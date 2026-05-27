@@ -30,6 +30,9 @@ security:
                 enable_csrf: true
                 default_target_path: app_register
 
+            custom_authenticators:
+                - App\Security\GoogleAuthenticator
+
             # Activate different ways to authenticate:
             # https://symfony.com/doc/current/security.html#the-firewall
 

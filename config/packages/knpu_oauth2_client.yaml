@@ -1,0 +1,14 @@
+knpu_oauth2_client:
+    clients:
+        # On définit notre client Google
+        google:
+            # Le type 'google' indique au bundle d'utiliser le provider de la League OAuth2
+            type: google
+            
+            # On lie les clés aux variables d'environnement configurées dans le .env.local
+            client_id: '%env(GOOGLE_CLIENT_ID)%'
+            client_secret: '%env(GOOGLE_CLIENT_SECRET)%'
+            
+            # C'est la route Symfony de retour où Google renverra l'utilisateur (le callback)
+            redirect_route: connect_google_check
+            redirect_params: {}
