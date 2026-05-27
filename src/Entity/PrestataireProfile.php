@@ -1,0 +1,545 @@
+<?php
+
+namespace App\Entity;
+
+use App\Enum\PrestataireProfileStatusEnum;
+use App\Enum\VerificationStatusEnum;
+use App\Enum\SearchVisibilityEnum;
+use App\Repository\PrestataireProfileRepository;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: PrestataireProfileRepository::class)]
+class PrestataireProfile
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'bigint')]
+    private ?int $id = null;
+
+    #[ORM\OneToOne(inversedBy: 'prestataireProfile', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false)]
+    private ?User $account = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $companyName = null;
+
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $slug = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $legalName = null;
+
+    #[ORM\Column(length: 80, nullable: true)]
+    private ?string $structureType = null;
+
+    #[ORM\Column(length: 9, nullable: true)]
+    private ?string $siren = null;
+
+    #[ORM\Column(length: 14, nullable: true, unique: true)]
+    private ?string $siret = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $vatNumber = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $address = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $addressComplement = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $postalCode = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $city = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $country = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7, nullable: true)]
+    private ?string $latitude = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 7, nullable: true)]
+    private ?string $longitude = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $geohash = null;
+
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $phonePublic = null;
+
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $phonePrivate = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $website = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $facebookUrl = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $instagramUrl = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $linkedinUrl = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $shortDescription = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $longDescription = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $logo = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $coverImage = null;
+
+    #[ORM\Column(type: 'string', length: 50, enumType: PrestataireProfileStatusEnum::class)]
+    private ?PrestataireProfileStatusEnum $profileStatus = PrestataireProfileStatusEnum::DRAFT;
+
+    #[ORM\Column(type: 'string', length: 50, enumType: VerificationStatusEnum::class)]
+    private ?VerificationStatusEnum $verificationStatus = VerificationStatusEnum::NOT_VERIFIED;
+
+    #[ORM\Column]
+    private ?int $completionScore = 0;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: 2)]
+    private ?string $averageRating = '0.00';
+
+    #[ORM\Column]
+    private ?int $reviewsCount = 0;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $responseTimeMinutes = null;
+
+    #[ORM\Column]
+    private ?bool $isFeatured = false;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $featuredUntil = null;
+
+    #[ORM\Column(type: 'string', length: 50, enumType: SearchVisibilityEnum::class)]
+    private ?SearchVisibilityEnum $searchVisibility = SearchVisibilityEnum::NORMAL;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $verifiedAt = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $deletedAt = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->profileStatus = PrestataireProfileStatusEnum::DRAFT;
+        $this->verificationStatus = VerificationStatusEnum::NOT_VERIFIED;
+        $this->searchVisibility = SearchVisibilityEnum::NORMAL;
+        $this->completionScore = 0;
+        $this->reviewsCount = 0;
+        $this->averageRating = '0.00';
+        $this->isFeatured = false;
+    }
+
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getAccount(): ?User
+    {
+        return $this->account;
+    }
+    public function setAccount(User $account): static
+    {
+        $this->account = $account;
+        return $this;
+    }
+
+    public function getCompanyName(): ?string
+    {
+        return $this->companyName;
+    }
+    public function setCompanyName(string $companyName): static
+    {
+        $this->companyName = $companyName;
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
+        return $this;
+    }
+
+    public function getLegalName(): ?string
+    {
+        return $this->legalName;
+    }
+    public function setLegalName(?string $legalName): static
+    {
+        $this->legalName = $legalName;
+        return $this;
+    }
+
+    public function getStructureType(): ?string
+    {
+        return $this->structureType;
+    }
+    public function setStructureType(?string $structureType): static
+    {
+        $this->structureType = $structureType;
+        return $this;
+    }
+
+    public function getSiren(): ?string
+    {
+        return $this->siren;
+    }
+    public function setSiren(?string $siren): static
+    {
+        $this->siren = $siren;
+        return $this;
+    }
+
+    public function getSiret(): ?string
+    {
+        return $this->siret;
+    }
+    public function setSiret(?string $siret): static
+    {
+        $this->siret = $siret;
+        return $this;
+    }
+
+    public function getVatNumber(): ?string
+    {
+        return $this->vatNumber;
+    }
+    public function setVatNumber(?string $vatNumber): static
+    {
+        $this->vatNumber = $vatNumber;
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+    public function setAddress(?string $address): static
+    {
+        $this->address = $address;
+        return $this;
+    }
+
+    public function getAddressComplement(): ?string
+    {
+        return $this->addressComplement;
+    }
+    public function setAddressComplement(?string $addressComplement): static
+    {
+        $this->addressComplement = $addressComplement;
+        return $this;
+    }
+
+    public function getPostalCode(): ?string
+    {
+        return $this->postalCode;
+    }
+    public function setPostalCode(?string $postalCode): static
+    {
+        $this->postalCode = $postalCode;
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+    public function setCity(?string $city): static
+    {
+        $this->city = $city;
+        return $this;
+    }
+
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+    public function setCountry(?string $country): static
+    {
+        $this->country = $country;
+        return $this;
+    }
+
+    public function getLatitude(): ?string
+    {
+        return $this->latitude;
+    }
+    public function setLatitude(?string $latitude): static
+    {
+        $this->latitude = $latitude;
+        return $this;
+    }
+
+    public function getLongitude(): ?string
+    {
+        return $this->longitude;
+    }
+    public function setLongitude(?string $longitude): static
+    {
+        $this->longitude = $longitude;
+        return $this;
+    }
+
+    public function getGeohash(): ?string
+    {
+        return $this->geohash;
+    }
+    public function setGeohash(?string $geohash): static
+    {
+        $this->geohash = $geohash;
+        return $this;
+    }
+
+    public function getPhonePublic(): ?string
+    {
+        return $this->phonePublic;
+    }
+    public function setPhonePublic(?string $phonePublic): static
+    {
+        $this->phonePublic = $phonePublic;
+        return $this;
+    }
+
+    public function getPhonePrivate(): ?string
+    {
+        return $this->phonePrivate;
+    }
+    public function setPhonePrivate(?string $phonePrivate): static
+    {
+        $this->phonePrivate = $phonePrivate;
+        return $this;
+    }
+
+    public function getWebsite(): ?string
+    {
+        return $this->website;
+    }
+    public function setWebsite(?string $website): static
+    {
+        $this->website = $website;
+        return $this;
+    }
+
+    public function getFacebookUrl(): ?string
+    {
+        return $this->facebookUrl;
+    }
+    public function setFacebookUrl(?string $facebookUrl): static
+    {
+        $this->facebookUrl = $facebookUrl;
+        return $this;
+    }
+
+    public function getInstagramUrl(): ?string
+    {
+        return $this->instagramUrl;
+    }
+    public function setInstagramUrl(?string $instagramUrl): static
+    {
+        $this->instagramUrl = $instagramUrl;
+        return $this;
+    }
+
+    public function getLinkedinUrl(): ?string
+    {
+        return $this->linkedinUrl;
+    }
+    public function setLinkedinUrl(?string $linkedinUrl): static
+    {
+        $this->linkedinUrl = $linkedinUrl;
+        return $this;
+    }
+
+    public function getShortDescription(): ?string
+    {
+        return $this->shortDescription;
+    }
+    public function setShortDescription(?string $shortDescription): static
+    {
+        $this->shortDescription = $shortDescription;
+        return $this;
+    }
+
+    public function getLongDescription(): ?string
+    {
+        return $this->longDescription;
+    }
+    public function setLongDescription(?string $longDescription): static
+    {
+        $this->longDescription = $longDescription;
+        return $this;
+    }
+
+    public function getLogo(): ?string
+    {
+        return $this->logo;
+    }
+    public function setLogo(?string $logo): static
+    {
+        $this->logo = $logo;
+        return $this;
+    }
+
+    public function getCoverImage(): ?string
+    {
+        return $this->coverImage;
+    }
+    public function setCoverImage(?string $coverImage): static
+    {
+        $this->coverImage = $coverImage;
+        return $this;
+    }
+
+    public function getProfileStatus(): ?PrestataireProfileStatusEnum
+    {
+        return $this->profileStatus;
+    }
+    public function setProfileStatus(PrestataireProfileStatusEnum $profileStatus): static
+    {
+        $this->profileStatus = $profileStatus;
+        return $this;
+    }
+
+    public function getVerificationStatus(): ?VerificationStatusEnum
+    {
+        return $this->verificationStatus;
+    }
+    public function setVerificationStatus(VerificationStatusEnum $verificationStatus): static
+    {
+        $this->verificationStatus = $verificationStatus;
+        return $this;
+    }
+
+    public function getCompletionScore(): ?int
+    {
+        return $this->completionScore;
+    }
+    public function setCompletionScore(int $completionScore): static
+    {
+        $this->completionScore = $completionScore;
+        return $this;
+    }
+
+    public function getAverageRating(): ?string
+    {
+        return $this->averageRating;
+    }
+    public function setAverageRating(string $averageRating): static
+    {
+        $this->averageRating = $averageRating;
+        return $this;
+    }
+
+    public function getReviewsCount(): ?int
+    {
+        return $this->reviewsCount;
+    }
+    public function setReviewsCount(int $reviewsCount): static
+    {
+        $this->reviewsCount = $reviewsCount;
+        return $this;
+    }
+
+    public function getResponseTimeMinutes(): ?int
+    {
+        return $this->responseTimeMinutes;
+    }
+    public function setResponseTimeMinutes(?int $responseTimeMinutes): static
+    {
+        $this->responseTimeMinutes = $responseTimeMinutes;
+        return $this;
+    }
+
+    public function isFeatured(): ?bool
+    {
+        return $this->isFeatured;
+    }
+    public function setIsFeatured(bool $isFeatured): static
+    {
+        $this->isFeatured = $isFeatured;
+        return $this;
+    }
+
+    public function getFeaturedUntil(): ?\DateTimeImmutable
+    {
+        return $this->featuredUntil;
+    }
+    public function setFeaturedUntil(?\DateTimeImmutable $featuredUntil): static
+    {
+        $this->featuredUntil = $featuredUntil;
+        return $this;
+    }
+
+    public function getSearchVisibility(): ?SearchVisibilityEnum
+    {
+        return $this->searchVisibility;
+    }
+    public function setSearchVisibility(SearchVisibilityEnum $searchVisibility): static
+    {
+        $this->searchVisibility = $searchVisibility;
+        return $this;
+    }
+
+    public function getVerifiedAt(): ?\DateTimeImmutable
+    {
+        return $this->verifiedAt;
+    }
+    public function setVerifiedAt(?\DateTimeImmutable $verifiedAt): static
+    {
+        $this->verifiedAt = $verifiedAt;
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+        return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+    public function setDeletedAt(?\DateTimeImmutable $deletedAt): static
+    {
+        $this->deletedAt = $deletedAt;
+        return $this;
+    }
+}

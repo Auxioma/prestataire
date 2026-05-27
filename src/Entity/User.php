@@ -84,6 +84,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeInterface $deletedAt = null;
 
+    #[ORM\OneToOne(mappedBy: 'account', cascade: ['persist', 'remove'])]
+    private ?ClientProfile $clientProfile = null;
+
+    #[ORM\OneToOne(mappedBy: 'account', cascade: ['persist', 'remove'])]
+    private ?PrestataireProfile $prestataireProfile = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -367,5 +373,39 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->createdAt = new \DateTime();
         $this->roles = [];
+    }
+
+    public function getClientProfile(): ?ClientProfile
+    {
+        return $this->clientProfile;
+    }
+
+    public function setClientProfile(ClientProfile $clientProfile): static
+    {
+        // set the owning side of the relation if necessary
+        if ($clientProfile->getAccount() !== $this) {
+            $clientProfile->setAccount($this);
+        }
+
+        $this->clientProfile = $clientProfile;
+
+        return $this;
+    }
+
+    public function getPrestataireProfile(): ?PrestataireProfile
+    {
+        return $this->prestataireProfile;
+    }
+
+    public function setPrestataireProfile(PrestataireProfile $prestataireProfile): static
+    {
+        // set the owning side of the relation if necessary
+        if ($prestataireProfile->getAccount() !== $this) {
+            $prestataireProfile->setAccount($this);
+        }
+
+        $this->prestataireProfile = $prestataireProfile;
+
+        return $this;
     }
 }
