@@ -5,12 +5,14 @@ namespace App\Entity;
 use App\Enum\UserStatusEnum;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -43,10 +45,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $phoneNumber = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeInterface $phoneVerifiedAt = null;
+    private ?\DateTimeImmutable $phoneVerifiedAt = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeInterface $emailVerifiedAt = null;
+    private ?\DateTimeImmutable $emailVerifiedAt = null;
 
     #[ORM\Column]
     private ?bool $isVerified = false;
@@ -64,7 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?UserStatusEnum $status = UserStatusEnum::PENDING;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeInterface $lastLoginAt = null;
+    private ?\DateTimeImmutable $lastLoginAt = null;
 
     #[ORM\Column]
     private ?int $loginCount = 0;
@@ -73,16 +75,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $resetToken = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeInterface $resetTokenExpiresAt = null;
+    private ?\DateTimeImmutable $resetTokenExpiresAt = null;
 
     #[ORM\Column]
-    private ?\DateTimeInterface $createdAt = null;
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeInterface $updatedAt = null;
+    private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeInterface $deletedAt = null;
+    private ?\DateTimeImmutable $deletedAt = null;
 
     #[ORM\OneToOne(mappedBy: 'account', cascade: ['persist', 'remove'])]
     private ?ClientProfile $clientProfile = null;
@@ -201,24 +203,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPhoneVerifiedAt(): ?\DateTimeInterface
+    public function getPhoneVerifiedAt(): ?\DateTimeImmutable
     {
         return $this->phoneVerifiedAt;
     }
 
-    public function setPhoneVerifiedAt(?\DateTimeInterface $phoneVerifiedAt): static
+    public function setPhoneVerifiedAt(?\DateTimeImmutable $phoneVerifiedAt): static
     {
         $this->phoneVerifiedAt = $phoneVerifiedAt;
 
         return $this;
     }
 
-    public function getEmailVerifiedAt(): ?\DateTimeInterface
+    public function getEmailVerifiedAt(): ?\DateTimeImmutable
     {
         return $this->emailVerifiedAt;
     }
 
-    public function setEmailVerifiedAt(?\DateTimeInterface $emailVerifiedAt): static
+    public function setEmailVerifiedAt(?\DateTimeImmutable $emailVerifiedAt): static
     {
         $this->emailVerifiedAt = $emailVerifiedAt;
 
@@ -284,12 +286,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getLastLoginAt(): ?\DateTimeInterface
+    public function getLastLoginAt(): ?\DateTimeImmutable
     {
         return $this->lastLoginAt;
     }
 
-    public function setLastLoginAt(?\DateTimeInterface $lastLoginAt): static
+    public function setLastLoginAt(?\DateTimeImmutable $lastLoginAt): static
     {
         $this->lastLoginAt = $lastLoginAt;
 
@@ -320,48 +322,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getResetTokenExpiresAt(): ?\DateTimeInterface
+    public function getResetTokenExpiresAt(): ?\DateTimeImmutable
     {
         return $this->resetTokenExpiresAt;
     }
 
-    public function setResetTokenExpiresAt(?\DateTimeInterface $resetTokenExpiresAt): static
+    public function setResetTokenExpiresAt(?\DateTimeImmutable $resetTokenExpiresAt): static
     {
         $this->resetTokenExpiresAt = $resetTokenExpiresAt;
 
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeInterface
+    public function getUpdatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
 
         return $this;
     }
 
-    public function getDeletedAt(): ?\DateTimeInterface
+    public function getDeletedAt(): ?\DateTimeImmutable
     {
         return $this->deletedAt;
     }
 
-    public function setDeletedAt(?\DateTimeInterface $deletedAt): static
+    public function setDeletedAt(?\DateTimeImmutable $deletedAt): static
     {
         $this->deletedAt = $deletedAt;
 
@@ -371,7 +373,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new \DateTimeImmutable();
         $this->roles = [];
     }
 
