@@ -43,16 +43,23 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('plainPassword', PasswordType::class, [
                 'mapped' => false,
-                'attr' => ['autocomplete' => 'new-password'],
+                'attr' => [
+                    'autocomplete' => 'new-password',
+                    'id' => 'registration_form_plainPassword' // Id explicite pour le JS
+                ],
                 'constraints' => [
                     new NotBlank(
-                        message: 'Entrez un mot de passe.'
+                        message: 'Please enter a password'
                     ),
                     new Length(
-                        min: 8,
-                        minMessage: 'Votre mot de passe doit comporter au moins 8 caractères.',
+                        min: 8, // On passe à 8 caractères minimum pour plus de sécurité
+                        minMessage: 'Votre mot de passe doit faire au moins {{ limit }} caractères',
                         max: 4096
                     ),
+                    new \Symfony\Component\Validator\Constraints\Regex(
+                        pattern: '/^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
+                        message: 'Votre mot de passe doit contenir au moins une majuscule, un chiffre et un caractère spécial.'
+                    )
                 ],
             ])
         ;

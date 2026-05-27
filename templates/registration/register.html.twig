@@ -29,10 +29,32 @@
                             {{ form_errors(registrationForm.accountType) }}
                         </div>
 
-                        <div class="mb-3">
-                            {{ form_label(registrationForm.plainPassword) }}
-                            {{ form_widget(registrationForm.plainPassword) }}
-                            {{ form_errors(registrationForm.plainPassword) }}
+                        <div class="mb-4">
+                            {{ form_label(registrationForm.plainPassword, 'Mot de passe', {'label_attr': {'class': 'form-label fw-semibold text-muted small'}}) }}
+                            {{ form_widget(registrationForm.plainPassword, {
+                                'attr': {
+                                    'class': 'form-control form-control-lg rounded-3 shadow-sm' ~ (registrationForm.plainPassword.vars.valid ? '' : ' is-invalid'),
+                                    'placeholder': '••••••••'
+                                }
+                            }) }}
+                            <div class="invalid-feedback small">
+                                {{ form_errors(registrationForm.plainPassword) }}
+                            </div>
+
+                            <div class="password-requirements mt-3 p-3 bg-light rounded-3 border small">
+                                <div id="req-length" class="text-danger mb-1" style="transition: all 0.2s;">
+                                    ❌ <span class="ms-1">Au moins 8 caractères</span>
+                                </div>
+                                <div id="req-uppercase" class="text-danger mb-1" style="transition: all 0.2s;">
+                                    ❌ <span class="ms-1">Au moins une majuscule</span>
+                                </div>
+                                <div id="req-number" class="text-danger mb-1" style="transition: all 0.2s;">
+                                    ❌ <span class="ms-1">Au moins un chiffre</span>
+                                </div>
+                                <div id="req-special" class="text-danger" style="transition: all 0.2s;">
+                                    ❌ <span class="ms-1">Au moins un caractère spécial (@, $, !, %, *, ?, &, #, _, etc.)</span>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-check mb-4 text-start">
@@ -48,4 +70,43 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const passwordInput = document.getElementById('{{ registrationForm.plainPassword.vars.id }}');
+        
+        const reqLength = document.getElementById('req-length');
+        const reqUppercase = document.getElementById('req-uppercase');
+        const reqNumber = document.getElementById('req-number');
+        const reqSpecial = document.getElementById('req-special');
+
+        passwordInput.addEventListener('input', function () {
+            const val = passwordInput.value;
+
+            // 1. Longueur (8 caractères minimum)
+            updateRequirement(reqLength, val.length >= 8, "Au moins 8 caractères");
+
+            // 2. Majuscule
+            updateRequirement(reqUppercase, /[A-Z]/.test(val), "Au moins une majuscule");
+
+            // 3. Chiffre
+            updateRequirement(reqNumber, /\d/.test(val), "Au moins un chiffre");
+
+            // 4. Caractère spécial
+            updateRequirement(reqSpecial, /[\W_]/.test(val), "Au moins un caractère spécial (@, $, !, %, *, ?, &, #, _, etc.)");
+        });
+
+        function updateRequirement(element, isValid, text) {
+            if (isValid) {
+                element.classList.remove('text-danger');
+                element.classList.add('text-success', 'fw-semibold');
+                element.innerHTML = `✅ <span class="ms-1">${text}</span>`;
+            } else {
+                element.classList.remove('text-success', 'fw-semibold');
+                element.classList.add('text-danger');
+                element.innerHTML = `❌ <span class="ms-1">${text}</span>`;
+            }
+        }
+    });
+</script>
 {% endblock %}
