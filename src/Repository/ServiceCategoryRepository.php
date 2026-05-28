@@ -16,6 +16,26 @@ class ServiceCategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, ServiceCategory::class);
     }
 
+    public function findWithSubCategories(): array
+    {
+        return $this->createQueryBuilder('c')
+            // On sélectionne la catégorie ET ses sous-catégories
+            ->addSelect('sub') 
+            // On fait la jointure avec la relation "subCategories" définie dans ton entité
+            ->leftJoin('c.subCategories', 'sub') 
+            // Filtres : uniquement les catégories racines et actives
+            ->where('c.parent IS NULL')
+            ->andWhere('c.isActive = :active')
+            // On peut aussi filtrer pour n'avoir que les sous-catégories actives
+            ->andWhere('sub.id IS NULL OR sub.isActive = :active') 
+            ->setParameter('active', true)
+            // Tri par position
+            ->orderBy('c.position', 'ASC')
+            ->addOrderBy('sub.position', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return ServiceCategory[] Returns an array of ServiceCategory objects
     //     */

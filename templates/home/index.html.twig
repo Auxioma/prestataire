@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}TrouveMoi Prestataires - Accueil{% endblock %}
+
+{% block body %}
+<div class="homepage-wrapper">
+
+    {# 1. SECTION HERO (Bannière gérée par le CSS) #}
+    <div class="hero-section text-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="display-5 fw-bold mb-3" style="letter-spacing: -0.02em;">
+                        Trouvez le prestataire idéal <br>
+                        <span style="color: #f59e0b;">pour tous vos projets</span>
+                    </h1>
+                    
+                    <p class="lead mb-4" style="max-width: 600px; margin: 0 auto;">
+                        Des professionnels de confiance pour vous accompagner dans tous vos besoins, partout en France.
+                    </p>
+                    
+                    <div class="d-flex flex-wrap justify-content-center gap-3">
+                        <span class="badge bg-secondary bg-opacity-25 px-3 py-2 border border-white border-opacity-10">
+                            <i class="fa-solid fa-circle-plus text-warning me-2"></i> 120 000 prestataires
+                        </span>
+                        <span class="badge bg-secondary bg-opacity-25 px-3 py-2 border border-white border-opacity-10">
+                            <i class="fa-solid fa-star text-warning me-2"></i> Avis clients vérifiés
+                        </span>
+                        <span class="badge bg-secondary bg-opacity-25 px-3 py-2 border border-white border-opacity-10">
+                            <i class="fa-solid fa-file-invoice-dollar text-warning me-2"></i> Devis gratuits
+                        </span>
+                        <span class="badge bg-secondary bg-opacity-25 px-3 py-2 border border-white border-opacity-10">
+                            <i class="fa-solid fa-shield-halved text-warning me-2"></i> Paiement sécurisé
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# 2. SECTION CATEGORIES #}
+    <div class="container my-5">
+        <div class="mb-4">
+            <h2 class="category-section-title h3 mb-1">Explorez nos catégories de services</h2>
+            <p class="text-muted small">Sélectionnez un secteur d'activité pour découvrir les profils disponibles.</p>
+        </div>
+
+        <div class="row g-4">
+            {% for category in categories %}
+                <div class="col-md-6 col-lg-4">
+                    <a href="#" class="card h-100 text-decoration-none text-dark p-3 shadow-sm tm-card" style="transition: transform 0.2s;">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-warning bg-opacity-10 text-warning rounded p-3 d-flex align-items-center justify-content-center fw-bold" style="width: 50px; height: 50px;">
+                                {{ category.name|slice(0, 1)|upper }}
+                            </div>
+                            <div>
+                                <h3 class="h6 mb-1 fw-bold">{{ category.name }}</h3>
+                                <p class="text-muted small mb-0">Toutes nos prestations autour de la thématique {{ category.name }}...</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% else %}
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted">Aucune catégorie disponible.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
