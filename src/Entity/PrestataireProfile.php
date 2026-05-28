@@ -10,15 +10,20 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PrestataireProfileRepository::class)]
+#[ORM\Table(name: 'prestataire_profile')]
+#[ORM\Index(name: 'idx_presta_user', columns: ['user_id'])]
+#[ORM\Index(name: 'idx_presta_status', columns: ['profile_status'])]
+#[ORM\Index(name: 'idx_presta_city', columns: ['city'])]
+#[ORM\Index(name: 'idx_presta_zip', columns: ['postal_code'])]
 class PrestataireProfile
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'bigint')]
-    private ?int $id = null;
+    #[ORM\Column(type: Types::BIGINT)]
+    private ?string $id = null;
 
     #[ORM\OneToOne(inversedBy: 'prestataireProfile', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false, columnDefinition: 'BIGINT NOT NULL')]
     private ?User $account = null;
 
     #[ORM\Column(length: 255)]
@@ -148,7 +153,7 @@ class PrestataireProfile
     }
 
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }

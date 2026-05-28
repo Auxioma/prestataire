@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Enum\UserStatusEnum;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -17,8 +18,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'bigint')]
-    private ?int $id = null;
+    #[ORM\Column(type: Types::BIGINT)]
+    private ?string $id = null;
 
     #[ORM\Column(length: 180)]
     private ?string $email = null;
@@ -92,7 +93,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'account', cascade: ['persist', 'remove'])]
     private ?PrestataireProfile $prestataireProfile = null;
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }

@@ -8,12 +8,14 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ClientProfileRepository::class)]
+#[ORM\Table(name: 'client_profile')]
+#[ORM\Index(name: 'idx_client_user', columns: ['user_id'])]
 class ClientProfile
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'bigint')]
-    private ?int $id = null;
+    #[ORM\Column(type: Types::BIGINT)]
+    private ?string $id = null;
 
     #[ORM\Column(type: 'string', length: 50, enumType: \App\Enum\ClientTypeEnum::class)]
     private ?\App\Enum\ClientTypeEnum $type = null;
@@ -58,10 +60,10 @@ class ClientProfile
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\OneToOne(inversedBy: 'clientProfile', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false, columnDefinition: 'BIGINT NOT NULL')]
     private ?User $account = null;
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }
