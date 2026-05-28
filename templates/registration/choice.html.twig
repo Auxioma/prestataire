@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - TrouveMoi{% endblock %}
+
+{% block body %}
+<div class="container d-flex align-items-center justify-content-center min-vh-100 py-5">
+    <div class="card shadow-lg p-4 rounded-4 bg-white" style="max-width: 600px; width: 100%;">
+        
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-dark mb-2">Bienvenue sur TrouveMoi</h2>
+            <p class="text-muted">Pour commencer, dites-nous qui vous êtes :</p>
+        </div>
+
+        <form action="{{ path('app_register') }}" method="GET">
+            
+            <div class="row g-3 mb-4">
+                
+                <div class="col-sm-6">
+                    <input type="radio" name="role" value="client" id="role_client" class="btn-check" required>
+                    <label class="card h-100 border-2 rounded-3 p-3 text-center role-card cursor-pointer w-100" for="role_client">
+                        <div class="fs-1 mb-2">👤</div>
+                        <h4 class="fw-bold fs-5 text-dark mb-2">Particulier</h4>
+                        <p class="text-muted small mb-0">Je cherche un professionnel ou un artisan de confiance pour mes projets.</p>
+                    </label>
+                </div>
+
+                <div class="col-sm-6">
+                    <input type="radio" name="role" value="prestataire" id="role_prestataire" class="btn-check" required>
+                    <label class="card h-100 border-2 rounded-3 p-3 text-center role-card cursor-pointer w-100" for="role_prestataire">
+                        <div class="fs-1 mb-2">🛠️</div>
+                        <h4 class="fw-bold fs-5 text-dark mb-2">Prestataire</h4>
+                        <p class="text-muted small mb-0">Je suis artisan, prestataire, et je souhaite développer mon activité.</p>
+                    </label>
+                </div>
+
+            </div>
+
+            <div class="text-center">
+                <button type="submit" id="btn-continue" class="btn btn-primary btn-lg w-100 py-2 rounded-3 shadow-sm fw-bold">
+                    Continuer
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<style>
+    /* Style au survol des cartes */
+    .role-card {
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+    .role-card:hover {
+        transform: translateY(-4px);
+        border-color: #6c757d !important;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    }
+    
+    /* 🌟 MAGIE CSS : Quand le bouton radio invisible est coché, on applique le style sexy à la carte */
+    .btn-check:checked + .role-card {
+        border-color: #0d6efd !important;
+        background-color: rgba(13, 110, 253, 0.04) !important;
+        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.15) !important;
+    }
+</style>
+{% endblock %}

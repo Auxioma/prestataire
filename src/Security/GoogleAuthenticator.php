@@ -3,6 +3,9 @@
 namespace App\Security;
 
 use App\Entity\User;
+use App\Entity\ClientProfile;
+use App\Entity\PrestataireProfile;
+use App\Enum\ClientTypeEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
@@ -17,6 +20,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 
 /**
  * On hérite de OAuth2Authenticator (fourni par le bundle KnpUniversity)
@@ -54,47 +58,68 @@ class GoogleAuthenticator extends OAuth2Authenticator
      */
     public function authenticate(Request $request): Passport
     {
-        // On récupère le client HTTP configuré pour Google
         $client = $this->clientRegistry->getClient('google');
-
-        // Le bundle va échanger le code reçu dans l'URL contre un "Access Token" (un jeton d'accès sécurisé)
         $accessToken = $this->fetchAccessToken($client);
 
-        // On retourne un Passport auto-validé (pas besoin de vérifier de mot de passe, Google l'a fait pour nous)
         return new SelfValidatingPassport(
-            new UserBadge($accessToken->getToken(), function () use ($accessToken, $client) {
+            new UserBadge($accessToken->getToken(), function () use ($accessToken, $client, $request) {
                 /** @var GoogleUser $googleUser */
-                // On utilise le jeton pour récupérer l'objet utilisateur officiel contenant les infos de Google
                 $googleUser = $client->fetchUserFromToken($accessToken);
-
-                // Extraction de l'adresse email
                 $email = $googleUser->getEmail();
 
-                // On cherche si un utilisateur possède déjà cet email dans notre base Postgres
+                // 1. On cherche l'utilisateur en base de données
                 $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
-                // Si l'utilisateur n'existe pas encore, on le crée AUTOMATIQUEMENT à la volée !
+                // 2. Si l'utilisateur n'existe pas encore
                 if (!$user) {
+                    
+                    // On vérifie si un rôle est présent en session (Preuve qu'il vient de la page d'inscription)
+                    $session = $request->getSession();
+                    $chosenRole = $session->get('oauth_registration_role');
+
+                    // 🛑 S'IL N'Y A PAS DE RÔLE EN SESSION : L'utilisateur a cliqué sur "Google" depuis la page Login !
+                    if (!$chosenRole) {
+                        // On refuse catégoriquement l'authentification avec un message clair
+                        throw new CustomUserMessageAuthenticationException(
+                            "Aucun compte n'est associé à cette adresse email. Veuillez d'abord vous inscrire."
+                        );
+                    }
+
+                    // --- SINON : C'est une inscription légitime, on procède à la création ---
                     $user = new User();
                     $user->setEmail($email);
-
-                    // Rôle par défaut (on pourra affiner ou le rediriger plus tard pour choisir son profil dédié)
-                    $user->setRoles(['ROLE_CLIENT']);
-
-                    // Pas de mot de passe physique puisque c'est Google qui gère la sécurité.
-                    // On laisse une chaîne vide, Symfony s'en accommode parfaitement.
                     $user->setPassword('');
-
-                    // Initialisation des dates obligatoires de ton entité
+                    $user->setIsVerified(true);
                     $user->setCreatedAt(new \DateTimeImmutable());
                     $user->setUpdatedAt(new \DateTimeImmutable());
 
-                    // Enregistrement en base de données
+                    // Nettoyage de la session
+                    $session->remove('oauth_registration_role');
+
+                    if ($chosenRole === 'prestataire') {
+                        $user->setRoles(['ROLE_PRESTATAIRE']);
+
+                        $prestataireProfile = new PrestataireProfile();
+                        $prestataireProfile->setCompanyName('Nouveau Prestataire (Google)');
+                        $prestataireProfile->setSlug('profil-' . uniqid());
+                        $prestataireProfile->setAccount($user);
+
+                        $this->entityManager->persist($prestataireProfile);
+                    } else {
+                        $user->setRoles(['ROLE_CLIENT']);
+
+                        $clientProfile = new ClientProfile();
+                        $clientProfile->setType(ClientTypeEnum::PARTICULIER);
+                        $clientProfile->setAccount($user);
+
+                        $this->entityManager->persist($clientProfile);
+                    }
+
                     $this->entityManager->persist($user);
                     $this->entityManager->flush();
                 }
 
-                // On renvoie l'entité User (existante ou créée). Symfony valide alors la connexion !
+                // Si l'utilisateur existait déjà (connexion classique), ou s'il vient d'être créé (inscription)
                 return $user;
             })
         );
@@ -123,7 +148,6 @@ class GoogleAuthenticator extends OAuth2Authenticator
         $message = strtr($exception->getMessageKey(), $exception->getMessageData());
 
         /** @var \Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface $flashBag */
-        // 🚀 Correction moderne pour Symfony : on récupère le sac de flashs proprement
         $flashBag = $request->getSession()->getBag('flashes');
         $flashBag->add('danger', 'Erreur d\'authentification Google : ' . $message);
 

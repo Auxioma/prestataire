@@ -14,15 +14,22 @@ class GoogleController extends AbstractController
      * Route d'amorçage : C'est le lien sur lequel l'utilisateur va cliquer pour se connecter.
      */
     #[Route('/connect/google', name: 'connect_google_start')]
-    public function connectAction(ClientRegistry $clientRegistry): RedirectResponse
+    public function connectAction(Request $request, ClientRegistry $clientRegistry): RedirectResponse
     {
-        // On récupère le client 'google' configuré dans notre fichier YAML
+        // On cherche si un rôle est EXPLICITEMENT fourni dans l'URL
+        $role = $request->query->get('role');
+
+        if ($role) {
+            // C'est une inscription : on stocke le rôle demandé (client ou prestataire)
+            $request->getSession()->set('oauth_registration_role', $role);
+        } else {
+            // C'est une connexion pure : on s'assure que la session est totalement vide de ce paramètre
+            $request->getSession()->remove('oauth_registration_role');
+        }
+
         return $clientRegistry
             ->getClient('google')
-            // On redirige l'utilisateur vers Google en lui demandant l'accès à son email et son profil public
-            ->redirect([
-                'email', 'profile'
-            ], []);
+            ->redirect(['email', 'profile'], []);
     }
 
     /**

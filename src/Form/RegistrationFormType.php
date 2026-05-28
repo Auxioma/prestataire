@@ -19,20 +19,7 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('email')
-            ->add('accountType', ChoiceType::class, [
-                'mapped' => false,
-                'expanded' => true,
-                'multiple' => false,
-                'choices' => [
-                    'Client' => 'client',
-                    'Prestataire' => 'prestataire',
-                ],
-                'constraints' => [
-                    new NotBlank(
-                        message: 'Veuillez choisir un type de compte.'
-                    ),
-                ],
-            ])
+            
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [

@@ -22,20 +22,28 @@ use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class RegistrationController extends AbstractController
 {
-    public function __construct(private EmailVerifier $emailVerifier)
+    public function __construct(private EmailVerifier $emailVerifier) {}
+
+    #[Route('/register/choice', name: 'app_register_choice')]
+    public function choice(): Response
     {
+        return $this->render('registration/choice.html.twig');
     }
 
     #[Route('/register', name: 'app_register')]
     public function register(
-        Request $request, 
-        UserPasswordHasherInterface $userPasswordHasher, 
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface $entityManager,
         Security $security
     ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
+
+        // 🚀 On récupère le rôle directement depuis l'URL (?role=...)
+        // S'il n'y a rien dans l'URL pour une raison X, on met 'client' par défaut
+        $accountType = $request->query->get('role', 'client');
 
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var string $plainPassword */
@@ -44,9 +52,7 @@ class RegistrationController extends AbstractController
             // 1. Encodage du mot de passe
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
 
-            // 2. Récupération du type de compte choisi dans le formulaire
-            $accountType = $form->get('accountType')->getData();
-
+            // 2. Attribution du rôle et création du profil selon le paramètre de l'URL
             if ($accountType === 'client') {
                 $user->setRoles(['ROLE_CLIENT']);
 
@@ -54,18 +60,17 @@ class RegistrationController extends AbstractController
                 $clientProfile = new ClientProfile();
                 $clientProfile->setType(ClientTypeEnum::PARTICULIER);
                 $clientProfile->setAccount($user);
-                
-                $entityManager->persist($clientProfile);
 
+                $entityManager->persist($clientProfile);
             } elseif ($accountType === 'prestataire') {
                 $user->setRoles(['ROLE_PRESTATAIRE']);
 
-                // Instanciation automatique du profil Prestataire (les Enums et valeurs par défaut sont gérés dans son constructeur)
+                // Instanciation automatique du profil Prestataire
                 $prestataireProfile = new PrestataireProfile();
-                $prestataireProfile->setCompanyName('Nouveau Prestataire'); // Valeur temporaire requise par le NOT NULL
-                $prestataireProfile->setSlug('profil-' . uniqid()); // Slug unique temporaire requis
+                $prestataireProfile->setCompanyName('Nouveau Prestataire');
+                $prestataireProfile->setSlug('profil-' . uniqid());
                 $prestataireProfile->setAccount($user);
-                
+
                 $entityManager->persist($prestataireProfile);
             }
 
@@ -73,8 +78,10 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // 4. Génération de l'URL signée et envoi de l'email de confirmation
-            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+            // 4. Envoi de l'email de confirmation
+            $this->emailVerifier->sendEmailConfirmation(
+                'app_verify_email',
+                $user,
                 (new TemplatedEmail())
                     ->from(new Address('noreply@trouvemoi.com', 'TrouveMoi'))
                     ->to((string) $user->getEmail())
@@ -82,7 +89,7 @@ class RegistrationController extends AbstractController
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
 
-            // 5. Connexion automatique immédiate avec le pare-feu standard (form_login)
+            // 5. Connexion automatique immédiate
             return $security->login($user, 'form_login', 'main');
         }
 
@@ -94,7 +101,6 @@ class RegistrationController extends AbstractController
     #[Route('/verify/email', name: 'app_verify_email')]
     public function verifyUserEmail(Request $request, TranslatorInterface $translator): Response
     {
-        // On exige que l'utilisateur soit connecté pour valider son mail (sécurité renforcée)
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         try {
@@ -109,7 +115,6 @@ class RegistrationController extends AbstractController
 
         $this->addFlash('success', 'Votre adresse email a bien été vérifiée.');
 
-        // Redirection temporaire sur l'inscription ou la future page d'accueil
         return $this->redirectToRoute('app_register');
     }
 }
