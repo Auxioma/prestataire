@@ -1,0 +1,109 @@
+		{# NAVBAR #}
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top tm-navbar-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold tm-logo" href="{{ path('app_home') }}">
+            TrouveMoi <span class="text-warning">Prestataires</span>
+        </a>
+
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#tmNavbarContent" aria-controls="tmNavbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="tmNavbarContent">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-2 gap-lg-3">
+                
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle fw-medium text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Prestataires
+                    </a>
+                    <ul class="dropdown-menu shadow border-0">
+                        <li><a class="dropdown-item" href="#">Tous les prestataires</a></li>
+                        <li><a class="dropdown-item" href="#">Les mieux notés</a></li>
+                        <li><a class="dropdown-item" href="#">Disponibles immédiatement</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle fw-medium text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Catégories
+                    </a>
+                    <ul class="dropdown-menu shadow border-0">
+                        <li><a class="dropdown-item" href="#">Bâtiment & Travaux</a></li>
+                        <li><a class="dropdown-item" href="#">Jardin & Extérieur</a></li>
+                        <li><a class="dropdown-item" href="#">High-Tech & Informatique</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item fw-semibold" href="#">Toutes les catégories</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link fw-medium text-white" href="#">Bons plans</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link fw-medium text-white" href="#">Favoris</a>
+                </li>
+
+                <li class="d-none d-lg-block border-end opacity-25" style="height: 20px; min-height: 20px;"></li>
+
+                {# GESTION DYNAMIQUE DE L'AUTHENTIFICATION #}
+                {% if app.user %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center fw-semibold text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-circle-user fs-5 me-2 text-warning"></i>
+                            Mon Compte
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                            <li>
+                                <span class="dropdown-item-text text-muted small">{{ app.user.email }}</span>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+
+                            {# Rôle Prestataire vs Client #}
+                            {% if is_granted('ROLE_PRESTATAIRE') %}
+                                <li>
+                                    <a class="dropdown-item fw-bold text-primary" href="#">
+                                        <i class="fa-solid fa-gauge me-2"></i>Espace Pro
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fa-solid fa-file-invoice me-2"></i>Mes Demandes
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fa-solid fa-gear me-2"></i>Paramètres
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="{{ path('app_logout') }}">
+                                    <i class="fa-solid fa-right-from-bracket me-2"></i>Déconnexion
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium text-white" href="{{ path('app_login') }}">Connexion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-sm btn-outline-light px-3" href="{{ path('app_register_choice') }}">Inscription</a>
+                    </li>
+                {% endif %}
+
+                {% if is_granted('ROLE_PRESTATAIRE') %}
+                    <li class="nav-item ms-lg-2">
+                        <a class="btn btn-sm btn-warning text-dark fw-bold px-3 tm-btn-nav-pro" href="#">
+                            <i class="fa-solid fa-briefcase me-2"></i>Proposer une Prestation
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

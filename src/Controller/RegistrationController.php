@@ -41,8 +41,7 @@ class RegistrationController extends AbstractController
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
-        // 🚀 On récupère le rôle directement depuis l'URL (?role=...)
-        // S'il n'y a rien dans l'URL pour une raison X, on met 'client' par défaut
+        // On récupère le rôle directement depuis l'URL (?role=...)
         $accountType = $request->query->get('role', 'client');
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -56,7 +55,6 @@ class RegistrationController extends AbstractController
             if ($accountType === 'client') {
                 $user->setRoles(['ROLE_CLIENT']);
 
-                // Instanciation automatique du profil Client
                 $clientProfile = new ClientProfile();
                 $clientProfile->setType(ClientTypeEnum::PARTICULIER);
                 $clientProfile->setAccount($user);
@@ -65,7 +63,6 @@ class RegistrationController extends AbstractController
             } elseif ($accountType === 'prestataire') {
                 $user->setRoles(['ROLE_PRESTATAIRE']);
 
-                // Instanciation automatique du profil Prestataire
                 $prestataireProfile = new PrestataireProfile();
                 $prestataireProfile->setCompanyName('Nouveau Prestataire');
                 $prestataireProfile->setSlug('profil-' . uniqid());
@@ -90,7 +87,8 @@ class RegistrationController extends AbstractController
             );
 
             // 5. Connexion automatique immédiate
-            return $security->login($user, 'form_login', 'main');
+            $security->login($user, 'form_login', 'main');
+            return $this->redirectToRoute('app_home');
         }
 
         return $this->render('registration/register.html.twig', [
@@ -115,6 +113,7 @@ class RegistrationController extends AbstractController
 
         $this->addFlash('success', 'Votre adresse email a bien été vérifiée.');
 
-        return $this->redirectToRoute('app_register');
+        // MODIFICATION ICI : Une fois l'email validé, on l'envoie sur l'accueil plutôt que sur le formulaire d'inscription
+        return $this->redirectToRoute('app_home');
     }
 }

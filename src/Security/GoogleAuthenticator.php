@@ -136,7 +136,7 @@ class GoogleAuthenticator extends OAuth2Authenticator
         }
 
         // Sinon, redirection temporaire vers la page d'inscription ou d'accueil
-        return new RedirectResponse($this->router->generate('app_register'));
+        return new RedirectResponse($this->router->generate('app_home'));
     }
 
     /**
@@ -152,6 +152,6 @@ class GoogleAuthenticator extends OAuth2Authenticator
         $flashBag->add('danger', 'Erreur d\'authentification Google : ' . $message);
 
         // On le redirige vers la page de login classique
-        return new RedirectResponse($this->router->generate('app_login'));
+        return new RedirectResponse($this->router->generate('app_register_choice'));
     }
 }

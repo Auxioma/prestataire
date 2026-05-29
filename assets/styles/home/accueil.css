@@ -1,50 +1,104 @@
-
+/* =========================================================================
+   CONFIGURATION GLOBALE DU SITE
+   ========================================================================= */
 body {
-    background-color: grey; 
+    background-color: gray !important; 
 }
 
-.hero-section {
-    background: linear-gradient(135px, #1e293b 0%, #0f172a 100%) !important;
-    padding: 80px 0 100px 0;
+/* =========================================================================
+   1. SECTION HERO (ACCUEIL)
+   ========================================================================= */
+.homepage-wrapper .hero-section,
+div.hero-section {
+    background-color: transparent !important; /* On tue le fond gris Bootstrap */
+    background-image: linear-gradient(135px, #1e293b 0%, #0f172a 100%) !important; /* On force le dégradé */
+    background: linear-gradient(135px, #1e293b 0%, #0f172a 100%) !important; /* Sécurité pour certains navigateurs */
+    padding: 80px 0 100px 0 !important;
     color: #ffffff !important;
 }
 
-.hero-section h1 {
+/* Titre principal de la maquette */
+.hero-title {
+    font-size: 2.75rem !important;
+    font-weight: 800 !important;
     color: #ffffff !important;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em !important;
+    line-height: 1.2;
 }
 
-.hero-section p.lead {
+/* Accentuation orange sur le titre */
+.hero-title-highlight {
+    color: #f59e0b !important;
+}
+
+/* Sous-titre d'accompagnement */
+.hero-lead {
+    font-size: 1.15rem !important;
     color: #cbd5e1 !important;
     max-width: 600px;
     margin: 0 auto;
+    font-weight: 400;
+    line-height: 1.6;
 }
 
-/* 4. Section Catégories & Grille */
+/* Badges de réassurance du Hero */
+.tm-badge-hero {
+    background-color: rgba(100, 116, 139, 0.25) !important; /* bg-secondary + opacité */
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* =========================================================================
+   2. SECTION ZONE CONTENU & GRILLE DE CATÉGORIES
+   ========================================================================= */
 .category-section-title {
     color: #0f172a !important;
-    font-weight: 700;
+    font-weight: 800 !important;
+    letter-spacing: -0.02em !important;
 }
 
-/* Style de base de tes cartes */
+.category-section-subtitle {
+    color: #64748b !important; /* text-muted adapté */
+}
+
+/* Structure de la carte de catégorie */
 .tm-card {
-    background-color: #ffffff !important;
+    background-color: #ffffff !important; /* Blanc pur pour trancher avec le whitesmoke */
     border: 1px solid #e2e8f0 !important;
     border-radius: 12px !important;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease !important;
-    display: block;
-    height: 100%;
+    padding: 1rem !important; /* Équivalent p-3 */
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important; /* shadow-sm léger */
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1), 
+                border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-/* L'effet au survol (Hover) qui se gère ici et refonctionnera à 100% */
+/* Effet au survol premium (Bordure ambrée et effet d'élévation) */
 .tm-card:hover {
     transform: translateY(-5px) !important;
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08) !important;
-    border-color: #f59e0b !important; /* Bordure orange au survol */
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.06) !important;
+    border-color: #f59e0b !important;
 }
 
+/* Bloc contenant la lettre/icône à gauche */
 .tm-icon-box {
     width: 50px;
     height: 50px;
     min-width: 50px;
+    background-color: rgba(245, 158, 11, 0.1) !important; /* bg-warning + opacité */
+    color: #f59e0b !important; /* text-warning */
+    border-radius: 8px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Contenu textuel de la carte */
+.tm-card-title {
+    color: #1e293b !important;
+    font-size: 1rem !important; /* Équivalent h6 */
+}
+
+.tm-card-description {
+    color: #64748b !important;
 }
