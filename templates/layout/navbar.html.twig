@@ -96,7 +96,7 @@
                     </li>
                 {% endif %}
 
-                {% if is_granted('ROLE_PRESTATAIRE') %}
+                {% if app.user and is_granted('ROLE_PRESTATAIRE') %}
                     <li class="nav-item ms-lg-2">
                         <a class="btn btn-sm btn-warning text-dark fw-bold px-3 tm-btn-nav-pro" href="#">
                             <i class="fa-solid fa-briefcase me-2"></i>Proposer une Prestation

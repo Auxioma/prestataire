@@ -87,7 +87,7 @@ class RegistrationController extends AbstractController
             );
 
             // 5. Connexion automatique immédiate
-            $security->login($user, 'form_login', 'main');
+            // $security->login($user, 'form_login', 'main');
             return $this->redirectToRoute('app_home');
         }
 
