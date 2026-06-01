@@ -1,122 +1,320 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Inscription - TrouveMoi
-{% endblock %}
+{% block title %}Inscription - TrouveMoi{% endblock %}
 
 {% block body %}
-	<div class="container mt-5">
-		<div class="row justify-content-center">
-			<div class="col-md-6">
-				<div class="text-center mb-4">
-					<div class="d-inline-flex align-items-center bg-light border rounded-pill px-3 py-2 shadow-sm">
-						<span class="text-muted small me-2">Inscription en tant que :</span>
-						<span class="badge bg-primary text-white fw-bold me-2 text-uppercase">
-							{{ app.request.query.get('role', 'client') == 'prestataire' ? 'Professionnel 🛠️' : 'Particulier 👤' }}
-						</span>
-						<a href="{{ path('app_register_choice') }}" class="btn btn-sm btn-outline-secondary rounded-pill fw-semibold py-0 px-2" style="font-size: 0.75rem;">
-							Changer
-						</a>
-					</div>
-				</div>
+<div class="min-vh-100 d-flex flex-column bg-light" style="font-family: 'Poppins', sans-serif; color: #061B56;">
+    
+    <div class="container flex-grow-1 d-flex align-items-center py-5">
+        <div class="row w-100 g-5 align-items-center justify-content-center">
+            
+            <!-- Colonne Gauche : Arguments & Textes -->
+            <div class="col-lg-6 d-flex flex-column justify-content-between h-100">
+                <div>
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-warning text-dark d-flex align-items-center justify-content-center rounded-circle me-2 shadow-sm" style="width: 40px; height: 40px; border: 4px solid #F4A911; border-radius: 50% 50% 50% 6px !important;">
+                            <i class="bi bi-geo-alt-fill text-white" style="font-size: 18px;"></i>
+                        </div>
+                        <div>
+                            <span class="fw-bold fs-4 text-dark d-block lh-1" style="font-weight: 800 !important; letter-spacing: -1px;">TrouveMoi</span>
+                            <small class="text-warning fw-semibold tracking-wide" style="font-weight: 800 !important; font-size: 14px;">Prestataires</small>
+                        </div>
+                    </div>
 
-				<div class="card shadow-sm">
-					<div class="card-header bg-primary text-white text-center">
-						<h2 class="h4 mb-0">Créer un compte sur TrouveMoi</h2>
-					</div>
-					<div class="card-body p-4">
-						{{ form_errors(registrationForm) }}
+                    <h1 class="display-5 text-dark mb-3" style="font-weight: 800; letter-spacing: -1px; line-height: 1.15;">
+                        Trouvez le bon prestataire,<br><span style="color: #2046D8;">au bon moment.</span>
+                    </h1>
+                    <p class="text-muted fs-5 mb-5" style="max-width: 480px; font-weight: 500;">
+                        Des professionnels qualifiés près de chez vous pour tous vos projets et services du quotidien.
+                    </p>
 
-						{{ form_start(registrationForm) }}
-						<div class="mb-3">
-							{{ form_label(registrationForm.email) }}
-							{{ form_widget(registrationForm.email) }}
-							{{ form_errors(registrationForm.email) }}
-						</div>
+                    <div class="d-flex flex-column gap-4 mb-5">
+                        <div class="d-flex align-items-start">
+                            <div class="bg-white text-primary rounded-circle shadow-sm d-flex align-items-center justify-content-center p-2 me-3 border border-light" style="width: 44px; height: 44px; flex-shrink: 0; color: #2046D8 !important;">
+                                <i class="bi bi-shield-check fs-5"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold text-dark mb-1 fs-6" style="font-weight: 800 !important;">Prestataires vérifiés</h5>
+                                <p class="text-muted small mb-0" style="font-size: 14px;">Des professionnels évalués et de confiance.</p>
+                            </div>
+                        </div>
 
-						<div class="mb-4" data-controller="password">
-							{{ form_label(registrationForm.plainPassword, 'Mot de passe', {
-        'label_attr': {
-            'class': 'form-label fw-semibold text-muted small'
+                        <div class="d-flex align-items-start">
+                            <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center p-2 me-3 border border-light" style="width: 44px; height: 44px; flex-shrink: 0; color: #F4A911 !important;">
+                                <i class="bi bi-star fs-5"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold text-dark mb-1 fs-6" style="font-weight: 800 !important;">Avis clients authentiques</h5>
+                                <p class="text-muted small mb-0" style="font-size: 14px;">Faites le bon choix grâce aux retours d'expérience.</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-start">
+                            <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center p-2 me-3 border border-light" style="width: 44px; height: 44px; flex-shrink: 0; color: #16A34A !important;">
+                                <i class="bi bi-lock fs-5"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold text-dark mb-1 fs-6" style="font-weight: 800 !important;">Paiement sécurisé</h5>
+                                <p class="text-muted small mb-0" style="font-size: 14px;">Vos transactions sont protégées à chaque étape.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="position-relative d-none d-lg-block mt-3 align-self-start">
+                    <div class="bg-primary rounded-circle opacity-10 position-absolute start-0 top-50 translate-middle-y" style="width: 300px; height: 300px; z-index: 1;"></div>
+                    <div class="bg-secondary rounded-4 shadow position-relative d-flex align-items-center justify-content-center text-white text-center" style="width: 320px; height: 260px; z-index: 2; background: linear-gradient(135deg, #061B56, #2046D8);">
+                        <div class="p-3">
+                            <i class="bi bi-person-plus display-3 mb-2"></i>
+                            <p class="small mb-0 opacity-75">Rejoignez notre communauté</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonne Droite : Formulaire d'inscription -->
+            <div class="col-lg-6 col-xl-5 offset-xl-1">
+                <div class="card border-0 shadow-lg p-4 p-md-5 rounded-4 bg-white">
+                    
+
+                    <!-- Badge du Rôle choisi -->
+                    <div class="text-center mb-4">
+                        <div class="d-inline-flex align-items-center bg-light border rounded-pill px-3 py-1.5 shadow-xs">
+                            <span class="text-muted small me-2" style="font-size: 13px;">En tant que :</span>
+                            <span class="badge bg-primary text-white fw-bold me-2 text-uppercase px-2 py-1.5" style="font-size: 11px; background-color: #2046D8 !important;">
+                                {{ app.request.query.get('role', 'client') == 'prestataire' ? 'Professionnel 🛠️' : 'Particulier 👤' }}
+                            </span>
+                            <a href="{{ path('app_register_choice') }}" class="btn btn-sm btn-outline-secondary rounded-pill fw-semibold py-0 px-2" style="font-size: 0.75rem;">
+                                Changer
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h3 class="fw-bold text-dark mb-1 fs-4" style="font-weight: 800 !important; letter-spacing: -1px;">Créer un compte</h3>
+                        <p class="text-muted small" style="font-size: 15px; font-weight: 500;">Remplissez les informations ci-dessous pour commencer.</p>
+                    </div>
+
+                    <!-- Erreurs Générales du Formulaire -->
+                    {% if form_errors(registrationForm) %}
+                        <div class="alert alert-danger rounded-3 p-3 mb-4 small" role="alert" style="font-size: 14px;">
+                            {{ form_errors(registrationForm) }}
+                        </div>
+                    {% endif %}
+
+                    {{ form_start(registrationForm) }}
+                        
+                        <!-- Champ Email -->
+                        <div class="mb-4">
+                            <div class="input-group tm-input-group {% if not registrationForm.email.vars.valid %}border-danger{% endif %}">
+                                <span class="input-group-text bg-white border-0 text-muted px-3">
+                                    <i class="bi bi-envelope fs-5" style="color: #2046D8;"></i>
+                                </span>
+                                {{ form_widget(registrationForm.email, {
+                                    'attr': {
+                                        'class': 'form-control border-0 py-3',
+                                        'placeholder': 'Adresse e-mail',
+                                        'style': 'font-size: 15px; font-weight: 500;'
+                                    }
+                                }) }}
+                            </div>
+                            {% if form_errors(registrationForm.email) %}
+                                <div class="text-danger small mt-1 ps-1" style="font-size: 13px;">
+                                    {{ form_errors(registrationForm.email) }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Champ Mot de Passe (Avec Stimulus & Toggle Vue) -->
+                        <div class="mb-3" data-controller="password">
+                            <div class="input-group tm-input-group {% if not registrationForm.plainPassword.vars.valid %}border-danger{% endif %}" id="passwordGroup">
+                                <span class="input-group-text bg-white border-0 text-muted px-3">
+                                    <i class="bi bi-lock fs-5" style="color: #2046D8;"></i>
+                                </span>
+                                {{ form_widget(registrationForm.plainPassword, {
+                                    'attr': {
+                                        'class': 'form-control border-0 py-3',
+                                        'placeholder': 'Mot de passe',
+                                        'style': 'font-size: 15px; font-weight: 500;',
+                                        'data-password-target': 'input',
+                                        'data-action': 'input->password#checkPassword'
+                                    }
+                                }) }}
+                                <button class="btn bg-white border-0 text-muted px-3" type="button" id="passwordToggle" aria-label="Afficher le mot de passe">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                            </div>
+                            
+                            {% if form_errors(registrationForm.plainPassword) %}
+                                <div class="text-danger small mt-1 ps-1" style="font-size: 13px;">
+                                    {{ form_errors(registrationForm.plainPassword) }}
+                                </div>
+                            {% endif %}
+
+                            <!-- Requirements List d'origine -->
+                            <div class="password-requirements mt-3 p-3 bg-light rounded-3 border small" style="font-size: 13px;">
+                                <div data-password-target="length" class="text-danger mb-1" style="transition: all 0.2s;">
+                                    ❌ <span class="ms-1">Au moins 8 caractères</span>
+                                </div>
+                                <div data-password-target="uppercase" class="text-danger mb-1" style="transition: all 0.2s;">
+                                    ❌ <span class="ms-1">Au moins une majuscule</span>
+                                </div>
+                                <div data-password-target="number" class="text-danger mb-1" style="transition: all 0.2s;">
+                                    ❌ <span class="ms-1">Au moins un chiffre</span>
+                                </div>
+                                <div data-password-target="special" class="text-danger" style="transition: all 0.2s;">
+                                    ❌ <span class="ms-1">Au moins un caractère spécial (@, $, !, %, *, ?, &, #, _, etc.)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Case à cocher CGU -->
+                        <div class="form-check mb-4 text-start d-flex align-items-start gap-2 ps-0 fs-6">
+                            {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input ms-0 mt-1', 'style': 'cursor:pointer; width:18px; height:18px;'}}) }}
+                            {{ form_label(registrationForm.agreeTerms, null, {'label_attr': {'class': 'form-check-label text-muted small fw-medium mt-0.5', 'style': 'cursor:pointer; font-size: 14px; user-select:none;'}}) }}
+                        </div>
+                        {% if form_errors(registrationForm.agreeTerms) %}
+                            <div class="text-danger small mt-n3 mb-3 ps-1" style="font-size: 13px;">
+                                {{ form_errors(registrationForm.agreeTerms) }}
+                            </div>
+                        {% endif %}
+
+                        <!-- Bouton d'action principal -->
+                        <button type="submit" class="btn btn-lg w-100 py-3 rounded-3 fw-bold fs-6 shadow-sm mb-4 text-white" style="background-color: #2046D8; border: 0; font-weight: 800 !important;">
+                            S'enregistrer
+                        </button>
+
+                        <div class="position-relative text-center my-4">
+                            <hr class="text-muted opacity-20">
+                            <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small fw-medium text-uppercase" style="font-size: 14px;">ou</span>
+                        </div>
+
+                        <!-- Boutons Sociaux Externes -->
+                        <div class="d-flex flex-column gap-2">
+                            <a href="{{ path('connect_google_start', {'role': app.request.query.get('role', 'client')}) }}" class="btn btn-outline-dark w-100 py-2.5 rounded-3 fw-bold text-start d-flex align-items-center justify-content-center bg-white border-light-subtle shadow-xs btn-social" style="font-size: 15px;">
+                                <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24c0-1.55-.15-3.24-.47-4.77H24v9.03h12.75c-.53 2.87-2.14 5.31-4.59 6.96l7.15 5.54C43.5 36.3 46.5 30.82 46.5 24z"/><path fill="#FBBC05" d="M10.54 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.15-5.54c-1.99 1.33-4.51 2.1-8.74 2.1-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                                S'inscrire avec Google
+                            </a>
+                            <button type="button" class="btn btn-outline-dark w-100 py-2.5 rounded-3 fw-bold text-start d-flex align-items-center justify-content-center bg-white border-light-subtle shadow-xs btn-social" style="font-size: 15px;">
+                                <i class="bi bi-apple me-2 text-dark fs-5"></i>
+                                S'inscrire avec Apple
+                            </button>
+                        </div>
+
+                        <p class="text-center text-muted small mt-4 mb-0" style="font-size: 14px; font-weight: 500;">
+                            Vous avez déjà un compte ? <a href="{{ path('app_login') }}" class="fw-bold text-decoration-none" style="color: #2046D8;">Se connecter</a>
+                        </p>
+                    {{ form_end(registrationForm) }}
+
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Pied de page caractéristiques -->
+    <div class="bg-white border-top py-4">
+        <div class="container">
+            <div class="row g-3 justify-content-center text-center text-md-start">
+                <div class="col-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+                    <div class="d-flex align-items-center justify-content-center rounded-3" style="width: 44px; height: 44px; background-color: #F1F5FF; color: #2046D8; flex-shrink: 0;">
+                        <i class="bi bi-shield-check fs-4"></i>
+                    </div>
+                    <div>
+                        <span class="d-block fw-bold text-dark small lh-1" style="font-weight: 800 !important; font-size: 14px;">Données sécurisées</span>
+                        <small class="text-muted" style="font-size: 12px; font-weight: 500;">Vos informations sont protégées</small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+                    <div class="d-flex align-items-center justify-content-center rounded-3" style="width: 44px; height: 44px; background-color: #F1F5FF; color: #2046D8; flex-shrink: 0;">
+                        <i class="bi bi-gift fs-4"></i>
+                    </div>
+                    <div>
+                        <span class="d-block fw-bold text-dark small lh-1" style="font-weight: 800 !important; font-size: 14px;">Gratuit</span>
+                        <small class="text-muted" style="font-size: 12px; font-weight: 500;">L'inscription et les devis</small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+                    <div class="d-flex align-items-center justify-content-center rounded-3" style="width: 44px; height: 44px; background-color: #F1F5FF; color: #2046D8; flex-shrink: 0;">
+                        <i class="bi bi-headset fs-4"></i>
+                    </div>
+                    <div>
+                        <span class="d-block fw-bold text-dark small lh-1" style="font-weight: 800 !important; font-size: 14px;">Support 7j/7</span>
+                        <small class="text-muted" style="font-size: 12px; font-weight: 500;">Notre équipe vous accompagne</small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+                    <div class="d-flex align-items-center justify-content-center rounded-3" style="width: 44px; height: 44px; background-color: #F1F5FF; color: #2046D8; flex-shrink: 0;">
+                        <i class="bi bi-star-fill fs-5" style="color: #F4A911;"></i>
+                    </div>
+                    <div>
+                        <span class="d-block fw-bold text-dark small lh-1" style="font-weight: 800 !important; font-size: 14px;">Satisfaction garantie</span>
+                        <small class="text-muted" style="font-size: 12px; font-weight: 500;">Votre satisfaction, notre priorité</small>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4 text-muted opacity-20">
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 text-muted" style="font-size: 0.75rem; font-weight: 500;">
+                <span>&copy; {{ date()|date('Y') }} TrouveMoi Prestataires. Tous droits réservés.</span>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-muted text-decoration-none hover-underline">Conditions d'utilisation</a>
+                    <a href="#" class="text-muted text-decoration-none hover-underline">Politique de confidentialité</a>
+                    <a href="#" class="text-muted text-decoration-none hover-underline">Aide</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .tm-input-group {
+        border: 1px solid #DDE2EA;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all .2s ease;
+    }
+    .tm-input-group:hover {
+        border-color: #BFC7D6;
+    }
+    .tm-input-group:focus-within {
+        border-color: #2046D8;
+        box-shadow: 0 0 0 4px rgba(32, 70, 216, 0.15);
+    }
+    .tm-input-group input:focus {
+        box-shadow: none !important;
+    }
+    .btn-social {
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    .btn-social:hover {
+        background-color: #f8f9fa !important;
+        border-color: #2046D8 !important;
+    }
+    .hover-underline:hover { text-decoration: underline !important; }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordToggle = document.getElementById('passwordToggle');
+        // Récupération de l'input généré dynamiquement par le FormType de Symfony (id globalement structuré ainsi)
+        const passwordInput = document.querySelector('input[type="password"]');
+        
+        if (passwordToggle && passwordInput) {
+            passwordToggle.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.classList.remove('bi-eye-slash');
+                    icon.classList.add('bi-eye');
+                } else {
+                    passwordInput.type = 'password';
+                    icon.classList.remove('bi-eye');
+                    icon.classList.add('bi-eye-slash');
+                }
+            });
         }
-    }) }}
-
-							{{ form_widget(registrationForm.plainPassword, {
-        'attr': {
-            'class': 'form-control form-control-lg rounded-3 shadow-sm' ~
-                (registrationForm.plainPassword.vars.valid ? '' : ' is-invalid'),
-            'placeholder': '••••••••',
-
-            'data-password-target': 'input',
-            'data-action': 'input->password#checkPassword'
-        }
-    }) }}
-
-							<div class="invalid-feedback small">
-								{{ form_errors(registrationForm.plainPassword) }}
-							</div>
-
-							<div class="password-requirements mt-3 p-3 bg-light rounded-3 border small">
-
-								<div data-password-target="length" class="text-danger mb-1" style="transition: all 0.2s;">
-									❌
-									<span class="ms-1">
-										Au moins 8 caractères
-									</span>
-								</div>
-
-								<div data-password-target="uppercase" class="text-danger mb-1" style="transition: all 0.2s;">
-									❌
-									<span class="ms-1">
-										Au moins une majuscule
-									</span>
-								</div>
-
-								<div data-password-target="number" class="text-danger mb-1" style="transition: all 0.2s;">
-									❌
-									<span class="ms-1">
-										Au moins un chiffre
-									</span>
-								</div>
-
-								<div data-password-target="special" class="text-danger" style="transition: all 0.2s;">
-									❌
-									<span class="ms-1">
-										Au moins un caractère spécial (@, $, !, %, *, ?, &, #, _, etc.)
-									</span>
-								</div>
-
-							</div>
-						</div>
-
-						<div class="form-check mb-4 text-start">
-							{{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}
-							{{ form_label(registrationForm.agreeTerms, null, {'label_attr': {'class': 'form-check-label'}}) }}
-							{{ form_errors(registrationForm.agreeTerms) }}
-						</div>
-
-						<button type="submit" class="btn btn-primary w-100 py-2">S'inscrire</button>
-						{{ form_end(registrationForm) }}
-
-						<div class="d-flex align-items-center my-4">
-							<hr class="flex-grow-1 text-muted">
-							<span class="mx-3 text-muted small fw-semibold text-uppercase">ou</span>
-							<hr class="flex-grow-1 text-muted">
-						</div>
-
-						<a href="{{ path('connect_google_start', {'role': app.request.query.get('role', 'client')}) }}" class="btn btn-outline-dark w-100 py-2 rounded-3 fw-bold d-flex align-items-center justify-content-center shadow-sm hover-shadow-transition">
-							<svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewbox="0 0 48 48">
-								<path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-								<path fill="#4285F4" d="M46.5 24c0-1.61-.15-3.16-.42-4.69H24v8.89h12.62c-.54 2.85-2.16 5.27-4.57 6.88l7.1 5.5C43.34 36.16 46.5 30.65 46.5 24z"/>
-								<path fill="#FBBC05" d="M10.54 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.98-6.19z"/>
-								<path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.1-5.5c-1.97 1.32-4.49 2.11-8.79 2.11-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-							</svg>
-							S'inscrire avec Google
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
+    });
+</script>
 {% endblock %}
