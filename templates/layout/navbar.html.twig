@@ -1,5 +1,5 @@
 {# NAVBAR #}
-<nav class="navbar navbar-expand-xl navbar-dark sticky-top" style="background-color: #0A1329; padding-top: 14px; padding-bottom: 14px; font-family: 'Plus Jakarta Sans', sans-serif;">
+<nav class="navbar navbar-expand-xl navbar-dark sticky-top" style="background-color: #061B56; padding-top: 14px; padding-bottom: 14px; font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;">
     <div class="container">
         
         <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none py-0" href="{{ path('app_home') }}">
@@ -36,9 +36,9 @@
                         Prestataires
                     </a>
                     <ul class="dropdown-menu shadow border-0 mt-2">
-                        <li><a class="dropdown-item fw-medium" href="#">Tous les prestataires</a></li>
-                        <li><a class="dropdown-item fw-medium" href="#">Les mieux notés</a></li>
-                        <li><a class="dropdown-item fw-medium" href="#">Disponibles immédiatement</a></li>
+                        <li><a class="dropdown-item fw-semibold" href="#">Tous les prestataires</a></li>
+                        <li><a class="dropdown-item fw-semibold" href="#">Les mieux notés</a></li>
+                        <li><a class="dropdown-item fw-semibold" href="#">Disponibles immédiatement</a></li>
                     </ul>
                 </li>
 
@@ -47,9 +47,9 @@
                         Catégories
                     </a>
                     <ul class="dropdown-menu shadow border-0 mt-2">
-                        <li><a class="dropdown-item fw-medium" href="#">Bâtiment & Travaux</a></li>
-                        <li><a class="dropdown-item fw-medium" href="#">Jardin & Extérieur</a></li>
-                        <li><a class="dropdown-item fw-medium" href="#">High-Tech & Informatique</a></li>
+                        <li><a class="dropdown-item fw-semibold" href="#">Bâtiment & Travaux</a></li>
+                        <li><a class="dropdown-item fw-semibold" href="#">Jardin & Extérieur</a></li>
+                        <li><a class="dropdown-item fw-semibold" href="#">High-Tech & Informatique</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item fw-bold" href="#">Toutes les catégories</a></li>
                     </ul>
@@ -115,14 +115,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-sm btn-outline-light px-3 py-1.5" href="{{ path('app_register_choice') }}" style="font-size: 13px; border-radius: 6px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600;">Inscription</a>
+                        <a class="btn btn-sm btn-outline-light px-3 py-1.5" href="{{ path('app_register_choice') }}" style="font-size: 13px; border-radius: 6px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;">Inscription</a>
                     </li>
                 {% endif %}
 
-                {# CONDITION ORIGINALE STRICTEMENT RESTAURÉE #}
+                {# BOUTON AFFICHÉ UNIQUEMENT POUR LE RÔLE PRESTATAIRE CONNECTÉ #}
                 {% if app.user and is_granted('ROLE_PRESTATAIRE') %}
                     <li class="nav-item ms-lg-2">
-                        <a class="btn text-white px-3 py-2" href="#" style="background-color: #E29633; border: 0; font-size: 13px; border-radius: 6px; font-weight: 800 !important; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.2px; transition: background-color 0.2s ease;">
+                        <a class="btn text-white px-3 py-2 tm-btn-cta" href="#" style="border: 0; font-size: 13px; border-radius: 6px; font-weight: 800 !important; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.2px; transition: all 0.2s ease;">
                             <i class="fa-solid fa-briefcase me-2"></i>Proposer une Prestation
                         </a>
                     </li>
@@ -133,15 +133,31 @@
 </nav>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    /* Chargement des polices Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap');
 
+    /* Liens de navigation : Gras et transition de couleur fluide selon vos règles (Navigation Hover = #F4A911) */
     .tm-nav-item {
         font-size: 14px !important;
-        font-weight: 700 !important;
+        font-weight: 700 !important; 
         letter-spacing: -0.2px;
-        transition: opacity 0.15s ease;
+        transition: color 0.2s ease;
     }
     .tm-nav-item:hover {
-        opacity: 0.85;
+        color: #F4A911 !important;
+    }
+
+    /* Bouton Proposer une prestation : États d'après votre charte (Default #F4A911 -> Hover #DC960E -> Active #C5830C) */
+    .tm-btn-cta {
+        background-color: #F4A911;
+    }
+    .tm-btn-cta:hover {
+        background-color: #DC960E;
+    }
+    .tm-btn-cta:active {
+        background-color: #C5830C;
+    }
+    .tm-btn-cta:focus {
+        box-shadow: 0 0 0 3px rgba(244, 169, 17, 0.30);
     }
 </style>

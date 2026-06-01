@@ -3,265 +3,378 @@
 {% block title %}Connexion - TrouveMoi Prestataires{% endblock %}
 
 {% block body %}
-<div class="min-vh-100 d-flex flex-column bg-light" style="font-family: 'Poppins', sans-serif; color: #061B56;">
-    
-    <div class="container flex-grow-1 d-flex align-items-center py-5">
-        <div class="row w-100 g-5 align-items-center justify-content-center">
-            
-            <div class="col-lg-6 d-flex flex-column justify-content-between h-100">
-                <div>
-                    <div class="d-flex align-items-center mb-4">
-                        <div class="bg-warning text-dark d-flex align-items-center justify-content-center rounded-circle me-2 shadow-sm" style="width: 40px; height: 40px; border: 4px solid #F4A911; border-radius: 50% 50% 50% 6px !important;">
-                            <i class="bi bi-geo-alt-fill text-white" style="font-size: 18px;"></i>
-                        </div>
-                        <div>
-                            <span class="fw-bold fs-4 text-dark d-block lh-1" style="font-weight: 800 !important; letter-spacing: -1px;">TrouveMoi</span>
-                            <small class="text-warning fw-semibold tracking-wide" style="font-weight: 800 !important; font-size: 14px;">Prestataires</small>
-                        </div>
-                    </div>
-
-                    <h1 class="display-5 text-dark mb-3" style="font-weight: 800; letter-spacing: -1px; line-height: 1.15;">
-                        Trouvez le bon prestataire,<br><span style="color: #2046D8;">au bon moment.</span>
-                    </h1>
-                    <p class="text-muted fs-5 mb-5" style="max-width: 480px; font-weight: 500;">
-                        Des professionnels qualifiés près de chez vous pour tous vos projets et services du quotidien.
-                    </p>
-
-                    <div class="d-flex flex-column gap-4 mb-5">
-                        <div class="d-flex align-items-start">
-                            <div class="bg-white text-primary rounded-circle shadow-sm d-flex align-items-center justify-content-center p-2 me-3 border border-light" style="width: 44px; height: 44px; flex-shrink: 0; color: #2046D8 !important;">
-                                <i class="bi bi-shield-check fs-5"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold text-dark mb-1 fs-6" style="font-weight: 800 !important;">Prestataires vérifiés</h5>
-                                <p class="text-muted small mb-0" style="font-size: 14px;">Des professionnels évalués et de confiance.</p>
-                            </div>
-                        </div>
-
-                        <div class="d-flex align-items-start">
-                            <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center p-2 me-3 border border-light" style="width: 44px; height: 44px; flex-shrink: 0; color: #F4A911 !important;">
-                                <i class="bi bi-star fs-5"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold text-dark mb-1 fs-6" style="font-weight: 800 !important;">Avis clients authentiques</h5>
-                                <p class="text-muted small mb-0" style="font-size: 14px;">Faites le bon choix grâce aux retours d'expérience.</p>
-                            </div>
-                        </div>
-
-                        <div class="d-flex align-items-start">
-                            <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center p-2 me-3 border border-light" style="width: 44px; height: 44px; flex-shrink: 0; color: #16A34A !important;">
-                                <i class="bi bi-lock fs-5"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold text-dark mb-1 fs-6" style="font-weight: 800 !important;">Paiement sécurisé</h5>
-                                <p class="text-muted small mb-0" style="font-size: 14px;">Vos transactions sont protégées à chaque étape.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="position-relative d-none d-lg-block mt-3 align-self-start">
-                    <div class="bg-primary rounded-circle opacity-10 position-absolute start-0 top-50 translate-middle-y" style="width: 300px; height: 300px; z-index: 1;"></div>
-                    <div class="bg-secondary rounded-4 shadow position-relative d-flex align-items-center justify-content-center text-white text-center" style="width: 320px; height: 260px; z-index: 2; background: linear-gradient(135deg, #061B56, #2046D8);">
-                        <div class="p-3">
-                            <i class="bi bi-person-workspace display-3 mb-2"></i>
-                            <p class="small mb-0 opacity-75">Espace Illustration Prestataire</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6 col-xl-5 offset-xl-1">
-                <div class="card border-0 shadow-lg p-4 p-md-5 rounded-4 bg-white">
-                    
-                    <div class="d-flex justify-content-between border-bottom pb-3 mb-4">
-                        <a href="#" class="w-50 text-center fw-bold text-decoration-none pb-2 text-primary border-bottom border-3 border-primary fs-5" style="color: #2046D8 !important;">Se connecter</a>
-                        <a href="{{ path('app_register_choice') }}" class="w-50 text-center fw-bold text-decoration-none pb-2 text-muted fs-5">S'inscrire</a>
-                    </div>
-
-                    <div class="mb-4">
-                        <h3 class="fw-bold text-dark mb-1 fs-4" style="font-weight: 800 !important; letter-spacing: -1px;">Bon retour !</h3>
-                        <p class="text-muted small" style="font-size: 15px; font-weight: 500;">Connectez-vous pour accéder à votre compte.</p>
-                    </div>
-
-                    {% if error %}
-                        <div class="alert alert-danger rounded-3 p-3 mb-4 small" role="alert" style="font-size: 14px;">
-                            {{ error.messageKey|trans(error.messageData, 'security') }}
-                        </div>
-                    {% endif %}
-
-                    {% if app.user %}
-                        <div class="alert alert-info small mb-4" style="font-size: 14px;">
-                            Vous êtes connecté en tant que <strong>{{ app.user.userIdentifier }}</strong>, 
-                            <a href="{{ path('app_logout') }}" class="fw-bold text-decoration-none text-info-emphasis">Déconnexion</a>
-                        </div>
-                    {% endif %}
-
-                    <form method="post">
-                        
-                        <div class="mb-4">
-                            <div class="input-group tm-input-group">
-                                <span class="input-group-text bg-white border-0 text-muted px-3">
-                                    <i class="bi bi-envelope fs-5" style="color: #2046D8;"></i>
-                                </span>
-                                <input 
-                                    type="email" 
-                                    value="{{ last_username }}" 
-                                    name="_username" 
-                                    id="username" 
-                                    class="form-control border-0 py-3" 
-                                    autocomplete="email" 
-                                    required 
-                                    autofocus 
-                                    placeholder="Adresse e-mail"
-                                    style="font-size: 15px; font-weight: 500;"
-                                >
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <div class="input-group tm-input-group" id="passwordGroup">
-                                <span class="input-group-text bg-white border-0 text-muted px-3">
-                                    <i class="bi bi-lock fs-5" style="color: #2046D8;"></i>
-                                </span>
-                                <input 
-                                    type="password" 
-                                    name="_password" 
-                                    id="password" 
-                                    class="form-control border-0 py-3" 
-                                    autocomplete="current-password" 
-                                    required 
-                                    placeholder="Mot de passe"
-                                    style="font-size: 15px; font-weight: 500;"
-                                >
-                                <button class="btn bg-white border-0 text-muted px-3" type="button" id="passwordToggle" aria-label="Afficher le mot de passe">
-                                    <i class="bi bi-eye-slash"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-                        <div class="text-end mb-4">
-                            <a href="#" class="fw-bold text-decoration-none small" style="color: #2046D8; font-size: 14px;">Mot de passe oublié ?</a>
-                        </div>
-
-                        <button type="submit" class="btn btn-lg w-100 py-3 rounded-3 fw-bold fs-6 shadow-sm mb-4 text-white" style="background-color: #2046D8; border: 0; font-weight: 800 !important;">
-                            Se connecter
-                        </button>
-
-                        <div class="position-relative text-center my-4">
-                            <hr class="text-muted opacity-20">
-                            <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small fw-medium text-uppercase" style="font-size: 14px;">ou</span>
-                        </div>
-
-                        <div class="d-flex flex-column gap-2">
-                            <a href="{{ path('connect_google_start') }}" class="btn btn-outline-dark w-100 py-2.5 rounded-3 fw-bold text-start d-flex align-items-center justify-content-center bg-white border-light-subtle shadow-xs btn-social" style="font-size: 15px;">
-                                <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24c0-1.55-.15-3.24-.47-4.77H24v9.03h12.75c-.53 2.87-2.14 5.31-4.59 6.96l7.15 5.54C43.5 36.3 46.5 30.82 46.5 24z"/><path fill="#FBBC05" d="M10.54 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.15-5.54c-1.99 1.33-4.51 2.1-8.74 2.1-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-                                Continuer avec Google
-                            </a>
-                            <button type="button" class="btn btn-outline-dark w-100 py-2.5 rounded-3 fw-bold text-start d-flex align-items-center justify-content-center bg-white border-light-subtle shadow-xs btn-social" style="font-size: 15px;">
-                                <i class="bi bi-apple me-2 text-dark fs-5"></i>
-                                Continuer avec Apple
-                            </button>
-                        </div>
-
-                        <p class="text-center text-muted small mt-4 mb-0" style="font-size: 14px; font-weight: 500;">
-                            Vous n'avez pas de compte ? <a href="{{ path('app_register_choice') }}" class="fw-bold text-decoration-none" style="color: #2046D8;">S'inscrire</a>
-                        </p>
-                    </form>
-
-                </div>
-            </div>
-            
-        </div>
-    </div>
-
-    <div class="bg-white border-top py-4">
-        <div class="container">
-            <div class="row g-3 justify-content-center text-center text-md-start">
-                <div class="col-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-                    <div class="d-flex align-items-center justify-content-center rounded-3" style="width: 44px; height: 44px; background-color: #F1F5FF; color: #2046D8; flex-shrink: 0;">
-                        <i class="bi bi-shield-check fs-4"></i>
-                    </div>
-                    <div>
-                        <span class="d-block fw-bold text-dark small lh-1" style="font-weight: 800 !important; font-size: 14px;">Données sécurisées</span>
-                        <small class="text-muted" style="font-size: 12px; font-weight: 500;">Vos informations sont protégées</small>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-                    <div class="d-flex align-items-center justify-content-center rounded-3" style="width: 44px; height: 44px; background-color: #F1F5FF; color: #2046D8; flex-shrink: 0;">
-                        <i class="bi bi-gift fs-4"></i>
-                    </div>
-                    <div>
-                        <span class="d-block fw-bold text-dark small lh-1" style="font-weight: 800 !important; font-size: 14px;">Gratuit</span>
-                        <small class="text-muted" style="font-size: 12px; font-weight: 500;">L'inscription et les devis</small>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-                    <div class="d-flex align-items-center justify-content-center rounded-3" style="width: 44px; height: 44px; background-color: #F1F5FF; color: #2046D8; flex-shrink: 0;">
-                        <i class="bi bi-headset fs-4"></i>
-                    </div>
-                    <div>
-                        <span class="d-block fw-bold text-dark small lh-1" style="font-weight: 800 !important; font-size: 14px;">Support 7j/7</span>
-                        <small class="text-muted" style="font-size: 12px; font-weight: 500;">Notre équipe vous accompagne</small>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-                    <div class="d-flex align-items-center justify-content-center rounded-3" style="width: 44px; height: 44px; background-color: #F1F5FF; color: #2046D8; flex-shrink: 0;">
-                        <i class="bi bi-star-fill fs-5" style="color: #F4A911;"></i>
-                    </div>
-                    <div>
-                        <span class="d-block fw-bold text-dark small lh-1" style="font-weight: 800 !important; font-size: 14px;">Satisfaction garantie</span>
-                        <small class="text-muted" style="font-size: 12px; font-weight: 500;">Votre satisfaction, notre priorité</small>
-                    </div>
-                </div>
-            </div>
-
-            <hr class="my-4 text-muted opacity-20">
-
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 text-muted" style="font-size: 0.75rem; font-weight: 500;">
-                <span>&copy; {{ date()|date('Y') }} TrouveMoi Prestataires. Tous droits réservés.</span>
-                <div class="d-flex gap-3">
-                    <a href="#" class="text-muted text-decoration-none hover-underline">Conditions d'utilisation</a>
-                    <a href="#" class="text-muted text-decoration-none hover-underline">Politique de confidentialité</a>
-                    <a href="#" class="text-muted text-decoration-none hover-underline">Aide</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <style>
-    /* Structure des champs avec bordure unifiée */
+    /* ==========================================================================
+       VARIABLES ET SECTIONS GLOBALES DE BASE
+       ========================================================================== */
+    :root {
+        --tm-primary: #061B56;
+        --tm-primary-hover: #0A286F;
+        --tm-service: #2046D8;
+        --tm-service-hover: #1B3CC0;
+        --tm-service-active: #1633A4;
+        --tm-accent: #F4A911;
+        --tm-accent-hover: #DC960E;
+        --tm-success: #16A34A;
+        --tm-background: #F8F9FC;
+        --tm-surface: #FFFFFF;
+        --tm-border: #E5E7EB;
+        --tm-text: #061B56;
+        --tm-text-secondary: #667085;
+        --tm-shadow: 0 18px 45px rgba(6, 27, 86, 0.08);
+        --tm-focus-blue: rgba(32, 70, 216, 0.25);
+        --tm-focus-blue-light: rgba(32, 70, 216, 0.15);
+    }
+
+    body {
+        font-family: "Poppins", sans-serif;
+        background: var(--tm-background);
+        color: var(--tm-text);
+    }
+
+    a { text-decoration: none; }
+
+    /* ==========================================================================
+       PANNEAU VISUEL GAUCHE (HARMONISÉ AVEC LE SELECTIONNEUR)
+       ========================================================================== */
+    .tm-login-visual {
+        min-height: 780px;
+        position: relative;
+        background: linear-gradient(180deg, rgba(6, 27, 86, 0.95) 0%, rgba(6, 27, 86, 0.85) 50%, rgba(6, 27, 86, 0.4) 100%),
+                    url("https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=80");
+        background-size: cover;
+        background-position: center;
+    }
+    .tm-login-visual-content { position: relative; z-index: 2; max-width: 540px; }
+    .tm-login-title { font-size: 40px; line-height: 1.2; font-weight: 800; letter-spacing: -1px; color: #ffffff; }
+    .tm-login-title span { color: var(--tm-accent); }
+    .tm-login-intro { color: rgba(255, 255, 255, 0.90); font-size: 16px; line-height: 1.6; font-weight: 500; }
+    
+    .tm-benefit-icon-outline {
+        width: 44px; height: 44px; border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.3); color: #ffffff;
+        flex: 0 0 44px; font-size: 20px;
+    }
+
+    /* Logo dans le bandeau visuel */
+    .tm-visual-logo { display: flex; align-items: center; gap: 12px; }
+    .tm-logo-icon-small {
+        width: 38px; height: 38px; border: 4px solid var(--tm-accent);
+        border-radius: 50% 50% 50% 6px; transform: rotate(-45deg);
+        display: flex; align-items: center; justify-content: center;
+    }
+    .tm-logo-icon-small i { transform: rotate(45deg); color: #ffffff; font-size: 16px; }
+    .tm-logo-text-small { font-size: 20px; font-weight: 800; color: #ffffff; line-height: 1; }
+    .tm-logo-text-small span { display: block; font-size: 11px; color: var(--tm-accent); font-weight: 700; margin-top: 2px; }
+
+    /* ==========================================================================
+       ZONE DE DROITE & FORMULAIRE
+       ========================================================================== */
+    .tm-form-area { min-height: 780px; background: #ffffff; position: relative; }
+    .tm-form-container { max-width: 460px; width: 100%; }
+    
+    /* UNIFICATION DES CHAMPS AVEC LES REGLES CHARTE */
     .tm-input-group {
-        border: 1px solid #DDE2EA;
-        border-radius: 8px;
+        border: 1px solid var(--tm-border);
+        border-radius: 10px;
         overflow: hidden;
         transition: all .2s ease;
+        background-color: var(--tm-surface);
     }
     .tm-input-group:hover {
         border-color: #BFC7D6;
     }
     .tm-input-group:focus-within {
-        border-color: #2046D8;
-        box-shadow: 0 0 0 4px rgba(32, 70, 216, 0.15);
+        border-color: var(--tm-service);
+        box-shadow: 0 0 0 4px var(--tm-focus-blue-light);
     }
     .tm-input-group input:focus {
         box-shadow: none !important;
     }
 
-    /* Style des boutons sociaux */
-    .btn-social {
-        transition: background-color 0.2s ease, border-color 0.2s ease;
+    /* ETAT TABS (CONNEXION / INSCRIPTION) */
+    .tm-tab-active {
+        color: var(--tm-service) !important;
+        border-bottom: 3px solid var(--tm-service);
     }
-    .btn-social:hover {
-        background-color: #f8f9fa !important;
-        border-color: #2046D8 !important;
+    .tm-tab-inactive {
+        transition: color 0.2s ease;
+    }
+    .tm-tab-inactive:hover {
+        color: var(--tm-text) !important;
     }
 
+    /* LIENS AVEC HOVER SUR LE BLEU */
+    .tm-link-forgot, .tm-link-register {
+        color: var(--tm-service);
+        transition: color 0.2s ease;
+    }
+    .tm-link-forgot:hover, .tm-link-register:hover {
+        color: var(--tm-service-hover);
+        text-decoration: underline !important;
+    }
+
+    /* CTA BOUTON SOUMISSION */
+    .tm-btn-submit {
+        background-color: var(--tm-service);
+        border: 0;
+        font-weight: 800 !important;
+        min-height: 52px;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+    }
+    .tm-btn-submit:hover {
+        background-color: var(--tm-service-hover);
+        color: #ffffff;
+    }
+    .tm-btn-submit:active {
+        background-color: var(--tm-service-active);
+    }
+    .tm-btn-submit:focus {
+        box-shadow: 0 0 0 4px var(--tm-focus-blue) !important;
+    }
+
+    /* BOUTONS SOCIAUX */
+    .btn-social {
+        transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        color: var(--tm-text);
+        min-height: 48px;
+    }
+    .btn-social:hover {
+        background-color: #F4F6FA !important;
+        border-color: var(--tm-service) !important;
+    }
+    .btn-social:focus {
+        box-shadow: 0 0 0 3px var(--tm-focus-blue-light) !important;
+    }
+
+    /* Séparateur central */
+    .tm-separator { position: relative; text-align: center; }
+    .tm-separator::before { content: ""; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #E2E8F0; }
+    .tm-separator span { position: relative; display: inline-block; padding-inline: 16px; background: #ffffff; color: #64748B; font-size: 13px; font-weight: 500; }
+
+    .tm-login-card { width: 100%; max-width: 1780px; margin-inline: auto; border: 0; border-radius: 24px; overflow: hidden; box-shadow: var(--tm-shadow); background: #ffffff; }
+    .tm-security-card { max-width: 1780px; margin-inline: auto; border: 0; border-radius: 16px; box-shadow: var(--tm-shadow); }
+    .tm-security-icon { width: 51px; height: 51px; border-radius: 12px; background: #F1F5FF; color: var(--tm-service); flex: 0 0 51px; font-size: 25px; }
+    
+    .text-secondary-custom { color: var(--tm-text-secondary); }
     .hover-underline:hover { text-decoration: underline !important; }
+
+    @media (max-width: 1199px) { 
+        .tm-login-visual, .tm-form-area { min-height: auto; } 
+    }
 </style>
+
+<main class="tm-login-section py-4">
+    <div class="container-fluid px-4 px-xxl-5">
+
+        <section class="card tm-login-card">
+            <div class="row g-0">
+
+                {# PANNEAU VISUEL GAUCHE #}
+                <div class="col-12 col-xl-5 col-xxl-4">
+                    <div class="tm-login-visual h-100 d-flex align-items-stretch">
+                        <div class="tm-login-visual-content px-4 px-md-5 py-5 d-flex flex-column justify-content-between w-100">
+                            
+                            {# Logo d'entête #}
+                            <div class="tm-visual-logo mb-5">
+                                <div class="tm-logo-icon-small">
+                                    <i class="bi bi-geo-alt-fill"></i>
+                                </div>
+                                <div class="tm-logo-text-small">
+                                    TrouveMoi
+                                    <span>Prestataires</span>
+                                </div>
+                            </div>
+
+                            {# Textes d'introduction héro #}
+                            <div class="my-auto py-4">
+                                <h1 class="tm-login-title mb-4">
+                                    Trouvez le bon prestataire,<br>
+                                    <span>au bon moment.</span>
+                                </h1>
+                                <p class="tm-login-intro mb-5">
+                                    Des professionnels qualifiés près de chez vous pour tous vos projets et services du quotidien.
+                                </p>
+
+                                {# Liste des caractéristiques #}
+                                <div class="d-flex flex-column gap-4">
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="tm-benefit-icon-outline d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-shield-check"></i>
+                                        </div>
+                                        <div>
+                                            <h2 class="fs-6 fw-bold text-white mb-1">Prestataires vérifiés</h2>
+                                            <p class="text-white-50 mb-0 small">Des professionnels évalués et de confiance.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="tm-benefit-icon-outline d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-star"></i>
+                                        </div>
+                                        <div>
+                                            <h2 class="fs-6 fw-bold text-white mb-1">Avis clients authentiques</h2>
+                                            <p class="text-white-50 mb-0 small">Faites le bon choix grâce aux retours d'expérience.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="tm-benefit-icon-outline d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-lock"></i>
+                                        </div>
+                                        <div>
+                                            <h2 class="fs-6 fw-bold text-white mb-1">Paiement sécurisé</h2>
+                                            <p class="text-white-50 mb-0 small">Vos transactions sont protégées à chaque étape.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {# Bloc d'images d'illustration combinées #}
+                            <div class="d-none d-xxl-flex gap-3 mt-4 opacity-75">
+                                <div class="rounded-3 overflow-hidden border border-2 border-white-50" style="width: 140px; height: 100px;">
+                                    <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=200&q=80" alt="Electricien" class="w-100 h-100 object-fit-cover">
+                                </div>
+                                <div class="rounded-3 overflow-hidden border border-2 border-white-50" style="width: 140px; height: 100px; margin-top: 15px;">
+                                    <img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=200&q=80" alt="Jardinage" class="w-100 h-100 object-fit-cover">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# PANNEAU DE FORMULAIRE DROITE #}
+                <div class="col-12 col-xl-7 col-xxl-8">
+                    <div class="tm-form-area d-flex align-items-center justify-content-center px-4 px-md-5 py-5">
+                        <div class="tm-form-container">
+                            
+                            {# Onglets Connexion / Inscription #}
+                            <div class="d-flex justify-content-between border-bottom pb-3 mb-4" style="border-color: var(--tm-border) !important;">
+                                <a href="#" class="w-50 text-center fw-bold text-decoration-none pb-2 tm-tab-active fs-5">Se connecter</a>
+                                <a href="{{ path('app_register_choice') }}" class="w-50 text-center fw-bold text-decoration-none pb-2 text-muted fs-5 tm-tab-inactive">S'inscrire</a>
+                            </div>
+
+                            <div class="mb-4">
+                                <h3 class="fw-bold text-dark mb-1 fs-4" style="font-weight: 800 !important; letter-spacing: -1px;">Bon retour !</h3>
+                                <p class="text-secondary-custom small mb-0" style="font-size: 15px; font-weight: 500;">Connectez-vous pour accéder à votre compte.</p>
+                            </div>
+
+                            {# Messages d'erreur & d'information Symfony #}
+                            {% if error %}
+                                <div class="alert alert-danger rounded-3 p-3 mb-4 small border-0" role="alert" style="font-size: 14px; background-color: rgba(234, 67, 53, 0.1); color: #EA4335;">
+                                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                                </div>
+                            {% endif %}
+
+                            {% if app.user %}
+                                <div class="alert alert-info small mb-4 border-0" style="font-size: 14px; background-color: rgba(32, 70, 216, 0.1); color: var(--tm-service);">
+                                    Vous êtes connecté en tant que <strong>{{ app.user.userIdentifier }}</strong>, 
+                                    <a href="{{ path('app_logout') }}" class="fw-bold text-decoration-none" style="color: var(--tm-service-hover);">Déconnexion</a>
+                                </div>
+                            {% endif %}
+
+                            {# Formulaire de connexion #}
+                            <form method="post">
+                                
+                                {# Champ Email #}
+                                <div class="mb-4">
+                                    <div class="input-group tm-input-group">
+                                        <span class="input-group-text bg-white border-0 text-muted px-3">
+                                            <i class="bi bi-envelope fs-5" style="color: var(--tm-service);"></i>
+                                        </span>
+                                        <input 
+                                            type="email" 
+                                            value="{{ last_username }}" 
+                                            name="_username" 
+                                            id="username" 
+                                            class="form-control border-0 py-3 bg-white" 
+                                            autocomplete="email" 
+                                            required 
+                                            autofocus 
+                                            placeholder="Adresse e-mail"
+                                            style="font-size: 15px; font-weight: 500; color: var(--tm-text);"
+                                        >
+                                    </div>
+                                </div>
+
+                                {# Champ Mot de passe #}
+                                <div class="mb-3">
+                                    <div class="input-group tm-input-group" id="passwordGroup">
+                                        <span class="input-group-text bg-white border-0 text-muted px-3">
+                                            <i class="bi bi-lock fs-5" style="color: var(--tm-service);"></i>
+                                        </span>
+                                        <input 
+                                            type="password" 
+                                            name="_password" 
+                                            id="password" 
+                                            class="form-control border-0 py-3 bg-white" 
+                                            autocomplete="current-password" 
+                                            required 
+                                            placeholder="Mot de passe"
+                                            style="font-size: 15px; font-weight: 500; color: var(--tm-text);"
+                                        >
+                                        <button class="btn bg-white border-0 text-muted px-3" type="button" id="passwordToggle" aria-label="Afficher le mot de passe">
+                                            <i class="bi bi-eye-slash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                                {# Mot de passe oublié #}
+                                <div class="text-end mb-4">
+                                    <a href="#" class="fw-bold text-decoration-none small tm-link-forgot" style="font-size: 14px;">Mot de passe oublié ?</a>
+                                </div>
+
+                                {# Bouton Submit #}
+                                <button type="submit" class="btn btn-lg w-100 py-3 text-white tm-btn-submit shadow-sm mb-4">
+                                    Se connecter
+                                </button>
+
+                                {# Séparateur #}
+                                <div class="tm-separator my-4">
+                                    <span>ou</span>
+                                </div>
+
+                                {# Boutons Réseaux Sociaux #}
+                                <div class="d-flex flex-column gap-2">
+                                    <a href="{{ path('connect_google_start') }}" class="btn btn-outline-dark w-100 py-2.5 rounded-3 fw-bold text-start d-flex align-items-center justify-content-center bg-white shadow-xs btn-social" style="font-size: 15px; border-color: var(--tm-border);">
+                                        <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24c0-1.55-.15-3.24-.47-4.77H24v9.03h12.75c-.53 2.87-2.14 5.31-4.59 6.96l7.15 5.54C43.5 36.3 46.5 30.82 46.5 24z"/><path fill="#FBBC05" d="M10.54 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.15-5.54c-1.99 1.33-4.51 2.1-8.74 2.1-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                                        Continuer avec Google
+                                    </a>
+                                    <button type="button" class="btn btn-outline-dark w-100 py-2.5 rounded-3 fw-bold text-start d-flex align-items-center justify-content-center bg-white shadow-xs btn-social" style="font-size: 15px; border-color: var(--tm-border);">
+                                        <i class="bi bi-apple me-2 text-dark fs-5"></i>
+                                        Continuer avec Apple
+                                    </button>
+                                </div>
+
+                                {# Lien d'inscription bas #}
+                                <p class="text-center small mt-4 mb-0" style="font-size: 14px; font-weight: 500; color: var(--tm-text-secondary);">
+                                    Vous n'avez pas de compte ? <a href="{{ path('app_register_choice') }}" class="fw-bold text-decoration-none tm-link-register">S'inscrire</a>
+                                </p>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        {# FOOTER DE LIENS #}
+        <div class="text-center mt-4 mb-3 text-muted" style="font-size: 13px; font-weight: 500;">
+            <span>&copy; {{ date()|date('Y') }} TrouveMoi Prestataires. Tous droits réservés.</span>
+            <div class="d-inline-flex gap-3 ms-md-3 mt-2 mt-md-0">
+                <a href="#" class="text-muted hover-underline">Conditions d'utilisation</a>
+                <a href="#" class="text-muted hover-underline">Politique de confidentialité</a>
+                <a href="#" class="text-muted hover-underline">Aide</a>
+            </div>
+        </div>
+
+    </div>
+</main>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

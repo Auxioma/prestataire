@@ -3,34 +3,34 @@
 {% block title %}TrouveMoi Prestataires - Accueil{% endblock %}
 
 {% block body %}
-<div class="homepage-wrapper bg-light" style="font-family: 'Poppins', sans-serif; color: #061B56;">
+<div class="homepage-wrapper">
 
     {# 1. SECTION HERO AVEC IMAGE D'ARRIÈRE-PLAN #}
-    <div class="hero-section position-relative text-white py-5" style="background: linear-gradient(to right, rgba(6, 27, 86, 0.95) 40%, rgba(6, 27, 86, 0.4) 100%), url('{{ asset('images/bg-hero-worker.jpg') }}') no-repeat center center / cover; min-height: 400px; padding-bottom: 90px !important;">
-        <div class="container pt-4">
+    <div class="hero-section position-relative text-white">
+        <div class="container hero-container">
             <div class="row">
                 <div class="col-lg-7 text-start">
-                    <h1 class="display-5 fw-bold mb-3" style="font-weight: 800 !important; letter-spacing: -1px; line-height: 1.2;">
+                    <h1 class="display-5 fw-extrabold mb-3 hero-title">
                         Trouvez le prestataire idéal <br>
-                        <span style="color: #F4A911;">pour tous vos projets</span>
+                        <span class="text-tm-accent">pour tous vos projets</span>
                     </h1>
                     
-                    <p class="fs-5 mb-4 opacity-90" style="max-width: 540px; font-weight: 400; line-height: 1.5;">
+                    <p class="fs-5 mb-4 opacity-90 max-w-540 hero-lead">
                         Des professionnels de confiance pour vous accompagner dans tous vos besoins, partout en France.
                     </p>
                     
-                    <div class="d-flex flex-wrap gap-2 mb-2">
-                        <span class="badge d-flex align-items-center gap-2 px-3 py-2 border border-white border-opacity-20 rounded-2" style="background: rgba(255, 255, 255, 0.1); font-size: 13px; font-weight: 500;">
-                            <i class="bi bi-plus-circle-fill text-warning"></i> + 120 000 prestataires
+                    <div class="d-flex flex-wrap gap-2 hero-badges-group">
+                        <span class="badge hero-badge">
+                            <i class="bi bi-plus-circle-fill text-tm-accent"></i> + 120 000 prestataires
                         </span>
-                        <span class="badge d-flex align-items-center gap-2 px-3 py-2 border border-white border-opacity-20 rounded-2" style="background: rgba(255, 255, 255, 0.1); font-size: 13px; font-weight: 500;">
-                            <i class="bi bi-star-fill text-warning"></i> Avis clients vérifiés
+                        <span class="badge hero-badge">
+                            <i class="bi bi-star-fill text-tm-accent"></i> Avis clients vérifiés
                         </span>
-                        <span class="badge d-flex align-items-center gap-2 px-3 py-2 border border-white border-opacity-20 rounded-2" style="background: rgba(255, 255, 255, 0.1); font-size: 13px; font-weight: 500;">
-                            <i class="bi bi-file-earmark-text-fill text-warning"></i> Devis gratuits
+                        <span class="badge hero-badge">
+                            <i class="bi bi-file-earmark-text-fill text-tm-accent"></i> Devis gratuits
                         </span>
-                        <span class="badge d-flex align-items-center gap-2 px-3 py-2 border border-white border-opacity-20 rounded-2" style="background: rgba(255, 255, 255, 0.1); font-size: 13px; font-weight: 500;">
-                            <i class="bi bi-shield-lock-fill text-warning"></i> Paiement sécurisé
+                        <span class="badge hero-badge">
+                            <i class="bi bi-shield-lock-fill text-tm-accent"></i> Paiement sécurisé
                         </span>
                     </div>
                 </div>
@@ -38,56 +38,63 @@
         </div>
     </div>
 
-    {# 2. BARRE DE RECHERCHE EN CHEVAUCHEMENT (OVERLAP) #}
-    <div class="container position-relative z-3" style="margin-top: -50px;">
-        <div class="card border-0 shadow-lg p-3 rounded-4 bg-white">
-            <form action="#" method="GET" class="row g-3 align-items-center">
-                <!-- Quoi -->
-                <div class="col-md-6 col-lg-3 border-end-lg">
-                    <div class="d-flex align-items-start gap-2 px-2">
-                        <i class="bi bi-geo-alt text-primary fs-5 mt-1" style="color: #2046D8 !important;"></i>
+    {# 2. BARRE DE RECHERCHE EN JONCTION EXACTE (OVERLAP CENTRÉ) #}
+    <div class="container search-overlap-wrapper">
+        <div class="card border-0 shadow-lg p-3 rounded-4 bg-white search-overlap-card">
+            <form action="#" method="GET" class="row g-0 align-items-center w-100">
+                <div class="col-md-6 col-lg-3 position-relative">
+                    <div class="d-flex align-items-start gap-2 px-3 py-2">
+                        <i class="bi bi-search text-tm-service fs-5 mt-1"></i>
                         <div class="w-100">
                             <label class="form-label small fw-bold mb-0 text-dark">Que recherchez-vous ?</label>
-                            <input type="text" class="form-control form-control-sm border-0 p-0 text-muted fs-7 bg-transparent" placeholder="Ex : Plomberie, Peinture, Nettoyage...">
+                            <input type="text" class="form-control search-input" placeholder="Ex : Plomberie, Peinture...">
                         </div>
                     </div>
+                    <div class="search-divider d-none d-lg-block"></div>
                 </div>
-                <!-- Type -->
-                <div class="col-md-6 col-lg-3 border-end-lg">
-                    <div class="d-flex align-items-start gap-2 px-2">
-                        <i class="bi bi-person text-primary fs-5 mt-1" style="color: #2046D8 !important;"></i>
-                        <div class="w-100">
+                
+                <div class="col-md-6 col-lg-3 position-relative">
+                    <div class="d-flex align-items-start gap-2 px-3 py-2">
+                        <i class="bi bi-person text-tm-service fs-5 mt-1"></i>
+                        <div class="w-100 position-relative select-wrapper">
                             <label class="form-label small fw-bold mb-0 text-dark">Type de prestation</label>
-                            <select class="form-select form-select-sm border-0 p-0 text-muted fs-7 bg-transparent shadow-none" style="cursor: pointer;">
-                                <option>Service, Réparation, Installation...</option>
+                            <select class="form-select search-select">
+                                <option selected>Service, Réparation, Installation...</option>
+                                <option value="1">Dépannage d'urgence</option>
+                                <option value="2">Entretien régulier</option>
                             </select>
+                            <i class="bi bi-chevron-down select-arrow-icon"></i>
                         </div>
                     </div>
+                    <div class="search-divider d-none d-lg-block"></div>
                 </div>
-                <!-- Où -->
-                <div class="col-md-6 col-lg-3 border-end-lg">
-                    <div class="d-flex align-items-start gap-2 px-2">
-                        <i class="bi bi-geo text-primary fs-5 mt-1" style="color: #2046D8 !important;"></i>
+                
+                <div class="col-md-6 col-lg-2 position-relative">
+                    <div class="d-flex align-items-start gap-2 px-3 py-2">
+                        <i class="bi bi-geo-alt text-tm-service fs-5 mt-1"></i>
                         <div class="w-100">
                             <label class="form-label small fw-bold mb-0 text-dark">Où ?</label>
-                            <input type="text" class="form-control form-control-sm border-0 p-0 text-muted fs-7 bg-transparent" placeholder="Ville, département, code postal...">
+                            <input type="text" class="form-control search-input" placeholder="Ville, CP...">
                         </div>
                     </div>
+                    <div class="search-divider d-none d-lg-block"></div>
                 </div>
-                <!-- Quand -->
-                <div class="col-md-6 col-lg-2">
-                    <div class="d-flex align-items-start gap-2 px-2">
-                        <i class="bi bi-calendar3 text-primary fs-5 mt-1" style="color: #2046D8 !important;"></i>
+                
+                <div class="col-md-6 col-lg-2 position-relative">
+                    <div class="d-flex align-items-start gap-2 px-3 py-2">
+                        <i class="bi bi-calendar3 text-tm-service fs-5 mt-1"></i>
                         <div class="w-100">
                             <label class="form-label small fw-bold mb-0 text-dark">Quand ?</label>
-                            <input type="text" class="form-control form-control-sm border-0 p-0 text-muted fs-7 bg-transparent" placeholder="Date souhaitée">
+                            <input type="date" class="form-control search-input custom-date-input">
                         </div>
                     </div>
+                    <div class="search-divider d-none d-lg-block"></div>
                 </div>
-                <!-- Bouton -->
-                <div class="col-12 col-lg-1">
-                    <button type="submit" class="btn btn-primary w-100 py-2.5 rounded-3 fw-bold" style="background-color: #2046D8; border: 0;">
-                        Rechercher
+                
+                <div class="col-12 col-lg-2 px-2 text-center text-lg-end">
+                    <button type="submit" class="btn btn-tm-service search-submit-btn rounded-3 w-100 py-2 d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-search"></i>
+                        <span>Rechercher</span>
                     </button>
                 </div>
             </form>
@@ -95,198 +102,173 @@
     </div>
 
     {# 3. SECTION CATÉGORIES POPULAIRES #}
-    <div class="container my-5 pt-3">
+    <div class="container main-content-section">
         <div class="mb-4 text-start">
-            <h2 class="fw-bold h4 mb-1 text-dark" style="font-weight: 800 !important; letter-spacing: -0.5px;">Catégories populaires</h2>
+            <h2 class="fw-extrabold h4 mb-1 text-dark tracking-tight">Catégories populaires</h2>
         </div>
 
         <div class="d-flex flex-wrap gap-2 justify-content-between align-items-stretch">
-            {# Boucle dynamique sur vos catégories injectées #}
             {% for category in categories|slice(0, 10) %}
-                <div class="flex-grow-1 text-center" style="min-width: 100px; max-width: 115px;">
+                <div class="flex-grow-1 text-center category-col">
                     <a href="#" class="card h-100 border-0 shadow-sm p-3 text-decoration-none tm-category-card rounded-3 bg-white d-flex flex-column align-items-center justify-content-center">
-                        <div class="d-flex align-items-center justify-content-center rounded-circle mb-2 bg-light-subtle text-primary" style="width: 46px; height: 46px; background-color: #F1F5FF; color: #2046D8 !important;">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle mb-2 category-icon-wrapper">
                             <span class="fw-bold fs-5">{{ category.name|slice(0, 1)|upper }}</span>
                         </div>
-                        <span class="text-dark fw-bold text-truncate w-100" style="font-size: 12px; font-weight: 700 !important;">{{ category.name }}</span>
+                        <span class="text-dark fw-bold text-truncate w-100 category-title">{{ category.name }}</span>
                     </a>
                 </div>
             {% else %}
-                {# Fallback statique conforme au visuel de l'image si la BDD est vide temporairement #}
-                {% set fallback_cats = ['Maison & Travaux', 'Déménagement', 'Nettoyage', 'Jardinage', 'Informatique', 'Événementiel', 'Bien-être', 'Cours & Soutien', 'Réparation auto', 'Petits travaux'] %}
+                {% set fallback_cats = [
+                    {'name': 'Maison & Travaux', 'icon': 'bi-house-door'},
+                    {'name': 'Déménagement', 'icon': 'bi-truck'},
+                    {'name': 'Nettoyage', 'icon': 'bi-stars'},
+                    {'name': 'Jardinage', 'icon': 'bi-tree'},
+                    {'name': 'Informatique', 'icon': 'bi-laptop'},
+                    {'name': 'Événementiel', 'icon': 'bi-balloon-heart'},
+                    {'name': 'Bien-être', 'icon': 'bi-heart-pulse'},
+                    {'name': 'Cours & Soutien', 'icon': 'bi-book'},
+                    {'name': 'Réparation auto', 'icon': 'bi-nut'},
+                    {'name': 'Petits travaux', 'icon': 'bi-tools'}
+                ] %}
                 {% for cat in fallback_cats %}
-                    <div class="flex-grow-1 text-center" style="min-width: 100px; max-width: 115px;">
+                    <div class="flex-grow-1 text-center category-col">
                         <a href="#" class="card h-100 border-0 shadow-sm p-3 text-decoration-none tm-category-card rounded-3 bg-white d-flex flex-column align-items-center justify-content-center">
-                            <div class="d-flex align-items-center justify-content-center rounded-circle mb-2" style="width: 46px; height: 46px; background-color: #F1F5FF; color: #2046D8;">
-                                <i class="bi bi-house-door fs-5"></i>
+                            <div class="d-flex align-items-center justify-content-center rounded-circle mb-2 category-icon-wrapper">
+                                <i class="bi {{ cat.icon }} fs-5"></i>
                             </div>
-                            <span class="text-dark fw-bold text-wrap line-clamp-2" style="font-size: 12px; font-weight: 700 !important; line-height: 1.2;">{{ cat }}</span>
+                            <span class="text-dark fw-bold text-wrap line-clamp-2 category-title">{{ cat.name }}</span>
                         </a>
                     </div>
                 {% endfor %}
             {% endfor %}
 
-            <!-- Bouton "Voir toutes les catégories" -->
-            <div class="flex-grow-1 text-center" style="min-width: 120px; max-width: 130px;">
-                <a href="#" class="card h-100 border border-dashed p-2 text-decoration-none rounded-3 bg-white d-flex flex-row align-items-center justify-content-center gap-2 shadow-xs" style="border-color: #DDE2EA !important;">
-                    <span class="text-dark fw-bold text-start" style="font-size: 12px; font-weight: 800 !important; line-height: 1.3;">Voir toutes<br>les catégories</span>
-                    <i class="bi bi-chevron-right text-muted" style="font-size: 12px;"></i>
+            <div class="flex-grow-1 text-center all-categories-col">
+                <a href="#" class="card h-100 border p-2 text-decoration-none rounded-3 bg-white d-flex flex-row align-items-center justify-content-center gap-2 shadow-xs all-categories-card">
+                    <span class="text-dark fw-extrabold text-start all-categories-text">Voir toutes<br>les catégories</span>
+                    <i class="bi bi-chevron-right arrow-indicator"></i>
                 </a>
             </div>
         </div>
     </div>
 
-    {# 4. SECTION PRESTATAIRES À LA UNE & ASIDE #}
+    {# 4. SECTION PRESTATAIRES À LA UNE (DYNAMIQUE) & ASIDE #}
     <div class="container my-5 pb-5">
         <div class="row g-4">
             
-            <!-- Colonne Gauche : Les fiches Prestataires -->
             <div class="col-xl-9 col-lg-8">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="fw-bold h4 mb-0 text-dark" style="font-weight: 800 !important; letter-spacing: -0.5px;">
-                        Prestataires à la une <span class="text-warning">★</span>
+                    <h2 class="fw-extrabold h4 mb-0 text-dark tracking-tight">
+                        Prestataires à la une <span class="text-tm-accent">★</span>
                     </h2>
-                    <a href="#" class="text-primary fw-bold text-decoration-none small d-flex align-items-center gap-1" style="color: #2046D8 !important; font-size: 13px;">
-                        Voir tous les prestataires <i class="bi bi-chevron-right"></i>
+                    <a href="#" class="text-tm-service fw-bold text-decoration-none small d-flex align-items-center gap-1 view-all-link">
+                        Voir tous les prestataires <i class="bi bi-chevron-right fs-7"></i>
                     </a>
                 </div>
 
                 <div class="row g-3">
-                    {# Carte Statique 1 #}
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden bg-white position-relative">
-                            <button class="btn btn-light rounded-circle p-1.5 position-absolute end-0 top-0 m-2 border-0 shadow-sm" style="z-index: 10; width: 32px; height: 32px;"><i class="bi bi-heart text-muted"></i></button>
-                            <div class="position-relative">
-                                <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=400&q=80" class="card-img-top" alt="Plomberie" style="height: 140px; object-fit: cover;">
-                                <span class="badge bg-success position-absolute start-0 top-0 m-2 text-white fw-medium border-0 px-2 py-1" style="font-size: 11px; background-color: #16A34A !important;">Disponible aujourd'hui</span>
-                            </div>
-                            <div class="card-body p-3 text-start position-relative">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center text-white position-absolute shadow-sm" style="width: 36px; height: 36px; top: -18px; left: 15px; background-color: #2046D8; border: 3px solid #fff;">
-                                    <i class="bi bi-droplet-fill small"></i>
+                    {# Boucle Twig sur les prestataires injectés par le contrôleur #}
+                    {% for provider in providers|slice(0, 4) %}
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden bg-white position-relative provider-card">
+                                <button class="btn btn-light rounded-circle favorite-btn border-0 shadow-sm">
+                                    <i class="bi bi-heart text-muted"></i>
+                                </button>
+                                
+                                <div class="position-relative">
+                                    {# Gestion d'une image par défaut si le prestataire n'en a pas #}
+                                    <img src="{{ provider.imageFilename ? asset('uploads/providers/' ~ provider.imageFilename) : 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=400&q=80' }}" 
+                                         class="card-img-top provider-img" 
+                                         alt="{{ provider.businessName }}">
+                                    
+                                    {# Badge dynamique basé sur la note #}
+                                    {% if provider.averageRating >= 4.8 %}
+                                        <span class="badge bg-tm-accent text-dark position-absolute start-0 top-0 m-2 fw-semibold border-0 px-2 py-1 fs-11">Excellent ({{ provider.averageRating }})</span>
+                                    {% else %}
+                                        <span class="badge bg-tm-service position-absolute start-0 top-0 m-2 text-white fw-medium border-0 px-2 py-1 fs-11">Top Prestataire</span>
+                                    {% endif %}
                                 </div>
-                                <h3 class="fw-bold h6 text-dark mt-2 mb-0 text-truncate" style="font-weight: 800 !important;">Plomberie Express</h3>
-                                <p class="text-muted small mb-2" style="font-size: 12px;">Plombier</p>
-                                <div class="d-flex align-items-center gap-1 text-muted small mb-2" style="font-size: 12px; font-weight: 500;">
-                                    <i class="bi bi-star-fill text-warning"></i> <span class="text-dark fw-bold">4.8</span> (256 avis)
+                                
+                                <div class="card-body p-3 text-start position-relative pt-4">
+                                    {# Icône ou miniature de catégorie si disponible, sinon défaut #}
+                                    <div class="provider-avatar-icon bg-tm-service">
+                                        <i class="bi bi-person-fill small"></i>
+                                    </div>
+                                    
+                                    <h3 class="fw-extrabold h6 text-dark mt-2 mb-0 text-truncate">
+                                        {{ provider.businessName }}
+                                    </h3>
+                                    
+                                    <p class="text-muted small mb-2 fs-12">
+                                        {{ provider.mainService ? provider.mainService.name : 'Prestataire' }}
+                                    </p>
+                                    
+                                    <div class="d-flex align-items-center gap-1 text-muted small mb-2 fs-12 fw-semibold">
+                                        <i class="bi bi-star-fill text-tm-accent"></i> 
+                                        <span class="text-dark fw-bold">{{ provider.averageRating|number_format(1, '.', '') }}</span> 
+                                        ({{ provider.reviewsCount ?? 0 }} avis)
+                                    </div>
+                                    
+                                    <p class="text-muted small mb-3 fs-12">
+                                        <i class="bi bi-geo-alt me-1"></i>{{ provider.city }} ({{ provider.zipCode|slice(0, 2) }})
+                                    </p>
+                                    
+                                    <div class="border-top pt-2 text-tm-success small fw-semibold fs-12">
+                                        <i class="bi bi-file-earmark-text me-1"></i> Devis gratuit
+                                    </div>
                                 </div>
-                                <p class="text-muted small mb-3" style="font-size: 12px;"><i class="bi bi-geo-alt"></i> Lyon (69)</p>
-                                <div class="border-top pt-2 text-success small fw-semibold" style="font-size: 12px;"><i class="bi bi-file-earmark-text me-1"></i> Devis gratuit</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {# Carte Statique 2 #}
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden bg-white position-relative">
-                            <button class="btn btn-light rounded-circle p-1.5 position-absolute end-0 top-0 m-2 border-0 shadow-sm" style="z-index: 10; width: 32px; height: 32px;"><i class="bi bi-heart text-muted"></i></button>
-                            <div class="position-relative">
-                                <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=400&q=80" class="card-img-top" alt="Nettoyage" style="height: 140px; object-fit: cover;">
-                                <span class="badge bg-warning text-dark position-absolute start-0 top-0 m-2 fw-medium border-0 px-2 py-1" style="font-size: 11px; background-color: #F4A911 !important; color: #fff !important;">Très bien noté</span>
-                            </div>
-                            <div class="card-body p-3 text-start position-relative">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center text-white position-absolute shadow-sm" style="width: 36px; height: 36px; top: -18px; left: 15px; background-color: #2046D8; border: 3px solid #fff;">
-                                    <i class="bi bi-stars small"></i>
-                                </div>
-                                <h3 class="fw-bold h6 text-dark mt-2 mb-0 text-truncate" style="font-weight: 800 !important;">Clean & Shine</h3>
-                                <p class="text-muted small mb-2" style="font-size: 12px;">Service de nettoyage</p>
-                                <div class="d-flex align-items-center gap-1 text-muted small mb-2" style="font-size: 12px; font-weight: 500;">
-                                    <i class="bi bi-star-fill text-warning"></i> <span class="text-dark fw-bold">4.9</span> (178 avis)
-                                </div>
-                                <p class="text-muted small mb-3" style="font-size: 12px;"><i class="bi bi-geo-alt"></i> Toulouse (31)</p>
-                                <div class="border-top pt-2 text-success small fw-semibold" style="font-size: 12px;"><i class="bi bi-file-earmark-text me-1"></i> Devis gratuit</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {# Carte Statique 3 #}
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden bg-white position-relative">
-                            <button class="btn btn-light rounded-circle p-1.5 position-absolute end-0 top-0 m-2 border-0 shadow-sm" style="z-index: 10; width: 32px; height: 32px;"><i class="bi bi-heart text-muted"></i></button>
-                            <div class="position-relative">
-                                <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=400&q=80" class="card-img-top" alt="Electricité" style="height: 140px; object-fit: cover;">
-                                <span class="badge bg-primary position-absolute start-0 top-0 m-2 text-white fw-medium border-0 px-2 py-1" style="font-size: 11px; background-color: #2046D8 !important;">Réponse rapide</span>
-                            </div>
-                            <div class="card-body p-3 text-start position-relative">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center text-white position-absolute shadow-sm" style="width: 36px; height: 36px; top: -18px; left: 15px; background-color: #2046D8; border: 3px solid #fff;">
-                                    <i class="bi bi-lightning-charge-fill small"></i>
-                                </div>
-                                <h3 class="fw-bold h6 text-dark mt-2 mb-0 text-truncate" style="font-weight: 800 !important;">Elec Solutions</h3>
-                                <p class="text-muted small mb-2" style="font-size: 12px;">Électricien</p>
-                                <div class="d-flex align-items-center gap-1 text-muted small mb-2" style="font-size: 12px; font-weight: 500;">
-                                    <i class="bi bi-star-fill text-warning"></i> <span class="text-dark fw-bold">4.7</span> (142 avis)
-                                </div>
-                                <p class="text-muted small mb-3" style="font-size: 12px;"><i class="bi bi-geo-alt"></i> Nantes (44)</p>
-                                <div class="border-top pt-2 text-success small fw-semibold" style="font-size: 12px;"><i class="bi bi-file-earmark-text me-1"></i> Devis gratuit</div>
                             </div>
                         </div>
-                    </div>
-
-                    {# Carte Statique 4 #}
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden bg-white position-relative">
-                            <button class="btn btn-light rounded-circle p-1.5 position-absolute end-0 top-0 m-2 border-0 shadow-sm" style="z-index: 10; width: 32px; height: 32px;"><i class="bi bi-heart text-muted"></i></button>
-                            <div class="position-relative">
-                                <img src="https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&w=400&q=80" class="card-img-top" alt="Jardin" style="height: 140px; object-fit: cover;">
-                                <span class="badge bg-success position-absolute start-0 top-0 m-2 text-white fw-medium border-0 px-2 py-1" style="font-size: 11px; background-color: #16A34A !important;">Disponible demain</span>
-                            </div>
-                            <div class="card-body p-3 text-start position-relative">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center text-white position-absolute shadow-sm" style="width: 36px; height: 36px; top: -18px; left: 15px; background-color: #2046D8; border: 3px solid #fff;">
-                                    <i class="bi bi-tree-fill small"></i>
-                                </div>
-                                <h3 class="fw-bold h6 text-dark mt-2 mb-0 text-truncate" style="font-weight: 800 !important;">Jardin Vert</h3>
-                                <p class="text-muted small mb-2" style="font-size: 12px;">Jardinier paysagiste</p>
-                                <div class="d-flex align-items-center gap-1 text-muted small mb-2" style="font-size: 12px; font-weight: 500;">
-                                    <i class="bi bi-star-fill text-warning"></i> <span class="text-dark fw-bold">4.8</span> (98 avis)
-                                </div>
-                                <p class="text-muted small mb-3" style="font-size: 12px;"><i class="bi bi-geo-alt"></i> Bordeaux (33)</p>
-                                <div class="border-top pt-2 text-success small fw-semibold" style="font-size: 12px;"><i class="bi bi-file-earmark-text me-1"></i> Devis gratuit</div>
+                    {% else %}
+                        {# Message de fallback si aucun prestataire n'est trouvé en BDD #}
+                        <div class="col-12">
+                            <div class="alert alert-info text-center border-0 shadow-sm">
+                                Aucun prestataire disponible pour le moment.
                             </div>
                         </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
 
-            <!-- Colonne Droite : Sidebar d'arguments de réassurance -->
             <div class="col-xl-3 col-lg-4 text-start">
-                <div class="card border-0 shadow-sm p-4 rounded-4 h-100" style="background-color: #F1F5FF;">
-                    <h3 class="fw-bold text-dark mb-3" style="font-weight: 800 !important; font-size: 15px; letter-spacing: -0.3px; color: #061B56 !important;">Pourquoi choisir<br>TrouveMoi Prestataires ?</h3>
+                <div class="card border-0 shadow-sm p-4 rounded-4 h-100 reassurance-aside">
+                    <h3 class="fw-extrabold text-dark mb-3 reassurance-main-title">Pourquoi choisir<br>TrouveMoi Prestataires ?</h3>
                     
                     <div class="d-flex flex-column gap-3 mb-4">
                         <div class="d-flex align-items-start gap-2">
-                            <i class="bi bi-patch-check text-primary fs-5 mt-n1" style="color: #2046D8 !important;"></i>
+                            <i class="bi bi-patch-check text-tm-service fs-5 mt-n1"></i>
                             <div>
-                                <h4 class="fw-bold text-dark mb-0" style="font-size: 12px; font-weight: 800 !important;">Des pros vérifiés</h4>
-                                <p class="text-muted mb-0" style="font-size: 11px; line-height: 1.3;">Des prestataires sélectionnés et contrôlés.</p>
+                                <h4 class="fw-extrabold text-dark mb-0 fs-12">Des pros vérifiés</h4>
+                                <p class="text-muted mb-0 reassurance-desc">Des prestataires sélectionnés et contrôlés.</p>
                             </div>
                         </div>
 
                         <div class="d-flex align-items-start gap-2">
-                            <i class="bi bi-star text-primary fs-5 mt-n1" style="color: #2046D8 !important;"></i>
+                            <i class="bi bi-star text-tm-service fs-5 mt-n1"></i>
                             <div>
-                                <h4 class="fw-bold text-dark mb-0" style="font-size: 12px; font-weight: 800 !important;">Avis clients authentiques</h4>
-                                <p class="text-muted mb-0" style="font-size: 11px; line-height: 1.3;">Des retours d'expérience fiables pour bien choisir.</p>
+                                <h4 class="fw-extrabold text-dark mb-0 fs-12">Avis clients authentiques</h4>
+                                <p class="text-muted mb-0 reassurance-desc">Des retours d'expérience fiables pour bien choisir.</p>
                             </div>
                         </div>
 
                         <div class="d-flex align-items-start gap-2">
-                            <i class="bi bi-file-earmark-check text-primary fs-5 mt-n1" style="color: #2046D8 !important;"></i>
+                            <i class="bi bi-file-earmark-check text-tm-service fs-5 mt-n1"></i>
                             <div>
-                                <h4 class="fw-bold text-dark mb-0" style="font-size: 12px; font-weight: 800 !important;">Devis gratuits</h4>
-                                <p class="text-muted mb-0" style="font-size: 11px; line-height: 1.3;">Comparez et choisissez sans engagement.</p>
+                                <h4 class="fw-extrabold text-dark mb-0 fs-12">Devis gratuits</h4>
+                                <p class="text-muted mb-0 reassurance-desc">Comparez et choisissez sans engagement.</p>
                             </div>
                         </div>
 
                         <div class="d-flex align-items-start gap-2">
-                            <i class="bi bi-shield-check text-primary fs-5 mt-n1" style="color: #2046D8 !important;"></i>
+                            <i class="bi bi-shield-check text-tm-service fs-5 mt-n1"></i>
                             <div>
-                                <h4 class="fw-bold text-dark mb-0" style="font-size: 12px; font-weight: 800 !important;">Paiement sécurisé</h4>
-                                <p class="text-muted mb-0" style="font-size: 11px; line-height: 1.3;">Transactions 100% sécurisées.</p>
+                                <h4 class="fw-extrabold text-dark mb-0 fs-12">Paiement sécurisé</h4>
+                                <p class="text-muted mb-0 reassurance-desc">Transactions 100% sécurisées.</p>
                             </div>
                         </div>
                     </div>
 
-                    <a href="#" class="btn btn-white w-100 py-2 rounded-3 fw-bold bg-white text-primary border shadow-xs d-flex align-items-center justify-content-between px-3 mt-auto" style="color: #2046D8 !important; border-color: #DDE2EA !important; font-size: 13px;">
-                        En savoir plus <i class="bi bi-chevron-right"></i>
+                    <a href="#" class="btn btn-white w-100 py-2 rounded-3 fw-bold bg-white text-tm-service border shadow-xs d-flex align-items-center justify-content-between px-3 mt-auto reassurance-more-btn">
+                        En savoir plus <i class="bi bi-chevron-right arrow-indicator"></i>
                     </a>
                 </div>
             </div>
@@ -297,41 +279,41 @@
     {# 5. BANDEAU DES CARACTÉRISTIQUES DU BAS #}
     <div class="bg-white border-top py-4">
         <div class="container">
-            <div class="row g-3 justify-content-center text-center text-md-start">
-                <div class="col-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-                    <div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs" style="width: 40px; height: 40px; background-color: #F1F5FF; color: #2046D8; flex-shrink: 0;">
+            <div class="row g-4 justify-content-center text-center text-md-start">
+                <div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
+                    <div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
                         <i class="bi bi-calendar-check fs-5"></i>
                     </div>
                     <div>
-                        <span class="d-block fw-bold text-dark small lh-1" style="font-weight: 800 !important; font-size: 13px;">Demande de devis gratuite</span>
-                        <small class="text-muted" style="font-size: 11px; font-weight: 500;">Réponse rapide des prestataires</small>
+                        <span class="d-block fw-extrabold text-dark small lh-1 fs-13">Demande de devis gratuite</span>
+                        <small class="text-muted fw-medium fs-11">Réponse rapide des prestataires</small>
                     </div>
                 </div>
-                <div class="col-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-                    <div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs" style="width: 40px; height: 40px; background-color: #F1F5FF; color: #2046D8; flex-shrink: 0;">
+                <div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
+                    <div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
                         <i class="bi bi-hand-thumbs-up fs-5"></i>
                     </div>
                     <div>
-                        <span class="d-block fw-bold text-dark small lh-1" style="font-weight: 800 !important; font-size: 13px;">Aucun engagement</span>
-                        <small class="text-muted" style="font-size: 11px; font-weight: 500;">Comparez et choisissez librement</small>
+                        <span class="d-block fw-extrabold text-dark small lh-1 fs-13">Aucun engagement</span>
+                        <small class="text-muted fw-medium fs-11">Comparez et choisissez librement</small>
                     </div>
                 </div>
-                <div class="col-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-                    <div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs" style="width: 40px; height: 40px; background-color: #F1F5FF; color: #2046D8; flex-shrink: 0;">
+                <div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
+                    <div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
                         <i class="bi bi-lock fs-5"></i>
                     </div>
                     <div>
-                        <span class="d-block fw-bold text-dark small lh-1" style="font-weight: 800 !important; font-size: 13px;">Paiement sécurisé</span>
-                        <small class="text-muted" style="font-size: 11px; font-weight: 500;">Par carte ou virement sécurisé</small>
+                        <span class="d-block fw-extrabold text-dark small lh-1 fs-13">Paiement sécurisé</span>
+                        <small class="text-muted fw-medium fs-11">Par carte ou virement sécurisé</small>
                     </div>
                 </div>
-                <div class="col-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-                    <div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs" style="width: 40px; height: 40px; background-color: #F1F5FF; color: #2046D8; flex-shrink: 0;">
+                <div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
+                    <div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
                         <i class="bi bi-headset fs-5"></i>
                     </div>
                     <div>
-                        <span class="d-block fw-bold text-dark small lh-1" style="font-weight: 800 !important; font-size: 13px;">Support 7j/7</span>
-                        <small class="text-muted" style="font-size: 11px; font-weight: 500;">Une équipe à votre écoute</small>
+                        <span class="d-block fw-extrabold text-dark small lh-1 fs-13">Support 7j/7</span>
+                        <small class="text-muted fw-medium fs-11">Une équipe à votre écoute</small>
                     </div>
                 </div>
             </div>
@@ -341,31 +323,295 @@
 </div>
 
 <style>
-    /* Alignements spécifiques responsive pour la barre de recherche */
-    @media (min-width: 992px) {
-        .border-end-lg {
-            border-right: 1px solid #DDE2EA !important;
-        }
+    /* VARIABLES DE DESIGN */
+    :root {
+        --tm-primary: #061B56;
+        --tm-service: #2046D8;
+        --tm-service-hover: #1B3CC0;
+        --tm-accent: #F4A911;
+        --tm-success: #16A34A;
+        --tm-bg-light: #F8F9FA;
+        --tm-border-color: #DDE2EA;
+        --tm-icon-bg: #F1F5FF;
+    }
+
+    /* STRUCTURES ET TYPOGRAPHIES BASE */
+    .homepage-wrapper {
+        font-family: 'Poppins', sans-serif;
+        color: var(--tm-primary);
+        background-color: var(--tm-bg-light);
+        overflow-x: hidden;
+    }
+    .fw-extrabold { font-weight: 800 !important; }
+    .tracking-tight { letter-spacing: -0.5px; }
+    .max-w-540 { max-width: 540px; }
+    
+    /* COULEURS ET BADGES UTILS */
+    .text-tm-accent { color: var(--tm-accent) !important; }
+    .text-tm-service { color: var(--tm-service) !important; }
+    .bg-tm-success { background-color: var(--tm-success) !important; }
+    .bg-tm-accent { background-color: var(--tm-accent) !important; }
+    .bg-tm-service { background-color: var(--tm-service) !important; }
+    .fs-11 { font-size: 11px !important; }
+    .fs-12 { font-size: 12px !important; }
+    .fs-13 { font-size: 13px !important; }
+    .shadow-xs { box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important; }
+
+    /* 1. HERO SECTION */
+    .hero-section {
+        background: linear-gradient(to right, rgba(6, 27, 86, 0.98) 35%, rgba(6, 27, 86, 0.5) 100%), 
+                    url('/images/bg-hero-worker.jpg') no-repeat center center / cover;
+        padding-top: 50px;
+        padding-bottom: 90px;
+    }
+    .hero-title {
+        letter-spacing: -1px;
+        line-height: 1.2;
+    }
+    .hero-lead {
+        font-weight: 400;
+        line-height: 1.6;
+    }
+    .hero-badge {
+        background: rgba(255, 255, 255, 0.08);
+        font-size: 13px;
+        font-weight: 500;
+        padding: 8px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 6px !important;
+    }
+
+    /* 2. OVERLAP DE LA BARRE DE RECHERCHE */
+    .search-overlap-wrapper {
+        position: relative;
+        z-index: 10;
+        height: 0;
+    }
+    .search-overlap-card {
+        transform: translateY(-50%);
     }
     
-    /* Effets de survol des cartes catégories */
+    /* CHAMPS DE RECHERCHE ET SEPARATEURS */
+    .search-input, .search-select {
+        border: 0 !important;
+        padding: 0 !important;
+        background-color: transparent !important;
+        font-size: 13px;
+        color: #495057;
+        box-shadow: none !important;
+        width: 100%;
+    }
+    .search-input::placeholder {
+        color: #9ba4b0;
+        opacity: 1;
+    }
+    
+    /* AJUSTEMENT SPÉCIFIQUE DU CHAMP DATE NATIF */
+    .custom-date-input {
+        cursor: pointer;
+        text-transform: uppercase;
+        font-size: 12px;
+    }
+
+    .select-wrapper {
+        position: relative;
+    }
+    .search-select {
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+        padding-right: 20px !important;
+    }
+    .select-arrow-icon {
+        position: absolute;
+        right: 0;
+        bottom: 2px;
+        font-size: 11px;
+        color: #9ba4b0;
+        pointer-events: none;
+    }
+    .search-divider {
+        position: absolute;
+        right: 0;
+        top: 15%;
+        height: 70%;
+        width: 1px;
+        background-color: var(--tm-border-color);
+    }
+
+    /* BOUTON DE RECHERCHE REVISITÉ */
+    .search-submit-btn {
+        background-color: var(--tm-service);
+        border: 0;
+        color: #fff;
+        height: 48px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+    .search-submit-btn:hover {
+        background-color: var(--tm-service-hover);
+        color: #fff;
+    }
+    .search-submit-btn:active {
+        transform: scale(0.98);
+    }
+    @media (max-width: 991.98px) {
+        .search-overlap-card {
+            transform: translateY(-20px);
+        }
+        .search-overlap-wrapper {
+            height: auto;
+        }
+        .search-submit-btn {
+            width: 100%;
+            margin-top: 10px;
+        }
+    }
+
+    /* 3. SECTION CATÉGORIES POPULAIRES */
+    .main-content-section {
+        margin-top: 80px;
+    }
+    .category-col {
+        min-width: 105px;
+        max-width: 115px;
+    }
     .tm-category-card {
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .tm-category-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(6, 27, 86, 0.08) !important;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(6, 27, 86, 0.08) !important;
+    }
+    .category-icon-wrapper {
+        width: 48px;
+        height: 48px;
+        background-color: var(--tm-icon-bg);
+        color: var(--tm-service) !important;
+    }
+    .category-title {
+        font-size: 12px;
+        font-weight: 700 !important;
+        line-height: 1.2;
+    }
+    .all-categories-col {
+        min-width: 125px;
+        max-width: 135px;
+    }
+    .all-categories-card {
+        border-color: var(--tm-border-color) !important;
+        border-style: dashed !important;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    .all-categories-card:hover {
+        background-color: var(--tm-icon-bg) !important;
+        border-color: var(--tm-service) !important;
+    }
+    .all-categories-text {
+        font-size: 12px;
+        line-height: 1.3;
+    }
+    .arrow-indicator {
+        font-size: 11px;
+        color: #9ba4b0;
+        transition: transform 0.2s ease;
+    }
+    .all-categories-card:hover .arrow-indicator, 
+    .view-all-link:hover i, 
+    .reassurance-more-btn:hover .arrow-indicator {
+        transform: translateX(2px);
+        color: var(--tm-service);
     }
 
-    /* Utilitaires de contraintes lignes */
+    /* 4. PRESTATAIRES À LA UNE */
+    .view-all-link {
+        font-size: 13px;
+        transition: color 0.2s ease;
+    }
+    .provider-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .provider-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.08) !important;
+    }
+    .favorite-btn {
+        position: absolute;
+        right: 0;
+        top: 0;
+        margin: 8px;
+        z-index: 10;
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s ease;
+    }
+    .favorite-btn:hover {
+        background-color: #fff !important;
+    }
+    .favorite-btn:hover i {
+        color: #dc3545 !important;
+    }
+    .provider-img {
+        height: 145px;
+        object-fit: cover;
+    }
+    .provider-avatar-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        position: absolute;
+        top: -19px;
+        left: 15px;
+        border: 3px solid #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    /* REASSURANCE SIDEBAR */
+    .reassurance-aside {
+        background-color: var(--tm-icon-bg) !important;
+    }
+    .reassurance-main-title {
+        font-size: 16px;
+        color: var(--tm-primary) !important;
+        line-height: 1.3;
+    }
+    .reassurance-desc {
+        font-size: 11px;
+        line-height: 1.3;
+    }
+    .reassurance-more-btn {
+        border-color: var(--tm-border-color) !important;
+        font-size: 13px;
+        color: var(--tm-service) !important;
+        transition: background-color 0.2s ease;
+    }
+    .reassurance-more-btn:hover {
+        background-color: #fff !important;
+    }
+
+    /* 5. BANDEAU CARACTÉRISTIQUES BAS */
+    .feature-bottom-icon {
+        width: 42px;
+        height: 42px;
+        background-color: var(--tm-icon-bg);
+        color: var(--tm-service);
+        flex-shrink: 0;
+    }
+
+    /* UTILITIES CONTRAINTES */
     .line-clamp-2 {
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;  
         overflow: hidden;
-    }
-    .shadow-xs {
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
     }
 </style>
 {% endblock %}

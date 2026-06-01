@@ -4,6 +4,9 @@
 
 {% block body %}
 <style>
+    /* ==========================================================================
+       VARIABLES ET SECTIONS GLOBALES DE BASE
+       ========================================================================== */
     :root {
         --tm-primary: #061B56;
         --tm-primary-hover: #0A286F;
@@ -29,335 +32,278 @@
 
     a { text-decoration: none; }
 
-    /* =========================
-       HEADER STYLES
-    ========================= */
-    .tm-header {
-        background: var(--tm-primary);
-        min-height: 86px;
-    }
-    .tm-logo-icon {
-        width: 57px;
-        height: 57px;
-        border: 6px solid var(--tm-accent);
-        border-radius: 50% 50% 50% 8px;
-        transform: rotate(-45deg);
-    }
-    .tm-logo-icon i {
-        transform: rotate(45deg);
-        color: #ffffff;
-        font-size: 26px;
-    }
-    .tm-logo-title {
-        font-size: 30px;
-        line-height: 1;
-        font-weight: 800;
-        letter-spacing: -1px;
-        color: #ffffff;
-    }
-    .tm-logo-subtitle {
-        display: block;
-        margin-top: 3px;
-        color: var(--tm-accent);
-        font-size: 19px;
-        font-weight: 800;
-    }
-    .tm-nav-link {
-        color: #ffffff;
-        font-size: 15px;
-        font-weight: 600;
-        transition: color .2s ease;
-    }
-    .tm-nav-link:hover { color: var(--tm-accent); }
-    .tm-btn-yellow {
-        min-height: 52px;
-        padding-inline: 26px;
-        border-radius: 8px;
-        background: var(--tm-accent);
-        color: #ffffff;
-        font-size: 15px;
-        font-weight: 700;
-        box-shadow: 0 8px 18px rgba(244, 169, 17, 0.22);
-        transition: all .2s ease;
-    }
-    .tm-btn-yellow:hover {
-        background: var(--tm-accent-hover);
-        color: #ffffff;
-        transform: translateY(-1px);
-    }
-
-    /* =========================
-       VISUAL SIDE (LEFT)
-    ========================= */
+    /* ==========================================================================
+       PANNEAU VISUEL GAUCHE (FIDÈLE À PRESTAREGISTERCHOICE.JPEG)
+       ========================================================================== */
     .tm-login-visual {
         min-height: 780px;
         position: relative;
-        background: linear-gradient(90deg, rgba(6, 27, 86, 0.98) 0%, rgba(6, 27, 86, 0.88) 34%, rgba(6, 27, 86, 0.56) 70%, rgba(6, 27, 86, 0.30) 100%),
-                    url("https://placehold.co/1200x900/0A286F/FFFFFF?text=Image+Vehicule+Pro");
+        background: linear-gradient(180deg, rgba(6, 27, 86, 0.95) 0%, rgba(6, 27, 86, 0.85) 50%, rgba(6, 27, 86, 0.4) 100%),
+                    url("https://images.unsplash.com/photo-1516514122718-d98c199bb69d?auto=format&fit=crop&w=1200&q=80"); /* Version réelle de l'utilitaire pro arrière-plan */
         background-size: cover;
         background-position: center;
     }
-    .tm-login-visual::after {
-        content: "";
-        position: absolute;
-        left: 0; right: 0; bottom: 0;
-        height: 45%;
-        background: linear-gradient(180deg, rgba(6, 27, 86, 0) 0%, rgba(6, 27, 86, 0.92) 100%);
-    }
     .tm-login-visual-content { position: relative; z-index: 2; max-width: 540px; }
-    .tm-login-title { font-size: 40px; line-height: 1.15; font-weight: 800; letter-spacing: -1px; color: #ffffff; }
+    .tm-login-title { font-size: 40px; line-height: 1.2; font-weight: 800; letter-spacing: -1px; color: #ffffff; }
     .tm-login-title span { color: var(--tm-accent); }
-    .tm-login-intro { color: rgba(255, 255, 255, 0.96); font-size: 17px; line-height: 1.65; font-weight: 500; }
+    .tm-login-intro { color: rgba(255, 255, 255, 0.90); font-size: 16px; line-height: 1.6; font-weight: 500; }
     
-    .tm-benefit-icon {
-        width: 53px; height: 53px; border-radius: 10px;
-        background: rgba(255, 255, 255, 0.12); color: #ffffff;
-        flex: 0 0 53px; font-size: 24px;
+    .tm-benefit-icon-outline {
+        width: 44px; height: 44px; border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.3); color: #ffffff;
+        flex: 0 0 44px; font-size: 20px;
     }
 
-    /* =========================
-       CHOICE CARDS (RIGHT)
-    ========================= */
-    .tm-choice-area { min-height: 780px; background: #ffffff; }
-    .tm-choice-container { max-width: 720px; width: 100%; }
-    .tm-choice-title { font-size: 36px; line-height: 1.2; font-weight: 800; letter-spacing: -1px; color: var(--tm-text); text-align: center; }
-    .tm-choice-subtitle { color: var(--tm-text-secondary); font-size: 16px; font-weight: 500; text-align: center; }
+    /* Logo dans le bandeau visuel */
+    .tm-visual-logo { display: flex; align-items: center; gap: 12px; }
+    .tm-logo-icon-small {
+        width: 38px; height: 38px; border: 4px solid var(--tm-accent);
+        border-radius: 50% 50% 50% 6px; transform: rotate(-45deg);
+        display: flex; align-items: center; justify-content: center;
+    }
+    .tm-logo-icon-small i { transform: rotate(45deg); color: #ffffff; font-size: 16px; }
+    .tm-logo-text-small { font-size: 20px; font-weight: 800; color: #ffffff; line-height: 1; }
+    .tm-logo-text-small span { display: block; font-size: 11px; color: var(--tm-accent); font-weight: 700; margin-top: 2px; }
+
+    /* ==========================================================================
+       ZONE DE DROITE & EN-TÊTE EN-LIGNE
+       ========================================================================== */
+    .tm-choice-area { min-height: 780px; background: #ffffff; position: relative; }
+    .tm-choice-container { max-width: 780px; width: 100%; }
+    .tm-choice-title { font-size: 34px; line-height: 1.2; font-weight: 800; letter-spacing: -0.5px; color: var(--tm-primary); text-align: center; }
+    .tm-choice-subtitle { color: var(--tm-text-secondary); font-size: 15px; font-weight: 500; text-align: center; }
     
+    .tm-top-nav-inline { position: absolute; top: 30px; right: 40px; z-index: 10; }
+    .tm-btn-outline-login {
+        border: 1px solid #CBD5E1; border-radius: 8px;
+        padding: 8px 22px; font-weight: 600; color: var(--tm-primary);
+        font-size: 14px; transition: all 0.2s ease;
+    }
+    .tm-btn-outline-login:hover { border-color: var(--tm-service); color: var(--tm-service); }
+
+    /* ==========================================================================
+       CARTES DE CHOIX DE PROFIL
+       ========================================================================== */
     .tm-profile-card {
         background: #ffffff;
-        border: 1px solid #E5E7EB;
-        border-radius: 16px;
+        border: 1px solid #F1F5F9;
+        border-radius: 20px;
         padding: 24px;
-        box-shadow: 0 4px 20px rgba(6, 27, 86, 0.03);
-        transition: all 0.3s ease;
-        position: relative;
+        box-shadow: 0 10px 30px rgba(6, 27, 86, 0.04);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     .tm-profile-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 30px rgba(6, 27, 86, 0.08);
-        border-color: #CBD5E1;
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(6, 27, 86, 0.08);
     }
     .tm-profile-img-wrapper {
         position: relative;
-        border-radius: 12px;
+        border-radius: 14px;
         overflow: hidden;
         margin-bottom: 20px;
     }
-    .tm-profile-img { width: 100%; height: 200px; object-fit: cover; }
+    .tm-profile-img { width: 100%; height: 185px; object-fit: cover; }
     
-    .tm-avatar-icon {
-        width: 48px; height: 48px; border-radius: 50%;
-        background: #F1F5FF; color: var(--tm-service);
-        font-size: 22px;
-    }
-    .tm-card-badge {
-        position: absolute; top: 12px; right: 12px;
-        background: var(--tm-service); color: #ffffff;
-        width: 28px; height: 28px; border-radius: 50%;
-        font-size: 16px;
-    }
-    .tm-stars-badge {
-        position: absolute; bottom: 12px; left: 12px;
-        background: #ffffff; color: var(--tm-text);
-        padding: 4px 10px; border-radius: 999px;
-        font-size: 12px; font-weight: 700;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    }
-    .tm-stars-badge i { color: var(--tm-accent); }
-    
-    .tm-floating-bubble {
-        position: absolute; width: 36px; height: 36px;
-        border-radius: 50%; background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        font-size: 16px; color: var(--tm-service);
+    .tm-avatar-icon-bg {
+        width: 52px; height: 52px; border-radius: 50%;
+        background: #F1F5FF; color: var(--tm-primary);
+        font-size: 24px;
     }
 
+    /* Listes à puces cochées */
     .tm-bullet-list { list-style: none; padding-left: 0; margin-bottom: 24px; }
     .tm-bullet-list li {
-        font-size: 14px; font-weight: 500; color: var(--tm-text);
-        margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
+        font-size: 14px; font-weight: 500; color: #475569;
+        margin-bottom: 12px; display: flex; align-items: center; gap: 12px;
     }
     .tm-bullet-list li i { color: var(--tm-service); font-size: 16px; }
 
-    .tm-btn-outline-header {
-        border: 1px solid #DDE2EA; border-radius: 8px;
-        padding: 10px 20px; font-weight: 600; color: var(--tm-text);
-        font-size: 14px; transition: all 0.2s ease;
+    /* BOUTONS BLEUS DE SOUMISSION (CORRIGÉS) */
+    .tm-btn-continue {
+        min-height: 52px; border-radius: 10px;
+        background: #0E3FE2; color: #ffffff;
+        font-size: 15px; font-weight: 600; width: 100%; border: 0;
+        transition: background .2s ease, transform 0.2s ease;
     }
-    .tm-btn-outline-header:hover { border-color: var(--tm-service); color: var(--tm-service); }
-
-    .tm-btn-card {
-        min-height: 50px; border-radius: 8px;
-        background: var(--tm-service); color: #ffffff;
-        font-size: 15px; font-weight: 700; width: 100%; border: 0;
-        transition: background .2s ease;
+    .tm-btn-continue:hover {
+        background: #0B33B8;
+        color: #ffffff;
     }
-    .tm-btn-card:hover { background: var(--tm-service-hover); color: #ffffff; }
 
+    /* Séparateur de pied */
     .tm-separator { position: relative; text-align: center; }
-    .tm-separator::before { content: ""; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--tm-border); }
-    .tm-separator span { position: relative; display: inline-block; padding-inline: 14px; background: var(--tm-background); color: var(--tm-text-secondary); font-size: 13px; font-weight: 500; }
+    .tm-separator::before { content: ""; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #E2E8F0; }
+    .tm-separator span { position: relative; display: inline-block; padding-inline: 16px; background: #ffffff; color: #64748B; font-size: 13px; font-weight: 500; }
 
-    /* =========================
-       SECURITY STRIP
-    ========================= */
-    .tm-login-card { width: 100%; max-width: 1780px; margin-inline: auto; border: 0; border-radius: 12px; overflow: hidden; box-shadow: var(--tm-shadow); background: #ffffff; }
-    .tm-security-card { max-width: 1780px; margin-inline: auto; border: 0; border-radius: 10px; box-shadow: var(--tm-shadow); }
+    .tm-login-card { width: 100%; max-width: 1780px; margin-inline: auto; border: 0; border-radius: 24px; overflow: hidden; box-shadow: var(--tm-shadow); background: #ffffff; }
+    .tm-security-card { max-width: 1780px; margin-inline: auto; border: 0; border-radius: 16px; box-shadow: var(--tm-shadow); }
     .tm-security-icon { width: 51px; height: 51px; border-radius: 12px; background: #F1F5FF; color: var(--tm-service); flex: 0 0 51px; font-size: 25px; }
-    .tm-security-title { font-size: 14px; font-weight: 800; color: var(--tm-text); }
-    .tm-security-text { font-size: 13px; color: var(--tm-text-secondary); font-weight: 500; }
 
-    @media (max-width: 1199px) { .tm-login-visual, .tm-choice-area { min-height: auto; } }
+    @media (max-width: 1199px) { 
+        .tm-login-visual, .tm-choice-area { min-height: auto; } 
+        .tm-top-nav-inline { position: static; text-align: right; margin-bottom: 20px; }
+    }
 </style>
-
 
 <main class="tm-login-section py-4">
     <div class="container-fluid px-4 px-xxl-5">
 
-        <div class="d-flex justify-content-between align-items-center mb-4 max-width-1780 mx-auto px-2">
-            <div></div>
-            <div class="d-flex align-items-center gap-2 d-md-none">
-                <span class="text-muted small">Pas encore de compte ?</span>
-                <a href="{{ path('app_login') }}" class="tm-btn-outline-header">Créer un compte</a>
-            </div>
-        </div>
-
         <section class="card tm-login-card">
             <div class="row g-0">
 
+                {# PANNEAU VISUEL GAUCHE #}
                 <div class="col-12 col-xl-5 col-xxl-4">
-                    <div class="tm-login-visual h-100 d-flex align-items-center">
-                        <div class="tm-login-visual-content px-4 px-md-5 py-5">
-                            <h1 class="tm-login-title mb-3">
-                                Bienvenue sur<br>
-                                TrouveMoi <span>Prestataires</span>
-                            </h1>
-                            <p class="tm-login-intro mb-5">
-                                Connectez-vous pour accéder à votre espace et profiter de tous nos services.
-                            </p>
-
-                            <div class="d-flex flex-column gap-4">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="tm-benefit-icon d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-shield-check"></i>
-                                    </div>
-                                    <div>
-                                        <h2 class="tm-benefit-title mb-0 fs-6 fw-bold text-white">Sécurisé</h2>
-                                        <p class="tm-benefit-text mb-0 opacity-75 small">Vos données sont protégées et vos transactions sécurisées.</p>
-                                    </div>
+                    <div class="tm-login-visual h-100 d-flex align-items-stretch">
+                        <div class="tm-login-visual-content px-4 px-md-5 py-5 d-flex flex-column justify-content-between w-100">
+                            
+                            {# Logo d'entête #}
+                            <div class="tm-visual-logo mb-5">
+                                <div class="tm-logo-icon-small">
+                                    <i class="bi bi-geo-alt-fill"></i>
                                 </div>
-
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="tm-benefit-icon d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-star"></i>
-                                    </div>
-                                    <div>
-                                        <h2 class="tm-benefit-title mb-0 fs-6 fw-bold text-white">Fiable</h2>
-                                        <p class="tm-benefit-text mb-0 opacity-75 small">Des professionnels vérifiés et des avis clients authentiques.</p>
-                                    </div>
+                                <div class="tm-logo-text-small">
+                                    TrouveMoi
+                                    <span>Prestataires</span>
                                 </div>
+                            </div>
 
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="tm-benefit-icon d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-headset"></i>
+                            {# Textes d'introduction #}
+                            <div class="my-auto py-4">
+                                <h1 class="tm-login-title mb-4">
+                                    Bienvenue sur<br>
+                                    <span>TrouveMoi Prestataires</span>
+                                </h1>
+                                <p class="tm-login-intro mb-5">
+                                    Connectez-vous pour accéder à votre espace et profiter de tous nos services.
+                                </p>
+
+                                {# Liste des avantages #}
+                                <div class="d-flex flex-column gap-4">
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="tm-benefit-icon-outline d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-shield-check"></i>
+                                        </div>
+                                        <div>
+                                            <h2 class="fs-6 fw-bold text-white mb-1">Sécurisé</h2>
+                                            <p class="text-white-50 mb-0 small">Vos données sont protégées et vos transactions sécurisées.</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h2 class="tm-benefit-title mb-0 fs-6 fw-bold text-white">À votre écoute</h2>
-                                        <p class="tm-benefit-text mb-0 opacity-75 small">Une équipe dédiée pour vous accompagner à chaque étape.</p>
+
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="tm-benefit-icon-outline d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-star"></i>
+                                        </div>
+                                        <div>
+                                            <h2 class="fs-6 fw-bold text-white mb-1">Fiable</h2>
+                                            <p class="text-white-50 mb-0 small">Des professionnels vérifiés et des avis clients authentiques.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="tm-benefit-icon-outline d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-headset"></i>
+                                        </div>
+                                        <div>
+                                            <h2 class="fs-6 fw-bold text-white mb-1">À votre écoute</h2>
+                                            <p class="text-white-50 mb-0 small">Une équipe dédiée pour vous accompagner à chaque étape.</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+                            {# Espacement bas #}
+                            <div class="mt-5"></div>
                         </div>
                     </div>
                 </div>
 
+                {# PANNEAU DE CHOIX DE PROFIL DROITE #}
                 <div class="col-12 col-xl-7 col-xxl-8">
                     <div class="tm-choice-area d-flex align-items-center justify-content-center px-4 px-md-5 py-5">
-                        <div class="tm-choice-container">
+                        
 
-                            <div class="mb-5">
-                                <h2 class="tm-choice-title mb-2">Comment souhaitez-vous vous connecter ?</h2>
+                        <div class="tm-choice-container">
+                            
+                            {# En-tête de sélection #}
+                            <div class="mb-5 text-center">
+                                <h2 class="tm-choice-title mb-3">Comment souhaitez-vous vous connecter ?</h2>
                                 <p class="tm-choice-subtitle mb-0">Choisissez votre profil pour accéder à votre espace personnalisé</p>
                             </div>
 
                             <div class="row g-4 justify-content-center">
+                                {# CARTE INTERFACE CLIENT #}
                                 <div class="col-12 col-md-6">
                                     <div class="tm-profile-card d-flex flex-column h-100">
                                         <div class="tm-profile-img-wrapper">
-                                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=80" alt="Client TrouveMoi" class="tm-profile-img">
-                                            <div class="tm-floating-bubble d-flex align-items-center justify-content-center" style="top: 15px; left: 15px;">
-                                                <i class="bi bi-house-door-fill"></i>
-                                            </div>
-                                            <div class="tm-floating-bubble d-flex align-items-center justify-content-center" style="top: 15px; right: 15px;">
-                                                <i class="bi bi-currency-euro"></i>
-                                            </div>
-                                            <div class="tm-card-badge d-flex align-items-center justify-content-center shadow" style="bottom: -14px; right: 20px; top: auto; background-color: #2046D8;">
-                                                <i class="bi bi-check-lg"></i>
-                                            </div>
+                                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=80" alt="Client Privé" class="tm-profile-img">
+
                                         </div>
 
                                         <div class="d-flex align-items-center gap-3 mb-3">
-                                            <div class="tm-avatar-icon d-flex align-items-center justify-content-center">
-                                                <i class="bi bi-person-fill"></i>
+                                            <div class="tm-avatar-icon-bg d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-person"></i>
                                             </div>
                                             <div>
-                                                <h3 class="fs-5 fw-bold mb-0 text-dark" style="font-weight:800 !important;">Je suis client</h3>
+                                                <h3 class="fs-5 fw-bold mb-0 text-dark" style="font-weight:700 !important;">Je suis client</h3>
                                                 <p class="text-muted small mb-0">Trouvez le prestataire idéal pour tous vos projets</p>
                                             </div>
                                         </div>
 
                                         <ul class="tm-bullet-list flex-grow-1">
-                                            <li><i class="bi bi-check2"></i> Recherchez des professionnels</li>
-                                            <li><i class="bi bi-check2"></i> Comparez les avis et tarifs</li>
-                                            <li><i class="bi bi-check2"></i> Demandez des devis gratuits</li>
-                                            <li><i class="bi bi-check2"></i> Gérez vos projets en toute simplicité</li>
+                                            <li><i class="bi bi-check-lg"></i> Recherchez des professionnels</li>
+                                            <li><i class="bi bi-check-lg"></i> Comparez les avis et tarifs</li>
+                                            <li><i class="bi bi-check-lg"></i> Demandez des devis gratuits</li>
+                                            <li><i class="bi bi-check-lg"></i> Gérez vos projets en toute simplicité</li>
                                         </ul>
 
-                                        <form action="{{ path('app_register') }}" method="GET">
+                                        {# ACTIONS - BOUTON DE SOUMISSION CLIENT #}
+                                        <form action="{{ path('app_login') }}" method="GET">
                                             <input type="hidden" name="role" value="client">
-                                            <button type="submit" class="tm-btn-card">Continuer en tant que client</button>
+                                            <button type="submit" class="tm-btn-continue">Continuer en tant que client</button>
                                         </form>
                                     </div>
                                 </div>
 
+                                {# CARTE INTERFACE PRESTATAIRE #}
                                 <div class="col-12 col-md-6">
                                     <div class="tm-profile-card d-flex flex-column h-100">
                                         <div class="tm-profile-img-wrapper">
-                                            <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80" alt="Prestataire TrouveMoi" class="tm-profile-img">
-                                            <div class="tm-floating-bubble d-flex align-items-center justify-content-center" style="top: 15px; left: 15px;">
-                                                <i class="bi bi-briefcase-fill"></i>
-                                            </div>
+                                            <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80" alt="Artisan Professionnel" class="tm-profile-img">
+
                                             <div class="tm-stars-badge d-flex align-items-center gap-1">
                                                 <i class="bi bi-star-fill"></i> 4,8/5
                                             </div>
                                         </div>
 
                                         <div class="d-flex align-items-center gap-3 mb-3">
-                                            <div class="tm-avatar-icon d-flex align-items-center justify-content-center" style="background-color: #F1F5FF; color: #061B56;">
-                                                <i class="bi bi-briefcase-fill"></i>
+                                            <div class="tm-avatar-icon-bg d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-briefcase"></i>
                                             </div>
                                             <div>
-                                                <h3 class="fs-5 fw-bold mb-0 text-dark" style="font-weight:800 !important;">Je suis prestataire</h3>
+                                                <h3 class="fs-5 fw-bold mb-0 text-dark" style="font-weight:700 !important;">Je suis prestataire</h3>
                                                 <p class="text-muted small mb-0">Développez votre activité et trouvez de nouveaux clients</p>
                                             </div>
                                         </div>
 
                                         <ul class="tm-bullet-list flex-grow-1">
-                                            <li><i class="bi bi-check2"></i> Recevez des demandes de devis</li>
-                                            <li><i class="bi bi-check2"></i> Gérez votre activité facilement</li>
-                                            <li><i class="bi bi-check2"></i> Développez votre visibilité</li>
-                                            <li><i class="bi bi-check2"></i> Suivez vos performances</li>
+                                            <li><i class="bi bi-check-lg"></i> Recevez des demandes de devis</li>
+                                            <li><i class="bi bi-check-lg"></i> Gérez votre activité facilement</li>
+                                            <li><i class="bi bi-check-lg"></i> Développez votre visibilité</li>
+                                            <li><i class="bi bi-check-lg"></i> Suivez vos performances</li>
                                         </ul>
 
-                                        <form action="{{ path('app_register') }}" method="GET">
+                                        {# ACTIONS - BOUTON DE SOUMISSION PRESTATAIRE #}
+                                        <form action="{{ path('app_login') }}" method="GET">
                                             <input type="hidden" name="role" value="prestataire">
-                                            <button type="submit" class="tm-btn-card" style="background-color: #2046D8;">Continuer en tant que prestataire</button>
+                                            <button type="submit" class="tm-btn-continue">Continuer en tant que prestataire</button>
                                         </form>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="tm-separator my-5">
-                                <span class="bg-white"><i class="bi bi-lock-fill me-1" style="color: var(--tm-text-secondary);"></i> Vos données sont sécurisées et confidentielles</span>
+                            {# Ligne de réassurance inférieure #}
+                            <div class="tm-separator mt-5">
+                                <span><i class="bi bi-lock-fill me-2"></i>Vos données sont sécurisées et confidentielles</span>
                             </div>
 
                         </div>
@@ -367,60 +313,8 @@
             </div>
         </section>
 
-        <section class="mt-4">
-            <div class="card tm-security-card">
-                <div class="card-body p-4">
-                    <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-xl-5">
-                        <div class="col">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="tm-security-icon d-flex align-items-center justify-content-center"><i class="bi bi-calendar-check"></i></div>
-                                <div>
-                                    <h4 class="tm-security-title mb-1">Demande de devis gratuite</h4>
-                                    <p class="tm-security-text mb-0">Réponse rapide des prestataires</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="tm-security-icon d-flex align-items-center justify-content-center"><i class="bi bi-shield-check"></i></div>
-                                <div>
-                                    <h4 class="tm-security-title mb-1">Aucun engagement</h4>
-                                    <p class="tm-security-text mb-0">Comparez et choisissez librement</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="tm-security-icon d-flex align-items-center justify-content-center"><i class="bi bi-lock"></i></div>
-                                <div>
-                                    <h4 class="tm-security-title mb-1">Paiement sécurisé</h4>
-                                    <p class="tm-security-text mb-0">Par carte ou virement sécurisé</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="tm-security-icon d-flex align-items-center justify-content-center"><i class="bi bi-star"></i></div>
-                                <div>
-                                    <h4 class="tm-security-title mb-1">Satisfaction garantie</h4>
-                                    <p class="tm-security-text mb-0">Un problème ? On vous accompagne</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="tm-security-icon d-flex align-items-center justify-content-center"><i class="bi bi-headset"></i></div>
-                                <div>
-                                    <h4 class="tm-security-title mb-1">Support 7j/7</h4>
-                                    <p class="tm-security-text mb-0">Une équipe à votre écoute</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
+        {# FOOTER DE LIENS #}
         <div class="text-center mt-4 mb-3 text-muted" style="font-size: 13px; font-weight: 500;">
             <span>&copy; {{ date()|date('Y') }} TrouveMoi Prestataires. Tous droits réservés.</span>
             <div class="d-inline-flex gap-3 ms-md-3 mt-2 mt-md-0">
