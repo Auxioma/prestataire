@@ -19,6 +19,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+use App\Repository\UserRepository;
 
 class RegistrationController extends AbstractController
 {
@@ -50,6 +51,8 @@ class RegistrationController extends AbstractController
 
             // 1. Encodage du mot de passe
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            $user->setIsVerified(false);
+            $user->setEmailVerifiedAt(null);
 
             // 2. Attribution du rôle et création du profil selon le paramètre de l'URL
             if ($accountType === 'client') {
@@ -97,23 +100,42 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/verify/email', name: 'app_verify_email')]
-    public function verifyUserEmail(Request $request, TranslatorInterface $translator): Response
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+    public function verifyUserEmail(
+        Request $request,
+        TranslatorInterface $translator,
+        UserRepository $userRepository
+    ): Response {
+
+        $user = $userRepository->find($request->query->get('id'));
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
 
         try {
-            /** @var User $user */
-            $user = $this->getUser();
-            $this->emailVerifier->handleEmailConfirmation($request, $user);
+            $this->emailVerifier->handleEmailConfirmation(
+                $request,
+                $user
+            );
         } catch (VerifyEmailExceptionInterface $exception) {
-            $this->addFlash('verify_email_error', $translator->trans($exception->getReason(), [], 'VerifyEmailBundle'));
+
+            $this->addFlash(
+                'verify_email_error',
+                $translator->trans(
+                    $exception->getReason(),
+                    [],
+                    'VerifyEmailBundle'
+                )
+            );
 
             return $this->redirectToRoute('app_register');
         }
 
-        $this->addFlash('success', 'Votre adresse email a bien été vérifiée.');
+        $this->addFlash(
+            'success',
+            'Votre adresse email a bien été vérifiée.'
+        );
 
-        // MODIFICATION ICI : Une fois l'email validé, on l'envoie sur l'accueil plutôt que sur le formulaire d'inscription
-        return $this->redirectToRoute('app_home');
+        return $this->redirectToRoute('app_login');
     }
 }

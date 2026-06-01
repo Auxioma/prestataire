@@ -16,16 +16,19 @@ class EmailVerifier
         private VerifyEmailHelperInterface $verifyEmailHelper,
         private MailerInterface $mailer,
         private EntityManagerInterface $entityManager,
-    ) {
-    }
+    ) {}
 
     public function sendEmailConfirmation(string $verifyEmailRouteName, User $user, TemplatedEmail $email): void
     {
         $signatureComponents = $this->verifyEmailHelper->generateSignature(
             $verifyEmailRouteName,
             (string) $user->getId(),
-            (string) $user->getEmail()
+            (string) $user->getEmail(),
+            [
+                'id' => $user->getId(),
+            ]
         );
+
 
         $context = $email->getContext();
         $context['signedUrl'] = $signatureComponents->getSignedUrl();
@@ -42,9 +45,19 @@ class EmailVerifier
      */
     public function handleEmailConfirmation(Request $request, User $user): void
     {
+
         $this->verifyEmailHelper->validateEmailConfirmationFromRequest($request, (string) $user->getId(), (string) $user->getEmail());
 
         $user->setIsVerified(true);
+        $user->setEmailVerifiedAt(new \DateTimeImmutable());
+
+        if (in_array('ROLE_PRESTATAIRE', $user->getRoles())) {
+
+            $roles = $user->getRoles();
+            $roles[] = 'ROLE_PRESTATAIRE_VERIFIED';
+
+            $user->setRoles(array_unique($roles));
+        }
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
