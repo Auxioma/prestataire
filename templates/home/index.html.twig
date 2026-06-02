@@ -116,7 +116,7 @@
 
 			<div class="d-flex flex-wrap gap-2 justify-content-between align-items-stretch">
 				{% for category in categories|slice(0, 10) %}
-					<div class="flex-grow-1 text-center category-col">
+					<div class="grow text-center category-col">
 						<a href="#" class="card h-100 border-0 shadow-sm p-3 text-decoration-none tm-category-card rounded-3 bg-white d-flex flex-column align-items-center justify-content-center">
 							<div class="d-flex align-items-center justify-content-center rounded-circle mb-2 category-icon-wrapper">
 								<span class="fw-bold fs-5">{{ category.name|slice(0, 1)|upper }}</span>
@@ -138,7 +138,7 @@
                     {'name': 'Petits travaux', 'icon': 'bi-tools'}
                 ] %}
 					{% for cat in fallback_cats %}
-						<div class="flex-grow-1 text-center category-col">
+						<div class="grow text-center category-col">
 							<a href="#" class="card h-100 border-0 shadow-sm p-3 text-decoration-none tm-category-card rounded-3 bg-white d-flex flex-column align-items-center justify-content-center">
 								<div class="d-flex align-items-center justify-content-center rounded-circle mb-2 category-icon-wrapper">
 									<i class="bi {{ cat.icon }} fs-5"></i>
@@ -149,7 +149,7 @@
 					{% endfor %}
 				{% endfor %}
 
-				<div class="flex-grow-1 text-center all-categories-col">
+				<div class="grow text-center all-categories-col">
 					<a href="#" class="card h-100 border p-2 text-decoration-none rounded-3 bg-white d-flex flex-row align-items-center justify-content-center gap-2 shadow-xs all-categories-card">
 						<span class="text-dark fw-extrabold text-start all-categories-text">Voir toutes<br>les catégories</span>
 						<i class="bi bi-chevron-right arrow-indicator"></i>

@@ -33,7 +33,7 @@
                 <div class="text-center mb-5">
                     <div class="position-relative d-inline-block mb-3">
                         <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80' }}" 
-                             class="rounded-circle border border-3 shadow-sm" style="width: 95px; height: 95px; object-fit: cover; border-color: var(--tm-border) !important;" alt="Avatar">
+                             class="rounded-circle border-3 shadow-sm" style="width: 95px; height: 95px; object-fit: cover; border-color: var(--tm-border) !important;" alt="Avatar">
                     </div>
                     <h5 class="mb-1 fw-semibold fs-5" style="color: var(--tm-primary);">{{ user.firstName }} {{ user.lastName }}</h5>
                     <p class="small mb-2" style="color: var(--tm-text-secondary);">Membre depuis {{ user.createdAt|date('Y') }}</p>
@@ -54,7 +54,7 @@
         </div>
 
         {# Contenu Principal #}
-        <div class="flex-grow-1 p-3 p-md-5 w-100" style="overflow-x: hidden;">
+        <div class="grow p-3 p-md-5 w-100" style="overflow-x: hidden;">
             
             <div class="mb-4 mb-md-5">
                 <h1 class="fw-bold tm-main-title mb-1">Mon Compte</h1>
@@ -130,7 +130,7 @@
                                 <h4 class="tm-card-title text-start mb-4">Photo de profil</h4>
                                 <div class="my-3 p-4 rounded-4" style="background-color: var(--tm-background);">
                                     <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&q=80' }}" 
-                                         class="rounded-circle mb-3 border border-2 border-white shadow-sm" style="width: 90px; height: 90px; object-fit: cover;" alt="Avatar">
+                                         class="rounded-circle mb-3 border-2 border-white shadow-sm" style="width: 90px; height: 90px; object-fit: cover;" alt="Avatar">
                                     <button type="button" class="btn btn-outline-primary btn-md d-block mx-auto fw-medium px-3">Modifier la photo</button>
                                 </div>
                             </div>
