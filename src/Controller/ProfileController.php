@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\ClientProfile;
 use App\Entity\PrestataireProfile;
 use App\Form\AccountSettingsType;
+use App\Form\ClientProfileType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ProfileController extends AbstractController
 {
-    #[Route('/compte/parametres', name: 'app_prestataire_settings')]
+    #[Route('/prestataire/parametres', name: 'app_prestataire_settings')]
     public function settings(Request $request, EntityManagerInterface $entityManager): Response
     {
         // 1. Récupérer l'utilisateur connecté
@@ -60,4 +62,49 @@ class ProfileController extends AbstractController
             'user' => $user,
         ]);
     }
+
+    /**
+     * Paramètres du profil Client
+     */
+    #[Route('/client/parametres', name: 'app_client_settings')]
+    public function clientSettings(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        // 1. Initialisation à la volée du ClientProfile s'il n'existe pas encore
+        if ($user->getClientProfile() === null) {
+            $profile = new ClientProfile();
+            
+            // On établit la relation bidirectionnelle
+            $user->setClientProfile($profile);
+            $profile->setAccount($user);
+        }
+
+        // 2. Utiliser le formulaire global AccountSettingsType lié au $user
+        $form = $this->createForm(AccountSettingsType::class, $user);
+        $form->handleRequest($request);
+
+        // 3. Traitement de la soumission
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Votre profil client a été mis à jour avec succès !');
+
+            return $this->redirectToRoute('app_client_settings');
+        }
+
+        // 4. Envoi à la vue client dédiée
+        return $this->render('profile/client_profile.html.twig', [
+            'settingsForm' => $form->createView(),
+            'user' => $user,
+        ]);
+    }
+
 }
