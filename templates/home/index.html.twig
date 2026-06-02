@@ -179,7 +179,7 @@
 						{# Boucle Twig sur les prestataires injectés par le contrôleur #}
 						{% for provider in providers|slice(0, 4) %}
 							<div class="col-md-6 col-xl-3">
-								<div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden bg-white position-relative provider-card">
+								<div class="card h-50 border-0 shadow-sm rounded-3 overflow-hidden bg-white position-relative provider-card">
 									<button class="btn btn-light rounded-circle favorite-btn border-0 shadow-sm">
 										<i class="bi bi-heart text-muted"></i>
 									</button>
@@ -200,10 +200,6 @@
 
 								<div
 									class="card-body p-3 text-start position-relative pt-4">
-									{# Icône ou miniature de catégorie si disponible, sinon défaut #}
-									<div class="provider-avatar-icon bg-tm-service">
-										<i class="bi bi-person-fill small"></i>
-									</div>
 
 									<h3 class="fw-extrabold h6 text-dark mt-2 mb-0 text-truncate">
 										{{ provider.companyName }}
@@ -244,7 +240,7 @@
 				</div>
 			</div>
 
-			<div class="col-xl-3 col-lg-4 text-start">
+			<div class="col-xl-3 col-lg-4 text-start pt-4">
 				<div class="card border-0 shadow-sm p-4 rounded-4 h-100 reassurance-aside">
 					<h3 class="fw-extrabold text-dark mb-3 reassurance-main-title">Pourquoi choisir<br>TrouveMoi Prestataires ?</h3>
 
