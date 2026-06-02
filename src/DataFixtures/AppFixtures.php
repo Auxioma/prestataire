@@ -27,7 +27,7 @@ class AppFixtures extends Fixture
         $admin = new User();
         $admin->setEmail('admin@trouvemoi.fr');
         $admin->setRoles(['ROLE_ADMIN']);
-        $admin->setPassword($this->passwordHasher->hashPassword($admin, 'admin123'));
+        $admin->setPassword($this->passwordHasher->hashPassword($admin, 'Admin123!'));
         if (method_exists($admin, 'setIsActive')) { 
             $admin->setIsActive(true); 
         }
