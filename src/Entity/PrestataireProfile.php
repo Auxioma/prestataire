@@ -140,6 +140,15 @@ class PrestataireProfile
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $deletedAt = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\Column(length: 150, nullable: true)]
+    private ?string $metier = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $experience = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -162,7 +171,7 @@ class PrestataireProfile
     {
         return $this->account;
     }
-    public function setAccount(User $account): static
+    public function setAccount(?User $account): static
     {
         $this->account = $account;
         return $this;
@@ -545,6 +554,42 @@ class PrestataireProfile
     public function setDeletedAt(?\DateTimeImmutable $deletedAt): static
     {
         $this->deletedAt = $deletedAt;
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getMetier(): ?string
+    {
+        return $this->metier;
+    }
+
+    public function setMetier(string $metier): static
+    {
+        $this->metier = $metier;
+
+        return $this;
+    }
+
+    public function getExperience(): ?string
+    {
+        return $this->experience;
+    }
+
+    public function setExperience(string $experience): static
+    {
+        $this->experience = $experience;
+
         return $this;
     }
 }

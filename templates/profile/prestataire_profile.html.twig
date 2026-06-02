@@ -1,0 +1,510 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paramètres - TrouveMoi
+{% endblock %}
+
+{% block body %}
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+	<div class="container-fluid min-vh-100 p-0 tm-page-wrapper">
+		<div class="d-flex flex-column flex-md-row">
+
+			<div class="w-100 p-3 d-flex justify-content-between align-items-center d-md-none" style="background-color: var(--tm-primary); border-bottom: 1px solid rgba(255,255,255,0.1);">
+				<div class="d-flex align-items-center gap-2">
+					<span class="fs-4 fw-bold" style="color: var(--tm-accent);">🔍 TrouveMoi</span>
+				</div>
+				<div class="d-flex gap-3 tm-mobile-nav">
+					<a href="#" class="text-white text-decoration-none fs-5">📋</a>
+					<a href="#" class="text-white text-decoration-none fs-5">📥</a>
+					<a href="#" class="text-white text-decoration-none fs-5">⭐</a>
+					<a href="#" class="text-white text-decoration-none fs-5 active-mobile">⚙️</a>
+				</div>
+			</div>
+
+			<div class="tm-sidebar p-4 vh-100 position-sticky top-0 d-none d-md-flex flex-column justify-content-between" style="width: 300px; min-width: 300px;">
+				<div>
+					<div class="mb-5 d-flex align-items-center gap-2">
+						<span class="fs-3 fw-bold" style="color: var(--tm-accent);">🔍 TrouveMoi</span>
+						<span class="badge px-2 py-1" style="background-color: rgba(255,255,255,0.1); color: var(--tm-accent); font-size: 11px;">Prestataires</span>
+					</div>
+
+					<div class="text-center mb-5">
+						<div class="position-relative d-inline-block mb-3">
+							<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80' }}" class="rounded-circle border border-3 shadow-sm border-opacity-25" style="width: 95px; height: 95px; object-fit: cover; border-color: var(--tm-accent) !important;" alt="Avatar">
+						</div>
+						<h5 class="mb-1 text-white fw-semibold fs-5">{{ user.firstName }}
+							{{ user.lastName }}</h5>
+						<p class="small mb-2" style="color: var(--tm-text-secondary-sidebar);">{{ user.prestataireProfile.metier|default('Plombier') }}</p>
+						<span class="badge d-inline-flex align-items-center gap-1 px-2 py-1" style="background-color: rgba(22, 163, 74, 0.2); color: #22c55e; font-size: 12px;">
+							✓ Compte vérifié
+						</span>
+					</div>
+
+					<ul class="nav flex-column gap-2 tm-nav-menu">
+						<li class="nav-item">
+							<a href="#" class="nav-link">
+								<span class="me-2">📋</span>
+								Tableau de bord</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link">
+								<span class="me-2">📥</span>
+								Mes demandes</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link">
+								<span class="me-2">💼</span>
+								Mes prestations</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link">
+								<span class="me-2">⭐</span>
+								Mes avis</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link active">
+								<span class="me-2">⚙️</span>
+								Paramètres</a>
+						</li>
+					</ul>
+				</div>
+
+				<div class="card border-0 p-3 rounded-4 text-center" style="background-color: rgba(244, 169, 17, 0.1); border: 1px solid rgba(244, 169, 17, 0.2) !important;">
+					<p class="small fw-medium text-white mb-2">🎁 Parrainez un collègue et gagnez
+						<span style="color: var(--tm-accent); font-weight: 700;">50€</span>
+					</p>
+					<button class="btn tm-btn-accent btn-sm w-100 fw-semibold">Parrainer maintenant</button>
+				</div>
+			</div>
+
+			<div class="flex-grow-1 p-3 p-md-5 w-100" style="overflow-x: hidden;">
+
+				<div class="mb-4 mb-md-5">
+					<h1 class="fw-bold tm-main-title mb-1">Paramètres</h1>
+					<p class="tm-subtitle mb-0">Gérez votre profil, vos informations et vos préférences</p>
+				</div>
+
+				{# Alertes Flash #}
+				{% for message in app.flashes('success') %}
+					<div class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4 fw-medium" role="alert">
+						✨
+						{{ message }}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>
+				{% endfor %}
+
+				<div class="tm-tabs-wrapper mb-4 mb-md-5">
+					<ul class="nav nav-tabs border-bottom gap-3 gap-md-4 tm-custom-tabs flex-nowrap" id="settingsTabs" role="tablist">
+						<li class="nav-item">
+							<button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-panel" type="button" role="tab">👤&nbsp;Mon&nbsp;profil</button>
+						</li>
+						<li class="nav-item">
+							<button class="nav-link" id="company-tab" data-bs-toggle="tab" data-bs-target="#company-panel" type="button" role="tab">🏢&nbsp;Mon&nbsp;entreprise</button>
+						</li>
+						<li class="nav-item">
+							<button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services-panel" type="button" role="tab">🛠&nbsp;Services</button>
+						</li>
+						<li class="nav-item">
+							<button class="nav-link" id="zones-tab" data-bs-toggle="tab" data-bs-target="#zones-panel" type="button" role="tab">📍&nbsp;Zones</button>
+						</li>
+						<li class="nav-item">
+							<button class="nav-link" id="dispo-tab" data-bs-toggle="tab" data-bs-target="#dispo-panel" type="button" role="tab">📅&nbsp;Disponibilités</button>
+						</li>
+						<li class="nav-item">
+							<button class="nav-link" id="notif-tab" data-bs-toggle="tab" data-bs-target="#notif-panel" type="button" role="tab">🔔&nbsp;Notifications</button>
+						</li>
+						<li class="nav-item">
+							<button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-panel" type="button" role="tab">🛡&nbsp;Sécurité</button>
+						</li>
+					</ul>
+				</div>
+
+				{{ form_start(settingsForm, {'attr': {'novalidate': 'novalidate'}}) }}
+
+				<div class="tab-content" id="settingsTabsContent">
+
+					<div class="tab-pane fade show active" id="profile-panel" role="tabpanel">
+						<div class="row g-4">
+
+							<div class="col-lg-4">
+								<div class="card tm-card p-4 h-100">
+									<h4 class="tm-card-title mb-4">Informations personnelles</h4>
+
+									<div class="mb-4 text-center p-4 rounded-4" style="background-color: var(--tm-background);">
+										<label class="form-label d-block text-start mb-3">Photo de profil</label>
+										<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle mb-3 border border-2 border-white shadow-sm" style="width: 90px; height: 90px; object-fit: cover;" alt="Avatar">
+										<button type="button" class="btn btn-outline-primary btn-md d-block mx-auto fw-medium px-3">Modifier la photo</button>
+										<small class="text-muted d-block mt-2 fs-7">PNG, JPG ou GIF. Max 2 Mo.</small>
+									</div>
+
+									<div class="mb-3 tm-form-row">
+										{{ form_row(settingsForm.firstName) }}
+									</div>
+									<div class="mb-3 tm-form-row">
+										{{ form_row(settingsForm.lastName) }}
+									</div>
+									<div class="mb-3 tm-form-row">
+										{{ form_row(settingsForm.phoneNumber) }}
+									</div>
+
+									<div class="mt-4 pt-2">
+										<button type="submit" class="btn tm-btn-service w-100 py-3 fw-bold">Enregistrer les modifications</button>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-lg-5">
+								<div class="card tm-card p-4 h-100">
+									<h4 class="tm-card-title mb-4">À propos de vous</h4>
+
+									<div class="mb-3 tm-form-row">
+										{{ form_row(settingsForm.prestataireProfile.metier) }}
+									</div>
+									<div class="mb-3 tm-form-row">
+										{{ form_row(settingsForm.prestataireProfile.description, {'attr': {'rows': 6}}) }}
+									</div>
+									<div class="mb-3 tm-form-row">
+										{{ form_row(settingsForm.prestataireProfile.experience) }}
+									</div>
+
+									<div class="mb-3">
+										<label class="form-label mb-2">Certifications</label>
+										<div class="d-flex flex-wrap gap-2 pt-1">
+											<button type="button" class="btn btn-light btn-md border border-dashed text-primary fw-medium px-3">+ Ajouter</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-lg-3">
+								<div class="d-flex flex-column gap-4">
+									<div class="card tm-card p-4">
+										<h5 class="fw-bold mb-3 fs-5" style="color: var(--tm-text);">Statut du compte</h5>
+										<div class="p-3 rounded-3 mb-0" style="background-color: rgba(22, 163, 74, 0.08); border: 1px solid rgba(22, 163, 74, 0.15);">
+											<div class="fw-bold small" style="color: var(--tm-success);">✓ Compte vérifié</div>
+											<div class="fs-7 text-muted mt-1">Félicitations ! Votre compte est validé.</div>
+										</div>
+									</div>
+
+									<div class="card tm-card p-4">
+										<h5 class="fw-bold mb-2 fs-5" style="color: var(--tm-text);">Note moyenne</h5>
+										<div class="d-flex align-items-baseline gap-2">
+											<span class="display-5 fw-bold" style="color: var(--tm-text);">
+												{{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0' }}
+											</span>
+											<span class="text-muted fs-5">/ 5</span>
+										</div>
+
+										<div class="my-2 fs-4" style="color: var(--tm-warning);">
+											{% if user.prestataireProfile and user.prestataireProfile.averageRating %}
+												{% for i in 1..5 %}
+													{{ i <= user.prestataireProfile.averageRating ? '★' : '☆' }}
+												{% endfor %}
+											{% else %}
+												☆☆☆☆☆
+											{% endif %}
+										</div>
+
+										<small class="text-muted fw-medium">
+											({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }}
+											avis)
+										</small>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-12 mt-3">
+								<div class="card tm-card p-4">
+									<h4 class="tm-card-title mb-3">Aperçu de votre profil public</h4>
+									<div class="p-3 p-md-4 border rounded-4 bg-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 shadow-sm">
+										<div class="d-flex align-items-center gap-3">
+											<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80' }}" class="rounded-circle border" style="width: 65px; height: 65px; object-fit: cover;">
+											<div>
+												<h5 class="mb-1 fw-bold" style="color: var(--tm-text);">{{ user.firstName }}
+													{{ user.lastName }}
+													<span class="badge bg-primary ms-1 fs-7">Vérifié</span>
+												</h5>
+												<p class="text-muted mb-0 fs-6">
+													<span style="color: var(--tm-text); font-weight: 500;">{{ user.prestataireProfile.metier|default('Plombier') }}</span>
+													• ⭐
+													{{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0' }}
+													({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }}
+													avis)
+													<span class="d-none d-md-inline">• 📍 Libourne et alentours</span>
+												</p>
+											</div>
+										</div>
+										<a href="#" class="btn btn-outline-secondary btn-md rounded-3 fw-medium px-4 text-center">Voir le profil public ↗</a>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="tab-pane fade" id="company-panel" role="tabpanel">
+						<div class="card tm-card p-4">
+
+							<h4 class="tm-card-title mb-4">Identité de l'entreprise</h4>
+							<div class="row g-4 mb-4">
+								<div class="col-md-6 tm-form-row">{{ form_row(settingsForm.prestataireProfile.companyName) }}</div>
+								<div class="col-md-6 tm-form-row">{{ form_row(settingsForm.prestataireProfile.legalName) }}</div>
+								<div class="col-md-4 tm-form-row">{{ form_row(settingsForm.prestataireProfile.structureType) }}</div>
+								<div class="col-md-4 tm-form-row">{{ form_row(settingsForm.prestataireProfile.siren) }}</div>
+								<div class="col-md-4 tm-form-row">{{ form_row(settingsForm.prestataireProfile.siret) }}</div>
+								<div class="col-md-6 tm-form-row">{{ form_row(settingsForm.prestataireProfile.vatNumber) }}</div>
+							</div>
+
+							<hr class="my-5 opacity-25" style="color: var(--tm-text-secondary);">
+
+							<h4 class="tm-card-title mb-4">Adresse du siège & Téléphones</h4>
+							<div class="row g-4 mb-4">
+								<div class="col-md-8 tm-form-row">{{ form_row(settingsForm.prestataireProfile.address) }}</div>
+								<div class="col-md-4 tm-form-row">{{ form_row(settingsForm.prestataireProfile.addressComplement) }}</div>
+								<div class="col-md-4 tm-form-row">{{ form_row(settingsForm.prestataireProfile.postalCode) }}</div>
+								<div class="col-md-4 tm-form-row">{{ form_row(settingsForm.prestataireProfile.city) }}</div>
+								<div class="col-md-4 tm-form-row">{{ form_row(settingsForm.prestataireProfile.country) }}</div>
+								<div class="col-md-6 tm-form-row">{{ form_row(settingsForm.prestataireProfile.phonePublic) }}</div>
+								<div class="col-md-6 tm-form-row">{{ form_row(settingsForm.prestataireProfile.phonePrivate) }}</div>
+							</div>
+
+							<hr class="my-5 opacity-25" style="color: var(--tm-text-secondary);">
+
+							<h4 class="tm-card-title mb-4">Liens & Réseaux Sociaux</h4>
+							<div class="row g-4">
+								<div class="col-md-6 tm-form-row">{{ form_row(settingsForm.prestataireProfile.website) }}</div>
+								<div class="col-md-6 tm-form-row">{{ form_row(settingsForm.prestataireProfile.facebookUrl) }}</div>
+								<div class="col-md-6 tm-form-row">{{ form_row(settingsForm.prestataireProfile.instagramUrl) }}</div>
+								<div class="col-md-6 tm-form-row">{{ form_row(settingsForm.prestataireProfile.linkedinUrl) }}</div>
+							</div>
+
+							<div class="mt-5 d-flex justify-content-center">
+								<button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold w-25 w-md-auto">Enregistrer l'entreprise</button>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="tab-pane fade" id="services-panel" role="tabpanel">
+						<div class="card tm-card p-4">
+							<h4>🛠️ Vos Services</h4>
+							<p class="text-muted fs-5">Configuration des prestations...</p>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="zones-panel" role="tabpanel">
+						<div class="card tm-card p-4">
+							<h4>📍 Zones d'intervention</h4>
+							<p class="text-muted fs-5">Gestion des rayons...</p>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="dispo-panel" role="tabpanel">
+						<div class="card tm-card p-4">
+							<h4>📅 Vos Disponibilités</h4>
+							<p class="text-muted fs-5">Calendrier d'ouverture...</p>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="notif-panel" role="tabpanel">
+						<div class="card tm-card p-4">
+							<h4>🔔 Vos Notifications</h4>
+							<p class="text-muted fs-5">Préférences d'alertes...</p>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="security-panel" role="tabpanel">
+						<div class="card tm-card p-4">
+							<h4>🛡️ Sièges & Sécurité</h4>
+							<p class="text-muted fs-5">Changement de mot de passe...</p>
+						</div>
+					</div>
+
+				</div>
+
+				{{ form_end(settingsForm) }}
+			</div>
+
+		</div>
+	</div>
+
+	<style>:root
+	{
+		--tm-primary: #061B56;
+		--tm-primary-hover: #0A286F;
+		--tm-service: #2046D8;
+		--tm-service-hover: #1B3CC0;
+		--tm-service-active: #1633A4;
+		--tm-accent: #F4A911;
+		--tm-accent-hover: #DC960E;
+		--tm-accent-active: #C5830C;
+		--tm-success: #16A34A;
+		--tm-warning: #F59E0B;
+		--tm-background: #F8F9FC;
+		--tm-surface: #FFFFFF;
+		--tm-border: #E5E7EB;
+		--tm-text: #061B56;
+		--tm-text-secondary: #667085;
+		--tm-text-secondary-sidebar: #A3AED0;
+	}
+
+	.tm-page-wrapper {
+		font-family: 'Poppins', sans-serif !important;
+		background-color: var(--tm-background);
+		color: var(--tm-text);
+		font-size: 15px !important;
+	}
+
+	.tm-sidebar {
+		background-color: var(--tm-primary);
+		border-right: 1px solid rgba(255, 255, 255, 0.08);
+	}
+
+	.tm-mobile-nav a {
+		opacity: 0.6;
+		transition: opacity 0.2s;
+	}
+	.tm-mobile-nav a:hover,
+	.tm-mobile-nav a.active-mobile {
+		opacity: 1;
+	}
+
+	.tm-nav-menu .nav-link {
+		color: rgba(255, 255, 255, 0.7) !important;
+		font-weight: 500;
+		padding: 12px 16px !important;
+		border-radius: 8px;
+		transition: all 0.2s ease;
+	}
+	.tm-nav-menu .nav-link:hover {
+		color: var(--tm-accent) !important;
+		background-color: rgba(255, 255, 255, 0.05);
+	}
+	.tm-nav-menu .nav-link.active {
+		background-color: var(--tm-accent) !important;
+		color: var(--tm-primary) !important;
+		font-weight: 600;
+	}
+
+	.tm-main-title {
+		color: var(--tm-primary);
+		font-size: 28px;
+	}
+	@media(min-width: 768px) {
+		.tm-main-title {
+			font-size: 32px;
+		}
+	}
+	.tm-subtitle {
+		color: var(--tm-text-secondary);
+		font-size: 15px;
+	}
+
+	.tm-card-title {
+		color: var(--tm-primary);
+		font-weight: 700;
+		font-size: 18px;
+		border-bottom: 2px solid var(--tm-background);
+		padding-bottom: 10px;
+	}
+
+	.tm-card {
+		background-color: var(--tm-surface);
+		border: 1px solid var(--tm-border) !important;
+		border-radius: 16px !important;
+		box-shadow: 0 4px 12px rgba(6, 27, 86, 0.03) !important;
+	}
+
+	.tm-tabs-wrapper {
+		overflow-x: auto;
+		white-space: nowrap;
+		-webkit-overflow-scrolling: touch;
+	}
+	.tm-tabs-wrapper::-webkit-scrollbar {
+		display: none;
+	}
+	.tm-tabs-wrapper {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+
+	.tm-custom-tabs {
+		border-bottom: 2px solid var(--tm-border) !important;
+	}
+	.tm-custom-tabs .nav-link {
+		border: none !important;
+		background: none !important;
+		color: var(--tm-text-secondary) !important;
+		font-weight: 500;
+		font-size: 16px;
+		padding: 0 4px 14px !important;
+		position: relative;
+		transition: color 0.2s ease;
+	}
+	.tm-custom-tabs .nav-link:hover {
+		color: var(--tm-accent) !important;
+	}
+	.tm-custom-tabs .nav-link.active {
+		color: var(--tm-service) !important;
+		font-weight: 600;
+	}
+	.tm-custom-tabs .nav-link.active::after {
+		content: '';
+		position: absolute;
+		bottom: -2px;
+		left: 0;
+		width: 100%;
+		height: 3px;
+		background-color: var(--tm-service);
+		border-radius: 3px;
+	}
+
+	.tm-form-row label {
+		font-weight: 600 !important;
+		color: var(--tm-text) !important;
+		margin-bottom: 8px !important;
+		font-size: 14px !important;
+	}
+	.tm-form-row input,
+	.tm-form-row textarea,
+	.tm-form-row select {
+		width: 100%;
+		display: block;
+		font-family: 'Poppins', sans-serif !important;
+		border-radius: 10px !important;
+		border: 1px solid var(--tm-border) !important;
+		padding: 12px 16px !important;
+		font-size: 15px !important;
+		color: var(--tm-text) !important;
+		background-color: #ffffff !important;
+		transition: all 0.2s ease-in-out;
+	}
+	.tm-form-row input:focus,
+	.tm-form-row textarea:focus,
+	.tm-form-row select:focus {
+		outline: none !important;
+		border-color: var(--tm-service) !important;
+		box-shadow: 0 0 0 4px rgba(32, 70, 216, 0.15) !important;
+	}
+
+	.tm-btn-service {
+		background-color: var(--tm-service) !important;
+		color: #ffffff !important;
+		border: none !important;
+		border-radius: 10px !important;
+		transition: all 0.2s ease;
+	}
+	.tm-btn-service:hover {
+		background-color: var(--tm-service-hover) !important;
+	}
+
+	.tm-btn-accent {
+		background-color: var(--tm-accent) !important;
+		color: var(--tm-primary) !important;
+		border: none !important;
+		border-radius: 8px !important;
+		transition: all 0.2s ease;
+	}
+
+	.fs-7 {
+		font-size: 12px !important;
+	}
+</style>{% endblock %}

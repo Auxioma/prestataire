@@ -400,9 +400,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->prestataireProfile;
     }
 
-    public function setPrestataireProfile(PrestataireProfile $prestataireProfile): static
+    public function setPrestataireProfile(?PrestataireProfile $prestataireProfile): static
     {
-        // set the owning side of the relation if necessary
+        // On gère le cas où on détache ou passe un profil null
+        if ($prestataireProfile === null) {
+            if ($this->prestataireProfile !== null) {
+                $this->prestataireProfile->setAccount(null);
+            }
+            $this->prestataireProfile = null;
+            return $this;
+        }
+
+        // Définir le côté propriétaire si nécessaire
         if ($prestataireProfile->getAccount() !== $this) {
             $prestataireProfile->setAccount($this);
         }

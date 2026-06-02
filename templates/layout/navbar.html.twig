@@ -11,7 +11,10 @@
 			</div>
 			<div class="d-flex flex-column lh-1">
 				<span class="text-white mb-0" style="letter-spacing: -0.5px; font-weight: 800 !important; font-size: 22px;">TrouveMoi</span>
-				<span style="color: #F4A911; font-size: 13px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;">Prestataires</span>
+				{# AJOUT DYNAMIQUE : Le sous-titre du logo s'adapte au rôle #}
+				<span style="color: #F4A911; font-size: 13px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;">
+					{{ is_granted('ROLE_PRESTATAIRE') ? 'Prestataires' : 'Particuliers' }}
+				</span>
 			</div>
 		</a>
 
@@ -53,37 +56,20 @@
 						Catégories
 					</a>
 					<ul class="dropdown-menu shadow border-0 mt-2">
-
 						{% for category in navbarCategories %}
-
 							<li class="dropdown-submenu">
-
-								<a class="dropdown-item fw-bold" href="#">
-									{{ category.name }}
-								</a>
-
+								<a class="dropdown-item fw-bold" href="#">{{ category.name }}</a>
 								{% if category.subCategories|length > 0 %}
-
 									<ul class="dropdown-menu">
-
 										{% for subCategory in category.subCategories %}
-
 											<li>
-												<a class="dropdown-item" href="#">
-													{{ subCategory.name }}
-												</a>
+												<a class="dropdown-item" href="#">{{ subCategory.name }}</a>
 											</li>
-
 										{% endfor %}
-
 									</ul>
-
 								{% endif %}
-
 							</li>
-
 						{% endfor %}
-
 					</ul>
 				</li>
 
@@ -128,11 +114,13 @@
 								</li>
 							{% endif %}
 
+							{# AJOUT DYNAMIQUE : Redirection vers le bon fichier/route de paramètres selon le rôle #}
 							<li>
-								<a class="dropdown-item fw-medium" href="#">
+								<a class="dropdown-item fw-medium" href="{{ is_granted('ROLE_PRESTATAIRE') ? path('app_prestataire_settings') : path('app_client_settings') }}">
 									<i class="fa-solid fa-gear me-2"></i>Paramètres
 								</a>
 							</li>
+
 							<li><hr class="dropdown-divider"></li>
 							<li>
 								<a class="dropdown-item text-danger fw-semibold" href="{{ path('app_logout') }}">
