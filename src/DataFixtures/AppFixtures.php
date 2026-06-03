@@ -5,6 +5,12 @@ namespace App\DataFixtures;
 use App\Entity\ServiceCategory;
 use App\Entity\Service;
 use App\Entity\User;
+use App\Entity\ClientProfile;
+use App\Entity\PrestataireProfile;
+use App\Enum\ClientTypeEnum;
+use App\Enum\PrestataireProfileStatusEnum;
+use App\Enum\VerificationStatusEnum;
+use App\Enum\SearchVisibilityEnum;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -19,6 +25,9 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
+        // Date commune pour les créations et vérifications par email
+        $now = new \DateTimeImmutable();
+
         // --------------------------------------------------------
         // 1. CRÉATION DES UTILISATEURS DE TEST
         // --------------------------------------------------------
@@ -28,37 +37,169 @@ class AppFixtures extends Fixture
         $admin->setEmail('admin@trouvemoi.fr');
         $admin->setRoles(['ROLE_ADMIN']);
         $admin->setPassword($this->passwordHasher->hashPassword($admin, 'Admin123!'));
-        if (method_exists($admin, 'setIsActive')) { 
-            $admin->setIsActive(true); 
+        
+        if (method_exists($admin, 'setFirstname')) { $admin->setFirstname('Admin'); }
+        if (method_exists($admin, 'setLastname')) { $admin->setLastname('TrouveMoi'); }
+        if (method_exists($admin, 'setAvatar')) { 
+            $admin->setAvatar('https://ui-avatars.com/api/?name=Admin+TrouveMoi&background=212529&color=fff&size=150'); 
+        }
+
+        if (method_exists($admin, 'setIsVerified')) { 
+            $admin->setIsVerified(true); 
+        }
+        if (method_exists($admin, 'setEmailVerifiedAt')) {
+            $admin->setEmailVerifiedAt($now);
         }
         $manager->persist($admin);
 
-        // Compte Client de test
-        $client = new User();
-        $client->setEmail('client@gmail.com');
-        $client->setRoles(['ROLE_CLIENT']);
-        $client->setPassword($this->passwordHasher->hashPassword($client, 'client123'));
-        if (method_exists($client, 'setIsActive')) { 
-            $client->setIsActive(true); 
-        }
-        $manager->persist($client);
+        // Mot de passe commun pour les autres utilisateurs de test
+        $commonPassword = '123Test!';
 
-        // Comptes Prestataires de test
-        $prestasData = [
-            'mario@plomberie.fr' => 'ROLE_PRESTATAIRE',
-            'jessica@clean.fr' => 'ROLE_PRESTATAIRE',
-            'contact@dev-informatique.fr' => 'ROLE_PRESTATAIRE'
+        // Liste des Clients avec l'API UI Avatars (Initiales et couleurs dédiées)
+        $clientsData = [
+            [
+                'email' => 'jean.dupont@gmail.com',
+                'firstname' => 'Jean',
+                'lastname' => 'Dupont',
+                'phone' => '0612345678',
+                'avatar' => 'https://ui-avatars.com/api/?name=Jean+Dupont&background=0D6EFD&color=fff&size=150',
+                'type' => ClientTypeEnum::PARTICULIER
+            ],
+            [
+                'email' => 'marie.lefevre@gmail.com',
+                'firstname' => 'Marie',
+                'lastname' => 'Lefevre',
+                'phone' => '0623456789',
+                'avatar' => 'https://ui-avatars.com/api/?name=Marie+Lefevre&background=E83E8C&color=fff&size=150',
+                'type' => ClientTypeEnum::PARTICULIER
+            ],
+            [
+                'email' => 'lucas.martin@gmail.com',
+                'firstname' => 'Lucas',
+                'lastname' => 'Martin',
+                'phone' => '0634567890',
+                'avatar' => 'https://ui-avatars.com/api/?name=Lucas+Martin&background=6F42C1&color=fff&size=150',
+                'type' => ClientTypeEnum::PROFESSIONNEL
+            ],
         ];
 
-        foreach ($prestasData as $email => $role) {
+        foreach ($clientsData as $data) {
+            $client = new User();
+            $client->setEmail($data['email']);
+            $client->setRoles(['ROLE_CLIENT']);
+            $client->setPassword($this->passwordHasher->hashPassword($client, $commonPassword));
+            
+            if (method_exists($client, 'setFirstname')) { $client->setFirstname($data['firstname']); }
+            if (method_exists($client, 'setLastname')) { $client->setLastname($data['lastname']); }
+            if (method_exists($client, 'setPhone')) { $client->setPhone($data['phone']); }
+            if (method_exists($client, 'setAvatar')) { $client->setAvatar($data['avatar']); }
+            
+            if (method_exists($client, 'setIsVerified')) { 
+                $client->setIsVerified(true); 
+            }
+            if (method_exists($client, 'setEmailVerifiedAt')) {
+                $client->setEmailVerifiedAt($now);
+            }
+            $manager->persist($client);
+
+            // --- CRÉATION DU CLIENT PROFILE ---
+            $clientProfile = new ClientProfile();
+            $clientProfile->setAccount($client); // Relation OneToOne via account
+            $clientProfile->setCreatedAt($now);
+            $clientProfile->setType($data['type']);
+            
+            // Si le client est un professionnel, on ajoute le nom de l'entreprise
+            if ($data['type'] === ClientTypeEnum::PROFESSIONNEL) {
+                $clientProfile->setCompanyName($data['lastname'] . ' Entreprise');
+            }
+
+            $manager->persist($clientProfile);
+        }
+
+        // Liste des Prestataires avec l'API UI Avatars
+        $prestasData = [
+            [
+                'email' => 'mario.plombier@plomberie.fr',
+                'firstname' => 'Mario',
+                'lastname' => 'Bros',
+                'phone' => '0645678901',
+                'avatar' => 'https://ui-avatars.com/api/?name=Mario+Bros&background=DC3545&color=fff&size=150',
+                'company' => 'Plomberie Bros & Co',
+                'metier' => 'Plombier Chauffagiste'
+            ],
+            [
+                'email' => 'jessica.clean@clean.fr',
+                'firstname' => 'Jessica',
+                'lastname' => 'Larsson',
+                'phone' => '0656789012',
+                'avatar' => 'https://ui-avatars.com/api/?name=Jessica+Larsson&background=FD7E14&color=fff&size=150',
+                'company' => 'Jessica Nettoyage',
+                'metier' => 'Agent d\'entretien'
+            ],
+            [
+                'email' => 'thomas.dev@dev-informatique.fr',
+                'firstname' => 'Thomas',
+                'lastname' => 'Durand',
+                'phone' => '0667890123',
+                'avatar' => 'https://ui-avatars.com/api/?name=Thomas+Durand&background=0DCAF0&color=fff&size=150',
+                'company' => 'Avenir Numérique',
+                'metier' => 'Développeur Web'
+            ],
+            [
+                'email' => 'julie.jardin@nature.fr',
+                'firstname' => 'Julie',
+                'lastname' => 'Moreau',
+                'phone' => '0678901234',
+                'avatar' => 'https://ui-avatars.com/api/?name=Julie+Moreau&background=198754&color=fff&size=150',
+                'company' => 'Julie Jardins Éco',
+                'metier' => 'Paysagiste'
+            ],
+            [
+                'email' => 'pierre.mecanique@garage.fr',
+                'firstname' => 'Pierre',
+                'lastname' => 'Rousseau',
+                'phone' => '0689012345',
+                'avatar' => 'https://ui-avatars.com/api/?name=Pierre+Rousseau&background=6C757D&color=fff&size=150',
+                'company' => 'Méca Dépannage 17',
+                'metier' => 'Mécanicien'
+            ],
+        ];
+
+        foreach ($prestasData as $data) {
             $prestaUser = new User();
-            $prestaUser->setEmail($email);
-            $prestaUser->setRoles([$role]);
-            $prestaUser->setPassword($this->passwordHasher->hashPassword($prestaUser, 'presta123'));
-            if (method_exists($prestaUser, 'setIsActive')) { 
-                $prestaUser->setIsActive(true); 
+            $prestaUser->setEmail($data['email']);
+            $prestaUser->setRoles(['ROLE_PRESTATAIRE']);
+            $prestaUser->setPassword($this->passwordHasher->hashPassword($prestaUser, $commonPassword));
+            
+            if (method_exists($prestaUser, 'setFirstname')) { $prestaUser->setFirstname($data['firstname']); }
+            if (method_exists($prestaUser, 'setLastname')) { $prestaUser->setLastname($data['lastname']); }
+            if (method_exists($prestaUser, 'setPhone')) { $prestaUser->setPhone($data['phone']); }
+            if (method_exists($prestaUser, 'setAvatar')) { $prestaUser->setAvatar($data['avatar']); }
+
+            if (method_exists($prestaUser, 'setIsVerified')) { 
+                $prestaUser->setIsVerified(true); 
+            }
+            if (method_exists($prestaUser, 'setEmailVerifiedAt')) {
+                $prestaUser->setEmailVerifiedAt($now);
             }
             $manager->persist($prestaUser);
+
+            // --- CRÉATION DU PRESTATAIRE PROFILE ---
+            $prestaProfile = new PrestataireProfile();
+            $prestaProfile->setAccount($prestaUser); // Relation OneToOne via account
+            $prestaProfile->setCompanyName($data['company']);
+            $prestaProfile->setMetier($data['metier']);
+            $prestaProfile->setCreatedAt($now);
+            
+            // Slug du prestataire (généré proprement grâce au slugger)
+            $prestaProfile->setSlug(strtolower($this->slugger->slug($data['company'])));
+            
+            // Configuration initiale via vos enums dédiés
+            $prestaProfile->setProfileStatus(PrestataireProfileStatusEnum::DRAFT);
+            $prestaProfile->setVerificationStatus(VerificationStatusEnum::NOT_VERIFIED);
+            $prestaProfile->setSearchVisibility(SearchVisibilityEnum::NORMAL);
+
+            $manager->persist($prestaProfile);
         }
 
         // --------------------------------------------------------

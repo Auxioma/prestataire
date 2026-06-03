@@ -13,7 +13,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
-// #[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_ADMIN')]
 class DashboardController extends AbstractDashboardController
 {
     public function __construct(

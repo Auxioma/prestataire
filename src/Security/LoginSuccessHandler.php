@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Security;
+
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
+
+class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
+{
+    public function __construct(private UrlGeneratorInterface $urlGenerator) {}
+
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token): Response
+    {
+        $user = $token->getUser();
+
+        // Si l'utilisateur est ADMIN, on le redirige vers l'URL demandée
+        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+            return new RedirectResponse('/admin/user');
+        }
+
+        // Pour les autres (Clients, Prestataires), direction la page d'accueil
+        return new RedirectResponse($this->urlGenerator->generate('app_home'));
+    }
+}
