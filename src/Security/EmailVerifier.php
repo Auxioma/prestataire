@@ -28,8 +28,6 @@ class EmailVerifier
                 'id' => $user->getId(),
             ]
         );
-
-
         $context = $email->getContext();
         $context['signedUrl'] = $signatureComponents->getSignedUrl();
         $context['expiresAtMessageKey'] = $signatureComponents->getExpirationMessageKey();
@@ -52,7 +50,7 @@ class EmailVerifier
         $user->setEmailVerifiedAt(new \DateTimeImmutable());
 
         if (in_array('ROLE_PRESTATAIRE', $user->getRoles())) {
-
+            
             $roles = $user->getRoles();
             $roles[] = 'ROLE_PRESTATAIRE_VERIFIED';
 

@@ -5,7 +5,6 @@
 
 {% block stylesheets %}
 	{{ parent() }}
-	{# Inclusion propre via AssetMapper #}
 	<link rel="stylesheet" href="{{ asset('styles/home/accueil.css') }}">
 {% endblock %}
 
@@ -13,6 +12,7 @@
 	<div
 		class="homepage-wrapper">
 
+		
 		{# 1. SECTION HERO AVEC IMAGE D'ARRIÈRE-PLAN #}
 		<div class="hero-section position-relative text-white">
 			<div class="container py-4">
@@ -127,7 +127,6 @@
 						<a href="#" class="card h-100 border-0 shadow-sm p-3 text-decoration-none tm-category-card rounded-3 bg-white d-flex flex-column align-items-center justify-content-center">
 							<div
 								class="d-flex align-items-center justify-content-center rounded-circle mb-2 category-icon-wrapper">
-								{# Utilisation de l'icône de la catégorie si elle existe, sinon la première lettre #}
 								{% if category.icon %}
 									<i class="fa-solid {{ category.icon }} fs-5"></i>
 								{% else %}

@@ -29,7 +29,6 @@ class ProfileController extends AbstractController
         if ($user->getPrestataireProfile() === null) {
             $profile = new PrestataireProfile();
             
-            // On établit la relation bidirectionnelle
             $user->setPrestataireProfile($profile);
             $profile->setAccount($user);
         }
@@ -47,7 +46,6 @@ class ProfileController extends AbstractController
                 $profile->setSlug(strtolower(str_replace(' ', '-', $profile->getCompanyName())));
             }
 
-            // Grâce au cascade: ['persist'] dans l'entité User, les deux tables se mettent à jour
             $entityManager->persist($user);
             $entityManager->flush();
 
@@ -64,7 +62,7 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * Paramètres du profil Client
+     * PARAMETRES PROFILE CLIENT
      */
     #[Route('/client/parametres', name: 'app_client_settings')]
     public function clientSettings(Request $request, EntityManagerInterface $entityManager): Response
@@ -80,7 +78,6 @@ class ProfileController extends AbstractController
         if ($user->getClientProfile() === null) {
             $profile = new ClientProfile();
             
-            // On établit la relation bidirectionnelle
             $user->setClientProfile($profile);
             $profile->setAccount($user);
         }

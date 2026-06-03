@@ -20,7 +20,6 @@ class AccountSettingsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // 1. Informations communes de la table 'users'
             ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
                 'attr' => ['class' => 'form-control']
@@ -37,13 +36,11 @@ class AccountSettingsType extends AbstractType
             // ->add('avatar') 
         ;
 
-        // 2. Imbrication conditionnelle selon le rôle de l'utilisateur connecté
         if ($this->security->isGranted('ROLE_PRESTATAIRE')) {
             $builder->add('prestataireProfile', PrestataireProfileType::class, [
                 'label' => false,
             ]);
         } else {
-            // Si ce n'est pas un prestataire, c'est un client connecté sur sa route dédiée
             $builder->add('clientProfile', ClientProfileType::class, [
                 'label' => false,
             ]);

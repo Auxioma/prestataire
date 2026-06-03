@@ -21,13 +21,11 @@ class PrestataireProfileCrudController extends AbstractCrudController
     {
         yield IdField::new('id')->hideOnForm();
 
-        // Liaison avec le compte User global
         yield AssociationField::new('account', 'Utilisateur');
 
         yield TextField::new('companyName', 'Nom de l\'entreprise');
         yield TextField::new('siret', 'Numéro SIRET');
 
-        // Gestion de ton enum avec EasyAdmin 5
         yield ChoiceField::new('ProfileStatus', 'Statut du Profil')
             ->setChoices(PrestataireProfileStatusEnum::cases())
             ->setFormTypeOption('class', PrestataireProfileStatusEnum::class)

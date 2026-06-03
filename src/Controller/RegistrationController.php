@@ -42,7 +42,6 @@ class RegistrationController extends AbstractController
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
-        // On récupère le rôle directement depuis l'URL (?role=...)
         $accountType = $request->query->get('role', 'client');
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -89,8 +88,10 @@ class RegistrationController extends AbstractController
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
 
-            // 5. Connexion automatique immédiate
+            // 5. Connexion automatique immédiate optionnelle
             // $security->login($user, 'form_login', 'main');
+
+            // 6. Redirection vers la page d'accueil
             return $this->redirectToRoute('app_home');
         }
 

@@ -21,18 +21,14 @@ class ClientProfileCrudController extends AbstractCrudController
     {
         yield IdField::new('id')->hideOnForm();
         
-        // Liaison avec le compte global (grâce au __toString() sur User, l'email s'affichera tout seul)
         yield AssociationField::new('account', 'Utilisateur global');
 
-        // Récupération du Nom et Prénom depuis l'entité User liée via la notation pointée !
         yield TextField::new('account.firstName', 'Prénom du Client')->hideOnForm();
         yield TextField::new('account.lastName', 'Nom du Client')->hideOnForm();
 
-        // Informations propres au profil Client
         yield TextField::new('companyName', "Nom de l'entreprise")->hideOnIndex();
         yield TextField::new('defaultCity', 'Ville principale');
 
-        // Correction : On cible la propriété 'type' et non 'clientType'
         yield ChoiceField::new('type', 'Type de Client')
             ->setChoices(ClientTypeEnum::cases())
             ->setFormTypeOption('class', ClientTypeEnum::class)

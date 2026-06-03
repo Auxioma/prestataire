@@ -32,14 +32,14 @@ class RegistrationFormType extends AbstractType
                 'mapped' => false,
                 'attr' => [
                     'autocomplete' => 'new-password',
-                    'id' => 'registration_form_plainPassword' // Id explicite pour le JS
+                    'id' => 'registration_form_plainPassword' 
                 ],
                 'constraints' => [
                     new NotBlank(
                         message: 'Please enter a password'
                     ),
                     new Length(
-                        min: 8, // On passe à 8 caractères minimum pour plus de sécurité
+                        min: 8, 
                         minMessage: 'Votre mot de passe doit faire au moins {{ limit }} caractères',
                         max: 4096
                     ),

@@ -17,12 +17,10 @@ class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
     {
         $user = $token->getUser();
 
-        // Si l'utilisateur est ADMIN, on le redirige vers l'URL demandée
         if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
             return new RedirectResponse('/admin/user');
         }
 
-        // Pour les autres (Clients, Prestataires), direction la page d'accueil
         return new RedirectResponse($this->urlGenerator->generate('app_home'));
     }
 }

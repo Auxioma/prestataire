@@ -13,15 +13,12 @@ class SecurityController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
     {        
-        // On ne nettoie que si on affiche la page (GET), pas quand on valide le formulaire (POST)
         if ($request->isMethod('GET')) {
             $request->getSession()->remove('oauth_registration_role');
         }
 
-        // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 
-        // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', [

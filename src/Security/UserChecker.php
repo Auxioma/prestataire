@@ -27,6 +27,5 @@ class UserChecker implements UserCheckerInterface
         UserInterface $user,
         ?TokenInterface $token = null
     ): void {
-        // Rien à faire pour l'instant
     }
 }

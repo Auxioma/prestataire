@@ -25,7 +25,6 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        // Date commune pour les créations et vérifications par email
         $now = new \DateTimeImmutable();
 
         // --------------------------------------------------------
@@ -52,10 +51,8 @@ class AppFixtures extends Fixture
         }
         $manager->persist($admin);
 
-        // Mot de passe commun pour les autres utilisateurs de test
         $commonPassword = '123Test!';
 
-        // Liste des Clients avec l'API UI Avatars (Initiales et couleurs dédiées)
         $clientsData = [
             [
                 'email' => 'jean.dupont@gmail.com',
@@ -104,11 +101,10 @@ class AppFixtures extends Fixture
 
             // --- CRÉATION DU CLIENT PROFILE ---
             $clientProfile = new ClientProfile();
-            $clientProfile->setAccount($client); // Relation OneToOne via account
+            $clientProfile->setAccount($client); 
             $clientProfile->setCreatedAt($now);
             $clientProfile->setType($data['type']);
             
-            // Si le client est un professionnel, on ajoute le nom de l'entreprise
             if ($data['type'] === ClientTypeEnum::PROFESSIONNEL) {
                 $clientProfile->setCompanyName($data['lastname'] . ' Entreprise');
             }
@@ -186,7 +182,7 @@ class AppFixtures extends Fixture
 
             // --- CRÉATION DU PRESTATAIRE PROFILE ---
             $prestaProfile = new PrestataireProfile();
-            $prestaProfile->setAccount($prestaUser); // Relation OneToOne via account
+            $prestaProfile->setAccount($prestaUser); 
             $prestaProfile->setCompanyName($data['company']);
             $prestaProfile->setMetier($data['metier']);
             $prestaProfile->setCreatedAt($now);
@@ -194,7 +190,7 @@ class AppFixtures extends Fixture
             // Slug du prestataire (généré proprement grâce au slugger)
             $prestaProfile->setSlug(strtolower($this->slugger->slug($data['company'])));
             
-            // Configuration initiale via vos enums dédiés
+            // Configuration initiale via enums dédiés
             $prestaProfile->setProfileStatus(PrestataireProfileStatusEnum::DRAFT);
             $prestaProfile->setVerificationStatus(VerificationStatusEnum::NOT_VERIFIED);
             $prestaProfile->setSearchVisibility(SearchVisibilityEnum::NORMAL);
