@@ -1,28 +1,25 @@
 {# NAVBAR #}
-<nav class="navbar navbar-expand-xl navbar-dark sticky-top" style="background-color: #061B56; padding-top: 14px; padding-bottom: 14px; font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;">
+<nav class="navbar navbar-expand-xl navbar-dark sticky-top" data-controller="navbar" style="background-color: #061B56; padding-top: 14px; padding-bottom: 14px; font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;">
 	<div class="container">
 
 		<a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none py-0" href="{{ path('app_home') }}">
-			<div class="position-relative d-flex align-items-center justify-content-center rounded-circle" style="width: 40px; height: 40px; border: 3px solid #F4A911; background-color: transparent; flex-shrink: 0;">
-				<div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width: 18px; height: 18px;">
-					<div class="bg-dark rounded-circle" style="width: 8px; height: 8px;"></div>
-				</div>
-				<div class="position-absolute" style="bottom: -5px; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid #F4A911;"></div>
-			</div>
+			<img src="{{ asset('images/logo_trouvemoipresta.png') }}" alt="Logo TrouveMoi" style="height: 40px; width: auto; flex-shrink: 0; object-fit: contain;">
 			<div class="d-flex flex-column lh-1">
 				<span class="text-white mb-0" style="letter-spacing: -0.5px; font-weight: 800 !important; font-size: 22px;">TrouveMoi</span>
 				{# AJOUT DYNAMIQUE : Le sous-titre du logo s'adapte au rôle #}
 				<span style="color: #F4A911; font-size: 13px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;">
-					{{ is_granted('ROLE_PRESTATAIRE') ? 'Prestataires' : 'Particuliers' }}
+					PRESTATAIRES
 				</span>
 			</div>
 		</a>
 
 		<div class="d-none d-lg-block ms-4 grow" style="max-width: 380px;">
-			<div class="position-relative">
-				<input type="text" class="form-control text-white border-0 px-4 py-2" placeholder="Rechercher un prestataire..." style="background-color: rgba(255, 255, 255, 0.08); border-radius: 50px; font-size: 13px; padding-right: 40px !important; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500;"/>
+			<div
+				class="position-relative">
+				{# CORRECTION : Remplacement de la police par Poppins et gestion des couleurs du texte/placeholder #}
+				<input type="text" class="form-control text-white border-0 px-4 py-2 tm-search-input" placeholder="Rechercher un prestataire..." style="background-color: rgba(255, 255, 255, 0.08); border-radius: 50px; font-size: 13px; padding-right: 40px !important; font-family: 'Poppins', sans-serif; font-weight: 400; color: #ffffff !important;"/>
 				<div class="position-absolute end-0 top-50 translate-middle-y pe-3" style="pointer-events: none;">
-					<i class="fa-solid fa-magnifying-glass text-white opacity-50" style="font-size: 13px;"></i>
+					<i class="fa-solid fa-magnifying-glass text-white opacity-75" style="font-size: 13px;"></i>
 				</div>
 			</div>
 		</div>
@@ -42,9 +39,15 @@
 						<li>
 							<a class="dropdown-item fw-semibold" href="#">Tous les prestataires</a>
 						</li>
+
+						<li><hr class="dropdown-divider opacity-50"></li>
+
 						<li>
 							<a class="dropdown-item fw-semibold" href="#">Les mieux notés</a>
 						</li>
+
+						<li><hr class="dropdown-divider opacity-50"></li>
+
 						<li>
 							<a class="dropdown-item fw-semibold" href="#">Disponibles immédiatement</a>
 						</li>
@@ -69,6 +72,12 @@
 									</ul>
 								{% endif %}
 							</li>
+
+							{# AJOUT DU SÉPARATEUR : Sauf après le dernier élément de la boucle #}
+							{% if not loop.last %}
+								<li><hr class="dropdown-divider opacity-50"></li>
+							{% endif %}
+
 						{% endfor %}
 					</ul>
 				</li>
@@ -153,33 +162,3 @@
 		</div>
 	</div>
 </nav>
-
-<style>
-	/* Chargement des polices Google Fonts */
-	@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap');
-
-	/* Liens de navigation : Gras et transition de couleur fluide selon vos règles (Navigation Hover = #F4A911) */
-	.tm-nav-item {
-		font-size: 14px !important;
-		font-weight: 700 !important;
-		letter-spacing: -0.2px;
-		transition: color 0.2s ease;
-	}
-	.tm-nav-item:hover {
-		color: #F4A911 !important;
-	}
-
-	/* Bouton Proposer une prestation : États d'après votre charte (Default #F4A911 -> Hover #DC960E -> Active #C5830C) */
-	.tm-btn-cta {
-		background-color: #F4A911;
-	}
-	.tm-btn-cta:hover {
-		background-color: #DC960E;
-	}
-	.tm-btn-cta:active {
-		background-color: #C5830C;
-	}
-	.tm-btn-cta:focus {
-		box-shadow: 0 0 0 3px rgba(244, 169, 17, 0.30);
-	}
-</style>
