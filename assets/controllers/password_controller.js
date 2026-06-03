@@ -1,61 +1,62 @@
-import { Controller } from '@hotwired/stimulus';
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
     static targets = [
-        'input',
-        'length',
-        'uppercase',
-        'number',
-        'special'
+        "input",
+        "toggle",
+        "length",
+        "uppercase",
+        "number",
+        "special",
     ];
 
     connect() {
+        this.renderClosedEye();
         this.checkPassword();
     }
 
-    checkPassword() {
-        const val = this.inputTarget.value;
+    toggleVisibility() {
+        const visible = this.inputTarget.type === "text";
 
-        this.updateRequirement(
-            this.lengthTarget,
-            val.length >= 8,
-            'Au moins 8 caractères'
-        );
+        this.inputTarget.type = visible ? "password" : "text";
 
-        this.updateRequirement(
-            this.uppercaseTarget,
-            /[A-Z]/.test(val),
-            'Au moins une majuscule'
-        );
-
-        this.updateRequirement(
-            this.numberTarget,
-            /\d/.test(val),
-            'Au moins un chiffre'
-        );
-
-        this.updateRequirement(
-            this.specialTarget,
-            /[\W_]/.test(val),
-            'Au moins un caractère spécial (@, $, !, %, *, ?, &, #, _, etc.)'
-        );
+        if (visible) {
+            this.renderClosedEye();
+        } else {
+            this.renderOpenEye();
+        }
     }
 
-    updateRequirement(element, isValid, text) {
-        if (isValid) {
-            element.classList.remove('text-danger');
-            element.classList.add('text-success', 'fw-semibold');
+    checkPassword() {
+        const value = this.inputTarget.value;
 
-            element.innerHTML = `
-                ✅ <span class="ms-1">${text}</span>
-            `;
-        } else {
-            element.classList.remove('text-success', 'fw-semibold');
-            element.classList.add('text-danger');
+        this.updateRequirement(this.lengthTarget, value.length >= 8);
 
-            element.innerHTML = `
-                ❌ <span class="ms-1">${text}</span>
-            `;
-        }
+        this.updateRequirement(this.uppercaseTarget, /[A-Z]/.test(value));
+
+        this.updateRequirement(this.numberTarget, /\d/.test(value));
+
+        this.updateRequirement(this.specialTarget, /[\W_]/.test(value));
+    }
+
+    updateRequirement(element, valid) {
+        element.classList.remove("valid", "invalid");
+
+        element.classList.add(valid ? "valid" : "invalid");
+
+        const text = element.textContent
+            .replace("✅", "")
+            .replace("❌", "")
+            .trim();
+
+        element.textContent = `${valid ? "✅" : "❌"} ${text}`;
+    }
+
+    renderOpenEye() {
+        this.toggleTarget.innerHTML = '<i class="bi bi-eye-fill"></i>';
+    }
+
+    renderClosedEye() {
+        this.toggleTarget.innerHTML = '<i class="bi bi-eye-slash-fill"></i>';
     }
 }
