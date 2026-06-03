@@ -1,0 +1,43 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      SSHPASS: ${{ secrets.APP_PASS }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install sshpass
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sshpass
+
+      - name: Deploy to preprod
+        run: |
+          sshpass -e ssh -o StrictHostKeyChecking=no -p 5022 ${{ secrets.APP_USER }}@${{ secrets.APP_HOST }} << 'EOF'
+            set -e
+
+            cd ~/maxime
+            git pull origin master
+
+            php composer.phar install --no-interaction --prefer-dist --optimize-autoloader
+
+            php composer.phar dump-env dev
+            php bin/console doctrine:schema:drop --full-database --force
+            php bin/console d:s:u --force
+            php bin/console doctrine:fixtures:load --no-interaction
+            php bin/console cache:clear --no-interaction
+            php bin/console cache:warmup --no-interaction
+            php bin/console assets:install public --no-interaction
+            php bin/console importmap:install --no-interaction
+            php bin/console asset-map:compile
+          EOF
