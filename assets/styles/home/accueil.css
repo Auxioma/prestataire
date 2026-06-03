@@ -1,104 +1,169 @@
-/* =========================================================================
-   CONFIGURATION GLOBALE DU SITE
-   ========================================================================= */
-body {
-    background-color: gray !important; 
+/* 1. HERO SECTION */
+.hero-section {
+    background: 
+        linear-gradient(to right, 
+            rgba(6, 27, 86, 1) 0%, 
+            rgba(6, 27, 86, 1) 30%, 
+            rgba(6, 27, 86, 0.85) 45%,
+            rgba(6, 27, 86, 0.5) 60%, 
+            rgba(6, 27, 86, 0.1) 85%,
+            rgba(6, 27, 86, 0) 100%
+        ), 
+        url('../../images/img_presta_homepage04.png') no-repeat;
+    
+    background-position: center, right center;
+    background-size: cover, 75% auto;
+    background-color: #061b56;
+
+    padding-top: 50px;
+    padding-bottom: 120px;
 }
 
-/* =========================================================================
-   1. SECTION HERO (ACCUEIL)
-   ========================================================================= */
-.homepage-wrapper .hero-section,
-div.hero-section {
-    background-color: transparent !important; /* On tue le fond gris Bootstrap */
-    background-image: linear-gradient(135px, #1e293b 0%, #0f172a 100%) !important; /* On force le dégradé */
-    background: linear-gradient(135px, #1e293b 0%, #0f172a 100%) !important; /* Sécurité pour certains navigateurs */
-    padding: 80px 0 100px 0 !important;
-    color: #ffffff !important;
+/* 2. OVERLAP DE LA BARRE DE RECHERCHE */
+.search-overlap-wrapper {
+    position: relative;
+    z-index: 10;
+    height: 0;
+}
+.search-overlap-card {
+    transform: translateY(-50%);
+    border-radius: 16px !important;
+}
+.search-input,
+.search-select {
+    border: 0 !important;
+    padding: 0 !important;
+    background-color: transparent !important;
+    font-size: 13px;
+    color: #495057;
+    box-shadow: none !important;
+    width: 100%;
+}
+.search-input::placeholder {
+    color: #9ba4b0;
+}
+.select-wrapper {
+    position: relative;
+}
+.search-select {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    padding-right: 20px !important;
+}
+.select-arrow-icon {
+    position: absolute;
+    right: 0;
+    bottom: 2px;
+    font-size: 11px;
+    color: #9ba4b0;
+    pointer-events: none;
+}
+.search-divider {
+    position: absolute;
+    right: 0;
+    top: 15%;
+    height: 70%;
+    width: 1px;
+    background-color: var(--tm-border-color);
+}
+.search-submit-btn {
+    background-color: var(--tm-service);
+    border: 0;
+    color: #fff;
+    height: 48px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+.search-submit-btn:hover {
+    background-color: var(--tm-service-hover);
+    color: #fff;
 }
 
-/* Titre principal de la maquette */
-.hero-title {
-    font-size: 2.75rem !important;
-    font-weight: 800 !important;
-    color: #ffffff !important;
-    letter-spacing: -0.03em !important;
-    line-height: 1.2;
+@media(max-width: 991.98px) {
+    .search-overlap-card { transform: translateY(-20px); }
+    .search-overlap-wrapper { height: auto; }
+    .search-submit-btn { width: 100%; margin-top: 10px; }
+    .search-divider { display: none; }
 }
 
-/* Accentuation orange sur le titre */
-.hero-title-highlight {
-    color: #f59e0b !important;
+/* 3. SECTION CATÉGORIES POPULAIRES */
+.main-content-section {
+    margin-top: 100px;
+}
+.category-col {
+    flex: 1 1 120px;
+    max-width: 140px;
+}
+.tm-category-card {
+    transition: all 0.2s ease;
+    min-height: 110px;
+}
+.tm-category-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(6, 27, 86, 0.08) !important;
+}
+.category-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    background-color: var(--tm-icon-bg);
+    color: var(--tm-service) !important;
+}
+.all-categories-col {
+    flex: 1 1 140px;
+    max-width: 160px;
+}
+.all-categories-card {
+    border-color: var(--tm-border-color) !important;
+    border-style: dashed !important;
+    transition: all 0.2s ease;
+    min-height: 110px;
 }
 
-/* Sous-titre d'accompagnement */
-.hero-lead {
-    font-size: 1.15rem !important;
-    color: #cbd5e1 !important;
-    max-width: 600px;
-    margin: 0 auto;
-    font-weight: 400;
-    line-height: 1.6;
+/* 4. PRESTATAIRES À LA UNE */
+.provider-card {
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04) !important;
 }
-
-/* Badges de réassurance du Hero */
-.tm-badge-hero {
-    background-color: rgba(100, 116, 139, 0.25) !important; /* bg-secondary + opacité */
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
+.provider-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.08) !important;
 }
-
-/* =========================================================================
-   2. SECTION ZONE CONTENU & GRILLE DE CATÉGORIES
-   ========================================================================= */
-.category-section-title {
-    color: #0f172a !important;
-    font-weight: 800 !important;
-    letter-spacing: -0.02em !important;
-}
-
-.category-section-subtitle {
-    color: #64748b !important; /* text-muted adapté */
-}
-
-/* Structure de la carte de catégorie */
-.tm-card {
-    background-color: #ffffff !important; /* Blanc pur pour trancher avec le whitesmoke */
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 12px !important;
-    padding: 1rem !important; /* Équivalent p-3 */
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important; /* shadow-sm léger */
-    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), 
-                box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1), 
-                border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-/* Effet au survol premium (Bordure ambrée et effet d'élévation) */
-.tm-card:hover {
-    transform: translateY(-5px) !important;
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.06) !important;
-    border-color: #f59e0b !important;
-}
-
-/* Bloc contenant la lettre/icône à gauche */
-.tm-icon-box {
-    width: 50px;
-    height: 50px;
-    min-width: 50px;
-    background-color: rgba(245, 158, 11, 0.1) !important; /* bg-warning + opacité */
-    color: #f59e0b !important; /* text-warning */
-    border-radius: 8px !important;
+.favorite-btn {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    z-index: 10;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 50% !important;
+}
+.favorite-btn:hover i {
+    color: #dc3545 !important;
+}
+.provider-img {
+    height: 160px;
+    object-fit: cover;
 }
 
-/* Contenu textuel de la carte */
-.tm-card-title {
-    color: #1e293b !important;
-    font-size: 1rem !important; /* Équivalent h6 */
+/* REASSURANCE SIDEBAR */
+.reassurance-aside {
+    background-color: var(--tm-icon-bg) !important;
+}
+.reassurance-main-title {
+    font-size: 18px;
+    line-height: 1.3;
 }
 
-.tm-card-description {
-    color: #64748b !important;
+/* 5. BANDEAU CARACTÉRISTIQUES BAS */
+.feature-bottom-icon {
+    width: 44px;
+    height: 44px;
+    background-color: var(--tm-icon-bg);
+    color: var(--tm-service);
+    flex-shrink: 0;
 }

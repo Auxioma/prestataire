@@ -207,7 +207,7 @@ class AppFixtures extends Fixture
         // --------------------------------------------------------
         $catalogData = [
             'Bâtiment & Travaux' => [
-                'icon' => 'bi-house-gear',
+                'icon' => 'fa-house',
                 'color' => '#0d6efd',
                 'subs' => [
                     'Plomberie' => [
@@ -230,7 +230,7 @@ class AppFixtures extends Fixture
                 ]
             ],
             'Jardin & Extérieur' => [
-                'icon' => 'bi-tree',
+                'icon' => 'fa-tree',
                 'color' => '#198754',
                 'subs' => [
                     'Entretien Espaces Verts' => [
@@ -247,7 +247,7 @@ class AppFixtures extends Fixture
                 ]
             ],
             'High-Tech & Informatique' => [
-                'icon' => 'bi-laptop',
+                'icon' => 'fa-laptop',
                 'color' => '#0dcaf0',
                 'subs' => [
                     'Assistance PC / Mac' => [
@@ -264,7 +264,7 @@ class AppFixtures extends Fixture
                 ]
             ],
             'Services à la Personne' => [
-                'icon' => 'bi-heart-pulse',
+                'icon' => 'fa-heart-pulse',
                 'color' => '#e83e8c',
                 'subs' => [
                     'Ménage & Entretien' => [
@@ -285,7 +285,7 @@ class AppFixtures extends Fixture
                 ]
             ],
             'Cours & Formations' => [
-                'icon' => 'bi-book',
+                'icon' => 'fa-book',
                 'color' => '#6f42c1',
                 'subs' => [
                     'Soutien Scolaire' => [
@@ -307,7 +307,7 @@ class AppFixtures extends Fixture
                 ]
             ],
             'Mécanique & Véhicules' => [
-                'icon' => 'bi-nut',
+                'icon' => 'fa-car',
                 'color' => '#6c757d',
                 'subs' => [
                     'Entretien Auto' => [
@@ -322,7 +322,7 @@ class AppFixtures extends Fixture
                 ]
             ],
             'Événementiel & Fêtes' => [
-                'icon' => 'bi-gift',
+                'icon' => 'fa-gift',
                 'color' => '#fd7e14',
                 'subs' => [
                     'Photographie' => [
@@ -342,7 +342,7 @@ class AppFixtures extends Fixture
                 ]
             ],
             'Santé & Bien-être' => [
-                'icon' => 'bi-emoji-smile',
+                'icon' => 'fa-heart-pulse',
                 'color' => '#20c997',
                 'subs' => [
                     'Massages & Relaxation' => [
@@ -358,7 +358,7 @@ class AppFixtures extends Fixture
                 ]
             ],
             'Animaux & Compagnie' => [
-                'icon' => 'bi-dog',
+                'icon' => 'fa-dog',
                 'color' => '#ffc107',
                 'subs' => [
                     'Garde & Visites' => [
@@ -373,7 +373,7 @@ class AppFixtures extends Fixture
                 ]
             ],
             'Déménagement & Transport' => [
-                'icon' => 'bi-truck',
+                'icon' => 'fa-truck',
                 'color' => '#17a2b8',
                 'subs' => [
                     'Aide au Déménagement' => [
