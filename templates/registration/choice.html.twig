@@ -1,318 +1,209 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Type de compte - TrouveMoi Prestataires{% endblock %}
+{% block title %}Type de compte - TrouveMoi Prestataires
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('styles/register/choice.css') }}">
+{% endblock %}
 
 {% block body %}
-<style>
-    /* ==========================================================================
-       VARIABLES ET SECTIONS GLOBALES DE BASE
-       ========================================================================== */
-    :root {
-        --tm-primary: #061B56;
-        --tm-primary-hover: #0A286F;
-        --tm-service: #2046D8;
-        --tm-service-hover: #1B3CC0;
-        --tm-service-active: #1633A4;
-        --tm-accent: #F4A911;
-        --tm-accent-hover: #DC960E;
-        --tm-success: #16A34A;
-        --tm-background: #F8F9FC;
-        --tm-surface: #FFFFFF;
-        --tm-border: #E5E7EB;
-        --tm-text: #061B56;
-        --tm-text-secondary: #667085;
-        --tm-shadow: 0 18px 45px rgba(6, 27, 86, 0.08);
-    }
+	<main class="tm-login-section py-4">
+		<div class="container-fluid px-4 px-xxl-5">
 
-    body {
-        font-family: "Poppins", sans-serif;
-        background: var(--tm-background);
-        color: var(--tm-text);
-    }
+			<section class="card tm-login-card">
+				<div
+					class="row g-0">
 
-    a { text-decoration: none; }
+					{# PANNEAU VISUEL GAUCHE #}
+					<div class="col-12 col-xl-5 col-xxl-4">
+						<div class="tm-login-visual h-100 d-flex align-items-stretch">
+							<div
+								class="tm-login-visual-content px-4 px-md-5 py-5 d-flex flex-column w-100">
 
-    /* ==========================================================================
-       PANNEAU VISUEL GAUCHE (FIDÈLE À PRESTAREGISTERCHOICE.JPEG)
-       ========================================================================== */
-    .tm-login-visual {
-        min-height: 780px;
-        position: relative;
-        background: linear-gradient(180deg, rgba(6, 27, 86, 0.95) 0%, rgba(6, 27, 86, 0.85) 50%, rgba(6, 27, 86, 0.4) 100%),
-                    url("https://images.unsplash.com/photo-1516514122718-d98c199bb69d?auto=format&fit=crop&w=1200&q=80"); /* Version réelle de l'utilitaire pro arrière-plan */
-        background-size: cover;
-        background-position: center;
-    }
-    .tm-login-visual-content { position: relative; z-index: 2; max-width: 540px; }
-    .tm-login-title { font-size: 40px; line-height: 1.2; font-weight: 800; letter-spacing: -1px; color: #ffffff; }
-    .tm-login-title span { color: var(--tm-accent); }
-    .tm-login-intro { color: rgba(255, 255, 255, 0.90); font-size: 16px; line-height: 1.6; font-weight: 500; }
-    
-    .tm-benefit-icon-outline {
-        width: 44px; height: 44px; border-radius: 50%;
-        border: 1px solid rgba(255, 255, 255, 0.3); color: #ffffff;
-        flex: 0 0 44px; font-size: 20px;
-    }
+								{# Logo d'entête #}
+								<a class="tm-logo d-flex align-items-center gap-2 text-decoration-none py-0 mb-4" href="{{ path('app_home') }}">
+									<img src="{{ asset('images/logo_trouvemoipresta.png') }}" alt="Logo TrouveMoi" class="brand-logo">
+									<div class="d-flex flex-column lh-1">
+										<span class="brand-title mb-0">TrouveMoi</span>
+										<span class="brand-subtitle">PRESTATAIRES</span>
+									</div>
+								</a>
 
-    /* Logo dans le bandeau visuel */
-    .tm-visual-logo { display: flex; align-items: center; gap: 12px; }
-    .tm-logo-icon-small {
-        width: 38px; height: 38px; border: 4px solid var(--tm-accent);
-        border-radius: 50% 50% 50% 6px; transform: rotate(-45deg);
-        display: flex; align-items: center; justify-content: center;
-    }
-    .tm-logo-icon-small i { transform: rotate(45deg); color: #ffffff; font-size: 16px; }
-    .tm-logo-text-small { font-size: 20px; font-weight: 800; color: #ffffff; line-height: 1; }
-    .tm-logo-text-small span { display: block; font-size: 11px; color: var(--tm-accent); font-weight: 700; margin-top: 2px; }
+								{# Textes d'introduction - On vire complètement le my-auto / mt-5 d'ici #}
+								<div class="py-2 mb-4">
+									<h1 class="tm-login-title mb-4">
+										Bienvenue sur<br>
+										<span>TrouveMoi Prestataires</span>
+									</h1>
+									<p class="tm-login-intro mb-4">
+										Connectez-vous pour accéder à votre espace et profiter de tous nos services.
+									</p>
 
-    /* ==========================================================================
-       ZONE DE DROITE & EN-TÊTE EN-LIGNE
-       ========================================================================== */
-    .tm-choice-area { min-height: 780px; background: #ffffff; position: relative; }
-    .tm-choice-container { max-width: 780px; width: 100%; }
-    .tm-choice-title { font-size: 34px; line-height: 1.2; font-weight: 800; letter-spacing: -0.5px; color: var(--tm-primary); text-align: center; }
-    .tm-choice-subtitle { color: var(--tm-text-secondary); font-size: 15px; font-weight: 500; text-align: center; }
-    
-    .tm-top-nav-inline { position: absolute; top: 30px; right: 40px; z-index: 10; }
-    .tm-btn-outline-login {
-        border: 1px solid #CBD5E1; border-radius: 8px;
-        padding: 8px 22px; font-weight: 600; color: var(--tm-primary);
-        font-size: 14px; transition: all 0.2s ease;
-    }
-    .tm-btn-outline-login:hover { border-color: var(--tm-service); color: var(--tm-service); }
+									{# Liste des avantages (Panneau Gauche) #}
+									<div class="d-flex flex-column gap-4">
+										<div class="d-flex align-items-start gap-3">
+											<div class="tm-benefit-icon-outline d-flex align-items-center justify-content-center">
+												<img src="{{ asset('images/categories/icons/shield-halved-solid.png') }}" alt="shield-icon">
+											</div>
+											<div>
+												<h2 class="fs-6 fw-bold text-white mb-1">Sécurisé</h2>
+												<p class="text-white-50 mb-0 small">Vos données sont protégées et vos transactions sécurisées.</p>
+											</div>
+										</div>
 
-    /* ==========================================================================
-       CARTES DE CHOIX DE PROFIL
-       ========================================================================== */
-    .tm-profile-card {
-        background: #ffffff;
-        border: 1px solid #F1F5F9;
-        border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 10px 30px rgba(6, 27, 86, 0.04);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .tm-profile-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(6, 27, 86, 0.08);
-    }
-    .tm-profile-img-wrapper {
-        position: relative;
-        border-radius: 14px;
-        overflow: hidden;
-        margin-bottom: 20px;
-    }
-    .tm-profile-img { width: 100%; height: 185px; object-fit: cover; }
-    
-    .tm-avatar-icon-bg {
-        width: 52px; height: 52px; border-radius: 50%;
-        background: #F1F5FF; color: var(--tm-primary);
-        font-size: 24px;
-    }
+										<div class="d-flex align-items-start gap-3">
+											<div class="tm-benefit-icon-outline d-flex align-items-center justify-content-center">
+												<img src="{{ asset('images/categories/icons/star-regular.png') }}" alt="star-icon">
+											</div>
+											<div>
+												<h2 class="fs-6 fw-bold text-white mb-1">Fiable</h2>
+												<p class="text-white-50 mb-0 small">Des professionnels vérifiés et des avis clients authentiques.</p>
+											</div>
+										</div>
 
-    /* Listes à puces cochées */
-    .tm-bullet-list { list-style: none; padding-left: 0; margin-bottom: 24px; }
-    .tm-bullet-list li {
-        font-size: 14px; font-weight: 500; color: #475569;
-        margin-bottom: 12px; display: flex; align-items: center; gap: 12px;
-    }
-    .tm-bullet-list li i { color: var(--tm-service); font-size: 16px; }
+										<div class="d-flex align-items-start gap-3">
+											<div class="tm-benefit-icon-outline d-flex align-items-center justify-content-center">
+												<img src="{{ asset('images/categories/icons/headset-solid-full.svg') }}" alt="headset-icon">
+											</div>
+											<div>
+												<h2 class="fs-6 fw-bold text-white mb-1">À votre écoute</h2>
+												<p class="text-white-50 mb-0 small">Une équipe dédiée pour vous accompagner à chaque étape.</p>
+											</div>
+										</div>
+									</div>
+								</div>
 
-    /* BOUTONS BLEUS DE SOUMISSION (CORRIGÉS) */
-    .tm-btn-continue {
-        min-height: 52px; border-radius: 10px;
-        background: #0E3FE2; color: #ffffff;
-        font-size: 15px; font-weight: 600; width: 100%; border: 0;
-        transition: background .2s ease, transform 0.2s ease;
-    }
-    .tm-btn-continue:hover {
-        background: #0B33B8;
-        color: #ffffff;
-    }
+								{# Zone Image avec effet estompé #}
+								<div class="tm-visual-img-container">
+									<img src="{{ asset('images/categories/img/fourgon.jpg') }}" alt="fourgon" class="tm-visual-img">
+								</div>
+							</div>
+						</div>
+					</div>
 
-    /* Séparateur de pied */
-    .tm-separator { position: relative; text-align: center; }
-    .tm-separator::before { content: ""; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #E2E8F0; }
-    .tm-separator span { position: relative; display: inline-block; padding-inline: 16px; background: #ffffff; color: #64748B; font-size: 13px; font-weight: 500; }
+					{# PANNEAU DE CHOIX DE PROFIL DROITE #}
+					<div class="col-12 col-xl-7 col-xxl-8">
+						<div class="tm-choice-area d-flex align-items-center justify-content-center px-4 px-md-5 py-5">
+							<div
+								class="tm-choice-container">
 
-    .tm-login-card { width: 100%; max-width: 1780px; margin-inline: auto; border: 0; border-radius: 24px; overflow: hidden; box-shadow: var(--tm-shadow); background: #ffffff; }
-    .tm-security-card { max-width: 1780px; margin-inline: auto; border: 0; border-radius: 16px; box-shadow: var(--tm-shadow); }
-    .tm-security-icon { width: 51px; height: 51px; border-radius: 12px; background: #F1F5FF; color: var(--tm-service); flex: 0 0 51px; font-size: 25px; }
+								{# En-tête de sélection #}
+								<div class="mb-5 text-center">
+									<h2 class="tm-choice-title mb-3">Comment souhaitez-vous vous connecter ?</h2>
+									<p class="tm-choice-subtitle mb-0">Choisissez votre profil pour accéder à votre espace personnalisé</p>
+								</div>
 
-    @media (max-width: 1199px) { 
-        .tm-login-visual, .tm-choice-area { min-height: auto; } 
-        .tm-top-nav-inline { position: static; text-align: right; margin-bottom: 20px; }
-    }
-</style>
+								<div
+									class="row g-4 justify-content-center">
+									{# CARTE INTERFACE CLIENT #}
+									<div class="col-12 col-md-6">
+										<div
+											class="tm-profile-card d-flex flex-column h-100">
 
-<main class="tm-login-section py-4">
-    <div class="container-fluid px-4 px-xxl-5">
+											<!-- Conteneur flex pour pousser le bouton en bas -->
+											<div class="grow">
+												<div class="tm-profile-img-wrapper">
+													<img src="{{ asset('images/categories/img/client_img_choice.jpg') }}" alt="Client Privé" class="tm-profile-img">
+												</div>
 
-        <section class="card tm-login-card">
-            <div class="row g-0">
+												<div class="d-flex align-items-center gap-3 mb-3">
+													<div class="tm-avatar-icon-bg d-flex align-items-center justify-content-center">
+														<img src="{{ asset('images/categories/icons/user-regular-full.svg') }}" alt="user-icon">
+													</div>
+													<div>
+														<h3 class="fs-5 fw-bold mb-0 text-dark" style="font-weight:700 !important;">Je suis client</h3>
+														<p class="text-muted small mb-0">Trouvez le prestataire idéal pour tous vos projets</p>
+													</div>
+												</div>
 
-                {# PANNEAU VISUEL GAUCHE #}
-                <div class="col-12 col-xl-5 col-xxl-4">
-                    <div class="tm-login-visual h-100 d-flex align-items-stretch">
-                        <div class="tm-login-visual-content px-4 px-md-5 py-5 d-flex flex-column justify-content-between w-100">
-                            
-                            {# Logo d'entête #}
-                            <div class="tm-visual-logo mb-5">
-                                <div class="tm-logo-icon-small">
-                                    <i class="bi bi-geo-alt-fill"></i>
-                                </div>
-                                <div class="tm-logo-text-small">
-                                    TrouveMoi
-                                    <span>Prestataires</span>
-                                </div>
-                            </div>
+												<ul class="tm-bullet-list">
+													<li>
+														<i class="bi bi-check-lg"></i>
+														Recherchez des professionnels</li>
+													<li>
+														<i class="bi bi-check-lg"></i>
+														Comparez les avis et tarifs</li>
+													<li>
+														<i class="bi bi-check-lg"></i>
+														Demandez des devis gratuits</li>
+													<li>
+														<i class="bi bi-check-lg"></i>
+														Gérez vos projets en toute simplicité</li>
+												</ul>
+											</div>
 
-                            {# Textes d'introduction #}
-                            <div class="my-auto py-4">
-                                <h1 class="tm-login-title mb-4">
-                                    Bienvenue sur<br>
-                                    <span>TrouveMoi Prestataires</span>
-                                </h1>
-                                <p class="tm-login-intro mb-5">
-                                    Connectez-vous pour accéder à votre espace et profiter de tous nos services.
-                                </p>
+											{# ACTIONS - BOUTON CLIENT #}
+											<form action="{{ path('app_register') }}" method="GET" class="mt-3">
+												<input type="hidden" name="role" value="client">
+												<button type="submit" class="tm-btn-continue">Continuer en tant que client</button>
+											</form>
+										</div>
+									</div>
 
-                                {# Liste des avantages #}
-                                <div class="d-flex flex-column gap-4">
-                                    <div class="d-flex align-items-start gap-3">
-                                        <div class="tm-benefit-icon-outline d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-shield-check"></i>
-                                        </div>
-                                        <div>
-                                            <h2 class="fs-6 fw-bold text-white mb-1">Sécurisé</h2>
-                                            <p class="text-white-50 mb-0 small">Vos données sont protégées et vos transactions sécurisées.</p>
-                                        </div>
-                                    </div>
+									{# CARTE INTERFACE PRESTATAIRE #}
+									<div class="col-12 col-md-6">
+										<div
+											class="tm-profile-card d-flex flex-column h-100">
 
-                                    <div class="d-flex align-items-start gap-3">
-                                        <div class="tm-benefit-icon-outline d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-star"></i>
-                                        </div>
-                                        <div>
-                                            <h2 class="fs-6 fw-bold text-white mb-1">Fiable</h2>
-                                            <p class="text-white-50 mb-0 small">Des professionnels vérifiés et des avis clients authentiques.</p>
-                                        </div>
-                                    </div>
+											<!-- Conteneur flex pour pousser le bouton en bas -->
+											<div class="grow">
+												<div class="tm-profile-img-wrapper">
+													<img src="{{ asset('images/categories/img/prestataire_img_choice.jpg') }}" alt="Artisan Professionnel" class="tm-profile-img">
+													<div class="tm-stars-badge d-flex align-items-center gap-1">
+														⭐ 4,8/5
+													</div>
+												</div>
 
-                                    <div class="d-flex align-items-start gap-3">
-                                        <div class="tm-benefit-icon-outline d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-headset"></i>
-                                        </div>
-                                        <div>
-                                            <h2 class="fs-6 fw-bold text-white mb-1">À votre écoute</h2>
-                                            <p class="text-white-50 mb-0 small">Une équipe dédiée pour vous accompagner à chaque étape.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+												<div class="d-flex align-items-center gap-3 mb-3">
+													<div class="tm-avatar-icon-bg d-flex align-items-center justify-content-center">
+														<img src="{{ asset('images/categories/icons/screwdriver-wrench-solid-full.svg') }}" alt="screwdriver-icon">
+													</div>
+													<div>
+														<h3 class="fs-5 fw-bold mb-0 text-dark" style="font-weight:700 !important;">Je suis prestataire</h3>
+														<p class="text-muted small mb-0">Développez votre activité et trouvez de nouveaux clients</p>
+													</div>
+												</div>
 
-                            {# Espacement bas #}
-                            <div class="mt-5"></div>
-                        </div>
-                    </div>
-                </div>
+												<ul class="tm-bullet-list">
+													<li>
+														<i class="bi bi-check-lg"></i>
+														Recevez des demandes de devis</li>
+													<li>
+														<i class="bi bi-check-lg"></i>
+														Gérez votre activité facilement</li>
+													<li>
+														<i class="bi bi-check-lg"></i>
+														Développez votre visibilité</li>
+													<li>
+														<i class="bi bi-check-lg"></i>
+														Suivez vos performances</li>
+												</ul>
+											</div>
 
-                {# PANNEAU DE CHOIX DE PROFIL DROITE #}
-                <div class="col-12 col-xl-7 col-xxl-8">
-                    <div class="tm-choice-area d-flex align-items-center justify-content-center px-4 px-md-5 py-5">
-                        
+											{# ACTIONS - BOUTON PRESTATAIRE #}
+											<form action="{{ path('app_register') }}" method="GET" class="mt-3">
+												<input type="hidden" name="role" value="prestataire">
+												<button type="submit" class="tm-btn-continue">Continuer en tant que prestataire</button>
+											</form>
+										</div>
+									</div>
+								</div>
 
-                        <div class="tm-choice-container">
-                            
-                            {# En-tête de sélection #}
-                            <div class="mb-5 text-center">
-                                <h2 class="tm-choice-title mb-3">Comment souhaitez-vous vous connecter ?</h2>
-                                <p class="tm-choice-subtitle mb-0">Choisissez votre profil pour accéder à votre espace personnalisé</p>
-                            </div>
+								{# Ligne de réassurance inférieure #}
+								<div class="tm-separator mt-5">
+									<span>
+										<img src="{{ asset('images/categories/icons/lock-solid.png') }}" alt="lock-icon">Vos données sont sécurisées et confidentielles</span>
+								</div>
 
-                            <div class="row g-4 justify-content-center">
-                                {# CARTE INTERFACE CLIENT #}
-                                <div class="col-12 col-md-6">
-                                    <div class="tm-profile-card d-flex flex-column h-100">
-                                        <div class="tm-profile-img-wrapper">
-                                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=80" alt="Client Privé" class="tm-profile-img">
+							</div>
+						</div>
+					</div>
 
-                                        </div>
+				</div>
+			</section>
 
-                                        <div class="d-flex align-items-center gap-3 mb-3">
-                                            <div class="tm-avatar-icon-bg d-flex align-items-center justify-content-center">
-                                                <i class="bi bi-person"></i>
-                                            </div>
-                                            <div>
-                                                <h3 class="fs-5 fw-bold mb-0 text-dark" style="font-weight:700 !important;">Je suis client</h3>
-                                                <p class="text-muted small mb-0">Trouvez le prestataire idéal pour tous vos projets</p>
-                                            </div>
-                                        </div>
-
-                                        <ul class="tm-bullet-list grow">
-                                            <li><i class="bi bi-check-lg"></i> Recherchez des professionnels</li>
-                                            <li><i class="bi bi-check-lg"></i> Comparez les avis et tarifs</li>
-                                            <li><i class="bi bi-check-lg"></i> Demandez des devis gratuits</li>
-                                            <li><i class="bi bi-check-lg"></i> Gérez vos projets en toute simplicité</li>
-                                        </ul>
-
-                                        {# ACTIONS - BOUTON DE SOUMISSION CLIENT #}
-                                        <form action="{{ path('app_register') }}" method="GET">
-                                            <input type="hidden" name="role" value="client">
-                                            <button type="submit" class="tm-btn-continue">Continuer en tant que client</button>
-                                        </form>
-                                    </div>
-                                </div>
-
-                                {# CARTE INTERFACE PRESTATAIRE #}
-                                <div class="col-12 col-md-6">
-                                    <div class="tm-profile-card d-flex flex-column h-100">
-                                        <div class="tm-profile-img-wrapper">
-                                            <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80" alt="Artisan Professionnel" class="tm-profile-img">
-
-                                            <div class="tm-stars-badge d-flex align-items-center gap-1">
-                                                <i class="bi bi-star-fill"></i> 4,8/5
-                                            </div>
-                                        </div>
-
-                                        <div class="d-flex align-items-center gap-3 mb-3">
-                                            <div class="tm-avatar-icon-bg d-flex align-items-center justify-content-center">
-                                                <i class="bi bi-briefcase"></i>
-                                            </div>
-                                            <div>
-                                                <h3 class="fs-5 fw-bold mb-0 text-dark" style="font-weight:700 !important;">Je suis prestataire</h3>
-                                                <p class="text-muted small mb-0">Développez votre activité et trouvez de nouveaux clients</p>
-                                            </div>
-                                        </div>
-
-                                        <ul class="tm-bullet-list grow">
-                                            <li><i class="bi bi-check-lg"></i> Recevez des demandes de devis</li>
-                                            <li><i class="bi bi-check-lg"></i> Gérez votre activité facilement</li>
-                                            <li><i class="bi bi-check-lg"></i> Développez votre visibilité</li>
-                                            <li><i class="bi bi-check-lg"></i> Suivez vos performances</li>
-                                        </ul>
-
-                                        {# ACTIONS - BOUTON DE SOUMISSION PRESTATAIRE #}
-                                        <form action="{{ path('app_register') }}" method="GET">
-                                            <input type="hidden" name="role" value="prestataire">
-                                            <button type="submit" class="tm-btn-continue">Continuer en tant que prestataire</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {# Ligne de réassurance inférieure #}
-                            <div class="tm-separator mt-5">
-                                <span><i class="bi bi-lock-fill me-2"></i>Vos données sont sécurisées et confidentielles</span>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-    </div>
-</main>
+		</div>
+	</main>
 {% endblock %}

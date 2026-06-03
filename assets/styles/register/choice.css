@@ -1,0 +1,318 @@
+/* ==========================================================================
+   VARIABLES ET SECTIONS GLOBALES DE BASE
+   ========================================================================== */
+:root {
+    --tm-primary: #061B56;
+    --tm-service: #2046D8;
+    --tm-accent: #F4A911;
+    --tm-accent-hover: #DC960E;
+    --tm-success: #16A34A;
+    --tm-background: #F8F9FC;
+    --tm-surface: #FFFFFF;
+    --tm-border: #E5E7EB;
+    --tm-text: #061B56;
+    --tm-text-secondary: #667085;
+    --tm-shadow: 0 18px 45px rgba(6, 27, 86, 0.08);
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    background: var(--tm-background);
+    color: var(--tm-text);
+}
+
+/* ==========================================================================
+   PANNEAU VISUEL GAUCHE
+   ========================================================================== */
+.tm-login-visual {
+    min-height: 780px;
+    position: relative;
+    background: #030F33; 
+    overflow: hidden;
+    z-index: 1;
+}
+
+.tm-login-visual-content {
+    position: relative;
+    z-index: 3;
+    max-width: 540px;
+}
+
+.tm-logo {
+    position: relative;
+    z-index: 3;
+}
+
+.tm-logo .brand-logo {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+}
+
+.tm-logo .brand-title {
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+}
+
+.tm-logo .brand-subtitle {
+    color: var(--tm-accent);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.tm-login-title {
+    font-size: 38px;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: #ffffff;
+}
+
+.tm-login-title span {
+    color: var(--tm-accent);
+}
+
+.tm-login-intro {
+    color: rgba(255, 255, 255, 0.7) !important;
+    font-size: 16px;
+    line-height: 1.6;
+    font-weight: 400;
+}
+
+.tm-benefit-icon-outline {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.9);
+    flex: 0 0 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.tm-benefit-icon-outline img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    filter: brightness(0) invert(1); 
+}
+
+.d-flex.align-items-start.gap-3:hover .tm-benefit-icon-outline {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* ==========================================================================
+   GESTION DE L'IMAGE ET DE L'EFFET ESTOMPÉ
+   ========================================================================== */
+.tm-visual-img-container {
+    position: relative;
+    width: 100%;
+    margin-top: auto; 
+    height: 320px;      
+    overflow: hidden;
+    border-radius: 0 0 0 24px; 
+}
+
+.tm-visual-img-container::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #030F33 0%, rgba(3, 15, 51, 0.4) 40%, #030F33 100%);
+    pointer-events: none;
+}
+
+.tm-visual-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+}
+
+/* ==========================================================================
+   ZONE DE DROITE & STRUCTURE
+   ========================================================================== */
+.tm-choice-area {
+    min-height: 780px;
+    background: #ffffff;
+    position: relative;
+}
+
+.tm-choice-container {
+    max-width: 780px;
+    width: 100%;
+}
+
+.tm-choice-title {
+    font-size: 34px;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--tm-primary);
+}
+
+.tm-choice-subtitle {
+    color: var(--tm-text-secondary);
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.tm-login-card {
+    width: 100%;
+    max-width: 1780px;
+    margin-inline: auto;
+    border: 0;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--tm-shadow);
+    background: #ffffff;
+}
+
+/* ==========================================================================
+   CARTES DE CHOIX DE PROFIL
+   ========================================================================== */
+.tm-profile-card {
+    background: #ffffff;
+    border: 1px solid #F1F5F9;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(6, 27, 86, 0.04);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tm-profile-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(6, 27, 86, 0.08);
+}
+
+.tm-profile-img-wrapper {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.tm-profile-img {
+    width: 100%;
+    height: 185px;
+    object-fit: cover;
+}
+
+.tm-stars-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(241, 243, 243, 0.884);
+    color: var(--tm-accent);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.tm-avatar-icon-bg {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #F1F5FF;
+    color: var(--tm-primary);
+    font-size: 24px;
+}
+
+.tm-bullet-list {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 24px;
+}
+
+.tm-bullet-list li {
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.tm-bullet-list li i {
+    color: var(--tm-service);
+    font-size: 16px;
+}
+
+/* ==========================================================================
+   BOUTONS & SEPARATEURS
+   ========================================================================== */
+.tm-btn-continue {
+    min-height: 52px;
+    border-radius: 10px;
+    background: #0E3FE2;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    width: 100%;
+    border: 0;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.tm-btn-continue:hover {
+    background: #0B33B8;
+    color: #ffffff;
+}
+
+.tm-separator {
+    position: relative;
+    text-align: center;
+}
+
+.tm-separator::before {
+    content: "";
+    position: absolute;
+    top: 55%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #CBD5E1;
+    z-index: 1;
+}
+
+.tm-separator span {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding-inline: 16px;
+    background: #ffffff;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 2;
+}
+
+.tm-separator span img {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+@media(max-width: 1199px) {
+    .tm-login-visual,
+    .tm-choice-area {
+        min-height: auto;
+    }
+    .tm-login-visual {
+        height: 400px;
+    }
+}
