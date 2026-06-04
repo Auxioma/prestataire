@@ -1,21 +1,26 @@
 /* 1. HERO SECTION */
 .hero-section {
-    background: 
-        linear-gradient(to right, 
-            rgba(6, 27, 86, 1) 0%, 
-            rgba(6, 27, 86, 1) 30%, 
+    background:
+        linear-gradient(
+            to right,
+            rgba(6, 27, 86, 1) 0%,
+            rgba(6, 27, 86, 1) 30%,
             rgba(6, 27, 86, 0.85) 45%,
-            rgba(6, 27, 86, 0.5) 60%, 
+            rgba(6, 27, 86, 0.5) 60%,
             rgba(6, 27, 86, 0.1) 85%,
             rgba(6, 27, 86, 0) 100%
-        ), 
-        url('../../images/img_presta_homepage04.png') no-repeat;
-    
-    background-position: center, right center;
-    background-size: cover, 75% auto;
+        ),
+        url("../../images/img_presta_homepage04.png") no-repeat;
+
+    background-position:
+        left center,
+        60% 35%;
+    background-size:
+        auto 100%,
+        cover;
     background-color: #061b56;
 
-    padding-top: 50px;
+    padding-top: 20px;
     padding-bottom: 120px;
 }
 
@@ -81,11 +86,20 @@
     color: #fff;
 }
 
-@media(max-width: 991.98px) {
-    .search-overlap-card { transform: translateY(-20px); }
-    .search-overlap-wrapper { height: auto; }
-    .search-submit-btn { width: 100%; margin-top: 10px; }
-    .search-divider { display: none; }
+@media (max-width: 991.98px) {
+    .search-overlap-card {
+        transform: translateY(-20px);
+    }
+    .search-overlap-wrapper {
+        height: auto;
+    }
+    .search-submit-btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+    .search-divider {
+        display: none;
+    }
 }
 
 /* 3. SECTION CATÉGORIES POPULAIRES */
@@ -95,6 +109,9 @@
 .category-col {
     flex: 1 1 120px;
     max-width: 140px;
+}
+.category-title {
+    font-size: 12px;
 }
 .tm-category-card {
     transition: all 0.2s ease;
@@ -124,11 +141,11 @@
 /* 4. PRESTATAIRES À LA UNE */
 .provider-card {
     transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.04) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
 }
 .provider-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.08) !important;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08) !important;
 }
 .favorite-btn {
     position: absolute;
@@ -166,4 +183,101 @@
     background-color: var(--tm-icon-bg);
     color: var(--tm-service);
     flex-shrink: 0;
+}
+
+.tm-categories-slider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.tm-categories-viewport {
+    overflow: hidden;
+    flex: 1 1 auto;
+}
+
+.tm-categories-track {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    transition: transform 0.35s ease;
+    will-change: transform;
+}
+
+.tm-category-item {
+    flex: 0 0 calc((100% - 6rem) / 7);
+    min-width: 0;
+}
+
+.tm-category-card,
+.all-categories-card {
+    min-height: 142px;
+}
+
+.tm-category-card {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.tm-category-card:hover,
+.all-categories-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px rgba(6, 27, 86, 0.1) !important;
+}
+
+.tm-categories-nav {
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 999px;
+    background: #061b56;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 22px rgba(6, 27, 86, 0.16);
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease,
+        background-color 0.2s ease;
+    flex: 0 0 auto;
+}
+
+.tm-categories-nav:hover {
+    transform: translateY(-2px);
+}
+
+.tm-categories-nav:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@media (max-width: 1399.98px) {
+    .tm-category-item {
+        flex: 0 0 calc((100% - 3rem) / 4);
+    }
+}
+
+@media (max-width: 991.98px) {
+    .tm-category-item {
+        flex: 0 0 calc((100% - 1rem) / 2);
+    }
+}
+
+@media (max-width: 575.98px) {
+    .tm-categories-slider {
+        gap: 0.5rem;
+    }
+
+    .tm-category-item {
+        flex: 0 0 100%;
+    }
+
+    .tm-categories-nav {
+        width: 38px;
+        height: 38px;
+    }
 }

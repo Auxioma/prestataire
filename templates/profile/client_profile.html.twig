@@ -1,354 +1,393 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Paramètres Client - TrouveMoi{% endblock %}
+{% block title %}Paramètres Client - TrouveMoi
+{% endblock %}
 
 {% block body %}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<div class="container-fluid min-vh-100 p-0 tm-page-wrapper">
-    <div class="d-flex flex-column flex-md-row">
-        
-        {# Navbar Mobile #}
-        <div class="w-100 p-3 d-flex justify-content-between align-items-center d-md-none" style="background-color: var(--tm-sidebar-bg); border-bottom: 1px solid var(--tm-border);">
-            <div class="d-flex align-items-center gap-2">
-                <span class="fs-4 fw-bold" style="color: var(--tm-primary);">🔍 TrouveMoi</span>
-            </div>
-            <div class="d-flex gap-3 tm-mobile-nav">
-                <a href="#" class="text-dark text-decoration-none fs-5">📋</a>
-                <a href="#" class="text-dark text-decoration-none fs-5">❤️</a>
-                <a href="#" class="text-dark text-decoration-none fs-5 active-mobile">⚙️</a>
-            </div>
-        </div>
-        
-        {# Sidebar Desktop #}
-        <div class="tm-sidebar p-4 vh-100 position-sticky top-0 d-none d-md-flex flex-column justify-content-between" style="width: 300px; min-width: 300px;">
-            <div>
-                <div class="mb-5 d-flex align-items-center gap-2">
-                    <span class="fs-3 fw-bold" style="color: var(--tm-primary);">🔍 TrouveMoi</span>
-                    <span class="badge px-2 py-1" style="background-color: rgba(6, 27, 86, 0.08); color: var(--tm-primary); font-size: 11px; font-weight: 600;">Espace Client</span>
-                </div>
+	<div class="container-fluid min-vh-100 p-0 tm-page-wrapper">
+		<div
+			class="d-flex flex-column flex-md-row">
 
-                <div class="text-center mb-5">
-                    <div class="position-relative d-inline-block mb-3">
-                        <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80' }}" 
-                             class="rounded-circle border-3 shadow-sm" style="width: 95px; height: 95px; object-fit: cover; border-color: var(--tm-border) !important;" alt="Avatar">
-                    </div>
-                    <h5 class="mb-1 fw-semibold fs-5" style="color: var(--tm-primary);">{{ user.firstName }} {{ user.lastName }}</h5>
-                    <p class="small mb-2" style="color: var(--tm-text-secondary);">Membre depuis {{ user.createdAt|date('Y') }}</p>
-                </div>
+			{# Navbar Mobile #}
+			<div class="w-100 p-3 d-flex justify-content-between align-items-center d-md-none" style="background-color: var(--tm-sidebar-bg); border-bottom: 1px solid var(--tm-border);">
+				<div class="d-flex align-items-center gap-2">
+					<span class="fs-4 fw-bold" style="color: var(--tm-primary);">🔍 TrouveMoi</span>
+				</div>
+				<div class="d-flex gap-3 tm-mobile-nav">
+					<a href="#" class="text-dark text-decoration-none fs-5">📋</a>
+					<a href="#" class="text-dark text-decoration-none fs-5">❤️</a>
+					<a href="#" class="text-dark text-decoration-none fs-5 active-mobile">⚙️</a>
+				</div>
+			</div>
 
-                <ul class="nav flex-column gap-2 tm-nav-menu">
-                    <li class="nav-item"><a href="#" class="nav-link"><span class="me-2">📋</span> Mes Demandes</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link"><span class="me-2">❤️</span> Mes Artisans Favoris</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link"><span class="me-2">💬</span> Mes Messages</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link active"><span class="me-2">⚙️</span> Paramètres</a></li>
-                </ul>
-            </div>
+			{# Sidebar Desktop #}
+			<div class="tm-sidebar p-4 vh-100 position-sticky top-0 d-none d-md-flex flex-column justify-content-between" style="width: 300px; min-width: 300px;">
+				<div>
+					<div class="mb-5 d-flex align-items-center gap-2">
+						<span class="fs-3 fw-bold" style="color: var(--tm-primary);">🔍 TrouveMoi</span>
+						<span class="badge px-2 py-1" style="background-color: rgba(6, 27, 86, 0.08); color: var(--tm-primary); font-size: 11px; font-weight: 600;">Espace Client</span>
+					</div>
 
-            <div class="card border-0 p-3 rounded-4 text-center" style="background-color: rgba(6, 27, 86, 0.03); border: 1px solid rgba(6, 27, 86, 0.05) !important;">
-                <p class="small mb-2 fw-medium" style="color: var(--tm-primary);">Besoin d'aide pour vos travaux ?</p>
-                <button class="btn btn-sm w-100 fw-bold tm-btn-sidebar-support">Contacter le support</button>
-            </div>
-        </div>
+					<div class="text-center mb-5">
+						<div class="position-relative d-inline-block mb-3">
+							<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80' }}" class="rounded-circle border-3 shadow-sm" style="width: 95px; height: 95px; object-fit: cover; border-color: var(--tm-border) !important;" alt="Avatar">
+						</div>
+						<h5 class="mb-1 fw-semibold fs-5" style="color: var(--tm-primary);">{{ user.firstName }}
+							{{ user.lastName }}</h5>
+						<p class="small mb-2" style="color: var(--tm-text-secondary);">Membre depuis
+							{{ user.createdAt|date('Y') }}</p>
+					</div>
 
-        {# Contenu Principal #}
-        <div class="grow p-3 p-md-5 w-100" style="overflow-x: hidden;">
-            
-            <div class="mb-4 mb-md-5">
-                <h1 class="fw-bold tm-main-title mb-1">Mon Compte</h1>
-                <p class="tm-subtitle mb-0">Gérez vos coordonnées personnelles, vos adresses et la sécurité de votre compte</p>
-            </div>
+					<ul class="nav flex-column gap-2 tm-nav-menu">
+						<li class="nav-item">
+							<a href="#" class="nav-link">
+								<span class="me-2">📋</span>
+								Mes Demandes</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link">
+								<span class="me-2">❤️</span>
+								Mes Artisans Favoris</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link">
+								<span class="me-2">💬</span>
+								Mes Messages</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link active">
+								<span class="me-2">⚙️</span>
+								Paramètres</a>
+						</li>
+					</ul>
+				</div>
 
-            {# Alertes Flash #}
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4 fw-medium" role="alert">
-                    ✨ {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
+				<div class="card border-0 p-3 rounded-4 text-center" style="background-color: rgba(6, 27, 86, 0.03); border: 1px solid rgba(6, 27, 86, 0.05) !important;">
+					<p class="small mb-2 fw-medium" style="color: var(--tm-primary);">Besoin d'aide pour vos travaux ?</p>
+					<button class="btn btn-sm w-100 fw-bold tm-btn-sidebar-support">Contacter le support</button>
+				</div>
+			</div>
 
-            <div class="tm-tabs-wrapper mb-4 mb-md-5">
-                <ul class="nav nav-tabs border-bottom gap-3 gap-md-4 tm-custom-tabs flex-nowrap" id="clientTabs" role="tablist">
-                    <li class="nav-item">
-                        <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal-panel" type="button" role="tab">👤 Informations</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" id="addresses-tab" data-bs-toggle="tab" data-bs-target="#addresses-panel" type="button" role="tab">📍 Mes Adresses</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-panel" type="button" role="tab">🛡 Sécurité</button>
-                    </li>
-                </ul>
-            </div>
+			{# Contenu Principal #}
+			<div class="grow p-3 p-md-5 w-100" style="overflow-x: hidden;">
 
-            {{ form_start(settingsForm, {'attr': {'novalidate': 'novalidate'}}) }}
-            
-            <div class="tab-content" id="clientTabsContent">
-                
-                {# Panel Informations #}
-                <div class="tab-pane fade show active" id="personal-panel" role="tabpanel">
-                    <div class="row g-4">
-                        <div class="col-lg-8">
-                            <div class="card tm-card p-4">
-                                <h4 class="tm-card-title mb-4">Informations personnelles</h4>
-                                
-                                <div class="row g-3">
-                                    <div class="col-md-6 tm-form-row">
-                                        {{ form_row(settingsForm.firstName) }}
-                                    </div>
-                                    <div class="col-md-6 tm-form-row">
-                                        {{ form_row(settingsForm.lastName) }}
-                                    </div>
-                                    <div class="col-md-6 tm-form-row">
-                                        {{ form_row(settingsForm.phoneNumber) }}
-                                    </div>
-                                    <div class="col-md-6 tm-form-row tm-enum-radio-group">
-                                        {{ form_row(settingsForm.clientProfile.type) }}
-                                    </div>
-                                </div>
+				<div class="mb-4 mb-md-5">
+					<h1 class="fw-bold tm-main-title mb-1">Mon Compte</h1>
+					<p class="tm-subtitle mb-0">Gérez vos coordonnées personnelles, vos adresses et la sécurité de votre compte</p>
+				</div>
 
-                                <div id="pro-fields-wrapper" class="row g-3 mt-2 pt-3 border-top" style="display: none;">
-                                    <h5 class="fw-semibold text-primary mb-2 fs-6">Détails de l'entreprise</h5>
-                                    <div class="col-md-6 tm-form-row">
-                                        {{ form_row(settingsForm.clientProfile.companyName) }}
-                                    </div>
-                                    <div class="col-md-6 tm-form-row">
-                                        {{ form_row(settingsForm.clientProfile.siret) }}
-                                    </div>
-                                </div>
+				{# Alertes Flash #}
+				{% for message in app.flashes('success') %}
+					<div class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4 fw-medium" role="alert">
+						✨
+						{{ message }}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>
+				{% endfor %}
 
-                                <div class="mt-4 pt-3 d-flex justify-content-center">
-                                    <button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold w-25 w-md-auto">Enregistrer les modifications</button>
-                                </div>
-                            </div>
-                        </div>
+				<div class="tm-tabs-wrapper mb-4 mb-md-5">
+					<ul class="nav nav-tabs border-bottom gap-3 gap-md-4 tm-custom-tabs flex-nowrap" id="clientTabs" role="tablist">
+						<li class="nav-item">
+							<button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal-panel" type="button" role="tab">👤 Informations</button>
+						</li>
+						<li class="nav-item">
+							<button class="nav-link" id="addresses-tab" data-bs-toggle="tab" data-bs-target="#addresses-panel" type="button" role="tab">📍 Mes Adresses</button>
+						</li>
+						<li class="nav-item">
+							<button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-panel" type="button" role="tab">🛡 Sécurité</button>
+						</li>
+					</ul>
+				</div>
 
-                        <div class="col-lg-4">
-                            <div class="card tm-card p-4 text-center">
-                                <h4 class="tm-card-title text-start mb-4">Photo de profil</h4>
-                                <div class="my-3 p-4 rounded-4" style="background-color: var(--tm-background);">
-                                    <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&q=80' }}" 
-                                         class="rounded-circle mb-3 border-2 border-white shadow-sm" style="width: 90px; height: 90px; object-fit: cover;" alt="Avatar">
-                                    <button type="button" class="btn btn-outline-primary btn-md d-block mx-auto fw-medium px-3">Modifier la photo</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+				{{ form_start(settingsForm, {'attr': {'novalidate': 'novalidate'}}) }}
 
-                {# Panel Adresses #}
-                <div class="tab-pane fade" id="addresses-panel" role="tabpanel">
-                    <div class="row g-4">
-                        <div class="col-12">
-                            <div class="card tm-card p-4">
-                                <h4 class="tm-card-title mb-4">📍 Adresse principale (Lieu des interventions)</h4>
-                                <div class="row g-3">
-                                    <div class="col-md-6 tm-form-row">
-                                        {{ form_row(settingsForm.clientProfile.defaultAddress) }}
-                                    </div>
-                                    <div class="col-md-3 tm-form-row">
-                                        {{ form_row(settingsForm.clientProfile.defaultPostalCode) }}
-                                    </div>
-                                    <div class="col-md-3 tm-form-row">
-                                        {{ form_row(settingsForm.clientProfile.defaultCity) }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+				<div
+					class="tab-content" id="clientTabsContent">
 
-                        <div class="col-12">
-                            <div class="card tm-card p-4">
-                                <h4 class="tm-card-title mb-4">🧾 Adresse de facturation</h4>
-                                <div class="row g-3">
-                                    <div class="col-md-6 tm-form-row">
-                                        {{ form_row(settingsForm.clientProfile.billingAddress) }}
-                                    </div>
-                                    <div class="col-md-2 tm-form-row">
-                                        {{ form_row(settingsForm.clientProfile.billingPostalCode) }}
-                                    </div>
-                                    <div class="col-md-2 tm-form-row">
-                                        {{ form_row(settingsForm.clientProfile.billingCity) }}
-                                    </div>
-                                    <div class="col-md-2 tm-form-row">
-                                        {{ form_row(settingsForm.clientProfile.billingCountry) }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-4 d-flex justify-content-center">
-                        <button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold w-25 w-md-auto">Enregistrer les adresses</button>
-                    </div>
-                </div>
+					{# Panel Informations #}
+					<div class="tab-pane fade show active" id="personal-panel" role="tabpanel">
+						<div class="row g-4">
+							<div class="col-lg-8">
+								<div class="card tm-card p-4">
+									<h4 class="tm-card-title mb-4">Informations personnelles</h4>
 
-                {# Panel Sécurité #}
-                <div class="tab-pane fade" id="security-panel" role="tabpanel">
-                    <div class="card tm-card p-4">
-                        <h4 class="tm-card-title mb-4">Sécurité du compte</h4>
-                        <p class="text-muted mb-4">Pour modifier votre mot de passe, veuillez passer par le module de réinitialisation sécurisé.</p>
-                        <button type="button" class="btn btn-outline-danger justify-content-center px-4 py-2 rounded-3 fw-semibold w-25 w-md-auto">Demander un lien de modification</button>
-                    </div>
-                </div>
+									<div class="row g-3">
+										<div class="col-md-6 tm-form-row">
+											{{ form_row(settingsForm.firstName) }}
+										</div>
+										<div class="col-md-6 tm-form-row">
+											{{ form_row(settingsForm.lastName) }}
+										</div>
+										<div class="col-md-6 tm-form-row">
+											{{ form_row(settingsForm.phoneNumber) }}
+										</div>
+										<div class="col-md-6 tm-form-row tm-enum-radio-group" id="client-type-field">
+											{{ form_row(settingsForm.clientProfile.type) }}
+										</div>
+									</div>
 
-            </div>
-            
-            {{ form_end(settingsForm) }}
-        </div>
-    </div>
-</div>
+									<div id="pro-fields-wrapper" class="row g-3 mt-2 pt-3 border-top" style="display: none;">
+										<h5 class="fw-semibold text-primary mb-2 fs-6">Détails de l'entreprise</h5>
+										<div class="col-md-6 tm-form-row">
+											{{ form_row(settingsForm.clientProfile.companyName) }}
+										</div>
+										<div class="col-md-6 tm-form-row">
+											{{ form_row(settingsForm.clientProfile.siret) }}
+										</div>
+									</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const typeRadios = document.querySelectorAll('input[name="{{ settingsForm.clientProfile.type.vars.full_name }}"]');
-    const proFieldsWrapper = document.getElementById('pro-fields-wrapper');
+									<div class="mt-4 pt-3 d-flex justify-content-center">
+										<button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold w-25 w-md-auto">Enregistrer les modifications</button>
+									</div>
+								</div>
+							</div>
 
-    function toggleProFields() {
-        const checkedRadio = Array.from(typeRadios).find(radio => radio.checked);
+							<div class="col-lg-4">
+								<div class="card tm-card p-4 text-center">
+									<h4 class="tm-card-title text-start mb-4">Photo de profil</h4>
+									<div class="my-3 p-4 rounded-4" style="background-color: var(--tm-background);">
+										<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle mb-3 border-2 border-white shadow-sm" style="width: 90px; height: 90px; object-fit: cover;" alt="Avatar">
+										<button type="button" class="btn btn-outline-primary btn-md d-block mx-auto fw-medium px-3">Modifier la photo</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 
-        if (!checkedRadio) {
-            proFieldsWrapper.style.display = 'none';
-            return;
-        }
+					{# Panel Adresses #}
+					<div class="tab-pane fade" id="addresses-panel" role="tabpanel">
+						<div class="row g-4">
+							<div class="col-12">
+								<div class="card tm-card p-4">
+									<h4 class="tm-card-title mb-4">📍 Adresse principale (Lieu des interventions)</h4>
+									<div class="row g-3">
+										<div class="col-md-6 tm-form-row">
+											{{ form_row(settingsForm.clientProfile.defaultAddress) }}
+										</div>
+										<div class="col-md-3 tm-form-row">
+											{{ form_row(settingsForm.clientProfile.defaultPostalCode) }}
+										</div>
+										<div class="col-md-3 tm-form-row">
+											{{ form_row(settingsForm.clientProfile.defaultCity) }}
+										</div>
+									</div>
+								</div>
+							</div>
 
-        const value = (checkedRadio.value || '').toLowerCase();
-        const isPro = value.includes('pro') || value.includes('professionnel') || value.includes('entreprise');
+							<div class="col-12">
+								<div class="card tm-card p-4">
+									<h4 class="tm-card-title mb-4">🧾 Adresse de facturation</h4>
+									<div class="row g-3">
+										<div class="col-md-6 tm-form-row">
+											{{ form_row(settingsForm.clientProfile.billingAddress) }}
+										</div>
+										<div class="col-md-2 tm-form-row">
+											{{ form_row(settingsForm.clientProfile.billingPostalCode) }}
+										</div>
+										<div class="col-md-2 tm-form-row">
+											{{ form_row(settingsForm.clientProfile.billingCity) }}
+										</div>
+										<div class="col-md-2 tm-form-row">
+											{{ form_row(settingsForm.clientProfile.billingCountry) }}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 
-        proFieldsWrapper.style.display = isPro ? '' : 'none';
-    }
+						<div class="mt-4 d-flex justify-content-center">
+							<button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold w-25 w-md-auto">Enregistrer les adresses</button>
+						</div>
+					</div>
 
-    typeRadios.forEach(radio => {
-        radio.addEventListener('change', toggleProFields);
-    });
+					{# Panel Sécurité #}
+					<div class="tab-pane fade" id="security-panel" role="tabpanel">
+						<div class="card tm-card p-4">
+							<h4 class="tm-card-title mb-4">Sécurité du compte</h4>
+							<p class="text-muted mb-4">Pour modifier votre mot de passe, veuillez passer par le module de réinitialisation sécurisé.</p>
+							<button type="button" class="btn btn-outline-danger justify-content-center px-4 py-2 rounded-3 fw-semibold w-25 w-md-auto">Demander un lien de modification</button>
+						</div>
+					</div>
 
-    toggleProFields();
+				</div>
+
+				{{ form_end(settingsForm) }}
+			</div>
+		</div>
+	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+const typeField = document.getElementById('client-type-field');
+const proFieldsWrapper = document.getElementById('pro-fields-wrapper');
+
+if (! typeField || ! proFieldsWrapper) {
+return;
+}
+
+function getSelectedTypeValue() {
+const radios = typeField.querySelectorAll('input[type="radio"]');
+
+for (const radio of radios) {
+if (radio.checked) {
+return radio.value;
+}
+}
+
+return null;
+}
+
+function toggleProFields() {
+const selectedValue = getSelectedTypeValue();
+const isPro = selectedValue === 'PROFESSIONNEL';
+
+proFieldsWrapper.style.display = isPro ? 'flex' : 'none';
+}
+
+typeField.addEventListener('change', function (event) {
+if (event.target.matches('input[type="radio"]')) {
+toggleProFields();
+}
 });
-</script>
 
-<style>
-    :root {
-        --tm-primary: #061B56;
-        --tm-primary-hover: #0A286F;
-        --tm-service: #2046D8;
-        --tm-service-hover: #1B3CC0;
-        --tm-accent: #F4A911;
-        --tm-background: #F8F9FC;
-        --tm-surface: #FFFFFF;
-        --tm-border: #E5E7EB;
-        --tm-text: #061B56;
-        --tm-text-secondary: #667085;
-        
-        --tm-sidebar-bg: #F5F5F5;
-        --tm-sidebar-link-hover: rgba(6, 27, 86, 0.05);
-    }
+toggleProFields();
+});
+	</script>
 
-    .tm-page-wrapper {
-        font-family: 'Poppins', sans-serif !important;
-        background-color: var(--tm-background);
-        color: var(--tm-text);
-        font-size: 15px !important;
-    }
+	<style>:root
+	{
+		--tm-primary: #061B56;
+		--tm-primary-hover: #0A286F;
+		--tm-service: #2046D8;
+		--tm-service-hover: #1B3CC0;
+		--tm-accent: #F4A911;
+		--tm-background: #F8F9FC;
+		--tm-surface: #FFFFFF;
+		--tm-border: #E5E7EB;
+		--tm-text: #061B56;
+		--tm-text-secondary: #667085;
 
-    .tm-sidebar {
-        background-color: var(--tm-sidebar-bg);
-        border-right: 1px solid var(--tm-border);
-    }
+		--tm-sidebar-bg: #F5F5F5;
+		--tm-sidebar-link-hover: rgba(6, 27, 86, 0.05);
+	}
 
-    .tm-nav-menu .nav-link {
-        color: var(--tm-text) !important;
-        font-weight: 500;
-        padding: 12px 16px !important;
-        border-radius: 8px;
-        transition: all 0.2s ease;
-    }
-    .tm-nav-menu .nav-link:hover {
-        color: var(--tm-primary) !important;
-        background-color: var(--tm-sidebar-link-hover);
-    }
-    .tm-nav-menu .nav-link.active {
-        background-color: var(--tm-service) !important;
-        color: #ffffff !important;
-        font-weight: 600;
-        box-shadow: 0 4px 10px rgba(32, 70, 216, 0.15);
-    }
+	.tm-page-wrapper {
+		font-family: 'Poppins', sans-serif !important;
+		background-color: var(--tm-background);
+		color: var(--tm-text);
+		font-size: 15px !important;
+	}
 
-    .tm-btn-sidebar-support {
-        background-color: var(--tm-primary) !important;
-        color: #ffffff !important;
-        border: none !important;
-        border-radius: 8px !important;
-        transition: background-color 0.2s ease;
-    }
-    .tm-btn-sidebar-support:hover {
-        background-color: var(--tm-primary-hover) !important;
-    }
+	.tm-sidebar {
+		background-color: var(--tm-sidebar-bg);
+		border-right: 1px solid var(--tm-border);
+	}
 
-    .tm-enum-radio-group div {
-        display: flex !important;
-        gap: 0.5rem !important; 
-        flex-wrap: wrap;
-        margin-top: 4px;
-    }
-    .tm-enum-radio-group .form-check {
-        display: flex;
-        align-items: center;
-        gap: 0.1rem;
-        margin-bottom: 0 !important;
-    }
+	.tm-nav-menu .nav-link {
+		color: var(--tm-text) !important;
+		font-weight: 500;
+		padding: 12px 16px !important;
+		border-radius: 8px;
+		transition: all 0.2s ease;
+	}
+	.tm-nav-menu .nav-link:hover {
+		color: var(--tm-primary) !important;
+		background-color: var(--tm-sidebar-link-hover);
+	}
+	.tm-nav-menu .nav-link.active {
+		background-color: var(--tm-service) !important;
+		color: #ffffff !important;
+		font-weight: 600;
+		box-shadow: 0 4px 10px rgba(32, 70, 216, 0.15);
+	}
 
-    .tm-main-title { color: var(--tm-primary); font-size: 32px; }
-    .tm-subtitle { color: var(--tm-text-secondary); font-size: 15px; }
+	.tm-btn-sidebar-support {
+		background-color: var(--tm-primary) !important;
+		color: #ffffff !important;
+		border: none !important;
+		border-radius: 8px !important;
+		transition: background-color 0.2s ease;
+	}
+	.tm-btn-sidebar-support:hover {
+		background-color: var(--tm-primary-hover) !important;
+	}
 
-    .tm-card-title {
-        color: var(--tm-primary);
-        font-weight: 700;
-        font-size: 18px;
-        border-bottom: 2px solid var(--tm-background);
-        padding-bottom: 10px;
-    }
+	.tm-enum-radio-group div {
+		display: flex !important;
+		gap: 0.5rem !important;
+		flex-wrap: wrap;
+		margin-top: 4px;
+	}
+	.tm-enum-radio-group .form-check {
+		display: flex;
+		align-items: center;
+		gap: 0.1rem;
+		margin-bottom: 0 !important;
+	}
 
-    .tm-card {
-        background-color: var(--tm-surface);
-        border: 1px solid var(--tm-border) !important;
-        border-radius: 16px !important;
-        box-shadow: 0 4px 12px rgba(6, 27, 86, 0.03) !important;
-    }
+	.tm-main-title {
+		color: var(--tm-primary);
+		font-size: 32px;
+	}
+	.tm-subtitle {
+		color: var(--tm-text-secondary);
+		font-size: 15px;
+	}
 
-    .tm-custom-tabs .nav-link {
-        border: none !important;
-        background: none !important;
-        color: var(--tm-text-secondary) !important;
-        font-weight: 500;
-        font-size: 16px;
-        padding: 0 4px 14px 4px !important;
-        position: relative;
-    }
-    .tm-custom-tabs .nav-link.active { color: var(--tm-service) !important; font-weight: 600; }
-    .tm-custom-tabs .nav-link.active::after {
-        content: '';
-        position: absolute;
-        bottom: -2px;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        background-color: var(--tm-service);
-        border-radius: 3px;
-    }
+	.tm-card-title {
+		color: var(--tm-primary);
+		font-weight: 700;
+		font-size: 18px;
+		border-bottom: 2px solid var(--tm-background);
+		padding-bottom: 10px;
+	}
 
-    .tm-form-row label {
-        font-weight: 600 !important;
-        color: var(--tm-text) !important;
-        margin-bottom: 8px !important;
-        font-size: 14px !important;
-    }
+	.tm-card {
+		background-color: var(--tm-surface);
+		border: 1px solid var(--tm-border) !important;
+		border-radius: 16px !important;
+		box-shadow: 0 4px 12px rgba(6, 27, 86, 0.03) !important;
+	}
 
-    .tm-btn-service {
-        background-color: var(--tm-service) !important;
-        color: #ffffff !important;
-        border: none !important;
-        border-radius: 10px !important;
-    }
-</style>
-{% endblock %}
+	.tm-custom-tabs .nav-link {
+		border: none !important;
+		background: none !important;
+		color: var(--tm-text-secondary) !important;
+		font-weight: 500;
+		font-size: 16px;
+		padding: 0 4px 14px !important;
+		position: relative;
+	}
+	.tm-custom-tabs .nav-link.active {
+		color: var(--tm-service) !important;
+		font-weight: 600;
+	}
+	.tm-custom-tabs .nav-link.active::after {
+		content: '';
+		position: absolute;
+		bottom: -2px;
+		left: 0;
+		width: 100%;
+		height: 3px;
+		background-color: var(--tm-service);
+		border-radius: 3px;
+	}
+
+	.tm-form-row label {
+		font-weight: 600 !important;
+		color: var(--tm-text) !important;
+		margin-bottom: 8px !important;
+		font-size: 14px !important;
+	}
+
+	.tm-btn-service {
+		background-color: var(--tm-service) !important;
+		color: #ffffff !important;
+		border: none !important;
+		border-radius: 10px !important;
+	}
+</style>{% endblock %}
