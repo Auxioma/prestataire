@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau mot de passe - TrouveMoi Prestataires{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/resetpassword/reset_password.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="tm-reset-password-page">
+        <div class="container">
+            <div class="tm-reset-password-card">
+                <div class="tm-reset-password-card__content">
+                    <span class="tm-reset-password-card__badge">Sécurité du compte</span>
+
+                    <h1 class="tm-reset-password-card__title">
+                        Choisissez un nouveau mot de passe
+                    </h1>
+
+                    <p class="tm-reset-password-card__text">
+                        Renseignez un nouveau mot de passe sécurisé pour protéger votre compte
+                        TrouveMoi Prestataires.
+                    </p>
+
+                    {{ form_start(resetForm, { attr: { class: 'tm-reset-password-form' } }) }}
+
+                        <div class="tm-reset-password-form__global-errors">
+                            {{ form_errors(resetForm.plainPassword) }}
+                        </div>
+
+                        <div class="tm-reset-password-form__group">
+                            {{ form_label(resetForm.plainPassword.first, null, {
+                                label_attr: {
+                                    class: 'tm-reset-password-form__label'
+                                }
+                            }) }}
+
+                            <div class="tm-reset-password-form__field" data-controller="reset-password-toggle">
+                                {{ form_widget(resetForm.plainPassword.first, {
+                                    attr: {
+                                        class: 'tm-reset-password-form__input',
+                                        placeholder: 'Saisissez votre nouveau mot de passe',
+                                        'data-reset-password-toggle-target': 'input'
+                                    }
+                                }) }}
+
+                                <button
+                                    type="button"
+                                    class="tm-reset-password-form__toggle"
+                                    data-action="click->reset-password-toggle#toggle"
+                                    aria-label="Afficher le mot de passe"
+                                    aria-pressed="false"
+                                >
+                                    <i class="bi bi-eye" data-reset-password-toggle-target="icon"></i>
+                                </button>
+                            </div>
+
+                            <div class="tm-reset-password-form__errors">
+                                {{ form_errors(resetForm.plainPassword.first) }}
+                            </div>
+                        </div>
+
+                        <div class="tm-reset-password-form__group">
+                            {{ form_label(resetForm.plainPassword.second, null, {
+                                label_attr: {
+                                    class: 'tm-reset-password-form__label'
+                                }
+                            }) }}
+
+                            <div class="tm-reset-password-form__field" data-controller="reset-password-toggle">
+                                {{ form_widget(resetForm.plainPassword.second, {
+                                    attr: {
+                                        class: 'tm-reset-password-form__input',
+                                        placeholder: 'Confirmez votre nouveau mot de passe',
+                                        'data-reset-password-toggle-target': 'input'
+                                    }
+                                }) }}
+
+                                <button
+                                    type="button"
+                                    class="tm-reset-password-form__toggle"
+                                    data-action="click->reset-password-toggle#toggle"
+                                    aria-label="Afficher le mot de passe"
+                                    aria-pressed="false"
+                                >
+                                    <i class="bi bi-eye" data-reset-password-toggle-target="icon"></i>
+                                </button>
+                            </div>
+
+                            <div class="tm-reset-password-form__errors">
+                                {{ form_errors(resetForm.plainPassword.second) }}
+                            </div>
+                        </div>
+
+                        <button type="submit" class="tm-reset-password-form__submit">
+                            Mettre à jour le mot de passe
+                        </button>
+
+                    {{ form_end(resetForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

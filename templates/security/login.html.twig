@@ -79,6 +79,20 @@
 					<p class="tm-login-card__subtitle">
 						Connectez-vous pour accéder à votre compte.
 					</p>
+					
+					{% for message in app.flashes('success') %}
+						<div class="tm-login-alert tm-login-alert--success" role="alert">
+							<i class="bi bi-check-circle-fill"></i>
+							<span>{{ message }}</span>
+						</div>
+					{% endfor %}
+
+					{% for message in app.flashes('reset_password_error') %}
+						<div class="tm-login-alert tm-login-alert--error" role="alert">
+							<i class="bi bi-exclamation-triangle-fill"></i>
+							<span>{{ message }}</span>
+						</div>
+					{% endfor %}
 
 					{% if error %}
 						<div class="alert alert-danger">
@@ -103,7 +117,7 @@
 						<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
 						<div class="tm-login-form__forgot">
-							<a href="#">Mot de passe oublié ?</a>
+							<a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a>
 						</div>
 
 						<button class="tm-login-form__submit">

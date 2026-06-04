@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}E-mail envoyé - TrouveMoi Prestataires{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('styles/resetpassword/reset_checkemail.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="tm-reset-check-page">
+        <div class="container">
+            <div class="tm-reset-check-card">
+                <div class="tm-reset-check-card__content">
+                    <span class="tm-reset-check-card__badge">Réinitialisation du mot de passe</span>
+
+                    <h1 class="tm-reset-check-card__title">
+                        Vérifiez votre boîte mail
+                    </h1>
+
+                    <p class="tm-reset-check-card__text">
+                        Si un compte correspond à l’adresse e-mail renseignée, un message vient d’être envoyé
+                        avec un lien pour réinitialiser votre mot de passe.
+                    </p>
+
+                    <div class="tm-reset-check-card__info" role="status">
+                        <strong>Durée de validité :</strong>
+                        <span>
+                            {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}
+                        </span>
+                    </div>
+
+                    <p class="tm-reset-check-card__text tm-reset-check-card__text--secondary">
+                        Pensez à vérifier votre dossier spam ou courriers indésirables si vous ne voyez pas
+                        l’e-mail dans votre boîte de réception.
+                    </p>
+
+                    <div class="tm-reset-check-card__actions">
+                        <a href="{{ path('app_forgot_password_request') }}" class="tm-reset-check-card__link">
+                            Réessayer avec une autre adresse e-mail
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

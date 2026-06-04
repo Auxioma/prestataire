@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mot de passe oublié - TrouveMoi Prestataires{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('styles/resetpassword/reset_request.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="tm-reset-page">
+    <div class="tm-reset-card">
+        <h1>Mot de passe oublié ?</h1>
+        <p>Entrez votre adresse e-mail pour recevoir un lien de réinitialisation.</p>
+
+        {% for flash_error in app.flashes('reset_password_error') %}
+            <div class="tm-reset-alert tm-reset-alert--error" role="alert">
+                {{ flash_error }}
+            </div>
+        {% endfor %}
+
+        {{ form_start(requestForm) }}
+
+            <div class="tm-field">
+                {{ form_label(requestForm.email, 'Adresse e-mail', {
+                    label_attr: {
+                        class: 'tm-visually-hidden'
+                    }
+                }) }}
+
+                {{ form_widget(requestForm.email, {
+                    attr: {
+                        placeholder: 'Votre adresse e-mail',
+                        class: 'tm-input'
+                    }
+                }) }}
+
+                {{ form_errors(requestForm.email) }}
+            </div>
+
+            <button type="submit" class="tm-submit">Envoyer le lien</button>
+
+        {{ form_end(requestForm) }}
+    </div>
+</div>
+{% endblock %}

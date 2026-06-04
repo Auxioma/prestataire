@@ -1,0 +1,161 @@
+body {
+    background: #f5f7fb;
+    font-family: "Poppins", sans-serif;
+}
+
+.tm-reset-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.tm-reset-card {
+    width: 100%;
+    max-width: 560px;
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 42px 36px;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+    border: 1px solid #e9edf5;
+}
+
+.tm-reset-card h1 {
+    margin: 0 0 12px;
+    font-size: 34px;
+    line-height: 1.15;
+    font-weight: 800;
+    color: #061b56;
+}
+
+.tm-reset-card > p {
+    margin: 0 0 28px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #667085;
+}
+
+.tm-reset-alert {
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    border: 1px solid transparent;
+}
+
+.tm-reset-alert--error {
+    background: #fef3f2;
+    border-color: #fecdca;
+    color: #b42318;
+}
+
+.tm-field {
+    margin-bottom: 18px;
+}
+
+.tm-field .tm-input,
+.tm-field input[type="email"] {
+    width: 100%;
+    height: 58px;
+    border: 1px solid #dbe2ea;
+    border-radius: 14px;
+    padding: 0 18px;
+    font-size: 15px;
+    color: #101828;
+    background: #ffffff;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.tm-field .tm-input::placeholder,
+.tm-field input[type="email"]::placeholder {
+    color: #98a2b3;
+}
+
+.tm-field .tm-input:focus,
+.tm-field input[type="email"]:focus {
+    border-color: #2046d8;
+    box-shadow: 0 0 0 4px rgba(32, 70, 216, 0.12);
+}
+
+.tm-field ul {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+}
+
+.tm-field li {
+    color: #b42318;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.tm-submit {
+    width: 100%;
+    height: 56px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #2046d8 0%, #163bbd 100%);
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    box-shadow: 0 12px 24px rgba(32, 70, 216, 0.18);
+}
+
+.tm-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 30px rgba(32, 70, 216, 0.22);
+}
+
+.tm-submit:active {
+    transform: translateY(0);
+}
+
+.tm-submit:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(32, 70, 216, 0.18);
+}
+
+.tm-visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+@media (max-width: 640px) {
+    .tm-reset-page {
+        padding: 24px 16px;
+        align-items: flex-start;
+    }
+
+    .tm-reset-card {
+        padding: 30px 22px;
+        border-radius: 18px;
+        margin-top: 32px;
+    }
+
+    .tm-reset-card h1 {
+        font-size: 28px;
+    }
+
+    .tm-reset-card > p {
+        font-size: 14px;
+    }
+
+    .tm-field .tm-input,
+    .tm-field input[type="email"],
+    .tm-submit {
+        height: 54px;
+    }
+}
