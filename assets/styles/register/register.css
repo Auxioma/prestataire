@@ -21,8 +21,14 @@ body {
 .tm-register-hero {
     position: relative;
     background-image:
-        linear-gradient(to right, #0a1128 0%, #0a1128 35%, rgba(10, 17, 40, 0.6) 70%, rgba(10, 17, 40, 0) 100%),
-        url('../../images/categories/img/register-img2.jpg');
+        linear-gradient(
+            to right,
+            #0a1128 0%,
+            #0a1128 35%,
+            rgba(10, 17, 40, 0.6) 70%,
+            rgba(10, 17, 40, 0) 100%
+        ),
+        url("../../images/categories/img/register-img2.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -362,4 +368,21 @@ body {
     .tm-register-review-card {
         width: 100%;
     }
+}
+
+.tm-register-password-rules div.valid {
+    color: #16a34a !important;
+    font-weight: 600;
+}
+
+.tm-register-password-rules div.invalid {
+    color: #dc2626 !important;
+}
+
+.tm-register-password-rules div.valid * {
+    color: inherit;
+}
+
+.tm-register-password-rules div.invalid * {
+    color: inherit;
 }
