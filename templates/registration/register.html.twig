@@ -9,122 +9,83 @@
 {% endblock %}
 
 {% block body %}
-
 	<div class="tm-register-page">
-
 		<div class="container-fluid px-4 px-xl-5">
+			<div class="tm-register-layout">
 
-			<div
-				class="tm-register-card">
-
-				{# ================= LEFT ================= #}
-
-				<div class="tm-left">
-
-					<div class="tm-overlay"></div>
-
-					<div class="tm-left-content">
-
-						<h1>
+				<section class="tm-register-hero">
+					<div class="tm-register-hero__content">
+						<h1 class="tm-register-hero__title">
 							Bienvenue sur<br>
 							TrouveMoi
 							<span>Prestataires</span>
 						</h1>
 
-						<p class="tm-description">
-							Connectez-vous pour accéder à des milliers de
-																												                        prestataires de confiance et profiter des meilleurs
-																												                        services partout en France.
+						<p class="tm-register-hero__subtitle">
+							Connectez-vous pour accéder à des milliers de prestataires de confiance et profiter des meilleurs services partout en France.
 						</p>
 
-						<div class="tm-benefits">
-
-							<div class="tm-benefit">
-								<div class="tm-benefit-icon">
+						<div class="tm-register-feature-list">
+							<div class="tm-register-feature">
+								<div class="tm-register-feature__icon">
 									<i class="bi bi-shield-check"></i>
 								</div>
-
-								<div>
+								<div class="tm-register-feature__content">
 									<strong>Des prestataires vérifiés</strong>
-									<span>
-										Chaque professionnel est vérifié et noté
-									</span>
+									<span>Chaque professionnel est vérifié et noté</span>
 								</div>
 							</div>
 
-							<div class="tm-benefit">
-								<div class="tm-benefit-icon">
+							<div class="tm-register-feature">
+								<div class="tm-register-feature__icon">
 									<i class="bi bi-star"></i>
 								</div>
-
-								<div>
+								<div class="tm-register-feature__content">
 									<strong>Des avis authentiques</strong>
-									<span>
-										Consultez les avis de vrais clients.
-									</span>
+									<span>Consultez les avis de vrais clients.</span>
 								</div>
 							</div>
 
-							<div class="tm-benefit">
-								<div class="tm-benefit-icon">
+							<div class="tm-register-feature">
+								<div class="tm-register-feature__icon">
 									<i class="bi bi-tag"></i>
 								</div>
-
-								<div>
+								<div class="tm-register-feature__content">
 									<strong>Des offres exclusives</strong>
-									<span>
-										Profitez des bons plans près de chez vous.
-									</span>
+									<span>Profitez des bons plans près de chez vous.</span>
 								</div>
 							</div>
 
-							<div class="tm-benefit">
-								<div class="tm-benefit-icon">
+							<div class="tm-register-feature">
+								<div class="tm-register-feature__icon">
 									<i class="bi bi-lock"></i>
 								</div>
-
-								<div>
+								<div class="tm-register-feature__content">
 									<strong>Paiement sécurisé</strong>
-									<span>
-										Transactions protégées.
-									</span>
+									<span>Transactions protégées.</span>
 								</div>
 							</div>
-
 						</div>
 
-						<div class="tm-review-card">
-
+						<div class="tm-register-review-card">
 							<p>
-								Grâce à TrouveMoi, j'ai trouvé un plombier fiable
-															en moins de 2 heures. Service au top !
+								Grâce à TrouveMoi, j'ai trouvé un plombier fiable en moins de 2 heures. Service au top !
 							</p>
-
-							<div class="tm-stars">
-								★★★★★
-							</div>
-
+							<div class="tm-register-review-card__stars">★★★★★</div>
 							<strong>Sophie D.</strong>
-
 							<span>Cliente satisfaite</span>
-
 						</div>
-
 					</div>
+				</section>
 
-				</div>
-
-				{# ================= RIGHT ================= #}
-
-				<div class="tm-form-container">
-
-					<div class="tm-role">
+				<section class="tm-register-panel">
+					<div class="tm-register-role-switch">
 						<span>
 							{{
-                app.request.query.get('role','client') == 'prestataire'
-                ? 'Professionnel 🛠️'
-                : 'Particulier 👤'
-            }}
+                                app.request.query.get('role', 'client') == 'prestataire'
+                                ? 'Professionnel 🛠️'
+                                : 'Particulier 👤'
+                            }}
 						</span>
 
 						<a href="{{ path('app_register_choice') }}">
@@ -132,165 +93,127 @@
 						</a>
 					</div>
 
-					<h2>Créer un compte</h2>
+					<h2 class="tm-register-panel__title">Créer un compte</h2>
 
-					<p class="tm-subtitle">
+					<p class="tm-register-panel__subtitle">
 						Remplissez les informations ci-dessous.
 					</p>
 
 					{{ form_start(registrationForm) }}
 
-					<div class="tm-field">
-						<i class="bi bi-envelope-fill"></i>
-
+					<div class="tm-register-field">
+						<i class="bi bi-envelope-fill tm-register-field__icon"></i>
 						{{
-            form_widget(registrationForm.email,{
-                attr:{
-                    placeholder:'Adresse e-mail',
-                    class:'tm-input'
-                }
-            })
-        }}
+                                form_widget(registrationForm.email, {
+                                    attr: {
+                                        placeholder: 'Adresse e-mail',
+                                        class: 'tm-register-field__input'
+                                    }
+                                })
+                            }}
 					</div>
 
-					<div class="tm-password-wrapper" data-controller="password">
-
-						<div class="tm-field tm-password-field">
-
-							<span class="tm-field-icon">
+					<div class="tm-register-password-block" data-controller="password">
+						<div class="tm-register-field tm-register-field--password">
+							<span class="tm-register-field__icon">
 								<i class="bi bi-lock-fill"></i>
 							</span>
 
 							{{
-                form_widget(registrationForm.plainPassword,{
-                    attr:{
-                        placeholder:'Mot de passe',
-                        class:'tm-input',
-                        'data-password-target':'input',
-                        'data-action':'input->password#checkPassword'
-                    }
-                })
-            }}
+                                    form_widget(registrationForm.plainPassword, {
+                                        attr: {
+                                            placeholder: 'Mot de passe',
+                                            class: 'tm-register-field__input',
+                                            'data-password-target': 'input',
+                                            'data-action': 'input->password#checkPassword'
+                                        }
+                                    })
+                                }}
 
-							<button type="button" class="tm-password-toggle" data-password-target="toggle" data-action="click->password#toggleVisibility"></button>
-
+							<button type="button" class="tm-register-password-toggle" data-password-target="toggle" data-action="click->password#toggleVisibility" aria-label="Afficher ou masquer le mot de passe"></button>
 						</div>
 
-						<div class="tm-password-rules">
-
-							<div class="invalid" data-password-target="length">
-								❌ Au moins 8 caractères
-							</div>
-
-							<div class="invalid" data-password-target="uppercase">
-								❌ Au moins une majuscule
-							</div>
-
-							<div class="invalid" data-password-target="number">
-								❌ Au moins un chiffre
-							</div>
-
-							<div class="invalid" data-password-target="special">
-								❌ Au moins un caractère spécial
-							</div>
-
+						<div class="tm-register-password-rules">
+							<div class="is-invalid" data-password-target="length">❌ Au moins 8 caractères</div>
+							<div class="is-invalid" data-password-target="uppercase">❌ Au moins une majuscule</div>
+							<div class="is-invalid" data-password-target="number">❌ Au moins un chiffre</div>
+							<div class="is-invalid" data-password-target="special">❌ Au moins un caractère spécial</div>
 						</div>
-
 					</div>
 
-					<div class="tm-checkbox">
-
+					<div class="tm-register-checkbox">
 						{{ form_widget(registrationForm.agreeTerms) }}
-
 						{{ form_label(registrationForm.agreeTerms) }}
-
 					</div>
 
-					<button type="submit" class="tm-submit">
+					<button type="submit" class="tm-register-submit-btn">
 						S'enregistrer
 					</button>
 
-					<div class="tm-divider">
+					<div class="tm-register-divider">
 						<span>ou</span>
 					</div>
 
-					<a href="{{ path('connect_google_start', { role: app.request.query.get('role','client') }) }}" class="tm-social-btn">
+					<a href="{{ path('connect_google_start', { role: app.request.query.get('role', 'client') }) }}" class="tm-register-social-btn" data-turbo="false" data-turbo-prefetch="false">
 						<i class="bi bi-google"></i>
 						<span>S'inscrire avec Google</span>
 					</a>
 
-					<button type="button" class="tm-social-btn">
+					<button type="button" class="tm-register-social-btn">
 						<i class="bi bi-apple"></i>
 						<span>S'inscrire avec Apple</span>
 					</button>
 
-					<p class="tm-login-link">
-
+					<p class="tm-register-login-link">
 						Vous avez déjà un compte ?
-
-						<a href="{{ path('app_login') }}">
-							Se connecter
-						</a>
-
+						<a href="{{ path('app_login') }}">Se connecter</a>
 					</p>
 
 					{{ form_end(registrationForm) }}
-
-				</div>
-
+				</section>
 			</div>
 
-			<div class="tm-footer-features">
-
-				<div class="item">
+			<div class="tm-register-bottom-features">
+				<div class="tm-register-bottom-features__item">
 					<i class="bi bi-calendar-check"></i>
-
 					<div>
 						<strong>Demande de devis gratuite</strong>
 						<span>Réponse rapide des prestataires</span>
 					</div>
 				</div>
 
-				<div class="item">
+				<div class="tm-register-bottom-features__item">
 					<i class="bi bi-shield-check"></i>
-
 					<div>
 						<strong>Aucun engagement</strong>
 						<span>Comparez librement</span>
 					</div>
 				</div>
 
-				<div class="item">
+				<div class="tm-register-bottom-features__item">
 					<i class="bi bi-lock"></i>
-
 					<div>
 						<strong>Paiement sécurisé</strong>
 						<span>100% protégé</span>
 					</div>
 				</div>
 
-				<div class="item">
+				<div class="tm-register-bottom-features__item">
 					<i class="bi bi-star"></i>
-
 					<div>
 						<strong>Satisfaction garantie</strong>
 						<span>Nous vous accompagnons</span>
 					</div>
 				</div>
 
-				<div class="item">
+				<div class="tm-register-bottom-features__item">
 					<i class="bi bi-headset"></i>
-
 					<div>
 						<strong>Support 7j/7</strong>
 						<span>Une équipe disponible</span>
 					</div>
 				</div>
-
 			</div>
-
 		</div>
-
 	</div>
-
 {% endblock %}

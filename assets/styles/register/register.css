@@ -4,35 +4,35 @@ body {
 }
 
 .tm-register-page {
-    padding: 60px 8%; 
+    padding: 60px 8%;
     margin: 0 auto;
 }
 
-.tm-register-card {
+.tm-register-layout {
     display: flex;
     width: 100%;
-    min-height: 85vh; 
-    border-radius: 16px; 
+    min-height: 85vh;
+    border-radius: 16px;
     overflow: hidden;
     background-color: #ffffff;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
 }
 
-.tm-left {
+.tm-register-hero {
     position: relative;
-    background-image: 
-        linear-gradient(to right, #0a1128 0%, #0a1128 35%, rgba(10, 17, 40, 0.6) 70%, rgba(10, 17, 40, 0) 100%), 
-        url('../../images/categories/img/register-img2.jpg'); 
+    background-image:
+        linear-gradient(to right, #0a1128 0%, #0a1128 35%, rgba(10, 17, 40, 0.6) 70%, rgba(10, 17, 40, 0) 100%),
+        url('../../images/categories/img/register-img2.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    flex: 3; 
+    flex: 3;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-.tm-left-content {
+.tm-register-hero__content {
     position: relative;
     z-index: 2;
     padding: 50px;
@@ -43,31 +43,36 @@ body {
     justify-content: space-between;
 }
 
-.tm-left h1 {
+.tm-register-hero__title {
     font-size: 58px;
     font-weight: 800;
     line-height: 1.1;
     margin-bottom: 25px;
 }
 
-.tm-left h1 span {
+.tm-register-hero__title span {
     color: #f4a911;
 }
 
-.tm-description {
+.tm-register-hero__subtitle {
     max-width: 520px;
     font-size: 18px;
     line-height: 1.7;
     margin-bottom: 50px;
 }
 
-.tm-benefit {
+.tm-register-feature-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.tm-register-feature {
     display: flex;
     gap: 18px;
     margin-bottom: 25px;
 }
 
-.tm-benefit-icon {
+.tm-register-feature__icon {
     width: 46px;
     height: 46px;
     background: white;
@@ -79,17 +84,17 @@ body {
     flex-shrink: 0;
 }
 
-.tm-benefit strong {
+.tm-register-feature__content strong {
     display: block;
     margin-bottom: 5px;
 }
 
-.tm-benefit span {
+.tm-register-feature__content span {
     opacity: 0.9;
     font-size: 14px;
 }
 
-.tm-review-card {
+.tm-register-review-card {
     margin-top: 50px;
     width: 380px;
     padding: 25px;
@@ -98,42 +103,37 @@ body {
     backdrop-filter: blur(10px);
 }
 
-.tm-review-card p {
+.tm-register-review-card p {
     margin-bottom: 10px;
 }
 
-.tm-stars {
+.tm-register-review-card__stars {
     color: #f4a911;
     margin-bottom: 10px;
 }
 
-.tm-review-card span {
+.tm-register-review-card span {
     display: block;
     opacity: 0.8;
     font-size: 14px;
 }
 
-.tm-right {
-    flex: 2; 
-    display: flex;
-    background-color: #ffffff;
-}
-
-.tm-form-container {
-    flex: 1; 
-    padding: 4rem 3.5rem; 
+.tm-register-panel {
+    flex: 2;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    background-color: #ffffff;
+    padding: 4rem 3.5rem;
 }
 
-.tm-form-container form {
+.tm-register-panel form {
     width: 100%;
     max-width: 400px;
     margin: 0 auto;
 }
 
-.tm-role {
+.tm-register-role-switch {
     display: inline-flex;
     gap: 10px;
     align-items: center;
@@ -141,24 +141,25 @@ body {
     border-radius: 999px;
     padding: 8px 14px;
     margin-bottom: 30px;
+    width: fit-content;
 }
 
-.tm-role a {
+.tm-register-role-switch a {
     text-decoration: none;
 }
 
-.tm-form-container h2 {
+.tm-register-panel__title {
     font-size: 42px;
     font-weight: 800;
     color: #061b56;
 }
 
-.tm-subtitle {
+.tm-register-panel__subtitle {
     color: #6b7280;
     margin-bottom: 30px;
 }
 
-.tm-field {
+.tm-register-field {
     border: 1px solid #e5e7eb;
     border-radius: 10px;
     height: 56px;
@@ -166,27 +167,73 @@ body {
     align-items: center;
     padding: 0 16px;
     margin-bottom: 18px;
+    background: #fff;
 }
 
-.tm-field i {
+.tm-register-field__icon {
     color: #2046d8;
     margin-right: 12px;
+    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
 }
 
-.tm-input {
+.tm-register-field__input {
     border: none !important;
     box-shadow: none !important;
     width: 100%;
+    background: transparent;
+    min-width: 0;
 }
 
-.tm-checkbox {
+.tm-register-password-block {
+    margin-bottom: 20px;
+}
+
+.tm-register-field--password {
+    position: relative;
+}
+
+.tm-register-password-toggle {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 0;
+    margin-left: 10px;
+}
+
+.tm-register-password-toggle i {
+    font-size: 20px;
+    color: #2046d8;
+}
+
+.tm-register-password-rules {
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.tm-register-password-rules div {
+    margin-bottom: 6px;
+}
+
+.tm-register-password-rules .is-valid {
+    color: #16a34a;
+    font-weight: 600;
+}
+
+.tm-register-password-rules .is-invalid {
+    color: #dc2626;
+}
+
+.tm-register-checkbox {
     margin: 20px 0;
     display: flex;
     gap: 10px;
     align-items: flex-start;
 }
 
-.tm-submit {
+.tm-register-submit-btn {
     width: 100%;
     height: 56px;
     border: none;
@@ -196,17 +243,17 @@ body {
     font-weight: 700;
 }
 
-.tm-submit:hover {
+.tm-register-submit-btn:hover {
     background: #1634a6;
 }
 
-.tm-divider {
+.tm-register-divider {
     text-align: center;
     margin: 25px 0;
     position: relative;
 }
 
-.tm-divider:before {
+.tm-register-divider::before {
     content: "";
     position: absolute;
     top: 50%;
@@ -216,13 +263,13 @@ body {
     background: #e5e7eb;
 }
 
-.tm-divider span {
+.tm-register-divider span {
     background: white;
     padding: 0 14px;
     position: relative;
 }
 
-.tm-social-btn {
+.tm-register-social-btn {
     width: 100%;
     height: 54px;
     border: 1px solid #e5e7eb;
@@ -237,18 +284,18 @@ body {
     color: #111827;
 }
 
-.tm-login-link {
+.tm-register-login-link {
     text-align: center;
     margin-top: 20px;
 }
 
-.tm-login-link a {
+.tm-register-login-link a {
     text-decoration: none;
     color: #2046d8;
     font-weight: 600;
 }
 
-.tm-footer-features {
+.tm-register-bottom-features {
     margin-top: 25px;
     background: white;
     border-radius: 18px;
@@ -259,105 +306,60 @@ body {
     box-shadow: 0 5px 25px rgba(0, 0, 0, 0.04);
 }
 
-.tm-footer-features .item {
+.tm-register-bottom-features__item {
     display: flex;
     gap: 12px;
 }
 
-.tm-footer-features i {
+.tm-register-bottom-features__item i {
     color: #2046d8;
     font-size: 22px;
 }
 
-.tm-footer-features strong {
+.tm-register-bottom-features__item strong {
     display: block;
     font-size: 14px;
 }
 
-.tm-footer-features span {
+.tm-register-bottom-features__item span {
     font-size: 13px;
     color: #6b7280;
 }
 
 @media (max-width: 1200px) {
-    .tm-register-card {
+    .tm-register-layout {
         flex-direction: column;
     }
 
-    .tm-left,
-    .tm-right {
+    .tm-register-hero,
+    .tm-register-panel {
         width: 100%;
     }
 
-    .tm-footer-features {
+    .tm-register-bottom-features {
         grid-template-columns: 1fr 1fr;
     }
 }
 
 @media (max-width: 768px) {
-    .tm-left-content {
-        padding: 35px;
+    .tm-register-page {
+        padding: 20px 12px;
     }
 
-    .tm-left h1 {
+    .tm-register-hero__content,
+    .tm-register-panel {
+        padding: 24px;
+    }
+
+    .tm-register-hero__title {
         font-size: 38px;
     }
 
-    .tm-footer-features {
+    .tm-register-bottom-features {
         grid-template-columns: 1fr;
     }
 
-    .tm-review-card {
+    .tm-register-review-card {
         width: 100%;
     }
-}
-
-.tm-field-icon {
-    margin-right: 12px;
-    font-size: 18px;
-}
-
-.tm-password-wrapper {
-    margin-bottom: 20px;
-}
-
-.tm-password-field {
-    position: relative;
-}
-
-.tm-password-toggle {
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-size: 20px;
-    padding: 0;
-    margin-left: 10px;
-}
-
-.tm-password-rules {
-    margin-top: 12px;
-    font-size: 14px;
-}
-
-.tm-password-rules div {
-    margin-bottom: 6px;
-}
-
-.tm-password-rules .valid {
-    color: #16a34a;
-    font-weight: 600;
-}
-
-.tm-password-rules .invalid {
-    color: #dc2626;
-}
-
-.tm-password-toggle i {
-    font-size: 20px;
-    color: #2046d8;
-}
-
-.tm-field-icon i {
-    font-size: 18px;
-    color: #2046d8;
 }

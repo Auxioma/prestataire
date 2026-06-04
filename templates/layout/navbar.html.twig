@@ -1,134 +1,156 @@
 {# NAVBAR #}
-<nav class="navbar navbar-expand-xl navbar-dark sticky-top" data-controller="navbar" style="background-color: #061B56; padding-top: 14px; padding-bottom: 14px; font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;">
-	<div class="container">
+<nav class="navbar navbar-expand-xl navbar-dark sticky-top tm-navbar" data-controller="navbar">
+	<div class="container tm-navbar__container">
 
-		<a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none py-0" href="{{ path('app_home') }}">
-			<img src="{{ asset('images/logo_trouvemoipresta.png') }}" alt="Logo TrouveMoi" style="height: 40px; width: auto; flex-shrink: 0; object-fit: contain;">
-			<div class="d-flex flex-column lh-1">
-				<span class="text-white mb-0" style="letter-spacing: -0.5px; font-weight: 800 !important; font-size: 22px;">TrouveMoi</span>
-				<span style="color: #F4A911; font-size: 13px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;">
-					PRESTATAIRES
-				</span>
+		<a class="navbar-brand tm-navbar__brand" href="{{ path('app_home') }}">
+			<img src="{{ asset('images/logo_trouvemoipresta.png') }}" alt="Logo TrouveMoi" class="tm-navbar__brand-logo">
+			<div class="tm-navbar__brand-text">
+				<span class="tm-navbar__brand-title">TrouveMoi</span>
+				<span class="tm-navbar__brand-subtitle">PRESTATAIRES</span>
 			</div>
 		</a>
 
-		<div class="d-none d-lg-block ms-4 grow" style="max-width: 380px;">
-			<div
-				class="position-relative">
-				<input type="text" class="form-control text-white border-0 px-4 py-2 tm-search-input" placeholder="Rechercher un prestataire..." style="background-color: rgba(255, 255, 255, 0.08); border-radius: 50px; font-size: 13px; padding-right: 40px !important; font-family: 'Poppins', sans-serif; font-weight: 400; color: #ffffff !important;"/>
-				<div class="position-absolute end-0 top-50 translate-middle-y pe-3" style="pointer-events: none;">
-					<i class="fa-solid fa-magnifying-glass text-white opacity-75" style="font-size: 13px;"></i>
-				</div>
+		<div class="tm-navbar__search tm-navbar__search--desktop">
+			<div class="tm-navbar__search-wrap">
+				<input type="text" class="form-control tm-navbar__search-input" placeholder="Rechercher un prestataire...">
+				<span class="tm-navbar__search-icon">
+					<i class="fa-solid fa-magnifying-glass"></i>
+				</span>
 			</div>
 		</div>
 
-		<button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#tmNavbarContent" aria-controls="tmNavbarContent" aria-expanded="false" aria-label="Toggle navigation">
+		<button class="navbar-toggler tm-navbar__toggler" type="button" data-bs-toggle="collapse" data-bs-target="#tmNavbarContent" aria-controls="tmNavbarContent" aria-expanded="false" aria-label="Ouvrir le menu">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 
-		<div class="collapse navbar-collapse" id="tmNavbarContent">
-			<ul class="navbar-nav ms-auto align-items-lg-center gap-2 gap-lg-3">
+		<div class="collapse navbar-collapse tm-navbar__collapse" id="tmNavbarContent">
+
+			<div class="tm-navbar__search tm-navbar__search--mobile">
+				<div class="tm-navbar__search-wrap">
+					<input type="text" class="form-control tm-navbar__search-input" placeholder="Rechercher un prestataire...">
+					<span class="tm-navbar__search-icon">
+						<i class="fa-solid fa-magnifying-glass"></i>
+					</span>
+				</div>
+			</div>
+
+			<ul class="navbar-nav ms-auto align-items-xl-center tm-navbar__nav">
 
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle text-white tm-nav-item" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<a class="nav-link dropdown-toggle tm-navbar__link" href="#" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
 						Prestataires
 					</a>
-					<ul class="dropdown-menu shadow border-0 mt-2">
+					<ul class="dropdown-menu tm-navbar__dropdown">
 						<li>
-							<a class="dropdown-item fw-semibold" href="#">Tous les prestataires</a>
+							<a class="dropdown-item tm-navbar__dropdown-link" href="#">
+								Tous les prestataires
+							</a>
 						</li>
-
-						<li><hr class="dropdown-divider opacity-50"></li>
-
+						<li><hr class="dropdown-divider"></li>
 						<li>
-							<a class="dropdown-item fw-semibold" href="#">Les mieux notés</a>
+							<a class="dropdown-item tm-navbar__dropdown-link" href="#">
+								Les mieux notés
+							</a>
 						</li>
-
-						<li><hr class="dropdown-divider opacity-50"></li>
-
+						<li><hr class="dropdown-divider"></li>
 						<li>
-							<a class="dropdown-item fw-semibold" href="#">Disponibles immédiatement</a>
+							<a class="dropdown-item tm-navbar__dropdown-link" href="#">
+								Disponibles immédiatement
+							</a>
 						</li>
 					</ul>
 				</li>
 
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle text-white tm-nav-item" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<a class="nav-link dropdown-toggle tm-navbar__link" href="#" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
 						Catégories
 					</a>
-					<ul class="dropdown-menu shadow border-0 mt-2">
+
+					<ul class="dropdown-menu tm-navbar__dropdown">
 						{% for category in navbarCategories %}
-							<li class="dropdown-submenu">
-								<a class="dropdown-item fw-bold" href="#">{{ category.name }}</a>
-								{% if category.subCategories|length > 0 %}
-									<ul class="dropdown-menu">
+							{% if category.subCategories|length > 0 %}
+								<li class="dropend tm-navbar__dropend">
+									<a class="dropdown-item dropdown-toggle tm-navbar__dropdown-link tm-navbar__dropdown-link--strong" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+										{{ category.name }}
+									</a>
+
+									<ul class="dropdown-menu tm-navbar__dropdown tm-navbar__dropdown--submenu">
 										{% for subCategory in category.subCategories %}
 											<li>
-												<a class="dropdown-item" href="#">{{ subCategory.name }}</a>
+												<a class="dropdown-item tm-navbar__dropdown-link" href="#">
+													{{ subCategory.name }}
+												</a>
 											</li>
 										{% endfor %}
 									</ul>
-								{% endif %}
-							</li>
-
-							{% if not loop.last %}
-								<li><hr class="dropdown-divider opacity-50"></li>
+								</li>
+							{% else %}
+								<li>
+									<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--strong" href="#">
+										{{ category.name }}
+									</a>
+								</li>
 							{% endif %}
 
+							{% if not loop.last %}
+								<li><hr class="dropdown-divider"></li>
+							{% endif %}
 						{% endfor %}
 					</ul>
 				</li>
 
 				<li class="nav-item">
-					<a class="nav-link text-white tm-nav-item" href="#">Bons plans</a>
+					<a class="nav-link tm-navbar__link" href="#">Bons plans</a>
 				</li>
 
 				<li class="nav-item">
-					<a class="nav-link text-white d-flex align-items-center gap-2 tm-nav-item" href="#">
-						<i class="fa-regular fa-heart" style="font-size: 14px;"></i>
-						Mes favoris
+					<a class="nav-link tm-navbar__link tm-navbar__link--icon" href="#">
+						<i class="fa-regular fa-heart"></i>
+						<span>Mes favoris</span>
 					</a>
 				</li>
 
-				<li class="d-none d-lg-block border-end opacity-25" style="height: 20px; min-height: 20px; border-color: rgba(255,255,255,0.3) !important;"></li>
+				<li class="tm-navbar__divider d-none d-xl-block"></li>
 
-				{# GESTION DYNAMIQUE DE L'AUTHENTIFICATION #}
 				{% if app.user %}
 					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle d-flex align-items-center text-white tm-nav-item" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight: 700 !important;">
-							<i class="fa-solid fa-circle-user fs-5 me-2 text-warning"></i>
-							Mon Compte
+						<a class="nav-link dropdown-toggle tm-navbar__link tm-navbar__link--account" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<i class="fa-solid fa-circle-user"></i>
+							<span>Mon Compte</span>
 						</a>
-						<ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+
+						<ul class="dropdown-menu dropdown-menu-end tm-navbar__dropdown">
 							<li>
-								<span class="dropdown-item-text text-muted small fw-medium">{{ app.user.email }}</span>
+								<span class="dropdown-item-text tm-navbar__dropdown-text">
+									{{ app.user.email }}
+								</span>
 							</li>
 							<li><hr class="dropdown-divider"></li>
 
-							{# Rôle Prestataire vs Client #}
 							{% if is_granted('ROLE_PRESTATAIRE') %}
 								<li>
-									<a class="dropdown-item fw-bold text-primary" href="#">
+									<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--primary" href="#">
 										<i class="fa-solid fa-gauge me-2"></i>Espace Pro
 									</a>
 								</li>
 							{% else %}
 								<li>
-									<a class="dropdown-item fw-semibold" href="#">
+									<a class="dropdown-item tm-navbar__dropdown-link" href="#">
 										<i class="fa-solid fa-file-invoice me-2"></i>Mes Demandes
 									</a>
 								</li>
 							{% endif %}
 
 							<li>
-								<a class="dropdown-item fw-medium" href="{{ is_granted('ROLE_PRESTATAIRE') ? path('app_prestataire_settings') : path('app_client_settings') }}">
+								<a class="dropdown-item tm-navbar__dropdown-link" href="{{ is_granted('ROLE_PRESTATAIRE') ? path('app_prestataire_settings') : path('app_client_settings') }}">
 									<i class="fa-solid fa-gear me-2"></i>Paramètres
 								</a>
 							</li>
 
 							<li><hr class="dropdown-divider"></li>
+
 							<li>
-								<a class="dropdown-item text-danger fw-semibold" href="{{ path('app_logout') }}">
+								<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--danger" href="{{ path('app_logout') }}">
 									<i class="fa-solid fa-right-from-bracket me-2"></i>Déconnexion
 								</a>
 							</li>
@@ -136,20 +158,22 @@
 					</li>
 				{% else %}
 					<li class="nav-item">
-						<a class="nav-link text-white d-flex align-items-center gap-2 tm-nav-item" href="{{ path('app_login') }}">
-							<i class="fa-regular fa-user" style="font-size: 14px;"></i>
-							Connexion
+						<a class="nav-link tm-navbar__link tm-navbar__link--icon" href="{{ path('app_login') }}">
+							<i class="fa-regular fa-user"></i>
+							<span>Connexion</span>
 						</a>
 					</li>
-					<li class="nav-item">
-						<a class="btn btn-sm btn-outline-light px-3 py-1.5" href="{{ path('app_register_choice') }}" style="font-size: 13px; border-radius: 6px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;">Inscription</a>
+
+					<li class="nav-item tm-navbar__mobile-full">
+						<a class="btn tm-navbar__btn-outline" href="{{ path('app_register_choice') }}">
+							Inscription
+						</a>
 					</li>
 				{% endif %}
 
-				{# BOUTON AFFICHÉ UNIQUEMENT POUR LE RÔLE PRESTATAIRE CONNECTÉ #}
 				{% if app.user and is_granted('ROLE_PRESTATAIRE') %}
-					<li class="nav-item ms-lg-2">
-						<a class="btn text-white px-3 py-2 tm-btn-cta" href="#" style="border: 0; font-size: 13px; border-radius: 6px; font-weight: 800 !important; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.2px; transition: all 0.2s ease;">
+					<li class="nav-item ms-xl-2 tm-navbar__mobile-full">
+						<a class="btn tm-navbar__btn-cta" href="#">
 							<i class="fa-solid fa-briefcase me-2"></i>Proposer une Prestation
 						</a>
 					</li>

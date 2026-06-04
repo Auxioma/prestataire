@@ -10,88 +10,73 @@
 
 {% block body %}
 	<div class="tm-login-page">
+		<div class="tm-login-layout">
 
-		<div
-			class="tm-login-wrapper">
-
-			{# ================= LEFT ================= #}
-			<div class="tm-left">
-
-				<a class="tm-logo d-flex align-items-center gap-2 text-decoration-none py-0" href="{{ path('app_home') }}">
-					<img src="{{ asset('images/logo_trouvemoipresta_black.png') }}" alt="Logo TrouveMoi" class="brand-logo">
-					<div class="d-flex flex-column lh-1">
-						<span class="brand-title mb-0">TrouveMoi</span>
-						<span class="brand-subtitle">PRESTATAIRES</span>
+			<section class="tm-login-hero">
+				<a class="tm-login-brand" href="{{ path('app_home') }}">
+					<img src="{{ asset('images/logo_trouvemoipresta_black.png') }}" alt="Logo TrouveMoi" class="tm-login-brand__logo">
+					<div class="tm-login-brand__text">
+						<span class="tm-login-brand__title">TrouveMoi</span>
+						<span class="tm-login-brand__subtitle">PRESTATAIRES</span>
 					</div>
 				</a>
 
-				<h1>
+				<h1 class="tm-login-hero__title">
 					Trouvez le bon prestataire,<br>
 					au bon moment.
 				</h1>
 
-				<p class="tm-subtitle">
+				<p class="tm-login-hero__subtitle">
 					Des professionnels qualifiés près de chez vous pour tous vos projets et services du quotidien.
 				</p>
 
-				<div class="tm-features">
-
-					<div class="tm-feature">
-						<div class="icon blue">
-							<img src="{{ asset('images/categories/icons/shield-halved-solid.png') }}" alt="shield-icon">
+				<div class="tm-login-feature-list">
+					<div class="tm-login-feature">
+						<div class="tm-login-feature__icon tm-login-feature__icon--blue">
+							<img src="{{ asset('images/categories/icons/shield-halved-solid.png') }}" alt="Icône sécurité">
 						</div>
-						<div>
+						<div class="tm-login-feature__content">
 							<strong>Prestataires vérifiés</strong>
 							<span>Des professionnels évalués et de confiance.</span>
 						</div>
 					</div>
 
-					<div class="tm-feature">
-						<div class="icon yellow">
-							<img src="{{ asset('images/categories/icons/star-regular.png') }}" alt="star-icon">
+					<div class="tm-login-feature">
+						<div class="tm-login-feature__icon tm-login-feature__icon--yellow">
+							<img src="{{ asset('images/categories/icons/star-regular.png') }}" alt="Icône avis">
 						</div>
-						<div>
+						<div class="tm-login-feature__content">
 							<strong>Avis clients authentiques</strong>
 							<span>Faites le bon choix grâce aux retours d'expérience.</span>
 						</div>
 					</div>
 
-					<div class="tm-feature">
-						<div class="icon green">
-							<img src="{{ asset('images/categories/icons/lock-solid.png') }}" alt="lock-icon">
+					<div class="tm-login-feature">
+						<div class="tm-login-feature__icon tm-login-feature__icon--green">
+							<img src="{{ asset('images/categories/icons/lock-solid.png') }}" alt="Icône cadenas">
 						</div>
-						<div>
+						<div class="tm-login-feature__content">
 							<strong>Paiement sécurisé</strong>
 							<span>Vos transactions sont protégées à chaque étape.</span>
 						</div>
 					</div>
-
 				</div>
 
-				<div class="tm-worker">
-
-					<img src="{{ asset('images/categories/img/worker2.png') }}" alt="Prestataire">
-
+				<div class="tm-login-hero__image-wrap">
+					<img src="{{ asset('images/categories/img/worker2.png') }}" alt="Prestataire" class="tm-login-hero__image">
 				</div>
+			</section>
 
-			</div>
-
-			{# ================= RIGHT ================= #}
-			<div class="tm-right">
-
-				<div class="tm-form-card">
-
-					<div class="tm-tabs">
-						<a class="active">Se connecter</a>
-
-						<a href="{{ path('app_register_choice') }}">
-							S'inscrire
-						</a>
+			<section class="tm-login-panel">
+				<div class="tm-login-card">
+					<div class="tm-login-switch">
+						<a class="tm-login-switch__link tm-login-switch__link--active">Se connecter</a>
+						<a href="{{ path('app_register_choice') }}" class="tm-login-switch__link">S'inscrire</a>
 					</div>
 
-					<h2>Bon retour !</h2>
+					<h2 class="tm-login-card__title">Bon retour !</h2>
 
-					<p class="welcome">
+					<p class="tm-login-card__subtitle">
 						Connectez-vous pour accéder à votre compte.
 					</p>
 
@@ -101,110 +86,94 @@
 						</div>
 					{% endif %}
 
-					<form method="post">
-
-						<div class="tm-input">
-							<i class="bi bi-envelope"></i>
-
-							<input type="email" name="_username" value="{{ last_username }}" placeholder="Adresse e-mail" required>
+					<form method="post" class="tm-login-form">
+						<div class="tm-login-field">
+							<i class="bi bi-envelope tm-login-field__icon"></i>
+							<input type="email" name="_username" value="{{ last_username }}" placeholder="Adresse e-mail" required class="tm-login-field__input">
 						</div>
 
-						<div class="tm-input">
-							<i class="bi bi-lock"></i>
+						<div class="tm-login-field" data-controller="password">
+							<i class="bi bi-lock tm-login-field__icon"></i>
 
-							<input type="password" id="password" name="_password" placeholder="Mot de passe" required>
+							<input type="password" id="password" name="_password" placeholder="Mot de passe" required class="tm-login-field__input" data-password-target="input">
 
-							<button type="button" id="passwordToggle">
-								<i class="bi bi-eye"></i>
-							</button>
+							<button type="button" class="tm-login-field__toggle" data-password-target="toggle" data-action="click->password#toggleVisibility" aria-label="Afficher ou masquer le mot de passe"></button>
 						</div>
 
 						<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-						<div class="forgot">
+						<div class="tm-login-form__forgot">
 							<a href="#">Mot de passe oublié ?</a>
 						</div>
 
-						<button class="tm-submit">
+						<button class="tm-login-form__submit">
 							Se connecter
 						</button>
 
-						<div class="separator">
+						<div class="tm-login-form__separator">
 							<span>ou</span>
 						</div>
 
-						<a href="{{ path('connect_google_start') }}" class="social-btn">
-
-							<img src="https://www.svgrepo.com/show/475656/google-color.svg">
+						<a href="{{ path('connect_google_start') }}" class="tm-login-social-btn" data-turbo="false" data-turbo-prefetch="false">
+							<img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
 							Continuer avec Google
 						</a>
 
-						<button type="button" class="social-btn">
-
-							<img src="{{ asset('images/categories/icons/apple.png') }}" alt="apple-icon">
+						<button type="button" class="tm-login-social-btn">
+							<img src="{{ asset('images/categories/icons/apple.png') }}" alt="Apple">
 							Continuer avec Apple
-
 						</button>
 
-						<p class="register">
+						<p class="tm-login-form__register">
 							Vous n'avez pas de compte ?
-
-							<a href="{{ path('app_register_choice') }}">
-								S'inscrire
-							</a>
+							<a href="{{ path('app_register_choice') }}">S'inscrire</a>
 						</p>
-
 					</form>
-
 				</div>
 
-				<div class="tm-bottom-features">
-
-					<div class="tm-bottom-feature-item">
-						<div class="feature-header">
-							<div class="mini-icon mini-blue">
-								<img src="{{ asset('images/categories/icons/shield-halved-solid.png') }}" alt="shield-icon">
+				<div class="tm-login-benefits">
+					<div class="tm-login-benefit-card">
+						<div class="tm-login-benefit-card__head">
+							<div class="tm-login-benefit-card__icon tm-login-benefit-card__icon--blue">
+								<img src="{{ asset('images/categories/icons/shield-halved-solid.png') }}" alt="Sécurité">
 							</div>
 							<strong>Données sécurisées</strong>
 						</div>
 						<span>Vos informations sont protégées</span>
 					</div>
 
-					<div class="tm-bottom-feature-item">
-						<div class="feature-header">
-							<div class="mini-icon mini-green">
-								<img src="{{ asset('images/categories/icons/circle-check-regular-full.svg') }}" alt="check-icon">
+					<div class="tm-login-benefit-card">
+						<div class="tm-login-benefit-card__head">
+							<div class="tm-login-benefit-card__icon tm-login-benefit-card__icon--green">
+								<img src="{{ asset('images/categories/icons/circle-check-regular-full.svg') }}" alt="Validation">
 							</div>
 							<strong>Gratuit</strong>
 						</div>
 						<span>L'inscription et la demande de devis sont gratuites</span>
 					</div>
 
-					<div class="tm-bottom-feature-item">
-						<div class="feature-header">
-							<div class="mini-icon mini-yellow">
-								<img src="{{ asset('images/categories/icons/headset-solid-full.svg') }}" alt="headset-icon">
+					<div class="tm-login-benefit-card">
+						<div class="tm-login-benefit-card__head">
+							<div class="tm-login-benefit-card__icon tm-login-benefit-card__icon--yellow">
+								<img src="{{ asset('images/categories/icons/headset-solid-full.svg') }}" alt="Support">
 							</div>
 							<strong>Support 7j/7</strong>
 						</div>
 						<span>Notre équipe vous accompagne à chaque étape</span>
 					</div>
 
-					<div class="tm-bottom-feature-item">
-						<div class="feature-header">
-							<div class="mini-icon mini-purple">
-								<img src="{{ asset('images/categories/icons/star-regular.png') }}" alt="star-icon">
+					<div class="tm-login-benefit-card">
+						<div class="tm-login-benefit-card__head">
+							<div class="tm-login-benefit-card__icon tm-login-benefit-card__icon--purple">
+								<img src="{{ asset('images/categories/icons/star-regular.png') }}" alt="Satisfaction">
 							</div>
 							<strong>Satisfaction garantie</strong>
 						</div>
 						<span>Votre satisfaction est notre priorité</span>
 					</div>
-
 				</div>
-
-			</div>
+			</section>
 
 		</div>
-
 	</div>
 {% endblock %}

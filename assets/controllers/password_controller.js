@@ -11,13 +11,21 @@ export default class extends Controller {
     ];
 
     connect() {
-        this.renderClosedEye();
-        this.checkPassword();
+        if (this.hasToggleTarget) {
+            this.renderClosedEye();
+        }
+
+        if (this.hasInputTarget && this.hasLengthTarget && this.hasUppercaseTarget && this.hasNumberTarget && this.hasSpecialTarget) {
+            this.checkPassword();
+        }
     }
 
     toggleVisibility() {
-        const visible = this.inputTarget.type === "text";
+        if (!this.hasInputTarget || !this.hasToggleTarget) {
+            return;
+        }
 
+        const visible = this.inputTarget.type === "text";
         this.inputTarget.type = visible ? "password" : "text";
 
         if (visible) {
@@ -28,20 +36,31 @@ export default class extends Controller {
     }
 
     checkPassword() {
+        if (!this.hasInputTarget) {
+            return;
+        }
+
         const value = this.inputTarget.value;
 
-        this.updateRequirement(this.lengthTarget, value.length >= 8);
+        if (this.hasLengthTarget) {
+            this.updateRequirement(this.lengthTarget, value.length >= 8);
+        }
 
-        this.updateRequirement(this.uppercaseTarget, /[A-Z]/.test(value));
+        if (this.hasUppercaseTarget) {
+            this.updateRequirement(this.uppercaseTarget, /[A-Z]/.test(value));
+        }
 
-        this.updateRequirement(this.numberTarget, /\d/.test(value));
+        if (this.hasNumberTarget) {
+            this.updateRequirement(this.numberTarget, /\d/.test(value));
+        }
 
-        this.updateRequirement(this.specialTarget, /[\W_]/.test(value));
+        if (this.hasSpecialTarget) {
+            this.updateRequirement(this.specialTarget, /[\W_]/.test(value));
+        }
     }
 
     updateRequirement(element, valid) {
         element.classList.remove("valid", "invalid");
-
         element.classList.add(valid ? "valid" : "invalid");
 
         const text = element.textContent
@@ -53,10 +72,14 @@ export default class extends Controller {
     }
 
     renderOpenEye() {
-        this.toggleTarget.innerHTML = '<i class="bi bi-eye-fill"></i>';
+        if (this.hasToggleTarget) {
+            this.toggleTarget.innerHTML = '<i class="bi bi-eye-fill"></i>';
+        }
     }
 
     renderClosedEye() {
-        this.toggleTarget.innerHTML = '<i class="bi bi-eye-slash-fill"></i>';
+        if (this.hasToggleTarget) {
+            this.toggleTarget.innerHTML = '<i class="bi bi-eye-slash-fill"></i>';
+        }
     }
 }
