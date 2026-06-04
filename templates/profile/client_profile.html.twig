@@ -201,31 +201,30 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const typeRadios = document.querySelectorAll('input[name="{{ settingsForm.clientProfile.type.vars.full_name }}"]');
-        const proFieldsWrapper = document.getElementById('pro-fields-wrapper');
+document.addEventListener('DOMContentLoaded', function () {
+    const typeRadios = document.querySelectorAll('input[name="{{ settingsForm.clientProfile.type.vars.full_name }}"]');
+    const proFieldsWrapper = document.getElementById('pro-fields-wrapper');
 
-        function toggleProFields() {
-            let isPro = false;
-            typeRadios.forEach(radio => {
-                if (radio.checked && (radio.value.includes('PROFESSIONNEL') || radio.value.includes('PRO'))) {
-                    isPro = true;
-                }
-            });
+    function toggleProFields() {
+        const checkedRadio = Array.from(typeRadios).find(radio => radio.checked);
 
-            if (isPro) {
-                proFieldsWrapper.style.display = 'flex';
-            } else {
-                proFieldsWrapper.style.display = 'none';
-            }
+        if (!checkedRadio) {
+            proFieldsWrapper.style.display = 'none';
+            return;
         }
 
-        typeRadios.forEach(radio => {
-            radio.addEventListener('change', toggleProFields);
-        });
+        const value = (checkedRadio.value || '').toLowerCase();
+        const isPro = value.includes('pro') || value.includes('professionnel') || value.includes('entreprise');
 
-        toggleProFields();
+        proFieldsWrapper.style.display = isPro ? '' : 'none';
+    }
+
+    typeRadios.forEach(radio => {
+        radio.addEventListener('change', toggleProFields);
     });
+
+    toggleProFields();
+});
 </script>
 
 <style>
