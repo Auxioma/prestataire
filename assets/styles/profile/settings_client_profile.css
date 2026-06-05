@@ -1,0 +1,189 @@
+:root {
+    --tm-cp-primary: #061B56;
+    --tm-cp-primary-hover: #0A286F;
+    --tm-cp-service: #2046D8;
+    --tm-cp-service-hover: #1B3CC0;
+    --tm-cp-accent: #F4A911;
+    --tm-cp-background: #F8F9FC;
+    --tm-cp-surface: #FFFFFF;
+    --tm-cp-border: #E5E7EB;
+    --tm-cp-text: #061B56;
+    --tm-cp-text-secondary: #667085;
+    --tm-cp-sidebar-bg: #F5F5F5;
+    --tm-cp-sidebar-link-hover: rgba(6, 27, 86, 0.05);
+}
+
+.tm-cp-page-wrapper {
+    font-family: 'Poppins', sans-serif !important;
+    background-color: var(--tm-cp-background);
+    color: var(--tm-cp-text);
+    font-size: 15px !important;
+}
+
+.tm-cp-client-sidebar {
+    background-color: var(--tm-cp-sidebar-bg);
+    border-right: 1px solid var(--tm-cp-border);
+    position: sticky;
+    top: 0;
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 260px;
+    min-width: 260px;
+    padding: 1.5rem !important;
+}
+
+.tm-cp-nav-menu .nav-link {
+    color: var(--tm-cp-text) !important;
+    font-weight: 500;
+    padding: 12px 16px !important;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.tm-cp-nav-menu .nav-link:hover {
+    color: var(--tm-cp-primary) !important;
+    background-color: var(--tm-cp-sidebar-link-hover);
+}
+
+.tm-cp-nav-menu .nav-link.active {
+    background-color: var(--tm-cp-service) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.tm-cp-btn-sidebar-support {
+    background-color: var(--tm-cp-primary) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    transition: background-color 0.2s ease;
+}
+
+.tm-cp-btn-sidebar-support:hover {
+    background-color: var(--tm-cp-primary-hover) !important;
+}
+
+/* --- LE FIX PROPRE POUR LES BOUTONS RADIO --- */
+
+/* On isole le gros titre "Type de compte" en haut */
+.tm-cp-form-row > label {
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 0.75rem !important;
+}
+
+/* Le conteneur global généré par Symfony : il empile les lignes d'options */
+#AccountSettingsType_clientProfile_accountType,
+[id*="accountType"],
+.tm-cp-enum-radio-group div {
+    display: flex !important;
+    flex-direction: column !important; /* Une option par ligne */
+    gap: 0.5rem !important;            /* Espace entre les deux lignes */
+    width: 100% !important;
+    align-items: flex-start !important;
+}
+
+/* Chaque ligne d'option (Le groupe form-check de Bootstrap) */
+#AccountSettingsType_clientProfile_accountType .form-check,
+[id*="accountType"] .form-check,
+.tm-cp-enum-radio-group .form-check {
+    display: flex !important;
+    flex-direction: row !important;    /* Rond à gauche, texte à droite ! */
+    align-items: center !important;    /* Aligné verticalement au centre */
+    gap: 0.5rem !important;            /* Petit espace entre le rond et le texte */
+    margin-bottom: 0 !important;
+    padding-left: 0 !important;        /* On vire le padding Bootstrap pour coller à gauche */
+}
+
+/* Style de l'input (le bouton radio) */
+#AccountSettingsType_clientProfile_accountType .form-check-input,
+[id*="accountType"] .form-check-input,
+.tm-cp-enum-radio-group .form-check-input {
+    margin: 0 !important;              /* Reset des marges chiantes de Bootstrap */
+    flex-shrink: 0 !important;         /* Le rond ne doit pas se déformer */
+    position: relative !important;     /* Force un positionnement normal */
+}
+
+/* Style du texte à côté du rond */
+#AccountSettingsType_clientProfile_accountType .form-check-label,
+[id*="accountType"] .form-check-label,
+.tm-cp-enum-radio-group .form-check-label {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-weight: 500 !important;
+    color: var(--tm-cp-text) !important;
+    font-size: 14px !important;
+}
+
+/* -------------------------------------------- */
+
+.tm-cp-main-title {
+    color: var(--tm-cp-primary);
+    font-size: 32px;
+}
+
+.tm-cp-subtitle {
+    color: var(--tm-cp-text-secondary);
+    font-size: 15px;
+}
+
+.tm-cp-card-title {
+    color: var(--tm-cp-primary);
+    font-weight: 700;
+    font-size: 18px;
+    border-bottom: 2px solid var(--tm-cp-background);
+    padding-bottom: 10px;
+}
+
+.tm-cp-card {
+    background-color: var(--tm-cp-surface);
+    border: 1px solid var(--tm-cp-border) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(6, 27, 86, 0.03) !important;
+}
+
+.tm-cp-custom-tabs .nav-link {
+    border: none !important;
+    background: none !important;
+    color: var(--tm-cp-text-secondary) !important;
+    font-weight: 500;
+    font-size: 16px;
+    padding: 0 4px 14px !important;
+    position: relative;
+}
+
+.tm-cp-custom-tabs .nav-link.active {
+    color: var(--tm-cp-service) !important;
+    font-weight: 600;
+}
+
+.tm-cp-custom-tabs .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--tm-cp-service);
+    border-radius: 3px;
+}
+
+.tm-cp-form-row label {
+    font-weight: 600 !important;
+    color: var(--tm-cp-text) !important;
+    font-size: 14px !important; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.tm-cp-btn-service {
+    background-color: var(--tm-cp-service) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 10px !important;
+}
