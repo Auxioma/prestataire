@@ -56,14 +56,7 @@
     cursor: pointer;
     padding-right: 20px !important;
 }
-.select-arrow-icon {
-    position: absolute;
-    right: 0;
-    bottom: 2px;
-    font-size: 11px;
-    color: #9ba4b0;
-    pointer-events: none;
-}
+
 .search-divider {
     position: absolute;
     right: 0;
@@ -106,10 +99,7 @@
 .main-content-section {
     margin-top: 100px;
 }
-.category-col {
-    flex: 1 1 120px;
-    max-width: 140px;
-}
+
 .category-title {
     font-size: 12px;
 }
@@ -126,10 +116,6 @@
     height: 48px;
     background-color: var(--tm-icon-bg);
     color: var(--tm-service) !important;
-}
-.all-categories-col {
-    flex: 1 1 140px;
-    max-width: 160px;
 }
 .all-categories-card {
     border-color: var(--tm-border-color) !important;
@@ -190,11 +176,13 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    min-width: 0;
 }
 
 .tm-categories-viewport {
-    overflow-x: clip;
-    overflow-y: visible;
+    overflow: hidden;
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .tm-categories-track {
@@ -208,23 +196,29 @@
 .tm-category-item {
     flex: 0 0 calc((100% - 6rem) / 7);
     min-width: 0;
+    flex-shrink: 0;
 }
 
 .tm-category-card,
 .all-categories-card {
     min-height: 142px;
+    height: 100%;
+}
+
+.all-categories-card {
+    border-color: var(--tm-border-color) !important;
+    border-style: dashed !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .tm-category-card {
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .tm-category-card:hover,
 .all-categories-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 14px 32px rgba(6, 27, 86, 0.1) !important;
+    box-shadow: 0 14px 32px rgba(6, 27, 86, 0.10) !important;
 }
 
 .tm-categories-nav {
@@ -237,12 +231,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 8px 22px rgba(6, 27, 86, 0.16);
-    transition:
-        transform 0.2s ease,
-        opacity 0.2s ease,
-        background-color 0.2s ease;
     flex: 0 0 auto;
+    box-shadow: 0 8px 22px rgba(6, 27, 86, 0.16);
+    transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
 }
 
 .tm-categories-nav:hover {
@@ -262,6 +253,12 @@
 }
 
 @media (max-width: 991.98px) {
+    .tm-category-item {
+        flex: 0 0 calc((100% - 2rem) / 3);
+    }
+}
+
+@media (max-width: 767.98px) {
     .tm-category-item {
         flex: 0 0 calc((100% - 1rem) / 2);
     }
