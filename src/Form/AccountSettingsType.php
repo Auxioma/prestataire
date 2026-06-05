@@ -51,7 +51,7 @@ class AccountSettingsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
-            'csrf_protection' => false,
+            // 'csrf_protection' => true,
         ]);
     }
 }
