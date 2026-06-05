@@ -1,4 +1,8 @@
+/* ==========================================================================
+   1. VARIABLES & CONFIGURATION GÉNÉRALE (Design System)
+   ========================================================================== */
 :root {
+    /* Couleurs Principales */
     --tm-primary: #18235b;
     --tm-primary-2: #223178;
     --tm-accent: #f4b63d;
@@ -6,16 +10,22 @@
     --tm-bg: #f4f6fb;
     --tm-surface: #ffffff;
     --tm-surface-soft: #f8f9fd;
+    
+    /* Frontières & Ombres */
     --tm-border: #e6eaf4;
     --tm-border-strong: #d7ddeb;
+    --tm-shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.04);
+    --tm-shadow-md: 0 14px 34px rgba(15, 23, 42, 0.06);
+    
+    /* Typographie & États */
     --tm-text: #172554;
     --tm-text-soft: #667085;
     --tm-text-faint: #8a94a8;
     --tm-success: #16a34a;
     --tm-warning: #f59e0b;
     --tm-danger: #dc2626;
-    --tm-shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.04);
-    --tm-shadow-md: 0 14px 34px rgba(15, 23, 42, 0.06);
+    
+    /* Layout */
     --tm-radius-sm: 12px;
     --tm-radius-md: 18px;
     --tm-radius-lg: 24px;
@@ -27,23 +37,48 @@ body {
     font-family: "Poppins", sans-serif;
     background: var(--tm-bg);
     color: var(--tm-text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
 }
 
 .tm-page-wrapper {
     background:
-        radial-gradient(
-            circle at top left,
-            rgba(244, 182, 61, 0.1),
-            transparent 18%
-        ),
+        radial-gradient(circle at top left, rgba(244, 182, 61, 0.1), transparent 18%),
         linear-gradient(180deg, #f8f9fd 0%, #f3f5fb 100%);
+    min-height: 100vh;
 }
 
+/* Helper alignement hauteur des cartes */
+@media (min-width: 992px) {
+    .match-height > [class*="col-"] {
+        display: flex;
+        flex-direction: column;
+    }
+    .match-height > [class*="col-"] > .card {
+        flex: 1 1 auto;
+    }
+}
+
+/* ==========================================================================
+   2. SIDEBAR STRUCTURELLE (Desktop par défaut)
+   ========================================================================== */
 .tm-sidebar {
-    background: linear-gradient(180deg, #18235b 0%, #1f2b6a 100%);
+    background: linear-gradient(180deg, var(--tm-primary) 0%, #1f2b6a 100%);
     color: #fff;
     border-right: 1px solid rgba(255, 255, 255, 0.05);
     box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.04);
+    width: var(--tm-sidebar-width);
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1030;
+}
+
+.tm-main-content {
+    margin-left: var(--tm-sidebar-width);
+    padding: 2rem;
+    width: calc(100% - var(--tm-sidebar-width));
 }
 
 .tm-sidebar .nav-link {
@@ -51,7 +86,7 @@ body {
     align-items: center;
     min-height: 48px;
     padding: 0.8rem 1rem;
-    border-radius: 14px;
+    border-radius: var(--tm-radius-sm);
     color: rgba(255, 255, 255, 0.82);
     font-weight: 500;
     transition: all 0.2s ease;
@@ -70,20 +105,15 @@ body {
     box-shadow: 0 10px 20px rgba(244, 182, 61, 0.22);
 }
 
-.tm-mobile-nav a {
-    opacity: 0.8;
-}
-
-.tm-mobile-nav a.active-mobile,
-.tm-mobile-nav a:hover {
-    opacity: 1;
-}
-
+/* ==========================================================================
+   3. TYPOGRAPHIE & ENCLOS DES ONGLETS (Communs)
+   ========================================================================== */
 .tm-main-title {
-    font-size: clamp(2rem, 1.6rem + 1.3vw, 2.75rem);
-    line-height: 1.05;
+    font-size: clamp(1.8rem, 1.4rem + 1.5vw, 2.75rem);
+    line-height: 1.1;
     color: var(--tm-text);
     letter-spacing: -0.04em;
+    font-weight: 700;
 }
 
 .tm-subtitle {
@@ -91,15 +121,33 @@ body {
     font-size: 1rem;
 }
 
-.tm-tabs-wrapper {
-    overflow-x: auto;
-    scrollbar-width: none;
+.tm-company-page-title {
+    color: var(--tm-text);
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
 }
 
-.tm-tabs-wrapper::-webkit-scrollbar {
+.tm-company-page-subtitle {
+    color: var(--tm-text-soft);
+    font-size: 0.98rem;
+}
+
+/* Zones de défilement horizontal tactiles pour onglets */
+.tm-tabs-wrapper,
+.tm-company-subtabs-wrapper {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+}
+
+.tm-tabs-wrapper::-webkit-scrollbar,
+.tm-company-subtabs-wrapper::-webkit-scrollbar {
     display: none;
 }
 
+/* Onglets Principaux (Profil/Entreprise) */
 .tm-custom-tabs {
     border-bottom: 1px solid var(--tm-border-strong) !important;
     flex-wrap: nowrap;
@@ -118,7 +166,7 @@ body {
 }
 
 .tm-custom-tabs .nav-link.active {
-    color: #3154df !important;
+    color: var(--tm-primary) !important;
 }
 
 .tm-custom-tabs .nav-link.active::after {
@@ -129,9 +177,49 @@ body {
     bottom: -1px;
     height: 3px;
     border-radius: 999px;
-    background: #3154df;
+    background: var(--tm-primary);
 }
 
+/* Sous-onglets internes (Entreprise) */
+.tm-company-subtabs {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.95rem;
+    border-bottom: 1px solid var(--tm-border-strong);
+    white-space: nowrap;
+}
+
+.tm-company-subtab {
+    border: 0;
+    background: transparent;
+    color: var(--tm-text-soft);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0;
+    position: relative;
+}
+
+.tm-company-subtab.is-active {
+    color: var(--tm-primary);
+}
+
+.tm-company-subtab.is-active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.95rem;
+    height: 3px;
+    border-radius: 999px;
+    background: var(--tm-primary);
+}
+
+/* ==========================================================================
+   4. STRUCTURE DES CARDS & DESIGN SYSTEM
+   ========================================================================== */
 .tm-card,
 .tm-company-card {
     border: 1px solid var(--tm-border) !important;
@@ -155,124 +243,100 @@ body {
     color: var(--tm-text);
 }
 
-.tm-form-row .form-text,
-.tm-form-row small,
-.tm-company-helper,
-.tm-company-muted,
-.tm-company-doc-meta {
-    color: var(--tm-text-faint) !important;
-    font-size: 0.8rem;
+.border-dashed {
+    border: 1.5px dashed var(--tm-border-strong) !important;
+    background: var(--tm-surface-soft);
 }
 
-.tm-btn-service,
-.tm-company-save-btn {
-    background: linear-gradient(
-        180deg,
-        var(--tm-accent) 0%,
-        #ecae34 100%
-    ) !important;
-    color: #1d2558 !important;
-    border: 0 !important;
-    border-radius: 14px !important;
-    min-height: 50px;
-    font-weight: 700;
-    box-shadow: 0 14px 28px rgba(244, 182, 61, 0.24);
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+.last-border-0:last-child {
+    border-bottom: 0 !important;
 }
 
-.tm-btn-service:hover,
-.tm-company-save-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 18px 34px rgba(244, 182, 61, 0.28);
-}
-
-.tm-btn-accent {
-    background: var(--tm-accent) !important;
-    color: #1d2558 !important;
-    border: 0 !important;
-    border-radius: 12px !important;
-}
-
-.btn-outline-primary,
-.tm-company-outline-btn,
-.tm-company-mini-btn,
-.tm-company-icon-btn {
-    border-radius: 12px !important;
-}
-
-.tm-card .border,
-.tm-company-card .border {
-    border-color: var(--tm-border) !important;
-}
-
-.tm-profile-photo-box,
-.tm-company-logo-preview {
-    background: linear-gradient(180deg, #fcfcfe 0%, #f5f7fc 100%);
-    border: 1px solid var(--tm-border);
-    border-radius: 18px;
-}
-
-.tm-company-shell {
-    --company-border: var(--tm-border);
-    --company-shadow: var(--tm-shadow-md);
-    --company-radius: 18px;
-}
-
-.tm-company-page-title {
-    color: var(--tm-text);
-    font-size: clamp(1.8rem, 1.4rem + 1vw, 2.4rem);
-    font-weight: 700;
-    letter-spacing: -0.04em;
-}
-
-.tm-company-page-subtitle {
-    color: var(--tm-text-soft);
-    font-size: 0.98rem;
-}
-
-.tm-company-subtabs {
-    display: flex;
+/* ==========================================================================
+   5. SECTION PROFIL PERSONNEL (_profile_tab)
+   ========================================================================== */
+.tm-profile-layout {
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 1.5rem;
-    overflow-x: auto;
-    padding-bottom: 0.95rem;
-    border-bottom: 1px solid var(--tm-border-strong);
-    scrollbar-width: none;
+    width: 100%;
 }
 
-.tm-company-subtabs::-webkit-scrollbar {
-    display: none;
+@media (min-width: 992px) {
+    .tm-profile-layout {
+        grid-template-columns: 300px 1fr;
+    }
 }
 
-.tm-company-subtab {
-    border: 0;
-    background: transparent;
-    color: var(--tm-text-soft);
-    font-weight: 600;
-    display: inline-flex;
+.tm-profile-avatar-wrapper {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0;
-    position: relative;
-    white-space: nowrap;
+    text-align: center;
+    padding: 1.75rem 1.25rem;
 }
 
-.tm-company-subtab.is-active {
-    color: #3154df;
+.tm-profile-photo-box {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--tm-border);
+    background: linear-gradient(180deg, #fcfcfe 0%, #f5f7fc 100%);
+    margin-bottom: 1.25rem;
+    flex-shrink: 0;
+    box-shadow: var(--tm-shadow-sm);
 }
 
-.tm-company-subtab.is-active::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -0.95rem;
-    height: 3px;
-    border-radius: 999px;
-    background: #3154df;
+.tm-profile-photo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
+/* Champs réseaux sociaux */
+.tm-social-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    width: 100%;
+}
+
+.tm-social-input-group {
+    display: flex;
+    align-items: center;
+    background: var(--tm-surface-soft);
+    border: 1px solid var(--tm-border-strong);
+    border-radius: 12px;
+    padding: 0 0.85rem;
+    min-height: 48px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.tm-social-input-group:focus-within {
+    border-color: var(--tm-primary);
+    box-shadow: 0 0 0 4px rgba(24, 35, 91, 0.08);
+    background: #fff;
+}
+
+.tm-social-input-group span {
+    font-size: 1.25rem;
+    margin-right: 0.65rem;
+    user-select: none;
+}
+
+.tm-social-input-group input {
+    border: none !important;
+    background: transparent !important;
+    padding: 0.5rem 0 !important;
+    min-height: auto !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* ==========================================================================
+   6. SECTION MON ENTREPRISE (_company_tab)
+   ========================================================================== */
 .tm-company-logo-block {
     display: flex;
     flex-direction: column;
@@ -288,21 +352,24 @@ body {
     gap: 0.85rem;
     text-align: center;
     padding: 1.25rem;
+    background: linear-gradient(180deg, #fcfcfe 0%, #f5f7fc 100%);
+    border: 1px solid var(--tm-border);
+    border-radius: var(--tm-radius-md);
 }
 
-.tm-company-logo-mark,
-.tm-company-public-logo {
-    width: 64px;
-    height: 64px;
-    border-radius: 999px;
+.tm-company-logo-mark {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--tm-radius-sm);
     background: linear-gradient(180deg, #fff9ec 0%, #fff4d6 100%);
-    color: #2950dd;
-    border: 2px solid #f3c25d;
+    color: var(--tm-primary);
+    border: 1.5px solid #f3c25d;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.9rem;
-    box-shadow: 0 8px 24px rgba(244, 182, 61, 0.16);
+    font-size: 1.35rem;
+    box-shadow: 0 4px 12px rgba(244, 182, 61, 0.12);
+    flex-shrink: 0;
 }
 
 .tm-company-logo-name {
@@ -313,6 +380,7 @@ body {
     text-transform: uppercase;
 }
 
+/* Documents administratifs */
 .tm-company-info-note {
     display: flex;
     gap: 0.9rem;
@@ -334,7 +402,6 @@ body {
 .tm-company-doc-list {
     display: flex;
     flex-direction: column;
-    gap: 0;
 }
 
 .tm-company-doc-item {
@@ -398,21 +465,12 @@ body {
     align-items: flex-start;
 }
 
-.tm-company-preview-card {
-    position: relative;
-}
-
+/* Box d'Aperçu Public */
 .tm-company-public-cover {
     height: 94px;
     background:
-        linear-gradient(
-            90deg,
-            rgba(24, 35, 91, 0.97) 0%,
-            rgba(24, 35, 91, 0.88) 48%,
-            rgba(24, 35, 91, 0.56) 100%
-        ),
-        url("https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=1200&q=80")
-            center/cover no-repeat;
+        linear-gradient(90deg, rgba(24, 35, 91, 0.97) 0%, rgba(24, 35, 91, 0.88) 48%, rgba(24, 35, 91, 0.56) 100%),
+        url("https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=1200&q=80") center/cover no-repeat;
 }
 
 .tm-company-public-body {
@@ -426,6 +484,14 @@ body {
     width: 74px;
     height: 74px;
     font-size: 2rem;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #fff9ec 0%, #fff4d6 100%);
+    color: var(--tm-primary);
+    border: 2px solid #f3c25d;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(244, 182, 61, 0.16);
 }
 
 .tm-company-public-title {
@@ -467,6 +533,48 @@ body {
     text-decoration: none;
 }
 
+.text-truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   7. INTERACTIONS, BUTTONS & BADGES
+   ========================================================================== */
+.tm-btn-service,
+.tm-company-save-btn {
+    background: linear-gradient(180deg, var(--tm-accent) 0%, #ecae34 100%) !important;
+    color: #1d2558 !important;
+    border: 0 !important;
+    border-radius: 14px !important;
+    min-height: 50px;
+    font-weight: 700;
+    box-shadow: 0 14px 28px rgba(244, 182, 61, 0.24);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tm-btn-service:hover,
+.tm-company-save-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 34px rgba(244, 182, 61, 0.28);
+}
+
+.tm-btn-accent {
+    background: var(--tm-accent) !important;
+    color: #1d2558 !important;
+    border: 0 !important;
+    border-radius: 12px !important;
+}
+
+.btn-outline-primary,
+.tm-company-outline-btn,
+.tm-company-mini-btn,
+.tm-company-icon-btn {
+    border-radius: 12px !important;
+}
+
 .tm-company-footer-actions {
     display: flex;
     justify-content: flex-end;
@@ -480,67 +588,9 @@ body {
     font-size: 0.8rem !important;
 }
 
-@media (max-width: 1199.98px) {
-    .tm-company-doc-item {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .tm-company-doc-actions {
-        flex-wrap: wrap;
-    }
-}
-
-@media (max-width: 991.98px) {
-    .tm-sidebar {
-        width: 100% !important;
-        min-width: 100% !important;
-        height: auto !important;
-        position: relative !important;
-    }
-
-    .tm-main-title {
-        font-size: 2rem;
-    }
-
-    .tm-company-footer-actions {
-        justify-content: stretch;
-    }
-
-    .tm-company-save-btn {
-        width: 100%;
-    }
-}
-
-@media (max-width: 767.98px) {
-    .tm-card,
-    .tm-company-card {
-        border-radius: 16px !important;
-    }
-
-    .tm-custom-tabs {
-        gap: 1rem !important;
-    }
-
-    .tm-custom-tabs .nav-link {
-        font-size: 0.92rem;
-        padding-bottom: 0.9rem;
-    }
-
-    .tm-company-subtabs {
-        gap: 1rem;
-    }
-
-    .tm-company-logo-preview {
-        min-height: 150px;
-    }
-
-    .tm-company-public-title {
-        font-size: 1.35rem;
-    }
-}
-
-/* PATCH FORMULAIRES SYMFONY */
+/* ==========================================================================
+   8. COMPATIBILITÉ & ROBUSTESSE FORMULAIRES SYMFONY (Patchs natifs)
+   ========================================================================== */
 .tm-card form,
 .tm-company-card form,
 .tm-form-row,
@@ -569,21 +619,22 @@ body {
     width: 100% !important;
     min-width: 100% !important;
     max-width: 100% !important;
-    min-height: 50px !important;
-    padding: 0.82rem 0.95rem !important;
-    border-radius: 14px !important;
-    border: 1px solid var(--tm-border) !important;
+    min-height: 48px !important;
+    padding: 0.75rem 0.95rem !important;
+    border-radius: 12px !important;
+    border: 1px solid var(--tm-border-strong) !important;
     background: #fff !important;
     color: var(--tm-text) !important;
     box-shadow: none !important;
     outline: none !important;
-    font-size: 0.95rem !important;
+    font-size: 0.92rem !important;
     line-height: 1.4 !important;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .tm-card textarea,
 .tm-company-card textarea {
-    min-height: 140px !important;
+    min-height: 130px !important;
     resize: vertical !important;
 }
 
@@ -593,33 +644,39 @@ body {
 .tm-company-card input:focus,
 .tm-company-card select:focus,
 .tm-company-card textarea:focus {
-    border-color: #c9d7ff !important;
-    box-shadow: 0 0 0 4px rgba(49, 84, 223, 0.1) !important;
+    border-color: var(--tm-primary) !important;
+    box-shadow: 0 0 0 4px rgba(24, 35, 91, 0.08) !important;
 }
 
 .tm-card label,
 .tm-company-card label {
     display: block !important;
     width: 100%;
-    margin-bottom: 0.55rem !important;
+    margin-bottom: 0.45rem !important;
     color: var(--tm-text) !important;
     font-weight: 600 !important;
-    font-size: 0.92rem !important;
+    font-size: 0.88rem !important;
 }
 
 .tm-card .form-group,
 .tm-card .mb-3,
 .tm-company-card .form-group,
 .tm-company-card .mb-3 {
-    margin-bottom: 1rem !important;
+    margin-bottom: 1.15rem !important;
 }
 
+.tm-form-row .form-text,
+.tm-form-row small,
+.tm-company-helper,
+.tm-company-muted,
+.tm-company-doc-meta,
 .tm-card .invalid-feedback,
 .tm-company-card .invalid-feedback,
 .tm-card .form-text,
 .tm-company-card .form-text,
 .tm-card small,
 .tm-company-card small {
+    color: var(--tm-text-soft) !important;
     font-size: 0.8rem !important;
 }
 
@@ -628,10 +685,135 @@ body {
     min-width: 0;
 }
 
-/* Cas spécifique : champs réseaux sociaux et à propos */
-#profile-panel .tm-card input,
-#profile-panel .tm-card textarea,
-#profile-panel .tm-card select {
-    width: 100% !important;
-    max-width: 100% !important;
+/* ==========================================================================
+   9. MEDIA QUERIES & RESPONSIVE (Centralisé)
+   ========================================================================== */
+
+/* Large screens down to tablets */
+@media (max-width: 1199.98px) {
+    .tm-company-doc-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .tm-company-doc-actions {
+        flex-wrap: wrap;
+    }
+}
+
+/* Tablets and Mobile Landscape (< 992px) */
+@media (max-width: 991.98px) {
+    /* Reconstruction complète Sidebar Mobile */
+    .tm-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 58px !important;
+        min-height: 58px !important;
+        padding: 0 1.25rem !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        z-index: 1050 !important;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08) !important;
+        border-right: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .tm-sidebar .tm-sidebar-brand, 
+    .tm-sidebar hr,
+    .tm-sidebar .user-profile-menu,
+    .tm-sidebar .nav-link span {
+        display: none !important;
+    }
+
+    .tm-sidebar .nav {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 0.5rem !important;
+        width: auto !important;
+    }
+
+    .tm-sidebar .nav-item {
+        width: auto !important;
+        margin: 0 !important;
+    }
+
+    .tm-sidebar .nav-link {
+        min-height: 38px !important;
+        padding: 0.5rem 0.85rem !important;
+        border-radius: 10px !important;
+        font-size: 1.15rem !important;
+    }
+
+    .tm-main-content {
+        margin-left: 0 !important;
+        margin-top: 58px !important;
+        padding: 1.25rem !important;
+        width: 100% !important;
+    }
+
+    .tm-mobile-nav a {
+        opacity: 0.8;
+    }
+
+    .tm-mobile-nav a.active-mobile,
+    .tm-mobile-nav a:hover {
+        opacity: 1;
+    }
+
+    .tm-company-footer-actions {
+        justify-content: stretch;
+    }
+
+    .tm-company-save-btn {
+        width: 100% !important;
+    }
+}
+
+/* Mobile Portrait (< 768px) */
+@media (max-width: 767.98px) {
+    .tm-card,
+    .tm-company-card {
+        border-radius: 16px !important;
+    }
+
+    .tm-custom-tabs {
+        gap: 1rem !important;
+    }
+
+    .tm-custom-tabs .nav-link {
+        font-size: 0.92rem;
+        padding-bottom: 0.9rem;
+    }
+
+    .tm-company-subtabs {
+        gap: 1rem;
+    }
+
+    .tm-company-logo-preview {
+        min-height: 150px;
+    }
+
+    .tm-company-public-title {
+        font-size: 1.35rem;
+    }
+}
+
+/* Extra small devices (< 576px) */
+@media (max-width: 575.98px) {
+    .row.g-3 > [class*="col-sm-"] {
+        width: 100% !important;
+    }
+
+    .tm-company-logo-block .d-flex {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.75rem !important;
+    }
+
+    .tm-company-logo-block button {
+        width: 100%;
+    }
 }
