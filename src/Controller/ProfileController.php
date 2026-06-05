@@ -37,6 +37,7 @@ class ProfileController extends AbstractController
         $form = $this->createForm(AccountSettingsType::class, $user);
         $form->handleRequest($request);
 
+
         // 4. Traitement de la soumission
         if ($form->isSubmitted() && $form->isValid()) {
             

@@ -25,7 +25,7 @@
 			</div>
 
 			{# Sidebar Desktop #}
-			<div class="tm-sidebar p-4 vh-100 position-sticky top-0 d-none d-md-flex flex-column justify-content-between" style="width: 300px; min-width: 300px;">
+			<div class="tm-client-sidebar p-4 vh-100 position-sticky top-0 d-none d-md-flex flex-column justify-content-between" style="width: 300px; min-width: 300px;">
 				<div>
 					<div class="mb-5 d-flex align-items-center gap-2">
 						<span class="fs-3 fw-bold" style="color: var(--tm-primary);">🔍 TrouveMoi</span>
@@ -229,29 +229,32 @@ if (! typeField || ! proFieldsWrapper) {
 return;
 }
 
-function getSelectedTypeValue() {
 const radios = typeField.querySelectorAll('input[type="radio"]');
 
-for (const radio of radios) {
-if (radio.checked) {
-return radio.value;
-}
-}
-
-return null;
+function getSelectedRadio() {
+return Array.from(radios).find(radio => radio.checked) || null;
 }
 
 function toggleProFields() {
-const selectedValue = getSelectedTypeValue();
-const isPro = selectedValue === 'PROFESSIONNEL';
+const selectedRadio = getSelectedRadio();
+
+if (! selectedRadio) {
+proFieldsWrapper.style.display = 'none';
+return;
+}
+
+const radioValue = (selectedRadio.value || '').toUpperCase();
+const radioLabel = (typeField.querySelector (`label[for="${
+selectedRadio.id
+}"]`) ?. textContent || '').trim().toUpperCase();
+
+const isPro = radioValue.includes('PRO') || radioValue.includes('PROFESSIONNEL') || radioLabel.includes('PRO') || radioLabel.includes('PROFESSIONNEL') || radioLabel.includes('ENTREPRISE');
 
 proFieldsWrapper.style.display = isPro ? 'flex' : 'none';
 }
 
-typeField.addEventListener('change', function (event) {
-if (event.target.matches('input[type="radio"]')) {
-toggleProFields();
-}
+radios.forEach(radio => {
+radio.addEventListener('change', toggleProFields);
 });
 
 toggleProFields();
@@ -271,7 +274,7 @@ toggleProFields();
 		--tm-text: #061B56;
 		--tm-text-secondary: #667085;
 
-		--tm-sidebar-bg: #F5F5F5;
+		--tm-client-sidebar-bg: #F5F5F5;
 		--tm-sidebar-link-hover: rgba(6, 27, 86, 0.05);
 	}
 
@@ -302,7 +305,7 @@ toggleProFields();
 		background-color: var(--tm-service) !important;
 		color: #ffffff !important;
 		font-weight: 600;
-		box-shadow: 0 4px 10px rgba(32, 70, 216, 0.15);
+		/* box-shadow: 0 4px 10px rgba(32, 70, 216, 0.15); */
 	}
 
 	.tm-btn-sidebar-support {
