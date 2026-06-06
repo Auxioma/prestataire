@@ -26,180 +26,13 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $now = new \DateTimeImmutable();
-
-        // --------------------------------------------------------
-        // 1. CRÉATION DES UTILISATEURS DE TEST
-        // --------------------------------------------------------
-
-        // Compte Administrateur
-        $admin = new User();
-        $admin->setEmail('admin@trouvemoi.fr');
-        $admin->setRoles(['ROLE_ADMIN']);
-        $admin->setPassword($this->passwordHasher->hashPassword($admin, 'Admin123!'));
-        
-        if (method_exists($admin, 'setFirstname')) { $admin->setFirstname('Admin'); }
-        if (method_exists($admin, 'setLastname')) { $admin->setLastname('TrouveMoi'); }
-        if (method_exists($admin, 'setAvatar')) { 
-            $admin->setAvatar('https://ui-avatars.com/api/?name=Admin+TrouveMoi&background=212529&color=fff&size=150'); 
-        }
-
-        if (method_exists($admin, 'setIsVerified')) { 
-            $admin->setIsVerified(true); 
-        }
-        if (method_exists($admin, 'setEmailVerifiedAt')) {
-            $admin->setEmailVerifiedAt($now);
-        }
-        $manager->persist($admin);
-
         $commonPassword = '123Test!';
-
-        $clientsData = [
-            [
-                'email' => 'jean.dupont@gmail.com',
-                'firstname' => 'Jean',
-                'lastname' => 'Dupont',
-                'phone' => '0612345678',
-                'avatar' => 'https://ui-avatars.com/api/?name=Jean+Dupont&background=0D6EFD&color=fff&size=150',
-                'type' => ClientTypeEnum::PARTICULIER
-            ],
-            [
-                'email' => 'marie.lefevre@gmail.com',
-                'firstname' => 'Marie',
-                'lastname' => 'Lefevre',
-                'phone' => '0623456789',
-                'avatar' => 'https://ui-avatars.com/api/?name=Marie+Lefevre&background=E83E8C&color=fff&size=150',
-                'type' => ClientTypeEnum::PARTICULIER
-            ],
-            [
-                'email' => 'lucas.martin@gmail.com',
-                'firstname' => 'Lucas',
-                'lastname' => 'Martin',
-                'phone' => '0634567890',
-                'avatar' => 'https://ui-avatars.com/api/?name=Lucas+Martin&background=6F42C1&color=fff&size=150',
-                'type' => ClientTypeEnum::PROFESSIONNEL
-            ],
-        ];
-
-        foreach ($clientsData as $data) {
-            $client = new User();
-            $client->setEmail($data['email']);
-            $client->setRoles(['ROLE_CLIENT']);
-            $client->setPassword($this->passwordHasher->hashPassword($client, $commonPassword));
-            
-            if (method_exists($client, 'setFirstname')) { $client->setFirstname($data['firstname']); }
-            if (method_exists($client, 'setLastname')) { $client->setLastname($data['lastname']); }
-            if (method_exists($client, 'setPhone')) { $client->setPhone($data['phone']); }
-            if (method_exists($client, 'setAvatar')) { $client->setAvatar($data['avatar']); }
-            
-            if (method_exists($client, 'setIsVerified')) { 
-                $client->setIsVerified(true); 
-            }
-            if (method_exists($client, 'setEmailVerifiedAt')) {
-                $client->setEmailVerifiedAt($now);
-            }
-            $manager->persist($client);
-
-            // --- CRÉATION DU CLIENT PROFILE ---
-            $clientProfile = new ClientProfile();
-            $clientProfile->setAccount($client); 
-            $clientProfile->setCreatedAt($now);
-            $clientProfile->setType($data['type']);
-            
-            if ($data['type'] === ClientTypeEnum::PROFESSIONNEL) {
-                $clientProfile->setCompanyName($data['lastname'] . ' Entreprise');
-            }
-
-            $manager->persist($clientProfile);
-        }
-
-        // Liste des Prestataires avec l'API UI Avatars
-        $prestasData = [
-            [
-                'email' => 'mario.plombier@plomberie.fr',
-                'firstname' => 'Mario',
-                'lastname' => 'Bros',
-                'phone' => '0645678901',
-                'avatar' => 'https://ui-avatars.com/api/?name=Mario+Bros&background=DC3545&color=fff&size=150',
-                'company' => 'Plomberie Bros & Co',
-                'metier' => 'Plombier Chauffagiste'
-            ],
-            [
-                'email' => 'jessica.clean@clean.fr',
-                'firstname' => 'Jessica',
-                'lastname' => 'Larsson',
-                'phone' => '0656789012',
-                'avatar' => 'https://ui-avatars.com/api/?name=Jessica+Larsson&background=FD7E14&color=fff&size=150',
-                'company' => 'Jessica Nettoyage',
-                'metier' => 'Agent d\'entretien'
-            ],
-            [
-                'email' => 'thomas.dev@dev-informatique.fr',
-                'firstname' => 'Thomas',
-                'lastname' => 'Durand',
-                'phone' => '0667890123',
-                'avatar' => 'https://ui-avatars.com/api/?name=Thomas+Durand&background=0DCAF0&color=fff&size=150',
-                'company' => 'Avenir Numérique',
-                'metier' => 'Développeur Web'
-            ],
-            [
-                'email' => 'julie.jardin@nature.fr',
-                'firstname' => 'Julie',
-                'lastname' => 'Moreau',
-                'phone' => '0678901234',
-                'avatar' => 'https://ui-avatars.com/api/?name=Julie+Moreau&background=198754&color=fff&size=150',
-                'company' => 'Julie Jardins Éco',
-                'metier' => 'Paysagiste'
-            ],
-            [
-                'email' => 'pierre.mecanique@garage.fr',
-                'firstname' => 'Pierre',
-                'lastname' => 'Rousseau',
-                'phone' => '0689012345',
-                'avatar' => 'https://ui-avatars.com/api/?name=Pierre+Rousseau&background=6C757D&color=fff&size=150',
-                'company' => 'Méca Dépannage 17',
-                'metier' => 'Mécanicien'
-            ],
-        ];
-
-        foreach ($prestasData as $data) {
-            $prestaUser = new User();
-            $prestaUser->setEmail($data['email']);
-            $prestaUser->setRoles(['ROLE_PRESTATAIRE']);
-            $prestaUser->setPassword($this->passwordHasher->hashPassword($prestaUser, $commonPassword));
-            
-            if (method_exists($prestaUser, 'setFirstname')) { $prestaUser->setFirstname($data['firstname']); }
-            if (method_exists($prestaUser, 'setLastname')) { $prestaUser->setLastname($data['lastname']); }
-            if (method_exists($prestaUser, 'setPhone')) { $prestaUser->setPhone($data['phone']); }
-            if (method_exists($prestaUser, 'setAvatar')) { $prestaUser->setAvatar($data['avatar']); }
-
-            if (method_exists($prestaUser, 'setIsVerified')) { 
-                $prestaUser->setIsVerified(true); 
-            }
-            if (method_exists($prestaUser, 'setEmailVerifiedAt')) {
-                $prestaUser->setEmailVerifiedAt($now);
-            }
-            $manager->persist($prestaUser);
-
-            // --- CRÉATION DU PRESTATAIRE PROFILE ---
-            $prestaProfile = new PrestataireProfile();
-            $prestaProfile->setAccount($prestaUser); 
-            $prestaProfile->setCompanyName($data['company']);
-            $prestaProfile->setMetier($data['metier']);
-            $prestaProfile->setCreatedAt($now);
-            
-            // Slug du prestataire (généré proprement grâce au slugger)
-            $prestaProfile->setSlug(strtolower($this->slugger->slug($data['company'])));
-            
-            // Configuration initiale via enums dédiés
-            $prestaProfile->setProfileStatus(PrestataireProfileStatusEnum::DRAFT);
-            $prestaProfile->setVerificationStatus(VerificationStatusEnum::NOT_VERIFIED);
-            $prestaProfile->setSearchVisibility(SearchVisibilityEnum::NORMAL);
-
-            $manager->persist($prestaProfile);
-        }
+        
+        // Tableau temporaire pour capturer les instances de services créées
+        $createdServices = [];
 
         // --------------------------------------------------------
-        // 2. CRÉATION DU CATALOGUE ENRICHI (10 CATÉGORIES PRINCIPALES)
+        // 1. CRÉATION DU CATALOGUE ENRICHI (10 Catégories pour le Carrousel)
         // --------------------------------------------------------
         $catalogData = [
             'Bâtiment & Travaux' => [
@@ -267,38 +100,6 @@ class AppFixtures extends Fixture
                         'Nettoyage régulier du domicile',
                         'Grand nettoyage de printemps',
                         'Lavage de vitres et baies vitrées'
-                    ],
-                    'Garde d\'enfants' => [
-                        'Babysitting occasionnel en soirée',
-                        'Sortie d\'école et aide aux devoirs',
-                        'Garde d\'enfants le mercredi ou week-end'
-                    ],
-                    'Aide aux Seniors' => [
-                        'Accompagnement aux courses',
-                        'Aide à la préparation des repas',
-                        'Assistance aux démarches administratives'
-                    ]
-                ]
-            ],
-            'Cours & Formations' => [
-                'icon' => 'fa-book',
-                'color' => '#6f42c1',
-                'subs' => [
-                    'Soutien Scolaire' => [
-                        'Cours particuliers de Mathématiques',
-                        'Cours particuliers de Français',
-                        'Aide aux devoirs (Primaire/Collège)',
-                        'Préparation au Bac et Brevet'
-                    ],
-                    'Langues Étrangères' => [
-                        'Cours d\'Anglais professionnel',
-                        'Cours d\'Espagnol de niveau intermédiaire',
-                        'Cours de FLE (Français Langue Étrangère)'
-                    ],
-                    'Musique' => [
-                        'Cours de guitare débutant',
-                        'Cours de piano à domicile',
-                        'Éveil musical pour enfants'
                     ]
                 ]
             ],
@@ -317,69 +118,59 @@ class AppFixtures extends Fixture
                     ]
                 ]
             ],
+            // --- NOUVELLES CATÉGORIES POUR GONFLER LE CARROUSEL ---
             'Événementiel & Fêtes' => [
-                'icon' => 'fa-gift',
+                'icon' => 'fa-cake-candles',
                 'color' => '#fd7e14',
                 'subs' => [
-                    'Photographie' => [
-                        'Shooting photo de mariage',
-                        'Portrait de famille en extérieur',
-                        'Photos professionnelles pour entreprise'
-                    ],
-                    'Animation & Musique' => [
-                        'Prestation de DJ pour soirée',
-                        'Magicien pour anniversaire d\'enfant',
-                        'Location et installation de matériel de sonorisation'
-                    ],
-                    'Traiteur & Cuisine' => [
-                        'Chef à domicile pour repas de groupe',
-                        'Buffet froid pour événements familiaux'
+                    'Organisation' => [
+                        'Photographe de mariage',
+                        'Traiteur et buffets',
+                        'Animation DJ et sonorisation'
+                    ]
+                ]
+            ],
+            'Cours & Formations' => [
+                'icon' => 'fa-graduation-cap',
+                'color' => '#6f42c1',
+                'subs' => [
+                    'Soutien Scolaire' => [
+                        'Cours particuliers de mathématiques',
+                        'Cours d\'anglais et langues étrangères',
+                        'Initiation à la programmation informatique'
                     ]
                 ]
             ],
             'Santé & Bien-être' => [
-                'icon' => 'fa-heart-pulse',
+                'icon' => 'fa-spa',
                 'color' => '#20c997',
                 'subs' => [
-                    'Massages & Relaxation' => [
-                        'Massage relaxant à domicile',
-                        'Séance de sophrologie ou méditation',
-                        'Réflexologie plantaire'
-                    ],
-                    'Coaching Sportif' => [
-                        'Remise en forme personnalisée',
-                        'Séance de Pilates ou Yoga individuel',
-                        'Programme de perte de poids avec coach'
+                    'Coaching & Soins' => [
+                        'Coaching sportif personnel',
+                        'Massages et relaxation à domicile',
+                        'Conseils en nutrition'
                     ]
                 ]
             ],
             'Animaux & Compagnie' => [
-                'icon' => 'fa-dog',
+                'icon' => 'fa-paw',
                 'color' => '#ffc107',
                 'subs' => [
-                    'Garde & Visites' => [
-                        'Pension canine familiale',
-                        'Visite et nourriture de chat à domicile',
-                        'Promenade de chiens quotidienne'
-                    ],
-                    'Éducation & Soins' => [
-                        'Séance d\'éducation canine de base',
-                        'Toilettage de chien à domicile'
+                    'Pet Sitting' => [
+                        'Garde de chiens et chats',
+                        'Promenade de chiens',
+                        'Toilettage à domicile'
                     ]
                 ]
             ],
-            'Déménagement & Transport' => [
-                'icon' => 'fa-truck',
-                'color' => '#17a2b8',
+            'Mode & Beauté' => [
+                'icon' => 'fa-shirt',
+                'color' => '#d63384',
                 'subs' => [
-                    'Aide au Déménagement' => [
-                        'Chargement et déchargement de camion',
-                        'Emballage de cartons et protection d\'objets fragiles',
-                        'Déménagement complet de logement'
-                    ],
-                    'Transport de marchandises' => [
-                        'Transport de meubles encombrants achetés d\'occasion',
-                        'Évacuation d\'encombrants et déchets verts en déchetterie'
+                    'Esthétique' => [
+                        'Coiffure à domicile',
+                        'Manucure et onglerie',
+                        'Maquillage pour événements'
                     ]
                 ]
             ]
@@ -396,8 +187,6 @@ class AppFixtures extends Fixture
             $parentCategory->setPosition($categoryPosition++);
             $parentCategory->setIsActive(true);
             $parentCategory->setDescription('Toutes nos prestations autour de la thématique ' . $parentName);
-            $parentCategory->setSeoTitle($parentName . ' - Trouvez un prestataire de confiance');
-            $parentCategory->setSeoDescription('Besoin d\'un pro pour ' . $parentName . ' ?');
             
             $manager->persist($parentCategory);
 
@@ -430,8 +219,170 @@ class AppFixtures extends Fixture
                     $service->setAveragePriceMax((string)($minPrice + rand(20, 60)));
 
                     $manager->persist($service);
+
+                    // On sauvegarde la référence du service indexée par son nom normalisé
+                    $createdServices[strtolower($serviceName)] = $service;
                 }
             }
+        }
+
+        // --------------------------------------------------------
+        // 2. COMPTE ADMINISTRATEUR
+        // --------------------------------------------------------
+        $admin = new User();
+        $admin->setEmail('admin@trouvemoi.fr');
+        $admin->setRoles(['ROLE_ADMIN']);
+        $admin->setPassword($this->passwordHasher->hashPassword($admin, 'Admin123!'));
+        if (method_exists($admin, 'setFirstname')) { $admin->setFirstname('Admin'); }
+        if (method_exists($admin, 'setLastname')) { $admin->setLastname('TrouveMoi'); }
+        if (method_exists($admin, 'setAvatar')) { 
+            $admin->setAvatar('https://ui-avatars.com/api/?name=Admin+TrouveMoi&background=212529&color=fff&size=150'); 
+        }
+        if (method_exists($admin, 'setIsVerified')) { $admin->setIsVerified(true); }
+        if (method_exists($admin, 'setEmailVerifiedAt')) { $admin->setEmailVerifiedAt($now); }
+        $manager->persist($admin);
+
+        // --------------------------------------------------------
+        // 3. COMPTES CLIENTS
+        // --------------------------------------------------------
+        $clientsData = [
+            [
+                'email' => 'jean.dupont@gmail.com',
+                'firstname' => 'Jean',
+                'lastname' => 'Dupont',
+                'phone' => '0612345678',
+                'avatar' => 'https://ui-avatars.com/api/?name=Jean+Dupont&background=0D6EFD&color=fff&size=150',
+                'type' => ClientTypeEnum::PARTICULIER
+            ],
+            [
+                'email' => 'marie.lefevre@gmail.com',
+                'firstname' => 'Marie',
+                'lastname' => 'Lefevre',
+                'phone' => '0623456789',
+                'avatar' => 'https://ui-avatars.com/api/?name=Marie+Lefevre&background=E83E8C&color=fff&size=150',
+                'type' => ClientTypeEnum::PARTICULIER
+            ],
+            [
+                'email' => 'lucas.martin@gmail.com',
+                'firstname' => 'Lucas',
+                'lastname' => 'Martin',
+                'phone' => '0634567890',
+                'avatar' => 'https://ui-avatars.com/api/?name=Lucas+Martin&background=6F42C1&color=fff&size=150',
+                'type' => ClientTypeEnum::PROFESSIONNEL
+            ],
+        ];
+
+        foreach ($clientsData as $data) {
+            $client = new User();
+            $client->setEmail($data['email']);
+            $client->setRoles(['ROLE_CLIENT']);
+            $client->setPassword($this->passwordHasher->hashPassword($client, $commonPassword));
+            if (method_exists($client, 'setFirstname')) { $client->setFirstname($data['firstname']); }
+            if (method_exists($client, 'setLastname')) { $client->setLastname($data['lastname']); }
+            if (method_exists($client, 'setPhone')) { $client->setPhone($data['phone']); }
+            if (method_exists($client, 'setAvatar')) { $client->setAvatar($data['avatar']); }
+            if (method_exists($client, 'setIsVerified')) { $client->setIsVerified(true); }
+            if (method_exists($client, 'setEmailVerifiedAt')) { $client->setEmailVerifiedAt($now); }
+            $manager->persist($client);
+
+            $clientProfile = new ClientProfile();
+            $clientProfile->setAccount($client); 
+            $clientProfile->setCreatedAt($now);
+            $clientProfile->setType($data['type']);
+            if ($data['type'] === ClientTypeEnum::PROFESSIONNEL) {
+                $clientProfile->setCompanyName($data['lastname'] . ' Entreprise');
+            }
+            $manager->persist($clientProfile);
+        }
+
+        // --------------------------------------------------------
+        // 4. COMPTES PRESTATAIRES (Ciblés et mappés sur nos Services)
+        // --------------------------------------------------------
+        $prestasData = [
+            [
+                'email' => 'mario.plombier@plomberie.fr',
+                'firstname' => 'Mario',
+                'lastname' => 'Bros',
+                'phone' => '0645678901',
+                'avatar' => 'https://ui-avatars.com/api/?name=Mario+Bros&background=DC3545&color=fff&size=150',
+                'company' => 'Plomberie Bros & Co',
+                'metier' => 'Plombier Chauffagiste',
+                'target_services' => ['dépannage de fuite d\'eau', 'installation de chauffe-eau']
+            ],
+            [
+                'email' => 'jessica.clean@clean.fr',
+                'firstname' => 'Jessica',
+                'lastname' => 'Larsson',
+                'phone' => '0656789012',
+                'avatar' => 'https://ui-avatars.com/api/?name=Jessica+Larsson&background=FD7E14&color=fff&size=150',
+                'company' => 'Jessica Nettoyage',
+                'metier' => 'Agent d\'entretien',
+                'target_services' => ['nettoyage régulier du domicile', 'grand nettoyage de printemps']
+            ],
+            [
+                'email' => 'thomas.dev@dev-informatique.fr',
+                'firstname' => 'Thomas',
+                'lastname' => 'Durand',
+                'phone' => '0667890123',
+                'avatar' => 'https://ui-avatars.com/api/?name=Thomas+Durand&background=0DCAF0&color=fff&size=150',
+                'company' => 'Avenir Numérique',
+                'metier' => 'Développeur Web',
+                'target_services' => ['création de site vitrine', 'création de boutique e-commerce']
+            ],
+            [
+                'email' => 'julie.jardin@nature.fr',
+                'firstname' => 'Julie',
+                'lastname' => 'Moreau',
+                'phone' => '0678901234',
+                'avatar' => 'https://ui-avatars.com/api/?name=Julie+Moreau&background=198754&color=fff&size=150',
+                'company' => 'Julie Jardins Éco',
+                'metier' => 'Paysagiste',
+                'target_services' => ['tonte de pelouse', 'taille de haies et arbustes']
+            ],
+            [
+                'email' => 'pierre.mecanique@garage.fr',
+                'firstname' => 'Pierre',
+                'lastname' => 'Rousseau',
+                'phone' => '0689012345',
+                'avatar' => 'https://ui-avatars.com/api/?name=Pierre+Rousseau&background=6C757D&color=fff&size=150',
+                'company' => 'Méca Dépannage 17',
+                'metier' => 'Mécanicien Moto / Auto',
+                'target_services' => ['vidange et remplacement de filtres', 'entretien de chaîne et vidange moto']
+            ],
+        ];
+
+        foreach ($prestasData as $data) {
+            $prestaUser = new User();
+            $prestaUser->setEmail($data['email']);
+            $prestaUser->setRoles(['ROLE_PRESTATAIRE']);
+            $prestaUser->setPassword($this->passwordHasher->hashPassword($prestaUser, $commonPassword));
+            if (method_exists($prestaUser, 'setFirstname')) { $prestaUser->setFirstname($data['firstname']); }
+            if (method_exists($prestaUser, 'setLastname')) { $prestaUser->setLastname($data['lastname']); }
+            if (method_exists($prestaUser, 'setPhone')) { $prestaUser->setPhone($data['phone']); }
+            if (method_exists($prestaUser, 'setAvatar')) { $prestaUser->setAvatar($data['avatar']); }
+            if (method_exists($prestaUser, 'setIsVerified')) { $prestaUser->setIsVerified(true); }
+            if (method_exists($prestaUser, 'setEmailVerifiedAt')) { $prestaUser->setEmailVerifiedAt($now); }
+            $manager->persist($prestaUser);
+
+            $prestaProfile = new PrestataireProfile();
+            $prestaProfile->setAccount($prestaUser); 
+            $prestaProfile->setCompanyName($data['company']);
+            $prestaProfile->setMetier($data['metier']);
+            $prestaProfile->setCreatedAt($now);
+            $prestaProfile->setSlug(strtolower($this->slugger->slug($data['company'])));
+            
+            $prestaProfile->setProfileStatus(PrestataireProfileStatusEnum::ACTIVE);
+            $prestaProfile->setVerificationStatus(VerificationStatusEnum::MANUALLY_VERIFIED);
+            $prestaProfile->setSearchVisibility(SearchVisibilityEnum::NORMAL);
+
+            // Liaison dynamique avec la relation ManyToMany
+            foreach ($data['target_services'] as $serviceKey) {
+                if (isset($createdServices[$serviceKey])) {
+                    $prestaProfile->addService($createdServices[$serviceKey]);
+                }
+            }
+
+            $manager->persist($prestaProfile);
         }
 
         $manager->flush();

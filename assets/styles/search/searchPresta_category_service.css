@@ -1,0 +1,81 @@
+/* Styles spécifiques pour la page de recherche - TrouveMoi */
+
+/* Conteneur principal */
+.tm-search-container {
+    max-width: 1320px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+/* Effet dynamique sur les cartes : Zoom et Ombre au survol */
+.tm-search-card-interactive {
+    transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
+}
+
+.tm-search-card-interactive:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Icônes de catégories */
+.tm-search-icon-box {
+    width: 45px;
+    height: 45px;
+    background-color: rgba(32, 70, 216, 0.06);
+    color: var(--tm-cp-service, #2046D8);
+    transition: transform 0.25s ease;
+}
+
+.tm-search-card-interactive:hover .tm-search-icon-box {
+    transform: rotate(5deg) scale(1.1);
+}
+
+/* Boutons d'action personnalisés avec effet hover */
+.tm-btn-primary-search {
+    background-color: var(--tm-cp-service, #2046D8);
+    color: #ffffff;
+    border-radius: 8px;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.tm-btn-primary-search:hover {
+    background-color: #1634a1 !important; /* Version légèrement plus sombre pour l'illumination */
+    color: #ffffff !important;
+}
+
+.tm-btn-secondary-search {
+    background-color: #f8f9fa;
+    color: #212529;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.tm-btn-secondary-search:hover {
+    background-color: #e2e6ea !important;
+    border-color: #dae0e5 !important;
+    color: #212529 !important;
+}
+
+/* Avatar / Logo Prestataire */
+.tm-search-avatar-wrapper {
+    width: 55px;
+    height: 55px;
+    flex-shrink: 0;
+}
+
+/* Badges de réassurance en bas */
+.tm-search-trust-badge {
+    min-width: 200px;
+}
+
+/* Utilitaires spécifiques */
+.fs-11 { font-size: 11px; }
+.fs-12 { font-size: 12px; }
+.fw-extrabold { font-weight: 800; }
+.line-clamp-3 {
+    display: -webkit-box;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+}

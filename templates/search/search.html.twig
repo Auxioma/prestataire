@@ -1,228 +1,236 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}TrouveMoi - Trouver un professionnel{% endblock %}
+{% block title %}TrouveMoi - Trouver un professionnel
+{% endblock %}
 
 {% block body %}
-<div class="container py-4 text-start main-content-sectionSection">
+	<div
+		class="container py-4 text-start tm-search-container">
 
-    {# 1. BREADCRUMB DYNAMIQUE À 3 NIVEAUX #}
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb small">
-            <li class="breadcrumb-item">
-                <a href="{{ path('app_home') }}" class="text-decoration-none text-muted">
-                    <i class="fa-solid fa-house me-1"></i> Accueil
-                </a>
-            </li>
-            {% if currentCategory %}
-                <li class="breadcrumb-item {% if not currentSubCategory and not currentService %}active text-dark fw-bold{% endif %}">
-                    {% if currentSubCategory or currentService %}
-                        <a href="{{ path('app_search_flow', {'type': 'categorie', 'slug': currentCategory.slug}) }}" class="text-decoration-none text-muted">{{ currentCategory.name }}</a>
-                    {% else %}
-                        {{ currentCategory.name }}
-                    {% endif %}
-                </li>
-            {% endif %}
-            {% if currentSubCategory %}
-                <li class="breadcrumb-item {% if not currentService %}active text-dark fw-bold{% endif %}">
-                    {% if currentService %}
-                        <a href="{{ path('app_search_flow', {'type': 'categorie', 'slug': currentSubCategory.slug}) }}" class="text-decoration-none text-muted">{{ currentSubCategory.name }}</a>
-                    {% else %}
-                        {{ currentSubCategory.name }}
-                    {% endif %}
-                </li>
-            {% endif %}
-            {% if currentService %}
-                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">{{ currentService.name }}</li>
-            {% endif %}
-        </ol>
-    </nav>
+		{# 1. BREADCRUMB DYNAMIQUE À 3 NIVEAUX #}
+		<nav aria-label="breadcrumb" class="mb-4">
+			<ol class="breadcrumb small">
+				<li class="breadcrumb-item">
+					<a href="{{ path('app_home') }}" class="text-decoration-none text-muted">
+						<i class="fa-solid fa-house me-1"></i>
+						Accueil
+					</a>
+				</li>
+				{% if currentCategory %}
+					<li class="breadcrumb-item {% if not currentSubCategory and not currentService %}active text-dark fw-bold{% endif %}">
+						{% if currentSubCategory or currentService %}
+							<a href="{{ path('app_search_flow', {'type': 'categorie', 'slug': currentCategory.slug}) }}" class="text-decoration-none text-muted">{{ currentCategory.name }}</a>
+						{% else %}
+							{{ currentCategory.name }}
+						{% endif %}
+					</li>
+				{% endif %}
+				{% if currentSubCategory %}
+					<li class="breadcrumb-item {% if not currentService %}active text-dark fw-bold{% endif %}">
+						{% if currentService %}
+							<a href="{{ path('app_search_flow', {'type': 'categorie', 'slug': currentSubCategory.slug}) }}" class="text-decoration-none text-muted">{{ currentSubCategory.name }}</a>
+						{% else %}
+							{{ currentSubCategory.name }}
+						{% endif %}
+					</li>
+				{% endif %}
+				{% if currentService %}
+					<li class="breadcrumb-item active text-dark fw-bold" aria-current="page">{{ currentService.name }}</li>
+				{% endif %}
+			</ol>
+		</nav>
 
-    {# 2. EN-TÊTE DYNAMIQUE SELON L'ÉTAPE #}
-    {# 2. EN-TÊTE DYNAMIQUE SELON L'ÉTAPE #}
-<div class="mb-5">
-    {% if currentService %}
-        <h1 class="fw-extrabold h2 text-dark mb-2">Prestataires pour : <span style="color: var(--tm-cp-service, #2046D8);">{{ currentService.name }}</span></h1>
-        <p class="text-muted mb-3">Découvrez les professionnels qualifiés et disponibles pour répondre à votre besoin précis.</p>
-    {% elseif currentSubCategory %}
-        <h1 class="fw-extrabold h2 text-dark mb-2">Services en <span style="color: var(--tm-cp-service, #2046D8);">{{ currentSubCategory.name }}</span></h1>
-        <p class="text-muted mb-3">Sélectionnez la prestation exacte dont vous avez besoin pour trouver le bon professionnel.</p>
-    {% elseif currentCategory %}
-        <h1 class="fw-extrabold h2 text-dark mb-2">Métiers en <span style="color: var(--tm-cp-service, #2046D8);">{{ currentCategory.name }}</span></h1>
-        <p class="text-muted mb-3">Affinez votre recherche en choisissant une sous-catégorie spécialisée.</p>
-    {% else %}
-        <h1 class="fw-extrabold h2 text-dark mb-2">Toutes les catégories</h1>
-        <p class="text-muted mb-3">Parcourez nos différents secteurs d'activité pour démarrer votre recherche.</p>
-    {% endif %}
-    
-    {# Badges de réassurance alignés en ligne sous le texte en desktop, et l'un sur l'autre en mobile #}
-    {% if currentService %}
-        <div class="d-flex flex-column flex-sm-row gap-3 mt-3">
-            <div class="p-2 px-3 border rounded-3 bg-white d-flex align-items-center shadow-xs" style="min-width: 200px;">
-                <i class="fa-solid fa-circle-check text-success me-2 fs-5"></i>
-                <span class="fw-bold small text-dark lh-sm">Pros vérifiés<br><span class="text-muted fw-normal fs-11">Identité & Siren</span></span>
-            </div>
-            <div class="p-2 px-3 border rounded-3 bg-white d-flex align-items-center shadow-xs" style="min-width: 200px;">
-                <i class="fa-solid fa-star text-warning me-2 fs-5"></i>
-                <span class="fw-bold small text-dark lh-sm">Avis contrôlés<br><span class="text-muted fw-normal fs-11">100% authentiques</span></span>
-            </div>
-        </div>
-    {% endif %}
-</div>
+		{# 2. EN-TÊTE DYNAMIQUE SELON L'ÉTAPE #}
+		<div class="mb-5">
+			{% if currentService %}
+				<h1 class="fw-extrabold h2 text-dark mb-2">Prestataires pour :
+					<span style="color: var(--tm-cp-service, #2046D8);">{{ currentService.name }}</span>
+				</h1>
+				<p class="text-muted mb-3">Découvrez les professionnels qualifiés et disponibles pour répondre à votre besoin précis.</p>
+			{% elseif currentSubCategory %}
+				<h1 class="fw-extrabold h2 text-dark mb-2">Services en
+					<span style="color: var(--tm-cp-service, #2046D8);">{{ currentSubCategory.name }}</span>
+				</h1>
+				<p class="text-muted mb-3">Sélectionnez la prestation exacte dont vous avez besoin pour trouver le bon professionnel.</p>
+			{% elseif currentCategory %}
+				<h1 class="fw-extrabold h2 text-dark mb-2">Métiers en
+					<span style="color: var(--tm-cp-service, #2046D8);">{{ currentCategory.name }}</span>
+				</h1>
+				<p class="text-muted mb-3">Affinez votre recherche en choisissant une sous-catégorie spécialisée.</p>
+			{% else %}
+				<h1 class="fw-extrabold h2 text-dark mb-2">Toutes les catégories</h1>
+				<p class="text-muted mb-3">Parcourez nos différents secteurs d'activité pour démarrer votre recherche.</p>
+			{% endif %}
+		</div>
 
-    {# 3. AFFICHAGE DES SOUS-CATÉGORIES (NIVEAU 1) #}
-    {% if subCategories is not empty %}
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
-            {% for subCat in subCategories %}
-                <div class="col">
-                    <a href="{{ path('app_search_flow', {'type': 'categorie', 'slug': subCat.slug}) }}" class="card h-100 border-0 shadow-sm rounded-3 p-3 text-decoration-none tm-cat-grid-card hover-lift bg-white d-flex flex-column justify-content-between">
-                        <div class="d-flex align-items-center">
-                            <div class="d-flex align-items-center justify-content-center rounded-3 me-3" style="width: 45px; height: 45px; background-color: rgba(32, 70, 216, 0.06); color: var(--tm-cp-service, #2046D8);">
-                                <i class="fa-solid {{ subCat.icon|default('fa-circle-dot') }} fs-5"></i>
-                            </div>
-                            <h3 class="fw-bold h6 text-dark mb-0">{{ subCat.name }}</h3>
-                        </div>
-                        <div class="text-end mt-3">
-                            <i class="fa-solid fa-arrow-right text-muted fs-12"></i>
-                        </div>
-                    </a>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
+		{# 3. AFFICHAGE DES SOUS-CATÉGORIES (NIVEAU 1) #}
+		{% if subCategories is not empty %}
+			<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+				{% for subCat in subCategories %}
+					<div class="col">
+						<a href="{{ path('app_search_flow', {'type': 'categorie', 'slug': subCat.slug}) }}" class="card h-100 border-0 shadow-sm rounded-3 p-3 text-decoration-none bg-white d-flex flex-column justify-content-between tm-search-card-interactive">
+							<div class="d-flex align-items-center">
+								<div class="d-flex align-items-center justify-content-center rounded-3 me-3 tm-search-icon-box">
+									<i class="fa-solid {{ subCat.icon|default('fa-circle-dot') }} fs-5"></i>
+								</div>
+								<h3 class="fw-bold h6 text-dark mb-0">{{ subCat.name }}</h3>
+							</div>
+							<div class="text-end mt-3">
+								<i class="fa-solid fa-arrow-right text-muted fs-12"></i>
+							</div>
+						</a>
+					</div>
+				{% endfor %}
+			</div>
+		{% endif %}
 
-    {# 4. AFFICHAGE DES SERVICES (NIVEAU 2) #}
-    {% if services is not empty %}
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
-            {% for service in services %}
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm rounded-3 p-3 bg-white d-flex flex-column justify-content-between tm-cat-grid-card">
-                        <div>
-                            <div class="d-flex align-items-center justify-content-center rounded-3 mb-3" style="width: 45px; height: 45px; background-color: rgba(32, 70, 216, 0.06); color: var(--tm-cp-service, #2046D8);">
-                                <i class="fa-solid {{ service.icon|default('fa-gears') }} fs-5"></i>
-                            </div>
-                            <h3 class="fw-extrabold h6 text-dark mb-2">{{ service.name }}</h3>
-                            {% if service.description %}
-                                <p class="text-muted fs-12 mb-3">{{ service.description|slice(0, 100) }}...</p>
-                            {% endif %}
-                        </div>
+		{# 4. AFFICHAGE DES SERVICES (NIVEAU 2) #}
+		{% if services is not empty %}
+			<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+				{% for service in services %}
+					<div class="col">
+						<div class="card h-100 border-0 shadow-sm rounded-3 p-3 bg-white d-flex flex-column justify-content-between tm-search-card-interactive">
+							<div>
+								<div class="d-flex align-items-center justify-content-center rounded-3 mb-3 tm-search-icon-box">
+									<i class="fa-solid {{ service.icon|default('fa-gears') }} fs-5"></i>
+								</div>
+								<h3 class="fw-extrabold h6 text-dark mb-2">{{ service.name }}</h3>
+								{% if service.description %}
+									<p class="text-muted fs-12 mb-3">{{ service.description|slice(0, 100) }}...</p>
+								{% endif %}
+							</div>
 
-                        <div class="mt-4">
-                            <a href="{{ path('app_search_flow', {'type': 'service', 'slug': service.slug}) }}" class="btn btn-sm w-100 py-2 fw-bold" style="background-color: var(--tm-cp-service, #2046D8); color: #ffffff; border-radius: 8px;">
-                                Trouver un pro
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
+							<div class="mt-4">
+								<a href="{{ path('app_search_flow', {'type': 'service', 'slug': service.slug}) }}" class="btn btn-sm w-100 py-2 fw-bold tm-btn-primary-search">
+									Trouver un pro
+								</a>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		{% endif %}
 
-    {# 5. AFFICHAGE DES PRESTATAIRES (NIVEAU 3) #}
-    {% if currentService %}
-        <div class="row g-4 mb-5">
-            {% for prestataire in prestataires %}
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm rounded-3 p-3 bg-white d-flex flex-column justify-content-between position-relative">
-                        
-                        {# En-tête de la carte prestataire #}
-                        <div>
-                            <div class="d-flex align-items-center mb-3">
-                                {# Avatar / Logo Pro #}
-                                <div class="rounded-circle bg-light border d-flex align-items-center justify-content-center overflow-hidden me-3" style="width: 55px; height: 55px; flex-shrink: 0;">
-                                    {% if prestataire.logo %}
-                                        <img src="{{ prestataire.logo }}" alt="{{ prestataire.companyName }}" class="w-100 h-100 object-fit-cover">
-                                    {% else %}
-                                        <i class="fa-solid fa-building text-muted fs-4"></i>
-                                    {% endif %}
-                                </div>
-                                {# Nom & Localisation #}
-                                <div>
-                                    <h4 class="fw-extrabold h6 text-dark mb-1">{{ prestataire.companyName }}</h4>
-                                    <span class="text-muted fs-12 d-block">
-                                        <i class="fa-solid fa-location-dot text-danger me-1"></i> {{ prestataire.city|default('Ville non renseignée') }} ({{ prestataire.postalCode|slice(0,2) }})
-                                    </span>
-                                </div>
-                            </div>
+		{# 5. AFFICHAGE DES PRESTATAIRES (NIVEAU 3) #}
+		{% if currentService %}
+			<div class="row g-4 mb-5">
+				{% for prestataire in prestataires %}
+					<div class="col-md-6 col-lg-4">
+						<div class="card h-100 border-0 shadow-sm rounded-3 p-3 bg-white d-flex flex-column justify-content-between position-relative tm-search-card-interactive">
 
-                            {# Note moyenne si elle existe #}
-                            {% if prestataire.reviewsCount > 0 %}
-                                <div class="mb-3 fs-12 d-flex align-items-center gap-1">
-                                    <i class="fa-solid fa-star text-warning"></i>
-                                    <span class="fw-bold text-dark">{{ prestataire.averageRating }}</span>
-                                    <span class="text-muted">({{ prestataire.reviewsCount }} avis)</span>
-                                </div>
-                            {% endif %}
+							<div>
+								<div class="d-flex align-items-center mb-3">
+									<div class="rounded-circle bg-light border d-flex align-items-center justify-content-center overflow-hidden me-3 tm-search-avatar-wrapper">
+										{% if prestataire.logo %}
+											<img src="{{ prestataire.logo }}" alt="{{ prestataire.companyName }}" class="w-100 h-100 object-fit-cover">
+										{% else %}
+											<i class="fa-solid fa-building text-muted fs-4"></i>
+										{% endif %}
+									</div>
+									<div>
+										<h4 class="fw-extrabold h6 text-dark mb-1">{{ prestataire.companyName }}</h4>
+										<span class="text-muted fs-12 d-block">
+											<i class="fa-solid fa-location-dot text-danger me-1"></i>
+											{{ prestataire.city|default('Ville non renseignée') }}
+											({{ prestataire.postalCode|slice(0,2) }})
+										</span>
+									</div>
+								</div>
 
-                            {# Métier / Expérience #}
-                            <div class="mb-3">
-                                <span class="badge bg-light text-dark border px-2 py-1 fs-11 rounded-2">{{ prestataire.metier|default('Prestataire') }}</span>
-                                {% if prestataire.experience %}
-                                    <span class="badge bg-light text-muted border px-2 py-1 fs-11 rounded-2">{{ prestataire.experience }} exp</span>
-                                {% endif %}
-                            </div>
+								{% if prestataire.reviewsCount > 0 %}
+									<div class="mb-3 fs-12 d-flex align-items-center gap-1">
+										<i class="fa-solid fa-star text-warning"></i>
+										<span class="fw-bold text-dark">{{ prestataire.averageRating }}</span>
+										<span class="text-muted">({{ prestataire.reviewsCount }}
+											avis)</span>
+									</div>
+								{% endif %}
 
-                            {# Courte description #}
-                            <p class="text-muted fs-12 mb-0 line-clamp-3">
-                                {{ prestataire.shortDescription|default(prestataire.description|slice(0, 130) ~ '...')|default('Aucune description rédigée pour le moment.') }}
-                            </p>
-                        </div>
+								<div class="mb-3">
+									<span class="badge bg-light text-dark border px-2 py-1 fs-11 rounded-2">{{ prestataire.metier|default('Prestataire') }}</span>
+									{% if prestataire.experience %}
+										<span class="badge bg-light text-muted border px-2 py-1 fs-11 rounded-2">{{ prestataire.experience }}
+											exp</span>
+									{% endif %}
+								</div>
 
-                        {# Actions de la carte #}
-                        <div class="mt-4 pt-3 border-top d-flex gap-2">
-                            <a href="#" class="btn btn-sm btn-light border text-dark w-50 py-2 fw-bold rounded-2 fs-12">
-                                Voir le profil
-                            </a>
-                            <a href="#" class="btn btn-sm text-white w-50 py-2 fw-bold rounded-2 fs-12" style="background-color: var(--tm-cp-service, #2046D8);">
-                                Demander un devis
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            {% else %}
-                {# EN CAS DE LISTE VIDE DE PRESTATAIRES #}
-                <div class="col-12 text-center py-5">
-                    <div class="mb-3">
-                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light border" style="width: 80px; height: 80px;">
-                            <i class="fa-solid fa-users-slash text-muted fs-3"></i>
-                        </div>
-                    </div>
-                    <h3 class="fw-extrabold h5 text-dark mb-2">Aucun professionnel trouvé pour ce service</h3>
-                    <p class="text-muted small mx-auto mb-4" style="max-width: 480px;">
-                        Notre réseau s'agrandit de jour en jour, mais il n'y a pas encore de prestataire actif enregistré pour la prestation spécifique <strong class="text-dark">"{{ currentService.name }}"</strong>.
-                    </p>
-                    <div class="d-flex justify-content-center gap-2">
-                        {% if currentSubCategory %}
-                            <a href="{{ path('app_search_flow', {'type': 'categorie', 'slug': currentSubCategory.slug}) }}" class="btn btn-sm btn-light border fw-bold px-3 py-2 rounded-2">
-                                <i class="fa-solid fa-arrow-left me-1"></i> Revenir à {{ currentSubCategory.name }}
-                            </a>
-                        {% endif %}
-                        <a href="#" class="btn btn-sm text-white fw-bold px-3 py-2 rounded-2" style="background-color: var(--tm-cp-service, #2046D8);">
-                            Déposer un projet global
-                        </a>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
+								<p class="text-muted fs-12 mb-0 line-clamp-3">
+									{{ prestataire.shortDescription|default(prestataire.description|slice(0, 130) ~ '...')|default('Aucune description rédigée pour le moment.') }}
+								</p>
+							</div>
 
-    {# 6. BANDEAU METIER EN BAS (Uniquement sur les listes ou pages intermédiaires) #}
-    {% if not currentService %}
-        <div class="tm-cat-banner mt-5 p-4 rounded-3 border d-flex flex-column flex-lg-row align-items-lg-center justify-content-between bg-white shadow-xs">
-            <div class="d-flex align-items-start gap-3">
-                <div class="tm-cat-banner-icon-wrapper rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background-color: var(--tm-cp-service, #2046D8); flex-shrink: 0;">
-                    <i class="fa-solid fa-briefcase fs-5"></i>
-                </div>
-                <div>
-                    <h4 class="fw-extrabold h5 text-dark mb-1">Vous êtes professionnel ?</h4>
-                    <p class="text-muted small mb-0">Rejoignez TrouveMoi pour développer votre clientèle locale et recevoir des demandes qualifiées.</p>
-                </div>
-            </div>
-            <div class="d-flex gap-2 mt-3 mt-lg-0 justify-content-end">
-                <a href="#" class="btn btn-sm btn-light border fw-bold px-3 py-2 rounded-2">En savoir plus</a>
-                <a href="#" class="btn btn-sm text-white fw-bold px-3 py-2 rounded-2" style="background-color: var(--tm-cp-service, #2046D8);">Devenir prestataire</a>
-            </div>
-        </div>
-    {% endif %}
+							<div class="mt-4 pt-3 border-top d-flex gap-2">
+								<a href="#" class="btn btn-sm w-50 py-2 fw-bold fs-12 tm-btn-secondary-search">
+									Voir le profil
+								</a>
+								<a href="#" class="btn btn-sm w-50 py-2 fw-bold fs-12 tm-btn-primary-search">
+									Demander un devis
+								</a>
+							</div>
+						</div>
+					</div>
+				{% else %}
+					{# LISTE VIDE #}
+					<div class="col-12 text-center py-5">
+						<div class="mb-3">
+							<div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light border" style="width: 80px; height: 80px;">
+								<i class="fa-solid fa-users-slash text-muted fs-3"></i>
+							</div>
+						</div>
+						<h3 class="fw-extrabold h5 text-dark mb-2">Aucun professionnel trouvé pour ce service</h3>
+						<p class="text-muted small mx-auto mb-4" style="max-width: 480px;">
+							Notre réseau s'agrandit de jour en jour, mais il n'y a pas encore de prestataire actif enregistré pour la prestation spécifique
+							<strong class="text-dark">"{{ currentService.name }}"</strong>.
+						</p>
+						<div class="d-flex justify-content-center gap-2">
+							{% if currentSubCategory %}
+								<a href="{{ path('app_search_flow', {'type': 'categorie', 'slug': currentSubCategory.slug}) }}" class="btn btn-sm btn-light border fw-bold px-3 py-2 rounded-2">
+									<i class="fa-solid fa-arrow-left me-1"></i>
+									Revenir à
+									{{ currentSubCategory.name }}
+								</a>
+							{% endif %}
+							<a href="#" class="btn btn-sm text-white fw-bold px-3 py-2 rounded-2" style="background-color: var(--tm-cp-service, #2046D8);">
+								Déposer un projet global
+							</a>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		{% endif %}
 
-</div>
+		{# 6. BANDEAU METIER EN BAS #}
+		{% if not currentService %}
+			<div class="mt-5 p-4 rounded-3 border d-flex flex-column flex-lg-row align-items-lg-center justify-content-between bg-white shadow-xs">
+				<div class="d-flex align-items-start gap-3">
+					<div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; background-color: var(--tm-cp-service, #2046D8); flex-shrink: 0;">
+						<i class="fa-solid fa-briefcase fs-5"></i>
+					</div>
+					<div>
+						<h4 class="fw-extrabold h5 text-dark mb-1">Vous êtes professionnel ?</h4>
+						<p class="text-muted small mb-0">Rejoignez TrouveMoi pour développer votre clientèle locale et recevoir des demandes qualifiées.</p>
+					</div>
+				</div>
+				<div class="d-flex gap-2 mt-3 mt-lg-0 justify-content-end">
+					<a href="#" class="btn btn-sm btn-light border fw-bold px-3 py-2 rounded-2">En savoir plus</a>
+					<a href="#" class="btn btn-sm text-white fw-bold px-3 py-2 rounded-2" style="background-color: var(--tm-cp-service, #2046D8);">Devenir prestataire</a>
+				</div>
+			</div>
+		{% endif %}
+
+		{# 7. BADGES DE RÉASSURANCE CENTRÉS TOUT EN BAS #}
+		<div class="d-flex flex-column flex-sm-row justify-content-center align-items-center gap-3 mt-5 pt-4 border-top">
+			<div class="p-2 px-3 border rounded-3 bg-white d-flex align-items-center shadow-xs tm-search-trust-badge">
+				<i class="fa-solid fa-circle-check text-success me-2 fs-5"></i>
+				<span class="fw-bold small text-dark lh-sm">Pros vérifiés<br><span class="text-muted fw-normal fs-11">Identité & Siren</span>
+				</span>
+			</div>
+			<div class="p-2 px-3 border rounded-3 bg-white d-flex align-items-center shadow-xs tm-search-trust-badge">
+				<i class="fa-solid fa-star text-warning me-2 fs-5"></i>
+				<span class="fw-bold small text-dark lh-sm">Avis contrôlés<br><span class="text-muted fw-normal fs-11">100% authentiques</span>
+				</span>
+			</div>
+		</div>
+
+	</div>
 {% endblock %}
