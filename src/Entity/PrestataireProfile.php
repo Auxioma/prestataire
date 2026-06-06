@@ -6,6 +6,8 @@ use App\Enum\PrestataireProfileStatusEnum;
 use App\Enum\VerificationStatusEnum;
 use App\Enum\SearchVisibilityEnum;
 use App\Repository\PrestataireProfileRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -149,6 +151,12 @@ class PrestataireProfile
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $experience = null;
 
+    /**
+     * @var Collection<int, Service>
+     */
+    #[ORM\ManyToMany(targetEntity: Service::class, inversedBy: 'prestataireProfiles')]
+    private Collection $services;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -159,6 +167,7 @@ class PrestataireProfile
         $this->reviewsCount = 0;
         $this->averageRating = '0.00';
         $this->isFeatured = false;
+        $this->services = new ArrayCollection();
     }
 
 
@@ -589,6 +598,30 @@ class PrestataireProfile
     public function setExperience(string $experience): static
     {
         $this->experience = $experience;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Service>
+     */
+    public function getServices(): Collection
+    {
+        return $this->services;
+    }
+
+    public function addService(Service $service): static
+    {
+        if (!$this->services->contains($service)) {
+            $this->services->add($service);
+        }
+
+        return $this;
+    }
+
+    public function removeService(Service $service): static
+    {
+        $this->services->removeElement($service);
 
         return $this;
     }
