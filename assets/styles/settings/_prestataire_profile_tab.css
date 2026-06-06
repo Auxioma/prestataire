@@ -1,0 +1,114 @@
+.tm-card{
+    border:none !important;
+    border-radius:16px;
+    background:#fff;
+    box-shadow:
+        0 1px 2px rgba(15,23,42,.04),
+        0 8px 24px rgba(15,23,42,.05);
+}
+
+.tm-card-title{
+    font-size:1.25rem;
+    font-weight:700;
+    color:#0F172A;
+}
+
+.tm-profile-photo-box{
+    background:#FAFBFD;
+    border:1px solid #EEF2F7;
+    border-radius:16px;
+}
+
+.tm-profile-photo-box img{
+    width:72px !important;
+    height:72px !important;
+    border:4px solid white;
+}
+
+/* Alignement forcé en haut et nettoyage des labels de Symfony */
+.tm-form-row {
+    display: flex;
+    flex-direction: column;
+}
+
+.tm-form-row label,
+.form-label {
+    font-size:.9rem;
+    font-weight:600;
+    color:#1E293B;
+    margin-bottom:8px;
+    display: block;
+    text-align: left;
+}
+
+.tm-form-row input,
+.tm-form-row select,
+.tm-form-row textarea{
+    width: 100%;
+    border:1px solid #E5E7EB; 
+    border-radius:10px;
+    background:#FAFBFD;
+    min-height:48px;
+    font-size:.95rem;
+    padding: 8px 14px;
+}
+
+/* Le textarea s'adapte dynamiquement grâce au flex-grow du HTML */
+.tm-form-row textarea{
+    min-height: 140px; 
+}
+
+/* États Focus conformes à ta charte graphique */
+.tm-form-row input:focus,
+.tm-form-row select:focus,
+.tm-form-row textarea:focus{
+    border-color:#2046D8; 
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(32, 70, 216, 0.15); 
+}
+
+.badge.bg-primary{
+    background:#2046D8 !important; 
+}
+
+.display-5{
+    font-size:3rem !important;
+}
+
+/* CTA principal avec ton dégradé bleu action */
+.tm-btn-service{
+    background: linear-gradient(180deg, #2046D8 0%, #1633A4 100%);
+    border:none;
+    color:white;
+    border-radius:12px;
+    min-width:320px;
+    box-shadow:0 10px 20px rgba(32, 70, 216, 0.18);
+    transition: all 0.2s ease;
+}
+
+.tm-btn-service:hover{
+    background: linear-gradient(180deg, #1B3CC0 0%, #1633A4 100%);
+    transform:translateY(-1px);
+}
+
+.tm-btn-service:active{
+    background: #1633A4;
+}
+
+.fs-7{
+    font-size:.78rem;
+}
+
+.card .display-5{
+    line-height:1;
+}
+
+.card .fs-4{
+    letter-spacing:2px;
+}
+
+/* Bordure pour les boutons neutres (ex: ajouter certifications) */
+.border-dashed {
+    border-style: dashed !important;
+    border-color: #BFC7D6 !important;
+}

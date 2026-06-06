@@ -79,8 +79,8 @@
 [id*="accountType"],
 .tm-cp-enum-radio-group div {
     display: flex !important;
-    flex-direction: column !important; /* Une option par ligne */
-    gap: 0.5rem !important;            /* Espace entre les deux lignes */
+    flex-direction: column !important; 
+    gap: 0.5rem !important;           
     width: 100% !important;
     align-items: flex-start !important;
 }
@@ -90,20 +90,20 @@
 [id*="accountType"] .form-check,
 .tm-cp-enum-radio-group .form-check {
     display: flex !important;
-    flex-direction: row !important;    /* Rond à gauche, texte à droite ! */
-    align-items: center !important;    /* Aligné verticalement au centre */
-    gap: 0.5rem !important;            /* Petit espace entre le rond et le texte */
+    flex-direction: row !important;    
+    align-items: center !important;    
+    gap: 0.5rem !important;           
     margin-bottom: 0 !important;
-    padding-left: 0 !important;        /* On vire le padding Bootstrap pour coller à gauche */
+    padding-left: 0 !important; 
 }
 
 /* Style de l'input (le bouton radio) */
 #AccountSettingsType_clientProfile_accountType .form-check-input,
 [id*="accountType"] .form-check-input,
 .tm-cp-enum-radio-group .form-check-input {
-    margin: 0 !important;              /* Reset des marges chiantes de Bootstrap */
-    flex-shrink: 0 !important;         /* Le rond ne doit pas se déformer */
-    position: relative !important;     /* Force un positionnement normal */
+    margin: 0 !important;  
+    flex-shrink: 0 !important; 
+    position: relative !important;
 }
 
 /* Style du texte à côté du rond */
@@ -186,4 +186,76 @@
     color: #ffffff !important;
     border: none !important;
     border-radius: 10px !important;
+}
+
+.tm-cp-mobile-navbar {
+    background-color: var(--tm-cp-sidebar-bg);
+    border-bottom: 1px solid var(--tm-cp-border);
+}
+
+.tm-cp-mobile-brand {
+    color: var(--tm-cp-primary);
+}
+
+/* Sidebar Desktop */
+.tm-cp-sidebar-desktop {
+    width: 300px;
+    min-width: 300px;
+}
+
+.tm-cp-sidebar-brand {
+    color: var(--tm-cp-primary);
+}
+
+.tm-cp-sidebar-badge {
+    background-color: rgba(6, 27, 86, 0.08);
+    color: var(--tm-cp-primary);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.tm-cp-sidebar-avatar {
+    width: 95px;
+    height: 95px;
+    object-fit: cover;
+    border-color: var(--tm-cp-border) !important;
+}
+
+.tm-cp-sidebar-username {
+    color: var(--tm-cp-primary);
+}
+
+.tm-cp-sidebar-date {
+    color: var(--tm-cp-text-secondary);
+}
+
+.tm-cp-sidebar-support-card {
+    background-color: rgba(6, 27, 86, 0.03);
+    border: 1px solid rgba(6, 27, 86, 0.05) !important;
+}
+
+.tm-cp-sidebar-support-text {
+    color: var(--tm-cp-primary);
+}
+
+/* Contenu Principal */
+.tm-cp-main-content-inner {
+    overflow-x: hidden;
+    background-color: var(--tm-cp-background);
+}
+
+/* Bloc Entreprise (Champs Pro) */
+.tm-cp-pro-fields-wrapper {
+    display: none;
+}
+
+/* Section Photo de profil (A droite) */
+.tm-cp-avatar-container {
+    background-color: var(--tm-cp-background);
+}
+
+.tm-cp-avatar-preview {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
 }

@@ -4,223 +4,226 @@
 {% endblock %}
 
 {% block body %}
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-	<div class="container-fluid p-0 tm-cp-page-wrapper" data-controller="client-profile">
-		<div
-			class="d-flex flex-column flex-md-row align-items-stretch">
+    <div class="container-fluid p-0 tm-cp-page-wrapper" data-controller="client-profile">
+        <div class="d-flex flex-column flex-md-row align-items-stretch">
 
-			{# Navbar Mobile #}
-			<div class="w-100 p-3 d-flex justify-content-between align-items-center d-md-none" style="background-color: var(--tm-cp-sidebar-bg); border-bottom: 1px solid var(--tm-cp-border);">
-				<div class="d-flex align-items-center gap-2">
-					<span class="fs-4 fw-bold" style="color: var(--tm-cp-primary);">🔍 TrouveMoi</span>
-				</div>
-				<div class="d-flex gap-3 tm-cp-mobile-nav">
-					<a href="#" class="text-dark text-decoration-none fs-5">📋</a>
-					<a href="#" class="text-dark text-decoration-none fs-5">❤️</a>
-					<a href="#" class="text-dark text-decoration-none fs-5 active-mobile">⚙️</a>
-				</div>
-			</div>
+            {# Navbar Mobile #}
+            <div class="w-100 p-3 d-flex justify-content-between align-items-center d-md-none tm-cp-mobile-navbar">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fs-4 fw-bold tm-cp-mobile-brand">🔍 TrouveMoi</span>
+                </div>
+                <div class="d-flex gap-3 tm-cp-mobile-nav">
+                    <a href="#" class="text-dark text-decoration-none fs-5">📋</a>
+                    <a href="#" class="text-dark text-decoration-none fs-5">❤️</a>
+                    <a href="#" class="text-dark text-decoration-none fs-5 active-mobile">⚙️</a>
+                </div>
+            </div>
 
-			{# Sidebar Desktop #}
-			<div class="tm-cp-client-sidebar p-4 d-none d-md-flex flex-column justify-content-between" style="width: 300px; min-width: 300px;">
-				<div>
-					<div class="mb-5 d-flex align-items-center gap-2">
-						<span class="fs-3 fw-bold" style="color: var(--tm-cp-primary);">🔍 TrouveMoi</span>
-						<span class="badge px-2 py-1" style="background-color: rgba(6, 27, 86, 0.08); color: var(--tm-cp-primary); font-size: 11px; font-weight: 600;">Espace Client</span>
-					</div>
+            {# Sidebar Desktop #}
+            <div class="tm-cp-client-sidebar p-4 d-none d-md-flex flex-column justify-content-between tm-cp-sidebar-desktop">
+                <div>
+                    <div class="mb-5 d-flex align-items-center gap-2">
+                        <span class="fs-3 fw-bold tm-cp-sidebar-brand">🔍 TrouveMoi</span>
+                        <span class="badge px-2 py-1 tm-cp-sidebar-badge">Espace Client</span>
+                    </div>
 
-					<div class="text-center mb-5">
-						<div class="position-relative d-inline-block mb-3">
-							<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80' }}" class="rounded-circle border-3 shadow-sm" style="width: 95px; height: 95px; object-fit: cover; border-color: var(--tm-cp-border) !important;" alt="Avatar">
-						</div>
-						<h5 class="mb-1 fw-semibold fs-5" style="color: var(--tm-cp-primary);">{{ user.firstName }}
-							{{ user.lastName }}</h5>
-						<p class="small mb-2" style="color: var(--tm-cp-text-secondary);">Membre depuis
-							{{ user.createdAt|date('Y') }}</p>
-					</div>
+                    <div class="text-center mb-5 ">
+                        <div class="position-relative d-inline-block mb-3">
+                            <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80' }}" class="rounded-circle border-3 shadow-sm tm-cp-sidebar-avatar" alt="Avatar">
+                        </div>
+                        <h5 class="mb-1 fw-semibold fs-5 tm-cp-sidebar-username">
+                            {{ user.firstName }} {{ user.lastName }}
+                        </h5>
+                        <p class="small mb-2 tm-cp-sidebar-date">
+                            Membre depuis {{ user.createdAt|date('Y') }}
+                        </p>
+                    </div>
 
-					<ul class="nav flex-column gap-2 tm-cp-nav-menu">
-						<li class="nav-item">
-							<a href="#" class="nav-link">
-								<span class="me-2">📋</span>
-								Mes Demandes</a>
-						</li>
-						<li class="nav-item">
-							<a href="#" class="nav-link">
-								<span class="me-2">❤️</span>
-								Mes Artisans Favoris</a>
-						</li>
-						<li class="nav-item">
-							<a href="#" class="nav-link">
-								<span class="me-2">💬</span>
-								Mes Messages</a>
-						</li>
-						<li class="nav-item">
-							<a href="#" class="nav-link active">
-								<span class="me-2">⚙️</span>
-								Paramètres</a>
-						</li>
-					</ul>
-				</div>
+                    <ul class="nav flex-column gap-2 tm-cp-nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <span class="me-2">📋</span>
+                                Mes Demandes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <span class="me-2">❤️</span>
+                                Mes Artisans Favoris
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <span class="me-2">💬</span>
+                                Mes Messages
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active">
+                                <span class="me-2">⚙️</span>
+                                Paramètres
+                            </a>
+                        </li>
+                    </ul>
+                </div>
 
-				<div class="card border-0 p-3 rounded-4 text-center mt-5" style="background-color: rgba(6, 27, 86, 0.03); border: 1px solid rgba(6, 27, 86, 0.05) !important;">
-					<p class="small mb-2 fw-medium" style="color: var(--tm-cp-primary);">Besoin d'aide pour vos travaux ?</p>
-					<button class="btn btn-sm w-100 fw-bold tm-cp-btn-sidebar-support">Contacter le support</button>
-				</div>
-			</div>
+                <div class="card border-0 p-3 rounded-4 text-center mt-5 tm-cp-sidebar-support-card">
+                    <p class="small mb-2 fw-medium tm-cp-sidebar-support-text">Besoin d'aide pour vos travaux ?</p>
+                    <button class="btn btn-sm w-100 fw-bold tm-cp-btn-sidebar-support">Contacter le support</button>
+                </div>
+            </div>
 
-			{# Contenu Principal #}
-			<div class="grow p-3 p-md-5" style="overflow-x: hidden; background-color: var(--tm-cp-background);">
+            {# Contenu Principal #}
+            <div class="grow p-3 p-md-5 tm-cp-main-content-inner">
 
-				<div class="mb-4 mb-md-5">
-					<h1 class="fw-bold tm-cp-main-title mb-1">Mon Compte</h1>
-					<p class="tm-cp-subtitle mb-0">Gérez vos coordonnées personnelles, vos adresses et la sécurité de votre compte</p>
-				</div>
+                <div class="mb-4 mb-md-5">
+                    <h1 class="fw-bold tm-cp-main-title mb-1">Mon Compte</h1>
+                    <p class="tm-cp-subtitle mb-0">Gérer vos coordonnées personnelles, vos adresses et la sécurité de votre compte</p>
+                </div>
 
-				{# Alertes Flash #}
-				{% for message in app.flashes('success') %}
-					<div class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4 fw-medium" role="alert">
-						✨
-						{{ message }}
-						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-					</div>
-				{% endfor %}
+                {# Alertes Flash #}
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4 fw-medium" role="alert">
+                        ✨ {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
 
-				<div class="tm-cp-tabs-wrapper mb-4 mb-md-5">
-					<ul class="nav nav-tabs border-bottom gap-3 gap-md-4 tm-cp-custom-tabs flex-nowrap" id="clientTabs" role="tablist">
-						<li class="nav-item">
-							<button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal-panel" type="button" role="tab">👤 Informations</button>
-						</li>
-						<li class="nav-item">
-							<button class="nav-link" id="addresses-tab" data-bs-toggle="tab" data-bs-target="#addresses-panel" type="button" role="tab">📍 Mes Adresses</button>
-						</li>
-						<li class="nav-item">
-							<button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-panel" type="button" role="tab">🛡 Sécurité</button>
-						</li>
-					</ul>
-				</div>
+                <div class="tm-cp-tabs-wrapper mb-4 mb-md-5">
+                    <ul class="nav nav-tabs border-bottom gap-3 gap-md-4 tm-cp-custom-tabs flex-nowrap" id="clientTabs" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal-panel" type="button" role="tab">👤 Informations</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="addresses-tab" data-bs-toggle="tab" data-bs-target="#addresses-panel" type="button" role="tab">📍 Mes Adresses</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-panel" type="button" role="tab">🛡 Sécurité</button>
+                        </li>
+                    </ul>
+                </div>
 
-				{{ form_start(settingsForm, {'attr': {'novalidate': 'novalidate'}}) }}
+                {{ form_start(settingsForm, {'attr': {'novalidate': 'novalidate'}}) }}
 
-				<div
-					class="tab-content" id="clientTabsContent">
+                <div class="tab-content" id="clientTabsContent">
 
-					{# Panel Informations #}
-					<div class="tab-pane fade show active" id="personal-panel" role="tabpanel">
-						<div class="row g-4">
-							<div class="col-lg-8">
-								<div class="card tm-cp-card p-4 h-100 d-flex flex-column justify-content-between">
-									<div>
-										<h4 class="tm-cp-card-title mb-4">Informations personnelles</h4>
+                    {# Panel Informations #}
+                    <div class="tab-pane fade show active" id="personal-panel" role="tabpanel">
+                        <div class="row g-4">
+                            <div class="col-lg-8">
+                                <div class="card tm-cp-card p-4 h-100 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h4 class="tm-cp-card-title mb-4">Informations personnelles</h4>
 
-										<div class="row g-3">
-											<div class="col-md-6 tm-cp-form-row">
-												{{ form_row(settingsForm.firstName) }}
-											</div>
-											<div class="col-md-6 tm-cp-form-row">
-												{{ form_row(settingsForm.lastName) }}
-											</div>
-											<div class="col-md-6 tm-cp-form-row">
-												{{ form_row(settingsForm.phoneNumber) }}
-											</div>
-											<div class="col-md-6 tm-cp-form-row tm-cp-enum-radio-group" id="client-type-field" data-client-profile-target="typeField" data-action="change->client-profile#toggleProFields">
-												{{ form_row(settingsForm.clientProfile.type,) }}
-											</div>
-										</div>
+                                        <div class="row g-3">
+                                            <div class="col-md-6 tm-cp-form-row">
+                                                {{ form_row(settingsForm.firstName) }}
+                                            </div>
+                                            <div class="col-md-6 tm-cp-form-row">
+                                                {{ form_row(settingsForm.lastName) }}
+                                            </div>
+                                            <div class="col-md-6 tm-cp-form-row">
+                                                {{ form_row(settingsForm.phoneNumber) }}
+                                            </div>
+                                            <div class="col-md-6 tm-cp-form-row tm-cp-enum-radio-group" id="client-type-field" data-client-profile-target="typeField" data-action="change->client-profile#toggleProFields">
+                                                {{ form_row(settingsForm.clientProfile.type) }}
+                                            </div>
+                                        </div>
 
-										<div id="pro-fields-wrapper" class="row g-3 mt-2 pt-3 border-top" style="display: none;" data-client-profile-target="proFieldsWrapper">
-											<h5 class="fw-semibold text-primary mb-2 fs-6">Détails de l'entreprise</h5>
-											<div class="col-md-6 tm-cp-form-row">
-												{{ form_row(settingsForm.clientProfile.companyName) }}
-											</div>
-											<div class="col-md-6 tm-cp-form-row">
-												{{ form_row(settingsForm.clientProfile.siret) }}
-											</div>
-										</div>
-									</div>
+                                        <div id="pro-fields-wrapper" class="row g-3 mt-2 pt-3 border-top tm-cp-pro-fields-wrapper" data-client-profile-target="proFieldsWrapper">
+                                            <h5 class="fw-semibold text-primary mb-2 fs-6">Détails de l'entreprise</h5>
+                                            <div class="col-md-6 tm-cp-form-row">
+                                                {{ form_row(settingsForm.clientProfile.companyName) }}
+                                            </div>
+                                            <div class="col-md-6 tm-cp-form-row">
+                                                {{ form_row(settingsForm.clientProfile.siret) }}
+                                            </div>
+                                        </div>
+                                    </div>
 
-									<div class="mt-4 pt-3 d-flex justify-content-md-start justify-content-center">
-										<button type="submit" class="btn tm-cp-btn-service px-4 py-2.5 fw-bold text-nowrap">Enregistrer les modifications</button>
-									</div>
-								</div>
-							</div>
+                                    <div class="mt-4 pt-3 d-flex justify-content-md-start justify-content-center">
+                                        <button type="submit" class="btn tm-cp-btn-service px-4 py-2.5 fw-bold text-nowrap">Enregistrer les modifications</button>
+                                    </div>
+                                </div>
+                            </div>
 
-							<div class="col-lg-4">
-								<div class="card tm-cp-card p-4 text-center h-100">
-									<h4 class="tm-cp-card-title text-start mb-4">Photo de profil</h4>
-									<div class="my-auto p-4 rounded-4" style="background-color: var(--tm-cp-background);">
-										<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle mb-3 border-2 border-white shadow-sm" style="width: 90px; height: 90px; object-fit: cover;" alt="Avatar">
-										<button type="button" class="btn btn-outline-primary btn-md d-block mx-auto fw-medium px-3">Modifier la photo</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+                            <div class="col-lg-4">
+                                <div class="card tm-cp-card p-4 text-center h-100">
+                                    <h4 class="tm-cp-card-title text-start mb-4">Photo de profil</h4>
+                                    <div class="my-auto p-4 rounded-4 tm-cp-avatar-container">
+                                        <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle mb-3 border-2 border-white shadow-sm tm-cp-avatar-preview" alt="Avatar">
+                                        <button type="button" class="btn btn-outline-primary btn-md d-block mx-auto fw-medium px-3">Modifier la photo</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-					{# Panel Adresses #}
-					<div class="tab-pane fade" id="addresses-panel" role="tabpanel">
-						<div class="row g-4">
-							<div class="col-12">
-								<div class="card tm-cp-card p-4">
-									<h4 class="tm-cp-card-title mb-4">📍 Adresse principale (Lieu des interventions)</h4>
-									<div class="row g-3">
-										<div class="col-md-6 col-lg-6 tm-cp-form-row">
-											{{ form_row(settingsForm.clientProfile.defaultAddress) }}
-										</div>
-										<div class="col-md-3 col-lg-3 tm-cp-form-row">
-											{{ form_row(settingsForm.clientProfile.defaultPostalCode) }}
-										</div>
-										<div class="col-md-3 col-lg-3 tm-cp-form-row">
-											{{ form_row(settingsForm.clientProfile.defaultCity) }}
-										</div>
-									</div>
-								</div>
-							</div>
+                    {# Panel Adresses #}
+                    <div class="tab-pane fade" id="addresses-panel" role="tabpanel">
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="card tm-cp-card p-4">
+                                    <h4 class="tm-cp-card-title mb-4">📍 Adresse principale (Lieu des interventions)</h4>
+                                    <div class="row g-3">
+                                        <div class="col-md-6 col-lg-6 tm-cp-form-row">
+                                            {{ form_row(settingsForm.clientProfile.defaultAddress) }}
+                                        </div>
+                                        <div class="col-md-3 col-lg-3 tm-cp-form-row">
+                                            {{ form_row(settingsForm.clientProfile.defaultPostalCode) }}
+                                        </div>
+                                        <div class="col-md-3 col-lg-3 tm-cp-form-row">
+                                            {{ form_row(settingsForm.clientProfile.defaultCity) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-							<div class="col-12">
-								<div class="card tm-cp-card p-4">
-									<h4 class="tm-cp-card-title mb-4">🧾 Adresse de facturation</h4>
-									<div class="row g-3">
-										<div class="col-md-5 col-lg-5 tm-cp-form-row">
-											{{ form_row(settingsForm.clientProfile.billingAddress) }}
-										</div>
-										<div class="col-md-2 col-lg-2 tm-cp-form-row">
-											{{ form_row(settingsForm.clientProfile.billingPostalCode) }}
-										</div>
-										<div class="col-md-3 col-lg-3 tm-cp-form-row">
-											{{ form_row(settingsForm.clientProfile.billingCity) }}
-										</div>
-										<div class="col-md-2 col-lg-2 tm-cp-form-row">
-											{{ form_row(settingsForm.clientProfile.billingCountry) }}
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+                            <div class="col-12">
+                                <div class="card tm-cp-card p-4">
+                                    <h4 class="tm-cp-card-title mb-4">🧾 Adresse de facturation</h4>
+                                    <div class="row g-3">
+                                        <div class="col-md-5 col-lg-5 tm-cp-form-row">
+                                            {{ form_row(settingsForm.clientProfile.billingAddress) }}
+                                        </div>
+                                        <div class="col-md-2 col-lg-2 tm-cp-form-row">
+                                            {{ form_row(settingsForm.clientProfile.billingPostalCode) }}
+                                        </div>
+                                        <div class="col-md-3 col-lg-3 tm-cp-form-row">
+                                            {{ form_row(settingsForm.clientProfile.billingCity) }}
+                                        </div>
+                                        <div class="col-md-2 col-lg-2 tm-cp-form-row">
+                                            {{ form_row(settingsForm.clientProfile.billingCountry) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="mt-4 d-flex justify-content-md-start justify-content-center">
-							<button type="submit" class="btn tm-cp-btn-service px-4 py-2.5 fw-bold text-nowrap">Enregistrer les adresses</button>
-						</div>
-					</div>
+                        <div class="mt-4 d-flex justify-content-md-start justify-content-center">
+                            <button type="submit" class="btn tm-cp-btn-service px-4 py-2.5 fw-bold text-nowrap">Enregistrer les adresses</button>
+                        </div>
+                    </div>
 
-					{# Panel Sécurité #}
-					<div class="tab-pane fade" id="security-panel" role="tabpanel">
-						<div class="card tm-cp-card p-4">
-							<h4 class="tm-cp-card-title mb-4">Sécurité du compte</h4>
-							<p class="text-muted mb-4">Pour modifier votre mot de passe, veuillez passer par le module de réinitialisation sécurisé.</p>
-							<div class="d-flex justify-content-md-start justify-content-center">
-								<button type="button" class="btn btn-outline-danger px-4 py-2 rounded-3 fw-semibold text-nowrap">Demander un lien de modification</button>
-							</div>
-						</div>
-					</div>
+                    {# Panel Sécurité #}
+                    <div class="tab-pane fade" id="security-panel" role="tabpanel">
+                        <div class="card tm-cp-card p-4">
+                            <h4 class="tm-cp-card-title mb-4">Sécurité du compte</h4>
+                            <p class="text-muted mb-4">Pour modifier votre mot de passe, veuillez passer par le module de réinitialisation sécurisé.</p>
+                            <div class="d-flex justify-content-md-start justify-content-center">
+                                <button type="button" class="btn btn-outline-danger px-4 py-2 rounded-3 fw-semibold text-nowrap">Demander un lien de modification</button>
+                            </div>
+                        </div>
+                    </div>
 
-				</div>
+                </div>
 
-				{{ form_end(settingsForm) }}
-			</div>
-		</div>
-	</div>
+                {{ form_end(settingsForm) }}
+            </div>
+        </div>
+    </div>
 {% endblock %}

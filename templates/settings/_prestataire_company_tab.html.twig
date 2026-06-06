@@ -1,85 +1,134 @@
 <div class="tm-company-shell">
     <div class="tm-company-header mb-4">
         <h2 class="tm-company-page-title mb-1">Mon entreprise</h2>
-        <p class="tm-company-page-subtitle mb-0">Gérez les informations et documents de votre structure juridique</p>
+        <p class="tm-company-page-subtitle mb-0">Gerez les informations et documents de votre structure juridique</p>
     </div>
 
     <div class="row g-4 match-height">
-        {# Card 1 : Informations Légales & Identité #}
+        {# Card 1 : Informations Legales & Identite #}
         <div class="col-lg-6">
-            <section class="card tm-company-card p-4 h-100">
-                <div class="tm-company-card-header mb-4 border-bottom pb-2">
-                    <h3 class="tm-company-card-title mb-0">📋 Identité de l'entreprise</h3>
-                </div>
+            <section class="card tm-company-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="tm-company-card-header mb-4 pb-2">
+                        <h3 class="tm-company-card-title mb-0">📋 Identite de l'entreprise</h3>
+                    </div>
 
-                <div class="row g-3">
-                    <div class="col-sm-6 tm-form-row">
-                        {{ form_row(settingsForm.prestataireProfile.companyName) }}
-                    </div>
-                    <div class="col-sm-6 tm-form-row">
-                        {{ form_row(settingsForm.prestataireProfile.legalName) }}
-                    </div>
-                    <div class="col-sm-4 tm-form-row">
-                        {{ form_row(settingsForm.prestataireProfile.structureType) }}
-                    </div>
-                    <div class="col-sm-4 tm-form-row">
-                        {{ form_row(settingsForm.prestataireProfile.siren) }}
-                    </div>
-                    <div class="col-sm-4 tm-form-row">
-                        {{ form_row(settingsForm.prestataireProfile.siret) }}
-                    </div>
-                    <div class="col-12 tm-form-row">
-                        {{ form_row(settingsForm.prestataireProfile.vatNumber) }}
+                    <div class="d-flex flex-column gap-3">
+                        {# Premiere rangee : Noms #}
+                        <div class="row g-3">
+                            <div class="col-sm-6 tm-form-row">
+                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.companyName) }}</label>
+                                {{ form_widget(settingsForm.prestataireProfile.companyName, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(settingsForm.prestataireProfile.companyName) }}
+                            </div>
+                            <div class="col-sm-6 tm-form-row">
+                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.legalName) }}</label>
+                                {{ form_widget(settingsForm.prestataireProfile.legalName, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(settingsForm.prestataireProfile.legalName) }}
+                            </div>
+                        </div>
+
+                        {# Deuxieme rangee : Parade absolue pour l'alignement de la Forme Juridique, SIREN et SIRET #}
+                        <div class="row g-3 tm-align-inputs-bottom">
+                            <div class="col-sm-4 tm-form-row">
+                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.structureType) }}</label>
+                                {{ form_widget(settingsForm.prestataireProfile.structureType, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(settingsForm.prestataireProfile.structureType) }}
+                            </div>
+                            <div class="col-sm-4 tm-form-row">
+                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.siren) }}</label>
+                                {{ form_widget(settingsForm.prestataireProfile.siren, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(settingsForm.prestataireProfile.siren) }}
+                            </div>
+                            <div class="col-sm-4 tm-form-row">
+                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.siret) }}</label>
+                                {{ form_widget(settingsForm.prestataireProfile.siret, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(settingsForm.prestataireProfile.siret) }}
+                            </div>
+                        </div>
+                        
+                        {# Troisieme rangee : TVA #}
+                        <div class="row g-3">
+                            <div class="col-12 tm-form-row">
+                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.vatNumber) }}</label>
+                                {{ form_widget(settingsForm.prestataireProfile.vatNumber, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(settingsForm.prestataireProfile.vatNumber) }}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="tm-company-logo-block mt-4 pt-3 border-top">
-                    <label class="tm-company-field-label fw-bold mb-2">Logo de l'entreprise</label>
+                    <label class="form-label fw-bold mb-2">Logo de l'entreprise</label>
                     <div class="d-flex align-items-center gap-3">
                         <div class="tm-company-logo-mark m-0" style="width: 50px; height: 50px; font-size: 1.4rem;">⚡</div>
                         <div class="grow">
-                            <button type="button" class="btn btn-sm btn-outline-primary tm-company-outline-btn py-2">📷 Modifier le logo</button>
-                            <div class="tm-company-helper mt-1" style="font-size: 11px;">PNG, JPG ou SVG. Max 2 Mo.</div>
+                            <button type="button" class="btn btn-sm btn-outline-primary tm-company-outline-btn py-2 px-3 fw-medium">📷 Modifier le logo</button>
+                            <div class="text-muted mt-1 fs-7">PNG, JPG ou SVG. Max 2 Mo.</div>
                         </div>
                     </div>
                 </div>
             </section>
         </div>
 
-        {# Card 2 : Coordonnées & Contact #}
+        {# Card 2 : Coordonnees & Contact #}
         <div class="col-lg-6">
-            <section class="card tm-company-card p-4 h-100">
-                <div class="tm-company-card-header mb-4 border-bottom pb-2">
-                    <h3 class="tm-company-card-title mb-0">📍 Coordonnées & Contact</h3>
+            <section class="card tm-company-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="tm-company-card-header mb-4 pb-2">
+                        <h3 class="tm-company-card-title mb-0">📍 Coordonnees & Contact</h3>
+                    </div>
+
+                    <div class="d-flex flex-column gap-3">
+                        <div class="row g-3">
+                            <div class="col-12 tm-form-row">
+                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.address) }}</label>
+                                {{ form_widget(settingsForm.prestataireProfile.address, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(settingsForm.prestataireProfile.address) }}
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-12 tm-form-row">
+                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.addressComplement) }}</label>
+                                {{ form_widget(settingsForm.prestataireProfile.addressComplement, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(settingsForm.prestataireProfile.addressComplement) }}
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-sm-4 tm-form-row">
+                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.postalCode) }}</label>
+                                {{ form_widget(settingsForm.prestataireProfile.postalCode, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(settingsForm.prestataireProfile.postalCode) }}
+                            </div>
+                            <div class="col-sm-4 tm-form-row">
+                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.city) }}</label>
+                                {{ form_widget(settingsForm.prestataireProfile.city, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(settingsForm.prestataireProfile.city) }}
+                            </div>
+                            <div class="col-sm-4 tm-form-row">
+                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.country) }}</label>
+                                {{ form_widget(settingsForm.prestataireProfile.country, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(settingsForm.prestataireProfile.country) }}
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-sm-6 tm-form-row">
+                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.phonePublic) }}</label>
+                                {{ form_widget(settingsForm.prestataireProfile.phonePublic, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(settingsForm.prestataireProfile.phonePublic) }}
+                            </div>
+                            <div class="col-sm-6 tm-form-row">
+                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.phonePrivate) }}</label>
+                                {{ form_widget(settingsForm.prestataireProfile.phonePrivate, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(settingsForm.prestataireProfile.phonePrivate) }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="row g-3">
-                    <div class="col-12 tm-form-row">
-                        {{ form_row(settingsForm.prestataireProfile.address) }}
-                    </div>
-                    <div class="col-12 tm-form-row">
-                        {{ form_row(settingsForm.prestataireProfile.addressComplement) }}
-                    </div>
-                    <div class="col-sm-4 tm-form-row">
-                        {{ form_row(settingsForm.prestataireProfile.postalCode) }}
-                    </div>
-                    <div class="col-sm-4 tm-form-row">
-                        {{ form_row(settingsForm.prestataireProfile.city) }}
-                    </div>
-                    <div class="col-sm-4 tm-form-row">
-                        {{ form_row(settingsForm.prestataireProfile.country) }}
-                    </div>
-                    <div class="col-sm-6 tm-form-row">
-                        {{ form_row(settingsForm.prestataireProfile.phonePublic) }}
-                    </div>
-                    <div class="col-sm-6 tm-form-row">
-                        {{ form_row(settingsForm.prestataireProfile.phonePrivate) }}
-                    </div>
-                </div>
-
-                <div class="tm-company-info-note mt-4 p-3 rounded-3" style="background-color: rgba(49, 84, 223, 0.05); border: 1px solid rgba(49, 84, 223, 0.1);">
-                    <div class="small fw-bold text-primary mb-1">🛡️ Visibilité des données</div>
-                    <p class="mb-0 small text-muted">Ces coordonnées permettent à vos futurs clients de vous joindre directement pour planifier les interventions.</p>
+                <div class="tm-company-info-note mt-4 p-3 rounded-3">
+                    <div class="small fw-bold mb-1" style="color: var(--tm-service, #2046D8);">🛡️ Visibilite des donnees</div>
+                    <p class="mb-0 fs-7 text-muted">Ces coordonnees permettent a vos futurs clients de vous joindre directement pour planifier les interventions.</p>
                 </div>
             </section>
         </div>
@@ -88,7 +137,7 @@
         <div class="col-lg-6">
             <section class="card tm-company-card p-4 h-100 d-flex flex-column justify-content-between">
                 <div>
-                    <div class="tm-company-card-header mb-2">
+                    <div class="tm-company-card-header mb-2 pb-2">
                         <h3 class="tm-company-card-title mb-0">📁 Documents administratifs</h3>
                     </div>
                     <p class="text-muted small mb-3">Justificatifs requis pour la certification de votre profil.</p>
@@ -97,49 +146,49 @@
                         {% set docs = [
                             {'title': "Extrait Kbis / Justificatif d'entreprise", 'icon': '📄'},
                             {'title': "Assurance RC Pro", 'icon': '🛡️'},
-                            {'title': "Attestation décennale", 'icon': '✅'}
+                            {'title': "Attestation decennale", 'icon': '✅'}
                         ] %}
                         {% for doc in docs %}
-                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom last-border-0">
+                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="fs-5">{{ doc.icon }}</span>
                                     <div>
-                                        <div class="fw-semibold small text-dark" style="font-size: 0.9rem;">{{ doc.title }}</div>
-                                        <div class="text-muted" style="font-size: 11px;">Ajouté le 12/04/2024</div>
+                                        <div class="fw-semibold text-dark fs-6" style="line-height: 1.2;">{{ doc.title }}</div>
+                                        <div class="text-muted fs-7">Ajoute le 12/04/2024</div>
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill" style="font-size: 10px; font-weight: 600;">Vérifié</span>
-                                    <button type="button" class="btn btn-light btn-sm px-2 py-0 border" style="font-size: 12px;">Voir</button>
+                                    <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill fw-semibold fs-7">Verifie</span>
+                                    <button type="button" class="btn btn-light btn-sm px-2 py-1 border fs-7 fw-medium">Voir</button>
                                 </div>
                             </div>
                         {% endfor %}
                     </div>
                 </div>
 
-                <button type="button" class="btn btn-sm btn-light border-dashed w-100 mt-3 py-2 text-primary fw-medium">
+                <button type="button" class="btn btn-sm btn-light border-dashed w-100 mt-4 py-3 text-primary fw-medium">
                     ☁️ Ajouter un nouveau document (PDF, JPG, PNG)
                 </button>
             </section>
         </div>
 
-        {# Card 4 : Aperçu Public Entreprise #}
+        {# Card 4 : Apercu Public Entreprise #}
         <div class="col-lg-6">
-            <section class="card tm-company-card p-0 overflow-hidden h-100 d-flex flex-column justify-content-between tm-company-preview-card bg-light-subtle">
+            <section class="card tm-company-card p-0 overflow-hidden h-100 d-flex flex-column justify-content-between tm-company-preview-card bg-light-subtle border">
                 <div>
                     <div class="p-4 pb-2">
-                        <h3 class="tm-company-card-title mb-0">👁️ Aperçu de votre encart public</h3>
+                        <h3 class="tm-company-card-title mb-0">👁️ Apercu de votre encart public</h3>
                     </div>
                     <div class="tm-company-public-cover" style="height: 70px;"></div>
                     
                     <div class="p-4 pt-0 position-relative">
                         <div class="tm-company-public-logo shadow-sm" style="width: 55px; height: 55px; top: -28px; font-size: 1.5rem;">⚡</div>
                         <h4 class="tm-company-public-title mb-1 fw-bold text-dark pt-4" style="font-size: 1.25rem;">
-                            {{ user.prestataireProfile.companyName|default('Dupont Électricité') }}
+                            {{ user.prestataireProfile.companyName|default('Dupont Electricite') }}
                         </h4>
                         
                         <p class="text-muted small mb-2 text-truncate-2">
-                            {{ user.prestataireProfile.description|default("Entreprise d'électricité générale spécialisée dans l'installation, la rénovation et le dépannage.") }}
+                            {{ user.prestataireProfile.description|default("Entreprise d'electricite generale specialisee dans l'installation, la renovation et le depannage.") }}
                         </p>
 
                         <div class="d-flex flex-wrap gap-1 mb-3">
@@ -149,17 +198,17 @@
                     </div>
                 </div>
 
-                <div class="p-4 pt-0 border-top mt-auto bg-light d-flex justify-content-between align-items-center">
-                    <span class="small text-muted">Visible par tous les utilisateurs</span>
-                    <a href="#" class="small fw-bold text-primary text-decoration-none">Voir le profil complet ↗</a>
+                <div class="p-4 py-3 border-top bg-light d-flex justify-content-between align-items-center mt-auto">
+                    <span class="small text-muted fw-medium fs-7">Visible par tous les utilisateurs</span>
+                    <a href="#" class="small fw-bold text-decoration-none" style="color: var(--tm-service, #2046D8);">Voir le profil complet ↗</a>
                 </div>
             </section>
         </div>
     </div>
 
-    {# Actions du bas de l'onglet #}
-    <div class="mt-4 pt-2 border-top d-flex justify-content-center">
-        <button type="submit" class="btn tm-company-save-btn px-5 py-3 fs-6">
+    {# Actions du bas #}
+    <div class="mt-4 pt-3 border-top d-flex justify-content-center">
+        <button type="submit" class="btn tm-company-save-btn px-5 py-3 fw-bold col-12 col-md-auto">
             Enregistrer les informations de l'entreprise
         </button>
     </div>
