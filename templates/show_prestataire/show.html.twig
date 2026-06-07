@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ prestataire.companyName }} - TrouveMoi{% endblock %}
+
+{% block body %}
+<div class="container py-5 text-start tm-profile-show">
+    
+    {# Bouton Retour #}
+    <div class="mb-4">
+        <a href="javascript:history.back()" class="tm-profile-show__back-link">
+            <i class="fa-solid fa-arrow-left me-1"></i> Retour aux résultats
+        </a>
+    </div>
+
+    {# Layout Principal #}
+    <div class="row g-4">
+        
+        {# COLONNE GAUCHE : CONTENU #}
+        <div class="col-lg-8">
+            
+            {# En-tête / Carte d'identité #}
+            <div class="tm-profile-show__card tm-profile-show__card--header mb-4">
+                <div class="d-flex flex-column flex-sm-row align-items-sm-center mb-4">
+                    
+                    <div class="tm-profile-show__logo-wrapper mb-3 mb-sm-0 me-sm-4">
+                        {% if prestataire.logo %}
+                            <img src="{{ prestataire.logo }}" alt="{{ prestataire.companyName }}" class="tm-profile-show__logo-img">
+                        {% else %}
+                            <i class="fa-solid fa-building tm-profile-show__logo-placeholder"></i>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="tm-profile-show__header-meta">
+                        <h1 class="tm-profile-show__title">{{ prestataire.companyName }}</h1>
+                        <p class="tm-profile-show__location">
+                            <i class="fa-solid fa-location-dot me-1"></i> 
+                            {{ prestataire.city|default('Ville non renseignée') }} 
+                            {% if prestataire.postalCode %}({{ prestataire.postalCode }}){% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="tm-profile-show__badge tm-profile-show__badge--primary">
+                        <i class="fa-solid fa-tools me-1"></i> {{ prestataire.metier|default('Professionnel') }}
+                    </span>
+                    {% if prestataire.experience %}
+                        <span class="tm-profile-show__badge tm-profile-show__badge--muted">
+                            <i class="fa-solid fa-briefcase me-1"></i> {{ prestataire.experience }} d'expérience
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Section : À propos #}
+            <div class="tm-profile-show__card mb-4">
+                <h2 class="tm-profile-show__section-title">À propos de l'entreprise</h2>
+                <div class="tm-profile-show__description">
+                    {{ prestataire.description|default('Aucune description détaillée n\'a encore été rédigée par ce professionnel.')|nl2br }}
+                </div>
+            </div>
+
+            {# Section : Services #}
+            <div class="tm-profile-show__card mb-4">
+                <h2 class="tm-profile-show__section-title">Prestations prises en charge</h2>
+                <div class="row row-cols-1 row-cols-sm-2 g-2">
+                    {% for service in prestataire.services %}
+                        <div class="col">
+                            <div class="tm-profile-show__service-item">
+                                <span class="tm-profile-show__service-name">
+                                    <i class="fa-solid {{ service.icon|default('fa-check') }} me-2"></i> {{ service.name }}
+                                </span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="col-12">
+                            <p class="text-muted small mb-0">Aucune prestation spécifique liée à ce profil pour le moment.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+
+        {# COLONNE DROITE : CTA STICKY #}
+        <div class="col-lg-4">
+            <div class="tm-profile-show__sidebar-card position-sticky" style="top: 110px;">
+                <h3 class="tm-profile-show__sidebar-title">Besoin d'un devis ?</h3>
+                <p class="tm-profile-show__sidebar-text">Expliquez votre projet en quelques clics. Ce prestataire étudiera votre demande gratuitement.</p>
+                
+                <a href="#" class="btn tm-profile-show__btn-action">
+                    <i class="fa-regular fa-paper-plane me-2"></i>Contacter ce pro
+                </a>
+
+                <div class="tm-profile-show__sidebar-footer">
+                    <div class="tm-profile-show__guarantee">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Garantie TrouveMoi</span>
+                    </div>
+                    <ul class="tm-profile-show__guarantee-list">
+                        <li>Mise en relation 100% gratuite</li>
+                        <li>Prestataire audité (SIRET valide)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
