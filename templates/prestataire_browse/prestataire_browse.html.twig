@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{{ page_title }}
+	- TrouveMoi
+{% endblock %}
+
+{% block body %}
+	<div class="container my-5">
+		<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+			<div>
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb small mb-1">
+						<li class="breadcrumb-item">
+							<a href="{{ path('app_home') }}">Accueil</a>
+						</li>
+						<li class="breadcrumb-item active" aria-current="page">Prestataires</li>
+					</ol>
+				</nav>
+				<h1 class="h2 fw-bold text-secondary mb-0">{{ page_title }}</h1>
+				<p class="text-muted mb-0">Découvrez les professionnels inscrits sur notre plateforme.</p>
+			</div>
+
+			<div
+				class="btn-group" role="group" aria-label="Filtres de tri">
+				{# Lien "Tous" : On retire simplement les filtres de tri #}
+				<a href="{{ path('app_prestataire_browse') }}" class="btn btn-sm {% if current_sort == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+					Tous
+				</a>
+				{# Lien "Mieux notés" : On passe le vrai champ de l'entité et la direction #}
+				<a href="{{ path('app_prestataire_browse', {'sort': 'p.averageRating', 'direction': 'desc'}) }}" class="btn btn-sm {% if current_sort == 'p.averageRating' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+					<i class="fa-solid fa-star me-1"></i>Mieux notés
+				</a>
+			</div>
+		</div>
+
+		<div class="row g-4">
+			{% if pagination|length > 0 %}
+				{% for profile in pagination %}
+					<div
+						class="col-12 col-md-6 col-lg-4">
+						{# Integration de Stimulus et des classes spécifiques #}
+						<div class="card h-100 border-0 tm-browse-card" data-controller="card-hover" data-card-hover-hovered-class="tm-browse-card--hovered" data-action="mouseenter->card-hover#mouseEnter mouseleave->card-hover#mouseLeave">
+
+							<div class="card-body p-4">
+								<div
+									class="d-flex align-items-center mb-3">
+									{# Retour à l'icône d'avant que tu préférais #}
+									<div class="tm-browse-card__icon p-3 me-3 text-primary">
+										<i class="fa-solid fa-user-gear fs-4"></i>
+									</div>
+									<div>
+										<h5 class="card-title h6 mb-1 fw-bold text-dark">
+											{{ profile.companyName|default(profile.account.userIdentifier) }}
+										</h5>
+										<small class="text-muted d-block">
+											<i class="fa-regular fa-envelope me-1"></i>
+											{{ profile.account.email }}
+										</small>
+									</div>
+								</div>
+
+								{# Description courte avec ton message de repli si NULL #}
+								<p class="card-text text-secondary small tm-browse-card__description mb-0">
+									{% if profile.shortDescription is not null and profile.shortDescription is not empty %}
+										{{ profile.shortDescription }}
+									{% else %}
+										<span class="text-muted fst-italic">Ce prestataire n'a pas encore rédigé de description courte, mais son savoir-faire reste entièrement à votre disposition.</span>
+									{% endif %}
+								</p>
+							</div>
+
+							{# Pied de carte épuré #}
+							<div class="card-footer bg-light-subtle border-0 pt-0 pb-4 px-4 d-flex justify-content-between align-items-center">
+								<div class="d-flex align-items-center">
+									<div class="text-warning me-2 small">
+										<i class="fa-solid fa-star"></i>
+									</div>
+									<span class="fw-bold text-dark small">{{ profile.averageRating|default('0.0') }}</span>
+									<span class="text-muted small ms-1">/5</span>
+								</div>
+
+								<a href="{{ path('app_prestataire_show', {'slug': profile.slug}) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
+									Voir le profil
+									<i class="fa-solid fa-arrow-right ms-1 small"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			{% else %}
+				<div class="col-12 text-center py-5">
+					<i class="fa-solid fa-user-slash fs-1 text-muted mb-3"></i>
+					<p class="fs-5 text-muted">Aucun prestataire ne correspond à ce critère pour le moment.</p>
+				</div>
+			{% endif %}
+		</div>
+
+		{# Bloc de rendu de la pagination KnpPaginator #}
+		<div class="d-flex justify-content-center mt-5">
+			{{ knp_pagination_render(pagination) }}
+		</div>
+	</div>
+{% endblock %}

@@ -42,155 +42,150 @@
 					</a>
 					<ul class="dropdown-menu tm-navbar__dropdown">
 						<li>
-							<a class="dropdown-item tm-navbar__dropdown-link" href="#">
+							<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_prestataire_browse') }}">
 								Tous les prestataires
 							</a>
 						</li>
 						<li><hr class="dropdown-divider"></li>
 						<li>
-							<a class="dropdown-item tm-navbar__dropdown-link" href="#">
+							<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_prestataire_browse', {'sort': 'p.averageRating', 'direction': 'desc'}) }}">
 								Les mieux notés
 							</a>
 						</li>
+					</a>
+				</li>
+				<li><hr class="dropdown-divider"></li>
+			</ul>
+		</li>
+
+		<li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle tm-navbar__link" href="#" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+				Catégories
+			</a>
+
+			<ul
+				class="dropdown-menu tm-navbar__dropdown">
+				{# Premier choix déroulant : Lien vers la page de toutes les catégories #}
+				<li>
+					<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--strong fw-bold text-primary" href="{{ path('app_category_index') }}">
+						<i class="fa-solid fa-layer-group me-2"></i>Toutes les catégories
+					</a>
+				</li>
+				<li><hr class="dropdown-divider"></li>
+
+				{# Boucle dynamique sur les catégories #}
+				{% for category in navbarCategories %}
+					{% if category.subCategories|length > 0 %}
+						<li
+							class="dropend tm-navbar__dropend">
+							{# Optionnel : Si tu veux que la catégorie parente reste cliquable pour envoyer sur le niveau 1 de la recherche #}
+							<a class="dropdown-item dropdown-toggle tm-navbar__dropdown-link tm-navbar__dropdown-link--strong" href="{{ path('app_search_flow', {'type': 'categorie', 'slug': category.slug}) }}" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+								{{ category.name }}
+							</a>
+
+							<ul class="dropdown-menu tm-navbar__dropdown tm-navbar__dropdown--submenu">
+								{% for subCategory in category.subCategories %}
+									<li>
+										<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_search_flow', {'type': 'categorie', 'slug': subCategory.slug}) }}">
+											{{ subCategory.name }}
+										</a>
+									</li>
+								{% endfor %}
+							</ul>
+						</li>
+					{% else %}
+						<li>
+							<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--strong" href="{{ path('app_search_flow', {'type': 'categorie', 'slug': category.slug}) }}">
+								{{ category.name }}
+							</a>
+						</li>
+					{% endif %}
+
+					{% if not loop.last %}
 						<li><hr class="dropdown-divider"></li>
+					{% endif %}
+				{% endfor %}
+			</ul>
+		</li>
+
+		<li class="nav-item">
+			<a class="nav-link tm-navbar__link" href="#">Bons plans</a>
+		</li>
+
+		<li class="nav-item">
+			<a class="nav-link tm-navbar__link tm-navbar__link--icon" href="#">
+				<i class="fa-regular fa-heart"></i>
+				<span>Mes favoris</span>
+			</a>
+		</li>
+
+		<li class="tm-navbar__divider d-none d-xl-block"></li>
+
+		{% if app.user %}
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle tm-navbar__link tm-navbar__link--account" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<i class="fa-solid fa-circle-user"></i>
+					<span>Mon Compte</span>
+				</a>
+
+				<ul class="dropdown-menu dropdown-menu-end tm-navbar__dropdown">
+					<li>
+						<span class="dropdown-item-text tm-navbar__dropdown-text">
+							{{ app.user.email }}
+						</span>
+					</li>
+					<li><hr class="dropdown-divider"></li>
+
+					{% if is_granted('ROLE_PRESTATAIRE') %}
+						<li>
+							<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--primary" href="#">
+								<i class="fa-solid fa-gauge me-2"></i>Espace Pro
+							</a>
+						</li>
+					{% else %}
 						<li>
 							<a class="dropdown-item tm-navbar__dropdown-link" href="#">
-								Disponibles immédiatement
+								<i class="fa-solid fa-file-invoice me-2"></i>Mes Demandes
 							</a>
 						</li>
-					</ul>
-				</li>
+					{% endif %}
 
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle tm-navbar__link" href="#" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-						Catégories
-					</a>
-
-					<ul
-						class="dropdown-menu tm-navbar__dropdown">
-						{# Premier choix déroulant : Lien vers la page de toutes les catégories #}
-						<li>
-							<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--strong fw-bold text-primary" href="{{ path('app_category_index') }}">
-								<i class="fa-solid fa-layer-group me-2"></i>Toutes les catégories
-							</a>
-						</li>
-						<li><hr class="dropdown-divider"></li>
-
-						{# Boucle dynamique sur les catégories #}
-						{% for category in navbarCategories %}
-							{% if category.subCategories|length > 0 %}
-								<li
-									class="dropend tm-navbar__dropend">
-									{# Optionnel : Si tu veux que la catégorie parente reste cliquable pour envoyer sur le niveau 1 de la recherche #}
-									<a class="dropdown-item dropdown-toggle tm-navbar__dropdown-link tm-navbar__dropdown-link--strong" href="{{ path('app_search_flow', {'type': 'categorie', 'slug': category.slug}) }}" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-										{{ category.name }}
-									</a>
-
-									<ul class="dropdown-menu tm-navbar__dropdown tm-navbar__dropdown--submenu">
-										{% for subCategory in category.subCategories %}
-											<li>
-												<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_search_flow', {'type': 'categorie', 'slug': subCategory.slug}) }}">
-													{{ subCategory.name }}
-												</a>
-											</li>
-										{% endfor %}
-									</ul>
-								</li>
-							{% else %}
-								<li>
-									<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--strong" href="{{ path('app_search_flow', {'type': 'categorie', 'slug': category.slug}) }}">
-										{{ category.name }}
-									</a>
-								</li>
-							{% endif %}
-
-							{% if not loop.last %}
-								<li><hr class="dropdown-divider"></li>
-							{% endif %}
-						{% endfor %}
-					</ul>
-				</li>
-
-				<li class="nav-item">
-					<a class="nav-link tm-navbar__link" href="#">Bons plans</a>
-				</li>
-
-				<li class="nav-item">
-					<a class="nav-link tm-navbar__link tm-navbar__link--icon" href="#">
-						<i class="fa-regular fa-heart"></i>
-						<span>Mes favoris</span>
-					</a>
-				</li>
-
-				<li class="tm-navbar__divider d-none d-xl-block"></li>
-
-				{% if app.user %}
-					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle tm-navbar__link tm-navbar__link--account" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							<i class="fa-solid fa-circle-user"></i>
-							<span>Mon Compte</span>
-						</a>
-
-						<ul class="dropdown-menu dropdown-menu-end tm-navbar__dropdown">
-							<li>
-								<span class="dropdown-item-text tm-navbar__dropdown-text">
-									{{ app.user.email }}
-								</span>
-							</li>
-							<li><hr class="dropdown-divider"></li>
-
-							{% if is_granted('ROLE_PRESTATAIRE') %}
-								<li>
-									<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--primary" href="#">
-										<i class="fa-solid fa-gauge me-2"></i>Espace Pro
-									</a>
-								</li>
-							{% else %}
-								<li>
-									<a class="dropdown-item tm-navbar__dropdown-link" href="#">
-										<i class="fa-solid fa-file-invoice me-2"></i>Mes Demandes
-									</a>
-								</li>
-							{% endif %}
-
-							<li>
-								<a class="dropdown-item tm-navbar__dropdown-link" href="{{ is_granted('ROLE_PRESTATAIRE') ? path('app_prestataire_settings') : path('app_client_settings') }}">
-									<i class="fa-solid fa-gear me-2"></i>Paramètres
-								</a>
-							</li>
-
-							<li><hr class="dropdown-divider"></li>
-
-							<li>
-								<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--danger" href="{{ path('app_logout') }}">
-									<i class="fa-solid fa-right-from-bracket me-2"></i>Déconnexion
-								</a>
-							</li>
-						</ul>
-					</li>
-				{% else %}
-					<li class="nav-item">
-						<a class="nav-link tm-navbar__link tm-navbar__link--icon" href="{{ path('app_login') }}">
-							<i class="fa-regular fa-user"></i>
-							<span>Connexion</span>
+					<li>
+						<a class="dropdown-item tm-navbar__dropdown-link" href="{{ is_granted('ROLE_PRESTATAIRE') ? path('app_prestataire_settings') : path('app_client_settings') }}">
+							<i class="fa-solid fa-gear me-2"></i>Paramètres
 						</a>
 					</li>
 
-					<li class="nav-item tm-navbar__mobile-full">
-						<a class="btn tm-navbar__btn-outline" href="{{ path('app_register_choice') }}">
-							Inscription
-						</a>
-					</li>
-				{% endif %}
+					<li><hr class="dropdown-divider"></li>
 
-				{% if app.user and is_granted('ROLE_PRESTATAIRE') %}
-					<li class="nav-item ms-xl-2 tm-navbar__mobile-full">
-						<a class="btn tm-navbar__btn-cta" href="#">
-							<i class="fa-solid fa-briefcase me-2"></i>Proposer une Prestation
+					<li>
+						<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--danger" href="{{ path('app_logout') }}">
+							<i class="fa-solid fa-right-from-bracket me-2"></i>Déconnexion
 						</a>
 					</li>
-				{% endif %}
-			</ul>
-		</div>
-	</div>
-</nav>
+				</ul>
+			</li>
+		{% else %}
+			<li class="nav-item">
+				<a class="nav-link tm-navbar__link tm-navbar__link--icon" href="{{ path('app_login') }}">
+					<i class="fa-regular fa-user"></i>
+					<span>Connexion</span>
+				</a>
+			</li>
+
+			<li class="nav-item tm-navbar__mobile-full">
+				<a class="btn tm-navbar__btn-outline" href="{{ path('app_register_choice') }}">
+					Inscription
+				</a>
+			</li>
+		{% endif %}
+
+		{% if app.user and is_granted('ROLE_PRESTATAIRE') %}
+			<li class="nav-item ms-xl-2 tm-navbar__mobile-full">
+				<a class="btn tm-navbar__btn-cta" href="#">
+					<i class="fa-solid fa-briefcase me-2"></i>Proposer une Prestation
+				</a>
+			</li>
+		{% endif %}
+	</ul>
+</div></div></nav>
