@@ -1,0 +1,42 @@
+.tm-footer-container {
+    background-color: #061b56 !important;
+}
+
+/* Animations des liens de navigation */
+.tm-footer-link {
+    color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-block;
+}
+
+.tm-footer-link:hover {
+    color: #ffffff !important;
+    transform: translateX(5px);
+}
+
+/* Effets boutons réseaux sociaux */
+.tm-footer-social-btn {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+.tm-footer-social-btn:hover {
+    transform: translateY(-3px);
+    background-color: rgba(255,255,255,0.1);
+}
+
+/* Effet sur l'icône cœur */
+.tm-footer-heart-pulse {
+    animation: tm-footer-heart-beat 1.5s infinite;
+}
+
+@keyframes tm-footer-heart-beat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Bordure verticale responsive */
+@media(min-width: 1200px) {
+    .tm-footer-border-xl {
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+    }
+}
