@@ -1,108 +1,153 @@
 <footer class="bg-dark text-white pt-5 pb-3 mt-auto tm-main-footer" style="background-color: #061b56 !important;">
-    <div class="container-fluid px-md-5"> {# container-fluid avec padding pour s'aligner sur les bords de ton site #}
-        
-        {# justify-content-xl-between répartit les colonnes de manière homogène sur les grands écrans #}
-        <div class="row g-4 justify-content-xl-between"> 
-            
-            {# Colonne 1 : Logo & Description #}
-            <div class="col-xl-3 col-lg-4 col-md-6">
-                <div class="d-flex align-items-center mb-3">
-                    <img src="{{ asset('images/logo-trouvemoi.png') }}" alt="TrouveMoi" height="35" class="me-2" onerror="this.style.display='none'">
-                    <span class="fs-4 fw-bold text-warning">TrouveMoi<span class="text-white" style="font-size: 14px;">.com</span></span>
-                </div>
-                <p class="text-white-50 small lh-lg mb-3">
-                    La plateforme qui connecte les clients avec les meilleurs professionnels près de chez eux.
-                </p>
-                {# Réseaux Sociaux #}
-                <div class="d-flex gap-2">
-                    <a href="#" class="btn btn-outline-light btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" class="btn btn-outline-light btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" class="btn btn-outline-light btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"><i class="fa-brands fa-linkedin-in"></i></a>
-                </div>
-            </div>
+	<div class="container-fluid px-md-5">
+		{# container-fluid avec padding pour s'aligner sur les bords de ton site #}
 
-            {# Colonne 2 : Pour les particuliers #}
-            <div class="col-xl-auto col-lg-2 col-md-6 col-6">
-                <h5 class="text-white fs-6 mb-3 fw-bold">Pour les particuliers</h5>
-                <ul class="list-unstyled small d-flex flex-column gap-2">
-                    <li><a href="#" class="text-white-50 text-decoration-none text-white-hover">Comment ça marche ?</a></li>
-                    <li><a href="#" class="text-white-50 text-decoration-none text-white-hover">Demander un devis</a></li>
-                    <li><a href="#" class="text-white-50 text-decoration-none text-white-hover">Bons plans</a></li>
-                    <li><a href="{{ path('app_help') }}" class="text-white-50 text-decoration-none text-white-hover">Aide & FAQ</a></li>
-                </ul>
-            </div>
+		{# justify-content-xl-between répartit les colonnes de manière homogène sur les grands écrans #}
+			<div
+			class="row g-4 justify-content-xl-between"> {# Colonne 1 : Logo & Description #}
+			<div class="col-xl-3 col-lg-4 col-md-6">
+				<div class="d-flex align-items-center mb-3">
+					<img src="{{ asset('images/logo-trouvemoi.png') }}" alt="TrouveMoi" height="35" class="me-2" onerror="this.style.display='none'">
+					<span class="fs-4 fw-bold text-warning">TrouveMoi<span class="text-white" style="font-size: 14px;">.com</span>
+					</span>
+				</div>
+				<p class="text-white-50 small lh-lg mb-3">
+					La plateforme qui connecte les clients avec les meilleurs professionnels près de chez eux.
+				</p>
+				{# Réseaux Sociaux #}
+				<div class="d-flex gap-2">
+					<a href="#" class="btn btn-outline-light btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+						<i class="fa-brands fa-facebook-f"></i>
+					</a>
+					<a href="#" class="btn btn-outline-light btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+						<i class="fa-brands fa-instagram"></i>
+					</a>
+					<a href="#" class="btn btn-outline-light btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+						<i class="fa-brands fa-linkedin-in"></i>
+					</a>
+				</div>
+			</div>
 
-            {# Colonne 3 : Pour les prestataires #}
-            <div class="col-xl-auto col-lg-2 col-md-6 col-6">
-                <h5 class="text-white fs-6 mb-3 fw-bold">Pour les prestataires</h5>
-                <ul class="list-unstyled small d-flex flex-column gap-2">
-                    <li><a href="#" class="text-white-50 text-decoration-none text-white-hover">Inscription prestataire</a></li>
-                    <li><a href="#" class="text-white-50 text-decoration-none text-white-hover">Espace prestataire</a></li>
-                    <li><a href="#" class="text-white-50 text-decoration-none text-white-hover">Avantages</a></li>
-                    <li><a href="#" class="text-white-50 text-decoration-none text-white-hover">Ressources</a></li>
-                </ul>
-            </div>
+			{# Colonne 2 : Pour les particuliers #}
+			<div class="col-xl-auto col-lg-2 col-md-6 col-6">
+				<h5 class="text-white fs-6 mb-3 fw-bold">Pour les particuliers</h5>
+				<ul class="list-unstyled small d-flex flex-column gap-2">
+					<li>
+						<a href="{{ path('app_static_page', {'slug': 'comment-ca-marche'}) }}" class="text-white-50 text-decoration-none text-white-hover">Comment ça marche ?</a>
+					</li>
+					<li>
+						<a href="{{ path('app_static_page', {'slug': 'demander-un-devis'}) }}" class="text-white-50 text-decoration-none text-white-hover">Demander un devis</a>
+					</li>
+					{# <li>
+						<a href="#" class="text-white-50 text-decoration-none text-white-hover">Bons plans</a>
+					</li> #}
+					<li>
+						<a href="{{ path('app_static_page', {'slug': 'aide-faq'}) }}" class="text-white-50 text-decoration-none text-white-hover">Aide & FAQ</a>
+					</li>
+				</ul>
+			</div>
 
-            {# Colonne 4 : Informations #}
-            <div class="col-xl-auto col-lg-2 col-md-6 col-6">
-                <h5 class="text-white fs-6 mb-3 fw-bold">Informations</h5>
-                <ul class="list-unstyled small d-flex flex-column gap-2">
-                    <li><a href="#" class="text-white-50 text-decoration-none text-white-hover">À propos de nous</a></li>
-                    <li><a href="{{ path('app_cgu') }}" class="text-white-50 text-decoration-none text-white-hover">Conditions générales</a></li>
-                    <li><a href="{{ path('app_privacy') }}" class="text-white-50 text-decoration-none text-white-hover">Politique de confidentialité</a></li>
-                    <li><a href="#" class="text-white-50 text-decoration-none text-white-hover">Mentions légales</a></li>
-                    <li><a href="{{ path('app_help') }}" class="text-decoration-none text-teal fw-bold">Besoin d'aide ?</a></li>
-                </ul>
-            </div>
+			{# Colonne 3 : Pour les prestataires #}
+			<div class="col-xl-auto col-lg-2 col-md-6 col-6">
+				<h5 class="text-white fs-6 mb-3 fw-bold">Pour les prestataires</h5>
+				<ul class="list-unstyled small d-flex flex-column gap-2">
+					<li>
+						<a href="{{ path('app_static_page', {'slug': 'inscription-prestataire'}) }}" class="text-white-50 text-decoration-none text-white-hover">Inscription prestataire</a>
+					</li>
+					<li>
+						<a href="{{ path('app_static_page', {'slug': 'espace-prestataire'}) }}" class="text-white-50 text-decoration-none text-white-hover">Espace prestataire</a>
+					</li>
+					<li>
+						<a href="{{ path('app_static_page', {'slug': 'avantages'}) }}" class="text-white-50 text-decoration-none text-white-hover">Avantages</a>
+					</li>
+					<li>
+						<a href="{{ path('app_static_page', {'slug': 'ressources'}) }}" class="text-white-50 text-decoration-none text-white-hover">Ressources</a>
+					</li>
+				</ul>
+			</div>
 
-            {# Colonne 5 : Besoin d'aide #}
-            <div class="col-xl-2 col-lg-3 col-md-6 border-start-xl ps-xl-4">
-                <h5 class="text-white fs-6 mb-3 fw-bold">Besoin d'aide ?</h5>
-                <ul class="list-unstyled small d-flex flex-column gap-3 text-white-50 mb-0">
-                    <li class="d-flex align-items-center"><i class="fa-solid fa-phone me-2 text-white-50"></i> 01 84 80 52 98</li>
-                    <li class="d-flex align-items-center"><i class="fa-regular fa-envelope me-2 text-white-50"></i> contact@trouvemoi.com</li>
-                    <li class="d-flex align-items-top"><i class="fa-regular fa-clock me-2 mt-1 text-white-50"></i> <span>Lun. - Ven. 9h - 18h<br>Sam. 9h - 14h</span></li>
-                </ul>
-            </div>
+			{# Colonne 4 : Informations #}
+			<div class="col-xl-auto col-lg-2 col-md-6 col-6">
+				<h5 class="text-white fs-6 mb-3 fw-bold">Informations</h5>
+				<ul class="list-unstyled small d-flex flex-column gap-2">
+					<li>
+						<a href="{{ path('app_static_page', {'slug': 'about'}) }}" class="text-white-50 text-decoration-none text-white-hover">À propos de nous</a>
+					</li>
+					<li>
+						<a href="{{ path('app_static_page', {'slug': 'cgu'}) }}">Conditions générales</a>
+					</li>
+					<li>
+						<a href="{{ path('app_static_page', {'slug': 'privacy'}) }}" class="text-white-50 text-decoration-none text-white-hover">Politique de confidentialité</a>
+					</li>
+					<li>
+						<a href="{{ path('app_static_page', {'slug': 'legal'}) }}" class="text-white-50 text-decoration-none text-white-hover">Mentions légales</a>
+					</li>
+					<li>
+						<a href="{{ path('app_static_page', {'slug': 'help'}) }}" class="text-decoration-none text-teal fw-bold">Besoin d'aide ?</a>
+					</li>
+				</ul>
+			</div>
 
-            {# Colonne 6 : Restez informé #}
-            <div class="col-xl-2 col-lg-3 col-md-6">
-                <h5 class="text-white fs-6 mb-2 fw-bold">Restez informé</h5>
-                <p class="text-white-50 small mb-3">Recevez nos bons plans et conseils.</p>
-                <form action="#" method="POST" class="d-flex gap-0">
-                    <input type="email" class="form-control bg-white border-0 text-dark form-control-sm py-2" placeholder="Votre adresse e-mail" required style="border-radius: 4px 0 0 4px; font-size: 13px;">
-                    <button class="btn btn-primary px-3 text-nowrap" type="submit" style="background-color: #2b59ff; border: none; border-radius: 0 4px 4px 0; font-size: 13px;">S'inscrire</button>
-                </form>
-            </div>
+			{# Colonne 5 : Besoin d'aide #}
+			<div class="col-xl-2 col-lg-3 col-md-6 border-start-xl ps-xl-4">
+				<h5 class="text-white fs-6 mb-3 fw-bold">Besoin d'aide ?</h5>
+				<ul class="list-unstyled small d-flex flex-column gap-3 text-white-50 mb-0">
+					<li class="d-flex align-items-center">
+						<i class="fa-solid fa-phone me-2 text-white-50"></i>
+						01 84 80 52 98</li>
+					<li class="d-flex align-items-center">
+						<i class="fa-regular fa-envelope me-2 text-white-50"></i>
+						contact@trouvemoi.com</li>
+					<li class="d-flex align-items-top">
+						<i class="fa-regular fa-clock me-2 mt-1 text-white-50"></i>
+						<span>Lun. - Ven. 9h - 18h<br>Sam. 9h - 14h</span>
+					</li>
+				</ul>
+			</div>
 
-        </div>
+			{# Colonne 6 : Restez informé #}
+			<div class="col-xl-2 col-lg-3 col-md-6">
+				<h5 class="text-white fs-6 mb-2 fw-bold">Restez informé</h5>
+				<p class="text-white-50 small mb-3">Recevez nos bons plans et conseils.</p>
+				<form action="#" method="POST" class="d-flex gap-0">
+					<input type="email" class="form-control bg-white border-0 text-dark form-control-sm py-2" placeholder="Votre adresse e-mail" required style="border-radius: 4px 0 0 4px; font-size: 13px;">
+					<button class="btn btn-primary px-3 text-nowrap" type="submit" style="background-color: #2b59ff; border: none; border-radius: 0 4px 4px 0; font-size: 13px;">S'inscrire</button>
+				</form>
+			</div>
 
-        <hr class="border-secondary my-4">
+		</div>
 
-        {# Bottom Footer #}
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center small text-white-50">
-            <p class="mb-2 mb-md-0">&copy; {{ date()|date('Y') }} TrouveMoi.com - Tous droits réservés</p>
-            <div class="d-flex align-items-center gap-2">
-                <span>Fait avec <i class="fa-solid fa-heart text-danger"></i> en France</span>
-                <span class="ms-1" style="display: inline-block; width: 16px; height: 11px; background: linear-gradient(90deg, #002395 33%, #fff 33%, #fff 66%, #ed2939 66%); border-radius: 1px;"></span>
-            </div>
-        </div>
-    </div>
+		<hr
+		class="border-secondary my-4">
+
+		{# Bottom Footer #}
+		<div class="d-flex flex-column flex-md-row justify-content-between align-items-center small text-white-50">
+			<p class="mb-2 mb-md-0">&copy;
+				{{ date()|date('Y') }}
+				TrouveMoi.com - Tous droits réservés</p>
+			<div class="d-flex align-items-center gap-2">
+				<span>Fait avec
+					<i class="fa-solid fa-heart text-danger"></i>
+					en France</span>
+				<span class="ms-1" style="display: inline-block; width: 16px; height: 11px; background: linear-gradient(90deg, #002395 33%, #fff 33%, #fff 66%, #ed2939 66%); border-radius: 1px;"></span>
+			</div>
+		</div>
+	</div>
 </footer>
 
 <style>
-    /* Nettoyage du CSS custom pour utiliser les flexbox de Bootstrap */
-    @media (min-width: 1200px) {
-        .tm-main-footer .border-start-xl {
-            border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
-        }
-    }
+	/* Nettoyage du CSS custom pour utiliser les flexbox de Bootstrap */
+	@media(min-width: 1200px) {
+		.tm-main-footer .border-start-xl {
+			border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+		}
+	}
 
-    .tm-main-footer .text-white-hover:hover {
-        color: #fff !important;
-        transition: color 0.2s ease-in-out;
-    }
-    .tm-main-footer .text-teal {
-        color: #00cbc6 !important;
-    }
+	.tm-main-footer .text-white-hover:hover {
+		color: #fff !important;
+		transition: color 0.2s ease-in-out;
+	}
+	.tm-main-footer .text-teal {
+		color: #00cbc6 !important;
+	}
 </style>

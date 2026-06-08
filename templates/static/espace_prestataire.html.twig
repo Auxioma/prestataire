@@ -1,0 +1,296 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Espace Prestataire - TrouveMoi.com{% endblock %}
+
+{% block json_ld %}{% endblock %}
+
+{% block body %}
+<div class="bg-light w-100 min-vh-100 py-4">
+    <div class="container-fluid px-md-5">
+        
+        <!-- Welcome Header -->
+        <div class="mb-4">
+            <h1 class="h3 fw-bold text-dark mb-1">Bonjour Thomas,</h1>
+            <p class="text-muted small mb-0">Voici un aperçu de votre activité sur TrouveMoi.com</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Sidebar Gauche : Navigation Dashboard -->
+            <div class="col-xl-2 col-lg-3">
+                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border">
+                    <button class="btn btn-primary w-100 text-start py-2 px-3 mb-4 rounded-3 d-flex align-items-center gap-2 small fw-medium" style="background-color: #e8eeff; color: #2b59ff; border: none;">
+                        <i class="fa-solid fa-table-columns"></i> Tableau de bord
+                    </button>
+
+                    <div class="mb-3">
+                        <span class="tm-static-text-xs-alt text-muted text-uppercase fw-bold tracking-wider px-2 d-block mb-2">Mon activité</span>
+                        <div class="list-group list-group-flush gap-1">
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted d-flex justify-content-between align-items-center"><span class="tm-static-text-dark-hover"><i class="fa-regular fa-envelope me-2"></i>Demandes reçues</span> <span class="badge bg-danger rounded-circle p-1 d-flex align-items-center justify-content-center" style="width:18px; height:18px; font-size:10px;">4</span></a>
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted"><span class="tm-static-text-dark-hover"><i class="fa-regular fa-paper-plane me-2"></i>Devis envoyés</span></a>
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted"><span class="tm-static-text-dark-hover"><i class="fa-solid fa-briefcase me-2"></i>Mes prestations</span></a>
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted"><span class="tm-static-text-dark-hover"><i class="fa-regular fa-user me-2"></i>Mes clients</span></a>
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted"><span class="tm-static-text-dark-hover"><i class="fa-regular fa-star me-2"></i>Avis et évaluations</span></a>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="tm-static-text-xs-alt text-muted text-uppercase fw-bold tracking-wider px-2 d-block mb-2">Gestion</span>
+                        <div class="list-group list-group-flush gap-1">
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted"><span class="tm-static-text-dark-hover"><i class="fa-regular fa-id-card me-2"></i>Mon profil</span></a>
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted"><span class="tm-static-text-dark-hover"><i class="fa-solid fa-gears me-2"></i>Mes services</span></a>
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted"><span class="tm-static-text-dark-hover"><i class="fa-location-dot fa-solid me-2"></i>Zones d'intervention</span></a>
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted"><span class="tm-static-text-dark-hover"><i class="fa-regular fa-images me-2"></i>Photos et réalisations</span></a>
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted"><span class="tm-static-text-dark-hover"><i class="fa-regular fa-calendar-days me-2"></i>Disponibilités</span></a>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <span class="tm-static-text-xs-alt text-muted text-uppercase fw-bold tracking-wider px-2 d-block mb-2">Facturation</span>
+                        <div class="list-group list-group-flush gap-1">
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted"><span class="tm-static-text-dark-hover"><i class="fa-solid fa-euro-sign me-2"></i>Paiements reçus</span></a>
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted"><span class="tm-static-text-dark-hover"><i class="fa-regular fa-file-lines me-2"></i>Mes factures</span></a>
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted"><span class="tm-static-text-dark-hover"><i class="fa-solid fa-box-archive me-2"></i>Mes abonnements</span></a>
+                        </div>
+                    </div>
+
+                    <div class="bg-light rounded-4 p-3 border text-center mt-2">
+                        <i class="fa-solid fa-headset text-primary fs-4 mb-2"></i>
+                        <h4 class="fw-bold text-dark mb-1" style="font-size:12px;">Besoin d'aide ?</h4>
+                        <p class="text-muted tm-static-text-xs-alt mb-3">Consultez notre centre d'aide ou contactez-nous.</p>
+                        <button class="btn btn-white border bg-white text-dark btn-sm w-100 fw-medium shadow-sm" style="font-size:11px;">Centre d'aide</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Centre : Statistiques & Demandes -->
+            <div class="col-xl-7 col-lg-9">
+                <!-- Row des KPIs -->
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6 col-md-3">
+                        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border d-flex flex-row justify-content-between align-items-center">
+                            <div>
+                                <span class="text-muted tm-static-text-xs-alt d-block mb-1">Demandes reçues</span>
+                                <span class="h3 fw-bold text-dark d-block mb-1">12</span>
+                                <span class="text-success tm-static-text-xs-alt fw-medium"><i class="fa-solid fa-arrow-trend-up me-1"></i>+20% ce mois</span>
+                            </div>
+                            <div class="bg-light text-primary rounded-3 p-2 fs-4"><i class="fa-regular fa-file-lines"></i></div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border d-flex flex-row justify-content-between align-items-center">
+                            <div>
+                                <span class="text-muted tm-static-text-xs-alt d-block mb-1">Devis envoyés</span>
+                                <span class="h3 fw-bold text-dark d-block mb-1">8</span>
+                                <span class="text-success tm-static-text-xs-alt fw-medium"><i class="fa-solid fa-arrow-trend-up me-1"></i>+14% ce mois</span>
+                            </div>
+                            <div class="bg-light text-success rounded-3 p-2 fs-4"><i class="fa-regular fa-paper-plane"></i></div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border d-flex flex-row justify-content-between align-items-center">
+                            <div>
+                                <span class="text-muted tm-static-text-xs-alt d-block mb-1">Devis acceptés</span>
+                                <span class="h3 fw-bold text-dark d-block mb-1">5</span>
+                                <span class="text-success tm-static-text-xs-alt fw-medium"><i class="fa-solid fa-arrow-trend-up me-1"></i>+25% ce mois</span>
+                            </div>
+                            <div class="bg-light text-warning rounded-3 p-2 fs-4"><i class="fa-regular fa-circle-check"></i></div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border d-flex flex-row justify-content-between align-items-center">
+                            <div>
+                                <span class="text-muted tm-static-text-xs-alt d-block mb-1">Avis clients</span>
+                                <span class="h3 fw-bold text-dark d-block mb-1">4,9/5</span>
+                                <div class="text-warning tm-static-text-xs-alt mb-1"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                                <span class="text-muted tm-static-text-xs-alt d-block">68 avis</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Demandes récentes -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border mb-4">
+                    <h2 class="h6 fw-bold text-dark mb-4">Demandes récentes</h2>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-borderless align-middle mb-0">
+                            <tbody>
+                                <tr class="border-bottom">
+                                    <td class="py-3"><span class="badge bg-warning-subtle text-warning fw-medium px-2 py-1" style="font-size:11px;">Plomberie</span></td>
+                                    <td class="py-3"><span class="fw-medium text-dark small">Fuite d'eau dans la salle de bain</span></td>
+                                    <td class="py-3 text-muted small"><i class="fa-solid fa-location-dot me-1"></i> Lyon 69003</td>
+                                    <td class="py-3 text-muted tm-static-text-xs-alt">Il y a 30 min</td>
+                                    <td class="py-3 text-end"><button class="btn btn-outline-primary btn-sm rounded-pill tm-static-text-sm-alt px-3" disabled>Voir la demande</button></td>
+                                </tr>
+                                <tr class="border-bottom">
+                                    <td class="py-3"><span class="badge bg-primary-subtle text-primary fw-medium px-2 py-1" style="font-size:11px;">Chauffage</span></td>
+                                    <td class="py-3"><span class="fw-medium text-dark small">Entretien chaudière gaz</span></td>
+                                    <td class="py-3 text-muted small"><i class="fa-solid fa-location-dot me-1"></i> Villeurbanne 69100</td>
+                                    <td class="py-3 text-muted tm-static-text-xs-alt">Il y a 2 h</td>
+                                    <td class="py-3 text-end"><button class="btn btn-outline-primary btn-sm rounded-pill tm-static-text-sm-alt px-3" disabled>Voir la demande</button></td>
+                                </tr>
+                                <tr class="border-bottom">
+                                    <td class="py-3"><span class="badge bg-success-subtle text-success fw-medium px-2 py-1" style="font-size:11px;">Installation</span></td>
+                                    <td class="py-3"><span class="fw-medium text-dark small">Installation chauffe-eau</span></td>
+                                    <td class="py-3 text-muted small"><i class="fa-solid fa-location-dot me-1"></i> Caluire-et-Cuire 69300</td>
+                                    <td class="py-3 text-muted tm-static-text-xs-alt">Il y a 5 h</td>
+                                    <td class="py-3 text-end"><button class="btn btn-outline-primary btn-sm rounded-pill tm-static-text-sm-alt px-3" disabled>Voir la demande</button></td>
+                                </tr>
+                                <tr class="border-bottom">
+                                    <td class="py-3"><span class="badge bg-warning-subtle text-warning fw-medium px-2 py-1" style="font-size:11px;">Plomberie</span></td>
+                                    <td class="py-3"><span class="fw-medium text-dark small">Débouchage canalisation</span></td>
+                                    <td class="py-3 text-muted small"><i class="fa-solid fa-location-dot me-1"></i> Lyon 69007</td>
+                                    <td class="py-3 text-muted tm-static-text-xs-alt">Il y a 1 jour</td>
+                                    <td class="py-3 text-end"><button class="btn btn-outline-primary btn-sm rounded-pill tm-static-text-sm-alt px-3" disabled>Voir la demande</button></td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3"><span class="badge bg-primary-subtle text-primary fw-medium px-2 py-1" style="font-size:11px;">Chauffage</span></td>
+                                    <td class="py-3"><span class="fw-medium text-dark small">Remplacement radiateur</span></td>
+                                    <td class="py-3 text-muted small"><i class="fa-solid fa-location-dot me-1"></i> Tassin-la-Demi-Lune 69160</td>
+                                    <td class="py-3 text-muted tm-static-text-xs-alt">Il y a 1 jour</td>
+                                    <td class="py-3 text-end"><button class="btn btn-outline-primary btn-sm rounded-pill tm-static-text-sm-alt px-3" disabled>Voir la demande</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center mt-3 pt-3 border-top">
+                        <a href="#" class="text-decoration-none text-primary fw-medium small">Voir toutes les demandes <i class="fa-solid fa-arrow-right ms-1 small"></i></a>
+                    </div>
+                </div>
+
+                <!-- Bottom Widgets: Développez votre activité & Prochain RDV -->
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border d-flex flex-row align-items-center justify-content-between">
+                            <div class="pe-3">
+                                <h3 class="h6 fw-bold text-dark mb-1">Développez votre activité</h3>
+                                <p class="text-muted tm-static-text-xs-alt mb-0">Complétez votre profil à 100% pour gagner en visibilité et recevoir plus de demandes.</p>
+                            </div>
+                            <div class="position-relative flex-shrink-0" style="width: 60px; height: 60px;">
+                                <svg viewBox="0 0 36 36" class="w-100 h-100">
+                                    <path class="text-light" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="text-success" stroke-dasharray="85, 100" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                </svg>
+                                <span class="position-absolute top-50 start-50 translate-middle fw-bold text-dark tm-static-text-xs-alt">85%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border d-flex flex-row align-items-center gap-3">
+                            <div class="bg-light text-primary rounded-3 p-3 fs-4"><i class="fa-regular fa-calendar"></i></div>
+                            <div class="w-100">
+                                <span class="tm-static-text-xs-alt text-muted d-block">Prochain rendez-vous</span>
+                                <h3 class="h6 fw-bold text-dark mb-0 mt-1">Intervention chez M. Bernard</h3>
+                                <span class="text-muted tm-static-text-xs-alt d-block mb-2">Entretien chaudière</span>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-medium text-dark tm-static-text-xs-alt">Demain à 9h00</span>
+                                    <button class="btn btn-link p-0 text-primary tm-static-text-xs-alt fw-medium text-decoration-none" disabled>Voir mon agenda</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonne Droite : Actions rapides & Messages -->
+            <div class="col-xl-3 col-lg-12">
+                <!-- Actions Rapides -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border mb-4">
+                    <h2 class="h6 fw-bold text-dark mb-3">Actions rapides</h2>
+                    <div class="list-group list-group-flush gap-2">
+                        <a href="#" class="list-group-item list-group-item-action border rounded-3 p-3 d-flex align-items-center justify-content-between tm-static-bg-light-hover">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="text-primary bg-light p-2 rounded-2"><i class="fa-regular fa-square-plus fs-5"></i></div>
+                                <div>
+                                    <h3 class="fw-bold text-dark mb-0" style="font-size:12px;">Créer une prestation</h3>
+                                    <span class="text-muted tm-static-text-xs-alt">Ajoutez un service que vous proposez</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-muted tm-static-text-xs-alt"></i>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action border rounded-3 p-3 d-flex align-items-center justify-content-between tm-static-bg-light-hover">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="text-primary bg-light p-2 rounded-2"><i class="fa-regular fa-user fs-5"></i></div>
+                                <div>
+                                    <h3 class="fw-bold text-dark mb-0" style="font-size:12px;">Mettre à jour mon profil</h3>
+                                    <span class="text-muted tm-static-text-xs-alt">Modifiez vos informations</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-muted tm-static-text-xs-alt"></i>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action border rounded-3 p-3 d-flex align-items-center justify-content-between tm-static-bg-light-hover">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="text-primary bg-light p-2 rounded-2"><i class="fa-regular fa-calendar-check fs-5"></i></div>
+                                <div>
+                                    <h3 class="fw-bold text-dark mb-0" style="font-size:12px;">Gérer mes disponibilités</h3>
+                                    <span class="text-muted tm-static-text-xs-alt">Indiquez vos créneaux disponibles</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-muted tm-static-text-xs-alt"></i>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action border rounded-3 p-3 d-flex align-items-center justify-content-between tm-static-bg-light-hover">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="text-primary bg-light p-2 rounded-2"><i class="fa-solid fa-chart-line fs-5"></i></div>
+                                <div>
+                                    <h3 class="fw-bold text-dark mb-0" style="font-size:12px;">Voir mes statistiques</h3>
+                                    <span class="text-muted tm-static-text-xs-alt">Suivez votre activity</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-muted tm-static-text-xs-alt"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Messages Récents -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h6 fw-bold text-dark mb-0">Messages récents</h2>
+                        <a href="#" class="text-decoration-none text-primary tm-static-text-xs-alt fw-medium">Voir tous</a>
+                    </div>
+
+                    <div class="d-flex flex-column gap-3 mb-3">
+                        <div class="d-flex gap-3 align-items-start border-bottom pb-2">
+                            <div class="rounded-circle bg-secondary flex-shrink-0" style="width:36px; height:36px; background: url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100') center/cover;"></div>
+                            <div class="w-100">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h4 class="fw-bold text-dark mb-0" style="font-size:12px;">Sophie L.</h4>
+                                    <span class="text-muted tm-static-text-xs-alt">10:24</span>
+                                </div>
+                                <p class="text-muted tm-static-text-xs-alt mb-0 text-truncate" style="max-width: 160px;">Votre devis a été accepté.</p>
+                            </div>
+                            <span class="bg-primary rounded-circle p-1 mt-2 flex-shrink-0" style="width:6px; height:6px;"></span>
+                        </div>
+
+                        <div class="d-flex gap-3 align-items-start border-bottom pb-2">
+                            <div class="rounded-circle bg-secondary flex-shrink-0" style="width:36px; height:36px; background: url('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100') center/cover;"></div>
+                            <div class="w-100">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h4 class="fw-bold text-dark mb-0" style="font-size:12px;">Julien M.</h4>
+                                    <span class="text-muted tm-static-text-xs-alt">Hier</span>
+                                </div>
+                                <p class="text-muted tm-static-text-xs-alt mb-0 text-truncate" style="max-width: 160px;">Pouvez-vous intervenir demain matin ?</p>
+                            </div>
+                            <span class="bg-primary rounded-circle p-1 mt-2 flex-shrink-0" style="width:6px; height:6px;"></span>
+                        </div>
+
+                        <div class="d-flex gap-3 align-items-start">
+                            <div class="rounded-circle bg-secondary flex-shrink-0" style="width:36px; height:36px; background: url('https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=100') center/cover;"></div>
+                            <div class="w-100">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h4 class="fw-bold text-dark mb-0" style="font-size:12px;">Claire D.</h4>
+                                    <span class="text-muted tm-static-text-xs-alt">Hier</span>
+                                </div>
+                                <p class="text-muted tm-static-text-xs-alt mb-0 text-truncate" style="max-width: 160px;">Merci pour votre intervention !</p>
+                            </div>
+                            <span class="bg-primary rounded-circle p-1 mt-2 flex-shrink-0" style="width:6px; height:6px;"></span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-outline-primary btn-sm w-100 py-2 rounded-3 fw-medium tm-static-text-sm-alt" disabled>Ouvrir la messagerie</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

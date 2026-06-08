@@ -1,32 +1,65 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Conditions Générales d'Utilisation - TrouveMoi{% endblock %}
+{% block title %}Conditions générales d'utilisation - TrouveMoi.com{% endblock %}
 
 {% block body %}
-<div class="container py-5 text-start" style="max-width: 800px;" data-controller="static-page">
-    <h1 class="fw-extrabold text-dark mb-2">Conditions Générales d'Utilisation</h1>
-    <p class="small text-muted mb-4">En vigueur au 07/06/2026</p>
-    
-    <hr class="my-4">
+<div class="container py-5">
+    {# Fil d'ariane #}
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}" class="text-decoration-none text-muted">Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Conditions générales d'utilisation</li>
+        </ol>
+    </nav>
 
-    <section class="mb-4">
-        <h2>1. Présentation du site</h2>
-        <p>Le site <strong>TrouveMoi</strong> est une plateforme de mise en relation entre des clients (particuliers ou professionnels) et des prestataires de services indépendants ou entreprises.</p>
-    </section>
+    {# En-tête #}
+    <div class="mb-5">
+        <h1 class="fw-bold text-dark tm-static-brand-title">Conditions <span class="text-primary">générales d'utilisation</span></h1>
+        <p class="text-muted small">Les présentes Conditions Générales d'Utilisation (CGU) régissent l'accès et l'utilisation de la plateforme TrouveMoi.com par tout utilisateur.</p>
+        <span class="badge bg-light text-muted border p-2">
+            <i class="bi bi-calendar3 me-1"></i> Dernière mise à jour : le 08 juin 2026
+        </span>
+    </div>
 
-    <section class="mb-4">
-        <h2>2. Accès et inscription</h2>
-        <p>L'accès au catalogue des prestataires est libre et gratuit pour tout utilisateur. L'inscription est obligatoire pour déposer un projet, contacter un professionnel ou configurer un profil prestataire.</p>
-    </section>
+    <div class="row g-4 mb-5">
+        {% set cgu_points = [
+            {n: 1, t: 'Objet', d: 'Les présentes CGU ont pour objet de définir les modalités d\'accès et d\'utilisation de la plateforme TrouveMoi.com, mise en relation de particuliers et de professionnels pour des services et prestations dans divers domaines.'},
+            {n: 2, t: 'Accès à la plateforme', d: 'L\'accès à la plateforme est gratuit pour les particuliers. Certains services proposés aux prestataires peuvent être soumis à des frais, selon les modalités indiquées sur la plateforme. L\'utilisateur s\'engage à fournir des informations exactes et à jour lors de son inscription.'},
+            {n: 3, t: 'Utilisation de la plateforme', d: 'L\'utilisateur s\'engage à utiliser la plateforme conformément à sa destination et à ne pas en détourner l\'usage. Il s\'interdit notamment de diffuser tout contenu illicite, frauduleux, diffamatoire ou portant atteinte aux droits de tiers. TrouveMoi.com se réserve le droit de suspendre ou de supprimer tout compte en cas de manquement aux présentes CGU.'},
+            {n: 4, t: 'Comptes utilisateurs', d: 'Chaque utilisateur est responsable de la confidentialité de ses identifiants de connexion et de l\'ensemble des activités réalisées depuis son compte. Toute utilisation non autorisée devra être signalée sans délai à notre service client.'},
+            {n: 5, t: 'Mise en relation', d: 'TrouveMoi.com est un service de mise en relation et ne réalise pas les prestations proposées par les prestataires. La conclusion et l\'exécution des prestations sont faites sous la seule responsabilité des utilisateurs.'},
+            {n: 6, t: 'Avis et évaluations', d: 'Les avis laissés sur la plateforme engagent uniquement leurs auteurs. TrouveMoi.com se réserve le droit de modérer, modifier ou supprimer tout avis contraire à la loi ou aux présentes CGU.'},
+            {n: 7, t: 'Responsabilités', d: 'TrouveMoi.com met tout en œuvre pour assurer un service fiable et sécurisé, sans toutefois garantir l\'absence d\'erreurs ou d\'interruptions. La responsabilité de TrouveMoi.com ne saurait être engagée en cas de litige entre utilisateurs.'},
+            {n: 8, t: 'Données personnelles', d: 'Les informations collectées sont traitées conformément à notre Politique de confidentialité. L\'utilisateur dispose d\'un droit d\'accès, de rectification et de suppression de ses données personnelles.'},
+            {n: 9, t: 'Droit applicable et litiges', d: 'Les présentes CGU sont soumises au droit français. En cas de litige relatif à l\'utilisation du site, une solution amiable sera recherchée avant toute action judiciaire compétente.'}
+        ] %}
 
-    <section class="mb-4">
-        <h2>3. Responsabilité de la plateforme</h2>
-        <p>TrouveMoi intervient uniquement en tant que tiers de confiance technique. Nous ne sommes pas partie prenante des contrats, devis ou prestations conclus entre les utilisateurs et les professionnels inscrits sur la plateforme.</p>
-    </section>
+        <div class="col-md-6 d-flex flex-column gap-4">
+            {% for item in cgu_points|slice(0, 4) %}
+                <div>
+                    <h3 class="fw-bold fs-5 text-dark"><span class="badge bg-primary rounded-circle me-2">{{ item.n }}</span> {{ item.t }}</h3>
+                    <p class="text-muted small ps-5">{{ item.d }}</p>
+                </div>
+            {% endfor %}
+        </div>
 
-    <section class="mb-4">
-        <h2>4. Propriété intellectuelle</h2>
-        <p>L'ensemble des éléments constituant l'interface du site (logos, chartes graphiques, textes, icônes) est la propriété exclusive de TrouveMoi. Toute reproduction sans accord préalable est strictement interdite.</p>
-    </section>
+        <div class="col-md-6 d-flex flex-column gap-4">
+            {% for item in cgu_points|slice(4, 5) %}
+                <div>
+                    <h3 class="fw-bold fs-5 text-dark"><span class="badge bg-primary rounded-circle me-2">{{ item.n }}</span> {{ item.t }}</h3>
+                    <p class="text-muted small ps-5">{{ item.d }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {# Bloc Contact bas de page #}
+    <div class="bg-primary-subtle p-4 rounded-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+            <h4 class="fw-bold fs-5 text-dark mb-1">Une question sur nos conditions d'utilisation ?</h4>
+            <p class="text-muted small mb-0">Notre équipe est à votre disposition pour vous accompagner.</p>
+        </div>
+        <a href="#" class="btn btn-white border shadow-sm px-4 fw-semibold text-primary">Nous contacter</a>
+    </div>
 </div>
 {% endblock %}

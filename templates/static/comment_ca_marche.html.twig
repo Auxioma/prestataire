@@ -1,0 +1,146 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Comment ça marche ? - TrouveMoi.com{% endblock %}
+
+{% block json_ld %}{% endblock %}
+
+{% block body %}
+<div class="bg-light py-4 border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">Accueil</a></li>
+                <li class="breadcrumb-item active text-dark fw-medium" aria-current="page">Comment ça marche ?</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="text-center mb-5 tm-static-max-w-700 mx-auto">
+        <h1 class="display-5 fw-bold tm-static-brand-title mb-3">Comment ça marche ?</h1>
+        <h2 class="h4 text-primary fw-bold mb-4">TrouveMoi.com vous simplifie la vie en <span class="text-primary">4 étapes clés</span></h2>
+        <p class="text-muted fs-5">
+            Que vous soyez à la recherche d'un professionnel ou que vous souhaitiez développer votre activité, notre plateforme est conçue pour vous faire gagner du temps et en toute confiance.
+        </p>
+    </div>
+
+    <div class="row g-4 justify-content-center align-items-stretch mb-5">
+        
+        {# Étape 1 #}
+        <div class="col-xl-3 col-md-6 d-flex">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center w-100 position-relative d-flex flex-column justify-content-between tm-static-hover-card">
+                <div>
+                    <div class="mx-auto mb-4 bg-light rounded-circle d-flex align-items-center justify-content-center position-relative" style="width: 100px; height: 100px;">
+                        <i class="fa-solid fa-file-magnifying-glass text-primary display-5"></i>
+                        <span class="position-absolute bottom-0 start-50 translate-middle-x badge rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; font-size: 14px;">1</span>
+                    </div>
+                    <h3 class="h5 fw-bold text-dark mb-3">Recherchez</h3>
+                    <p class="text-muted small mb-4">Trouvez le prestataire idéal parmi des milliers de professionnels qualifiés près de chez vous.</p>
+                </div>
+                <div class="bg-light rounded-3 p-3 text-start mt-auto">
+                    <p class="small text-muted mb-0"><i class="fa-solid fa-magnifying-glass text-primary me-2"></i>Utilisez nos filtres par catégorie, localisation, avis et bien plus pour affiner votre recherche.</p>
+                </div>
+                {# Flèche de liaison en Desktop #}
+                <div class="d-none d-xl-flex position-absolute top-50 start-100 translate-middle z-3 bg-primary text-white rounded-circle align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;">
+                    <i class="fa-solid fa-chevron-right small"></i>
+                </div>
+            </div>
+        </div>
+
+        {# Étape 2 #}
+        <div class="col-xl-3 col-md-6 d-flex">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center w-100 position-relative d-flex flex-column justify-content-between tm-static-hover-card">
+                <div>
+                    <div class="mx-auto mb-4 bg-light rounded-circle d-flex align-items-center justify-content-center position-relative" style="width: 100px; height: 100px;">
+                        <i class="fa-solid fa-users-viewfinder text-primary display-5"></i>
+                        <span class="position-absolute bottom-0 start-50 translate-middle-x badge rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; font-size: 14px;">2</span>
+                    </div>
+                    <h3 class="h5 fw-bold text-dark mb-3">Comparez</h3>
+                    <p class="text-muted small mb-4">Consultez les profils, avis clients, réalisations et tarifs pour choisir en toute confiance.</p>
+                </div>
+                <div class="bg-light rounded-3 p-3 text-start mt-auto">
+                    <p class="small text-muted mb-0"><i class="fa-solid fa-shield-check text-primary me-2"></i>Des avis vérifiés et des profils contrôlés pour vous aider <strong>à faire le bon choix</strong>.</p>
+                </div>
+                {# Flèche de liaison en Desktop #}
+                <div class="d-none d-xl-flex position-absolute top-50 start-100 translate-middle z-3 bg-primary text-white rounded-circle align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;">
+                    <i class="fa-solid fa-chevron-right small"></i>
+                </div>
+            </div>
+        </div>
+
+        {# Étape 3 #}
+        <div class="col-xl-3 col-md-6 d-flex">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center w-100 position-relative d-flex flex-column justify-content-between tm-static-hover-card">
+                <div>
+                    <div class="mx-auto mb-4 bg-light rounded-circle d-flex align-items-center justify-content-center position-relative" style="width: 100px; height: 100px;">
+                        <i class="fa-solid fa-comments text-primary display-5"></i>
+                        <span class="position-absolute bottom-0 start-50 translate-middle-x badge rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; font-size: 14px;">3</span>
+                    </div>
+                    <h3 class="h5 fw-bold text-dark mb-3">Échangez</h3>
+                    <p class="text-muted small mb-4">Contactez le prestataire, posez vos questions et demandez un devis gratuitement.</p>
+                </div>
+                <div class="bg-light rounded-3 p-3 text-start mt-auto">
+                    <p class="small text-muted mb-0"><i class="fa-solid fa-comment-dots text-primary me-2"></i>Échangez en toute simplicité directement via la messagerie <strong>sécurisée de la plateforme</strong>.</p>
+                </div>
+                {# Flèche de liaison en Desktop #}
+                <div class="d-none d-xl-flex position-absolute top-50 start-100 translate-middle z-3 bg-primary text-white rounded-circle align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;">
+                    <i class="fa-solid fa-chevron-right small"></i>
+                </div>
+            </div>
+        </div>
+
+        {# Étape 4 #}
+        <div class="col-xl-3 col-md-6 d-flex">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center w-100 d-flex flex-column justify-content-between tm-static-hover-card">
+                <div>
+                    <div class="mx-auto mb-4 bg-light rounded-circle d-flex align-items-center justify-content-center position-relative" style="width: 100px; height: 100px;">
+                        <i class="fa-solid fa-clipboard-check text-primary display-5"></i>
+                        <span class="position-absolute bottom-0 start-50 translate-middle-x badge rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; font-size: 14px;">4</span>
+                    </div>
+                    <h3 class="h5 fw-bold text-dark mb-3">Réalisez votre projet</h3>
+                    <p class="text-muted small mb-4">Validez votre choix et réalisez votre projet en toute sérénité avec un professionnel de confiance.</p>
+                </div>
+                <div class="bg-light rounded-3 p-3 text-start mt-auto">
+                    <p class="small text-muted mb-0"><i class="fa-solid fa-gears text-primary me-2"></i>Paiement sécurisé, suivi de mission et service client disponible à chaque étape.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="bg-light rounded-4 p-4 mt-5 border shadow-sm">
+        <div class="row g-4 text-center text-md-start">
+            <div class="col-md-3 d-flex flex-column flex-md-row align-items-center gap-3">
+                <i class="fa-solid fa-shield-halved text-primary fs-2"></i>
+                <div>
+                    <h4 class="h6 fw-bold mb-1">Sûr et sécurisé</h4>
+                    <p class="small text-muted mb-0">Paiement sécurisé et données personnelles protégées.</p>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex flex-column flex-md-row align-items-center gap-3 border-start-md">
+                <i class="fa-solid fa-star text-primary fs-2"></i>
+                <div>
+                    <h4 class="h6 fw-bold mb-1">Qualité garantie</h4>
+                    <p class="small text-muted mb-0">Des professionnels vérifiés et des avis authentiques.</p>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex flex-column flex-md-row align-items-center gap-3 border-start-md">
+                <i class="fa-solid fa-headset text-primary fs-2"></i>
+                <div>
+                    <h4 class="h6 fw-bold mb-1">Accompagnement</h4>
+                    <p class="small text-muted mb-0">Une équipe à votre écoute 7j/7 pour vous accompagner.</p>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex flex-column flex-md-row align-items-center gap-3 border-start-md">
+                <i class="fa-solid fa-thumbs-up text-primary fs-2"></i>
+                <div>
+                    <h4 class="h6 fw-bold mb-1">Satisfaction</h4>
+                    <p class="small text-muted mb-0">Votre satisfaction est notre priorité pour des projets réussis.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

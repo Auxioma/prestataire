@@ -1,32 +1,68 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Politique de Confidentialité - TrouveMoi{% endblock %}
+{% block title %}Politique de confidentialité - TrouveMoi.com{% endblock %}
 
 {% block body %}
-<div class="container py-5 text-start" style="max-width: 800px;" data-controller="static-page">
-    <h1 class="fw-extrabold text-dark mb-2">Politique de Confidentialité</h1>
-    <p class="small text-muted mb-4">Dernière mise à jour : Juin 2026</p>
-    
-    <hr class="my-4">
+<div class="container py-5">
+    {# Fil d'ariane #}
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}" class="text-decoration-none text-muted">Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Politique de confidentialité</li>
+        </ol>
+    </nav>
 
-    <section class="mb-4">
-        <h2>1. Collecte des données personnelles</h2>
-        <p>Nous collectons les informations nécessaires au bon fonctionnement de votre compte : nom, prénom, adresse e-mail, code postal et, pour les professionnels, les données relatives à votre entreprise (Siret, description, services).</p>
-    </section>
+    {# En-tête #}
+    <div class="row align-items-center mb-5 g-4">
+        <div class="col-md-8">
+            <h1 class="fw-bold text-dark tm-static-brand-title">Politique de <span class="text-primary">confidentialité</span></h1>
+            <p class="text-muted">La présente Politique de confidentialité a pour but de vous informer sur la manière dont TrouveMoi.com collecte, utilise et protège vos données personnelles.</p>
+            <span class="badge bg-light text-muted border p-2">
+                <i class="bi bi-calendar3 me-1"></i> Dernière mise à jour : 15 mai 2024
+            </span>
+        </div>
+        <div class="col-md-4 text-md-end text-center">
+            <div class="bg-primary-subtle text-primary rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 100px; height: 100px;">
+                <i class="bi bi-shield-lock-fill display-4"></i>
+            </div>
+        </div>
+    </div>
 
-    <section class="mb-4">
-        <h2>2. Utilisation de vos données</h2>
-        <p>Vos données personnelles servent exclusivement à faire fonctionner notre moteur de recherche de services, à permettre les mises en relation directes, et à sécuriser la plateforme contre les comportements abusifs.</p>
-    </section>
+    {# Grille des points #}
+    <div class="row g-4 mb-5">
+        {% set privacy_points = [
+            {n: 1, icon: 'bi-person-square', t: 'Données collectées', d: 'Nous collectons les données que vous nous fournissez directement lors de votre inscription ou de l\'utilisation de nos services (nom, prénom, e-mail, téléphone, adresse, etc.) ainsi que les données liées à votre activité sur la plateforme.'},
+            {n: 2, icon: 'bi-gear', t: 'Utilisation des données', d: 'Vos données sont utilisées pour fournir et améliorer nos services, gérer vos demandes et prestations, communiquer avec vous, assurer la sécurité de la plateforme et respecter nos obligations légales.'},
+            {n: 3, icon: 'bi-share', t: 'Partage des données', d: 'Nous ne vendons ni ne louons vos données personnelles. Elles peuvent être partagées uniquement avec des prestataires de confiance strictement nécessaires au bon fonctionnement de la plateforme ou lorsque la loi l\'exige.'},
+            {n: 4, icon: 'bi-cookie', t: 'Cookies et traceurs', d: 'Nous utilisons des cookies pour améliorer votre expérience, mesurer l\'audience et sécuriser la plateforme. Vous pouvez paramétrer vos préférences de cookies depuis les réglages de votre navigateur.'},
+            {n: 5, icon: 'bi-calendar-range', t: 'Durée de conservation', d: 'Nous conservons vos données personnelles pendant la durée nécessaire aux finalités pour lesquelles elles ont été collectées, conformément à nos obligations légales et réglementaires.'},
+            {n: 6, icon: 'bi-unlock', t: 'Vos droits', d: 'Conformément à la réglementation en vigueur, vous disposez d\'un droit d\'accès, de rectification, d\'effacement, d\'opposition, de limitation et de portabilité de vos données. Vous pouvez exercer ces droits à tout moment.'},
+            {n: 7, icon: 'bi-shield-check', t: 'Sécurité des données', d: 'Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données personnelles contre tout accès non autorisé, perte, altération ou divulgation.'},
+            {n: 8, icon: 'bi-person-dash', t: 'Données des mineurs', d: 'Nos services ne sont pas destinés aux mineurs de moins de 16 ans. Nous ne collectons pas sciemment de données personnelles les concernant.'},
+            {n: 9, icon: 'bi-pencil-square', t: 'Modifications', d: 'Nous pouvons mettre à jour la présente Politique de confidentialité à tout moment. Les modifications seront publiées sur cette page avec la date de mise à jour.'}
+        ] %}
 
-    <section class="mb-4">
-        <h2>3. Partage et transfert</h2>
-        <p>TrouveMoi s'engage à ne jamais revendre ni louer vos données personnelles à des tiers. Les seules informations partagées sont celles que vous décidez de rendre publiques sur votre profil de prestataire ou lors d'une demande de devis.</p>
-    </section>
+        {% for item in privacy_points %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm p-4 tm-static-hover-card">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="badge bg-primary rounded-circle">{{ item.n }}</span>
+                        <i class="{{ item.icon }} text-primary fs-5"></i>
+                        <h3 class="fw-bold fs-6 text-dark mb-0">{{ item.t }}</h3>
+                    </div>
+                    <p class="text-muted small mb-0 lh-sm">{{ item.d }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 
-    <section class="mb-4">
-        <h2>4. Vos Droits (RGPD)</h2>
-        <p>Conformément à la réglementation européenne sur la protection des données, vous disposez d'un droit permanent d'accès, de rectification, de portabilité et de suppression de l'ensemble de vos données depuis l'espace de configuration de votre compte utilisateur.</p>
-    </section>
+    {# Bloc Contact #}
+    <div class="bg-primary-subtle p-4 rounded-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+            <h4 class="fw-bold fs-5 text-dark mb-1">Une question sur la confidentialité de vos données ?</h4>
+            <p class="text-muted small mb-0">Notre équipe est à votre disposition pour répondre à toutes vos questions.</p>
+        </div>
+        <a href="#" class="btn btn-white border shadow-sm px-4 fw-semibold text-primary">Nous contacter</a>
+    </div>
 </div>
 {% endblock %}

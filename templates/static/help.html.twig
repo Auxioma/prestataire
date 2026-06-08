@@ -1,59 +1,137 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Centre d'aide & FAQ - TrouveMoi{% endblock %}
+{% block title %}Besoin d'aide ? - TrouveMoi.com{% endblock %}
 
 {% block body %}
-<div class="container py-5 text-start" style="max-width: 850px;" data-controller="static-page">
-    
-    <div class="text-center mb-5">
-        <h1 class="fw-extrabold text-dark mb-2">Comment pouvons-nous vous aider ?</h1>
-        <p class="text-muted">Retrouvez les réponses aux questions les plus fréquentes sur la plateforme TrouveMoi.</p>
+<div class="container py-5">
+    {# Fil d'ariane #}
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}" class="text-decoration-none text-muted">Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Besoin d'aide ?</li>
+        </ol>
+    </nav>
+
+    {# En-tête #}
+    <div class="row align-items-center mb-5 gy-4">
+        <div class="col-md-7">
+            <h1 class="display-4 fw-bold text-dark mb-3 tm-static-brand-title">
+                Besoin d'<span class="text-primary">aide</span> ?
+            </h1>
+            <p class="fs-5 text-dark mb-2 fw-semibold">Nous sommes là pour vous accompagner.</p>
+            <p class="text-muted fs-5">Trouvez rapidement des réponses ou contactez notre équipe.</p>
+        </div>
+        <div class="col-md-5 text-center d-none d-md-block">
+            <div class="position-relative d-inline-block">
+                <div class="bg-primary-subtle rounded-circle position-absolute top-50 start-50 translate-middle tm-static-bg-circle-xl" style="z-index: -1;"></div>
+                <i class="bi bi-headset text-primary display-1"></i>
+            </div>
+        </div>
     </div>
 
-    <div class="accordion border-0" id="faqAccordion">
+    {# Section Principale #}
+    <div class="row g-4 mb-5">
         
-        {# QUESTION 1 #}
-        <div class="accordion-item mb-3 border rounded-3 overflow-hidden bg-white shadow-xs">
-            <h2 class="accordion-header" id="headingOne" style="margin: 0 !important;">
-                <button class="accordion-button fw-bold text-dark bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Est-ce que le service est gratuit pour les clients ?
-                </button>
-            </h2>
-            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
-                <div class="accordion-body bg-white">
-                    <p>Oui, l'utilisation de TrouveMoi est 100% gratuite pour les particuliers et clients à la recherche d'un prestataire. Aucun frais caché ne vous sera demandé pour faire une recherche ou demander un devis.</p>
+        {# Grille de catégories #}
+        <div class="col-lg-8">
+            <h2 class="fw-bold fs-4 text-dark mb-4">Comment pouvons-nous vous aider ?</h2>
+            
+            {% set categories = [
+                {icon: 'bi-person', title: 'Mon compte', desc: 'Gérez votre compte, vos informations personnelles et vos préférences.'},
+                {icon: 'bi-briefcase', title: 'Trouver une prestation', desc: 'Rechercher, comparer et réserver la prestation qui vous convient.'},
+                {icon: 'bi-file-earmark-medical', title: 'Paiements et facturation', desc: 'Modes de paiement, factures, remboursements et garanties.'},
+                {icon: 'bi-cone-striped', title: 'Espace prestataire', desc: 'Inscription, gestion de votre profil, devis et interventions.'},
+                {icon: 'bi-shield-check', title: 'Sécurité et confidentialité', desc: 'Vos données, la sécurité de la plateforme et nos engagements.'},
+                {icon: 'bi-chat-dots', title: 'Autres questions', desc: 'Consultez nos réponses aux questions les plus fréquentes.'}
+            ] %}
+
+            <div class="row g-3">
+                {% for cat in categories %}
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm p-4 tm-static-hover-card">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center tm-static-icon-circle-md">
+                                    <i class="{{ cat.icon }} fs-4"></i>
+                                </div>
+                                <div class="d-flex flex-column h-100 justify-content-between">
+                                    <div>
+                                        <h3 class="fw-bold fs-5 text-dark mb-2">{{ cat.title }}</h3>
+                                        <p class="text-muted small mb-3 lh-sm">{{ cat.desc }}</p>
+                                    </div>
+                                    <a href="#" class="text-primary fw-semibold small text-decoration-none mt-auto">
+                                        Voir les articles <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {# Bloc Contact sous la grille #}
+            <div class="card border-0 shadow-sm p-4 mt-4 bg-white tm-static-hover-card">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-primary-subtle text-primary p-3 rounded-circle"><i class="bi bi-lightbulb fs-4"></i></div>
+                        <div>
+                            <h4 class="fw-bold fs-5 text-dark mb-1">Vous ne trouvez pas la réponse ?</h4>
+                            <p class="text-muted small mb-0">Contactez notre équipe pour une aide personnalisée.</p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-outline-primary px-4 fw-semibold text-nowrap">Nous contacter</a>
                 </div>
             </div>
         </div>
 
-        {# QUESTION 2 #}
-        <div class="accordion-item mb-3 border rounded-3 overflow-hidden bg-white shadow-xs">
-            <h2 class="accordion-header" id="headingTwo" style="margin: 0 !important;">
-                <button class="accordion-button collapsed fw-bold text-dark bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    Comment savoir si un professionnel est fiable ?
-                </button>
-            </h2>
-            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
-                <div class="accordion-body bg-white">
-                    <p>Chaque profil prestataire affiche son expérience, son métier et les avis laissés par d'autres clients. De plus, notre équipe effectue une vérification de la validité du numéro SIRET lors de l'activation complète du profil professionnel.</p>
+        {# Sidebar Contact #}
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm p-4 h-100 bg-white tm-static-hover-card">
+                <h3 class="fw-bold fs-4 text-dark mb-2">Contactez-nous</h3>
+                <p class="text-muted small mb-4">Notre équipe est à votre écoute du lundi au vendredi.</p>
+
+                <div class="d-flex flex-column gap-4">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center tm-static-icon-circle-sm">
+                            <i class="bi bi-telephone-fill"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark small">Par téléphone</div>
+                            <a href="tel:0184805298" class="text-dark fw-bold text-decoration-none fs-5 d-block my-1">01 84 80 52 98</a>
+                            <div class="text-muted small">Lun. - Ven. : 9h - 18h<br>Sam. : 9h - 14h</div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center tm-static-icon-circle-sm">
+                            <i class="bi bi-envelope-fill"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark small">Par e-mail</div>
+                            <a href="mailto:contact@trouvemoi.com" class="text-primary fw-semibold small text-decoration-none d-block my-1">contact@trouvemoi.com</a>
+                            <div class="text-muted small">Réponse sous 24h</div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center tm-static-icon-circle-sm">
+                            <i class="bi bi-chat-left-text-fill"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark small">Par chat</div>
+                            <div class="text-dark fw-semibold small my-1">Discutez en direct avec un conseiller.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="text-muted my-4">
+
+                <div>
+                    <h4 class="fw-bold text-dark small mb-2">Centre d'aide</h4>
+                    <p class="text-muted small mb-3">Consultez nos guides et tutoriels disponibles 24h/24.</p>
+                    <a href="#" class="btn btn-primary w-100 fw-semibold">Accéder au centre d'aide</a>
                 </div>
             </div>
         </div>
-
-        {# QUESTION 3 #}
-        <div class="accordion-item border rounded-3 overflow-hidden bg-white shadow-xs">
-            <h2 class="accordion-header" id="headingThree" style="margin: 0 !important;">
-                <button class="accordion-button collapsed fw-bold text-dark bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                    Je suis un professionnel, comment m'inscrire ?
-                </button>
-            </h2>
-            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
-                <div class="accordion-body bg-white">
-                    <p>Il vous suffit de vous inscrire normalement sur le site, puis de vous rendre dans vos paramètres pour basculer en compte Prestataire. Vous pourrez alors renseigner votre entreprise, vos compétences, votre zone géographique et apparaître instantanément dans le flux de recherche.</p>
-                </div>
-            </div>
-        </div>
-
     </div>
 </div>
 {% endblock %}

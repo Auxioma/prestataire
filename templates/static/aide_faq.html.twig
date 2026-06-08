@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Aide & FAQ - TrouveMoi.com{% block json_ld %}{% endblock %}{% endblock %}
+
+{% block body %}
+<div class="bg-light py-4 border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">Accueil</a></li>
+                <li class="breadcrumb-item active text-dark fw-medium" aria-current="page">Aide & FAQ</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container py-5" data-controller="faq">
+    <div class="text-center mb-5 tm-static-max-w-700 mx-auto">
+        <h1 class="display-5 fw-bold text-dark mb-2 tm-static-brand-title">Aide & FAQ</h1>
+        <h2 class="h5 text-primary fw-medium mb-4">Trouvez rapidement des réponses à vos questions</h2>
+        <p class="text-muted small">
+            Parcourez nos questions fréquentes ou contactez-nous, notre équipe est là pour vous aider.
+        </p>
+        
+        <div class="position-relative tm-static-max-w-600 mx-auto mt-4">
+            <input type="text" class="form-control form-control-lg ps-5 bg-white border shadow-sm fs-6 tm-static-input-round" placeholder="Rechercher une question, un sujet...">
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <h3 class="h5 fw-bold text-dark mb-4">Questions fréquentes</h3>
+            
+            <div class="accordion accordion-flush bg-white rounded-4 shadow-sm p-2 border tm-static-accordion" id="faqAccordion">
+                
+                {# Question 1 #}
+                <div class="accordion-item border-bottom py-2">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button collapsed fw-medium text-dark bg-white fs-6 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            <i class="fa-regular fa-user text-primary me-3"></i> Comment créer un compte sur TrouveMoi.com ?
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted small lh-lg ps-5">
+                            Pour créer un compte, cliquez sur le bouton "Connexion" ou "S'inscrire" en haut à droite de la page d'accueil. Choisissez ensuite votre profil (Particulier ou Prestataire), remplissez le formulaire avec vos coordonnées, puis validez votre inscription grâce au mail de confirmation envoyé sur votre messagerie.
+                        </div>
+                    </div>
+                </div>
+
+                {# Question 2 #}
+                <div class="accordion-item border-bottom py-2">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed fw-medium text-dark bg-white fs-6 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            <i class="fa-solid fa-magnifying-glass text-primary me-3"></i> Comment trouver un prestataire près de chez moi ?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted small lh-lg ps-5">
+                            Utilisez la barre de recherche principale en indiquant le métier recherché et votre code postal. Vous pourrez ensuite filtrer les résultats selon les notes des clients, les certifications ou les disponibilités pour sélectionner le professionnel idéal.
+                        </div>
+                    </div>
+                </div>
+
+                {# Question 3 #}
+                <div class="accordion-item py-2">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed fw-medium text-dark bg-white fs-6 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            <i class="fa-regular fa-file-lines text-primary me-3"></i> Comment demander un devis et combien de temps pour recevoir une réponse ?
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted small lh-lg ps-5">
+                            Cliquez sur "Demander un devis", décrivez précisément votre projet et soumettez votre demande. En moyenne, les artisans et prestataires qualifiés de votre région reviennent vers vous avec des propositions concrètes sous un délai de 24 à 72 heures.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-4">
+                <button class="btn btn-outline-primary btn-sm px-4 rounded-pill fw-medium shadow-none tm-static-text-xs" type="button">
+                    Voir plus de questions <i class="fa-solid fa-chevron-down ms-1 small"></i>
+                </button>
+            </div>
+
+            <div class="bg-light rounded-4 p-3 border mt-5 d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                <div class="small text-muted mb-0">
+                    <i class="fa-regular fa-lightbulb text-warning me-2 fs-5"></i>
+                    <strong>Conseil :</strong> Consultez nos <strong>guides pratiques</strong> pour tirer le meilleur parti de TrouveMoi.com.
+                </div>
+                <button class="btn btn-white border bg-white text-dark btn-sm px-3 shadow-sm tm-static-text-nowrap tm-static-text-xs fw-medium" type="button">Voir les guides</button>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            {# Bloc 1 : Parcourir par catégorie #}
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+                <h3 class="h6 fw-bold text-dark mb-3">Parcourir par catégorie</h3>
+                <div class="list-group list-group-flush small">
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-0 text-muted"><span class="tm-static-link-hover"><i class="fa-regular fa-user me-2 text-primary"></i> Compte et inscription</span> <i class="fa-solid fa-chevron-right text-muted small"></i></a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-0 text-muted"><span class="tm-static-link-hover"><i class="fa-solid fa-magnifying-glass me-2 text-primary"></i> Recherche et devis</span> <i class="fa-solid fa-chevron-right text-muted small"></i></a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-0 text-muted"><span class="tm-static-link-hover"><i class="fa-solid fa-shield-halved me-2 text-primary"></i> Paiement et sécurité</span> <i class="fa-solid fa-chevron-right text-muted small"></i></a>
+                </div>
+            </div>
+
+            {# Bloc 2 : Contact #}
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <h3 class="h6 fw-bold text-dark mb-1">Vous ne trouvez pas votre réponse ?</h3>
+                <p class="text-muted small mb-4">Notre équipe est là pour vous aider.</p>
+                
+                <div class="d-flex align-items-start gap-3 mb-4">
+                    <div class="bg-light p-2 rounded-3 text-primary"><i class="fa-regular fa-comment-dots fs-5"></i></div>
+                    <div>
+                        <h4 class="h6 fw-bold text-dark mb-0">Envoyez-nous un message</h4>
+                        <span class="tm-static-text-xs text-muted d-block mb-1">Réponse sous 24h</span>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-start gap-3 mb-4">
+                    <div class="bg-light p-2 rounded-3 text-primary"><i class="fa-solid fa-phone fs-5"></i></div>
+                    <div>
+                        <h4 class="h6 fw-bold text-dark mb-0">Appelez-nous</h4>
+                        <span class="fw-bold text-primary small d-block my-1">01 84 80 52 98</span>
+                        <span class="tm-static-text-xs text-muted d-block">Lun. - Ven. 9h - 18h</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

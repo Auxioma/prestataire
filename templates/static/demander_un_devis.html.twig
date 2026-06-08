@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demander un devis - TrouveMoi.com{% block json_ld %}{% endblock %}{% endblock %}
+
+{% block body %}
+<div class="bg-light py-4 border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">Accueil</a></li>
+                <li class="breadcrumb-item active text-dark fw-medium" aria-current="page">Demander un devis</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="text-center mb-5 tm-static-max-w-800 mx-auto">
+        <h1 class="display-5 fw-bold text-dark mb-3 tm-static-brand-title">Demander un devis en 4 étapes simples</h1>
+        <p class="text-muted fs-5">
+            Décrivez votre projet en quelques clics et recevez des devis personnalisés<br>
+            de professionnels qualifiés, gratuitement et sans engagement.
+        </p>
+    </div>
+
+    <div class="row g-5">
+        <div class="col-lg-7">
+            <div class="row row-cols-1 row-cols-sm-2 g-4 mb-5">
+                
+                {# Étape 1 #}
+                <div class="col d-flex">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 w-100 d-flex flex-column justify-content-between position-relative tm-static-hover-card">
+                        <div>
+                            <div class="mb-3 bg-light rounded-circle d-flex align-items-center justify-content-center position-relative tm-static-icon-circle-lg">
+                                <i class="fa-solid fa-pen-to-square text-primary fs-3"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-primary d-flex align-items-center justify-content-center tm-static-step-badge">1</span>
+                            </div>
+                            <h3 class="h6 fw-bold text-dark mb-2">Décrivez votre projet</h3>
+                            <p class="text-muted small mb-0">Expliquez votre besoin, indiquez les détails importants et vos préférences.</p>
+                        </div>
+                        <div class="bg-light rounded-3 p-2 mt-3">
+                            <p class="tm-static-text-xs text-muted mb-0"><i class="fa-solid fa-lightbulb text-primary me-1"></i> Plus votre demande est précise, plus les devis seront adaptés.</p>
+                        </div>
+                    </div>
+                </div>
+
+                {# Étape 2 #}
+                <div class="col d-flex">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 w-100 d-flex flex-column justify-content-between tm-static-hover-card">
+                        <div>
+                            <div class="mb-3 bg-light rounded-circle d-flex align-items-center justify-content-center position-relative tm-static-icon-circle-lg">
+                                <i class="fa-solid fa-envelope-open-text text-primary fs-3"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-primary d-flex align-items-center justify-content-center tm-static-step-badge">2</span>
+                            </div>
+                            <h3 class="h6 fw-bold text-dark mb-2">Recevez des devis</h3>
+                            <p class="text-muted small mb-0">Les professionnels intéressés par votre projet vous envoient leur proposition.</p>
+                        </div>
+                        <div class="bg-light rounded-3 p-2 mt-3">
+                            <p class="tm-static-text-xs text-muted mb-0"><i class="fa-solid fa-clock text-primary me-1"></i> Vous recevrez plusieurs devis sous 24 à 72h en moyenne.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row g-3 text-start small border-top pt-4">
+                <div class="col-sm-6 d-flex align-items-start gap-2 mb-2">
+                    <i class="fa-solid fa-circle-euro text-primary fs-5 mt-1"></i>
+                    <div>
+                        <strong>Gratuit & sans engagement</strong><br>
+                        <span class="text-muted">Demandez autant de devis que vous le souhaitez.</span>
+                    </div>
+                </div>
+                <div class="col-sm-6 d-flex align-items-start gap-2 mb-2">
+                    <i class="fa-solid fa-user-check text-primary fs-5 mt-1"></i>
+                    <div>
+                        <strong>Professionnels qualifiés</strong><br>
+                        <span class="text-muted">Des prestataires vérifiés et évalués par notre communauté.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border tm-static-form-disabled">
+                <h2 class="h5 fw-bold text-dark mb-1">Demandez votre devis gratuit</h2>
+                <p class="text-muted small mb-4">Décrivez votre projet, c'est rapide et sans engagement.</p>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-dark mb-1">Catégorie de votre projet</label>
+                    <select class="form-select form-select-sm bg-light text-muted border-0 py-2" disabled>
+                        <option>Sélectionnez une catégorie</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-dark mb-1">Titre de votre projet</label>
+                    <input type="text" class="form-control form-control-sm bg-light border-0 py-2" placeholder="Ex : Rénovation complète" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-dark mb-1">Décrivez votre projet</label>
+                    <textarea class="form-control form-control-sm bg-light border-0" rows="4" placeholder="Décrivez votre besoin..." disabled></textarea>
+                    <div class="text-end mt-1">
+                        <span class="tm-static-text-xs text-muted">Précisez votre demande au maximum.</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary w-100 py-2 fw-medium d-flex align-items-center justify-content-center gap-2 mb-3" type="button" disabled>
+                    Envoyer ma demande <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

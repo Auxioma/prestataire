@@ -1,0 +1,134 @@
+/* ==========================================================================
+   TROUVEMOI.COM - FEUILLE DE STYLE COMMUNE AUX PAGES STATIQUES
+   Base de nommage obligatoire : .tm-static-
+   ========================================================================== */
+
+/* --- Layout, Conteneurs & Utilitaires de dimensions --- */
+.tm-static-max-w-800 {
+    max-width: 800px;
+}
+
+.tm-static-max-w-700 {
+    max-width: 700px;
+}
+
+.tm-static-max-w-600 {
+    max-width: 600px;
+}
+
+/* Typographies spécifiques & micro-textes */
+.tm-static-brand-title {
+    color: #061b56 !important;
+}
+
+.tm-static-text-xs {
+    font-size: 11px !important;
+}
+
+.tm-static-text-nowrap {
+    white-space: nowrap !important;
+}
+
+/* --- Composants Interactifs & États Globaux (Prêts pour Stimulus) --- */
+
+/* Effet de survol fluide pour les cartes, catégories et grilles de prestations */
+.tm-static-hover-card {
+    transition: transform 0.22s ease-in-out, box-shadow 0.22s ease-in-out, border-color 0.22s ease-in-out;
+}
+
+.tm-static-hover-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.5rem 1.5rem rgba(43, 89, 255, 0.08) !important;
+    border-color: rgba(43, 89, 255, 0.2) !important;
+}
+
+/* Liens de listes ou de navigation avec transition de couleur */
+.tm-static-link-hover {
+    transition: color 0.15s ease-in-out;
+}
+
+.tm-static-link-hover:hover {
+    color: #2b59ff !important;
+}
+
+/* --- Customisation Bootstrap : Accordéons & FAQ --- */
+.tm-static-accordion .accordion-button::after {
+    background-size: 0.8rem;
+    transition: transform 0.2s ease-in-out;
+}
+
+.tm-static-accordion .accordion-button:not(.collapsed) {
+    color: #2b59ff;
+    background-color: #fff;
+    font-weight: 600;
+}
+
+.tm-static-accordion .accordion-item {
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* --- Formulaires simulés et états désactivés (Page Devis / Contact) --- */
+.tm-static-form-disabled :disabled,
+.tm-static-form-disabled .form-select:disabled,
+.tm-static-form-disabled .form-control:disabled {
+    opacity: 0.88;
+    cursor: not-allowed;
+    background-color: #f8f9fa !important;
+}
+
+.tm-static-input-round {
+    border-radius: 30px !important;
+}
+
+/* --- Éléments structurels décoratifs --- */
+.tm-static-step-badge {
+    width: 24px;
+    height: 24px;
+}
+
+.tm-static-icon-circle-lg {
+    width: 70px;
+    height: 70px;
+}
+
+.tm-static-icon-circle-md {
+    width: 55px;
+    height: 55px;
+    min-width: 55px;
+}
+
+.tm-static-illustration-circle {
+    width: 250px;
+    height: 250px;
+    z-index: -1;
+}
+
+@media (min-width: 768px) {
+    .border-start-md {
+        border-left: 1px solid #dee2e6 !important;
+    }
+}
+
+.tm-static-text-sm {
+    font-size: 12px !important;
+}
+
+/* --- Ajouts spécifiques pour l'Espace Prestataire --- */
+.tm-static-text-xs-alt {
+    font-size: 11px !important;
+}
+.tm-static-text-sm-alt {
+    font-size: 12px !important;
+}
+.tm-static-bg-light-hover:hover {
+    background-color: #f8f9fa !important;
+}
+.tm-static-text-dark-hover:hover {
+    color: #2b59ff !important;
+    transition: color 0.15s ease-in-out;
+}
+
+/* --- Ajustement spécifique pour les boutons de réassurance --- */
+.tm-static-text-md-alt {
+    font-size: 13px !important;
+}
