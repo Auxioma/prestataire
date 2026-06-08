@@ -30,19 +30,7 @@
 		{% block body %}{% endblock %}
 
 		{% block footer %}
-			<footer>
-				{# FOOTER DE LIENS #}
-				<div class="text-center mt-4 mb-3 text-muted" style="font-size: 13px; font-weight: 500;">
-					<span>&copy;
-						{{ date()|date('Y') }}
-						TrouveMoi Prestataires. Tous droits réservés.</span>
-					<div class="d-inline-flex gap-3 ms-md-3 mt-2 mt-md-0">
-						<a href="{{ path('app_cgu') }}" class="text-decoration-none text-muted">Conditions Générales</a>
-						<a href="{{ path('app_privacy') }}" class="text-decoration-none text-muted">Politique de Confidentialité</a>
-						<a href="{{ path('app_help') }}" class="text-decoration-none text-muted">Centre d'aide</a>
-					</div>
-				</div>
-			</footer>
+			{% include 'layout/_footer.html.twig' %}
 		{% endblock %}
 	</body>
 </html>

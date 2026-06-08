@@ -1,62 +1,73 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ prestataire.companyName }} - TrouveMoi{% endblock %}
+{% block title %}
+	{{ prestataire.companyName }}
+	- TrouveMoi
+{% endblock %}
 
 {% block body %}
-<div class="container py-5 text-start tm-profile-show">
-    
-    {# Bouton Retour #}
-    <div class="mb-4">
-        <a href="javascript:history.back()" class="tm-profile-show__back-link">
-            <i class="fa-solid fa-arrow-left me-1"></i> Retour aux résultats
-        </a>
-    </div>
+<div
+	class="container py-5 text-start tm-profile-show">
 
-    {# Layout Principal #}
-    <div class="row g-4">
-        
-        {# COLONNE GAUCHE : CONTENU #}
-        <div class="col-lg-8">
-            
-            {# En-tête / Carte d'identité #}
-            <div class="tm-profile-show__card tm-profile-show__card--header mb-4">
-                <div class="d-flex flex-column flex-sm-row align-items-sm-center mb-4">
-                    
-                    <div class="tm-profile-show__logo-wrapper mb-3 mb-sm-0 me-sm-4">
-                        {% if prestataire.logo %}
-                            <img src="{{ prestataire.logo }}" alt="{{ prestataire.companyName }}" class="tm-profile-show__logo-img">
-                        {% else %}
-                            <i class="fa-solid fa-building tm-profile-show__logo-placeholder"></i>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="tm-profile-show__header-meta">
-                        <h1 class="tm-profile-show__title">{{ prestataire.companyName }}</h1>
-                        <p class="tm-profile-show__location">
-                            <i class="fa-solid fa-location-dot me-1"></i> 
-                            {{ prestataire.city|default('Ville non renseignée') }} 
-                            {% if prestataire.postalCode %}({{ prestataire.postalCode }}){% endif %}
-                        </p>
-                    </div>
-                </div>
+	{# Bouton Retour #}
+	<div class="mb-4">
+		<a href="javascript:history.back()" class="tm-profile-show__back-link">
+			<i class="fa-solid fa-arrow-left me-1"></i>
+			Retour aux résultats
+		</a>
+	</div>
 
-                <div class="d-flex flex-wrap gap-2">
-                    <span class="tm-profile-show__badge tm-profile-show__badge--primary">
-                        <i class="fa-solid fa-tools me-1"></i> {{ prestataire.metier|default('Professionnel') }}
-                    </span>
-                    {% if prestataire.experience %}
-                        <span class="tm-profile-show__badge tm-profile-show__badge--muted">
-                            <i class="fa-solid fa-briefcase me-1"></i> {{ prestataire.experience }} d'expérience
-                        </span>
-                    {% endif %}
-                </div>
-            </div>
+	{# Layout Principal #}
+	<div
+		class="row g-4">
 
-            {# Section : À propos #}
-            <div class="tm-profile-show__card mb-4">
-                <h2 class="tm-profile-show__section-title">À propos de l'entreprise</h2>
-                <div class="tm-profile-show__description">
-                    {{ prestataire.description|default('Aucune description détaillée n\'a encore été rédigée par ce professionnel.')|nl2br }}
+		{# COLONNE GAUCHE : CONTENU #}
+		<div
+			class="col-lg-8">
+
+			{# En-tête / Carte d'identité #}
+			<div class="tm-profile-show__card tm-profile-show__card--header mb-4">
+				<div class="d-flex flex-column flex-sm-row align-items-sm-center mb-4">
+
+					<div class="tm-profile-show__logo-wrapper mb-3 mb-sm-0 me-sm-4">
+						{% if prestataire.logo %}
+							<img src="{{ asset('uploads/logos/' ~ prestataire.logo) }}" alt="{{ prestataire.companyName }}" class="tm-profile-show__logo-img">
+						{% else %}
+							<i class="fa-solid fa-building tm-profile-show__logo-placeholder"></i>
+						{% endif %}
+					</div>
+
+					<div class="tm-profile-show__header-meta">
+						<h1 class="tm-profile-show__title">{{ prestataire.companyName }}</h1>
+						<p class="tm-profile-show__location">
+							<i class="fa-solid fa-location-dot me-1"></i>
+							{{ prestataire.city|default('Ville non renseignée') }}
+							{% if prestataire.postalCode %}({{ prestataire.postalCode }})
+							{% endif %}
+						</p>
+					</div>
+				</div>
+
+				<div class="d-flex flex-wrap gap-2">
+					<span class="tm-profile-show__badge tm-profile-show__badge--primary">
+						<i class="fa-solid fa-tools me-1"></i>
+						{{ prestataire.metier|default('Professionnel') }}
+					</span>
+					{% if prestataire.experience %}
+						<span class="tm-profile-show__badge tm-profile-show__badge--muted">
+							<i class="fa-solid fa-briefcase me-1"></i>
+							{{ prestataire.experience }}
+							d'expérience
+						</span>
+					{% endif %}
+				</div>
+			</div>
+
+			{# Section : À propos #}
+			<div class="tm-profile-show__card mb-4">
+				<h2 class="tm-profile-show__section-title">À propos de l'entreprise</h2>
+				<div class="tm-profile-show__description">
+					{{ prestataire.description|default('Aucune description détaillée n\'a encore été rédigée par ce professionnel.')|nl2br }}
                 </div>
             </div>
 
