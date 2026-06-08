@@ -23,20 +23,23 @@
 						</p>
 
 						<div class="d-flex flex-wrap gap-2 hero-badges-group">
-							<span class="badge hero-badge" data-controller="counter-up">
+							<span class="badge hero-badge">
 								<i class="fa-solid fa-circle-plus text-tm-accent me-1"></i>
 								+
-								<span data-counter-up-target="number" data-counter-up-target-value="120000">0</span>
+								<span data-controller="counter-up" data-counter-up-target="number" data-counter-up-target-value="120000" class="tm-counter-digit">0</span>
 								prestataires
 							</span>
+
 							<span class="badge hero-badge">
 								<i class="fa-solid fa-star text-tm-accent me-1"></i>
 								Avis clients vérifiés
 							</span>
+
 							<span class="badge hero-badge">
 								<i class="fa-solid fa-file-invoice text-tm-accent me-1"></i>
 								Devis gratuits
 							</span>
+
 							<span class="badge hero-badge">
 								<i class="fa-solid fa-shield-halved text-tm-accent me-1"></i>
 								Paiement sécurisé
@@ -47,68 +50,57 @@
 			</div>
 		</div>
 
-		{# 2. BARRE DE RECHERCHE EN JONCTION EXACTE #}
-		<div class="container search-overlap-wrapper">
-			<div class="card border-0 shadow-lg p-3 search-overlap-card bg-white">
-				<form action="#" method="GET" class="row g-2 align-items-center w-100 m-0">
-					<div class="col-md-6 col-lg-3 position-relative">
-						<div class="d-flex align-items-start gap-2 px-2 py-1">
-							<i class="fa-solid fa-magnifying-glass text-tm-service fs-5 mt-2"></i>
-							<div class="w-100">
-								<label class="form-label small fw-bold mb-0 text-dark">Que recherchez-vous ?</label>
-								<input type="text" class="form-control search-input" placeholder="Ex : Plomberie, Peinture...">
-							</div>
-						</div>
-						<div class="search-divider d-none d-lg-block"></div>
-					</div>
+<div class="container search-overlap-wrapper">
+    <div class="card border-0 p-2 search-overlap-card bg-white">
+        <form action="#" method="GET" class="row g-2 align-items-center w-100 m-0">
+            
+            {# Champ 1 #}
+            <div class="col-lg-3">
+                <div class="search-field-container d-flex align-items-center gap-3">
+                    <i class="fa-solid fa-magnifying-glass text-tm-service fs-5"></i>
+                    <div class="w-100">
+                        <label class="search-label">Que recherchez-vous ?</label>
+                        <input type="text" class="form-control search-input" placeholder="Ex: Plomberie...">
+                    </div>
+                </div>
+            </div>
 
-					<div class="col-md-6 col-lg-3 position-relative">
-						<div class="d-flex align-items-start gap-2 px-2 py-1">
-							<i class="fa-solid fa-briefcase text-tm-service fs-5 mt-2"></i>
-							<div class="w-100 position-relative select-wrapper">
-								<label class="form-label small fw-bold mb-0 text-dark">Type de prestation</label>
-								<select class="form-select search-select">
-									<option selected>Service, Réparation, Installation...</option>
-									<option value="1">Dépannage d'urgence</option>
-									<option value="2">Entretien régulier</option>
-								</select>
-							</div>
-						</div>
-						<div class="search-divider d-none d-lg-block"></div>
-					</div>
+            {# Champ 2 #}
+            <div class="col-lg-3 d-flex align-items-center">
+                <div class="search-divider d-none d-lg-block me-3"></div>
+                <div class="search-field-container d-flex align-items-center gap-3 w-100">
+                    <i class="fa-solid fa-briefcase text-tm-service fs-5"></i>
+                    <div class="w-100">
+                        <label class="search-label">Type de prestation</label>
+                        <select class="form-select search-select">
+                            <option selected>Service, Installation...</option>
+                            <option>Dépannage d'urgence</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
 
-					<div class="col-md-6 col-lg-2 position-relative">
-						<div class="d-flex align-items-start gap-2 px-2 py-1">
-							<i class="fa-solid fa-location-dot text-tm-service fs-5 mt-2"></i>
-							<div class="w-100">
-								<label class="form-label small fw-bold mb-0 text-dark">Où ?</label>
-								<input type="text" class="form-control search-input" placeholder="Ville, CP...">
-							</div>
-						</div>
-						<div class="search-divider d-none d-lg-block"></div>
-					</div>
+            {# Champ 3 #}
+            <div class="col-lg-3 d-flex align-items-center">
+                <div class="search-divider d-none d-lg-block me-3"></div>
+                <div class="search-field-container d-flex align-items-center gap-3 w-100">
+                    <i class="fa-solid fa-location-dot text-tm-service fs-5"></i>
+                    <div class="w-100">
+                        <label class="search-label">Où ?</label>
+                        <input type="text" class="form-control search-input" placeholder="Ville, CP...">
+                    </div>
+                </div>
+            </div>
 
-					<div class="col-md-6 col-lg-2 position-relative">
-						<div class="d-flex align-items-start gap-2 px-2 py-1">
-							<i class="fa-solid fa-calendar-days text-tm-service fs-5 mt-2"></i>
-							<div class="w-100">
-								<label class="form-label small fw-bold mb-0 text-dark">Quand ?</label>
-								<input type="date" class="form-control search-input custom-date-input">
-							</div>
-						</div>
-						<div class="search-divider d-none d-lg-block"></div>
-					</div>
-
-					<div class="col-12 col-lg-2 text-center text-lg-end">
-						<button type="submit" class="btn search-submit-btn rounded-3 w-100 d-flex align-items-center justify-content-center gap-2">
-							<i class="fa-solid fa-magnifying-glass"></i>
-							<span>Rechercher</span>
-						</button>
-					</div>
-				</form>
-			</div>
-		</div>
-
+            {# Bouton #}
+            <div class="col-lg-3">
+                <button type="submit" class="btn search-submit-btn w-100">
+                    <i class="fa-solid fa-magnifying-glass me-2"></i> Rechercher
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 		{# 3. SECTION CATÉGORIES POPULAIRES #}
 		<div class="container main-content-section">
 			<div class="mb-4 text-start">
@@ -150,7 +142,7 @@
 												<span class="fw-bold fs-5">{{ category.name|first|upper }}</span>
 											{% endif %}
 										</div>
-										<span class="text-dark text-center fw-bold w-100 category-title px-1">{{ category.name }}</span>
+										<span class="text-dark text-center fw-bold category-title px-1">{{ category.name }}</span>
 									</a>
 								</div>
 							{% endfor %}

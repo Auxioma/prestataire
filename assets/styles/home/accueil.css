@@ -22,76 +22,67 @@
     padding-bottom: 120px;
 }
 
-/* --- 2. BARRE DE RECHERCHE --- */
-.search-overlap-wrapper {
-    position: relative;
-    z-index: 10;
-    height: 0;
-}
-.search-overlap-card {
-    transform: translateY(-50%);
-    border-radius: 16px !important;
+/* --- BARRE DE RECHERCHE RAFFINÉE --- */
+.search-overlap-wrapper { position: relative; z-index: 10; height: 0; }
+.search-overlap-card { 
+    transform: translateY(-50%); 
+    border-radius: 20px !important; /* Plus arrondi pour un look moderne */
+    padding: 1rem !important; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
 }
 
-.search-input,
-.search-select {
+/* Zone de saisie avec fond léger pour les distinguer */
+.search-field-container {
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    padding: 8px 15px;
+    transition: background-color 0.2s ease;
+    border: 1px solid transparent;
+}
+.search-field-container:focus-within {
+    background-color: #ffffff;
+    border-color: var(--tm-service);
+}
+
+.search-input, .search-select {
     border: 0 !important;
-    padding: 0 !important;
     background-color: transparent !important;
-    font-size: 13px;
-    color: #495057;
+    font-size: 14px;
+    color: #333;
     box-shadow: none !important;
-    width: 100%;
-}
-.search-input::placeholder {
-    color: #9ba4b0;
-}
-.search-select {
-    appearance: none;
-    -webkit-appearance: none;
-    cursor: pointer;
-    padding-right: 20px !important;
+    padding: 0 !important;
 }
 
-.search-divider {
-    position: absolute;
-    right: 0;
-    top: 15%;
-    height: 70%;
-    width: 1px;
-    background-color: var(--tm-border-color);
+.search-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #88909a !important;
+    margin-bottom: 0px !important;
 }
 
+/* Bouton aligné et dynamique */
 .search-submit-btn {
     background-color: var(--tm-service);
     border: 0;
     color: #fff;
-    height: 48px;
+    height: 60px; /* Aligné avec la hauteur des blocs de saisie */
     font-weight: 600;
-    font-size: 14px;
-    transition: all 0.2s ease;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    border-radius: 12px !important;
 }
 .search-submit-btn:hover {
-    background-color: #03470d;
+    background-color: #03470d; /* Vert foncé demandé */
     color: #fff;
 }
 
-@media (max-width: 991.98px) {
-    .search-overlap-card {
-        transform: translateY(-20px);
-    }
-    .search-overlap-wrapper {
-        height: auto;
-    }
-    .search-submit-btn {
-        width: 100%;
-        margin-top: 10px;
-    }
-    .search-divider {
-        display: none;
-    }
+/* Séparateur */
+.search-divider {
+    height: 40px;
+    width: 1px;
+    background-color: #dee2e6;
 }
-
 /* --- 3. CATÉGORIES (Slider & Cartes) --- */
 .main-content-section {
     margin-top: 100px;
@@ -268,4 +259,10 @@
     width: 48px;
     height: 48px;
     object-fit: cover;
+}
+/* Ajoute ceci dans ton fichier CSS global ou ton fichier dédié */
+.tm-counter-digit {
+    font-variant-numeric: tabular-nums; /* Force les chiffres à avoir une largeur fixe */
+    display: inline-block;
+    min-width: 50px; /* Ajuste selon la taille du nombre */
 }
