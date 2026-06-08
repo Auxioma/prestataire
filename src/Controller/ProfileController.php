@@ -50,6 +50,12 @@ class ProfileController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
+            // 💡 AJOUT ICI : On vide les fichiers de l'entité pour éviter l'erreur de sérialisation en session
+            if ($profile) {
+                $profile->setLogoFile(null);
+                $profile->setCoverImageFile(null);
+            }
+
             $this->addFlash('success', 'Vos modifications ont été enregistrées avec succès !');
 
             return $this->redirectToRoute('app_prestataire_settings');
@@ -104,5 +110,4 @@ class ProfileController extends AbstractController
             'user' => $user,
         ]);
     }
-
 }

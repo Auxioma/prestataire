@@ -4,13 +4,13 @@ namespace App\Form;
 
 use App\Entity\PrestataireProfile;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Image;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class PrestataireProfileType extends AbstractType
 {
@@ -46,10 +46,12 @@ class PrestataireProfileType extends AbstractType
             ])
 
             // --- IMAGES DU PROFIL PROFESSIONNEL ---
-            ->add('logo', FileType::class, [
+            ->add('logoFile', VichImageType::class, [ 
                 'label' => 'Logo de l\'entreprise',
-                'mapped' => false,
                 'required' => false,
+                'allow_delete' => true,
+                'download_uri' => false,
+                'image_uri'=> false,
                 'constraints' => [
                     new Image(
                         maxSize: '2M',
@@ -58,10 +60,12 @@ class PrestataireProfileType extends AbstractType
                     )
                 ],
             ])
-            ->add('coverImage', FileType::class, [
+            ->add('coverImageFile', VichImageType::class, [ 
                 'label' => 'Image de couverture (Bannière)',
-                'mapped' => false,
                 'required' => false,
+                'allow_delete' => true,
+                'download_uri' => false,
+                'image_uri'=> false,
                 'constraints' => [
                     new Image(
                         maxSize: '3M',
@@ -122,7 +126,7 @@ class PrestataireProfileType extends AbstractType
                 'attr' => ['placeholder' => 'ex: Libourne']
             ])
             ->add('country', TextType::class, [
-                'label' => 'Pays', 
+                'label' => 'Pays',
                 'data' => 'France',
                 'attr' => ['placeholder' => 'France']
             ])

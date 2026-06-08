@@ -10,6 +10,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: PrestataireProfileRepository::class)]
 #[ORM\Table(name: 'prestataire_profile')]
@@ -17,6 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_presta_status', columns: ['profile_status'])]
 #[ORM\Index(name: 'idx_presta_city', columns: ['city'])]
 #[ORM\Index(name: 'idx_presta_zip', columns: ['postal_code'])]
+#[Vich\Uploadable] 
 class PrestataireProfile
 {
     #[ORM\Id]
@@ -97,11 +100,19 @@ class PrestataireProfile
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $longDescription = null;
 
+    // --- LOGO ---
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $logo = null;
 
+    #[Vich\UploadableField(mapping: 'company_logo', fileNameProperty: 'logo')]
+    private ?File $logoFile = null;
+
+    // --- COVER IMAGE ---
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $coverImage = null;
+
+    #[Vich\UploadableField(mapping: 'company_cover', fileNameProperty: 'coverImage')] 
+    private ?File $coverImageFile = null;
 
     #[ORM\Column(type: 'string', length: 50, enumType: PrestataireProfileStatusEnum::class)]
     private ?PrestataireProfileStatusEnum $profileStatus = PrestataireProfileStatusEnum::DRAFT;
@@ -170,7 +181,6 @@ class PrestataireProfile
         $this->services = new ArrayCollection();
     }
 
-
     public function getId(): ?string
     {
         return $this->id;
@@ -180,6 +190,7 @@ class PrestataireProfile
     {
         return $this->account;
     }
+
     public function setAccount(?User $account): static
     {
         $this->account = $account;
@@ -190,6 +201,7 @@ class PrestataireProfile
     {
         return $this->companyName;
     }
+
     public function setCompanyName(string $companyName): static
     {
         $this->companyName = $companyName;
@@ -200,6 +212,7 @@ class PrestataireProfile
     {
         return $this->slug;
     }
+
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
@@ -210,6 +223,7 @@ class PrestataireProfile
     {
         return $this->legalName;
     }
+
     public function setLegalName(?string $legalName): static
     {
         $this->legalName = $legalName;
@@ -220,6 +234,7 @@ class PrestataireProfile
     {
         return $this->structureType;
     }
+
     public function setStructureType(?string $structureType): static
     {
         $this->structureType = $structureType;
@@ -230,6 +245,7 @@ class PrestataireProfile
     {
         return $this->siren;
     }
+
     public function setSiren(?string $siren): static
     {
         $this->siren = $siren;
@@ -240,6 +256,7 @@ class PrestataireProfile
     {
         return $this->siret;
     }
+
     public function setSiret(?string $siret): static
     {
         $this->siret = $siret;
@@ -250,6 +267,7 @@ class PrestataireProfile
     {
         return $this->vatNumber;
     }
+
     public function setVatNumber(?string $vatNumber): static
     {
         $this->vatNumber = $vatNumber;
@@ -260,6 +278,7 @@ class PrestataireProfile
     {
         return $this->address;
     }
+
     public function setAddress(?string $address): static
     {
         $this->address = $address;
@@ -270,6 +289,7 @@ class PrestataireProfile
     {
         return $this->addressComplement;
     }
+
     public function setAddressComplement(?string $addressComplement): static
     {
         $this->addressComplement = $addressComplement;
@@ -280,6 +300,7 @@ class PrestataireProfile
     {
         return $this->postalCode;
     }
+
     public function setPostalCode(?string $postalCode): static
     {
         $this->postalCode = $postalCode;
@@ -290,6 +311,7 @@ class PrestataireProfile
     {
         return $this->city;
     }
+
     public function setCity(?string $city): static
     {
         $this->city = $city;
@@ -300,6 +322,7 @@ class PrestataireProfile
     {
         return $this->country;
     }
+
     public function setCountry(?string $country): static
     {
         $this->country = $country;
@@ -310,6 +333,7 @@ class PrestataireProfile
     {
         return $this->latitude;
     }
+
     public function setLatitude(?string $latitude): static
     {
         $this->latitude = $latitude;
@@ -320,6 +344,7 @@ class PrestataireProfile
     {
         return $this->longitude;
     }
+
     public function setLongitude(?string $longitude): static
     {
         $this->longitude = $longitude;
@@ -330,6 +355,7 @@ class PrestataireProfile
     {
         return $this->geohash;
     }
+
     public function setGeohash(?string $geohash): static
     {
         $this->geohash = $geohash;
@@ -340,6 +366,7 @@ class PrestataireProfile
     {
         return $this->phonePublic;
     }
+
     public function setPhonePublic(?string $phonePublic): static
     {
         $this->phonePublic = $phonePublic;
@@ -350,6 +377,7 @@ class PrestataireProfile
     {
         return $this->phonePrivate;
     }
+
     public function setPhonePrivate(?string $phonePrivate): static
     {
         $this->phonePrivate = $phonePrivate;
@@ -360,6 +388,7 @@ class PrestataireProfile
     {
         return $this->website;
     }
+
     public function setWebsite(?string $website): static
     {
         $this->website = $website;
@@ -370,6 +399,7 @@ class PrestataireProfile
     {
         return $this->facebookUrl;
     }
+
     public function setFacebookUrl(?string $facebookUrl): static
     {
         $this->facebookUrl = $facebookUrl;
@@ -380,6 +410,7 @@ class PrestataireProfile
     {
         return $this->instagramUrl;
     }
+
     public function setInstagramUrl(?string $instagramUrl): static
     {
         $this->instagramUrl = $instagramUrl;
@@ -390,6 +421,7 @@ class PrestataireProfile
     {
         return $this->linkedinUrl;
     }
+
     public function setLinkedinUrl(?string $linkedinUrl): static
     {
         $this->linkedinUrl = $linkedinUrl;
@@ -400,6 +432,7 @@ class PrestataireProfile
     {
         return $this->shortDescription;
     }
+
     public function setShortDescription(?string $shortDescription): static
     {
         $this->shortDescription = $shortDescription;
@@ -410,6 +443,7 @@ class PrestataireProfile
     {
         return $this->longDescription;
     }
+
     public function setLongDescription(?string $longDescription): static
     {
         $this->longDescription = $longDescription;
@@ -420,9 +454,26 @@ class PrestataireProfile
     {
         return $this->logo;
     }
+
     public function setLogo(?string $logo): static
     {
         $this->logo = $logo;
+        return $this;
+    }
+
+    public function getLogoFile(): ?File
+    {
+        return $this->logoFile;
+    }
+
+    public function setLogoFile(?File $logoFile = null): static
+    {
+        $this->logoFile = $logoFile;
+
+        if (null !== $logoFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+
         return $this;
     }
 
@@ -430,9 +481,26 @@ class PrestataireProfile
     {
         return $this->coverImage;
     }
+
     public function setCoverImage(?string $coverImage): static
     {
         $this->coverImage = $coverImage;
+        return $this;
+    }
+
+    public function getCoverImageFile(): ?File
+    {
+        return $this->coverImageFile;
+    }
+
+    public function setCoverImageFile(?File $coverImageFile = null): static
+    {
+        $this->coverImageFile = $coverImageFile;
+
+        if (null !== $coverImageFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+
         return $this;
     }
 
@@ -440,6 +508,7 @@ class PrestataireProfile
     {
         return $this->profileStatus;
     }
+
     public function setProfileStatus(PrestataireProfileStatusEnum $profileStatus): static
     {
         $this->profileStatus = $profileStatus;
@@ -450,6 +519,7 @@ class PrestataireProfile
     {
         return $this->verificationStatus;
     }
+
     public function setVerificationStatus(VerificationStatusEnum $verificationStatus): static
     {
         $this->verificationStatus = $verificationStatus;
@@ -460,6 +530,7 @@ class PrestataireProfile
     {
         return $this->completionScore;
     }
+
     public function setCompletionScore(int $completionScore): static
     {
         $this->completionScore = $completionScore;
@@ -470,6 +541,7 @@ class PrestataireProfile
     {
         return $this->averageRating;
     }
+
     public function setAverageRating(string $averageRating): static
     {
         $this->averageRating = $averageRating;
@@ -480,6 +552,7 @@ class PrestataireProfile
     {
         return $this->reviewsCount;
     }
+
     public function setReviewsCount(int $reviewsCount): static
     {
         $this->reviewsCount = $reviewsCount;
@@ -490,6 +563,7 @@ class PrestataireProfile
     {
         return $this->responseTimeMinutes;
     }
+
     public function setResponseTimeMinutes(?int $responseTimeMinutes): static
     {
         $this->responseTimeMinutes = $responseTimeMinutes;
@@ -500,6 +574,7 @@ class PrestataireProfile
     {
         return $this->isFeatured;
     }
+
     public function setIsFeatured(bool $isFeatured): static
     {
         $this->isFeatured = $isFeatured;
@@ -510,6 +585,7 @@ class PrestataireProfile
     {
         return $this->featuredUntil;
     }
+
     public function setFeaturedUntil(?\DateTimeImmutable $featuredUntil): static
     {
         $this->featuredUntil = $featuredUntil;
@@ -520,6 +596,7 @@ class PrestataireProfile
     {
         return $this->searchVisibility;
     }
+
     public function setSearchVisibility(SearchVisibilityEnum $searchVisibility): static
     {
         $this->searchVisibility = $searchVisibility;
@@ -530,6 +607,7 @@ class PrestataireProfile
     {
         return $this->verifiedAt;
     }
+
     public function setVerifiedAt(?\DateTimeImmutable $verifiedAt): static
     {
         $this->verifiedAt = $verifiedAt;
@@ -540,6 +618,7 @@ class PrestataireProfile
     {
         return $this->createdAt;
     }
+
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
@@ -550,6 +629,7 @@ class PrestataireProfile
     {
         return $this->updatedAt;
     }
+
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
@@ -560,6 +640,7 @@ class PrestataireProfile
     {
         return $this->deletedAt;
     }
+
     public function setDeletedAt(?\DateTimeImmutable $deletedAt): static
     {
         $this->deletedAt = $deletedAt;
@@ -574,7 +655,6 @@ class PrestataireProfile
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -583,10 +663,9 @@ class PrestataireProfile
         return $this->metier;
     }
 
-    public function setMetier(string $metier): static
+    public function setMetier(?string $metier): static
     {
         $this->metier = $metier;
-
         return $this;
     }
 
@@ -595,10 +674,9 @@ class PrestataireProfile
         return $this->experience;
     }
 
-    public function setExperience(string $experience): static
+    public function setExperience(?string $experience): static
     {
         $this->experience = $experience;
-
         return $this;
     }
 
@@ -622,7 +700,6 @@ class PrestataireProfile
     public function removeService(Service $service): static
     {
         $this->services->removeElement($service);
-
         return $this;
     }
 }
