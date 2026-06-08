@@ -40,3 +40,64 @@
         border-left: 1px solid rgba(255, 255, 255, 0.1);
     }
 }
+
+@media (max-width: 767.98px) {
+    /* Centre tout le footer sur mobile */
+    .tm-footer-container {
+        text-align: center;
+    }
+
+    /* Centre les listes de liens */
+    .tm-footer-container ul {
+        align-items: center !important;
+    }
+
+    /* Centre la zone de réseaux sociaux */
+    .tm-footer-container .d-flex.gap-2 {
+        justify-content: center;
+    }
+
+    /* Ajuste la zone du copyright en bas */
+    .tm-footer-container .flex-column {
+        gap: 15px;
+    }
+}
+
+/* Optionnel : si le footer fait trop "chargé" sur mobile */
+@media (max-width: 576px) {
+    .tm-footer-container h5 {
+        margin-top: 1rem;
+    }
+}
+
+/* --- FORCAGE RESPONSIVE FOOTER --- */
+@media (max-width: 991px) {
+    .tm-footer-container .row {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .tm-footer-container .row > div {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        margin-bottom: 30px !important; /* Espace vertical entre les blocs */
+        text-align: center !important;
+    }
+
+    /* Centre les listes de liens */
+    .tm-footer-container .list-unstyled {
+        align-items: center !important;
+    }
+
+    /* Centre les icônes réseaux sociaux */
+    .tm-footer-container .d-flex.gap-2 {
+        justify-content: center !important;
+    }
+
+    /* Supprime la bordure de gauche sur mobile */
+    .tm-footer-border-xl {
+        border-left: none !important;
+        padding-left: 0 !important;
+    }
+}
