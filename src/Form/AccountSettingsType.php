@@ -22,15 +22,15 @@ class AccountSettingsType extends AbstractType
         $builder
             ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-control', 'placeholder' => 'Ex: Jean']
             ])
             ->add('lastName', TextType::class, [
                 'label' => 'Nom',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-control', 'placeholder' => 'Ex: Dupont']
             ])
             ->add('phoneNumber', TextType::class, [
                 'label' => 'Numéro de téléphone',
-                'attr' => ['class' => 'form-control'],
+                'attr' => ['class' => 'form-control', 'placeholder' => 'Ex: 06 12 34 56 78'],
                 'required' => false 
             ])
             // ->add('avatar') 

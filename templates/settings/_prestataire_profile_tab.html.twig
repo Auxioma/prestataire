@@ -1,6 +1,6 @@
 <div class="row g-4 match-height">
 
-    {# ================= COLONNE GAUCHE : INFOS & APERÇU ================= #}
+    {# ================= COLONNE GAUCHE : INFOS & VISUELS ================= #}
     <div class="col-lg-4 d-flex flex-column gap-4">
         {# Card Informations personnelles #}
         <div class="card tm-card p-4">
@@ -24,25 +24,69 @@
             </div>
         </div>
 
+        {# Nouvelle Card dédiée à l'identité visuelle pro (Logo & Cover) #}
+        <div class="card tm-card p-4">
+            <h4 class="tm-card-title mb-4">Identité visuelle de l'Entreprise</h4>
+            
+            {# Champ d'upload du logo #}
+            <div class="mb-3 tm-form-row">
+                {{ form_label(settingsForm.prestataireProfile.logo) }}
+                {% if user.prestataireProfile and user.prestataireProfile.logo %}
+                    <div class="mb-2">
+                        <img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" alt="Logo actuel" class="img-thumbnail rounded-circle" style="max-height: 50px; width: 50px; object-fit: cover;">
+                    </div>
+                {% endif %}
+                {{ form_widget(settingsForm.prestataireProfile.logo) }}
+                {{ form_errors(settingsForm.prestataireProfile.logo) }}
+            </div>
+
+            {# Champ d'upload de l'image de couverture #}
+            <div class="mb-3 tm-form-row">
+                {{ form_label(settingsForm.prestataireProfile.coverImage) }}
+                {% if user.prestataireProfile and user.prestataireProfile.coverImage %}
+                    <div class="mb-2">
+                        <img src="{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}" alt="Couverture actuelle" class="img-fluid rounded-3" style="max-height: 80px; width: 100%; object-fit: cover;">
+                    </div>
+                {% endif %}
+                {{ form_widget(settingsForm.prestataireProfile.coverImage) }}
+                {{ form_errors(settingsForm.prestataireProfile.coverImage) }}
+            </div>
+        </div>
+
         {# Card Aperçu Profil Public #}
         <div class="card tm-card p-4">
             <h4 class="tm-card-title mb-3">Aperçu de votre profil public</h4>
-            <div class="p-3 border rounded-4 bg-white shadow-sm text-center">
-                <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80' }}" class="rounded-circle border mb-3" style="width: 70px; height: 70px; object-fit: cover;" alt="Aperçu avatar">
+            <div class="p-3 border rounded-4 bg-white shadow-sm text-center position-relative overflow-hidden">
                 
-                <h5 class="mb-1 fw-bold" style="color: var(--tm-text);">
-                    {{ user.firstName }} {{ user.lastName }}
-                    <span class="badge bg-primary ms-1 fs-7">Vérifié</span>
-                </h5>
-                
-                <p class="text-muted mb-3 fs-6">
-                    <span style="color: var(--tm-text); font-weight: 500;">{{ user.prestataireProfile.metier|default('Plombier') }}</span><br>
-                    ⭐ {{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0' }}
-                    ({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }} avis)
-                    <br><span class="fs-7">📍 Libourne et alentours</span>
-                </p>
-                
-                <a href="#" class="btn btn-outline-secondary btn-sm rounded-3 fw-medium w-100 py-2">Voir le profil public ↗</a>
+                {# Miniature de la CoverImage en arrière-plan de l'aperçu si elle existe #}
+                {% if user.prestataireProfile and user.prestataireProfile.coverImage %}
+                    <div class="position-absolute start-0 top-0 w-100" style="height: 60px; background-image: url('{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}'); background-size: cover; background-position: center; opacity: 0.7;"></div>
+                {% else %}
+                    <div class="position-absolute start-0 top-0 w-100" style="height: 60px; background: linear-gradient(135deg, #e0eaff 0%, #cff0ff 100%);"></div>
+                {% endif %}
+
+                <div class="position-relative pt-4">
+                    {# Affiche le logo de l'entreprise s'il existe, sinon l'avatar de l'utilisateur #}
+                    {% if user.prestataireProfile and user.prestataireProfile.logo %}
+                        <img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" class="rounded-circle border-3 border-white shadow-sm mb-2" style="width: 70px; height: 70px; object-fit: cover;" alt="Logo entreprise">
+                    {% else %}
+                        <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80' }}" class="rounded-circle border-3 border-white shadow-sm mb-2" style="width: 70px; height: 70px; object-fit: cover;" alt="Aperçu avatar">
+                    {% endif %}
+                    
+                    <h5 class="mb-1 fw-bold text-dark">
+                        {{ user.prestataireProfile.companyName|default(user.firstName ~ ' ' ~ user.lastName) }}
+                        <span class="badge bg-primary ms-1 fs-7">Vérifié</span>
+                    </h5>
+                    
+                    <p class="text-muted mb-3 fs-6">
+                        <span style="color: var(--tm-text); font-weight: 500;">{{ user.prestataireProfile.metier|default('Plombier') }}</span><br>
+                        ⭐ {{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0' }}
+                        ({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }} avis)
+                        <br><span class="fs-7">📍 {{ user.prestataireProfile.city|default('Libourne') }} et alentours</span>
+                    </p>
+                    
+                    <a href="#" class="btn btn-outline-secondary btn-sm rounded-3 fw-medium w-100 py-2">Voir le profil public ↗</a>
+                </div>
             </div>
         </div>
     </div>
@@ -55,9 +99,16 @@
             <div class="mb-3 tm-form-row">
                 {{ form_row(settingsForm.prestataireProfile.metier) }}
             </div>
+            
+            {# Insertion de la shortDescription juste au-dessus de la grande description #}
             <div class="mb-3 tm-form-row">
-                {{ form_row(settingsForm.prestataireProfile.description, {'attr': {'rows': 8}}) }}
+                {{ form_row(settingsForm.prestataireProfile.shortDescription) }}
             </div>
+            
+            <div class="mb-3 tm-form-row">
+                {{ form_row(settingsForm.prestataireProfile.description) }}
+            </div>
+            
             <div class="mb-3 tm-form-row">
                 {{ form_row(settingsForm.prestataireProfile.experience) }}
             </div>
@@ -111,7 +162,7 @@
                     <span class="text-muted fs-5">/ 5</span>
                 </div>
 
-                <div class="my-2 fs-4" style="color: var(--tm-warning);">
+                <div class="my-2 fs-4" style="color: var(--var-tm-warning, #ffc107);">
                     {% if user.prestataireProfile and user.prestataireProfile.averageRating %}
                         {% for i in 1..5 %}
                             {{ i <= user.prestataireProfile.averageRating ? '★' : '☆' }}

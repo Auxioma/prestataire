@@ -112,8 +112,14 @@
                     </ul>
                 </div>
 
-                {# Conteneur des formulaires #}
-                {{ form_start(settingsForm, {'attr': {'novalidate': 'novalidate', 'class': 'tm-form-container'}}) }}
+                {# Conteneur des formulaires - AJOUT DE ENCTYPE POUR LES FICHIERS #}
+                {{ form_start(settingsForm, {
+                    'attr': {
+                        'novalidate': 'novalidate', 
+                        'class': 'tm-form-container',
+                        'enctype': 'multipart/form-data'
+                    }
+                }) }}
                     <div class="tab-content" id="settingsTabsContent">
                         <div class="tab-pane fade show active" id="profile-panel" role="tabpanel">
                             {{ include('settings/_prestataire_profile_tab.html.twig') }}
