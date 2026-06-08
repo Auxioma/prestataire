@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Centre d'aide & FAQ - TrouveMoi{% endblock %}
+
+{% block body %}
+<div class="container py-5 text-start" style="max-width: 850px;" data-controller="static-page">
+    
+    <div class="text-center mb-5">
+        <h1 class="fw-extrabold text-dark mb-2">Comment pouvons-nous vous aider ?</h1>
+        <p class="text-muted">Retrouvez les réponses aux questions les plus fréquentes sur la plateforme TrouveMoi.</p>
+    </div>
+
+    <div class="accordion border-0" id="faqAccordion">
+        
+        {# QUESTION 1 #}
+        <div class="accordion-item mb-3 border rounded-3 overflow-hidden bg-white shadow-xs">
+            <h2 class="accordion-header" id="headingOne" style="margin: 0 !important;">
+                <button class="accordion-button fw-bold text-dark bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Est-ce que le service est gratuit pour les clients ?
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                <div class="accordion-body bg-white">
+                    <p>Oui, l'utilisation de TrouveMoi est 100% gratuite pour les particuliers et clients à la recherche d'un prestataire. Aucun frais caché ne vous sera demandé pour faire une recherche ou demander un devis.</p>
+                </div>
+            </div>
+        </div>
+
+        {# QUESTION 2 #}
+        <div class="accordion-item mb-3 border rounded-3 overflow-hidden bg-white shadow-xs">
+            <h2 class="accordion-header" id="headingTwo" style="margin: 0 !important;">
+                <button class="accordion-button collapsed fw-bold text-dark bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Comment savoir si un professionnel est fiable ?
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                <div class="accordion-body bg-white">
+                    <p>Chaque profil prestataire affiche son expérience, son métier et les avis laissés par d'autres clients. De plus, notre équipe effectue une vérification de la validité du numéro SIRET lors de l'activation complète du profil professionnel.</p>
+                </div>
+            </div>
+        </div>
+
+        {# QUESTION 3 #}
+        <div class="accordion-item border rounded-3 overflow-hidden bg-white shadow-xs">
+            <h2 class="accordion-header" id="headingThree" style="margin: 0 !important;">
+                <button class="accordion-button collapsed fw-bold text-dark bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Je suis un professionnel, comment m'inscrire ?
+                </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                <div class="accordion-body bg-white">
+                    <p>Il vous suffit de vous inscrire normalement sur le site, puis de vous rendre dans vos paramètres pour basculer en compte Prestataire. Vous pourrez alors renseigner votre entreprise, vos compétences, votre zone géographique et apparaître instantanément dans le flux de recherche.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -96,16 +96,43 @@
 
 					{{ form_start(registrationForm) }}
 
-					<div class="tm-register-field">
-						<i class="bi bi-envelope-fill tm-register-field__icon"></i>
-						{{
-                                form_widget(registrationForm.email, {
-                                    attr: {
-                                        placeholder: 'Adresse e-mail',
-                                        class: 'tm-register-field__input'
-                                    }
-                                })
-                            }}
+					{# Affichage des erreurs globales nettoyé et francisé #}
+					{% if not registrationForm.vars.valid %}
+						<div class="alert alert-danger p-3 small mb-3 rounded-3 d-flex align-items-start fw-semibold">
+							<i class="bi bi-exclamation-triangle-fill me-2 fs-5 mt-0.5"></i>
+							<div>
+								{% for error in registrationForm.vars.errors %}
+									{% if 'CSRF' in error.message or 'token' in error.message %}
+										La session de votre formulaire a expiré. Veuillez réessayer de soumettre le formulaire.
+									{% else %}
+										{{ error.message }}
+									{% endif %}
+								{% endfor %}
+							</div>
+						</div>
+					{% endif %}
+
+					{# CHAMP EMAIL ET SES ERREURS #}
+					<div class="mb-3">
+						<div class="tm-register-field {% if not registrationForm.email.vars.valid %}border border-danger rounded-3{% endif %}">
+							<i class="bi bi-envelope-fill tm-register-field__icon"></i>
+							{{
+            form_widget(registrationForm.email, {
+                attr: {
+                    placeholder: 'Adresse e-mail',
+                    class: 'tm-register-field__input'
+                }
+            })
+        }}
+						</div>
+
+						{# Nettoyage radical : on extrait uniquement le texte brut #}
+						{% if registrationForm.email.vars.errors|length > 0 %}
+							<div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
+								<i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+								<span>{{ registrationForm.email.vars.errors[0].message }}</span>
+							</div>
+						{% endif %}
 					</div>
 
 					<div class="tm-register-password-block" data-controller="password">
@@ -115,15 +142,15 @@
 							</span>
 
 							{{
-                                    form_widget(registrationForm.plainPassword, {
-                                        attr: {
-                                            placeholder: 'Mot de passe',
-                                            class: 'tm-register-field__input',
-                                            'data-password-target': 'input',
-                                            'data-action': 'input->password#checkPassword'
-                                        }
-                                    })
-                                }}
+                                form_widget(registrationForm.plainPassword, {
+                                    attr: {
+                                        placeholder: 'Mot de passe',
+                                        class: 'tm-register-field__input',
+                                        'data-password-target': 'input',
+                                        'data-action': 'input->password#checkPassword'
+                                    }
+                                })
+                            }}
 
 							<button type="button" class="tm-register-password-toggle" data-password-target="toggle" data-action="click->password#toggleVisibility" aria-label="Afficher ou masquer le mot de passe"></button>
 						</div>
@@ -164,7 +191,7 @@
 						<a href="{{ path('app_login') }}">Se connecter</a>
 					</p>
 
-					{{ form_end(registrationForm) }}
+					{{ form_end(registrationForm, {'render_rest': false}) }}
 				</section>
 			</div>
 
