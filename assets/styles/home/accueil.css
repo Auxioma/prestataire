@@ -23,8 +23,12 @@
 }
 
 /* --- BARRE DE RECHERCHE RAFFINÉE --- */
-.search-overlap-wrapper { position: relative; z-index: 10; height: 0; }
-.search-overlap-card { 
+.search-overlap-wrapper { 
+    position: relative; 
+    z-index: 10; 
+    height: 60px; /* Donne une hauteur équivalente à la moitié de la hauteur du bloc */
+    margin-bottom: 50px; /* Ajuste selon la taille réelle de ton bloc de recherche */
+}.search-overlap-card { 
     transform: translateY(-50%); 
     border-radius: 20px !important; /* Plus arrondi pour un look moderne */
     padding: 1rem !important; 
@@ -82,6 +86,26 @@
     height: 40px;
     width: 1px;
     background-color: #dee2e6;
+}
+
+@media (min-width: 992px) {
+    .search-overlap-wrapper {
+        height: 60px; /* Espace réservé pour que le bloc flottant ne cache rien */
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .search-overlap-wrapper {
+        height: 250px; /* Ajuste cette valeur selon la hauteur réelle de ton bloc mobile */
+        margin-bottom: 0;
+    }
+    
+    /* On s'assure que le bloc ne soit pas en absolute/transform si ça pose problème */
+    .search-overlap-card {
+        transform: none !important;
+        margin-top: -110px; /* Remonte le bloc juste ce qu'il faut */
+    }
 }
 /* --- 3. CATÉGORIES (Slider & Cartes) --- */
 .main-content-section {

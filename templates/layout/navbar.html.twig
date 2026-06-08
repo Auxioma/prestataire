@@ -54,55 +54,44 @@
 			</ul>
 		</li>
 
-		<li class="nav-item dropdown">
-			<a class="nav-link dropdown-toggle tm-navbar__link" href="#" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-				Catégories
-			</a>
+		<li class="nav-item dropdown position-static"> {# position-static est crucial ici #}
+    <a class="nav-link dropdown-toggle tm-navbar__link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Catégories
+    </a>
 
-			<ul
-				class="dropdown-menu tm-navbar__dropdown">
-				{# Premier choix déroulant : Lien vers la page de toutes les catégories #}
-				<li>
-					<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--strong fw-bold text-primary" href="{{ path('app_category_index') }}">
-						<i class="fa-solid fa-layer-group me-2"></i>Toutes les catégories
-					</a>
-				</li>
-				<li><hr class="dropdown-divider"></li>
+    {# Mega Menu Container #}
+    <div class="dropdown-menu tm-navbar__megamenu">
+        <div class="container">
+            <div class="row">
+                {# Lien principal #}
+                <div class="col-12 mb-3">
+                    <a class="dropdown-item tm-navbar__dropdown-link fw-bold text-primary" href="{{ path('app_category_index') }}">
+                        <i class="fa-solid fa-layer-group me-2"></i>Toutes les catégories
+                    </a>
+                    <hr class="dropdown-divider">
+                </div>
 
-				{# Boucle dynamique sur les catégories #}
-				{% for category in navbarCategories %}
-					{% if category.subCategories|length > 0 %}
-						<li
-							class="dropend tm-navbar__dropend">
-							{# Optionnel : Si tu veux que la catégorie parente reste cliquable pour envoyer sur le niveau 1 de la recherche #}
-							<a class="dropdown-item dropdown-toggle tm-navbar__dropdown-link tm-navbar__dropdown-link--strong" href="{{ path('app_search_flow', {'type': 'categorie', 'slug': category.slug}) }}" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-								{{ category.name }}
-							</a>
-
-							<ul class="dropdown-menu tm-navbar__dropdown tm-navbar__dropdown--submenu">
-								{% for subCategory in category.subCategories %}
-									<li>
-										<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_search_flow', {'type': 'categorie', 'slug': subCategory.slug}) }}">
-											{{ subCategory.name }}
-										</a>
-									</li>
-								{% endfor %}
-							</ul>
-						</li>
-					{% else %}
-						<li>
-							<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--strong" href="{{ path('app_search_flow', {'type': 'categorie', 'slug': category.slug}) }}">
-								{{ category.name }}
-							</a>
-						</li>
-					{% endif %}
-
-					{% if not loop.last %}
-						<li><hr class="dropdown-divider"></li>
-					{% endif %}
-				{% endfor %}
-			</ul>
-		</li>
+                {# Boucle pour diviser en colonnes #}
+                {% for category in navbarCategories %}
+                    <div class="col-lg-3 mb-3">
+                        <a class="dropdown-item tm-navbar__dropdown-link--strong mb-2 d-block" href="{{ path('app_search_flow', {'type': 'categorie', 'slug': category.slug}) }}">
+                            {{ category.name }}
+                        </a>
+                        <ul class="list-unstyled ps-2">
+                            {% for subCategory in category.subCategories|slice(0, 5) %} {# Limite à 5 sous-catégories #}
+                                <li>
+                                    <a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_search_flow', {'type': 'categorie', 'slug': subCategory.slug}) }}">
+                                        {{ subCategory.name }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</li>
 
 		<li class="nav-item">
 			<a class="nav-link tm-navbar__link" href="#">Bons plans</a>
