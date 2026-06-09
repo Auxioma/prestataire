@@ -162,11 +162,11 @@ class PrestataireProfile
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $experience = null;
 
-    /**
-     * @var Collection<int, Service>
+/**
+     * @var Collection<int, PrestataireService>
      */
-    #[ORM\ManyToMany(targetEntity: Service::class, inversedBy: 'prestataireProfiles')]
-    private Collection $services;
+    #[ORM\OneToMany(mappedBy: 'prestataire', targetEntity: PrestataireService::class, cascade: ['persist', 'remove'])]
+    private Collection $prestataireServices;
 
     public function __construct()
     {
@@ -178,7 +178,7 @@ class PrestataireProfile
         $this->reviewsCount = 0;
         $this->averageRating = '0.00';
         $this->isFeatured = false;
-        $this->services = new ArrayCollection();
+        $this->prestataireServices = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -681,25 +681,46 @@ class PrestataireProfile
     }
 
     /**
-     * @return Collection<int, Service>
+     * @return Collection<int, PrestataireService>
      */
-    public function getServices(): Collection
+    public function getPrestataireServices(): Collection
     {
-        return $this->services;
+        return $this->prestataireServices;
     }
 
-    public function addService(Service $service): static
+    public function addPrestataireService(PrestataireService $prestataireService): static
     {
-        if (!$this->services->contains($service)) {
-            $this->services->add($service);
+        if (!$this->prestataireServices->contains($prestataireService)) {
+            $this->prestataireServices->add($prestataireService);
+            $prestataireService->setPrestataire($this);
         }
 
         return $this;
     }
 
-    public function removeService(Service $service): static
+    public function removePrestataireService(PrestataireService $prestataireService): static
     {
-        $this->services->removeElement($service);
+        if ($this->prestataireServices->removeElement($prestataireService)) {
+            // set the owning side to null (unless already changed)
+            if ($prestataireService->getPrestataire() === $this) {
+                $prestataireService->setPrestataire(null);
+            }
+        }
+
         return $this;
+    }
+
+    /**
+     * Raccourci pour garder la compatibilité avec le reste de ton site
+     * @return Collection<int, Service>
+     */
+    public function getServices(): Collection
+    {
+        // Extrait les objets Service de tes PrestataireService
+        $services = new ArrayCollection();
+        foreach ($this->prestataireServices as $ps) {
+            $services->add($ps->getService());
+        }
+        return $services;
     }
 }

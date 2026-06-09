@@ -54,16 +54,10 @@ class Service
     #[ORM\JoinColumn(nullable: false)]
     private ?ServiceCategory $category = null;
 
-    /**
-     * @var Collection<int, PrestataireProfile>
-     */
-    #[ORM\ManyToMany(targetEntity: PrestataireProfile::class, mappedBy: 'services')]
-    private Collection $prestataireProfiles;
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-        $this->prestataireProfiles = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -203,30 +197,4 @@ class Service
         return $this;
     }
 
-    /**
-     * @return Collection<int, PrestataireProfile>
-     */
-    public function getPrestataireProfiles(): Collection
-    {
-        return $this->prestataireProfiles;
-    }
-
-    public function addPrestataireProfile(PrestataireProfile $prestataireProfile): static
-    {
-        if (!$this->prestataireProfiles->contains($prestataireProfile)) {
-            $this->prestataireProfiles->add($prestataireProfile);
-            $prestataireProfile->addService($this);
-        }
-
-        return $this;
-    }
-
-    public function removePrestataireProfile(PrestataireProfile $prestataireProfile): static
-    {
-        if ($this->prestataireProfiles->removeElement($prestataireProfile)) {
-            $prestataireProfile->removeService($this);
-        }
-
-        return $this;
-    }
 }
