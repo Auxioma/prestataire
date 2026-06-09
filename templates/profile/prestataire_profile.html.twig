@@ -1,167 +1,154 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Paramètres - TrouveMoi{% endblock %}
+{% block title %}Paramètres - TrouveMoi
+{% endblock %}
 
 {% block body %}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <div class="tm-settings-container">
-        
-        {# 1. Main Layout #}
-        <div class="tm-main-layout">
-            
-            {# 2. Sidebar Structurelle Desktop (Montée au plafond + ultra étroite) #}
-            <div class="tm-settings-sidebar">
-                <div class="w-100">
-                    <div class="d-flex align-items-center gap-2 mb-4 border-bottom border-secondary border-opacity-25 pb-3">
-                        <span class="fs-5 fw-bold text-white">🔍 TrouveMoi</span>
-                        <span class="badge bg-primary px-2 py-1" style="font-size: 10px;">Pro</span>
-                    </div>
+	<div class="tm-settings-container">
+		<div
+			class="tm-main-layout">
 
-                    {# Bloc Profil Utilisateur Sidebar #}
-                    <div class="text-center mb-4 p-3 rounded-3 bg-light-subtle border">
-                        <div class="position-relative d-inline-block mb-2">
-                            <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle border" style="width: 60px; height: 60px; object-fit: cover;" alt="Avatar">
-                        </div>
-                        <h6 class="mb-0 fw-semibold" style="font-size: 14px; color: #fff;">{{ user.firstName }} {{ user.lastName }}</h6>
-                        <p class="mb-2 small text-muted" style="font-size: 12px;">{{ user.prestataireProfile.metier|default('Plombier') }}</p>
-                        <span class="badge bg-success-subtle text-success px-2 py-1" style="font-size: 11px;">
-                            ✓ Vérifié
-                        </span>
-                    </div>
+			{# Sidebar #}
+			<div class="tm-settings-sidebar">
+				<div class="w-100">
+					<div class="text-center mb-4 p-3 rounded-3 bg-light-subtle border">
+						<div class="position-relative d-inline-block mb-2">
+							<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle border tm-sidebar-avatar" alt="Avatar">
+						</div>
+						<h6 class="mb-0 fw-semibold">{{ user.firstName }}
+							{{ user.lastName }}</h6>
+						<p class="mb-2 small text-muted">{{ user.prestataireProfile.metier|default('Plombier') }}</p>
+						<span class="badge bg-success-subtle text-success px-2 py-1">✓ Vérifié</span>
+					</div>
 
-                    {# Menu de Navigation principal Sidebar #}
-                    <ul class="nav tm-settings-nav flex-column gap-1">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <span>📋</span> Tableau de bord
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <span>📥</span> Mes demandes
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <span>💼</span> Mes prestations
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <span>⭐</span> Mes avis
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link active">
-                                <span>⚙️</span> Paramètres
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+					<ul class="nav tm-settings-nav flex-column gap-1">
+						<li class="nav-item">
+							<a href="#" class="nav-link">
+								<span>📋</span>
+								Tableau de bord</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link">
+								<span>📥</span>
+								Mes demandes</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link">
+								<span>💼</span>
+								Mes prestations</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link">
+								<span>⭐</span>
+								Mes avis</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link active">
+								<span>⚙️</span>
+								Paramètres</a>
+						</li>
+					</ul>
+				</div>
 
-                {# Bloc Parrainage fixe tout en bas avec style dégradé #}
-                <div class="tm-sidebar-parrainage-card w-100 text-center p-3 rounded-3 mt-auto">
-                    <p class="fw-medium mb-2 text-white" style="font-size: 13px;">🎁 Parrainez un collègue <br><span class="fw-normal text-white-50" style="font-size: 11px;">Gagnez 50€ de crédit</span></p>
-                    <button class="btn btn-sm btn-light w-100 fw-semibold" style="font-size: 12px; border-radius: 0.5rem; color: #041B59;">Parrainer maintenant</button>
-                </div>
-            </div>
+				<div class="tm-sidebar-parrainage-card w-100 text-center rounded-3 mt-auto">
+					<p class="fw-medium mb-2 text-white">🎁 Parrainez un collègue
+						<br><span class="fw-normal text-white-50">Gagnez 50€ de crédit</span>
+					</p>
+					<button class="btn btn-sm btn-light w-100 fw-semibold">Parrainer maintenant</button>
+				</div>
+			</div>
 
-            {# 3. Zone de contenu principal à droite #}
-            <div class="tm-settings-content">
-                
-                <div class="mb-4">
-                    <h1 class="fw-bold mb-1" style="color: #0F172A; font-size: 1.75rem; letter-spacing: -0.02em;">Paramètres</h1>
-                    <p class="text-muted mb-0" style="font-size: 0.95rem;">Gérez votre profil, vos informations et vos préférences</p>
-                </div>
+			{# Zone de contenu principal #}
+			<div class="tm-settings-content">
+				<div class="mb-4">
+					<h1 class="fw-bold mb-1">Paramètres</h1>
+					<p class="text-muted mb-0">Gérez votre profil, vos informations et vos préférences</p>
+				</div>
 
-                {# Alertes Flash #}
-                {% for message in app.flashes('success') %}
-                    <div class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4 fw-medium" role="alert">
-                        ✨ {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
+				{% for label in ['success', 'warning'] %}
+					{% for message in app.flashes(label) %}
+						<div class="alert alert-{{ label == 'warning' ? 'warning' : 'success' }} alert-dismissible fade show mb-4" role="alert">
+							{{ message }}
+							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>
+					{% endfor %}
+				{% endfor %}
 
-                {# Barre d'onglets horizontaux #}
-                <div class="mb-4">
-                    <ul class="nav nav-tabs border-bottom gap-2 tm-settings-nav flex-nowrap overflow-x-auto pb-1" id="settingsTabs" role="tablist" style="border-width: 2px !important;">
-                        <li class="nav-item">
-                            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-panel" type="button" role="tab">👤 Mon profil</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" id="company-tab" data-bs-toggle="tab" data-bs-target="#company-panel" type="button" role="tab">🏢 Mon entreprise</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services-panel" type="button" role="tab">🛠️ Services</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" id="zones-tab" data-bs-toggle="tab" data-bs-target="#zones-panel" type="button" role="tab">📍 Zones</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" id="dispo-tab" data-bs-toggle="tab" data-bs-target="#dispo-panel" type="button" role="tab">📅 Disponibilités</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" id="notif-tab" data-bs-toggle="tab" data-bs-target="#notif-panel" type="button" role="tab">🔔 Notifications</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-panel" type="button" role="tab">🛡️ Sécurité</button>
-                        </li>
-                    </ul>
-                </div>
+				<div class="mb-4">
+					<ul class="nav nav-tabs border-bottom gap-2 tm-settings-nav flex-nowrap overflow-x-auto pb-1" id="settingsTabs" role="tablist">
+						<li class="nav-item">
+							<button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-panel" role="tab">👤 Mon profil</button>
+						</li>
+						<li class="nav-item">
+							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#company-panel" role="tab">🏢 Mon entreprise</button>
+						</li>
+						<li class="nav-item">
+							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#services-panel" role="tab">🛠️ Services</button>
+						</li>
+						<li class="nav-item">
+							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#zones-panel" role="tab">📍 Zones</button>
+						</li>
+						<li class="nav-item">
+							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#dispo-panel" role="tab">📅 Disponibilités</button>
+						</li>
+						<li class="nav-item">
+							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#notif-panel" role="tab">🔔 Notifications</button>
+						</li>
+						<li class="nav-item">
+							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#security-panel" role="tab">🛡️ Sécurité</button>
+						</li>
+					</ul>
+				</div>
 
-                {# Conteneur des formulaires - AJOUT DE ENCTYPE POUR LES FICHIERS #}
-                {{ form_start(settingsForm, {
-                    'attr': {
-                        'novalidate': 'novalidate', 
-                        'class': 'tm-form-container',
-                        'enctype': 'multipart/form-data'
-                    }
-                }) }}
-                    <div class="tab-content" id="settingsTabsContent">
-                        <div class="tab-pane fade show active" id="profile-panel" role="tabpanel">
-                            {{ include('settings/_prestataire_profile_tab.html.twig') }}
-                        </div>
+				{{ form_start(settingsForm, {'attr': {'novalidate': 'novalidate', 'class': 'tm-form-container', 'enctype': 'multipart/form-data'}}) }}
+				<div class="tab-content" id="settingsTabsContent">
+					<div class="tab-pane fade show active" id="profile-panel" role="tabpanel">{{ include('settings/_prestataire_profile_tab.html.twig') }}</div>
+					<div class="tab-pane fade" id="company-panel" role="tabpanel">{{ include('settings/_prestataire_company_tab.html.twig') }}</div>
+					<div class="tab-pane fade" id="services-panel" role="tabpanel">{{ include('settings/_prestataire_services_tab.html.twig') }}</div>
+					<div class="tab-pane fade" id="zones-panel" role="tabpanel">
+						<div class="card tm-card p-4">
+							<h4 class="tm-card-title mb-2">📍 Zones d'intervention</h4>
+							<p class="text-muted mb-0">Gestion des rayons...</p>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="dispo-panel" role="tabpanel">
+						<div class="card tm-card p-4">
+							<h4 class="tm-card-title mb-2">📅 Vos Disponibilités</h4>
+							<p class="text-muted mb-0">Calendrier d'ouverture...</p>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="notif-panel" role="tabpanel">
+						<div class="card tm-card p-4">
+							<h4 class="tm-card-title mb-2">🔔 Vos Notifications</h4>
+							<p class="text-muted mb-0">Préférences d'alertes...</p>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="security-panel" role="tabpanel">
+						<div class="card tm-card p-4">
+							<h4 class="tm-card-title mb-2">🛡️ Sécurité</h4>
+							<p class="text-muted mb-0">Changement de mot de passe...</p>
+						</div>
+					</div>
+				</div>
+				{{ form_end(settingsForm) }}
+			</div>
+		</div>
+	</div>
 
-                        <div class="tab-pane fade" id="company-panel" role="tabpanel">
-                            {{ include('settings/_prestataire_company_tab.html.twig') }}
-                        </div>
-
-                        <div class="tab-pane fade" id="services-panel" role="tabpanel">
-                            <div class="card tm-card p-4">
-                                <h4 class="tm-card-title mb-2">🛠️ Vos Services</h4>
-                                <p class="text-muted mb-0">Configuration des prestations...</p>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="zones-panel" role="tabpanel">
-                            <div class="card tm-card p-4">
-                                <h4 class="tm-card-title mb-2">📍 Zones d'intervention</h4>
-                                <p class="text-muted mb-0">Gestion des rayons...</p>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="dispo-panel" role="tabpanel">
-                            <div class="card tm-card p-4">
-                                <h4 class="tm-card-title mb-2">📅 Vos Disponibilités</h4>
-                                <p class="text-muted mb-0">Calendrier d'ouverture...</p>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="notif-panel" role="tabpanel">
-                            <div class="card tm-card p-4">
-                                <h4 class="tm-card-title mb-2">🔔 Vos Notifications</h4>
-                                <p class="text-muted mb-0">Préférences d'alertes...</p>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="security-panel" role="tabpanel">
-                            <div class="card tm-card p-4">
-                                <h4 class="tm-card-title mb-2">🛡️ Sièges & Sécurité</h4>
-                                <p class="text-muted mb-0">Changement de mot de passe...</p>
-                            </div>
-                        </div>
-                    </div>
-                {{ form_end(settingsForm) }}
-            </div>
-        </div>
-    </div>
+<script>
+window.addEventListener('load', function() {
+    if (window.location.hash) {
+        // On cible le bouton dans la liste des onglets par son attribut data-bs-target
+        const targetTab = document.querySelector('button[data-bs-target="' + window.location.hash + '"]');
+        if (targetTab) {
+            // On clique dessus pour forcer l'activation
+            targetTab.click();
+        }
+    }
+});
+</script>
 {% endblock %}

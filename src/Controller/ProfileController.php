@@ -4,8 +4,11 @@ namespace App\Controller;
 
 use App\Entity\ClientProfile;
 use App\Entity\PrestataireProfile;
+use App\Entity\PrestataireService;
 use App\Form\AccountSettingsType;
 use App\Form\ClientProfileType;
+use App\Repository\ServiceRepository;
+use App\Repository\ServiceCategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class ProfileController extends AbstractController
 {
     #[Route('/prestataire/parametres', name: 'app_prestataire_settings')]
-    public function settings(Request $request, EntityManagerInterface $entityManager): Response
+    public function settings(Request $request, EntityManagerInterface $entityManager, ServiceCategoryRepository $categoryRepository): Response
     {
         // 1. Récupérer l'utilisateur connecté
         /** @var \App\Entity\User $user */
@@ -28,7 +31,7 @@ class ProfileController extends AbstractController
         // 2. Si le prestataire n'a pas encore de profil créé en BDD, on l'initialise à la volée
         if ($user->getPrestataireProfile() === null) {
             $profile = new PrestataireProfile();
-            
+
             $user->setPrestataireProfile($profile);
             $profile->setAccount($user);
         }
@@ -40,7 +43,7 @@ class ProfileController extends AbstractController
 
         // 4. Traitement de la soumission
         if ($form->isSubmitted() && $form->isValid()) {
-            
+
             // Générer le slug à partir du nom de l'entreprise si nécessaire
             $profile = $user->getPrestataireProfile();
             if ($profile && $profile->getCompanyName()) {
@@ -65,8 +68,45 @@ class ProfileController extends AbstractController
         return $this->render('profile/prestataire_profile.html.twig', [
             'settingsForm' => $form->createView(),
             'user' => $user,
+            'categories' => $categoryRepository->findWithSubCategories(),
         ]);
     }
+
+    #[Route('/prestataire/service/ajouter', name: 'app_prestataire_add_service', methods: ['POST'])]
+    public function addService(Request $request, EntityManagerInterface $em, ServiceRepository $serviceRepo): Response
+    {
+        $serviceId = $request->request->get('service_id');
+        $user = $this->getUser();
+        $service = $serviceRepo->find($serviceId);
+
+        // 1. Vérification de base (est-ce qu'on a bien un service et un profil ?)
+        if (!$service || !($user instanceof \App\Entity\User) || !$user->getPrestataireProfile()) {
+            $this->addFlash('error', 'Une erreur est survenue.');
+            return $this->redirectToRoute('app_prestataire_settings');
+        }
+
+        // 2. Vérification d'existence (est-ce que le service est déjà lié ?)
+        $exists = $em->getRepository(PrestataireService::class)->findOneBy([
+            'prestataire' => $user->getPrestataireProfile(),
+            'service' => $service
+        ]);
+
+        if ($exists) {
+            $this->addFlash('warning', 'Vous proposez déjà ce service !');
+        } else {
+            // 3. Persistance
+            $pService = new PrestataireService();
+            $pService->setPrestataire($user->getPrestataireProfile());
+            $pService->setService($service);
+
+            $em->persist($pService);
+            $em->flush();
+            $this->addFlash('success', 'Service ajouté !');
+        }
+
+        return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
+    }
+
 
     /**
      * PARAMETRES PROFILE CLIENT
@@ -84,7 +124,7 @@ class ProfileController extends AbstractController
         // 1. Initialisation à la volée du ClientProfile s'il n'existe pas encore
         if ($user->getClientProfile() === null) {
             $profile = new ClientProfile();
-            
+
             $user->setClientProfile($profile);
             $profile->setAccount($user);
         }
@@ -95,7 +135,7 @@ class ProfileController extends AbstractController
 
         // 3. Traitement de la soumission
         if ($form->isSubmitted() && $form->isValid()) {
-            
+
             $entityManager->persist($user);
             $entityManager->flush();
 

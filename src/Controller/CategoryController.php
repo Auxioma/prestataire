@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\ServiceCategory;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\ServiceRepository;
 use App\Repository\ServiceCategoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity; // <-- IMPORTANT : Pense à ajouter cet import en haut !
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 
 class CategoryController extends AbstractController
 {
@@ -44,11 +46,11 @@ class CategoryController extends AbstractController
      */
     #[Route('/categories/{categorySlug}/{subCategorySlug}', name: 'app_subcategory_services', methods: ['GET'])]
     public function showServices(
-        string $categorySlug, 
-        string $subCategorySlug, 
+        string $categorySlug,
+        string $subCategorySlug,
         ServiceCategoryRepository $categoryRepository
     ): Response {
-        
+
         $subCategory = $categoryRepository->findOneBy([
             'slug' => $subCategorySlug,
             'isActive' => true
@@ -63,4 +65,23 @@ class CategoryController extends AbstractController
             'subCategory' => $subCategory,
         ]);
     }
+
+    // src/Controller/CategoryController.php
+
+#[Route('/api/subcategories/{categoryId}', name: 'api_subcategories', methods: ['GET'])]
+public function getSubCategories(int $categoryId, ServiceCategoryRepository $repo): JsonResponse
+{
+    $subCategories = $repo->findBy(['parent' => $categoryId, 'isActive' => true]);
+    $data = array_map(fn($s) => ['id' => $s->getId(), 'name' => $s->getName()], $subCategories);
+    return $this->json($data);
+}
+
+#[Route('/api/services/{subCategoryId}', name: 'api_services', methods: ['GET'])]
+public function getServices(int $subCategoryId, ServiceRepository $serviceRepo): JsonResponse
+{
+    // Ici on cherche les services liés à cette sous-catégorie
+    $services = $serviceRepo->findBy(['category' => $subCategoryId, 'isActive' => true]);
+    $data = array_map(fn($s) => ['id' => $s->getId(), 'name' => $s->getName()], $services);
+    return $this->json($data);
+}
 }

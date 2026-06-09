@@ -1,0 +1,105 @@
+<div class="tm-settings-container">
+	<div
+		class="tm-main-layout">
+		{# ... sidebar inchangée ... #}
+
+		<div class="tm-settings-content">
+			<h1 class="fw-bold mb-4">Paramètres</h1>
+
+			{# Onglets de navigation #}
+			<ul class="nav nav-tabs border-bottom gap-2 mb-4" role="tablist">
+				<li class="nav-item">
+					<button class="nav-link active" data-bs-toggle="tab" data-bs-target="#services-panel" role="tab">🛠️ Services</button>
+				</li>
+				{# ... autres onglets ... #}
+			</ul>
+
+			{{ form_start(settingsForm, {'attr': {'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+			<div class="tab-content">
+				<div
+					class="tab-pane fade show active" id="services-panel" role="tabpanel">
+
+					{# Bloc Principal des Services #}
+					<div class="card border-0 shadow-sm p-4">
+						<div class="d-flex justify-content-between align-items-center mb-4">
+							<div>
+								<h5 class="fw-bold mb-1">Vos services</h5>
+								<p class="text-muted small mb-0">Gérez les prestations que vous proposez.</p>
+							</div>
+							<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addServiceModal">
+								<i class="fa-solid fa-plus me-2"></i>
+								Ajouter un service
+							</button>
+						</div>
+
+						{# Liste des services existants #}
+						<div class="d-flex flex-column gap-3">
+							{% for service in user.prestataireProfile.services %}
+								<div class="row align-items-center border-bottom pb-3">
+									<div class="col-md-6 fw-bold">{{ service.name }}</div>
+									<div class="col-md-3 text-muted">{{ service.category.name }}</div>
+									<div class="col-md-3 text-end">
+										<button type="button" class="btn btn-sm btn-outline-danger">Supprimer</button>
+									</div>
+								</div>
+							{% else %}
+								<div class="text-center py-5 text-muted">
+									<i class="fa-solid fa-tools fa-2x mb-3"></i>
+									<p>Aucun service configuré. Ajoutez votre première prestation !</p>
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+			{{ form_end(settingsForm) }}
+		</div>
+	</div>
+</div>
+
+{# MODAL D'AJOUT DE SERVICE #}
+<div class="modal fade" id="addServiceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ajouter un service</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            {# Ton contrôleur Stimulus est ici, dans le contenu du modal #}
+            <div class="modal-body" data-controller="chained-selects">
+                <form action="{{ path('app_prestataire_add_service') }}" method="POST">
+
+                    {# 1. Menu Catégories #}
+                    <select data-chained-selects-target="category" 
+                            data-action="change->chained-selects#loadSubCategories" 
+                            class="form-select mb-3" required>
+                        <option value="">Choisir une catégorie principale</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    {# 2. Menu Sous-Catégories #}
+                    <select data-chained-selects-target="subcategory" 
+                            data-action="change->chained-selects#loadServices" 
+                            class="form-select mb-3" disabled required>
+                        <option value="">Choisir une sous-catégorie...</option>
+                    </select>
+
+                    {# 3. Menu Services #}
+                    <select data-chained-selects-target="service" 
+                            name="service_id" 
+                            class="form-select mb-3" disabled required>
+                        <option value="">Choisir un service...</option>
+                    </select>
+
+                    <div class="modal-footer px-0 pb-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Ajouter ce service</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
