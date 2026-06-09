@@ -50,7 +50,7 @@ class Service
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'services')]
+    #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?ServiceCategory $category = null;
 
@@ -196,5 +196,4 @@ class Service
 
         return $this;
     }
-
 }

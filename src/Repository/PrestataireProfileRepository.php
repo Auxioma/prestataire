@@ -22,7 +22,8 @@ class PrestataireProfileRepository extends ServiceEntityRepository
     public function findByService(Service $service): array
     {
         return $this->createQueryBuilder('p')
-            ->join('p.services', 's')
+            ->join('p.prestataireServices', 'ps')
+            ->join('ps.service', 's')
             ->andWhere('s.id = :serviceId')
             ->setParameter('serviceId', $service->getId())
             ->andWhere('p.profileStatus = :status')
