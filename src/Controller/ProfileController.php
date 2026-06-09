@@ -7,8 +7,9 @@ use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
 use App\Form\AccountSettingsType;
 use App\Form\ClientProfileType;
-use App\Repository\ServiceRepository;
+use App\Form\PrestataireServiceType;
 use App\Repository\ServiceCategoryRepository;
+use App\Repository\ServiceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,7 +54,6 @@ class ProfileController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // 💡 AJOUT ICI : On vide les fichiers de l'entité pour éviter l'erreur de sérialisation en session
             if ($profile) {
                 $profile->setLogoFile(null);
                 $profile->setCoverImageFile(null);
@@ -72,6 +72,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
+    // Ajouter un service au profil
     #[Route('/prestataire/service/ajouter', name: 'app_prestataire_add_service', methods: ['POST'])]
     public function addService(Request $request, EntityManagerInterface $em, ServiceRepository $serviceRepo): Response
     {
@@ -105,6 +106,39 @@ class ProfileController extends AbstractController
         }
 
         return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
+    }
+
+    // Suppression d'un service
+    #[Route('/prestataire/service/supprimer/{id}', name: 'app_prestataire_service_delete', methods: ['POST'])]
+    public function delete(Request $request, PrestataireService $ps, EntityManagerInterface $em): Response
+    {
+        if ($this->isCsrfTokenValid('delete' . $ps->getId(), $request->request->get('_token'))) {
+            $em->remove($ps);
+            $em->flush();
+            $this->addFlash('success', 'Le service a bien été retiré de votre profil.');
+        }
+
+        // On redirige vers la route nommée avec l'ancre
+        return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
+    }
+
+    // Edition d'un service
+    #[Route('/prestataire/service/editer/{id}', name: 'app_prestataire_service_edit')]
+    public function edit(Request $request, PrestataireService $ps, EntityManagerInterface $em): Response
+    {
+        $form = $this->createForm(PrestataireServiceType::class, $ps);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'Tarifs mis à jour !');
+            return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
+        }
+
+        return $this->render('prestataire/edit_service.html.twig', [
+            'form' => $form->createView(),
+            'ps' => $ps
+        ]);
     }
 
 

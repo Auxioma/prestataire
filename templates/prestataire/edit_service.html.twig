@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div class="tm-settings-container mt-5">
+		<div class="container col-md-6">
+			<div class="card shadow-sm p-4">
+				<h4 class="mb-4 fw-bold">Modifier le service :
+					{{ ps.service.name }}</h4>
+
+				{{ form_start(form, {'attr': {'class': 'needs-validation'}}) }}
+				<div class="mb-3">
+					{{ form_row(form.prixCatalogue, {'attr': {'class': 'form-control'}}) }}
+				</div>
+				<div class="mb-3">
+					{{ form_row(form.tauxReduction, {'attr': {'class': 'form-control'}}) }}
+				</div>
+
+				<div class="d-flex gap-2 justify-content-end">
+					<a href="{{ path('app_prestataire_settings') }}#services-panel" class="btn btn-secondary">Annuler</a>
+					<button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+				</div>
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</div>
+{% endblock %}

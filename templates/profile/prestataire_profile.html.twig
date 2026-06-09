@@ -140,13 +140,13 @@
 	</div>
 
 <script>
-window.addEventListener('load', function() {
-    if (window.location.hash) {
-        // On cible le bouton dans la liste des onglets par son attribut data-bs-target
-        const targetTab = document.querySelector('button[data-bs-target="' + window.location.hash + '"]');
-        if (targetTab) {
-            // On clique dessus pour forcer l'activation
-            targetTab.click();
+document.addEventListener('DOMContentLoaded', function () {
+    // Vérifie si l'URL contient #services-panel
+    if (window.location.hash === '#services-panel') {
+        const triggerEl = document.querySelector('button[data-bs-target="#services-panel"]');
+        if (triggerEl) {
+            const tab = new bootstrap.Tab(triggerEl);
+            tab.show();
         }
     }
 });
