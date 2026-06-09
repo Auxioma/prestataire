@@ -7,7 +7,7 @@ export default class extends Controller {
 
     connect() {
         // Stimulus convertit automatiquement l'attribut HTML en variable JS disponible via "this.endValue"
-        const targetNumber = this.endValue || 120000; 
+        const targetNumber = this.endValue || 1200; 
         const duration = 1500; 
         const startTime = performance.now();
 

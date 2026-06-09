@@ -50,57 +50,83 @@
 			</div>
 		</div>
 
-<div class="container search-overlap-wrapper">
-    <div class="card border-0 p-2 search-overlap-card bg-white">
-        <form action="#" method="GET" class="row g-2 align-items-center w-100 m-0">
-            
-            {# Champ 1 #}
-            <div class="col-lg-3">
-                <div class="search-field-container d-flex align-items-center gap-3">
-                    <i class="fa-solid fa-magnifying-glass text-tm-service fs-5"></i>
-                    <div class="w-100">
-                        <label class="search-label">Que recherchez-vous ?</label>
-                        <input type="text" class="form-control search-input" placeholder="Ex: Plomberie...">
-                    </div>
-                </div>
-            </div>
 
-            {# Champ 2 #}
-            <div class="col-lg-3 d-flex align-items-center">
-                <div class="search-divider d-none d-lg-block me-3"></div>
-                <div class="search-field-container d-flex align-items-center gap-3 w-100">
-                    <i class="fa-solid fa-briefcase text-tm-service fs-5"></i>
-                    <div class="w-100">
-                        <label class="search-label">Type de prestation</label>
-                        <select class="form-select search-select">
-                            <option selected>Service, Installation...</option>
-                            <option>Dépannage d'urgence</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+		<div class="container search-overlap-wrapper">
+			<div class="card border-0 p-2 search-overlap-card bg-white">
+				<form
+					action="#" method="GET" class="row g-2 align-items-center w-100 m-0">
 
-            {# Champ 3 #}
-            <div class="col-lg-3 d-flex align-items-center">
-                <div class="search-divider d-none d-lg-block me-3"></div>
-                <div class="search-field-container d-flex align-items-center gap-3 w-100">
-                    <i class="fa-solid fa-location-dot text-tm-service fs-5"></i>
-                    <div class="w-100">
-                        <label class="search-label">Où ?</label>
-                        <input type="text" class="form-control search-input" placeholder="Ville, CP...">
-                    </div>
-                </div>
-            </div>
+					{# Champ 1 #}
+					<div class="col-lg-3">
+						<div class="search-field-container d-flex align-items-center gap-3">
+							<i class="fa-solid fa-magnifying-glass text-tm-service fs-5"></i>
+							<div class="w-100">
+								<label class="search-label">Que recherchez-vous ?</label>
+								<input type="text" class="form-control search-input" placeholder="Ex: Plomberie...">
+							</div>
+						</div>
+					</div>
 
-            {# Bouton #}
-            <div class="col-lg-3">
-                <button type="submit" class="btn search-submit-btn w-100">
-                    <i class="fa-solid fa-magnifying-glass me-2"></i> Rechercher
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+					{# Champ 2 #}
+					<div class="col-lg-3 d-flex align-items-center">
+						<div class="search-divider d-none d-lg-block me-3"></div>
+						<div class="search-field-container d-flex align-items-center gap-3 w-100">
+							<i class="fa-solid fa-briefcase text-tm-service fs-5"></i>
+							<div class="w-100">
+								<label class="search-label">Type de prestation</label>
+								<select class="form-select search-select">
+									<option selected>Service, Installation...</option>
+									<option>Dépannage d'urgence</option>
+								</select>
+							</div>
+						</div>
+					</div>
+
+					{# Champ 3 #}
+					<div class="col-lg-3 d-flex align-items-center">
+						<div class="search-divider d-none d-lg-block me-3"></div>
+						<div class="search-field-container d-flex align-items-center gap-3 w-100">
+							<i class="fa-solid fa-location-dot text-tm-service fs-5"></i>
+							<div class="w-100">
+								<label class="search-label">Où ?</label>
+								<input type="text" class="form-control search-input" placeholder="Ville, CP...">
+							</div>
+						</div>
+					</div>
+
+					{# Bouton #}
+					<div class="col-lg-3">
+						<button type="submit" class="btn search-submit-btn w-100">
+							<i class="fa-solid fa-magnifying-glass me-2"></i>
+							Rechercher
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		{# CHIFFRES CLÉS #}
+		<div class="container tm-stats-container">
+			<div class="row g-3">
+				{% set stats = [
+            {'icon': 'fa-users', 'val': '1,200+', 'label': 'Prestataires', 'color': '#4338ca'},
+            {'icon': 'fa-briefcase', 'val': '8,500+', 'label': 'Projets', 'color': '#e11d48'},
+            {'icon': 'fa-star', 'val': '98%', 'label': 'Satisfaction', 'color': '#16a34a'},
+            {'icon': 'fa-bolt', 'val': '- 2h', 'label': 'Réponse', 'color': '#d97706'}
+        ] %}
+
+				{% for stat in stats %}
+					<div class="col-md-3 col-6">
+						<div class="tm-stat-card">
+							<i class="fa-solid {{ stat.icon }} tm-stat-icon" style="color: {{ stat.color }};"></i>
+							<h4 class="tm-stat-value">{{ stat.val }}</h4>
+							<p class="tm-stat-label">{{ stat.label }}</p>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+
 		{# 3. SECTION CATÉGORIES POPULAIRES #}
 		<div class="container main-content-section">
 			<div class="mb-4 text-start">
@@ -122,13 +148,11 @@
     ] %}
 
 			{% set display_categories = raw_categories is not empty ? raw_categories : fallback_cats %}
-
-			{# Agencement global : d-flex avec w-100 pour occuper toute la largeur disponible #}
 			<div
 				class="d-flex align-items-stretch gap-3 w-100">
 
 				{# LE CARROUSEL AUTOMATIQUE (Ajout du min-width: 0 vital pour les métriques JS) #}
-				<div class="tm-categories-slider flex-grow-1 position-relative" data-controller="categories-carousel" data-categories-carousel-step-value="1" style="min-width: 0;">
+				<div class="tm-categories-slider grow position-relative" data-controller="categories-carousel" data-categories-carousel-step-value="1" style="min-width: 0;">
 
 					<div class="tm-categories-viewport" data-categories-carousel-target="viewport">
 						<div class="tm-categories-track" data-categories-carousel-target="track">
@@ -151,7 +175,6 @@
 
 				</div>
 
-				{# LA CARD FIXE (Correction de la classe "Bella" en moins) #}
 				<div style="width: 160px; min-width: 160px; flex-shrink: 0;">
 					<a href="{{ path('app_category_index') }}" class="card h-100 border p-2 text-decoration-none rounded-3 bg-white d-flex flex-column align-items-center justify-content-center gap-2 shadow-sm all-categories-card text-center text-tm-service border-tm-service-light">
 						<div class="rounded-circle bg-tm-service-light d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: rgba(6, 27, 86, 0.05);">
@@ -284,16 +307,77 @@
 			</div>
 		</div>
 
-		{# 4bis. SECTION AVIS CLIENTS (Ajoutée) #}
-		<div class="container my-5">
-			<div class="text-center mb-5">
+		<div class="container my-5 py-5 px-4 tm-step-section" data-controller="scroll-reveal">
+			<div class="text-center mb-5" data-scroll-reveal-target="element">
+				<h2 class="tm-step-title h3">Votre projet commence ici</h2>
+				<div class="tm-step-divider"></div>
+				<p class="text-muted">6 étapes simples pour une collaboration réussie</p>
+			</div>
+
+			<div class="row g-4">
+				{% set steps = [
+            {'icon': 'fa-magnifying-glass', 'label': '1. Recherchez', 'desc': 'Trouvez le pro idéal parmi nos experts.', 'bg': '#f0f4ff', 'color': '#061b56'},
+            {'icon': 'fa-user-plus', 'label': '2. Inscrivez-vous', 'desc': 'Créez votre compte en quelques secondes.', 'bg': '#eef2ff', 'color': '#4338ca'},
+            {'icon': 'fa-address-card', 'label': '3. Complétez', 'desc': 'Remplissez vos besoins sur mesure.', 'bg': '#fdf2f8', 'color': '#db2777'},
+            {'icon': 'fa-sliders', 'label': '4. Comparez', 'desc': 'Analysez les avis en toute confiance.', 'bg': '#fff1f2', 'color': '#e11d48'},
+            {'icon': 'fa-comments', 'label': '5. Échangez', 'desc': 'Discutez avec le prestataire choisi.', 'bg': '#f0fdf4', 'color': '#16a34a'},
+            {'icon': 'fa-circle-check', 'label': '6. Réalisez', 'desc': 'Validez votre projet sereinement.', 'bg': '#fffbeb', 'color': '#d97706'}
+        ] %}
+
+				{% for step in steps %}
+					<div class="col-md-4 col-lg-2" data-scroll-reveal-target="element">
+						<div class="tm-step-card">
+							<div class="tm-step-icon-wrapper" style="background: {{ step.bg }}; color: {{ step.color }};">
+								<i class="fa-solid {{ step.icon }}"></i>
+							</div>
+							<h6 class="tm-step-label">{{ step.label }}</h6>
+							<p class="tm-step-desc">{{ step.desc }}</p>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+
+			<div class="text-center mt-4" data-scroll-reveal-target="element">
+				<a href="/register" class="btn btn-primary tm-step-btn">
+					Créer mon compte maintenant
+				</a>
+			</div>
+		</div>
+
+		{# FAQ #}
+		<div class="container tm-faq-section" data-controller="scroll-reveal">
+			<div class="row align-items-center">
+				<div class="col-lg-1 d-none d-lg-block tm-faq-icon-wrapper" data-scroll-reveal-target="element">
+					<i class="fa-solid fa-circle-question tm-faq-icon"></i>
+				</div>
+				<div class="col-lg-7" data-scroll-reveal-target="element">
+					<h3 class="tm-faq-title">Besoin d'aide pour bien démarrer ?</h3>
+					<p class="tm-faq-description">Notre équipe est là pour vous accompagner à chaque étape de votre projet.</p>
+				</div>
+				<div class="col-lg-4 mt-4 mt-lg-0 tm-faq-actions" data-scroll-reveal-target="element">
+					<a href="{{ path('app_static_page', {'slug': 'aide-faq'}) }}" class="btn btn-outline-light px-4 py-2 me-2">
+						<i class="fa-solid fa-book-open me-2"></i>
+						FAQ
+					</a>
+					<a href="{{ path('app_static_page', {'slug': 'help'}) }}" class="btn btn-light px-4 py-2 fw-bold text-primary">
+						<i class="fa-solid fa-envelope me-2"></i>
+						Support
+					</a>
+				</div>
+			</div>
+		</div>
+
+
+		{# SECTION AVIS CLIENTS (Ajoutée) #}
+		<div class="container my-5" data-controller="scroll-reveal">
+			<div class="text-center mb-5" data-scroll-reveal-target="element">
 				<h2 class="fw-extrabold h4 text-dark">Ce que nos utilisateurs pensent de nous</h2>
 				<p class="text-muted">Plus de 10 000 avis certifiés pour vous aider à choisir en toute sérénité.</p>
 			</div>
 
 			<div class="row g-4">
 				{% for i in 1..3 %}
-					<div class="col-md-4">
+					<div class="col-md-4" data-scroll-reveal-target="element">
 						<div class="card h-100 border-0 shadow-sm p-4 review-card">
 							<div class="d-flex align-items-center mb-3">
 								<img src="https://ui-avatars.com/api/?name=User+{{i}}&background=random" class="rounded-circle reviewer-avatar me-3" alt="Utilisateur">
