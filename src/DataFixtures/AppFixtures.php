@@ -375,13 +375,6 @@ class AppFixtures extends Fixture
             $prestaProfile->setVerificationStatus(VerificationStatusEnum::MANUALLY_VERIFIED);
             $prestaProfile->setSearchVisibility(SearchVisibilityEnum::NORMAL);
 
-            // Liaison dynamique avec la relation ManyToMany
-            foreach ($data['target_services'] as $serviceKey) {
-                if (isset($createdServices[$serviceKey])) {
-                    $prestaProfile->addService($createdServices[$serviceKey]);
-                }
-            }
-
             $manager->persist($prestaProfile);
         }
 
