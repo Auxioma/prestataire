@@ -20,8 +20,8 @@ class HomeController extends AbstractController
 
         return $this->render('home/index.html.twig', [
             'categories' => $categories,
-            'providers' => $prestataireProfileRepository->findBy([], ['averageRating' => 'DESC'], 4)
-            
+            'providers' => $prestataireProfileRepository->findBy([], ['averageRating' => 'DESC'], 4),
+            'bonsPlans' => $prestataireProfileRepository->findWithActivePromotions(4),
         ]);
     }
 }

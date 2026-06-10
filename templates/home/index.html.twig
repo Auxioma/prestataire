@@ -207,10 +207,8 @@
 
 					<div class="row g-3" data-controller="scroll-reveal">
 						{% for provider in providers|slice(0, 4) %}
-							<div
-								class="col-md-6 col-xl-3" data-scroll-reveal-target="element">
-								<div
-									class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden bg-white position-relative provider-card">
+							<div class="col-md-6 col-xl-3" data-scroll-reveal-target="element">
+								<div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden bg-white position-relative provider-card">
 
 									<a href="{{ path('app_prestataire_show', {'slug': provider.slug}) }}" class="stretched-link"></a>
 
@@ -264,6 +262,7 @@
 					</div>
 				</div>
 
+
 				{# SIDEBAR REASSURANCE #}
 				<div class="col-xl-3 col-lg-4 text-start">
 					<div class="card border-0 shadow-sm p-4 rounded-4 h-100 reassurance-aside d-flex flex-column">
@@ -312,6 +311,71 @@
 			</div>
 		</div>
 
+
+		{# BON PLAN #}
+		<div class="container my-5">
+			<h2 class="fw-extrabold h4 mb-0 text-dark tracking-tight mb-4">
+				Nos Bons Plans
+				<span class="text-tm-accent">
+					<i class="fa-solid fa-percent"></i>
+				</span>
+			</h2>
+
+			<div class="bons-plans-grid">
+				{% for prestataire in bonsPlans %}
+					{% for ps in prestataire.prestataireServices %}
+						{% if ps.tauxReduction is not null and ps.tauxReduction > 0 %}
+
+							{# Carte cliquable #}
+							<a href="{{ path('app_prestataire_show', {slug: prestataire.slug}) }}" class="card-bon-plan">
+
+								<div class="card-img-wrapper">
+									<img src="{{ asset('uploads/logos/' ~ prestataire.logo) }}" alt="{{ prestataire.companyName }}">
+									<div class="badge-promo">-{{ ps.tauxReduction|number_format(0) }}%</div>
+									<button class="btn btn-light favorite-btn border-0 shadow-sm">
+										<i class="fa-regular fa-heart text-muted"></i>
+									</button>
+								</div>
+
+								<div class="service-icon">⚡</div>
+
+								<div class="card-content">
+									<h3 style="margin: 5px 0; font-size: 18px; color: #1a1a4a;">{{ prestataire.companyName }}</h3>
+									<p style="margin: 0; color: #555; font-size: 14px;">{{ ps.service.name }}</p>
+
+									<div class="prix-container">
+										<span class="ancien-prix">{{ ps.prixCatalogue|number_format(0, ',', ' ') }}
+											€</span>
+										<span class="nouveau-prix">
+											{{ (ps.prixCatalogue * (1 - ps.tauxReduction / 100))|number_format(0, ',', ' ') }}
+											€
+										</span>
+									</div>
+
+									<div class="meta-info">
+										<p style="margin: 5px 0;">📍
+											{{ prestataire.city }}
+											({{ prestataire.postalCode|slice(0, 2) }})</p>
+										<p style="margin: 5px 0; color: #f59f00; font-weight: bold;">
+											★
+											{{ prestataire.averageRating }}
+											<span style="color:#666; font-weight: normal;">({{ prestataire.reviewsCount }}
+												avis)</span>
+										</p>
+									</div>
+								</div>
+							</a>
+
+						{% endif %}
+					{% endfor %}
+				{% else %}
+					<p>Aucune offre promotionnelle pour le moment.</p>
+				{% endfor %}
+			</div>
+		</div>
+
+
+		{# STEPS #}
 		<div class="container my-5 py-5 px-4 tm-step-section" data-controller="scroll-reveal">
 			<div class="text-center mb-5" data-scroll-reveal-target="element">
 				<h2 class="tm-step-title h3">Votre projet commence ici</h2>

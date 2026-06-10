@@ -436,3 +436,56 @@
 .tm-step-btn:hover {
     background-color: #1e3a8a;
 }
+
+/* --- SECTION BONS PLANS --- */
+.bons-plans-section {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+}
+
+/* Grille de disposition */
+.bons-plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+/* Base de la carte */
+.card-bon-plan {
+    border: 1px solid #e0e0e0;
+    border-radius: 15px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    position: relative;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Effet Sexy Hover */
+.card-bon-plan:hover {
+    transform: scale(1.03);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.card-bon-plan .fav-icon {
+    transition: color 0.2s;
+}
+
+.card-bon-plan:hover .fav-icon {
+    color: #ff4d6d !important;
+}
+
+/* Éléments internes */
+.card-img-wrapper { position: relative; height: 180px; background-color: #eee; }
+.card-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+.badge-promo { position: absolute; top: 10px; left: 10px; background: #3b5bdb; color: #fff; padding: 5px 12px; border-radius: 5px; font-weight: bold; font-size: 14px; }
+.fav-icon { position: absolute; top: 10px; right: 10px; cursor: pointer; color: white; font-size: 24px; text-shadow: 0 0 5px rgba(0,0,0,0.3); }
+.service-icon { width: 50px; height: 50px; background: #3b5bdb; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: -25px 0 0 15px; border: 4px solid #fff; color: white; font-size: 24px; z-index: 10; position: relative; }
+.card-content { padding: 15px; padding-top: 5px; }
+.prix-container { margin: 10px 0; display: flex; align-items: baseline; gap: 10px; }
+.ancien-prix { text-decoration: line-through; color: #999; font-size: 14px; }
+.nouveau-prix { font-size: 20px; font-weight: bold; color: #1a1a4a; }
+.meta-info { margin-top: 10px; color: #666; font-size: 13px; }

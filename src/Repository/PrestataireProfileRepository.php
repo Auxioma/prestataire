@@ -46,4 +46,14 @@ class PrestataireProfileRepository extends ServiceEntityRepository
             ->andWhere('p.profileStatus = :status')
             ->setParameter('status', PrestataireProfileStatusEnum::ACTIVE);
     }
+
+    public function findWithActivePromotions(int $limit = 4): array
+{
+    return $this->createQueryBuilder('p')
+        ->innerJoin('p.prestataireServices', 'ps')
+        ->where('ps.tauxReduction > 0')
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+}
 }
