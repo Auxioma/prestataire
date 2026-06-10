@@ -1,11 +1,19 @@
+{{ form_start(companyForm, {
+    attr: {
+        novalidate: 'novalidate',
+        class: 'tm-form-container',
+        'data-turbo': 'false'
+    }
+}) }}
+
 <div class="tm-company-shell">
     <div class="tm-company-header mb-4">
         <h2 class="tm-company-page-title mb-1">Mon entreprise</h2>
-        <p class="tm-company-page-subtitle mb-0">Gerez les informations et documents de votre structure juridique</p>
+        <p class="tm-company-page-subtitle mb-0">Gérez les informations et documents de votre structure juridique</p>
     </div>
 
     <div class="row g-4 match-height">
-        {# Card 1 : Informations Légales & Identité (incluant Logo et Couverture l'un au-dessus de l'autre) #}
+        {# Card 1 : Informations Légales & Identité #}
         <div class="col-lg-6">
             <section class="card tm-company-card p-4 h-100 d-flex flex-column justify-content-between">
                 <div>
@@ -14,55 +22,39 @@
                     </div>
 
                     <div class="d-flex flex-column gap-3">
-                        {# Première rangée : Noms #}
                         <div class="row g-3">
                             <div class="col-sm-6 tm-form-row">
-                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.companyName) }}</label>
-                                {{ form_widget(settingsForm.prestataireProfile.companyName, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(settingsForm.prestataireProfile.companyName) }}
+                                {{ form_row(companyForm.companyName) }}
                             </div>
                             <div class="col-sm-6 tm-form-row">
-                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.legalName) }}</label>
-                                {{ form_widget(settingsForm.prestataireProfile.legalName, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(settingsForm.prestataireProfile.legalName) }}
+                                {{ form_row(companyForm.legalName) }}
                             </div>
                         </div>
 
-                        {# Deuxième rangée : Forme Juridique, SIREN et SIRET #}
                         <div class="row g-3 tm-align-inputs-bottom">
                             <div class="col-sm-4 tm-form-row">
-                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.structureType) }}</label>
-                                {{ form_widget(settingsForm.prestataireProfile.structureType, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(settingsForm.prestataireProfile.structureType) }}
+                                {{ form_row(companyForm.structureType) }}
                             </div>
                             <div class="col-sm-4 tm-form-row">
-                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.siren) }}</label>
-                                {{ form_widget(settingsForm.prestataireProfile.siren, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(settingsForm.prestataireProfile.siren) }}
+                                {{ form_row(companyForm.siren) }}
                             </div>
                             <div class="col-sm-4 tm-form-row">
-                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.siret) }}</label>
-                                {{ form_widget(settingsForm.prestataireProfile.siret, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(settingsForm.prestataireProfile.siret) }}
+                                {{ form_row(companyForm.siret) }}
                             </div>
                         </div>
 
-                        {# Troisième rangée : TVA #}
                         <div class="row g-3">
                             <div class="col-12 tm-form-row">
-                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.vatNumber) }}</label>
-                                {{ form_widget(settingsForm.prestataireProfile.vatNumber, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(settingsForm.prestataireProfile.vatNumber) }}
+                                {{ form_row(companyForm.vatNumber) }}
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {# BLOC MÉDIAS (LOGO & COUVERTURE) EMPILÉS #}
+                {# BLOC MÉDIAS #}
                 <div class="tm-company-medias-block mt-4 pt-3 border-top">
                     <div class="d-flex flex-column gap-4">
-                        
-                        {# Ligne Logo #}
+
                         <div class="tm-media-row">
                             <label class="form-label fw-bold mb-2">Logo de l'entreprise</label>
                             <div class="d-flex align-items-center gap-3 w-100">
@@ -73,23 +65,19 @@
                                         ⚡
                                     {% endif %}
                                 </div>
+
                                 <div class="grow">
                                     <div class="tm-vich-custom-container">
-                                        {{ form_widget(settingsForm.prestataireProfile.logoFile, {
-                                            'required': false,
-                                            'allow_delete': false,
-                                            'download_uri': false,
-                                            'image_uri': false,
-                                            'attr': {'class': 'form-control form-control-sm mb-1'}
+                                        {{ form_widget(companyForm.logoFile, {
+                                            attr: {'class': 'form-control form-control-sm mb-1'}
                                         }) }}
                                     </div>
-                                    {{ form_errors(settingsForm.prestataireProfile.logoFile) }}
+                                    {{ form_errors(companyForm.logoFile) }}
                                     <div class="text-muted fs-7">Max 2 Mo. (PNG, JPG, WEBP)</div>
                                 </div>
                             </div>
                         </div>
 
-                        {# Ligne Image de Couverture #}
                         <div class="tm-media-row">
                             <label class="form-label fw-bold mb-2">Image de couverture</label>
                             <div class="d-flex align-items-center gap-3 w-100">
@@ -100,18 +88,15 @@
                                         🖼️
                                     {% endif %}
                                 </div>
+
                                 <div class="grow">
                                     <div class="tm-vich-custom-container">
-                                        {{ form_widget(settingsForm.prestataireProfile.coverImageFile, {
-                                            'required': false,
-                                            'allow_delete': false,
-                                            'download_uri': false,
-                                            'image_uri': false,
-                                            'attr': {'class': 'form-control form-control-sm mb-1'}
+                                        {{ form_widget(companyForm.coverImageFile, {
+                                            attr: {'class': 'form-control form-control-sm mb-1'}
                                         }) }}
                                     </div>
-                                    {{ form_errors(settingsForm.prestataireProfile.coverImageFile) }}
-                                    <div class="text-muted fs-7">Max 3 Mo. Format Paysage</div>
+                                    {{ form_errors(companyForm.coverImageFile) }}
+                                    <div class="text-muted fs-7">Max 3 Mo. Format paysage</div>
                                 </div>
                             </div>
                         </div>
@@ -132,45 +117,34 @@
                     <div class="d-flex flex-column gap-3">
                         <div class="row g-3">
                             <div class="col-12 tm-form-row">
-                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.address) }}</label>
-                                {{ form_widget(settingsForm.prestataireProfile.address, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(settingsForm.prestataireProfile.address) }}
+                                {{ form_row(companyForm.address) }}
                             </div>
                         </div>
+
                         <div class="row g-3">
                             <div class="col-12 tm-form-row">
-                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.addressComplement) }}</label>
-                                {{ form_widget(settingsForm.prestataireProfile.addressComplement, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(settingsForm.prestataireProfile.addressComplement) }}
+                                {{ form_row(companyForm.addressComplement) }}
                             </div>
                         </div>
+
                         <div class="row g-3">
                             <div class="col-sm-4 tm-form-row">
-                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.postalCode) }}</label>
-                                {{ form_widget(settingsForm.prestataireProfile.postalCode, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(settingsForm.prestataireProfile.postalCode) }}
+                                {{ form_row(companyForm.postalCode) }}
                             </div>
                             <div class="col-sm-4 tm-form-row">
-                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.city) }}</label>
-                                {{ form_widget(settingsForm.prestataireProfile.city, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(settingsForm.prestataireProfile.city) }}
+                                {{ form_row(companyForm.city) }}
                             </div>
                             <div class="col-sm-4 tm-form-row">
-                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.country) }}</label>
-                                {{ form_widget(settingsForm.prestataireProfile.country, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(settingsForm.prestataireProfile.country) }}
+                                {{ form_row(companyForm.country) }}
                             </div>
                         </div>
+
                         <div class="row g-3">
                             <div class="col-sm-6 tm-form-row">
-                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.phonePublic) }}</label>
-                                {{ form_widget(settingsForm.prestataireProfile.phonePublic, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(settingsForm.prestataireProfile.phonePublic) }}
+                                {{ form_row(companyForm.phonePublic) }}
                             </div>
                             <div class="col-sm-6 tm-form-row">
-                                <label class="form-label">{{ form_label(settingsForm.prestataireProfile.phonePrivate) }}</label>
-                                {{ form_widget(settingsForm.prestataireProfile.phonePrivate, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(settingsForm.prestataireProfile.phonePrivate) }}
+                                {{ form_row(companyForm.phonePrivate) }}
                             </div>
                         </div>
                     </div>
@@ -178,7 +152,9 @@
 
                 <div class="tm-company-info-note mt-4 p-3 rounded-3">
                     <div class="small fw-bold mb-1" style="color: var(--tm-service, #2046D8);">🛡️ Visibilité des données</div>
-                    <p class="mb-0 fs-7 text-muted">Ces coordonnées permettent à vos futurs clients de vous joindre directement pour planifier les interventions.</p>
+                    <p class="mb-0 fs-7 text-muted">
+                        Ces coordonnées permettent à vos futurs clients de vous joindre directement pour planifier les interventions.
+                    </p>
                 </div>
             </section>
         </div>
@@ -244,6 +220,7 @@
                                 ⚡
                             {% endif %}
                         </div>
+
                         <h4 class="tm-company-public-title mb-1 fw-bold text-dark pt-4" style="font-size: 1.25rem;">
                             {{ user.prestataireProfile.companyName|default('Dupont Électricité') }}
                         </h4>
@@ -267,10 +244,11 @@
         </div>
     </div>
 
-    {# Actions du bas #}
     <div class="mt-4 pt-3 border-top d-flex justify-content-center">
         <button type="submit" class="btn tm-company-save-btn px-5 py-3 fw-bold col-12 col-md-auto">
             Enregistrer les informations de l'entreprise
         </button>
     </div>
 </div>
+
+{{ form_end(companyForm, {'render_rest': false}) }}

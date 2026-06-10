@@ -1,153 +1,382 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Paramètres - TrouveMoi
-{% endblock %}
+{% block title %}Paramètres - TrouveMoi{% endblock %}
 
 {% block body %}
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <div class="tm-settings-container">
+        <div class="tm-main-layout">
+            {# ================= SIDEBAR ================= #}
+            <aside class="tm-settings-sidebar">
+                <div class="card border-0 shadow-sm p-3">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <img
+                            src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}"
+                            alt="Avatar"
+                            class="rounded-circle tm-sidebar-avatar"
+                        >
+                        <div>
+                            <div class="fw-bold">{{ user.firstName }} {{ user.lastName }}</div>
+                            <div class="text-muted small">
+                                {{ user.prestataireProfile.metier|default('Prestataire') }}
+                            </div>
+                        </div>
+                    </div>
 
-	<div class="tm-settings-container">
-		<div
-			class="tm-main-layout">
+                    <div class="small text-muted mb-2">Paramètres du compte</div>
 
-			{# Sidebar #}
-			<div class="tm-settings-sidebar">
-				<div class="w-100">
-					<div class="text-center mb-4 p-3 rounded-3 bg-light-subtle border">
-						<div class="position-relative d-inline-block mb-2">
-							<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle border tm-sidebar-avatar" alt="Avatar">
-						</div>
-						<h6 class="mb-0 fw-semibold">{{ user.firstName }}
-							{{ user.lastName }}</h6>
-						<p class="mb-2 small text-muted">{{ user.prestataireProfile.metier|default('Plombier') }}</p>
-						<span class="badge bg-success-subtle text-success px-2 py-1">✓ Vérifié</span>
-					</div>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-light text-start active" data-bs-toggle="tab" data-bs-target="#profile-panel" type="button">
+                            👤 Mon profil
+                        </button>
+                        <button class="btn btn-light text-start" data-bs-toggle="tab" data-bs-target="#company-panel" type="button">
+                            🏢 Mon entreprise
+                        </button>
+                        <button class="btn btn-light text-start" data-bs-toggle="tab" data-bs-target="#services-panel" type="button">
+                            🛠️ Services
+                        </button>
+                        <button class="btn btn-light text-start" data-bs-toggle="tab" data-bs-target="#zones-panel" type="button">
+                            📍 Zones
+                        </button>
+                        <button class="btn btn-light text-start" data-bs-toggle="tab" data-bs-target="#dispo-panel" type="button">
+                            📅 Disponibilités
+                        </button>
+                        <button class="btn btn-light text-start" data-bs-toggle="tab" data-bs-target="#notif-panel" type="button">
+                            🔔 Notifications
+                        </button>
+                        <button class="btn btn-light text-start" data-bs-toggle="tab" data-bs-target="#security-panel" type="button">
+                            🛡️ Sécurité
+                        </button>
+                    </div>
+                </div>
+            </aside>
 
-					<ul class="nav tm-settings-nav flex-column gap-1">
-						<li class="nav-item">
-							<a href="#" class="nav-link">
-								<span>📋</span>
-								Tableau de bord</a>
-						</li>
-						<li class="nav-item">
-							<a href="#" class="nav-link">
-								<span>📥</span>
-								Mes demandes</a>
-						</li>
-						<li class="nav-item">
-							<a href="#" class="nav-link">
-								<span>💼</span>
-								Mes prestations</a>
-						</li>
-						<li class="nav-item">
-							<a href="#" class="nav-link">
-								<span>⭐</span>
-								Mes avis</a>
-						</li>
-						<li class="nav-item">
-							<a href="#" class="nav-link active">
-								<span>⚙️</span>
-								Paramètres</a>
-						</li>
-					</ul>
-				</div>
+            {# ================= CONTENU ================= #}
+            <div class="tm-settings-content">
+                <h1 class="fw-bold mb-1">Paramètres</h1>
+                <p class="text-muted mb-4">Gérez votre profil, vos services et vos préférences.</p>
 
-				<div class="tm-sidebar-parrainage-card w-100 text-center rounded-3 mt-auto">
-					<p class="fw-medium mb-2 text-white">🎁 Parrainez un collègue<br><span class="fw-normal text-white-50">Gagnez 50€ de crédit</span>
-					</p>
-					<button class="btn btn-sm btn-light w-100 fw-semibold">Parrainer maintenant</button>
-				</div>
-			</div>
+                {# Flash messages #}
+                {% for label in ['success', 'warning', 'danger', 'error'] %}
+                    {% for message in app.flashes(label) %}
+                        <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show mb-4" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
 
-			{# Zone de contenu principal #}
-			<div class="tm-settings-content">
-				<div class="mb-4">
-					<h1 class="fw-bold mb-1">Paramètres</h1>
-					<p class="text-muted mb-0">Gérez votre profil, vos informations et vos préférences</p>
-				</div>
+                {# Tabs top nav #}
+                <ul class="nav nav-tabs border-bottom gap-2 mb-4" id="settingsTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-panel" type="button" role="tab">
+                            👤 Mon profil
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#company-panel" type="button" role="tab">
+                            🏢 Mon entreprise
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#services-panel" type="button" role="tab">
+                            🛠️ Services
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#zones-panel" type="button" role="tab">
+                            📍 Zones
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#dispo-panel" type="button" role="tab">
+                            📅 Disponibilités
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#notif-panel" type="button" role="tab">
+                            🔔 Notifications
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#security-panel" type="button" role="tab">
+                            🛡️ Sécurité
+                        </button>
+                    </li>
+                </ul>
 
-				{% for label in ['success', 'warning'] %}
-					{% for message in app.flashes(label) %}
-						<div class="alert alert-{{ label == 'warning' ? 'warning' : 'success' }} alert-dismissible fade show mb-4" role="alert">
-							{{ message }}
-							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-						</div>
-					{% endfor %}
-				{% endfor %}
+                <div class="tab-content" id="settingsTabsContent">
+                    {# ================= PROFILE PANEL ================= #}
+                    <div class="tab-pane fade show active" id="profile-panel" role="tabpanel">
+                        <div class="row g-4 align-items-start">
+                            {# ================= COLONNE GAUCHE ================= #}
+                            <div class="col-lg-4 d-flex flex-column gap-4">
+                                <div class="card tm-card p-4">
+                                    <h4 class="tm-card-title mb-4">Informations personnelles</h4>
 
-				<div class="mb-4">
-					<ul class="nav nav-tabs border-bottom gap-2 tm-settings-nav flex-nowrap overflow-x-auto pb-1" id="settingsTabs" role="tablist">
-						<li class="nav-item">
-							<button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-panel" role="tab">👤 Mon profil</button>
-						</li>
-						<li class="nav-item">
-							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#company-panel" role="tab">🏢 Mon entreprise</button>
-						</li>
-						<li class="nav-item">
-							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#services-panel" role="tab">🛠️ Services</button>
-						</li>
-						<li class="nav-item">
-							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#zones-panel" role="tab">📍 Zones</button>
-						</li>
-						<li class="nav-item">
-							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#dispo-panel" role="tab">📅 Disponibilités</button>
-						</li>
-						<li class="nav-item">
-							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#notif-panel" role="tab">🔔 Notifications</button>
-						</li>
-						<li class="nav-item">
-							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#security-panel" role="tab">🛡️ Sécurité</button>
-						</li>
-					</ul>
-				</div>
+                                    {{ form_start(userForm, {
+                                        attr: {
+                                            novalidate: 'novalidate',
+                                            class: 'tm-form-container',
+                                            'data-turbo': 'false'
+                                        }
+                                    }) }}
 
-				{{ form_start(settingsForm, {'attr': {'novalidate': 'novalidate', 'class': 'tm-form-container', 'enctype': 'multipart/form-data'}}) }}
-				<div class="tab-content" id="settingsTabsContent">
-					<div class="tab-pane fade show active" id="profile-panel" role="tabpanel">{{ include('settings/_prestataire_profile_tab.html.twig') }}</div>
-					<div class="tab-pane fade" id="company-panel" role="tabpanel">{{ include('settings/_prestataire_company_tab.html.twig') }}</div>
-					<div class="tab-pane fade" id="services-panel" role="tabpanel">{{ include('settings/_prestataire_services_tab.html.twig') }}</div>
-					<div class="tab-pane fade" id="zones-panel" role="tabpanel">
-						<div class="card tm-card p-4">
-							<h4>📍 Zones</h4>
-						</div>
-					</div>
-					<div class="tab-pane fade" id="dispo-panel" role="tabpanel">
-						<div class="card tm-card p-4">
-							<h4>📅 Disponibilités</h4>
-						</div>
-					</div>
-					<div class="tab-pane fade" id="notif-panel" role="tabpanel">
-						<div class="card tm-card p-4">
-							<h4>🔔 Notifications</h4>
-						</div>
-					</div>
-					<div class="tab-pane fade" id="security-panel" role="tabpanel">
-						<div class="card tm-card p-4">
-							<h4>🛡️ Sécurité</h4>
-						</div>
-					</div>
-				</div>
-				{{ form_end(settingsForm) }}
-			</div>
-		</div>
-	</div>
+                                        <div class="mb-4 text-center p-3 tm-profile-photo-box">
+                                            <label class="form-label d-block text-start mb-3">Photo de profil</label>
+                                            <img
+                                                src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}"
+                                                class="rounded-circle mb-3 shadow-sm"
+                                                alt="Avatar"
+                                            >
+                                            <button type="button" class="btn btn-outline-primary btn-sm d-block mx-auto fw-medium px-3">
+                                                Modifier la photo
+                                            </button>
+                                            <small class="text-muted d-block mt-2 fs-7">PNG, JPG ou GIF. Max 2 Mo.</small>
+                                        </div>
 
-	<script>
-		window.addEventListener('DOMContentLoaded', () => {
-const hash = window.location.hash;
-if (hash) {
-const triggerEl = document.querySelector (`button[data-bs-target="${hash}"]`);
-if (triggerEl) { // Désactive l'onglet par défaut (Profil)
-document.querySelector('button[data-bs-target="#profile-panel"]').classList.remove('active');
-document.querySelector('#profile-panel').classList.remove('show', 'active');
+                                        <div class="mb-3 tm-form-row">
+                                            {{ form_row(userForm.firstName) }}
+                                        </div>
+                                        <div class="mb-3 tm-form-row">
+                                            {{ form_row(userForm.lastName) }}
+                                        </div>
+                                        <div class="mb-3 tm-form-row">
+                                            {{ form_row(userForm.phoneNumber) }}
+                                        </div>
 
-// Active l'onglet de l'ancre
-triggerEl.classList.add('active');
-document.querySelector(hash).classList.add('show', 'active');
-}
-}
-});
-	</script>
+                                        <div class="row mt-4">
+                                            <div class="col-12 d-flex justify-content-center">
+                                                <button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold col-12 col-md-auto">
+                                                    Enregistrer les informations personnelles
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    {{ form_end(userForm) }}
+                                </div>
+
+                                <div class="card tm-card p-4">
+                                    <h4 class="tm-card-title mb-3">Aperçu de votre profil public</h4>
+
+                                    <div class="p-3 border rounded-4 bg-white shadow-sm text-center position-relative overflow-hidden">
+                                        {% if user.prestataireProfile and user.prestataireProfile.coverImage %}
+                                            <div
+                                                class="position-absolute start-0 top-0 w-100 tm-public-cover tm-public-cover--image"
+                                                style="background-image: url('{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}');"
+                                            ></div>
+                                        {% else %}
+                                            <div class="position-absolute start-0 top-0 w-100 tm-public-cover tm-public-cover--fallback"></div>
+                                        {% endif %}
+
+                                        <div class="position-relative pt-4">
+                                            {% if user.prestataireProfile and user.prestataireProfile.logo %}
+                                                <img
+                                                    src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}"
+                                                    class="rounded-circle border-3 border-white shadow-sm mb-2 tm-public-avatar"
+                                                    alt="Logo entreprise"
+                                                >
+                                            {% else %}
+                                                <img
+                                                    src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80' }}"
+                                                    class="rounded-circle border-3 border-white shadow-sm mb-2 tm-public-avatar"
+                                                    alt="Aperçu avatar"
+                                                >
+                                            {% endif %}
+
+                                            <h5 class="mb-1 fw-bold text-dark">
+                                                {{ user.prestataireProfile.companyName|default(user.firstName ~ ' ' ~ user.lastName) }}
+                                                <span class="badge bg-primary ms-1 fs-7">Vérifié</span>
+                                            </h5>
+
+                                            <p class="text-muted mb-3 fs-6">
+                                                <span class="fw-medium text-dark">
+                                                    {{ user.prestataireProfile.metier|default('Plombier') }}
+                                                </span><br>
+                                                ⭐
+                                                {{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0' }}
+                                                ({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }} avis)
+                                                <br>
+                                                <span class="tm-profile-preview-location">📍 {{ user.prestataireProfile.city|default('Libourne') }} et alentours</span>
+                                            </p>
+
+                                            <a href="#" class="btn btn-outline-secondary btn-sm rounded-3 fw-medium w-100 py-2">
+                                                Voir le profil public ↗
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {# ================= COLONNE DROITE ================= #}
+                            <div class="col-lg-8 d-flex flex-column gap-4">
+                                <div class="card tm-card p-4">
+                                    {{ form_start(publicProfileForm, {
+                                        attr: {
+                                            novalidate: 'novalidate',
+                                            class: 'tm-form-container',
+                                            'data-turbo': 'false'
+                                        }
+                                    }) }}
+
+                                        <div class="row g-4">
+                                            <div class="col-lg-7">
+                                                <h4 class="tm-card-title mb-4">À propos de vous</h4>
+
+                                                <div class="mb-3 tm-form-row">
+                                                    {{ form_row(publicProfileForm.metier) }}
+                                                </div>
+
+                                                <div class="mb-3 tm-form-row">
+                                                    {{ form_row(publicProfileForm.shortDescription) }}
+                                                </div>
+
+                                                <div class="mb-3 tm-form-row">
+                                                    {{ form_row(publicProfileForm.description) }}
+                                                </div>
+
+                                                <div class="mb-3 tm-form-row">
+                                                    {{ form_row(publicProfileForm.experience) }}
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label mb-2">Certifications</label>
+                                                    <div class="d-flex flex-wrap gap-2 pt-1">
+                                                        <button type="button" class="btn btn-light btn-md border border-dashed text-primary fw-medium px-3">
+                                                            + Ajouter
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-5">
+                                                <h4 class="tm-card-title mb-4">Réseaux sociaux & liens</h4>
+
+                                                <div class="mb-3 tm-form-row">
+                                                    {{ form_row(publicProfileForm.website) }}
+                                                </div>
+
+                                                <div class="mb-3 tm-form-row">
+                                                    {{ form_row(publicProfileForm.facebookUrl) }}
+                                                </div>
+
+                                                <div class="mb-3 tm-form-row">
+                                                    {{ form_row(publicProfileForm.instagramUrl) }}
+                                                </div>
+
+                                                <div class="mb-3 tm-form-row">
+                                                    {{ form_row(publicProfileForm.linkedinUrl) }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-4">
+                                            <div class="col-12 d-flex justify-content-center">
+                                                <button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold col-12 col-md-auto">
+                                                    Enregistrer le profil public
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    {{ form_end(publicProfileForm) }}
+                                </div>
+
+                                <div class="row g-4">
+                                    <div class="col-lg-6">
+                                        <div class="card tm-card p-4 h-100">
+                                            <h5 class="fw-bold mb-3 fs-5 text-dark">Statut du compte</h5>
+                                            <div class="p-3 mb-0 tm-status-box">
+                                                <div class="fw-bold small tm-status-success">✓ Compte vérifié</div>
+                                                <div class="fs-7 text-muted mt-1">Félicitations ! Votre compte est validé.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="card tm-card p-4 h-100">
+                                            <h5 class="fw-bold mb-2 fs-5 text-dark">Note moyenne</h5>
+                                            <div class="d-flex align-items-baseline gap-2">
+                                                <span class="display-5 fw-bold text-dark">
+                                                    {{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0' }}
+                                                </span>
+                                                <span class="text-muted fs-5">/ 5</span>
+                                            </div>
+
+                                            <div class="my-2 fs-4 tm-rating-stars">
+                                                {% if user.prestataireProfile and user.prestataireProfile.averageRating %}
+                                                    {% for i in 1..5 %}
+                                                        {{ i <= user.prestataireProfile.averageRating ? '★' : '☆' }}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    ☆☆☆☆☆
+                                                {% endif %}
+                                            </div>
+
+                                            <small class="text-muted fw-medium">
+                                                ({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }} avis)
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# ================= ENTREPRISE ================= #}
+                    <div class="tab-pane fade" id="company-panel" role="tabpanel">
+                        {{ include('settings/_prestataire_company_tab.html.twig', {
+                            companyForm: companyForm,
+                            user: user
+                        }) }}
+                    </div>
+
+                    {# ================= SERVICES ================= #}
+                    <div class="tab-pane fade" id="services-panel" role="tabpanel">
+                        {{ include('settings/_prestataire_services_tab.html.twig') }}
+                    </div>
+
+                    {# ================= AUTRES TABS ================= #}
+                    <div class="tab-pane fade" id="zones-panel" role="tabpanel">
+                        <div class="card tm-card p-4">
+                            <h4>📍 Zones</h4>
+                            <p class="text-muted mb-0">Contenu à venir.</p>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="dispo-panel" role="tabpanel">
+                        <div class="card tm-card p-4">
+                            <h4>📅 Disponibilités</h4>
+                            <p class="text-muted mb-0">Contenu à venir.</p>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="notif-panel" role="tabpanel">
+                        <div class="card tm-card p-4">
+                            <h4>🔔 Notifications</h4>
+                            <p class="text-muted mb-0">Contenu à venir.</p>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="security-panel" role="tabpanel">
+                        <div class="card tm-card p-4">
+                            <h4>🛡️ Sécurité</h4>
+                            <p class="text-muted mb-0">Contenu à venir.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const hash = window.location.hash;
+            if (!hash) return;
+
+            const trigger = document.querySelector(`[data-bs-target="${hash}"]`);
+            if (trigger) {
+                const tab = new bootstrap.Tab(trigger);
+                tab.show();
+            }
+        });
+    </script>
 {% endblock %}

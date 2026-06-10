@@ -3,46 +3,38 @@
 namespace App\Form;
 
 use App\Entity\User;
-use App\Form\PrestataireProfileType;
-use App\Form\ClientProfileType;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AccountSettingsType extends AbstractType
+class UserProfileTabType extends AbstractType
 {
-    public function __construct(private Security $security)
-    {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Ex: Jean']
+                'attr' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Ex: Jean',
+                ],
             ])
             ->add('lastName', TextType::class, [
                 'label' => 'Nom',
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Ex: Dupont']
+                'attr' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Ex: Dupont',
+                ],
             ])
             ->add('phoneNumber', TextType::class, [
                 'label' => 'Numéro de téléphone',
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Ex: 06 12 34 56 78'],
-                'required' => false 
-            ])        ;
-
-        if ($this->security->isGranted('ROLE_PRESTATAIRE')) {
-            $builder->add('prestataireProfile', PrestatairePublicProfileTabType::class, [
-                'label' => false,
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Ex: 06 12 34 56 78',
+                ],
             ]);
-        } else {
-            $builder->add('clientProfile', ClientProfileType::class, [
-                'label' => false,
-            ]);
-        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void

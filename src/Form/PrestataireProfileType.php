@@ -46,12 +46,12 @@ class PrestataireProfileType extends AbstractType
             ])
 
             // --- IMAGES DU PROFIL PROFESSIONNEL ---
-            ->add('logoFile', VichImageType::class, [ 
+            ->add('logoFile', VichImageType::class, [
                 'label' => 'Logo de l\'entreprise',
                 'required' => false,
                 'allow_delete' => true,
                 'download_uri' => false,
-                'image_uri'=> false,
+                'image_uri' => false,
                 'constraints' => [
                     new Image(
                         maxSize: '2M',
@@ -60,12 +60,12 @@ class PrestataireProfileType extends AbstractType
                     )
                 ],
             ])
-            ->add('coverImageFile', VichImageType::class, [ 
+            ->add('coverImageFile', VichImageType::class, [
                 'label' => 'Image de couverture (Bannière)',
                 'required' => false,
                 'allow_delete' => true,
                 'download_uri' => false,
-                'image_uri'=> false,
+                'image_uri' => false,
                 'constraints' => [
                     new Image(
                         maxSize: '3M',

@@ -1,31 +1,43 @@
-.tm-card{
-    border:none !important;
-    border-radius:16px;
-    background:#fff;
+/* =========================
+   CARDS & PANELS
+========================= */
+
+.tm-card,
+.tm-company-card {
+    border: none !important;
+    border-radius: 16px !important;
+    background: #fff !important;
     box-shadow:
-        0 1px 2px rgba(15,23,42,.04),
-        0 8px 24px rgba(15,23,42,.05);
+        0 1px 2px rgba(15, 23, 42, 0.04),
+        0 8px 24px rgba(15, 23, 42, 0.05);
 }
 
-.tm-card-title{
-    font-size:1.25rem;
-    font-weight:700;
-    color:#0F172A;
+.tm-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0F172A;
 }
 
-.tm-profile-photo-box{
-    background:#FAFBFD;
-    border:1px solid #EEF2F7;
-    border-radius:16px;
+.tm-profile-photo-box {
+    background: #FAFBFD;
+    border: 1px solid #EEF2F7;
+    border-radius: 16px;
 }
 
-.tm-profile-photo-box img{
-    width:72px !important;
-    height:72px !important;
-    border:4px solid white;
+.tm-profile-photo-box img {
+    width: 72px !important;
+    height: 72px !important;
+    border: 4px solid #FFFFFF;
 }
 
-/* Alignement forcé en haut et nettoyage des labels de Symfony */
+/* =========================
+   FORMULAIRES
+========================= */
+
+.tm-form-container {
+    margin: 0;
+}
+
 .tm-form-row {
     display: flex;
     flex-direction: column;
@@ -33,82 +45,155 @@
 
 .tm-form-row label,
 .form-label {
-    font-size:.9rem;
-    font-weight:600;
-    color:#1E293B;
-    margin-bottom:8px;
     display: block;
+    margin-bottom: 8px;
+    color: #1E293B;
+    font-size: 0.9rem;
+    font-weight: 600;
     text-align: left;
 }
 
 .tm-form-row input,
 .tm-form-row select,
-.tm-form-row textarea{
+.tm-form-row textarea {
     width: 100%;
-    border:1px solid #E5E7EB; 
-    border-radius:10px;
-    background:#FAFBFD;
-    min-height:48px;
-    font-size:.95rem;
+    min-height: 48px;
     padding: 8px 14px;
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+    background: #FAFBFD;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
-/* Le textarea s'adapte dynamiquement grâce au flex-grow du HTML */
-.tm-form-row textarea{
-    min-height: 140px; 
+.tm-form-row textarea {
+    min-height: 140px;
+    resize: vertical;
 }
 
-/* États Focus conformes à ta charte graphique */
 .tm-form-row input:focus,
 .tm-form-row select:focus,
-.tm-form-row textarea:focus{
-    border-color:#2046D8; 
+.tm-form-row textarea:focus {
+    border-color: #2046D8;
     outline: none;
-    box-shadow: 0 0 0 4px rgba(32, 70, 216, 0.15); 
+    box-shadow: 0 0 0 4px rgba(32, 70, 216, 0.15);
+    background: #FFFFFF;
 }
 
-.badge.bg-primary{
-    background:#2046D8 !important; 
+.tm-form-row .form-text {
+    font-size: 0.8rem;
+    color: #64748B;
+    margin-top: 6px;
 }
 
-.display-5{
-    font-size:3rem !important;
+.tm-form-row .invalid-feedback,
+.tm-form-row .form-error-message {
+    font-size: 0.82rem;
+    margin-top: 6px;
 }
 
-/* CTA principal avec ton dégradé bleu action */
-.tm-btn-service{
+/* =========================
+   CTA & BADGES
+========================= */
+
+.badge.bg-primary {
+    background: #2046D8 !important;
+}
+
+.tm-btn-service {
+    min-width: 320px;
+    border: none;
+    border-radius: 12px;
     background: linear-gradient(180deg, #2046D8 0%, #1633A4 100%);
-    border:none;
-    color:white;
-    border-radius:12px;
-    min-width:320px;
-    box-shadow:0 10px 20px rgba(32, 70, 216, 0.18);
+    color: #FFFFFF;
+    box-shadow: 0 10px 20px rgba(32, 70, 216, 0.18);
     transition: all 0.2s ease;
 }
 
-.tm-btn-service:hover{
+.tm-btn-service:hover {
     background: linear-gradient(180deg, #1B3CC0 0%, #1633A4 100%);
-    transform:translateY(-1px);
+    color: #FFFFFF;
+    transform: translateY(-1px);
 }
 
-.tm-btn-service:active{
+.tm-btn-service:active {
     background: #1633A4;
+    color: #FFFFFF;
 }
 
-.fs-7{
-    font-size:.78rem;
-}
-
-.card .display-5{
-    line-height:1;
-}
-
-.card .fs-4{
-    letter-spacing:2px;
-}
-
-/* Bordure pour les boutons neutres (ex: ajouter certifications) */
 .border-dashed {
     border-style: dashed !important;
     border-color: #BFC7D6 !important;
+}
+
+/* =========================
+   UTILITAIRES VISUELS
+========================= */
+
+.fs-7 {
+    font-size: 0.78rem;
+}
+
+.display-5 {
+    font-size: 3rem !important;
+}
+
+.card .display-5 {
+    line-height: 1;
+}
+
+.card .fs-4 {
+    letter-spacing: 2px;
+}
+
+/* =========================
+   PROFIL PUBLIC
+========================= */
+
+.tm-public-cover {
+    height: 60px;
+}
+
+.tm-public-cover--image {
+    background-size: cover;
+    background-position: center;
+    opacity: 0.7;
+}
+
+.tm-public-cover--fallback {
+    background: linear-gradient(135deg, #e0eaff 0%, #cff0ff 100%);
+}
+
+.tm-public-avatar {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+}
+
+.tm-profile-preview-location {
+    font-size: 0.78rem;
+}
+
+.tm-rating-stars {
+    color: #ffc107;
+}
+
+.tm-status-box {
+    background-color: rgba(22, 163, 74, 0.08);
+    border: 1px solid rgba(22, 163, 74, 0.15);
+    border-radius: 12px;
+}
+
+.tm-status-success {
+    color: #16A34A;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 991.98px) {
+    .tm-btn-service {
+        min-width: 100%;
+    }
 }

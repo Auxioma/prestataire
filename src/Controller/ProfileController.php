@@ -6,12 +6,13 @@ use App\Entity\ClientProfile;
 use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
 use App\Form\AccountSettingsType;
-use App\Form\ClientProfileType;
+use App\Form\PrestataireCompanyTabType;
 use App\Form\PrestataireServiceType;
 use App\Repository\ServiceCategoryRepository;
 use App\Repository\ServiceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -19,9 +20,12 @@ use Symfony\Component\Routing\Attribute\Route;
 class ProfileController extends AbstractController
 {
     #[Route('/prestataire/parametres', name: 'app_prestataire_settings')]
-    public function settings(Request $request, EntityManagerInterface $entityManager, ServiceCategoryRepository $categoryRepository): Response
-    {
-        // 1. Récupérer l'utilisateur connecté
+    public function settings(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ServiceCategoryRepository $categoryRepository,
+        FormFactoryInterface $formFactory
+    ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
@@ -29,44 +33,71 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        // 2. Si le prestataire n'a pas encore de profil créé en BDD, on l'initialise à la volée
         if ($user->getPrestataireProfile() === null) {
             $profile = new PrestataireProfile();
-
             $user->setPrestataireProfile($profile);
             $profile->setAccount($user);
         }
 
-        // 3. Création du formulaire global (User + sous-formulaire Prestataire)
-        $form = $this->createForm(AccountSettingsType::class, $user);
-        $form->handleRequest($request);
+        $prestataireProfile = $user->getPrestataireProfile();
 
+        $userForm = $formFactory->createNamed(
+            'user_profile_form',
+            \App\Form\UserProfileTabType::class,
+            $user
+        );
 
-        // 4. Traitement de la soumission
-        if ($form->isSubmitted() && $form->isValid()) {
+        $companyForm = $formFactory->createNamed(
+            'company_form',
+            PrestataireCompanyTabType::class,
+            $prestataireProfile
+        );
 
-            // Générer le slug à partir du nom de l'entreprise si nécessaire
-            $profile = $user->getPrestataireProfile();
-            if ($profile && $profile->getCompanyName()) {
-                $profile->setSlug(strtolower(str_replace(' ', '-', $profile->getCompanyName())));
-            }
+        $publicProfileForm = $formFactory->createNamed(
+            'public_profile_form',
+            \App\Form\PrestatairePublicProfileTabType::class,
+            $prestataireProfile
+        );
+        $userForm->handleRequest($request);
+        $publicProfileForm->handleRequest($request);
+        $companyForm->handleRequest($request);
 
+        if ($userForm->isSubmitted() && $userForm->isValid()) {
             $entityManager->persist($user);
             $entityManager->flush();
 
-            if ($profile) {
-                $profile->setLogoFile(null);
-                $profile->setCoverImageFile(null);
-            }
-
-            $this->addFlash('success', 'Vos modifications ont été enregistrées avec succès !');
-
-            return $this->redirectToRoute('app_prestataire_settings');
+            $this->addFlash('success', 'Vos informations personnelles ont été enregistrées.');
+            return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'profile-panel']);
         }
 
-        // 5. Envoi à la vue
+        if ($publicProfileForm->isSubmitted() && $publicProfileForm->isValid()) {
+            if ($prestataireProfile && $prestataireProfile->getCompanyName()) {
+                $prestataireProfile->setSlug(strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName())));
+            }
+
+            $entityManager->persist($prestataireProfile);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Votre profil public a été enregistré.');
+            return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'profile-panel']);
+        }
+
+        if ($companyForm->isSubmitted() && $companyForm->isValid()) {
+            if ($prestataireProfile && $prestataireProfile->getCompanyName()) {
+                $prestataireProfile->setSlug(strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName())));
+            }
+
+            $entityManager->persist($prestataireProfile);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Les informations de l’entreprise ont été enregistrées.');
+            return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'company-panel']);
+        }
+
         return $this->render('profile/prestataire_profile.html.twig', [
-            'settingsForm' => $form->createView(),
+            'userForm' => $userForm->createView(),
+            'publicProfileForm' => $publicProfileForm->createView(),
+            'companyForm' => $companyForm->createView(),
             'user' => $user,
             'categories' => $categoryRepository->findWithSubCategories(),
         ]);
@@ -79,6 +110,7 @@ class ProfileController extends AbstractController
         $serviceId = $request->request->get('service_id');
         $user = $this->getUser();
         $service = $serviceRepo->find($serviceId);
+
 
         // 1. Vérification de base (est-ce qu'on a bien un service et un profil ?)
         if (!$service || !($user instanceof \App\Entity\User) || !$user->getPrestataireProfile()) {

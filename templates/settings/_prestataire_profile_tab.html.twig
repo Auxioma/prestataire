@@ -1,173 +1,197 @@
-<div
-	class="row g-4 match-height">
+<div class="tab-pane fade show active" id="profile-panel" role="tabpanel">
+    <div class="row g-4 match-height">
 
-	{# ================= COLONNE GAUCHE : INFOS & VISUELS ================= #}
-	<div
-		class="col-lg-4 d-flex flex-column gap-4">
-		{# Card Informations personnelles #}
-		<div class="card tm-card p-4">
-			<h4 class="tm-card-title mb-4">Informations personnelles</h4>
+        {# ================= COLONNE GAUCHE : INFOS PERSONNELLES ================= #}
+        <div class="col-lg-4 d-flex flex-column gap-4">
+            <div class="card tm-card p-4">
+                <h4 class="tm-card-title mb-4">Informations personnelles</h4>
 
-			<div class="mb-4 text-center p-3 tm-profile-photo-box">
-				<label class="form-label d-block text-start mb-3">Photo de profil</label>
-				<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle mb-3 border-2 border-white shadow-sm" style="width: 90px; height: 90px; object-fit: cover;" alt="Avatar">
-				<button type="button" class="btn btn-outline-primary btn-sm d-block mx-auto fw-medium px-3">Modifier la photo</button>
-				<small class="text-muted d-block mt-2 fs-7">PNG, JPG ou GIF. Max 2 Mo.</small>
-			</div>
+                {{ form_start(userForm, {
+                    attr: {
+                        novalidate: 'novalidate',
+                        class: 'tm-form-container',
+                        'data-turbo': 'false'
+                    }
+                }) }}
 
-			<div class="mb-3 tm-form-row">
-				{{ form_row(settingsForm.firstName) }}
-			</div>
-			<div class="mb-3 tm-form-row">
-				{{ form_row(settingsForm.lastName) }}
-			</div>
-			<div class="mb-3 tm-form-row">
-				{{ form_row(settingsForm.phoneNumber) }}
-			</div>
-		</div>
+                    <div class="mb-4 text-center p-3 tm-profile-photo-box">
+                        <label class="form-label d-block text-start mb-3">Photo de profil</label>
+                        <img
+                            src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}"
+                            class="rounded-circle mb-3 border-2 border-white shadow-sm"
+                            style="width: 90px; height: 90px; object-fit: cover;"
+                            alt="Avatar"
+                        >
+                        <button type="button" class="btn btn-outline-primary btn-sm d-block mx-auto fw-medium px-3">
+                            Modifier la photo
+                        </button>
+                        <small class="text-muted d-block mt-2 fs-7">PNG, JPG ou GIF. Max 2 Mo.</small>
+                    </div>
 
+                    <div class="mb-3 tm-form-row">
+                        {{ form_row(userForm.firstName) }}
+                    </div>
 
-		{# Card Aperçu Profil Public #}
-		<div class="card tm-card p-4">
-			<h4 class="tm-card-title mb-3">Aperçu de votre profil public</h4>
-			<div
-				class="p-3 border rounded-4 bg-white shadow-sm text-center position-relative overflow-hidden">
+                    <div class="mb-3 tm-form-row">
+                        {{ form_row(userForm.lastName) }}
+                    </div>
 
-				{# Miniature de la CoverImage en arrière-plan de l'aperçu si elle existe #}
-				{% if user.prestataireProfile and user.prestataireProfile.coverImage %}
-					<div class="position-absolute start-0 top-0 w-100" style="height: 60px; background-image: url('{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}'); background-size: cover; background-position: center; opacity: 0.7;"></div>
-				{% else %}
-					<div class="position-absolute start-0 top-0 w-100" style="height: 60px; background: linear-gradient(135deg, #e0eaff 0%, #cff0ff 100%);"></div>
-				{% endif %}
+                    <div class="mb-3 tm-form-row">
+                        {{ form_row(userForm.phoneNumber) }}
+                    </div>
 
-				<div
-					class="position-relative pt-4">
-					{# Affiche le logo de l'entreprise s'il existe, sinon l'avatar de l'utilisateur #}
-					{% if user.prestataireProfile and user.prestataireProfile.logo %}
-						<img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" class="rounded-circle border-3 border-white shadow-sm mb-2" style="width: 70px; height: 70px; object-fit: cover;" alt="Logo entreprise">
-					{% else %}
-						<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80' }}" class="rounded-circle border-3 border-white shadow-sm mb-2" style="width: 70px; height: 70px; object-fit: cover;" alt="Aperçu avatar">
-					{% endif %}
+                    <div class="row mt-4">
+                        <div class="col-12 d-flex justify-content-center">
+                            <button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold col-12 col-md-auto">
+                                Enregistrer les informations personnelles
+                            </button>
+                        </div>
+                    </div>
 
-					<h5 class="mb-1 fw-bold text-dark">
-						{{ user.prestataireProfile.companyName|default(user.firstName ~ ' ' ~ user.lastName) }}
-						<span class="badge bg-primary ms-1 fs-7">Vérifié</span>
-					</h5>
+                {{ form_end(userForm) }}
+            </div>
 
-					<p class="text-muted mb-3 fs-6">
-						<span style="color: var(--tm-text); font-weight: 500;">{{ user.prestataireProfile.metier|default('Plombier') }}</span><br>
-						⭐
-						{{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0' }}
-						({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }}
-						avis)
-						<br><span class="fs-7">📍
-							{{ user.prestataireProfile.city|default('Libourne') }}
-							et alentours</span>
-					</p>
+            {# Card Aperçu Profil Public #}
+            <div class="card tm-card p-4">
+                <h4 class="tm-card-title mb-3">Aperçu de votre profil public</h4>
+                <div class="p-3 border rounded-4 bg-white shadow-sm text-center position-relative overflow-hidden">
 
-					<a href="#" class="btn btn-outline-secondary btn-sm rounded-3 fw-medium w-100 py-2">Voir le profil public ↗</a>
-				</div>
-			</div>
-		</div>
-	</div>
+                    {% if user.prestataireProfile and user.prestataireProfile.coverImage %}
+                        <div class="position-absolute start-0 top-0 w-100" style="height: 60px; background-image: url('{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}'); background-size: cover; background-position: center; opacity: 0.7;"></div>
+                    {% else %}
+                        <div class="position-absolute start-0 top-0 w-100" style="height: 60px; background: linear-gradient(135deg, #e0eaff 0%, #cff0ff 100%);"></div>
+                    {% endif %}
 
-	{# ================= COLONNE MILIEU : À PROPOS ================= #}
-	<div class="col-lg-4">
-		<div class="card tm-card p-4 h-100">
-			<h4 class="tm-card-title mb-4">À propos de vous</h4>
+                    <div class="position-relative pt-4">
+                        {% if user.prestataireProfile and user.prestataireProfile.logo %}
+                            <img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" class="rounded-circle border-3 border-white shadow-sm mb-2" style="width: 70px; height: 70px; object-fit: cover;" alt="Logo entreprise">
+                        {% else %}
+                            <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80' }}" class="rounded-circle border-3 border-white shadow-sm mb-2" style="width: 70px; height: 70px; object-fit: cover;" alt="Aperçu avatar">
+                        {% endif %}
 
-			<div class="mb-3 tm-form-row">
-				{{ form_row(settingsForm.prestataireProfile.metier) }}
-			</div>
+                        <h5 class="mb-1 fw-bold text-dark">
+                            {{ user.prestataireProfile.companyName|default(user.firstName ~ ' ' ~ user.lastName) }}
+                            <span class="badge bg-primary ms-1 fs-7">Vérifié</span>
+                        </h5>
 
-			{# Insertion de la shortDescription juste au-dessus de la grande description #}
-			<div class="mb-3 tm-form-row">
-				{{ form_row(settingsForm.prestataireProfile.shortDescription) }}
-			</div>
+                        <p class="text-muted mb-3 fs-6">
+                            <span style="color: var(--tm-text); font-weight: 500;">
+                                {{ user.prestataireProfile.metier|default('Plombier') }}
+                            </span><br>
+                            ⭐ {{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0' }}
+                            ({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }} avis)
+                            <br>
+                            <span class="fs-7">📍 {{ user.prestataireProfile.city|default('Libourne') }} et alentours</span>
+                        </p>
 
-			<div class="mb-3 tm-form-row">
-				{{ form_row(settingsForm.prestataireProfile.description) }}
-			</div>
+                        <a href="#" class="btn btn-outline-secondary btn-sm rounded-3 fw-medium w-100 py-2">Voir le profil public ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-			<div class="mb-3 tm-form-row">
-				{{ form_row(settingsForm.prestataireProfile.experience) }}
-			</div>
+        {# ================= COLONNE MILIEU + DROITE : PROFIL PUBLIC ================= #}
+        <div class="col-lg-8">
+            {{ form_start(publicProfileForm, {
+                attr: {
+                    novalidate: 'novalidate',
+                    class: 'tm-form-container',
+                    'data-turbo': 'false'
+                }
+            }) }}
 
-			<div class="mb-3">
-				<label class="form-label mb-2">Certifications</label>
-				<div class="d-flex flex-wrap gap-2 pt-1">
-					<button type="button" class="btn btn-light btn-md border border-dashed text-primary fw-medium px-3">+ Ajouter</button>
-				</div>
-			</div>
-		</div>
-	</div>
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card tm-card p-4 h-100">
+                        <h4 class="tm-card-title mb-4">À propos de vous</h4>
 
-	{# ================= COLONNE DROITE : RÉSEAUX & STATUTS ================= #}
-	<div
-		class="col-lg-4 d-flex flex-column gap-4">
-		{# Card Réseaux Sociaux #}
-		<div class="card tm-card p-4">
-			<h4 class="tm-card-title mb-4">Réseaux sociaux & liens</h4>
-			<div class="row g-3">
-				<div class="col-12 tm-form-row">
-					{{ form_row(settingsForm.prestataireProfile.website) }}
-				</div>
-				<div class="col-12 tm-form-row">
-					{{ form_row(settingsForm.prestataireProfile.facebookUrl) }}
-				</div>
-				<div class="col-12 tm-form-row">
-					{{ form_row(settingsForm.prestataireProfile.instagramUrl) }}
-				</div>
-				<div class="col-12 tm-form-row">
-					{{ form_row(settingsForm.prestataireProfile.linkedinUrl) }}
-				</div>
-			</div>
-		</div>
+                        <div class="mb-3 tm-form-row">
+                            {{ form_row(publicProfileForm.metier) }}
+                        </div>
 
-		{# Bloc Stats (Statut + Note) #}
-		<div class="d-flex flex-column gap-4">
-			<div class="card tm-card p-4">
-				<h5 class="fw-bold mb-3 fs-5" style="color: var(--tm-text);">Statut du compte</h5>
-				<div class="p-3 rounded-3 mb-0" style="background-color: rgba(22, 163, 74, 0.08); border: 1px solid rgba(22, 163, 74, 0.15);">
-					<div class="fw-bold small" style="color: var(--tm-success);">✓ Compte vérifié</div>
-					<div class="fs-7 text-muted mt-1">Félicitations ! Votre compte est validé.</div>
-				</div>
-			</div>
+                        <div class="mb-3 tm-form-row">
+                            {{ form_row(publicProfileForm.shortDescription) }}
+                        </div>
 
-			<div class="card tm-card p-4">
-				<h5 class="fw-bold mb-2 fs-5" style="color: var(--tm-text);">Note moyenne</h5>
-				<div class="d-flex align-items-baseline gap-2">
-					<span class="display-5 fw-bold" style="color: var(--tm-text);">
-						{{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0' }}
-					</span>
-					<span class="text-muted fs-5">/ 5</span>
-				</div>
+                        <div class="mb-3 tm-form-row">
+                            {{ form_row(publicProfileForm.description) }}
+                        </div>
 
-				<div class="my-2 fs-4" style="color: var(--var-tm-warning, #ffc107);">
-					{% if user.prestataireProfile and user.prestataireProfile.averageRating %}
-						{% for i in 1..5 %}
-							{{ i <= user.prestataireProfile.averageRating ? '★' : '☆' }}
-						{% endfor %}
-					{% else %}
-						☆☆☆☆☆
-					{% endif %}
-				</div>
+                        <div class="mb-3 tm-form-row">
+                            {{ form_row(publicProfileForm.experience) }}
+                        </div>
 
-				<small class="text-muted fw-medium">
-					({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }}
-					avis)
-				</small>
-			</div>
-		</div>
-	</div>
+                        <div class="mb-3">
+                            <label class="form-label mb-2">Certifications</label>
+                            <div class="d-flex flex-wrap gap-2 pt-1">
+                                <button type="button" class="btn btn-light btn-md border border-dashed text-primary fw-medium px-3">
+                                    + Ajouter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-</div>
+                <div class="col-lg-6 d-flex flex-column gap-4">
+                    <div class="card tm-card p-4">
+                        <h4 class="tm-card-title mb-4">Réseaux sociaux & liens</h4>
+                        <div class="row g-3">
+                            <div class="col-12 tm-form-row">
+                                {{ form_row(publicProfileForm.website) }}
+                            </div>
+                            <div class="col-12 tm-form-row">
+                                {{ form_row(publicProfileForm.facebookUrl) }}
+                            </div>
+                            <div class="col-12 tm-form-row">
+                                {{ form_row(publicProfileForm.instagramUrl) }}
+                            </div>
+                            <div class="col-12 tm-form-row">
+                                {{ form_row(publicProfileForm.linkedinUrl) }}
+                            </div>
+                        </div>
+                    </div>
 
-{# ================= BOUTON GÉNÉRAL DE CLÔTURE DE LA PAGE ================= #}
-<div class="row mt-4">
-	<div class="col-12 d-flex justify-content-center">
-		<button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold col-12 col-md-auto">
-			Enregistrer les modifications
-		</button>
-	</div>
+                    <div class="card tm-card p-4">
+                        <h5 class="fw-bold mb-3 fs-5" style="color: var(--tm-text);">Statut du compte</h5>
+                        <div class="p-3 rounded-3 mb-0" style="background-color: rgba(22, 163, 74, 0.08); border: 1px solid rgba(22, 163, 74, 0.15);">
+                            <div class="fw-bold small" style="color: var(--tm-success);">✓ Compte vérifié</div>
+                            <div class="fs-7 text-muted mt-1">Félicitations ! Votre compte est validé.</div>
+                        </div>
+                    </div>
+
+                    <div class="card tm-card p-4">
+                        <h5 class="fw-bold mb-2 fs-5" style="color: var(--tm-text);">Note moyenne</h5>
+                        <div class="d-flex align-items-baseline gap-2">
+                            <span class="display-5 fw-bold" style="color: var(--tm-text);">
+                                {{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0' }}
+                            </span>
+                            <span class="text-muted fs-5">/ 5</span>
+                        </div>
+
+                        <div class="my-2 fs-4" style="color: var(--var-tm-warning, #ffc107);">
+                            {% if user.prestataireProfile and user.prestataireProfile.averageRating %}
+                                {% for i in 1..5 %}
+                                    {{ i <= user.prestataireProfile.averageRating ? '★' : '☆' }}
+                                {% endfor %}
+                            {% else %}
+                                ☆☆☆☆☆
+                            {% endif %}
+                        </div>
+
+                        <small class="text-muted fw-medium">
+                            ({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }} avis)
+                        </small>
+                    </div>
+
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold col-12 col-md-auto">
+                            Enregistrer le profil public
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {{ form_end(publicProfileForm) }}
+        </div>
+    </div>
 </div>
