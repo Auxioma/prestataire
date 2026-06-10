@@ -196,9 +196,10 @@ class ProfileController extends AbstractController
         }
 
         // 2. Utiliser le formulaire global AccountSettingsType lié au $user
-$form = $this->createForm(AccountSettingsType::class, $user, [
-    'profile_type' => in_array('ROLE_PRESTATAIRE', $user->getRoles(), true) ? 'prestataire' : 'client',
-]);        $form->handleRequest($request);
+        $form = $this->createForm(AccountSettingsType::class, $user, [
+            'profile_type' => in_array('ROLE_PRESTATAIRE', $user->getRoles(), true) ? 'prestataire' : 'client',
+        ]);
+        $form->handleRequest($request);
 
         // 3. Traitement de la soumission
         if ($form->isSubmitted() && $form->isValid()) {

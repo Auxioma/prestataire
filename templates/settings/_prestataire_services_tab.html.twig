@@ -1,35 +1,26 @@
 {# settings/_prestataire_services_tab.html.twig #}
 
-<div class="card border-0 shadow-sm p-4">
-    {# Messages flash propres à l'onglet #}
-    {% for label in ['success', 'warning', 'danger'] %}
-        {% for message in app.flashes(label) %}
-            <div class="alert alert-{{ label }} alert-dismissible fade show mb-4" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endfor %}
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="card tm-card tm-services-card p-4">
+    <div class="tm-services-header mb-4">
         <div>
-            <h5 class="fw-bold mb-1">Vos services</h5>
-            <p class="text-muted small mb-0">Gérez vos tarifs et prestations.</p>
+            <h5 class="tm-services-title">Vos services</h5>
+            <p class="tm-services-subtitle">Gérez vos tarifs et prestations.</p>
         </div>
 
         <button
             type="button"
             class="btn btn-primary"
             data-bs-toggle="modal"
-            data-bs-target="#addServiceModal">
+            data-bs-target="#addServiceModal"
+        >
             <i class="fa-solid fa-plus me-2"></i>
             Ajouter un service
         </button>
     </div>
 
-    <div class="table-responsive">
-        <table class="table align-middle mb-0">
-            <thead class="table-light">
+    <div class="table-responsive tm-services-table-wrap">
+        <table class="table align-middle tm-services-table">
+            <thead>
                 <tr>
                     <th>Service</th>
                     <th>Catégorie</th>
@@ -41,29 +32,40 @@
             <tbody>
                 {% for ps in user.prestataireProfile.prestataireServices %}
                     <tr>
-                        <td class="fw-bold">{{ ps.service.name }}</td>
-                        <td class="text-muted">{{ ps.service.category.name }}</td>
-                        <td>{{ ps.prixCatalogue|number_format(2, ',', ' ') }} €</td>
-                        <td>{{ ps.tauxReduction ? ps.tauxReduction ~ '%' : '-' }}</td>
+                        <td class="tm-service-name">{{ ps.service.name }}</td>
+                        <td class="tm-service-category">{{ ps.service.category.name }}</td>
+                        <td class="tm-service-price">{{ ps.prixCatalogue|number_format(2, ',', ' ') }} €</td>
+                        <td class="{{ ps.tauxReduction ? 'tm-service-discount' : 'tm-service-discount--empty' }}">
+                            {{ ps.tauxReduction ? ps.tauxReduction ~ '%' : '-' }}
+                        </td>
                         <td class="text-end">
-                            <a href="{{ path('app_prestataire_service_edit', {'id': ps.id}) }}"
-                               class="btn btn-sm btn-outline-primary">
-                                <i class="fa-solid fa-pencil"></i>
-                            </a>
+                            <div class="tm-services-actions">
+                                <a
+                                    href="{{ path('app_prestataire_service_edit', {'id': ps.id}) }}"
+                                    class="btn btn-sm btn-outline-primary tm-icon-btn"
+                                    title="Modifier"
+                                    data-turbo="false"
+                                >
+                                    <i class="fa-solid fa-pencil"></i>
+                                </a>
 
-                            <button
-                                type="button"
-                                class="btn btn-sm btn-outline-danger"
-                                onclick="deleteService('{{ path('app_prestataire_service_delete', {'id': ps.id}) }}', '{{ csrf_token('delete' ~ ps.id) }}')">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-outline-danger tm-icon-btn js-delete-service"
+                                    data-delete-url="{{ path('app_prestataire_service_delete', {'id': ps.id}) }}"
+                                    data-delete-token="{{ csrf_token('delete' ~ ps.id) }}"
+                                    title="Supprimer"
+                                >
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="5" class="text-center py-5 text-muted">
-                            <i class="fa-solid fa-tools fa-2x mb-3"></i>
-                            <p class="mb-0">Aucun service ajouté pour le moment.</p>
+                        <td colspan="5" class="tm-services-empty text-center">
+                            <i class="fa-solid fa-tools fa-2x mb-3 d-block"></i>
+                            <p>Aucun service ajouté pour le moment.</p>
                         </td>
                     </tr>
                 {% endfor %}
@@ -82,12 +84,17 @@
             </div>
 
             <div class="modal-body" data-controller="chained-selects">
-                <form action="{{ path('app_prestataire_add_service') }}" method="POST">
+                <form
+                    action="{{ path('app_prestataire_add_service') }}"
+                    method="POST"
+                    data-turbo="false"
+                >
                     <select
                         data-chained-selects-target="category"
                         data-action="change->chained-selects#loadSubCategories"
                         class="form-select mb-3"
-                        required>
+                        required
+                    >
                         <option value="">Choisir une catégorie principale</option>
                         {% for category in categories %}
                             <option value="{{ category.id }}">{{ category.name }}</option>
@@ -99,7 +106,8 @@
                         data-action="change->chained-selects#loadServices"
                         class="form-select mb-3"
                         disabled
-                        required>
+                        required
+                    >
                         <option value="">Choisir une sous-catégorie...</option>
                     </select>
 
@@ -108,35 +116,25 @@
                         name="service_id"
                         class="form-select mb-3"
                         disabled
-                        required>
+                        required
+                    >
                         <option value="">Choisir un service...</option>
                     </select>
 
                     <div class="modal-footer px-0 pb-0">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <button type="submit" class="btn btn-primary">Ajouter ce service</button>
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Ajouter ce service
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-function deleteService(url, token) {
-    if (confirm('Confirmer la suppression ?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = url;
-
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = '_token';
-        input.value = token;
-
-        form.appendChild(input);
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
-</script>

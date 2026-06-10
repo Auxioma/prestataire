@@ -367,16 +367,60 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tabTriggers = document.querySelectorAll(
+            '#settingsTabs [data-bs-toggle="tab"], .tm-settings-sidebar [data-bs-toggle="tab"]'
+        );
+
+        function showTabFromHash() {
             const hash = window.location.hash;
             if (!hash) return;
 
-            const trigger = document.querySelector(`[data-bs-target="${hash}"]`);
+            const trigger = document.querySelector(
+                `#settingsTabs [data-bs-target="${hash}"], .tm-settings-sidebar [data-bs-target="${hash}"]`
+            );
+
             if (trigger) {
-                const tab = new bootstrap.Tab(trigger);
-                tab.show();
+                bootstrap.Tab.getOrCreateInstance(trigger).show();
             }
+        }
+
+        tabTriggers.forEach(trigger => {
+            trigger.addEventListener('shown.bs.tab', function (event) {
+                const target = event.target.getAttribute('data-bs-target');
+                if (target) {
+                    history.replaceState(null, '', target);
+                }
+            });
         });
-    </script>
+
+        window.addEventListener('hashchange', showTabFromHash);
+        showTabFromHash();
+
+        document.querySelectorAll('.js-delete-service').forEach(button => {
+            button.addEventListener('click', function () {
+                const url = this.dataset.deleteUrl;
+                const token = this.dataset.deleteToken;
+
+                if (!confirm('Confirmer la suppression ?')) {
+                    return;
+                }
+
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = url;
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = '_token';
+                input.value = token;
+
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            });
+        });
+    });
+</script>
 {% endblock %}
