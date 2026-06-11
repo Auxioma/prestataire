@@ -2,24 +2,66 @@
 
 namespace App\Controller;
 
+use App\Repository\PrestataireServiceRepository;
+use App\Repository\ServiceCategoryRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class BonsPlansController extends AbstractController
 {
-    #[Route('/bons-plans', name: 'app_bons_plans')]
-    public function index(): Response
-    {
-        // Simulation de tes données de bons plans
-        $bonsPlans = [
-            ['title' => 'Plomberie Express', 'desc' => 'Débouchage canalisation', 'discount' => '20%', 'time' => '3j 12h', 'old_price' => 90, 'price' => 72, 'city' => 'Lyon (69)', 'rating' => 4.8, 'reviews' => 256, 'icon' => 'fa-droplet'],
-            ['title' => 'Clean & Shine', 'desc' => 'Ménage complet 3h', 'discount' => '15%', 'time' => '5j 08h', 'old_price' => 120, 'price' => 102, 'city' => 'Toulouse (31)', 'rating' => 4.9, 'reviews' => 178, 'icon' => 'fa-broom'],
-            // ... ajoute tes autres éléments ici
-        ];
+    #[Route('/bons-plans', name: 'app_bons_plans', methods: ['GET'])]
+    public function index(
+        Request $request,
+        PrestataireServiceRepository $prestataireServiceRepository,
+        ServiceCategoryRepository $serviceCategoryRepository,
+        PaginatorInterface $paginator
+    ): Response {
+        $selectedCategorySlug = $request->query->get('category');
+        $selectedSubCategorySlug = $request->query->get('subCategory');
 
-        return $this->render('bons_plans/bon_plans.html.twig', [
-            'bons_plans' => $bonsPlans,
+        $categories = $serviceCategoryRepository->findBy(
+            ['parent' => null, 'isActive' => true],
+            ['position' => 'ASC']
+        );
+
+        $subCategories = [];
+        if ($selectedCategorySlug) {
+            $selectedCategory = $serviceCategoryRepository->findOneBy([
+                'slug' => $selectedCategorySlug,
+                'isActive' => true,
+            ]);
+
+            if ($selectedCategory) {
+                $subCategories = $serviceCategoryRepository->findBy(
+                    ['parent' => $selectedCategory, 'isActive' => true],
+                    ['position' => 'ASC']
+                );
+            }
+        }
+
+        $queryBuilder = $prestataireServiceRepository->getBonsPlansQueryBuilder(
+            $selectedCategorySlug ?: null,
+            $selectedSubCategorySlug ?: null
+        );
+
+        $bonsPlans = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            9,
+            [
+                'wrap-queries' => true,
+            ]
+        );
+
+        return $this->render('bons_plans/bons_plans.html.twig', [
+            'bonsPlans' => $bonsPlans,
+            'categories' => $categories,
+            'subCategories' => $subCategories,
+            'selectedCategorySlug' => $selectedCategorySlug,
+            'selectedSubCategorySlug' => $selectedSubCategorySlug,
         ]);
     }
 }

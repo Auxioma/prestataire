@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PrestataireServiceRepository;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: PrestataireServiceRepository::class)]
 #[ORM\Table(name: 'prestataire_profile_service')]
 class PrestataireService
 {
@@ -28,18 +29,87 @@ class PrestataireService
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2, nullable: true)]
     private ?string $tauxReduction = null;
 
-    // Getters et Setters basiques
-    public function getId(): ?int { return $this->id; }
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $promotionCreatedAt = null;
 
-    public function getPrestataire(): ?PrestataireProfile { return $this->prestataire; }
-    public function setPrestataire(?PrestataireProfile $prestataire): self { $this->prestataire = $prestataire; return $this; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-    public function getService(): ?Service { return $this->service; }
-    public function setService(?Service $service): self { $this->service = $service; return $this; }
+    public function getPrestataire(): ?PrestataireProfile
+    {
+        return $this->prestataire;
+    }
 
-    public function getPrixCatalogue(): ?string { return $this->prixCatalogue; }
-    public function setPrixCatalogue(string $prixCatalogue): self { $this->prixCatalogue = $prixCatalogue; return $this; }
+    public function setPrestataire(?PrestataireProfile $prestataire): self
+    {
+        $this->prestataire = $prestataire;
+        return $this;
+    }
 
-    public function getTauxReduction(): ?string { return $this->tauxReduction; }
-    public function setTauxReduction(?string $tauxReduction): self { $this->tauxReduction = $tauxReduction; return $this; }
+    public function getService(): ?Service
+    {
+        return $this->service;
+    }
+
+    public function setService(?Service $service): self
+    {
+        $this->service = $service;
+        return $this;
+    }
+
+    public function getPrixCatalogue(): ?string
+    {
+        return $this->prixCatalogue;
+    }
+
+    public function setPrixCatalogue(string $prixCatalogue): self
+    {
+        $this->prixCatalogue = $prixCatalogue;
+        return $this;
+    }
+
+    public function getTauxReduction(): ?string
+    {
+        return $this->tauxReduction;
+    }
+
+    public function setTauxReduction(?string $tauxReduction): self
+    {
+        $this->tauxReduction = $tauxReduction;
+        return $this;
+    }
+
+    public function getPromotionCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->promotionCreatedAt;
+    }
+
+    public function setPromotionCreatedAt(?\DateTimeImmutable $promotionCreatedAt): self
+    {
+        $this->promotionCreatedAt = $promotionCreatedAt;
+        return $this;
+    }
+
+    public function getPrixRemise(): ?float
+    {
+        if ($this->prixCatalogue === null) {
+            return null;
+        }
+
+        $prix = (float) $this->prixCatalogue;
+        $taux = (float) ($this->tauxReduction ?? 0);
+
+        if ($taux <= 0) {
+            return $prix;
+        }
+
+        return round($prix * (1 - ($taux / 100)), 2);
+    }
+
+    public function hasPromotion(): bool
+    {
+        return $this->tauxReduction !== null && (float) $this->tauxReduction > 0;
+    }
 }

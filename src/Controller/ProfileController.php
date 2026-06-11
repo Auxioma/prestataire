@@ -164,6 +164,15 @@ class ProfileController extends AbstractController
     #[Route('/prestataire/service/supprimer/{id}', name: 'app_prestataire_service_delete', methods: ['POST'])]
     public function delete(Request $request, PrestataireService $ps, EntityManagerInterface $em): Response
     {
+        $user = $this->getUser();
+
+        if (
+            !$user instanceof \App\Entity\User ||
+            !$user->getPrestataireProfile() ||
+            $ps->getPrestataire() !== $user->getPrestataireProfile()
+        ) {
+            throw $this->createAccessDeniedException();
+        }
         if ($this->isCsrfTokenValid('delete' . $ps->getId(), $request->request->get('_token'))) {
             $em->remove($ps);
             $em->flush();
@@ -178,11 +187,37 @@ class ProfileController extends AbstractController
     #[Route('/prestataire/service/editer/{id}', name: 'app_prestataire_service_edit')]
     public function edit(Request $request, PrestataireService $ps, EntityManagerInterface $em): Response
     {
+        $user = $this->getUser();
+
+        if (
+            !$user instanceof \App\Entity\User ||
+            !$user->getPrestataireProfile() ||
+            $ps->getPrestataire() !== $user->getPrestataireProfile()
+        ) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $oldReduction = $ps->getTauxReduction();
+
         $form = $this->createForm(PrestataireServiceType::class, $ps);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $newReduction = $ps->getTauxReduction();
+
+            $oldReductionValue = $oldReduction !== null ? (float) $oldReduction : 0;
+            $newReductionValue = $newReduction !== null ? (float) $newReduction : 0;
+
+            if ($newReductionValue > 0) {
+                if ($oldReductionValue <= 0 || $oldReductionValue !== $newReductionValue) {
+                    $ps->setPromotionCreatedAt(new \DateTimeImmutable());
+                }
+            } else {
+                $ps->setPromotionCreatedAt(null);
+            }
+
             $em->flush();
+
             $this->addFlash('success', 'Tarifs mis à jour !');
             return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
         }
