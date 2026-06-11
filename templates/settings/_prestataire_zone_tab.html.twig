@@ -1,5 +1,4 @@
 <div class="tm-zone-layout d-flex flex-column gap-4">
-
 	<div class="row g-4">
 		<div class="col-xl-6">
 			<div class="card tm-card p-4 h-100">
@@ -16,8 +15,7 @@
 					{% for zone in zones %}
 						<div class="tm-zone-list-item">
 							<div class="tm-zone-list-left">
-								<div class="tm-zone-icon-box
-																																																		                                    {% if loop.index == 1 %}tm-zone-icon-blue{% elseif loop.index == 2 %}tm-zone-icon-green{% elseif loop.index == 3 %}tm-zone-icon-yellow{% else %}tm-zone-icon-purple{% endif %}">
+								<div class="tm-zone-icon-box {% if loop.index == 1 %}tm-zone-icon-blue{% elseif loop.index == 2 %}tm-zone-icon-green{% elseif loop.index == 3 %}tm-zone-icon-yellow{% else %}tm-zone-icon-purple{% endif %}">
 									📍
 								</div>
 
@@ -43,9 +41,11 @@
 							</div>
 
 							<div class="tm-zone-list-meta">
-								<span class="tm-zone-radius-pill">Rayon :
+								<span class="tm-zone-radius-pill">
+									Rayon :
 									{{ zone.radiusKm ?? 20 }}
-									km</span>
+									km
+								</span>
 
 								{% if zone.isActive %}
 									<span class="tm-zone-toggle-state tm-zone-toggle-state--active">Active</span>
@@ -53,9 +53,9 @@
 									<span class="tm-zone-toggle-state tm-zone-toggle-state--inactive">Inactive</span>
 								{% endif %}
 
-								<form method="post" action="{{ path('app_prestataire_zone_delete', {id: zone.id}) }}" onsubmit="return confirm('Confirmer la suppression de cette zone ?');">
+								<form method="post" action="{{ path('app_prestataire_zone_delete', { id: zone.id }) }}#zones-panel" data-turbo="false" onsubmit="return confirm('Confirmer la suppression de cette zone ?');">
 									<input type="hidden" name="_token" value="{{ csrf_token('delete_zone_' ~ zone.id) }}">
-									<button type="submit" class="tm-zone-delete-btn" title="Supprimer">
+									<button type="submit" class="tm-zone-delete-btn" title="Supprimer" aria-label="Supprimer la zone">
 										<i class="fa-solid fa-trash-can" aria-hidden="true"></i>
 									</button>
 								</form>
@@ -98,9 +98,9 @@
 					<div class="tm-zone-marker tm-zone-marker--yellow">📍</div>
 
 					<div class="tm-zone-map-controls">
-						<button type="button">+</button>
-						<button type="button">−</button>
-						<button type="button">⛶</button>
+						<button type="button" aria-label="Zoom avant">+</button>
+						<button type="button" aria-label="Zoom arrière">−</button>
+						<button type="button" aria-label="Plein écran">⛶</button>
 					</div>
 				</div>
 			</div>
@@ -110,85 +110,74 @@
 	<div class="card tm-card p-4">
 		<h4 class="tm-card-title mb-4">Ajouter une zone d’intervention</h4>
 
-		{# <div class="row g-3 mb-4">
-										            <div class="col-lg-4">
-										                <div class="tm-zone-option-card active">
-										                    <div class="tm-zone-option-icon">◎</div>
-										                    <div class="tm-zone-option-content">
-										                        <div class="tm-zone-option-title">Par rayon autour d’un point</div>
-										                        <div class="tm-zone-option-text">
-										                            Définissez un rayon en km autour d’une ville ou d’une adresse.
-										                        </div>
-										                    </div>
-										                    <div class="tm-zone-option-arrow">›</div>
-										                </div>
-										            </div> #}
-
-		<div class="col-lg-6">
-			<button type="button" class="tm-zone-option-card active w-100 text-start" data-zone-mode="selection">
-				<div class="tm-zone-option-icon">⌖</div>
-				<div class="tm-zone-option-content">
-					<div class="tm-zone-option-title">Par sélection de villes / codes postaux</div>
-					<div class="tm-zone-option-text">
-						Sélectionnez une ville ou un code postal pour définir votre zone d’intervention.
+		<div class="row g-3 mb-4">
+			<div class="col-lg-6">
+				<button type="button" class="tm-zone-option-card active w-100 text-start" data-zone-mode="selection">
+					<div class="tm-zone-option-icon">⌖</div>
+					<div class="tm-zone-option-content">
+						<div class="tm-zone-option-title">Par sélection de villes / codes postaux</div>
+						<div class="tm-zone-option-text">
+							Sélectionnez une ville ou un code postal pour définir votre zone d’intervention.
+						</div>
 					</div>
-				</div>
-				<div class="tm-zone-option-arrow">›</div>
-			</button>
-		</div>
-	</div>
-
-	<div id="zone-selection-form" class="tm-zone-mode-panel is-visible">
-		{{ form_start(zoneForm, {
-        attr: {
-            novalidate: 'novalidate',
-            class: 'tm-form-container',
-            'data-turbo': 'false'
-        }
-    }) }}
-
-		{% if zoneForm.vars.errors|length > 0 %}
-			<div class="alert alert-danger mb-3">
-				{{ form_errors(zoneForm) }}
-			</div>
-		{% endif %}
-
-		<div class="row g-3 align-items-end">
-			<div class="col-md-4">
-				<div class="tm-form-row">
-					{{ form_row(zoneForm.city) }}
-				</div>
-			</div>
-
-			<div class="col-md-3">
-				<div class="tm-form-row">
-					{{ form_row(zoneForm.postalCode) }}
-				</div>
-			</div>
-
-			<div class="col-md-2">
-				<div class="tm-form-row">
-					{{ form_row(zoneForm.radiusKm) }}
-				</div>
-			</div>
-
-			<div class="col-md-3">
-				<div class="tm-zone-form-switches">
-					<div class="tm-form-check-row">
-						{{ form_row(zoneForm.isMainZone) }}
-					</div>
-					<div class="tm-form-check-row">
-						{{ form_row(zoneForm.isActive) }}
-					</div>
-				</div>
+					<div class="tm-zone-option-arrow">›</div>
+				</button>
 			</div>
 		</div>
 
-		<div class="d-flex justify-content-center mt-4">
-			<button type="submit" class="btn tm-btn-service px-4 py-2 fw-bold">
-				Enregistrer les modifications
-			</button>
+		<div id="zone-selection-form" class="tm-zone-mode-panel is-visible">
+			{{ form_start(zoneForm, {
+                attr: {
+                    novalidate: 'novalidate',
+                    class: 'tm-form-container',
+                    'data-turbo': 'false'
+                }
+            }) }}
+
+			{% if zoneForm.vars.errors|length > 0 %}
+				<div class="alert alert-danger mb-3">
+					{{ form_errors(zoneForm) }}
+				</div>
+			{% endif %}
+
+			<div class="row g-3 align-items-end">
+				<div class="col-md-4">
+					<div class="tm-form-row">
+						{{ form_row(zoneForm.city) }}
+					</div>
+				</div>
+
+				<div class="col-md-3">
+					<div class="tm-form-row">
+						{{ form_row(zoneForm.postalCode) }}
+					</div>
+				</div>
+
+				<div class="col-md-2">
+					<div class="tm-form-row">
+						{{ form_row(zoneForm.radiusKm) }}
+					</div>
+				</div>
+
+				<div class="col-md-3">
+					<div class="tm-zone-form-switches">
+						<div class="tm-form-check-row">
+							{{ form_row(zoneForm.isMainZone) }}
+						</div>
+						<div class="tm-form-check-row">
+							{{ form_row(zoneForm.isActive) }}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="d-flex justify-content-center mt-4">
+				<button type="submit" class="btn tm-btn-service px-4 py-2 fw-bold">
+					Enregistrer les modifications
+				</button>
+			</div>
+
+			{{ form_end(zoneForm) }}
 		</div>
-		{{ form_end(zoneForm) }}
 	</div>
 </div>
