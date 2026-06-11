@@ -16,6 +16,8 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Entity\PrestataireInterventionZone;
+use App\Form\PrestataireInterventionZoneType;
 
 class ProfileController extends AbstractController
 {
@@ -58,6 +60,22 @@ class ProfileController extends AbstractController
             \App\Form\PrestatairePublicProfileTabType::class,
             $prestataireProfile
         );
+
+        $zone = new PrestataireInterventionZone();
+        $zone->setPrestataireProfile($prestataireProfile);
+
+        $zoneForm = $formFactory->createNamed(
+            'zone_form',
+            PrestataireInterventionZoneType::class,
+            $zone,
+            [
+                'action' => $this->generateUrl('app_prestataire_zone_add'),
+                'method' => 'POST',
+            ]
+        );
+
+        $zones = $prestataireProfile->getPrestataireInterventionZones();
+
         $userForm->handleRequest($request);
         $publicProfileForm->handleRequest($request);
         $companyForm->handleRequest($request);
@@ -98,6 +116,8 @@ class ProfileController extends AbstractController
             'userForm' => $userForm->createView(),
             'publicProfileForm' => $publicProfileForm->createView(),
             'companyForm' => $companyForm->createView(),
+            'zoneForm' => $zoneForm->createView(),
+            'zones' => $zones,
             'user' => $user,
             'categories' => $categoryRepository->findWithSubCategories(),
         ]);

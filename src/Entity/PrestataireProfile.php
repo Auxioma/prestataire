@@ -19,7 +19,7 @@ use Vich\UploaderBundle\Mapping\Attribute as Vich;
 #[ORM\Index(name: 'idx_presta_status', columns: ['profile_status'])]
 #[ORM\Index(name: 'idx_presta_city', columns: ['city'])]
 #[ORM\Index(name: 'idx_presta_zip', columns: ['postal_code'])]
-#[Vich\Uploadable] 
+#[Vich\Uploadable]
 class PrestataireProfile
 {
     #[ORM\Id]
@@ -111,7 +111,7 @@ class PrestataireProfile
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $coverImage = null;
 
-    #[Vich\UploadableField(mapping: 'company_cover', fileNameProperty: 'coverImage')] 
+    #[Vich\UploadableField(mapping: 'company_cover', fileNameProperty: 'coverImage')]
     private ?File $coverImageFile = null;
 
     #[ORM\Column(type: 'string', length: 50, enumType: PrestataireProfileStatusEnum::class)]
@@ -162,11 +162,17 @@ class PrestataireProfile
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $experience = null;
 
-/**
+    /**
      * @var Collection<int, PrestataireService>
      */
     #[ORM\OneToMany(mappedBy: 'prestataire', targetEntity: PrestataireService::class, cascade: ['persist', 'remove'])]
     private Collection $prestataireServices;
+
+    /**
+     * @var Collection<int, PrestataireInterventionZone>
+     */
+    #[ORM\OneToMany(targetEntity: PrestataireInterventionZone::class, mappedBy: 'prestataireProfile')]
+    private Collection $prestataireInterventionZones;
 
     public function __construct()
     {
@@ -179,6 +185,7 @@ class PrestataireProfile
         $this->averageRating = '0.00';
         $this->isFeatured = false;
         $this->prestataireServices = new ArrayCollection();
+        $this->prestataireInterventionZones = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -722,5 +729,30 @@ class PrestataireProfile
             $services->add($ps->getService());
         }
         return $services;
+    }
+
+    /**
+     * @return Collection<int, PrestataireInterventionZone>
+     */
+    public function getPrestataireInterventionZones(): Collection
+    {
+        return $this->prestataireInterventionZones;
+    }
+
+    public function addPrestataireInterventionZone(PrestataireInterventionZone $prestataireInterventionZone): static
+    {
+        if (!$this->prestataireInterventionZones->contains($prestataireInterventionZone)) {
+            $this->prestataireInterventionZones->add($prestataireInterventionZone);
+            $prestataireInterventionZone->setPrestataireProfile($this);
+        }
+
+        return $this;
+    }
+
+    public function removePrestataireInterventionZone(PrestataireInterventionZone $prestataireInterventionZone): static
+    {
+        $this->prestataireInterventionZones->removeElement($prestataireInterventionZone);
+
+        return $this;
     }
 }

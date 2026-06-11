@@ -107,7 +107,7 @@
 
 				</div>
 			</aside>
-            <div class="tm-settings-sidebar-backdrop"></div>
+			<div class="tm-settings-sidebar-backdrop"></div>
 
 
 			{# ================= CONTENU ================= #}
@@ -388,14 +388,16 @@
 						{{ include('settings/_prestataire_services_tab.html.twig') }}
 					</div>
 
-					{# ================= AUTRES TABS ================= #}
+					{# ================= ZONES ================= #}
 					<div class="tab-pane fade" id="zones-panel" role="tabpanel">
-						<div class="card tm-card p-4">
-							<h4>📍 Zones</h4>
-							<p class="text-muted mb-0">Contenu à venir.</p>
-						</div>
+						{{ include('settings/_prestataire_zone_tab.html.twig', {
+        					zoneForm: zoneForm,
+        					zones: zones,
+        					user: user
+    					}) }}
 					</div>
 
+					{# ================= AUTRES TABS ================= #}
 					<div class="tab-pane fade" id="dispo-panel" role="tabpanel">
 						<div class="card tm-card p-4">
 							<h4>📅 Disponibilités</h4>
@@ -429,6 +431,7 @@ function showTabFromHash() {
 const hash = window.location.hash;
 if (! hash) 
 return;
+
 
 
 const trigger = document.querySelector(`#settingsTabs [data-bs-target="${hash}"], .tm-settings-sidebar [data-bs-target="${hash}"]`);
@@ -482,6 +485,7 @@ const toggle = document.querySelector('.tm-sidebar-toggle');
 
 if (! sidebar || ! toggle) 
 return;
+
 
 
 toggle.addEventListener('click', function () {
