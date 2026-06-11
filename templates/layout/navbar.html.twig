@@ -97,6 +97,7 @@
 			<a class="nav-link tm-navbar__link" href="#">Bons plans</a>
 		</li>
 
+		{% if app.user %}
 		<li class="nav-item">
 			<a class="nav-link tm-navbar__link tm-navbar__link--icon" href="#">
 				<i class="fa-regular fa-heart"></i>
@@ -106,7 +107,6 @@
 
 		<li class="tm-navbar__divider d-none d-xl-block"></li>
 
-		{% if app.user %}
 			<li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle tm-navbar__link tm-navbar__link--account" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 					<i class="fa-solid fa-circle-user"></i>
