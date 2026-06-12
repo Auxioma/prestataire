@@ -2,8 +2,9 @@
 
 namespace App\Controller;
 
-use App\Repository\PrestataireServiceRepository;
+use App\Form\HomepageSearchType;
 use App\Repository\PrestataireProfileRepository;
+use App\Repository\PrestataireServiceRepository;
 use App\Repository\ServiceCategoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +18,11 @@ class HomeController extends AbstractController
         PrestataireProfileRepository $prestataireProfileRepository,
         PrestataireServiceRepository $prestataireServiceRepository
     ): Response {
+        $homepageSearchForm = $this->createForm(HomepageSearchType::class, null, [
+            'action' => $this->generateUrl('app_homepage_search'),
+            'method' => 'GET',
+        ]);
+
         $categories = $categoryRepository->findBy([
             'isActive' => true,
             'parent' => null,
@@ -25,6 +31,7 @@ class HomeController extends AbstractController
         ]);
 
         return $this->render('home/index.html.twig', [
+            'homepageSearchForm' => $homepageSearchForm->createView(),
             'categories' => $categories,
             'providers' => $prestataireProfileRepository->findBy([], ['averageRating' => 'DESC'], 4),
             'bonsPlans' => $prestataireServiceRepository->findLatestBonsPlansForHome(4),

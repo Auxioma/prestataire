@@ -51,57 +51,65 @@
 		</div>
 
 
+		{# 2. BARRE DE RECHERCHE #}
 		<div class="container search-overlap-wrapper">
 			<div class="card border-0 p-2 search-overlap-card bg-white">
-				<form
-					action="#" method="GET" class="row g-2 align-items-center w-100 m-0">
+				{{ form_start(homepageSearchForm, {
+            attr: {
+                class: 'row g-2 align-items-center w-100 m-0'
+            }
+        }) }}
 
-					{# Champ 1 #}
-					<div class="col-lg-3">
-						<div class="search-field-container d-flex align-items-center gap-3">
-							<i class="fa-solid fa-magnifying-glass text-tm-service fs-5"></i>
-							<div class="w-100">
-								<label class="search-label">Que recherchez-vous ?</label>
-								<input type="text" class="form-control search-input" placeholder="Ex: Plomberie...">
-							</div>
+				{# Champ 1 #}
+				<div class="col-lg-3">
+					<div class="search-field-container d-flex align-items-center gap-3">
+						<i class="fa-solid fa-magnifying-glass text-tm-service fs-5"></i>
+						<div class="w-100">
+							{{ form_label(homepageSearchForm.query, null, {
+                            label_attr: { class: 'search-label' }
+                        }) }}
+							{{ form_widget(homepageSearchForm.query) }}
 						</div>
 					</div>
+				</div>
 
-					{# Champ 2 #}
-					<div class="col-lg-3 d-flex align-items-center">
-						<div class="search-divider d-none d-lg-block me-3"></div>
-						<div class="search-field-container d-flex align-items-center gap-3 w-100">
-							<i class="fa-solid fa-briefcase text-tm-service fs-5"></i>
-							<div class="w-100">
-								<label class="search-label">Type de prestation</label>
-								<select class="form-select search-select">
-									<option selected>Service, Installation...</option>
-									<option>Dépannage d'urgence</option>
-								</select>
-							</div>
+				{# Champ 2 #}
+				<div class="col-lg-3 d-flex align-items-center">
+					<div class="search-divider d-none d-lg-block me-3"></div>
+					<div class="search-field-container d-flex align-items-center gap-3 w-100">
+						<i class="fa-solid fa-briefcase text-tm-service fs-5"></i>
+						<div class="w-100">
+							{{ form_label(homepageSearchForm.subCategory, null, {
+                            label_attr: { class: 'search-label' }
+                        }) }}
+							{{ form_widget(homepageSearchForm.subCategory) }}
 						</div>
 					</div>
+				</div>
 
-					{# Champ 3 #}
-					<div class="col-lg-3 d-flex align-items-center">
-						<div class="search-divider d-none d-lg-block me-3"></div>
-						<div class="search-field-container d-flex align-items-center gap-3 w-100">
-							<i class="fa-solid fa-location-dot text-tm-service fs-5"></i>
-							<div class="w-100">
-								<label class="search-label">Où ?</label>
-								<input type="text" class="form-control search-input" placeholder="Ville, CP...">
-							</div>
+				{# Champ 3 #}
+				<div class="col-lg-3 d-flex align-items-center">
+					<div class="search-divider d-none d-lg-block me-3"></div>
+					<div class="search-field-container d-flex align-items-center gap-3 w-100">
+						<i class="fa-solid fa-location-dot text-tm-service fs-5"></i>
+						<div class="w-100">
+							{{ form_label(homepageSearchForm.location, null, {
+                            label_attr: { class: 'search-label' }
+                        }) }}
+							{{ form_widget(homepageSearchForm.location) }}
 						</div>
 					</div>
+				</div>
 
-					{# Bouton #}
-					<div class="col-lg-3">
-						<button type="submit" class="btn search-submit-btn w-100">
-							<i class="fa-solid fa-magnifying-glass me-2"></i>
-							Rechercher
-						</button>
-					</div>
-				</form>
+				{# Bouton #}
+				<div class="col-lg-3">
+					<button type="submit" class="btn search-submit-btn w-100">
+						<i class="fa-solid fa-magnifying-glass me-2"></i>
+						Rechercher
+					</button>
+				</div>
+
+				{{ form_end(homepageSearchForm) }}
 			</div>
 		</div>
 
