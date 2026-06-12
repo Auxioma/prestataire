@@ -1,0 +1,94 @@
+<?php
+
+namespace App\DataFixtures\User;
+
+use App\Entity\ClientProfile;
+use App\Entity\User;
+use App\Enum\ClientTypeEnum;
+use App\Enum\UserStatusEnum;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
+class ClientFixtures extends Fixture
+{
+    public const CLIENT_JEAN_REFERENCE = 'user_client_jean';
+    public const CLIENT_MARIE_REFERENCE = 'user_client_marie';
+    public const CLIENT_LUCAS_REFERENCE = 'user_client_lucas';
+
+    public function __construct(
+        private UserPasswordHasherInterface $passwordHasher,
+    ) {
+    }
+
+    public function load(ObjectManager $manager): void
+    {
+        $now = new \DateTimeImmutable();
+        $plainPassword = '123Test!';
+
+        $clients = [
+            [
+                'reference' => self::CLIENT_JEAN_REFERENCE,
+                'email' => 'jean.dupont@gmail.com',
+                'first_name' => 'Jean',
+                'last_name' => 'Dupont',
+                'phone' => '0612345678',
+                'avatar' => 'https://ui-avatars.com/api/?name=Jean+Dupont&background=0D6EFD&color=fff&size=150',
+                'type' => ClientTypeEnum::PARTICULIER,
+                'company_name' => null,
+            ],
+            [
+                'reference' => self::CLIENT_MARIE_REFERENCE,
+                'email' => 'marie.lefevre@gmail.com',
+                'first_name' => 'Marie',
+                'last_name' => 'Lefevre',
+                'phone' => '0623456789',
+                'avatar' => 'https://ui-avatars.com/api/?name=Marie+Lefevre&background=E83E8C&color=fff&size=150',
+                'type' => ClientTypeEnum::PARTICULIER,
+                'company_name' => null,
+            ],
+            [
+                'reference' => self::CLIENT_LUCAS_REFERENCE,
+                'email' => 'lucas.martin@gmail.com',
+                'first_name' => 'Lucas',
+                'last_name' => 'Martin',
+                'phone' => '0634567890',
+                'avatar' => 'https://ui-avatars.com/api/?name=Lucas+Martin&background=6F42C1&color=fff&size=150',
+                'type' => ClientTypeEnum::PROFESSIONNEL,
+                'company_name' => 'Martin Entreprise',
+            ],
+        ];
+
+        foreach ($clients as $data) {
+            $user = new User();
+            $user->setEmail($data['email']);
+            $user->setRoles(['ROLE_CLIENT']);
+            $user->setPassword($this->passwordHasher->hashPassword($user, $plainPassword));
+            $user->setFirstName($data['first_name']);
+            $user->setLastName($data['last_name']);
+            $user->setPhoneNumber($data['phone']);
+            $user->setAvatar($data['avatar']);
+            $user->setIsVerified(true);
+            $user->setEmailVerifiedAt($now);
+            $user->setStatus(UserStatusEnum::ACTIVE);
+            $user->setCreatedAt($now);
+            $user->setUpdatedAt($now);
+
+            $profile = new ClientProfile();
+            $profile->setAccount($user);
+            $profile->setType($data['type']);
+            $profile->setCreatedAt($now);
+
+            if ($data['company_name'] !== null) {
+                $profile->setCompanyName($data['company_name']);
+            }
+
+            $manager->persist($user);
+            $manager->persist($profile);
+
+            $this->addReference($data['reference'], $user);
+        }
+
+        $manager->flush();
+    }
+}
