@@ -321,101 +321,131 @@
 
 
 		{# BON PLAN #}
-		<section class="tm-home-deals-section container my-5">
-			<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-				<h2 class="fw-extrabold h4 mb-0 text-dark tracking-tight">
-					Nos Bons Plans
-					<span class="text-tm-accent">
-						<i class="fa-solid fa-percent"></i>
-					</span>
-				</h2>
+<section class="tm-home-deals-section container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <h2 class="fw-extrabold h4 mb-0 text-dark tracking-tight">
+            Nos Bons Plans
+            <span class="text-tm-accent">
+                <i class="fa-solid fa-percent"></i>
+            </span>
+        </h2>
 
-				<a href="{{ path('app_bons_plans') }}" class="tm-home-deals-link">
-					Voir toutes les offres
-					<i class="fa-solid fa-chevron-right"></i>
-				</a>
-			</div>
+        <a href="{{ path('app_bons_plans') }}" class="tm-home-deals-link">
+            Voir toutes les offres
+            <i class="fa-solid fa-chevron-right"></i>
+        </a>
+    </div>
 
-			{% if bonsPlans is not empty %}
-				<div class="tm-home-deals-grid">
-					{% for bonPlan in bonsPlans %}
-						{% set reduction = bonPlan.tauxReduction|default(0) %}
-						{% set prixCatalogue = bonPlan.prixCatalogue|default(0) %}
-						{% set prixRemise = prixCatalogue - (prixCatalogue * reduction / 100) %}
+    {% if bonsPlans is not empty %}
+        <div class="tm-home-deals-grid">
+            {% for bonPlan in bonsPlans %}
+                {% set reduction = bonPlan.tauxReduction|default(0) %}
+                {% set prixCatalogue = bonPlan.prixCatalogue|default(0) %}
+                {% set prixRemise = prixCatalogue - (prixCatalogue * reduction / 100) %}
 
-						{% if reduction <= 15 %}
-							{% set promoLevel = 'low' %}
-						{% elseif reduction <= 25 %}
-							{% set promoLevel = 'medium' %}
-						{% elseif reduction <= 40 %}
-							{% set promoLevel = 'high' %}
-						{% else %}
-							{% set promoLevel = 'max' %}
-						{% endif %}
+                {% if reduction <= 15 %}
+                    {% set promoLevel = 'low' %}
+                {% elseif reduction <= 25 %}
+                    {% set promoLevel = 'medium' %}
+                {% elseif reduction <= 40 %}
+                    {% set promoLevel = 'high' %}
+                {% else %}
+                    {% set promoLevel = 'max' %}
+                {% endif %}
 
-						<article class="tm-home-deal-card tm-home-deal-card--{{ promoLevel }}">
-							<div class="tm-home-deal-card__top">
-								<span class="tm-home-deal-card__badge tm-home-deal-card__badge--{{ promoLevel }}">
-									-{{ reduction|number_format(0, ',', ' ') }}%
-								</span>
+                {% set companyName = bonPlan.prestataire.companyName ?: bonPlan.prestataire.account.firstName ~ ' ' ~ bonPlan.prestataire.account.lastName %}
+                {% set coverImage = bonPlan.prestataire.coverImage ?? null %}
 
-								{% if bonPlan.service is defined and bonPlan.service.category is defined and bonPlan.service.category %}
-									<span class="tm-home-deal-card__category">
-										{{ bonPlan.service.category.name }}
-									</span>
-								{% endif %}
-							</div>
+                <article class="tm-home-deal-card tm-home-deal-card--{{ promoLevel }}">
+                    <div class="tm-home-deal-card__glow"></div>
 
-							<div class="tm-home-deal-card__icon">
-								<i class="fa-solid {{ bonPlan.service.icon|default('fa-screwdriver-wrench') }}"></i>
-							</div>
+                    <div class="tm-home-deal-card__hero">
+                        <img
+                            src="{{ coverImage ? asset('uploads/covers/' ~ coverImage) : asset('images/img_par_defaut.png') }}"
+                            alt="{{ companyName }}"
+                            class="tm-home-deal-card__cover"
+                        >
 
-							<div class="tm-home-deal-card__body">
-								<h3 class="tm-home-deal-card__title">
-									{{ bonPlan.service.name }}
-								</h3>
+                        <div class="tm-home-deal-card__hero-overlay"></div>
 
-								<p class="tm-home-deal-card__company">
-									{{ bonPlan.prestataire.companyName ?: bonPlan.prestataire.account.firstName ~ ' ' ~ bonPlan.prestataire.account.lastName }}
-								</p>
+                        <div class="tm-home-deal-card__hero-top">
+                            <span class="tm-home-deal-card__badge tm-home-deal-card__badge--{{ promoLevel }}">
+                                -{{ reduction|number_format(0, ',', ' ') }}%
+                            </span>
 
-								<p class="tm-home-deal-card__meta">
-									<i class="fa-solid fa-location-dot"></i>
-									{{ bonPlan.prestataire.city ?: 'Ville non renseignée' }}
-								</p>
-							</div>
+                            {% if bonPlan.service is defined and bonPlan.service.category is defined and bonPlan.service.category %}
+                                <span class="tm-home-deal-card__category-chip">
+                                    {{ bonPlan.service.category.name }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
 
-							<div class="tm-home-deal-card__footer">
-								<div class="tm-home-deal-card__prices">
-									<span class="tm-home-deal-card__old-price">
-										{{ prixCatalogue|number_format(2, ',', ' ') }}
-										€
-									</span>
-									<span class="tm-home-deal-card__new-price">
-										{{ prixRemise|number_format(2, ',', ' ') }}
-										€
-									</span>
-								</div>
+                    <div class="tm-home-deal-card__body">
+                        <div class="tm-home-deal-card__provider-row">
+                            <span class="tm-home-deal-card__provider-avatar">
+                                {{ companyName|slice(0, 1)|upper }}
+                            </span>
+                            <span class="tm-home-deal-card__provider-text">
+                                {{ companyName }}
+                            </span>
+                        </div>
 
-								{% if bonPlan.prestataire.slug %}
-									<a href="{{ path('app_prestataire_show', { slug: bonPlan.prestataire.slug }) }}" class="tm-home-deal-card__cta">
-										Voir l’offre
-									</a>
-								{% endif %}
-							</div>
-						</article>
-					{% endfor %}
-				</div>
-			{% else %}
-				<div class="tm-home-deals-empty">
-					<div class="tm-home-deals-empty__icon">🏷️</div>
-					<h3 class="tm-home-deals-empty__title">Aucun bon plan pour le moment</h3>
-					<p class="tm-home-deals-empty__text">
-						Les offres promotionnelles apparaîtront ici dès qu’elles seront publiées.
-					</p>
-				</div>
-			{% endif %}
-		</section>
+                        <h3 class="tm-home-deal-card__title">
+                            {{ bonPlan.service.name }}
+                        </h3>
+
+                        {% if bonPlan.service.description is defined and bonPlan.service.description %}
+                            <p class="tm-home-deal-card__description">
+                                {{ bonPlan.service.description|slice(0, 96) }}{% if bonPlan.service.description|length > 96 %}...{% endif %}
+                            </p>
+                        {% endif %}
+
+                        <div class="tm-home-deal-card__meta-wrap">
+                            <p class="tm-home-deal-card__meta">
+                                <i class="fa-solid fa-location-dot"></i>
+                                {{ bonPlan.prestataire.city ?: 'Ville non renseignée' }}
+                            </p>
+
+                            {% if bonPlan.prestataire.averageRating is defined and bonPlan.prestataire.averageRating %}
+                                <p class="tm-home-deal-card__rating">
+                                    <i class="fa-solid fa-star"></i>
+                                    {{ bonPlan.prestataire.averageRating|number_format(1, ',', ' ') }}/5
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="tm-home-deal-card__footer">
+                        <div class="tm-home-deal-card__prices">
+                            <span class="tm-home-deal-card__old-price">
+                                {{ prixCatalogue|number_format(2, ',', ' ') }} €
+                            </span>
+                            <span class="tm-home-deal-card__new-price">
+                                {{ prixRemise|number_format(2, ',', ' ') }} €
+                            </span>
+                        </div>
+
+                        {% if bonPlan.prestataire.slug %}
+                            <a href="{{ path('app_prestataire_show', { slug: bonPlan.prestataire.slug }) }}" class="tm-home-deal-card__cta">
+                                <span>Voir l’offre</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="tm-home-deals-empty">
+            <div class="tm-home-deals-empty__icon">🏷️</div>
+            <h3 class="tm-home-deals-empty__title">Aucun bon plan pour le moment</h3>
+            <p class="tm-home-deals-empty__text">
+                Les offres promotionnelles apparaîtront ici dès qu’elles seront publiées.
+            </p>
+        </div>
+    {% endif %}
+</section>
 
 
 		{# STEPS #}
