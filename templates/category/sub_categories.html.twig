@@ -1,132 +1,176 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}TrouveMoi -
-	{{ category.name }}
-{% endblock %}
+{% block title %}TrouveMoi - {{ category.name }}{% endblock %}
 
 {% block body %}
-	<div
-		class="container py-4 text-start">
+    <div class="container py-4 tm-subcat-page">
 
-		{# 1. BREADCRUMB #}
-		<nav aria-label="breadcrumb" class="mb-4">
-			<ol class="breadcrumb small">
-				<li class="breadcrumb-item">
-					<a href="{{ path('app_home') }}" class="text-decoration-none text-muted">
-						<i class="fa-solid fa-house me-1"></i>
-						Accueil
-					</a>
-				</li>
-				<li class="breadcrumb-item">
-					<a href="{{ path('app_category_index') }}" class="text-decoration-none text-muted">Catégories</a>
-				</li>
-				<li class="breadcrumb-item active text-dark fw-bold" aria-current="page">{{ category.name }}</li>
-			</ol>
-		</nav>
+        {# 1. BREADCRUMB #}
+        <nav aria-label="breadcrumb" class="tm-subcat-breadcrumb mb-4">
+            <ol class="breadcrumb small mb-0">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('app_home') }}" class="text-decoration-none text-muted">
+                        <i class="fa-solid fa-house me-1"></i>
+                        Accueil
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ path('app_category_index') }}" class="text-decoration-none text-muted">
+                        Catégories
+                    </a>
+                </li>
+                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">
+                    {{ category.name }}
+                </li>
+            </ol>
+        </nav>
 
-		{# 2. EN-TÊTE & BADGES #}
-		<div class="row align-items-center mb-5 gy-4">
-			<div class="col-lg-6">
-				<h1 class="fw-extrabold h2 text-dark mb-2">{{ category.name }}</h1>
-				<p class="text-muted mb-0">Sélectionnez un métier ou une spécialité pour affiner votre recherche de prestation.</p>
-			</div>
-			<div class="col-lg-6">
-				<div class="row g-2 justify-content-lg-end">
-					<div class="col-6 col-sm-3">
-						<div class="p-2 border rounded-3 bg-white text-center h-100 d-flex flex-column align-items-center justify-content-center shadow-xs">
-							<i class="fa-solid fa-circle-plus text-tm-accent mb-1 fs-5"></i>
-							<span class="fw-bold small text-dark lh-sm">+ 120 000<br><span class="text-muted fw-normal fs-11">prestataires</span>
-							</span>
-						</div>
-					</div>
-					<div class="col-6 col-sm-3">
-						<div class="p-2 border rounded-3 bg-white text-center h-100 d-flex flex-column align-items-center justify-content-center shadow-xs">
-							<i class="fa-solid fa-circle-check text-success mb-1 fs-5"></i>
-							<span class="fw-bold small text-dark lh-sm">Prestataires<br><span class="text-muted fw-normal fs-11">vérifiés</span>
-							</span>
-						</div>
-					</div>
-					<div class="col-6 col-sm-3">
-						<div class="p-2 border rounded-3 bg-white text-center h-100 d-flex flex-column align-items-center justify-content-center shadow-xs">
-							<i class="fa-solid fa-star text-warning mb-1 fs-5"></i>
-							<span class="fw-bold small text-dark lh-sm">Avis clients<br><span class="text-muted fw-normal fs-11">contrôlés</span>
-							</span>
-						</div>
-					</div>
-					<div class="col-6 col-sm-3">
-						<div class="p-2 border rounded-3 bg-white text-center h-100 d-flex flex-column align-items-center justify-content-center shadow-xs">
-							<i class="fa-solid fa-headset text-tm-service mb-1 fs-5"></i>
-							<span class="fw-bold small text-dark lh-sm">Support 7j/7<br><span class="text-muted fw-normal fs-11">à votre écoute</span>
-							</span>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+        {# 2. HERO #}
+        <section class="tm-subcat-hero mb-5">
+            <div class="tm-subcat-hero__content">
+                <span class="tm-subcat-hero__eyebrow">Explorer les métiers</span>
 
-		{# 3. GRILLE DES SOUS-CATÉGORIES (MÉTIERS) #}
-		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
-			{% set hasSubCategories = false %}
+                <h1 class="tm-subcat-hero__title">
+                    Métiers en {{ category.name }}
+                </h1>
 
-			{% for subCategory in category.subCategories|sort((a, b) => a.position <=> b.position) %}
-				{% if subCategory.isActive %}
-					{% set hasSubCategories = true %}
-					<div class="col">
-						<a
-							href="{{ path('app_subcategory_services', {'categorySlug': category.slug, 'subCategorySlug': subCategory.slug}) }}" class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden text-decoration-none tm-cat-grid-card position-relative p-4 text-center">
+                <p class="tm-subcat-hero__subtitle">
+                    Affinez votre recherche en choisissant une sous-catégorie spécialisée et trouvez plus rapidement le bon professionnel.
+                </p>
+            </div>
 
-							{# COIN ICÔNE CENTRALISÉ ET ÉPURÉ #}
-							<div class="d-flex align-items-center justify-content-center rounded-3 mb-3 mx-auto" style="width: 65px; height: 65px; background-color: rgba(6, 27, 86, 0.05); color: #061B56;">
-								<i class="fa-solid {{ subCategory.icon|default('fa-screwdriver-wrench') }} fs-3"></i>
-							</div>
+            <div class="tm-subcat-hero__stats">
+                <div class="tm-subcat-stat-card">
+                    <div class="tm-subcat-stat-card__icon tm-subcat-stat-card__icon--accent">
+                        <i class="fa-solid fa-circle-plus"></i>
+                    </div>
+                    <div class="tm-subcat-stat-card__content">
+                        <strong>+ 120 000</strong>
+                        <span>prestataires</span>
+                    </div>
+                </div>
 
-							{# CONTENU TEXTUEL #}
-							<div class="card-body p-0">
-								<h3 class="fw-extrabold h6 text-dark mb-1">{{ subCategory.name }}</h3>
-								<span class="text-muted fs-12 fw-medium">
-									{{ subCategory.services|length }}
-									{{ subCategory.services|length > 1 ? 'prestations' : 'prestation' }}
-								</span>
-							</div>
-						</a>
-					</div>
-				{% endif %}
-			{% else %}
-				{% set hasSubCategories = false %}
-			{% endfor %}
+                <div class="tm-subcat-stat-card">
+                    <div class="tm-subcat-stat-card__icon tm-subcat-stat-card__icon--success">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div class="tm-subcat-stat-card__content">
+                        <strong>Profils</strong>
+                        <span>vérifiés</span>
+                    </div>
+                </div>
 
-			{% if not hasSubCategories %}
-				<div class="col-12 text-center">
-					<div class="alert alert-info border-0 shadow-sm">Aucune spécialité n'est disponible dans cette catégorie pour le moment.</div>
-				</div>
-			{% endif %}
-		</div>
+                <div class="tm-subcat-stat-card">
+                    <div class="tm-subcat-stat-card__icon tm-subcat-stat-card__icon--warning">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <div class="tm-subcat-stat-card__content">
+                        <strong>Avis</strong>
+                        <span>contrôlés</span>
+                    </div>
+                </div>
 
-		{# 4. BANDEAU DE CONVERSION #}
-		<div class="tm-cat-banner">
-			<div class="tm-cat-banner-left">
-				<div class="tm-cat-banner-icon-wrapper">
-					<i class="fa-solid fa-award"></i>
-				</div>
-				<div class="tm-cat-banner-info">
-					<h4 class="h5 mb-1">Vous êtes prestataire ?</h4>
-					<p class="tm-cat-banner-desc mb-3">Rejoignez des milliers de professionnels et développez votre activité</p>
+                <div class="tm-subcat-stat-card">
+                    <div class="tm-subcat-stat-card__icon tm-subcat-stat-card__icon--service">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <div class="tm-subcat-stat-card__content">
+                        <strong>Support</strong>
+                        <span>7j/7</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-					<ul class="tm-cat-banner-features">
-						<li>
-							<i class="fa-solid fa-circle-check me-2"></i>Visibilité accrue</li>
-						<li>
-							<i class="fa-solid fa-circle-check me-2"></i>Clients qualifiés</li>
-						<li>
-							<i class="fa-solid fa-circle-check me-2"></i>Outils de gestion</li>
-					</ul>
-				</div>
-			</div>
-			<div class="tm-cat-banner-actions flex-sm-row flex-column mt-3 mt-lg-0">
-				<a href="#" class="btn tm-cat-btn-outline">En savoir plus</a>
-				<a href="#" class="btn tm-cat-btn-primary">Devenir prestataire</a>
-			</div>
-		</div>
+        {# 3. SECTION SOUS-CATÉGORIES #}
+        <section class="tm-subcat-section mb-5">
+            <div class="tm-subcat-section__head">
+                <div>
+                    <h2 class="tm-subcat-section__title">Choisissez un métier</h2>
+                    <p class="tm-subcat-section__subtitle">
+                        Sélectionnez la spécialité la plus adaptée à votre besoin.
+                    </p>
+                </div>
+            </div>
 
-	</div>
+            {% set activeSubCategories = category.subCategories|filter(subCategory => subCategory.isActive) %}
+
+            {% if activeSubCategories is not empty %}
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
+                    {% for subCategory in activeSubCategories|sort((a, b) => a.position <=> b.position) %}
+                        <div class="col">
+                            <a href="{{ path('app_subcategory_services', {'categorySlug': category.slug, 'subCategorySlug': subCategory.slug}) }}"
+                               class="tm-subcat-card text-decoration-none">
+                                <div class="tm-subcat-card__inner">
+                                    <div class="tm-subcat-card__top">
+                                        <div class="tm-subcat-card__icon-box">
+                                            <i class="fa-solid {{ subCategory.icon|default('fa-screwdriver-wrench') }}"></i>
+                                        </div>
+
+                                        <div class="tm-subcat-card__arrow">
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="tm-subcat-card__body">
+                                        <h3 class="tm-subcat-card__title">{{ subCategory.name }}</h3>
+                                        <p class="tm-subcat-card__meta">
+                                            {{ subCategory.services|length }}
+                                            {{ subCategory.services|length > 1 ? 'prestations disponibles' : 'prestation disponible' }}
+                                        </p>
+                                    </div>
+
+                                    <div class="tm-subcat-card__footer">
+                                        <span class="tm-subcat-card__link">
+                                            Voir les prestations
+                                            <i class="fa-solid fa-chevron-right"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="tm-subcat-empty">
+                    <div class="tm-subcat-empty__icon">🧰</div>
+                    <h3 class="tm-subcat-empty__title">Aucune spécialité disponible</h3>
+                    <p class="tm-subcat-empty__text">
+                        Cette catégorie ne propose pas encore de sous-catégories actives pour le moment.
+                    </p>
+                </div>
+            {% endif %}
+        </section>
+
+        {# 4. BANDEAU PRESTATAIRE #}
+        <section class="tm-subcat-banner">
+            <div class="tm-subcat-banner__glow"></div>
+
+            <div class="tm-subcat-banner__left">
+                <div class="tm-subcat-banner__icon">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+
+                <div class="tm-subcat-banner__content">
+                    <span class="tm-subcat-banner__eyebrow">Espace professionnel</span>
+                    <h3 class="tm-subcat-banner__title">Vous êtes prestataire ?</h3>
+                    <p class="tm-subcat-banner__desc">
+                        Développez votre visibilité sur TrouveMoi et recevez des demandes qualifiées dans votre spécialité.
+                    </p>
+
+                    <ul class="tm-subcat-banner__features">
+                        <li><i class="fa-solid fa-circle-check"></i> Visibilité accrue</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Clients qualifiés</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Outils de gestion</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tm-subcat-banner__actions">
+                <a href="#" class="btn tm-subcat-btn-outline">En savoir plus</a>
+                <a href="#" class="btn tm-subcat-btn-primary">Devenir prestataire</a>
+            </div>
+        </section>
+
+    </div>
 {% endblock %}
