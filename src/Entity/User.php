@@ -160,14 +160,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
      */
-    // public function __serialize(): array
-    // {
-    //     $data = (array) $this;
-    //     $data["\0" . self::class . "\0password"] = hash('crc32c', $this->password);
+    public function __serialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'email' => $this->email,
+            'password' => $this->password ? hash('crc32c', $this->password) : null,
+            'roles' => $this->roles,
+            'isVerified' => $this->isVerified,
+            'status' => $this->status?->value,
+        ];
+    }
 
-    //     return $data;
-    // }
+    public function __unserialize(array $data): void
+    {
+        $this->id = $data['id'] ?? null;
+        $this->email = $data['email'] ?? null;
+        $this->password = $data['password'] ?? null;
+        $this->roles = $data['roles'] ?? [];
+        $this->isVerified = $data['isVerified'] ?? false;
+        $this->status = isset($data['status']) && $data['status'] !== null
+            ? UserStatusEnum::from($data['status'])
+            : UserStatusEnum::PENDING;
 
+        $this->clientProfile = null;
+        $this->prestataireProfile = null;
+    }
     public function getFirstName(): ?string
     {
         return $this->firstName;
