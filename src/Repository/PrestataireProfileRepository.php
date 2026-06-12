@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\PrestataireProfile;
 use App\Entity\Service;
-use App\Entity\ServiceCategory;
 use App\Enum\PrestataireProfileStatusEnum;
 // use App\Enum\SearchVisibilityEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
