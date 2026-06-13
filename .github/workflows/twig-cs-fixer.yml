@@ -1,0 +1,34 @@
+# .github/workflows/twig-cs-fixer.yml
+
+name: Twig CS Fixer
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  twig-cs-fixer:
+    name: Twig CS Fixer
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installer PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          tools: composer
+
+      - name: Installer les dépendances Composer
+        run: composer install --prefer-dist --no-progress --no-interaction --no-scripts
+
+      - name: Vérifier les templates Twig
+        run: vendor/bin/twig-cs-fixer fix templates
