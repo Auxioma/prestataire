@@ -9,11 +9,14 @@ use Doctrine\DBAL\Types\Types;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: "Cette adresse e-mail est déjà utilisée.")]
+#[Vich\Uploadable]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -56,6 +59,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
+
+    #[Vich\UploadableField(mapping: 'user_avatars', fileNameProperty: 'avatar')]
+    private ?File $avatarFile = null;
 
     #[ORM\Column(length: 10, nullable: true)]
     private ?string $locale = null;
@@ -268,6 +274,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->avatar = $avatar;
 
         return $this;
+    }
+
+    public function setAvatarFile(?File $avatarFile = null): void
+    {
+        $this->avatarFile = $avatarFile;
+
+        if ($avatarFile !== null) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getAvatarFile(): ?File
+    {
+        return $this->avatarFile;
     }
 
     public function getLocale(): ?string

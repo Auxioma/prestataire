@@ -11,18 +11,13 @@
 			<aside class="tm-settings-sidebar" {{ stimulus_target('settings-tabs', 'sidebar') }}>
 				<div class="tm-app-sidebar">
 					<div class="tm-app-sidebar-top">
-						<div class="tm-sidebar-brand">
-							<div class="tm-sidebar-brand-logo">📍</div>
-							<div class="tm-sidebar-brand-text">
-								<span class="tm-sidebar-brand-title">TrouveMoi</span>
-								<span class="tm-sidebar-brand-subtitle">Prestataires</span>
-							</div>
-						</div>
+
 
 						<div class="tm-sidebar-profile-card">
 							<div class="tm-sidebar-profile-avatar-wrap">
 								<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" alt="Avatar" class="tm-sidebar-profile-avatar">
 							</div>
+
 
 							<div class="tm-sidebar-profile-content">
 								<div class="tm-sidebar-profile-name">
@@ -191,14 +186,28 @@
                                     }
                                 }) }}
 
-									<div class="mb-4 text-center p-3 tm-profile-photo-box">
-										<label class="form-label d-block text-start mb-3">Photo de profil</label>
-										<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle mb-3 shadow-sm" alt="Avatar">
-										<button type="button" class="btn btn-outline-primary btn-sm d-block mx-auto fw-medium px-3">
-											Modifier la photo
-										</button>
-										<small class="text-muted d-block mt-2 fs-7">PNG, JPG ou GIF. Max 2 Mo.</small>
-									</div>
+									<div class="mb-4 p-3 tm-profile-photo-box">
+    <label class="form-label d-block text-start mb-3">Photo de profil</label>
+
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+        <img
+            src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}"
+            class="rounded-circle shadow-sm"
+            style="width: 90px; height: 90px; object-fit: cover;"
+            alt="Avatar"
+        >
+
+        <div class="flex-grow-1 tm-vich-custom-container">
+            {{ form_widget(userForm.avatarFile, {
+                attr: {
+                    class: 'form-control form-control-sm'
+                }
+            }) }}
+            {{ form_errors(userForm.avatarFile) }}
+            <small class="text-muted d-block mt-2 fs-7">PNG, JPG ou WEBP. Max 2 Mo.</small>
+        </div>
+    </div>
+</div>
 
 									<div class="mb-3 tm-form-row">
 										{{ form_row(userForm.firstName) }}

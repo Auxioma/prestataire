@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class UserProfileTabType extends AbstractType
 {
@@ -33,6 +34,19 @@ class UserProfileTabType extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                     'placeholder' => 'Ex: 06 12 34 56 78',
+                ],
+            ])
+            ->add('avatarFile', VichImageType::class, [
+                'label' => false,
+                'required' => false,
+                'allow_delete' => false,
+                'download_uri' => false,
+                'image_uri' => false,
+                'imagine_pattern' => false,
+                'asset_helper' => true,
+                'attr' => [
+                    'accept' => 'image/png,image/jpeg,image/webp',
+                    'class' => 'd-none',
                 ],
             ]);
     }
