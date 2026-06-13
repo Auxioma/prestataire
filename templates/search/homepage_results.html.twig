@@ -1,204 +1,221 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ pageTitle }} - TrouveMoi{% endblock %}
+{% block title %}
+	{{ pageTitle }}
+	- TrouveMoi
+{% endblock %}
 
 {% block body %}
-<div class="tm-homepage-search-page">
-    <div class="container tm-homepage-search-shell">
-        <div class="tm-homepage-search-header d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3">
-            <div>
-                <nav aria-label="breadcrumb" class="tm-homepage-search-breadcrumb">
-                    <ol class="breadcrumb small mb-2">
-                        <li class="breadcrumb-item">
-                            <a href="{{ path('app_home') }}" class="text-decoration-none text-muted">Accueil</a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page">Recherche</li>
-                    </ol>
-                </nav>
+	<div class="tm-homepage-search-page">
+		<div class="container tm-homepage-search-shell">
+			<div class="tm-homepage-search-header d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3">
+				<div>
+					<nav aria-label="breadcrumb" class="tm-homepage-search-breadcrumb">
+						<ol class="breadcrumb small mb-2">
+							<li class="breadcrumb-item">
+								<a href="{{ path('app_home') }}" class="text-decoration-none text-muted">Accueil</a>
+							</li>
+							<li class="breadcrumb-item active" aria-current="page">Recherche</li>
+						</ol>
+					</nav>
 
-                <h1 class="tm-homepage-search-title h2 fw-bold text-secondary mb-2">{{ pageTitle }}</h1>
-                <p class="tm-homepage-search-subtitle text-muted mb-0">
-                    Trouvez les prestataires correspondant à votre besoin, votre métier recherché et votre localisation.
-                </p>
-            </div>
+					<h1 class="tm-homepage-search-title h2 fw-bold text-secondary mb-2">{{ pageTitle }}</h1>
+					<p class="tm-homepage-search-subtitle text-muted mb-0">
+						Trouvez les prestataires correspondant à votre besoin, votre métier recherché et votre localisation.
+					</p>
+				</div>
 
-            <div class="text-lg-end">
-                <span class="tm-homepage-search-count badge rounded-pill text-bg-light border px-3 py-2">
-                    {{ pagination.getTotalItemCount }} résultat{{ pagination.getTotalItemCount > 1 ? 's' : '' }}
-                </span>
-            </div>
-        </div>
+				<div class="text-lg-end">
+					<span class="tm-homepage-search-count badge rounded-pill text-bg-light border px-3 py-2">
+						{{ pagination.getTotalItemCount }}
+						résultat{{ pagination.getTotalItemCount > 1 ? 's' : '' }}
+					</span>
+				</div>
+			</div>
 
-        <div class="tm-homepage-search-toolbar">
-            <div class="tm-homepage-search-form-card card border-0 shadow-sm rounded-4 mb-4">
-                <div class="card-body p-4">
-                    {{ form_start(searchForm, {
+			<div class="tm-homepage-search-toolbar">
+				<div class="tm-homepage-search-form-card card border-0 shadow-sm rounded-4 mb-4">
+					<div class="card-body p-4">
+						{{ form_start(searchForm, {
                         attr: {
                             class: 'row g-3 align-items-end'
                         }
                     }) }}
-                        <div class="col-12 col-lg-4">
-                            {{ form_label(searchForm.query, null, { label_attr: { class: 'form-label fw-semibold small text-uppercase text-muted' } }) }}
-                            {{ form_widget(searchForm.query) }}
-                        </div>
+						<div class="col-12 col-lg-4">
+							{{ form_label(searchForm.query, null, { label_attr: { class: 'form-label fw-semibold small text-uppercase text-muted' } }) }}
+							{{ form_widget(searchForm.query) }}
+						</div>
 
-                        <div class="col-12 col-lg-4">
-                            {{ form_label(searchForm.subCategory, null, { label_attr: { class: 'form-label fw-semibold small text-uppercase text-muted' } }) }}
-                            {{ form_widget(searchForm.subCategory) }}
-                        </div>
+						<div class="col-12 col-lg-4">
+							{{ form_label(searchForm.subCategory, null, { label_attr: { class: 'form-label fw-semibold small text-uppercase text-muted' } }) }}
+							{{ form_widget(searchForm.subCategory) }}
+						</div>
 
-                        <div class="col-12 col-lg-3">
-                            {{ form_label(searchForm.location, null, { label_attr: { class: 'form-label fw-semibold small text-uppercase text-muted' } }) }}
-                            {{ form_widget(searchForm.location) }}
-                        </div>
+						<div class="col-12 col-lg-3">
+							{{ form_label(searchForm.location, null, { label_attr: { class: 'form-label fw-semibold small text-uppercase text-muted' } }) }}
+							{{ form_widget(searchForm.location) }}
+						</div>
 
-                        <div class="col-12 col-lg-1 d-grid">
-                            <button type="submit" class="tm-homepage-search-submit btn btn-primary rounded-3 fw-semibold">
-                                OK
-                            </button>
-                        </div>
-                    {{ form_end(searchForm) }}
-                </div>
-            </div>
-        </div>
+						<div class="col-12 col-lg-1 d-grid">
+							<button type="submit" class="tm-homepage-search-submit btn btn-primary rounded-3 fw-semibold">
+								OK
+							</button>
+						</div>
+						{{ form_end(searchForm) }}
+					</div>
+				</div>
+			</div>
 
-        {% set hasFilters = query is not empty or location is not empty or subCategory is not null %}
+			{% set hasFilters = query is not empty or location is not empty or subCategory is not null %}
 
-        {% if hasFilters %}
-            <div class="tm-homepage-search-active-filters d-flex flex-wrap align-items-center gap-2 mb-4">
-                <span class="tm-homepage-search-active-label small fw-semibold text-muted text-uppercase">Filtres actifs :</span>
+			{% if hasFilters %}
+				<div class="tm-homepage-search-active-filters d-flex flex-wrap align-items-center gap-2 mb-4">
+					<span class="tm-homepage-search-active-label small fw-semibold text-muted text-uppercase">Filtres actifs :</span>
 
-                {% if query is not empty %}
-                    <span class="tm-homepage-search-chip badge rounded-pill bg-light text-dark border px-3 py-2">
-                        Mot-clé : {{ query }}
-                    </span>
-                {% endif %}
+					{% if query is not empty %}
+						<span class="tm-homepage-search-chip badge rounded-pill bg-light text-dark border px-3 py-2">
+							Mot-clé :
+							{{ query }}
+						</span>
+					{% endif %}
 
-                {% if subCategory is not null %}
-                    <span class="tm-homepage-search-chip badge rounded-pill bg-light text-dark border px-3 py-2">
-                        Type : {{ subCategory.name }}
-                    </span>
-                {% endif %}
+					{% if subCategory is not null %}
+						<span class="tm-homepage-search-chip badge rounded-pill bg-light text-dark border px-3 py-2">
+							Type :
+							{{ subCategory.name }}
+						</span>
+					{% endif %}
 
-                {% if location is not empty %}
-                    <span class="tm-homepage-search-chip badge rounded-pill bg-light text-dark border px-3 py-2">
-                        Lieu : {{ location }}
-                    </span>
-                {% endif %}
+					{% if location is not empty %}
+						<span class="tm-homepage-search-chip badge rounded-pill bg-light text-dark border px-3 py-2">
+							Lieu :
+							{{ location }}
+						</span>
+					{% endif %}
 
-                <a href="{{ path('app_homepage_search') }}" class="tm-homepage-search-reset btn btn-sm btn-outline-secondary rounded-pill ms-1">
-                    Réinitialiser
-                </a>
-            </div>
-        {% endif %}
+					<a href="{{ path('app_homepage_search') }}" class="tm-homepage-search-reset btn btn-sm btn-outline-secondary rounded-pill ms-1">
+						Réinitialiser
+					</a>
+				</div>
+			{% endif %}
 
-        <div class="tm-homepage-search-grid row g-4">
-            {% if pagination|length > 0 %}
-                {% for profile in pagination %}
-                    <div class="col-12 col-md-6 col-xl-4">
-                        <div class="tm-homepage-search-card card h-100 border-0 shadow-sm rounded-4 provider-card">
-                            <div class="card-body p-4 d-flex flex-column">
-                                <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
-                                    <div class="d-flex align-items-center gap-3 min-w-0">
-                                        <div class="tm-homepage-search-avatar rounded-circle bg-light d-flex align-items-center justify-content-center shrink-0"
-                                             style="width: 52px; height: 52px;">
-                                            <i class="fa-solid fa-briefcase text-primary"></i>
-                                        </div>
+			<div class="tm-homepage-search-grid row g-4">
+				{% if pagination|length > 0 %}
+					{% for profile in pagination %}
+						<div class="col-12 col-md-6 col-xl-4">
+							<div class="tm-homepage-search-card card h-100 border-0 shadow-sm rounded-4 provider-card">
+								<div class="card-body p-4 d-flex flex-column">
+									<div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+										<div class="d-flex align-items-center gap-3 min-w-0">
+											<div class="tm-homepage-search-avatar rounded-circle bg-light d-flex align-items-center justify-content-center shrink-0" style="width: 52px; height: 52px;">
+												<i class="fa-solid fa-briefcase text-primary"></i>
+											</div>
 
-                                        <div class="min-w-0">
-                                            <h2 class="tm-homepage-search-company h6 fw-bold text-dark mb-1 text-truncate">
-                                                {{ profile.companyName|default(profile.account.userIdentifier) }}
-                                            </h2>
+											<div class="min-w-0">
+												<h2 class="tm-homepage-search-company h6 fw-bold text-dark mb-1 text-truncate">
+													{{ profile.companyName|default(profile.account.userIdentifier) }}
+												</h2>
 
-                                            {% if profile.metier %}
-                                                <p class="tm-homepage-search-job text-muted small mb-0">{{ profile.metier }}</p>
-                                            {% endif %}
-                                        </div>
-                                    </div>
+												{% if profile.metier %}
+													<p class="tm-homepage-search-job text-muted small mb-0">{{ profile.metier }}</p>
+												{% endif %}
+											</div>
+										</div>
 
-                                    <div class="tm-homepage-search-rating text-warning small fw-semibold text-nowrap">
-                                        <i class="fa-solid fa-star me-1"></i>{{ profile.averageRating|default('0.0') }}
-                                    </div>
-                                </div>
+										<div class="tm-homepage-search-rating text-warning small fw-semibold text-nowrap">
+											<i class="fa-solid fa-star me-1"></i>
+											{{ profile.averageRating|default('0.0') }}
+										</div>
+									</div>
 
-                                <div class="mb-3">
-                                    {% if profile.shortDescription %}
-                                        <p class="tm-homepage-search-description text-secondary small mb-0">
-                                            {{ profile.shortDescription|length > 140 ? profile.shortDescription|slice(0, 140) ~ '…' : profile.shortDescription }}
-                                        </p>
-                                    {% else %}
-                                        <p class="tm-homepage-search-description tm-homepage-search-description--empty text-muted small fst-italic mb-0">
-                                            Ce prestataire n’a pas encore rédigé de description courte.
-                                        </p>
-                                    {% endif %}
-                                </div>
+									<div class="mb-3">
+										{% if profile.shortDescription %}
+											<p class="tm-homepage-search-description text-secondary small mb-0">
+												{{ profile.shortDescription|length > 140 ? profile.shortDescription|slice(0, 140) ~ '…' : profile.shortDescription }}
+											</p>
+										{% else %}
+											<p class="tm-homepage-search-description tm-homepage-search-description--empty text-muted small fst-italic mb-0">
+												Ce prestataire n’a pas encore rédigé de description courte.
+											</p>
+										{% endif %}
+									</div>
 
-                                <div class="tm-homepage-search-meta d-flex flex-wrap gap-2 mb-4">
-                                    {% if profile.city %}
-                                        <span class="tm-homepage-search-meta-badge badge rounded-pill bg-light text-dark border">
-                                            <i class="fa-solid fa-location-dot me-1 text-primary"></i>{{ profile.city }}
-                                        </span>
-                                    {% endif %}
+									<div class="tm-homepage-search-meta d-flex flex-wrap gap-2 mb-4">
+										{% if profile.city %}
+											<span class="tm-homepage-search-meta-badge badge rounded-pill bg-light text-dark border">
+												<i class="fa-solid fa-location-dot me-1 text-primary"></i>
+												{{ profile.city }}
+											</span>
+										{% endif %}
 
-                                    {% if profile.postalCode %}
-                                        <span class="tm-homepage-search-meta-badge badge rounded-pill bg-light text-dark border">
-                                            {{ profile.postalCode }}
-                                        </span>
-                                    {% endif %}
+										{% if profile.postalCode %}
+											<span class="tm-homepage-search-meta-badge badge rounded-pill bg-light text-dark border">
+												{{ profile.postalCode }}
+											</span>
+										{% endif %}
 
-                                    {% if profile.verificationStatus is defined and profile.verificationStatus %}
-                                        <span class="tm-homepage-search-meta-badge tm-homepage-search-meta-badge--verified badge rounded-pill bg-success-subtle text-success-emphasis border">
-                                            Vérifié
-                                        </span>
-                                    {% endif %}
-                                </div>
+										{% if profile.matchedDistanceKm is defined and profile.matchedDistanceKm is not null %}
+											<span class="tm-homepage-search-meta-badge badge rounded-pill bg-primary-subtle text-primary border">
+												<i class="fa-solid fa-route me-1"></i>
+												À
+												{{ profile.matchedDistanceKm|round(1) }}
+												km
+											</span>
+										{% endif %}
 
-                                <div class="tm-homepage-search-footer mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
-                                    <small class="tm-homepage-search-reviews text-muted">
-                                        {{ profile.reviewsCount|default(0) }} avis
-                                    </small>
+										{% if profile.verificationStatus is defined and profile.verificationStatus %}
+											<span class="tm-homepage-search-meta-badge tm-homepage-search-meta-badge--verified badge rounded-pill bg-success-subtle text-success-emphasis border">
+												Vérifié
+											</span>
+										{% endif %}
+									</div>
 
-                                    {% if profile.slug %}
-                                        <a href="{{ path('app_prestataire_show', { slug: profile.slug }) }}"
-                                           class="tm-homepage-search-profile-link btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
-                                            Voir le profil
-                                            <i class="fa-solid fa-arrow-right ms-1 small"></i>
-                                        </a>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <div class="col-12">
-                    <div class="tm-homepage-search-empty card border-0 shadow-sm rounded-4">
-                        <div class="card-body text-center py-5 px-4">
-                            <div class="tm-homepage-search-empty-icon mb-3">
-                                <i class="fa-solid fa-user-slash fs-1 text-muted"></i>
-                            </div>
+									<div class="tm-homepage-search-footer mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
+										<small class="tm-homepage-search-reviews text-muted">
+											{{ profile.reviewsCount|default(0) }}
+											avis
+										</small>
 
-                            <h2 class="tm-homepage-search-empty-title h4 fw-bold text-dark mb-2">Aucun prestataire trouvé</h2>
+										{% if profile.slug %}
+											<a href="{{ path('app_prestataire_show', { slug: profile.slug }) }}" class="tm-homepage-search-profile-link btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
+												Voir le profil
+												<i class="fa-solid fa-arrow-right ms-1 small"></i>
+											</a>
+										{% endif %}
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				{% else %}
+					<div class="col-12">
+						<div class="tm-homepage-search-empty card border-0 shadow-sm rounded-4">
+							<div class="card-body text-center py-5 px-4">
+								<div class="tm-homepage-search-empty-icon mb-3">
+									<i class="fa-solid fa-user-slash fs-1 text-muted"></i>
+								</div>
 
-                            <p class="tm-homepage-search-empty-text text-muted mb-4 mx-auto" style="max-width: 640px;">
-                                Aucun résultat ne correspond à votre recherche pour le moment. Essayez avec un autre mot-clé,
-                                une autre spécialité ou une autre localisation.
-                            </p>
+								<h2 class="tm-homepage-search-empty-title h4 fw-bold text-dark mb-2">Aucun prestataire trouvé</h2>
 
-                            <a href="{{ path('app_homepage_search') }}" class="tm-homepage-search-empty-cta btn btn-primary rounded-pill px-4 fw-semibold">
-                                Relancer une recherche
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
+								<p class="tm-homepage-search-empty-text text-muted mb-4 mx-auto" style="max-width: 640px;">
+									Aucun résultat ne correspond à votre recherche pour le moment. Essayez avec un autre mot-clé,
+									                                une autre spécialité ou une autre localisation.
+								</p>
 
-        {% if pagination|length > 0 %}
-            <div class="tm-homepage-search-pagination d-flex justify-content-center mt-5">
-                {{ knp_pagination_render(pagination) }}
-            </div>
-        {% endif %}
-    </div>
-</div>
+								<a href="{{ path('app_homepage_search') }}" class="tm-homepage-search-empty-cta btn btn-primary rounded-pill px-4 fw-semibold">
+									Relancer une recherche
+								</a>
+							</div>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+
+			{% if pagination|length > 0 %}
+				<div class="tm-homepage-search-pagination d-flex justify-content-center mt-5">
+					{{ knp_pagination_render(pagination) }}
+				</div>
+			{% endif %}
+		</div>
+	</div>
 {% endblock %}

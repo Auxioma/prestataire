@@ -60,12 +60,14 @@ class PrestataireProfileRepository extends ServiceEntityRepository
             ->leftJoin('ps.service', 's')
             ->leftJoin('s.category', 'c')
             ->leftJoin('c.parent', 'parent')
+            ->leftJoin('p.prestataireInterventionZones', 'z')
             ->andWhere('p.profileStatus = :status')
             ->setParameter('status', PrestataireProfileStatusEnum::ACTIVE);
 
         $query = trim((string) ($criteria['query'] ?? ''));
         $location = trim((string) ($criteria['location'] ?? ''));
         $subCategory = $criteria['subCategory'] ?? null;
+        $searchedLocation = $criteria['searchedLocation'] ?? null;
 
         if ($query !== '') {
             $qb
@@ -78,15 +80,18 @@ class PrestataireProfileRepository extends ServiceEntityRepository
                 ->setParameter('query', '%' . $query . '%');
         }
 
-        if ($location !== '') {
+        if ($location !== '' && $searchedLocation === null) {
             $qb
                 ->andWhere('(
-                LOWER(p.city) LIKE LOWER(:location)
-                OR p.postalCode LIKE :locationExact
-            )')
+        LOWER(p.city) LIKE LOWER(:location)
+        OR p.postalCode LIKE :locationExact
+        OR LOWER(z.city) LIKE LOWER(:location)
+        OR z.postalCode LIKE :locationExact
+    )')
                 ->setParameter('location', '%' . $location . '%')
                 ->setParameter('locationExact', '%' . $location . '%');
         }
+
 
         if ($subCategory !== null) {
             $qb
