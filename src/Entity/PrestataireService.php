@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Entity;
 
 use App\Repository\PrestataireServiceRepository;
@@ -45,6 +55,7 @@ class PrestataireService
     public function setPrestataire(?PrestataireProfile $prestataire): self
     {
         $this->prestataire = $prestataire;
+
         return $this;
     }
 
@@ -56,6 +67,7 @@ class PrestataireService
     public function setService(?Service $service): self
     {
         $this->service = $service;
+
         return $this;
     }
 
@@ -67,6 +79,7 @@ class PrestataireService
     public function setPrixCatalogue(string $prixCatalogue): self
     {
         $this->prixCatalogue = $prixCatalogue;
+
         return $this;
     }
 
@@ -78,6 +91,7 @@ class PrestataireService
     public function setTauxReduction(?string $tauxReduction): self
     {
         $this->tauxReduction = $tauxReduction;
+
         return $this;
     }
 
@@ -89,12 +103,13 @@ class PrestataireService
     public function setPromotionCreatedAt(?\DateTimeImmutable $promotionCreatedAt): self
     {
         $this->promotionCreatedAt = $promotionCreatedAt;
+
         return $this;
     }
 
     public function getPrixRemise(): ?float
     {
-        if ($this->prixCatalogue === null) {
+        if (null === $this->prixCatalogue) {
             return null;
         }
 
@@ -110,6 +125,6 @@ class PrestataireService
 
     public function hasPromotion(): bool
     {
-        return $this->tauxReduction !== null && (float) $this->tauxReduction > 0;
+        return null !== $this->tauxReduction && (float) $this->tauxReduction > 0;
     }
 }

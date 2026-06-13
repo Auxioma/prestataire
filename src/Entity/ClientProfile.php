@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Entity;
 
 use App\Enum\ClientTypeEnum;
@@ -17,8 +27,8 @@ class ClientProfile
     #[ORM\Column(type: Types::BIGINT)]
     private ?string $id = null;
 
-    #[ORM\Column(type: 'string', length: 50, enumType: \App\Enum\ClientTypeEnum::class)]
-    private ?\App\Enum\ClientTypeEnum $type = null;
+    #[ORM\Column(type: 'string', length: 50, enumType: ClientTypeEnum::class)]
+    private ?ClientTypeEnum $type = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $companyName = null;
@@ -232,6 +242,7 @@ class ClientProfile
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
         return $this;
     }
 

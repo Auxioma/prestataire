@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Security;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -18,7 +28,9 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
-    public function __construct(private UrlGeneratorInterface $urlGenerator) {}
+    public function __construct(private UrlGeneratorInterface $urlGenerator)
+    {
+    }
 
     public function authenticate(Request $request): Passport
     {
@@ -38,7 +50,7 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
         $user = $token->getUser();
 
         // 1. Redirection spécifique pour l'ADMIN vers l'URL souhaitée
-        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+        if (\in_array('ROLE_ADMIN', $user->getRoles(), true)) {
             return new RedirectResponse('/admin/user');
         }
 

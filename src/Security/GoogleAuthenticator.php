@@ -1,10 +1,20 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Security;
 
-use App\Entity\User;
 use App\Entity\ClientProfile;
 use App\Entity\PrestataireProfile;
+use App\Entity\User;
 use App\Enum\ClientTypeEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
@@ -16,11 +26,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 
 class GoogleAuthenticator extends OAuth2Authenticator
 {
@@ -39,7 +49,7 @@ class GoogleAuthenticator extends OAuth2Authenticator
 
     public function supports(Request $request): ?bool
     {
-        return $request->attributes->get('_route') === 'connect_google_check';
+        return 'connect_google_check' === $request->attributes->get('_route');
     }
 
     public function authenticate(Request $request): Passport
@@ -56,14 +66,11 @@ class GoogleAuthenticator extends OAuth2Authenticator
                 $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
                 if (!$user) {
-                    
                     $session = $request->getSession();
                     $chosenRole = $session->get('oauth_registration_role');
 
                     if (!$chosenRole) {
-                        throw new CustomUserMessageAuthenticationException(
-                            "Aucun compte n'est associé à cette adresse email. Veuillez d'abord vous inscrire."
-                        );
+                        throw new CustomUserMessageAuthenticationException("Aucun compte n'est associé à cette adresse email. Veuillez d'abord vous inscrire.");
                     }
 
                     $user = new User();
@@ -75,12 +82,12 @@ class GoogleAuthenticator extends OAuth2Authenticator
 
                     $session->remove('oauth_registration_role');
 
-                    if ($chosenRole === 'prestataire') {
+                    if ('prestataire' === $chosenRole) {
                         $user->setRoles(['ROLE_PRESTATAIRE']);
 
                         $prestataireProfile = new PrestataireProfile();
                         $prestataireProfile->setCompanyName('Nouveau Prestataire (Google)');
-                        $prestataireProfile->setSlug('profil-' . uniqid());
+                        $prestataireProfile->setSlug('profil-'.uniqid());
                         $prestataireProfile->setAccount($user);
 
                         $this->entityManager->persist($prestataireProfile);
@@ -118,7 +125,7 @@ class GoogleAuthenticator extends OAuth2Authenticator
 
         /** @var \Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface $flashBag */
         $flashBag = $request->getSession()->getBag('flashes');
-        $flashBag->add('danger', 'Erreur d\'authentification Google : ' . $message);
+        $flashBag->add('danger', 'Erreur d\'authentification Google : '.$message);
 
         return new RedirectResponse($this->router->generate('app_register_choice'));
     }

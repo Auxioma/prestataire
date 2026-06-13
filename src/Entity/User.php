@@ -1,21 +1,31 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Entity;
 
 use App\Enum\UserStatusEnum;
 use App\Repository\UserRepository;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[UniqueEntity(fields: ['email'], message: "Cette adresse e-mail est déjà utilisée.")]
+#[UniqueEntity(fields: ['email'], message: 'Cette adresse e-mail est déjà utilisée.')]
 #[Vich\Uploadable]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -185,13 +195,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->password = $data['password'] ?? null;
         $this->roles = $data['roles'] ?? [];
         $this->isVerified = $data['isVerified'] ?? false;
-        $this->status = isset($data['status']) && $data['status'] !== null
+        $this->status = isset($data['status']) && null !== $data['status']
             ? UserStatusEnum::from($data['status'])
             : UserStatusEnum::PENDING;
 
         $this->clientProfile = null;
         $this->prestataireProfile = null;
     }
+
     public function getFirstName(): ?string
     {
         return $this->firstName;
@@ -280,7 +291,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->avatarFile = $avatarFile;
 
-        if ($avatarFile !== null) {
+        if (null !== $avatarFile) {
             $this->updatedAt = new \DateTimeImmutable();
         }
     }
@@ -322,6 +333,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setStatus(UserStatusEnum $status): static
     {
         $this->status = $status;
+
         return $this;
     }
 
@@ -409,7 +421,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -441,11 +452,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPrestataireProfile(?PrestataireProfile $prestataireProfile): static
     {
         // On gère le cas où on détache ou passe un profil null
-        if ($prestataireProfile === null) {
-            if ($this->prestataireProfile !== null) {
+        if (null === $prestataireProfile) {
+            if (null !== $this->prestataireProfile) {
                 $this->prestataireProfile->setAccount(null);
             }
             $this->prestataireProfile = null;
+
             return $this;
         }
 

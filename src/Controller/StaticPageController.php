@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,17 +31,18 @@ class StaticPageController extends AbstractController
         }
 
         return $this->render($templatePath, [
-            'current_slug' => $slug
+            'current_slug' => $slug,
         ]);
     }
 
     /**
-     * Petite méthode utilitaire pour vérifier si le template twig existe
+     * Petite méthode utilitaire pour vérifier si le template twig existe.
      */
     private function twigExists(string $name): bool
     {
         try {
             $this->container->get('twig')->getLoader()->exists($name);
+
             return true;
         } catch (\Exception $e) {
             return false;

@@ -4,323 +4,320 @@
 {% endblock %}
 
 {% block body %}
-	<div
-		class="homepage-wrapper">
+    <div
+        class="homepage-wrapper">
 
-		{# 1. SECTION HERO AVEC IMAGE D'ARRIÈRE-PLAN #}
-		<div class="hero-section position-relative text-white">
-			<div class="container py-4">
-				<div class="row">
-					<div class="col-lg-7 text-start">
-						<h1 class="display-5 fw-extrabold mb-3 hero-title">
-							Trouvez le prestataire idéal
-							<br>
-							<span class="text-tm-accent">pour tous vos projets</span>
-						</h1>
+        {# 1. SECTION HERO AVEC IMAGE D'ARRIÈRE-PLAN #}
+        <div class="hero-section position-relative text-white">
+            <div class="container py-4">
+                <div class="row">
+                    <div class="col-lg-7 text-start">
+                        <h1 class="display-5 fw-extrabold mb-3 hero-title">
+                            Trouvez le prestataire idéal
+                            <br>
+                            <span class="text-tm-accent">pour tous vos projets</span>
+                        </h1>
 
-						<p class="fs-5 mb-4 opacity-90 max-w-540 hero-lead">
-							Des professionnels de confiance pour vous accompagner dans tous vos besoins, partout en France.
-						</p>
+                        <p class="fs-5 mb-4 opacity-90 max-w-540 hero-lead">
+                            Des professionnels de confiance pour vous accompagner dans tous vos besoins, partout en France.
+                        </p>
 
-						<div class="d-flex flex-wrap gap-2 hero-badges-group">
-							<span class="badge hero-badge">
-								<i class="fa-solid fa-circle-plus text-tm-accent me-1"></i>
-								+
-								<span data-controller="counter-up" data-counter-up-target="number" data-counter-up-target-value="120000" class="tm-counter-digit">0</span>
-								prestataires
-							</span>
+                        <div class="d-flex flex-wrap gap-2 hero-badges-group">
+                            <span class="badge hero-badge">
+                                <i class="fa-solid fa-circle-plus text-tm-accent me-1"></i>
+                                +
+                                <span data-controller="counter-up" data-counter-up-target="number" data-counter-up-target-value="120000" class="tm-counter-digit">0</span>
+                                prestataires
+                            </span>
 
-							<span class="badge hero-badge">
-								<i class="fa-solid fa-star text-tm-accent me-1"></i>
-								Avis clients vérifiés
-							</span>
+                            <span class="badge hero-badge">
+                                <i class="fa-solid fa-star text-tm-accent me-1"></i>
+                                Avis clients vérifiés
+                            </span>
 
-							<span class="badge hero-badge">
-								<i class="fa-solid fa-file-invoice text-tm-accent me-1"></i>
-								Devis gratuits
-							</span>
+                            <span class="badge hero-badge">
+                                <i class="fa-solid fa-file-invoice text-tm-accent me-1"></i>
+                                Devis gratuits
+                            </span>
 
-							<span class="badge hero-badge">
-								<i class="fa-solid fa-shield-halved text-tm-accent me-1"></i>
-								Paiement sécurisé
-							</span>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+                            <span class="badge hero-badge">
+                                <i class="fa-solid fa-shield-halved text-tm-accent me-1"></i>
+                                Paiement sécurisé
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-
-		{# 2. BARRE DE RECHERCHE #}
-		<div class="container search-overlap-wrapper">
-			<div class="card border-0 p-2 search-overlap-card bg-white">
-				{{ form_start(homepageSearchForm, {
+        {# 2. BARRE DE RECHERCHE #}
+        <div class="container search-overlap-wrapper">
+            <div class="card border-0 p-2 search-overlap-card bg-white">
+                {{ form_start(homepageSearchForm, {
             attr: {
-                class: 'row g-2 align-items-center w-100 m-0'
-            }
+                class: 'row g-2 align-items-center w-100 m-0',
+            },
         }) }}
 
-				{# Champ 1 #}
-				<div class="col-lg-3">
-					<div class="search-field-container d-flex align-items-center gap-3">
-						<i class="fa-solid fa-magnifying-glass text-tm-service fs-5"></i>
-						<div class="w-100">
-							{{ form_label(homepageSearchForm.query, null, {
-                            label_attr: { class: 'search-label' }
+                {# Champ 1 #}
+                <div class="col-lg-3">
+                    <div class="search-field-container d-flex align-items-center gap-3">
+                        <i class="fa-solid fa-magnifying-glass text-tm-service fs-5"></i>
+                        <div class="w-100">
+                            {{ form_label(homepageSearchForm.query, null, {
+                            label_attr: {class: 'search-label'},
                         }) }}
-							{{ form_widget(homepageSearchForm.query) }}
-						</div>
-					</div>
-				</div>
+                            {{ form_widget(homepageSearchForm.query) }}
+                        </div>
+                    </div>
+                </div>
 
-				{# Champ 2 #}
-				<div class="col-lg-3 d-flex align-items-center">
-					<div class="search-divider d-none d-lg-block me-3"></div>
-					<div class="search-field-container d-flex align-items-center gap-3 w-100">
-						<i class="fa-solid fa-briefcase text-tm-service fs-5"></i>
-						<div class="w-100">
-							{{ form_label(homepageSearchForm.subCategory, null, {
-                            label_attr: { class: 'search-label' }
+                {# Champ 2 #}
+                <div class="col-lg-3 d-flex align-items-center">
+                    <div class="search-divider d-none d-lg-block me-3"></div>
+                    <div class="search-field-container d-flex align-items-center gap-3 w-100">
+                        <i class="fa-solid fa-briefcase text-tm-service fs-5"></i>
+                        <div class="w-100">
+                            {{ form_label(homepageSearchForm.subCategory, null, {
+                            label_attr: {class: 'search-label'},
                         }) }}
-							{{ form_widget(homepageSearchForm.subCategory) }}
-						</div>
-					</div>
-				</div>
+                            {{ form_widget(homepageSearchForm.subCategory) }}
+                        </div>
+                    </div>
+                </div>
 
-				{# Champ 3 #}
-				<div class="col-lg-3 d-flex align-items-center">
-					<div class="search-divider d-none d-lg-block me-3"></div>
-					<div class="search-field-container d-flex align-items-center gap-3 w-100">
-						<i class="fa-solid fa-location-dot text-tm-service fs-5"></i>
-						<div class="w-100">
-							{{ form_label(homepageSearchForm.location, null, {
-                            label_attr: { class: 'search-label' }
+                {# Champ 3 #}
+                <div class="col-lg-3 d-flex align-items-center">
+                    <div class="search-divider d-none d-lg-block me-3"></div>
+                    <div class="search-field-container d-flex align-items-center gap-3 w-100">
+                        <i class="fa-solid fa-location-dot text-tm-service fs-5"></i>
+                        <div class="w-100">
+                            {{ form_label(homepageSearchForm.location, null, {
+                            label_attr: {class: 'search-label'},
                         }) }}
-							{{ form_widget(homepageSearchForm.location) }}
-						</div>
-					</div>
-				</div>
+                            {{ form_widget(homepageSearchForm.location) }}
+                        </div>
+                    </div>
+                </div>
 
-				{# Bouton #}
-				<div class="col-lg-3">
-					<button type="submit" class="btn search-submit-btn w-100">
-						<i class="fa-solid fa-magnifying-glass me-2"></i>
-						Rechercher
-					</button>
-				</div>
+                {# Bouton #}
+                <div class="col-lg-3">
+                    <button type="submit" class="btn search-submit-btn w-100">
+                        <i class="fa-solid fa-magnifying-glass me-2"></i>
+                        Rechercher
+                    </button>
+                </div>
 
-				{{ form_end(homepageSearchForm) }}
-			</div>
-		</div>
+                {{ form_end(homepageSearchForm) }}
+            </div>
+        </div>
 
-		{# CHIFFRES CLÉS #}
-		<div class="container tm-stats-container">
-			<div class="row g-3">
-				{% set stats = [
-            {'icon': 'fa-users', 'val': '1,200+', 'label': 'Prestataires', 'color': '#4338ca'},
-            {'icon': 'fa-briefcase', 'val': '8,500+', 'label': 'Projets', 'color': '#e11d48'},
-            {'icon': 'fa-star', 'val': '98%', 'label': 'Satisfaction', 'color': '#16a34a'},
-            {'icon': 'fa-bolt', 'val': '- 2h', 'label': 'Réponse', 'color': '#d97706'}
+        {# CHIFFRES CLÉS #}
+        <div class="container tm-stats-container">
+            <div class="row g-3">
+                {% set stats = [
+            {icon: 'fa-users', val: '1,200+', label: 'Prestataires', color: '#4338ca'},
+            {icon: 'fa-briefcase', val: '8,500+', label: 'Projets', color: '#e11d48'},
+            {icon: 'fa-star', val: '98%', label: 'Satisfaction', color: '#16a34a'},
+            {icon: 'fa-bolt', val: '- 2h', label: 'Réponse', color: '#d97706'},
         ] %}
 
-				{% for stat in stats %}
-					<div class="col-md-3 col-6">
-						<div class="tm-stat-card">
-							<i class="fa-solid {{ stat.icon }} tm-stat-icon" style="color: {{ stat.color }};"></i>
-							<h4 class="tm-stat-value">{{ stat.val }}</h4>
-							<p class="tm-stat-label">{{ stat.label }}</p>
-						</div>
-					</div>
-				{% endfor %}
-			</div>
-		</div>
+                {% for stat in stats %}
+                    <div class="col-md-3 col-6">
+                        <div class="tm-stat-card">
+                            <i class="fa-solid {{ stat.icon }} tm-stat-icon" style="color: {{ stat.color }};"></i>
+                            <h4 class="tm-stat-value">{{ stat.val }}</h4>
+                            <p class="tm-stat-label">{{ stat.label }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
 
-		{# 3. SECTION CATÉGORIES POPULAIRES #}
-		<div class="container main-content-section">
-			<div class="mb-4 text-start">
-				<h2 class="fw-extrabold h4 mb-1 text-dark tracking-tight">Catégories populaires</h2>
-			</div>
+        {# 3. SECTION CATÉGORIES POPULAIRES #}
+        <div class="container main-content-section">
+            <div class="mb-4 text-start">
+                <h2 class="fw-extrabold h4 mb-1 text-dark tracking-tight">Catégories populaires</h2>
+            </div>
 
-			{% set raw_categories = (categories ?? [])|slice(0, 20) %}
-			{% set fallback_cats = [
-        {'name': 'Bâtiment & Travaux', 'icon': 'fa-hammer'},
-        {'name': 'Déménagement', 'icon': 'fa-truck-ramp-box'},
-        {'name': 'Nettoyage', 'icon': 'fa-sparkles'},
-        {'name': 'Jardin & Extérieur', 'icon': 'fa-tree'},
-        {'name': 'High-Tech', 'icon': 'fa-laptop'},
-        {'name': 'Événementiel', 'icon': 'fa-cake-candles'},
-        {'name': 'Bien-être', 'icon': 'fa-heart-pulse'},
-        {'name': 'Cours & Formations', 'icon': 'fa-book-open'},
-        {'name': 'Mécanique', 'icon': 'fa-wrench'},
-        {'name': 'Animaux', 'icon': 'fa-dog'}
+            {% set raw_categories = (categories ?? [])|slice(0, 20) %}
+            {% set fallback_cats = [
+        {name: 'Bâtiment & Travaux', icon: 'fa-hammer'},
+        {name: 'Déménagement', icon: 'fa-truck-ramp-box'},
+        {name: 'Nettoyage', icon: 'fa-sparkles'},
+        {name: 'Jardin & Extérieur', icon: 'fa-tree'},
+        {name: 'High-Tech', icon: 'fa-laptop'},
+        {name: 'Événementiel', icon: 'fa-cake-candles'},
+        {name: 'Bien-être', icon: 'fa-heart-pulse'},
+        {name: 'Cours & Formations', icon: 'fa-book-open'},
+        {name: 'Mécanique', icon: 'fa-wrench'},
+        {name: 'Animaux', icon: 'fa-dog'},
     ] %}
 
-			{% set display_categories = raw_categories is not empty ? raw_categories : fallback_cats %}
-			<div
-				class="d-flex align-items-stretch gap-3 w-100">
+            {% set display_categories = raw_categories is not empty ? raw_categories : fallback_cats %}
+            <div
+                class="d-flex align-items-stretch gap-3 w-100">
 
-				{# LE CARROUSEL AUTOMATIQUE (Ajout du min-width: 0 vital pour les métriques JS) #}
-				<div class="tm-categories-slider grow position-relative" data-controller="categories-carousel" data-categories-carousel-step-value="1" style="min-width: 0;">
+                {# LE CARROUSEL AUTOMATIQUE (Ajout du min-width: 0 vital pour les métriques JS) #}
+                <div class="tm-categories-slider grow position-relative" data-controller="categories-carousel" data-categories-carousel-step-value="1" style="min-width: 0;">
 
-					<div class="tm-categories-viewport" data-categories-carousel-target="viewport">
-						<div class="tm-categories-track" data-categories-carousel-target="track">
-							{% for category in display_categories %}
-								<div class="tm-category-item" data-categories-carousel-target="item">
-									<a href="{{ category.slug is defined ? path('app_category_show', {'slug': category.slug}) : '#' }}" class="card h-100 border-0 shadow-sm p-3 text-decoration-none tm-category-card rounded-3 bg-white d-flex flex-column align-items-center justify-content-center">
-										<div class="d-flex align-items-center justify-content-center rounded-circle mb-2 category-icon-wrapper">
-											{% if category.icon %}
-												<i class="fa-solid {{ category.icon }} fs-3"></i>
-											{% else %}
-												<span class="fw-bold fs-5">{{ category.name|first|upper }}</span>
-											{% endif %}
-										</div>
-										<span class="text-dark text-center fw-bold category-title px-1">{{ category.name }}</span>
-									</a>
-								</div>
-							{% endfor %}
-						</div>
-					</div>
+                    <div class="tm-categories-viewport" data-categories-carousel-target="viewport">
+                        <div class="tm-categories-track" data-categories-carousel-target="track">
+                            {% for category in display_categories %}
+                                <div class="tm-category-item" data-categories-carousel-target="item">
+                                    <a href="{{ category.slug is defined ? path('app_category_show', {slug: category.slug}) : '#' }}" class="card h-100 border-0 shadow-sm p-3 text-decoration-none tm-category-card rounded-3 bg-white d-flex flex-column align-items-center justify-content-center">
+                                        <div class="d-flex align-items-center justify-content-center rounded-circle mb-2 category-icon-wrapper">
+                                            {% if category.icon %}
+                                                <i class="fa-solid {{ category.icon }} fs-3"></i>
+                                            {% else %}
+                                                <span class="fw-bold fs-5">{{ category.name|first|upper }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <span class="text-dark text-center fw-bold category-title px-1">{{ category.name }}</span>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-				</div>
+                </div>
 
-				<div style="width: 160px; min-width: 160px; flex-shrink: 0;">
-					<a href="{{ path('app_category_index') }}" class="card h-100 border p-2 text-decoration-none rounded-3 bg-white d-flex flex-column align-items-center justify-content-center gap-2 shadow-sm all-categories-card text-center text-tm-service border-tm-service-light">
-						<div class="rounded-circle bg-tm-service-light d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: rgba(6, 27, 86, 0.05);">
-							<i class="fa-solid fa-grid-2 text-tm-service"></i>
-						</div>
-						<span class="text-dark fw-extrabold small lh-sm">Voir toutes<br>les catégories</span>
-						<i class="fa-solid fa-chevron-right arrow-indicator small text-muted"></i>
-					</a>
-				</div>
+                <div style="width: 160px; min-width: 160px; flex-shrink: 0;">
+                    <a href="{{ path('app_category_index') }}" class="card h-100 border p-2 text-decoration-none rounded-3 bg-white d-flex flex-column align-items-center justify-content-center gap-2 shadow-sm all-categories-card text-center text-tm-service border-tm-service-light">
+                        <div class="rounded-circle bg-tm-service-light d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: rgba(6, 27, 86, 0.05);">
+                            <i class="fa-solid fa-grid-2 text-tm-service"></i>
+                        </div>
+                        <span class="text-dark fw-extrabold small lh-sm">Voir toutes<br>les catégories</span>
+                        <i class="fa-solid fa-chevron-right arrow-indicator small text-muted"></i>
+                    </a>
+                </div>
 
-			</div>
-		</div>
+            </div>
+        </div>
 
-		{# 4. SECTION PRESTATAIRES À LA UNE & ASIDE #}
-		<div class="container my-5 pb-5">
-			<div class="row gy-4 gx-lg-5">
-				<div class="col-xl-9 col-lg-8">
-					<div class="d-flex justify-content-between align-items-center mb-4">
-						<h2 class="fw-extrabold h4 mb-0 text-dark tracking-tight">
-							Prestataires à la une
-							<span class="text-tm-accent">
-								<i class="fa-solid fa-star"></i>
-							</span>
-						</h2>
-						<a href="{{ path('app_prestataire_browse') }}" class="text-tm-service fw-bold text-decoration-none small d-flex align-items-center gap-1 view-all-link">
-							Voir tous les prestataires
-							<i class="fa-solid fa-chevron-right fs-7"></i>
-						</a>
-					</div>
+        {# 4. SECTION PRESTATAIRES À LA UNE & ASIDE #}
+        <div class="container my-5 pb-5">
+            <div class="row gy-4 gx-lg-5">
+                <div class="col-xl-9 col-lg-8">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="fw-extrabold h4 mb-0 text-dark tracking-tight">
+                            Prestataires à la une
+                            <span class="text-tm-accent">
+                                <i class="fa-solid fa-star"></i>
+                            </span>
+                        </h2>
+                        <a href="{{ path('app_prestataire_browse') }}" class="text-tm-service fw-bold text-decoration-none small d-flex align-items-center gap-1 view-all-link">
+                            Voir tous les prestataires
+                            <i class="fa-solid fa-chevron-right fs-7"></i>
+                        </a>
+                    </div>
 
-					<div class="row g-3" data-controller="scroll-reveal">
-						{% for provider in providers|slice(0, 4) %}
-							<div class="col-md-6 col-xl-3" data-scroll-reveal-target="element">
-								<div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden bg-white position-relative provider-card">
+                    <div class="row g-3" data-controller="scroll-reveal">
+                        {% for provider in providers|slice(0, 4) %}
+                            <div class="col-md-6 col-xl-3" data-scroll-reveal-target="element">
+                                <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden bg-white position-relative provider-card">
 
-									<a href="{{ path('app_prestataire_show', {'slug': provider.slug}) }}" class="stretched-link"></a>
+                                    <a href="{{ path('app_prestataire_show', {slug: provider.slug}) }}" class="stretched-link"></a>
 
-									<button class="btn btn-light favorite-btn border-0 shadow-sm">
-										<i class="fa-regular fa-heart text-muted"></i>
-									</button>
+                                    <button class="btn btn-light favorite-btn border-0 shadow-sm">
+                                        <i class="fa-regular fa-heart text-muted"></i>
+                                    </button>
 
-									<div class="position-relative">
-										<img src="{{ provider.logo ? asset('uploads/providers/' ~ provider.logo) : 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=400&q=80' }}" class="card-img-top provider-img" alt="{{ provider.companyName }}">
+                                    <div class="position-relative">
+                                        <img src="{{ provider.logo ? asset('uploads/providers/' ~ provider.logo) : 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=400&q=80' }}" class="card-img-top provider-img" alt="{{ provider.companyName }}">
 
-										{% if provider.averageRating >= 4.8 %}
-											<span class="badge bg-tm-accent text-dark position-absolute start-0 top-0 m-2 fw-semibold border-0 px-2 py-1 fs-11">Excellent ({{ provider.averageRating }})</span>
-										{% else %}
-											<span class="badge bg-tm-service position-absolute start-0 top-0 m-2 text-white fw-medium border-0 px-2 py-1 fs-11">Top Prestataire</span>
-										{% endif %}
-									</div>
+                                        {% if provider.averageRating >= 4.8 %}
+                                            <span class="badge bg-tm-accent text-dark position-absolute start-0 top-0 m-2 fw-semibold border-0 px-2 py-1 fs-11">Excellent ({{ provider.averageRating }})</span>
+                                        {% else %}
+                                            <span class="badge bg-tm-service position-absolute start-0 top-0 m-2 text-white fw-medium border-0 px-2 py-1 fs-11">Top Prestataire</span>
+                                        {% endif %}
+                                    </div>
 
-									<div class="card-body p-3 text-start d-flex flex-column justify-content-between">
-										<div>
-											<h3 class="fw-extrabold h6 text-dark mb-1 text-truncate">
-												{{ provider.companyName }}
-											</h3>
-											<p class="text-muted small mb-2 fs-12">
-												{{ provider.metier ? provider.metier : 'Prestataire' }}
-											</p>
-											<div class="d-flex align-items-center gap-1 text-muted small mb-2 fs-12 fw-semibold">
-												<i class="fa-solid fa-star text-tm-accent"></i>
-												<span class="text-dark fw-bold">{{ provider.averageRating|number_format(1, '.', '') }}</span>
-												({{ provider.reviewsCount ?? 0 }}
-												avis)
-											</div>
-											<p class="text-muted small mb-3 fs-12">
-												<i class="fa-solid fa-location-dot me-1"></i>
-												{{ provider.city }}
-											</p>
-										</div>
-										<div class="border-top pt-2 text-tm-success small fw-semibold fs-12 mt-auto">
-											<i class="fa-solid fa-file-circle-check me-1"></i>
-											Devis gratuit
-										</div>
-									</div>
-								</div>
-							</div>
-						{% else %}
-							<div class="col-12">
-								<div class="alert alert-info text-center border-0 shadow-sm">
-									Aucun prestataire disponible pour le moment.
-								</div>
-							</div>
-						{% endfor %}
-					</div>
-				</div>
+                                    <div class="card-body p-3 text-start d-flex flex-column justify-content-between">
+                                        <div>
+                                            <h3 class="fw-extrabold h6 text-dark mb-1 text-truncate">
+                                                {{ provider.companyName }}
+                                            </h3>
+                                            <p class="text-muted small mb-2 fs-12">
+                                                {{ provider.metier ? provider.metier : 'Prestataire' }}
+                                            </p>
+                                            <div class="d-flex align-items-center gap-1 text-muted small mb-2 fs-12 fw-semibold">
+                                                <i class="fa-solid fa-star text-tm-accent"></i>
+                                                <span class="text-dark fw-bold">{{ provider.averageRating|number_format(1, '.', '') }}</span>
+                                                ({{ provider.reviewsCount ?? 0 }}
+                                                avis)
+                                            </div>
+                                            <p class="text-muted small mb-3 fs-12">
+                                                <i class="fa-solid fa-location-dot me-1"></i>
+                                                {{ provider.city }}
+                                            </p>
+                                        </div>
+                                        <div class="border-top pt-2 text-tm-success small fw-semibold fs-12 mt-auto">
+                                            <i class="fa-solid fa-file-circle-check me-1"></i>
+                                            Devis gratuit
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="col-12">
+                                <div class="alert alert-info text-center border-0 shadow-sm">
+                                    Aucun prestataire disponible pour le moment.
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
 
+                {# SIDEBAR REASSURANCE #}
+                <div class="col-xl-3 col-lg-4 text-start">
+                    <div class="card border-0 shadow-sm p-4 rounded-4 h-100 reassurance-aside d-flex flex-column">
+                        <h3 class="fw-extrabold text-dark mb-4 reassurance-main-title">Pourquoi choisir<br>TrouveMoi ?</h3>
 
-				{# SIDEBAR REASSURANCE #}
-				<div class="col-xl-3 col-lg-4 text-start">
-					<div class="card border-0 shadow-sm p-4 rounded-4 h-100 reassurance-aside d-flex flex-column">
-						<h3 class="fw-extrabold text-dark mb-4 reassurance-main-title">Pourquoi choisir<br>TrouveMoi ?</h3>
+                        <div class="d-flex flex-column gap-3 mb-4">
+                            <div class="d-flex align-items-start gap-2">
+                                <i class="fa-solid fa-circle-check text-tm-service fs-5 mt-1"></i>
+                                <div>
+                                    <h4 class="fw-extrabold text-dark mb-0 fs-12">Des pros vérifiés</h4>
+                                    <p class="text-muted mb-0 reassurance-desc">Prestataires sélectionnés et contrôlés.</p>
+                                </div>
+                            </div>
 
-						<div class="d-flex flex-column gap-3 mb-4">
-							<div class="d-flex align-items-start gap-2">
-								<i class="fa-solid fa-circle-check text-tm-service fs-5 mt-1"></i>
-								<div>
-									<h4 class="fw-extrabold text-dark mb-0 fs-12">Des pros vérifiés</h4>
-									<p class="text-muted mb-0 reassurance-desc">Prestataires sélectionnés et contrôlés.</p>
-								</div>
-							</div>
+                            <div class="d-flex align-items-start gap-2">
+                                <i class="fa-solid fa-comments text-tm-service fs-5 mt-1"></i>
+                                <div>
+                                    <h4 class="fw-extrabold text-dark mb-0 fs-12">Avis authentiques</h4>
+                                    <p class="text-muted mb-0 reassurance-desc">Des retours fiables pour bien choisir.</p>
+                                </div>
+                            </div>
 
-							<div class="d-flex align-items-start gap-2">
-								<i class="fa-solid fa-comments text-tm-service fs-5 mt-1"></i>
-								<div>
-									<h4 class="fw-extrabold text-dark mb-0 fs-12">Avis authentiques</h4>
-									<p class="text-muted mb-0 reassurance-desc">Des retours fiables pour bien choisir.</p>
-								</div>
-							</div>
+                            <div class="d-flex align-items-start gap-2">
+                                <i class="fa-solid fa-file-signature text-tm-service fs-5 mt-1"></i>
+                                <div>
+                                    <h4 class="fw-extrabold text-dark mb-0 fs-12">Devis gratuits</h4>
+                                    <p class="text-muted mb-0 reassurance-desc">Comparez et choisissez sans engagement.</p>
+                                </div>
+                            </div>
 
-							<div class="d-flex align-items-start gap-2">
-								<i class="fa-solid fa-file-signature text-tm-service fs-5 mt-1"></i>
-								<div>
-									<h4 class="fw-extrabold text-dark mb-0 fs-12">Devis gratuits</h4>
-									<p class="text-muted mb-0 reassurance-desc">Comparez et choisissez sans engagement.</p>
-								</div>
-							</div>
+                            <div class="d-flex align-items-start gap-2">
+                                <i class="fa-solid fa-shield-halved text-tm-service fs-5 mt-1"></i>
+                                <div>
+                                    <h4 class="fw-extrabold text-dark mb-0 fs-12">Paiement sécurisé</h4>
+                                    <p class="text-muted mb-0 reassurance-desc">Transactions 100% sécurisées.</p>
+                                </div>
+                            </div>
+                        </div>
 
-							<div class="d-flex align-items-start gap-2">
-								<i class="fa-solid fa-shield-halved text-tm-service fs-5 mt-1"></i>
-								<div>
-									<h4 class="fw-extrabold text-dark mb-0 fs-12">Paiement sécurisé</h4>
-									<p class="text-muted mb-0 reassurance-desc">Transactions 100% sécurisées.</p>
-								</div>
-							</div>
-						</div>
+                        <a href="#" class="btn btn-white w-100 py-2 rounded-3 fw-bold bg-white text-tm-service border shadow-xs d-flex align-items-center justify-content-between px-3 mt-auto reassurance-more-btn">
+                            En savoir plus
+                            <i class="fa-solid fa-chevron-right arrow-indicator"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-						<a href="#" class="btn btn-white w-100 py-2 rounded-3 fw-bold bg-white text-tm-service border shadow-xs d-flex align-items-center justify-content-between px-3 mt-auto reassurance-more-btn">
-							En savoir plus
-							<i class="fa-solid fa-chevron-right arrow-indicator"></i>
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
-
-
-		{# BON PLAN #}
+        {# BON PLAN #}
 <section class="tm-home-deals-section container my-5">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <h2 class="fw-extrabold h4 mb-0 text-dark tracking-tight">
@@ -427,7 +424,7 @@
                         </div>
 
                         {% if bonPlan.prestataire.slug %}
-                            <a href="{{ path('app_prestataire_show', { slug: bonPlan.prestataire.slug }) }}" class="tm-home-deal-card__cta">
+                            <a href="{{ path('app_prestataire_show', {slug: bonPlan.prestataire.slug}) }}" class="tm-home-deal-card__cta">
                                 <span>Voir l’offre</span>
                                 <i class="fa-solid fa-arrow-right"></i>
                             </a>
@@ -447,147 +444,145 @@
     {% endif %}
 </section>
 
+        {# STEPS #}
+        <div class="container my-5 py-5 px-4 tm-step-section" data-controller="scroll-reveal">
+            <div class="text-center mb-5" data-scroll-reveal-target="element">
+                <h2 class="tm-step-title h3">Votre projet commence ici</h2>
+                <div class="tm-step-divider"></div>
+                <p class="text-muted">6 étapes simples pour une collaboration réussie</p>
+            </div>
 
-		{# STEPS #}
-		<div class="container my-5 py-5 px-4 tm-step-section" data-controller="scroll-reveal">
-			<div class="text-center mb-5" data-scroll-reveal-target="element">
-				<h2 class="tm-step-title h3">Votre projet commence ici</h2>
-				<div class="tm-step-divider"></div>
-				<p class="text-muted">6 étapes simples pour une collaboration réussie</p>
-			</div>
-
-			<div class="row g-4">
-				{% set steps = [
-            {'icon': 'fa-magnifying-glass', 'label': '1. Recherchez', 'desc': 'Trouvez le pro idéal parmi nos experts.', 'bg': '#f0f4ff', 'color': '#061b56'},
-            {'icon': 'fa-user-plus', 'label': '2. Inscrivez-vous', 'desc': 'Créez votre compte en quelques secondes.', 'bg': '#eef2ff', 'color': '#4338ca'},
-            {'icon': 'fa-address-card', 'label': '3. Complétez', 'desc': 'Remplissez vos besoins sur mesure.', 'bg': '#fdf2f8', 'color': '#db2777'},
-            {'icon': 'fa-sliders', 'label': '4. Comparez', 'desc': 'Analysez les avis en toute confiance.', 'bg': '#fff1f2', 'color': '#e11d48'},
-            {'icon': 'fa-comments', 'label': '5. Échangez', 'desc': 'Discutez avec le prestataire choisi.', 'bg': '#f0fdf4', 'color': '#16a34a'},
-            {'icon': 'fa-circle-check', 'label': '6. Réalisez', 'desc': 'Validez votre projet sereinement.', 'bg': '#fffbeb', 'color': '#d97706'}
+            <div class="row g-4">
+                {% set steps = [
+            {icon: 'fa-magnifying-glass', label: '1. Recherchez', desc: 'Trouvez le pro idéal parmi nos experts.', bg: '#f0f4ff', color: '#061b56'},
+            {icon: 'fa-user-plus', label: '2. Inscrivez-vous', desc: 'Créez votre compte en quelques secondes.', bg: '#eef2ff', color: '#4338ca'},
+            {icon: 'fa-address-card', label: '3. Complétez', desc: 'Remplissez vos besoins sur mesure.', bg: '#fdf2f8', color: '#db2777'},
+            {icon: 'fa-sliders', label: '4. Comparez', desc: 'Analysez les avis en toute confiance.', bg: '#fff1f2', color: '#e11d48'},
+            {icon: 'fa-comments', label: '5. Échangez', desc: 'Discutez avec le prestataire choisi.', bg: '#f0fdf4', color: '#16a34a'},
+            {icon: 'fa-circle-check', label: '6. Réalisez', desc: 'Validez votre projet sereinement.', bg: '#fffbeb', color: '#d97706'},
         ] %}
 
-				{% for step in steps %}
-					<div class="col-md-4 col-lg-2" data-scroll-reveal-target="element">
-						<div class="tm-step-card">
-							<div class="tm-step-icon-wrapper" style="background: {{ step.bg }}; color: {{ step.color }};">
-								<i class="fa-solid {{ step.icon }}"></i>
-							</div>
-							<h6 class="tm-step-label">{{ step.label }}</h6>
-							<p class="tm-step-desc">{{ step.desc }}</p>
-						</div>
-					</div>
-				{% endfor %}
-			</div>
+                {% for step in steps %}
+                    <div class="col-md-4 col-lg-2" data-scroll-reveal-target="element">
+                        <div class="tm-step-card">
+                            <div class="tm-step-icon-wrapper" style="background: {{ step.bg }}; color: {{ step.color }};">
+                                <i class="fa-solid {{ step.icon }}"></i>
+                            </div>
+                            <h6 class="tm-step-label">{{ step.label }}</h6>
+                            <p class="tm-step-desc">{{ step.desc }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
 
-			<div class="text-center mt-4" data-scroll-reveal-target="element">
-				<a href="/register" class="btn btn-primary tm-step-btn">
-					Créer mon compte maintenant
-				</a>
-			</div>
-		</div>
+            <div class="text-center mt-4" data-scroll-reveal-target="element">
+                <a href="/register" class="btn btn-primary tm-step-btn">
+                    Créer mon compte maintenant
+                </a>
+            </div>
+        </div>
 
-		{# FAQ #}
-		<div class="container tm-faq-section" data-controller="scroll-reveal">
-			<div class="row align-items-center">
-				<div class="col-lg-1 d-none d-lg-block tm-faq-icon-wrapper" data-scroll-reveal-target="element">
-					<i class="fa-solid fa-circle-question tm-faq-icon"></i>
-				</div>
-				<div class="col-lg-7" data-scroll-reveal-target="element">
-					<h3 class="tm-faq-title">Besoin d'aide pour bien démarrer ?</h3>
-					<p class="tm-faq-description">Notre équipe est là pour vous accompagner à chaque étape de votre projet.</p>
-				</div>
-				<div class="col-lg-4 mt-4 mt-lg-0 tm-faq-actions" data-scroll-reveal-target="element">
-					<a href="{{ path('app_static_page', {'slug': 'aide-faq'}) }}" class="btn btn-outline-light px-4 py-2 me-2">
-						<i class="fa-solid fa-book-open me-2"></i>
-						FAQ
-					</a>
-					<a href="{{ path('app_static_page', {'slug': 'help'}) }}" class="btn btn-light px-4 py-2 fw-bold text-primary">
-						<i class="fa-solid fa-envelope me-2"></i>
-						Support
-					</a>
-				</div>
-			</div>
-		</div>
+        {# FAQ #}
+        <div class="container tm-faq-section" data-controller="scroll-reveal">
+            <div class="row align-items-center">
+                <div class="col-lg-1 d-none d-lg-block tm-faq-icon-wrapper" data-scroll-reveal-target="element">
+                    <i class="fa-solid fa-circle-question tm-faq-icon"></i>
+                </div>
+                <div class="col-lg-7" data-scroll-reveal-target="element">
+                    <h3 class="tm-faq-title">Besoin d'aide pour bien démarrer ?</h3>
+                    <p class="tm-faq-description">Notre équipe est là pour vous accompagner à chaque étape de votre projet.</p>
+                </div>
+                <div class="col-lg-4 mt-4 mt-lg-0 tm-faq-actions" data-scroll-reveal-target="element">
+                    <a href="{{ path('app_static_page', {slug: 'aide-faq'}) }}" class="btn btn-outline-light px-4 py-2 me-2">
+                        <i class="fa-solid fa-book-open me-2"></i>
+                        FAQ
+                    </a>
+                    <a href="{{ path('app_static_page', {slug: 'help'}) }}" class="btn btn-light px-4 py-2 fw-bold text-primary">
+                        <i class="fa-solid fa-envelope me-2"></i>
+                        Support
+                    </a>
+                </div>
+            </div>
+        </div>
 
+        {# SECTION AVIS CLIENTS (Ajoutée) #}
+        <div class="container my-5" data-controller="scroll-reveal">
+            <div class="text-center mb-5" data-scroll-reveal-target="element">
+                <h2 class="fw-extrabold h4 text-dark">Ce que nos utilisateurs pensent de nous</h2>
+                <p class="text-muted">Plus de 10 000 avis certifiés pour vous aider à choisir en toute sérénité.</p>
+            </div>
 
-		{# SECTION AVIS CLIENTS (Ajoutée) #}
-		<div class="container my-5" data-controller="scroll-reveal">
-			<div class="text-center mb-5" data-scroll-reveal-target="element">
-				<h2 class="fw-extrabold h4 text-dark">Ce que nos utilisateurs pensent de nous</h2>
-				<p class="text-muted">Plus de 10 000 avis certifiés pour vous aider à choisir en toute sérénité.</p>
-			</div>
+            <div class="row g-4">
+                {% for i in 1..3 %}
+                    <div class="col-md-4" data-scroll-reveal-target="element">
+                        <div class="card h-100 border-0 shadow-sm p-4 review-card">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="https://ui-avatars.com/api/?name=User+{{ i }}&background=random" class="rounded-circle reviewer-avatar me-3" alt="Utilisateur">
+                                <div>
+                                    <h5 class="fw-bold fs-6 mb-0">Jean D.</h5>
+                                    <div class="text-tm-accent small">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-muted small italic">"Une expérience exceptionnelle ! J'ai trouvé un plombier en moins de 30 minutes. Service rapide, efficace et très professionnel. Je recommande vivement !"</p>
+                            <div class="mt-auto pt-3 border-top">
+                                <span class="badge bg-light text-dark small">Prestation : Plomberie</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
 
-			<div class="row g-4">
-				{% for i in 1..3 %}
-					<div class="col-md-4" data-scroll-reveal-target="element">
-						<div class="card h-100 border-0 shadow-sm p-4 review-card">
-							<div class="d-flex align-items-center mb-3">
-								<img src="https://ui-avatars.com/api/?name=User+{{i}}&background=random" class="rounded-circle reviewer-avatar me-3" alt="Utilisateur">
-								<div>
-									<h5 class="fw-bold fs-6 mb-0">Jean D.</h5>
-									<div class="text-tm-accent small">
-										<i class="fa-solid fa-star"></i>
-										<i class="fa-solid fa-star"></i>
-										<i class="fa-solid fa-star"></i>
-										<i class="fa-solid fa-star"></i>
-										<i class="fa-solid fa-star"></i>
-									</div>
-								</div>
-							</div>
-							<p class="text-muted small italic">"Une expérience exceptionnelle ! J'ai trouvé un plombier en moins de 30 minutes. Service rapide, efficace et très professionnel. Je recommande vivement !"</p>
-							<div class="mt-auto pt-3 border-top">
-								<span class="badge bg-light text-dark small">Prestation : Plomberie</span>
-							</div>
-						</div>
-					</div>
-				{% endfor %}
-			</div>
-		</div>
+        {# 5. BANDEAU DES CARACTÉRISTIQUES DU BAS #}
+        <div class="bg-white border-top py-4 mb-4">
+            <div class="container">
+                <div class="row g-4 justify-content-center text-center text-md-start">
+                    <div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
+                        <div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
+                            <i class="fa-solid fa-calendar-check fs-5"></i>
+                        </div>
+                        <div>
+                            <span class="d-block fw-extrabold text-dark small lh-1 fs-13">Demande de devis gratuite</span>
+                            <small class="text-muted fw-medium fs-11">Réponse rapide sous 48h</small>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
+                        <div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
+                            <i class="fa-solid fa-thumbs-up fs-5"></i>
+                        </div>
+                        <div>
+                            <span class="d-block fw-extrabold text-dark small lh-1 fs-13">Aucun engagement</span>
+                            <small class="text-muted fw-medium fs-11">Comparez et choisissez librement</small>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
+                        <div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
+                            <i class="fa-solid fa-lock fs-5"></i>
+                        </div>
+                        <div>
+                            <span class="d-block fw-extrabold text-dark small lh-1 fs-13">Paiement sécurisé</span>
+                            <small class="text-muted fw-medium fs-11">Transactions cryptées</small>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
+                        <div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
+                            <i class="fa-solid fa-headset fs-5"></i>
+                        </div>
+                        <div>
+                            <span class="d-block fw-extrabold text-dark small lh-1 fs-13">Support 7j/7</span>
+                            <small class="text-muted fw-medium fs-11">Une équipe à votre écoute</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		{# 5. BANDEAU DES CARACTÉRISTIQUES DU BAS #}
-		<div class="bg-white border-top py-4 mb-4">
-			<div class="container">
-				<div class="row g-4 justify-content-center text-center text-md-start">
-					<div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
-						<div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
-							<i class="fa-solid fa-calendar-check fs-5"></i>
-						</div>
-						<div>
-							<span class="d-block fw-extrabold text-dark small lh-1 fs-13">Demande de devis gratuite</span>
-							<small class="text-muted fw-medium fs-11">Réponse rapide sous 48h</small>
-						</div>
-					</div>
-					<div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
-						<div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
-							<i class="fa-solid fa-thumbs-up fs-5"></i>
-						</div>
-						<div>
-							<span class="d-block fw-extrabold text-dark small lh-1 fs-13">Aucun engagement</span>
-							<small class="text-muted fw-medium fs-11">Comparez et choisissez librement</small>
-						</div>
-					</div>
-					<div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
-						<div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
-							<i class="fa-solid fa-lock fs-5"></i>
-						</div>
-						<div>
-							<span class="d-block fw-extrabold text-dark small lh-1 fs-13">Paiement sécurisé</span>
-							<small class="text-muted fw-medium fs-11">Transactions cryptées</small>
-						</div>
-					</div>
-					<div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
-						<div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
-							<i class="fa-solid fa-headset fs-5"></i>
-						</div>
-						<div>
-							<span class="d-block fw-extrabold text-dark small lh-1 fs-13">Support 7j/7</span>
-							<small class="text-muted fw-medium fs-11">Une équipe à votre écoute</small>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-	</div>
+    </div>
 
 {% endblock %}

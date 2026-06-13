@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\DataFixtures\User;
 
 use App\Entity\ClientProfile;
@@ -79,7 +89,7 @@ class ClientFixtures extends Fixture
             $profile->setType($data['type']);
             $profile->setCreatedAt($now);
 
-            if ($data['company_name'] !== null) {
+            if (null !== $data['company_name']) {
                 $profile->setCompanyName($data['company_name']);
             }
 

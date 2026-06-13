@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Form;
 
 use App\Entity\ClientProfile;
@@ -19,54 +29,54 @@ class ClientProfileType extends AbstractType
                 'class' => ClientTypeEnum::class,
                 'label' => 'Type de compte',
                 'expanded' => true,
-                'choice_label' => fn (ClientTypeEnum $choice) => match ($choice) {
+                'choice_label' => static fn (ClientTypeEnum $choice) => match ($choice) {
                     ClientTypeEnum::PARTICULIER => 'Particulier',
                     ClientTypeEnum::PROFESSIONNEL => 'Entreprise / Professionnel',
                 },
-                'attr' => ['class' => 'mb-3']
+                'attr' => ['class' => 'mb-3'],
             ])
             ->add('companyName', TextType::class, [
                 'label' => 'Nom de l\'entreprise',
                 'required' => false,
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Ex: TrouveMoi Inc.']
+                'attr' => ['class' => 'form-control', 'placeholder' => 'Ex: TrouveMoi Inc.'],
             ])
             ->add('siret', TextType::class, [
                 'label' => 'Numéro de SIRET',
                 'required' => false,
-                'attr' => ['class' => 'form-control', 'placeholder' => '14 chiffres']
+                'attr' => ['class' => 'form-control', 'placeholder' => '14 chiffres'],
             ])
-            
+
             // --- Section Adresse de Facturation ---
             ->add('billingAddress', TextType::class, [
                 'label' => 'Adresse de facturation',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-control'],
             ])
             ->add('billingPostalCode', TextType::class, [
                 'label' => 'Code postal',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-control'],
             ])
             ->add('billingCity', TextType::class, [
                 'label' => 'Ville',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-control'],
             ])
             ->add('billingCountry', TextType::class, [
                 'label' => 'Pays',
                 'data' => 'France', // Valeur par défaut
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-control'],
             ])
 
             // --- Section Adresse d'Intervention / Par défaut ---
             ->add('defaultAddress', TextType::class, [
                 'label' => 'Adresse par défaut (Intervention)',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-control'],
             ])
             ->add('defaultPostalCode', TextType::class, [
                 'label' => 'Code postal',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-control'],
             ])
             ->add('defaultCity', TextType::class, [
                 'label' => 'Ville',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-control'],
             ])
         ;
     }

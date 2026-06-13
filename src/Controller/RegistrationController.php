@@ -1,12 +1,23 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Entity\ClientProfile;
 use App\Entity\PrestataireProfile;
+use App\Entity\User;
 use App\Enum\ClientTypeEnum;
 use App\Form\RegistrationFormType;
+use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -19,11 +30,12 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
-use App\Repository\UserRepository;
 
 class RegistrationController extends AbstractController
 {
-    public function __construct(private EmailVerifier $emailVerifier) {}
+    public function __construct(private EmailVerifier $emailVerifier)
+    {
+    }
 
     #[Route('/register/choice', name: 'app_register_choice')]
     public function choice(): Response
@@ -36,7 +48,7 @@ class RegistrationController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface $entityManager,
-        Security $security
+        Security $security,
     ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -54,7 +66,7 @@ class RegistrationController extends AbstractController
             $user->setEmailVerifiedAt(null);
 
             // 2. Attribution du rôle et création du profil selon le paramètre de l'URL
-            if ($accountType === 'client') {
+            if ('client' === $accountType) {
                 $user->setRoles(['ROLE_CLIENT']);
 
                 $clientProfile = new ClientProfile();
@@ -62,12 +74,12 @@ class RegistrationController extends AbstractController
                 $clientProfile->setAccount($user);
 
                 $entityManager->persist($clientProfile);
-            } elseif ($accountType === 'prestataire') {
+            } elseif ('prestataire' === $accountType) {
                 $user->setRoles(['ROLE_PRESTATAIRE']);
 
                 $prestataireProfile = new PrestataireProfile();
                 $prestataireProfile->setCompanyName('Nouveau Prestataire');
-                $prestataireProfile->setSlug('profil-' . uniqid());
+                $prestataireProfile->setSlug('profil-'.uniqid());
                 $prestataireProfile->setAccount($user);
 
                 $entityManager->persist($prestataireProfile);
@@ -104,9 +116,8 @@ class RegistrationController extends AbstractController
     public function verifyUserEmail(
         Request $request,
         TranslatorInterface $translator,
-        UserRepository $userRepository
+        UserRepository $userRepository,
     ): Response {
-
         $user = $userRepository->find($request->query->get('id'));
 
         if (!$user) {
@@ -119,7 +130,6 @@ class RegistrationController extends AbstractController
                 $user
             );
         } catch (VerifyEmailExceptionInterface $exception) {
-
             $this->addFlash(
                 'verify_email_error',
                 $translator->trans(

@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Service;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -7,20 +17,20 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 final class ZoneGeocoder
 {
     public function __construct(
-        private HttpClientInterface $httpClient
+        private HttpClientInterface $httpClient,
     ) {
     }
 
     public function geocode(?string $city, ?string $postalCode): ?array
     {
-        $city = trim((string) $city);
-        $postalCode = trim((string) $postalCode);
+        $city = mb_trim((string) $city);
+        $postalCode = mb_trim((string) $postalCode);
 
-        if ($city === '' && $postalCode === '') {
+        if ('' === $city && '' === $postalCode) {
             return null;
         }
 
-        $query = trim(sprintf('%s %s France', $postalCode, $city));
+        $query = mb_trim(\sprintf('%s %s France', $postalCode, $city));
 
         $response = $this->httpClient->request('GET', 'https://nominatim.openstreetmap.org/search', [
             'query' => [

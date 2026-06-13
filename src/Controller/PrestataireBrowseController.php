@@ -1,9 +1,19 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Controller;
 
 use App\Repository\PrestataireProfileRepository;
-use Knp\Component\Pager\PaginatorInterface; 
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,16 +23,16 @@ class PrestataireBrowseController extends AbstractController
 {
     #[Route('/prestataires', name: 'app_prestataire_browse', methods: ['GET'])]
     public function index(
-        Request $request, 
+        Request $request,
         PrestataireProfileRepository $profileRepository,
-        PaginatorInterface $paginator
+        PaginatorInterface $paginator,
     ): Response {
         // On récupère le paramètre pour savoir quel bouton est actif dans le Twig
         $sortBy = $request->query->get('sort', 'all');
-        
+
         // On récupère le QueryBuilder de base (SANS le orderBy, KnpPaginator va s'en charger)
         $queryBuilder = $profileRepository->getBrowseQueryBuilder($sortBy);
-        
+
         // On passe directement la request d'origine
         $pagination = $paginator->paginate(
             $queryBuilder,
@@ -31,18 +41,18 @@ class PrestataireBrowseController extends AbstractController
             [
                 'wrap-queries' => true,
                 'defaultSortFieldName' => 'p.createdAt',
-                'defaultSortDirection' => 'desc'
+                'defaultSortDirection' => 'desc',
             ]
         );
 
-        $pageTitle = ($sortBy === 'p.averageRating') 
-            ? 'Les prestataires les mieux notés' 
+        $pageTitle = ('p.averageRating' === $sortBy)
+            ? 'Les prestataires les mieux notés'
             : 'Tous nos prestataires';
 
         return $this->render('prestataire_browse/prestataire_browse.html.twig', [
             'pagination' => $pagination,
             'current_sort' => $sortBy,
-            'page_title' => $pageTitle
+            'page_title' => $pageTitle,
         ]);
     }
 }

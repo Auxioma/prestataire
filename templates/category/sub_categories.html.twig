@@ -99,7 +99,7 @@
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
                     {% for subCategory in activeSubCategories|sort((a, b) => a.position <=> b.position) %}
                         <div class="col">
-                            <a href="{{ path('app_subcategory_services', {'categorySlug': category.slug, 'subCategorySlug': subCategory.slug}) }}"
+                            <a href="{{ path('app_subcategory_services', {categorySlug: category.slug, subCategorySlug: subCategory.slug}) }}"
                                class="tm-subcat-card text-decoration-none">
                                 <div class="tm-subcat-card__inner">
                                     <div class="tm-subcat-card__top">

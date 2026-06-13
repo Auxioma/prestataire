@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Repository;
 
 use App\Entity\PrestataireProfile;
@@ -18,7 +28,7 @@ class PrestataireProfileRepository extends ServiceEntityRepository
     }
 
     /**
-     * Récupère tous les prestataires actifs qui proposent un service spécifique
+     * Récupère tous les prestataires actifs qui proposent un service spécifique.
      */
     public function findByService(Service $service): array
     {
@@ -37,7 +47,7 @@ class PrestataireProfileRepository extends ServiceEntityRepository
     }
 
     /**
-     * Retourne le QueryBuilder de recherche globale (le tri est géré par le Paginator)
+     * Retourne le QueryBuilder de recherche globale (le tri est géré par le Paginator).
      */
     public function getBrowseQueryBuilder(string $sortBy): QueryBuilder
     {
@@ -49,7 +59,7 @@ class PrestataireProfileRepository extends ServiceEntityRepository
     }
 
     /**
-     * Retourne le QueryBuilder de la barre de recherche d'accueil (le tri est géré par le Paginator)
+     * Retourne le QueryBuilder de la barre de recherche d'accueil (le tri est géré par le Paginator).
      */
     public function getHomepageSearchQueryBuilder(array $criteria): QueryBuilder
     {
@@ -64,12 +74,12 @@ class PrestataireProfileRepository extends ServiceEntityRepository
             ->andWhere('p.profileStatus = :status')
             ->setParameter('status', PrestataireProfileStatusEnum::ACTIVE);
 
-        $query = trim((string) ($criteria['query'] ?? ''));
-        $location = trim((string) ($criteria['location'] ?? ''));
+        $query = mb_trim((string) ($criteria['query'] ?? ''));
+        $location = mb_trim((string) ($criteria['location'] ?? ''));
         $subCategory = $criteria['subCategory'] ?? null;
         $searchedLocation = $criteria['searchedLocation'] ?? null;
 
-        if ($query !== '') {
+        if ('' !== $query) {
             $qb
                 ->andWhere('(
                 LOWER(p.companyName) LIKE LOWER(:query)
@@ -77,10 +87,10 @@ class PrestataireProfileRepository extends ServiceEntityRepository
                 OR LOWER(p.shortDescription) LIKE LOWER(:query)
                 OR LOWER(s.name) LIKE LOWER(:query)
             )')
-                ->setParameter('query', '%' . $query . '%');
+                ->setParameter('query', '%'.$query.'%');
         }
 
-        if ($location !== '' && $searchedLocation === null) {
+        if ('' !== $location && null === $searchedLocation) {
             $qb
                 ->andWhere('(
         LOWER(p.city) LIKE LOWER(:location)
@@ -88,12 +98,11 @@ class PrestataireProfileRepository extends ServiceEntityRepository
         OR LOWER(z.city) LIKE LOWER(:location)
         OR z.postalCode LIKE :locationExact
     )')
-                ->setParameter('location', '%' . $location . '%')
-                ->setParameter('locationExact', '%' . $location . '%');
+                ->setParameter('location', '%'.$location.'%')
+                ->setParameter('locationExact', '%'.$location.'%');
         }
 
-
-        if ($subCategory !== null) {
+        if (null !== $subCategory) {
             $qb
                 ->andWhere('c = :subCategory OR parent = :subCategory')
                 ->setParameter('subCategory', $subCategory);

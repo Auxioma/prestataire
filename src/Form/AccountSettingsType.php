@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Form;
 
 use App\Entity\User;
@@ -36,13 +46,13 @@ class AccountSettingsType extends AbstractType
                 ],
             ]);
 
-        if ($options['profile_type'] === 'prestataire') {
+        if ('prestataire' === $options['profile_type']) {
             $builder->add('prestataireProfile', PrestatairePublicProfileTabType::class, [
                 'label' => false,
             ]);
         }
 
-        if ($options['profile_type'] === 'client') {
+        if ('client' === $options['profile_type']) {
             $builder->add('clientProfile', ClientProfileType::class, [
                 'label' => false,
             ]);

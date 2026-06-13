@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Security;
 
 use App\Entity\User;
@@ -16,7 +26,8 @@ class EmailVerifier
         private VerifyEmailHelperInterface $verifyEmailHelper,
         private MailerInterface $mailer,
         private EntityManagerInterface $entityManager,
-    ) {}
+    ) {
+    }
 
     public function sendEmailConfirmation(string $verifyEmailRouteName, User $user, TemplatedEmail $email): void
     {
@@ -43,14 +54,12 @@ class EmailVerifier
      */
     public function handleEmailConfirmation(Request $request, User $user): void
     {
-
         $this->verifyEmailHelper->validateEmailConfirmationFromRequest($request, (string) $user->getId(), (string) $user->getEmail());
 
         $user->setIsVerified(true);
         $user->setEmailVerifiedAt(new \DateTimeImmutable());
 
-        if (in_array('ROLE_PRESTATAIRE', $user->getRoles())) {
-            
+        if (\in_array('ROLE_PRESTATAIRE', $user->getRoles(), true)) {
             $roles = $user->getRoles();
             $roles[] = 'ROLE_PRESTATAIRE_VERIFIED';
 

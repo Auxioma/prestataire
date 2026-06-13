@@ -4,353 +4,353 @@
 {% endblock %}
 
 {% block body %}
-	<div
-		class="container py-4 text-start tm-flow-page">
+    <div
+        class="container py-4 text-start tm-flow-page">
 
-		{# 1. BREADCRUMB #}
-		<nav aria-label="breadcrumb" class="tm-flow-breadcrumb mb-4">
-			<ol class="breadcrumb small mb-0">
-				<li class="breadcrumb-item">
-					<a href="{{ path('app_home') }}" class="text-decoration-none text-muted">
-						<i class="fa-solid fa-house me-1"></i>
-						Accueil
-					</a>
-				</li>
+        {# 1. BREADCRUMB #}
+        <nav aria-label="breadcrumb" class="tm-flow-breadcrumb mb-4">
+            <ol class="breadcrumb small mb-0">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('app_home') }}" class="text-decoration-none text-muted">
+                        <i class="fa-solid fa-house me-1"></i>
+                        Accueil
+                    </a>
+                </li>
 
-				{% if currentCategory %}
-					<li class="breadcrumb-item {% if not currentSubCategory and not currentService %}active text-dark fw-bold{% endif %}">
-						{% if currentSubCategory or currentService %}
-							<a href="{{ path('app_search_flow', {'type': 'categorie', 'slug': currentCategory.slug}) }}" class="text-decoration-none text-muted">
-								{{ currentCategory.name }}
-							</a>
-						{% else %}
-							{{ currentCategory.name }}
-						{% endif %}
-					</li>
-				{% endif %}
+                {% if currentCategory %}
+                    <li class="breadcrumb-item {% if not currentSubCategory and not currentService %}active text-dark fw-bold{% endif %}">
+                        {% if currentSubCategory or currentService %}
+                            <a href="{{ path('app_search_flow', {type: 'categorie', slug: currentCategory.slug}) }}" class="text-decoration-none text-muted">
+                                {{ currentCategory.name }}
+                            </a>
+                        {% else %}
+                            {{ currentCategory.name }}
+                        {% endif %}
+                    </li>
+                {% endif %}
 
-				{% if currentSubCategory %}
-					<li class="breadcrumb-item {% if not currentService %}active text-dark fw-bold{% endif %}">
-						{% if currentService %}
-							<a href="{{ path('app_search_flow', {'type': 'categorie', 'slug': currentSubCategory.slug}) }}" class="text-decoration-none text-muted">
-								{{ currentSubCategory.name }}
-							</a>
-						{% else %}
-							{{ currentSubCategory.name }}
-						{% endif %}
-					</li>
-				{% endif %}
+                {% if currentSubCategory %}
+                    <li class="breadcrumb-item {% if not currentService %}active text-dark fw-bold{% endif %}">
+                        {% if currentService %}
+                            <a href="{{ path('app_search_flow', {type: 'categorie', slug: currentSubCategory.slug}) }}" class="text-decoration-none text-muted">
+                                {{ currentSubCategory.name }}
+                            </a>
+                        {% else %}
+                            {{ currentSubCategory.name }}
+                        {% endif %}
+                    </li>
+                {% endif %}
 
-				{% if currentService %}
-					<li class="breadcrumb-item active text-dark fw-bold" aria-current="page">
-						{{ currentService.name }}
-					</li>
-				{% endif %}
-			</ol>
-		</nav>
+                {% if currentService %}
+                    <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">
+                        {{ currentService.name }}
+                    </li>
+                {% endif %}
+            </ol>
+        </nav>
 
-		{# 2. HEADER DYNAMIQUE #}
-		<section class="tm-flow-hero mb-5">
-			<div class="tm-flow-hero__main">
-				<span class="tm-flow-hero__eyebrow">
-					{% if currentService %}
-						Sélection de professionnels
-					{% elseif currentSubCategory %}
-						Prestations disponibles
-					{% elseif currentCategory %}
-						Explorer les métiers
-					{% else %}
-						Recherche de prestataires
-					{% endif %}
-				</span>
+        {# 2. HEADER DYNAMIQUE #}
+        <section class="tm-flow-hero mb-5">
+            <div class="tm-flow-hero__main">
+                <span class="tm-flow-hero__eyebrow">
+                    {% if currentService %}
+                        Sélection de professionnels
+                    {% elseif currentSubCategory %}
+                        Prestations disponibles
+                    {% elseif currentCategory %}
+                        Explorer les métiers
+                    {% else %}
+                        Recherche de prestataires
+                    {% endif %}
+                </span>
 
-				{% if currentService %}
-					<h1 class="tm-flow-hero__title">
-						Prestataires pour
-						<span>{{ currentService.name }}</span>
-					</h1>
-					<p class="tm-flow-hero__subtitle">
-						Comparez les entreprises disponibles et choisissez le professionnel qui correspond le mieux à votre besoin.
-					</p>
-				{% elseif currentSubCategory %}
-					<h1 class="tm-flow-hero__title">
-						Services en
-						<span>{{ currentSubCategory.name }}</span>
-					</h1>
-					<p class="tm-flow-hero__subtitle">
-						Sélectionnez la prestation exacte dont vous avez besoin pour trouver le bon professionnel.
-					</p>
-				{% elseif currentCategory %}
-					<h1 class="tm-flow-hero__title">
-						Métiers en
-						<span>{{ currentCategory.name }}</span>
-					</h1>
-					<p class="tm-flow-hero__subtitle">
-						Affinez votre recherche en choisissant une sous-catégorie spécialisée.
-					</p>
-				{% else %}
-					<h1 class="tm-flow-hero__title">Toutes les catégories</h1>
-					<p class="tm-flow-hero__subtitle">
-						Parcourez nos différents secteurs d’activité pour démarrer votre recherche.
-					</p>
-				{% endif %}
-			</div>
+                {% if currentService %}
+                    <h1 class="tm-flow-hero__title">
+                        Prestataires pour
+                        <span>{{ currentService.name }}</span>
+                    </h1>
+                    <p class="tm-flow-hero__subtitle">
+                        Comparez les entreprises disponibles et choisissez le professionnel qui correspond le mieux à votre besoin.
+                    </p>
+                {% elseif currentSubCategory %}
+                    <h1 class="tm-flow-hero__title">
+                        Services en
+                        <span>{{ currentSubCategory.name }}</span>
+                    </h1>
+                    <p class="tm-flow-hero__subtitle">
+                        Sélectionnez la prestation exacte dont vous avez besoin pour trouver le bon professionnel.
+                    </p>
+                {% elseif currentCategory %}
+                    <h1 class="tm-flow-hero__title">
+                        Métiers en
+                        <span>{{ currentCategory.name }}</span>
+                    </h1>
+                    <p class="tm-flow-hero__subtitle">
+                        Affinez votre recherche en choisissant une sous-catégorie spécialisée.
+                    </p>
+                {% else %}
+                    <h1 class="tm-flow-hero__title">Toutes les catégories</h1>
+                    <p class="tm-flow-hero__subtitle">
+                        Parcourez nos différents secteurs d’activité pour démarrer votre recherche.
+                    </p>
+                {% endif %}
+            </div>
 
-			<div class="tm-flow-hero__badges">
-				<div class="tm-flow-mini-badge">
-					<i class="fa-solid fa-circle-check"></i>
-					<span>Profils vérifiés</span>
-				</div>
-				<div class="tm-flow-mini-badge">
-					<i class="fa-solid fa-star"></i>
-					<span>Avis contrôlés</span>
-				</div>
-				<div class="tm-flow-mini-badge">
-					<i class="fa-solid fa-bolt"></i>
-					<span>Réponse rapide</span>
-				</div>
-			</div>
-		</section>
+            <div class="tm-flow-hero__badges">
+                <div class="tm-flow-mini-badge">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Profils vérifiés</span>
+                </div>
+                <div class="tm-flow-mini-badge">
+                    <i class="fa-solid fa-star"></i>
+                    <span>Avis contrôlés</span>
+                </div>
+                <div class="tm-flow-mini-badge">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Réponse rapide</span>
+                </div>
+            </div>
+        </section>
 
-		{# 3. SOUS-CATÉGORIES #}
-		{% if subCategories is not empty %}
-			<section class="tm-flow-section mb-5">
-				<div class="tm-flow-section__head">
-					<div>
-						<span class="tm-flow-section__eyebrow">Étape suivante</span>
-						<h2 class="tm-flow-section__title">Choisissez un métier</h2>
-						<p class="tm-flow-section__subtitle">
-							Sélectionnez une spécialité pour faire apparaître les prestations associées.
-						</p>
-					</div>
-				</div>
+        {# 3. SOUS-CATÉGORIES #}
+        {% if subCategories is not empty %}
+            <section class="tm-flow-section mb-5">
+                <div class="tm-flow-section__head">
+                    <div>
+                        <span class="tm-flow-section__eyebrow">Étape suivante</span>
+                        <h2 class="tm-flow-section__title">Choisissez un métier</h2>
+                        <p class="tm-flow-section__subtitle">
+                            Sélectionnez une spécialité pour faire apparaître les prestations associées.
+                        </p>
+                    </div>
+                </div>
 
-				<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-					{% for subCat in subCategories %}
-						<div class="col">
-							<a href="{{ path('app_search_flow', {'type': 'categorie', 'slug': subCat.slug}) }}" class="tm-flow-choice-card">
-								<div class="tm-flow-choice-card__top">
-									<div class="tm-flow-choice-card__icon">
-										<i class="fa-solid {{ subCat.icon|default('fa-circle-dot') }}"></i>
-									</div>
-									<h3 class="tm-flow-choice-card__title">{{ subCat.name }}</h3>
-								</div>
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                    {% for subCat in subCategories %}
+                        <div class="col">
+                            <a href="{{ path('app_search_flow', {type: 'categorie', slug: subCat.slug}) }}" class="tm-flow-choice-card">
+                                <div class="tm-flow-choice-card__top">
+                                    <div class="tm-flow-choice-card__icon">
+                                        <i class="fa-solid {{ subCat.icon|default('fa-circle-dot') }}"></i>
+                                    </div>
+                                    <h3 class="tm-flow-choice-card__title">{{ subCat.name }}</h3>
+                                </div>
 
-								<div class="tm-flow-choice-card__bottom">
-									<span>Explorer</span>
-									<i class="fa-solid fa-arrow-right"></i>
-								</div>
-							</a>
-						</div>
-					{% endfor %}
-				</div>
-			</section>
-		{% endif %}
+                                <div class="tm-flow-choice-card__bottom">
+                                    <span>Explorer</span>
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
 
-		{# 4. SERVICES #}
-		{% if services is not empty %}
-			<section class="tm-flow-section mb-5">
-				<div class="tm-flow-section__head">
-					<div>
-						<span class="tm-flow-section__eyebrow">Prestations</span>
-						<h2 class="tm-flow-section__title">Choisissez un service</h2>
-						<p class="tm-flow-section__subtitle">
-							Lancez votre recherche avec une prestation claire et précise.
-						</p>
-					</div>
-				</div>
+        {# 4. SERVICES #}
+        {% if services is not empty %}
+            <section class="tm-flow-section mb-5">
+                <div class="tm-flow-section__head">
+                    <div>
+                        <span class="tm-flow-section__eyebrow">Prestations</span>
+                        <h2 class="tm-flow-section__title">Choisissez un service</h2>
+                        <p class="tm-flow-section__subtitle">
+                            Lancez votre recherche avec une prestation claire et précise.
+                        </p>
+                    </div>
+                </div>
 
-				<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-					{% for service in services %}
-						<div class="col">
-							<article class="tm-flow-service-card">
-								<div class="tm-flow-service-card__icon">
-									<i class="fa-solid {{ service.icon|default('fa-gears') }}"></i>
-								</div>
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                    {% for service in services %}
+                        <div class="col">
+                            <article class="tm-flow-service-card">
+                                <div class="tm-flow-service-card__icon">
+                                    <i class="fa-solid {{ service.icon|default('fa-gears') }}"></i>
+                                </div>
 
-								<h3 class="tm-flow-service-card__title">{{ service.name }}</h3>
+                                <h3 class="tm-flow-service-card__title">{{ service.name }}</h3>
 
-								{% if service.description %}
-									<p class="tm-flow-service-card__desc">
-										{{ service.description|length > 95 ? service.description|slice(0, 95) ~ '...' : service.description }}
-									</p>
-								{% else %}
-									<p class="tm-flow-service-card__desc">
-										Trouvez rapidement un professionnel qualifié pour cette prestation.
-									</p>
-								{% endif %}
+                                {% if service.description %}
+                                    <p class="tm-flow-service-card__desc">
+                                        {{ service.description|length > 95 ? service.description|slice(0, 95) ~ '...' : service.description }}
+                                    </p>
+                                {% else %}
+                                    <p class="tm-flow-service-card__desc">
+                                        Trouvez rapidement un professionnel qualifié pour cette prestation.
+                                    </p>
+                                {% endif %}
 
-								<div class="tm-flow-service-card__footer">
-									<a href="{{ path('app_search_flow', {'type': 'service', 'slug': service.slug}) }}" class="tm-flow-btn tm-flow-btn--primary tm-flow-btn--small">
-										Trouver un pro
-									</a>
-								</div>
-							</article>
-						</div>
-					{% endfor %}
-				</div>
-			</section>
-		{% endif %}
+                                <div class="tm-flow-service-card__footer">
+                                    <a href="{{ path('app_search_flow', {type: 'service', slug: service.slug}) }}" class="tm-flow-btn tm-flow-btn--primary tm-flow-btn--small">
+                                        Trouver un pro
+                                    </a>
+                                </div>
+                            </article>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
 
-		{# 5. PRESTATAIRES #}
-		{% if currentService %}
-			<section class="tm-flow-section mb-5">
-				<div class="tm-flow-section__head tm-flow-section__head--split">
-					<div>
-						<span class="tm-flow-section__eyebrow">Professionnels disponibles</span>
-						<h2 class="tm-flow-section__title">Entreprises pour
-							{{ currentService.name }}</h2>
-						<p class="tm-flow-section__subtitle">
-							Une sélection claire, plus chaleureuse et plus homogène.
-						</p>
-					</div>
+        {# 5. PRESTATAIRES #}
+        {% if currentService %}
+            <section class="tm-flow-section mb-5">
+                <div class="tm-flow-section__head tm-flow-section__head--split">
+                    <div>
+                        <span class="tm-flow-section__eyebrow">Professionnels disponibles</span>
+                        <h2 class="tm-flow-section__title">Entreprises pour
+                            {{ currentService.name }}</h2>
+                        <p class="tm-flow-section__subtitle">
+                            Une sélection claire, plus chaleureuse et plus homogène.
+                        </p>
+                    </div>
 
-					{% if prestataires is not empty %}
-						<div class="tm-flow-results-pill">
-							{{ prestataires|length }}
-							résultat{{ prestataires|length > 1 ? 's' : '' }}
-						</div>
-					{% endif %}
-				</div>
+                    {% if prestataires is not empty %}
+                        <div class="tm-flow-results-pill">
+                            {{ prestataires|length }}
+                            résultat{{ prestataires|length > 1 ? 's' : '' }}
+                        </div>
+                    {% endif %}
+                </div>
 
-				{% if prestataires is not empty %}
-					<div class="row g-4">
-						{% for prestataire in prestataires %}
-							<div class="col-md-6 col-lg-4">
-								<article class="tm-flow-provider-card">
+                {% if prestataires is not empty %}
+                    <div class="row g-4">
+                        {% for prestataire in prestataires %}
+                            <div class="col-md-6 col-lg-4">
+                                <article class="tm-flow-provider-card">
 
-									<div class="tm-flow-provider-card__cover">
-										{% if prestataire.coverImage %}
-											<img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="{{ prestataire.companyName }}">
-										{% elseif prestataire.logo %}
-											<img src="{{ prestataire.logo }}" alt="{{ prestataire.companyName }}">
-										{% else %}
-											<img src="{{ asset('images/img_par_defaut.png') }}" alt="{{ prestataire.companyName }}">
-										{% endif %}
-									</div>
+                                    <div class="tm-flow-provider-card__cover">
+                                        {% if prestataire.coverImage %}
+                                            <img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="{{ prestataire.companyName }}">
+                                        {% elseif prestataire.logo %}
+                                            <img src="{{ prestataire.logo }}" alt="{{ prestataire.companyName }}">
+                                        {% else %}
+                                            <img src="{{ asset('images/img_par_defaut.png') }}" alt="{{ prestataire.companyName }}">
+                                        {% endif %}
+                                    </div>
 
-									<div class="tm-flow-provider-card__body">
-										{% if prestataire.reviewsCount > 0 %}
-											<div class="tm-flow-provider-card__rating">
-												<i class="fa-solid fa-star"></i>
-												<span class="fw-bold">{{ prestataire.averageRating }}</span>
-												<span>{{ prestataire.reviewsCount }}
-													avis</span>
-											</div>
-										{% endif %}
+                                    <div class="tm-flow-provider-card__body">
+                                        {% if prestataire.reviewsCount > 0 %}
+                                            <div class="tm-flow-provider-card__rating">
+                                                <i class="fa-solid fa-star"></i>
+                                                <span class="fw-bold">{{ prestataire.averageRating }}</span>
+                                                <span>{{ prestataire.reviewsCount }}
+                                                    avis</span>
+                                            </div>
+                                        {% endif %}
 
-										<h3 class="tm-flow-provider-card__title">{{ prestataire.companyName }}</h3>
+                                        <h3 class="tm-flow-provider-card__title">{{ prestataire.companyName }}</h3>
 
-										<div class="tm-flow-provider-card__location">
-											<i class="fa-solid fa-location-dot"></i>
-											<span>{{ prestataire.city|default('Ville non renseignée') }}</span>
-											{% if prestataire.postalCode %}
-												<em>{{ prestataire.postalCode|slice(0,2) }}</em>
-											{% endif %}
-										</div>
+                                        <div class="tm-flow-provider-card__location">
+                                            <i class="fa-solid fa-location-dot"></i>
+                                            <span>{{ prestataire.city|default('Ville non renseignée') }}</span>
+                                            {% if prestataire.postalCode %}
+                                                <em>{{ prestataire.postalCode|slice(0, 2) }}</em>
+                                            {% endif %}
+                                        </div>
 
-										<div class="tm-flow-provider-card__tags">
-											<span class="tm-flow-tag">
-												{{ prestataire.metier|default('Prestataire') }}
-											</span>
+                                        <div class="tm-flow-provider-card__tags">
+                                            <span class="tm-flow-tag">
+                                                {{ prestataire.metier|default('Prestataire') }}
+                                            </span>
 
-											{% if prestataire.experience %}
-												<span class="tm-flow-tag tm-flow-tag--muted">
-													{{ prestataire.experience }}
-													d’expérience
-												</span>
-											{% endif %}
-										</div>
+                                            {% if prestataire.experience %}
+                                                <span class="tm-flow-tag tm-flow-tag--muted">
+                                                    {{ prestataire.experience }}
+                                                    d’expérience
+                                                </span>
+                                            {% endif %}
+                                        </div>
 
-										<p class="tm-flow-provider-card__desc">
-											{{ prestataire.shortDescription|default(prestataire.description|slice(0, 120) ~ '...')|default('Aucune description rédigée pour le moment.') }}
-										</p>
-									</div>
+                                        <p class="tm-flow-provider-card__desc">
+                                            {{ prestataire.shortDescription|default(prestataire.description|slice(0, 120) ~ '...')|default('Aucune description rédigée pour le moment.') }}
+                                        </p>
+                                    </div>
 
-									<div class="tm-flow-provider-card__footer">
-										<a href="{{ path('app_prestataire_show', {'slug': prestataire.slug}) }}" class="tm-flow-provider-card__link">
-											Voir le profil
-											<i class="fa-solid fa-arrow-right"></i>
-										</a>
+                                    <div class="tm-flow-provider-card__footer">
+                                        <a href="{{ path('app_prestataire_show', {slug: prestataire.slug}) }}" class="tm-flow-provider-card__link">
+                                            Voir le profil
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </a>
 
-										<a href="#" class="tm-flow-btn tm-flow-btn--primary tm-flow-btn--tiny">
-											Demander un devis
-										</a>
-									</div>
-								</article>
-							</div>
-						{% endfor %}
-					</div>
-				{% else %}
-					<div class="tm-flow-empty">
-						<div class="tm-flow-empty__icon">
-							<i class="fa-solid fa-users-slash"></i>
-						</div>
-						<h3 class="tm-flow-empty__title">Aucun professionnel trouvé pour ce service</h3>
-						<p class="tm-flow-empty__text">
-							Notre réseau s’agrandit de jour en jour, mais il n’y a pas encore de prestataire actif enregistré pour
-							<strong>"{{ currentService.name }}"</strong>.
-						</p>
+                                        <a href="#" class="tm-flow-btn tm-flow-btn--primary tm-flow-btn--tiny">
+                                            Demander un devis
+                                        </a>
+                                    </div>
+                                </article>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="tm-flow-empty">
+                        <div class="tm-flow-empty__icon">
+                            <i class="fa-solid fa-users-slash"></i>
+                        </div>
+                        <h3 class="tm-flow-empty__title">Aucun professionnel trouvé pour ce service</h3>
+                        <p class="tm-flow-empty__text">
+                            Notre réseau s’agrandit de jour en jour, mais il n’y a pas encore de prestataire actif enregistré pour
+                            <strong>"{{ currentService.name }}"</strong>.
+                        </p>
 
-						<div class="tm-flow-empty__actions">
-							{% if currentSubCategory %}
-								<a href="{{ path('app_search_flow', {'type': 'categorie', 'slug': currentSubCategory.slug}) }}" class="tm-flow-btn tm-flow-btn--ghost tm-flow-btn--small">
-									<i class="fa-solid fa-arrow-left me-1"></i>
-									Revenir à
-									{{ currentSubCategory.name }}
-								</a>
-							{% endif %}
+                        <div class="tm-flow-empty__actions">
+                            {% if currentSubCategory %}
+                                <a href="{{ path('app_search_flow', {type: 'categorie', slug: currentSubCategory.slug}) }}" class="tm-flow-btn tm-flow-btn--ghost tm-flow-btn--small">
+                                    <i class="fa-solid fa-arrow-left me-1"></i>
+                                    Revenir à
+                                    {{ currentSubCategory.name }}
+                                </a>
+                            {% endif %}
 
-							<a href="#" class="tm-flow-btn tm-flow-btn--primary tm-flow-btn--small">
-								Déposer un projet global
-							</a>
-						</div>
-					</div>
-				{% endif %}
-			</section>
-		{% endif %}
+                            <a href="#" class="tm-flow-btn tm-flow-btn--primary tm-flow-btn--small">
+                                Déposer un projet global
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </section>
+        {% endif %}
 
-		{# 6. BANDEAU BAS #}
-		{% if not currentService %}
-			<section class="tm-flow-banner mb-5">
-				<div class="tm-flow-banner__left">
-					<div class="tm-flow-banner__icon">
-						<i class="fa-solid fa-award"></i>
-					</div>
+        {# 6. BANDEAU BAS #}
+        {% if not currentService %}
+            <section class="tm-flow-banner mb-5">
+                <div class="tm-flow-banner__left">
+                    <div class="tm-flow-banner__icon">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
 
-					<div class="tm-flow-banner__content">
-						<h3 class="tm-flow-banner__title">Vous êtes professionnel ?</h3>
-						<p class="tm-flow-banner__desc">
-							Rejoignez TrouveMoi pour développer votre clientèle locale et recevoir des demandes qualifiées.
-						</p>
-					</div>
-				</div>
+                    <div class="tm-flow-banner__content">
+                        <h3 class="tm-flow-banner__title">Vous êtes professionnel ?</h3>
+                        <p class="tm-flow-banner__desc">
+                            Rejoignez TrouveMoi pour développer votre clientèle locale et recevoir des demandes qualifiées.
+                        </p>
+                    </div>
+                </div>
 
-				<div class="tm-flow-banner__actions">
-					<a href="#" class="tm-flow-btn tm-flow-btn--ghost tm-flow-btn--small">En savoir plus</a>
-					<a href="#" class="tm-flow-btn tm-flow-btn--primary tm-flow-btn--small">Devenir prestataire</a>
-				</div>
-			</section>
-		{% endif %}
+                <div class="tm-flow-banner__actions">
+                    <a href="#" class="tm-flow-btn tm-flow-btn--ghost tm-flow-btn--small">En savoir plus</a>
+                    <a href="#" class="tm-flow-btn tm-flow-btn--primary tm-flow-btn--small">Devenir prestataire</a>
+                </div>
+            </section>
+        {% endif %}
 
-		{# 7. BADGES #}
-		<section class="tm-flow-trust">
-			<div class="tm-flow-trust__badge">
-				<i class="fa-solid fa-circle-check text-success"></i>
-				<span>
-					<strong>Pros vérifiés</strong>
-					<em>Identité & Siren</em>
-				</span>
-			</div>
+        {# 7. BADGES #}
+        <section class="tm-flow-trust">
+            <div class="tm-flow-trust__badge">
+                <i class="fa-solid fa-circle-check text-success"></i>
+                <span>
+                    <strong>Pros vérifiés</strong>
+                    <em>Identité & Siren</em>
+                </span>
+            </div>
 
-			<div class="tm-flow-trust__badge">
-				<i class="fa-solid fa-star text-warning"></i>
-				<span>
-					<strong>Avis contrôlés</strong>
-					<em>100% authentiques</em>
-				</span>
-			</div>
-		</section>
+            <div class="tm-flow-trust__badge">
+                <i class="fa-solid fa-star text-warning"></i>
+                <span>
+                    <strong>Avis contrôlés</strong>
+                    <em>100% authentiques</em>
+                </span>
+            </div>
+        </section>
 
-	</div>
+    </div>
 {% endblock %}

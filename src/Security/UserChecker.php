@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Security;
 
 use App\Entity\User;
@@ -17,15 +27,13 @@ class UserChecker implements UserCheckerInterface
         }
 
         if (!$user->isVerified()) {
-            throw new CustomUserMessageAccountStatusException(
-                'Veuillez vérifier votre adresse email avant de vous connecter.'
-            );
+            throw new CustomUserMessageAccountStatusException('Veuillez vérifier votre adresse email avant de vous connecter.');
         }
     }
 
     public function checkPostAuth(
         UserInterface $user,
-        ?TokenInterface $token = null
+        ?TokenInterface $token = null,
     ): void {
     }
 }

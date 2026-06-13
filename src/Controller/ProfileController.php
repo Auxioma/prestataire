@@ -1,12 +1,24 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Controller;
 
 use App\Entity\ClientProfile;
+use App\Entity\PrestataireInterventionZone;
 use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
 use App\Form\AccountSettingsType;
 use App\Form\PrestataireCompanyTabType;
+use App\Form\PrestataireInterventionZoneType;
 use App\Form\PrestataireServiceType;
 use App\Repository\ServiceCategoryRepository;
 use App\Repository\ServiceRepository;
@@ -16,8 +28,6 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Entity\PrestataireInterventionZone;
-use App\Form\PrestataireInterventionZoneType;
 use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
 use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
 use Symfony\UX\Map\InfoWindow;
@@ -32,7 +42,7 @@ class ProfileController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         ServiceCategoryRepository $categoryRepository,
-        FormFactoryInterface $formFactory
+        FormFactoryInterface $formFactory,
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -41,7 +51,7 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        if ($user->getPrestataireProfile() === null) {
+        if (null === $user->getPrestataireProfile()) {
             $profile = new PrestataireProfile();
             $user->setPrestataireProfile($profile);
             $profile->setAccount($user);
@@ -91,30 +101,33 @@ class ProfileController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Vos informations personnelles ont été enregistrées.');
+
             return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'profile-panel']);
         }
 
         if ($publicProfileForm->isSubmitted() && $publicProfileForm->isValid()) {
             if ($prestataireProfile && $prestataireProfile->getCompanyName()) {
-                $prestataireProfile->setSlug(strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName())));
+                $prestataireProfile->setSlug(mb_strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName())));
             }
 
             $entityManager->persist($prestataireProfile);
             $entityManager->flush();
 
             $this->addFlash('success', 'Votre profil public a été enregistré.');
+
             return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'profile-panel']);
         }
 
         if ($companyForm->isSubmitted() && $companyForm->isValid()) {
             if ($prestataireProfile && $prestataireProfile->getCompanyName()) {
-                $prestataireProfile->setSlug(strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName())));
+                $prestataireProfile->setSlug(mb_strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName())));
             }
 
             $entityManager->persist($prestataireProfile);
             $entityManager->flush();
 
             $this->addFlash('success', 'Les informations de l’entreprise ont été enregistrées.');
+
             return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'company-panel']);
         }
 
@@ -123,16 +136,16 @@ class ProfileController extends AbstractController
 
         foreach ($zones as $existingZone) {
             if (
-                $existingZone !== null
-                && $existingZone->getLatitude() !== null
-                && $existingZone->getLongitude() !== null
+                null !== $existingZone
+                && null !== $existingZone->getLatitude()
+                && null !== $existingZone->getLongitude()
             ) {
                 $firstMappableZone = $existingZone;
                 break;
             }
         }
 
-        if ($firstMappableZone !== null) {
+        if (null !== $firstMappableZone) {
             $zoneMap = (new Map('default'))
                 ->center(new Point(
                     (float) $firstMappableZone->getLatitude(),
@@ -150,9 +163,9 @@ class ProfileController extends AbstractController
 
             foreach ($zones as $existingZone) {
                 if (
-                    $existingZone !== null
-                    && $existingZone->getLatitude() !== null
-                    && $existingZone->getLongitude() !== null
+                    null !== $existingZone
+                    && null !== $existingZone->getLatitude()
+                    && null !== $existingZone->getLongitude()
                 ) {
                     $label = $existingZone->getCity() ?: 'Zone d’intervention';
 
@@ -163,7 +176,7 @@ class ProfileController extends AbstractController
                         ),
                         title: $label,
                         infoWindow: new InfoWindow(
-                            content: '<strong>' . htmlspecialchars($label) . '</strong><br>Rayon : ' . (int) $existingZone->getRadiusKm() . ' km'
+                            content: '<strong>'.htmlspecialchars($label).'</strong><br>Rayon : '.(int) $existingZone->getRadiusKm().' km'
                         )
                     ));
                 }
@@ -178,7 +191,7 @@ class ProfileController extends AbstractController
             'zones' => $zones,
             'user' => $user,
             'categories' => $categoryRepository->findWithSubCategories(),
-            'zoneMap' => $zoneMap
+            'zoneMap' => $zoneMap,
         ]);
     }
 
@@ -190,17 +203,17 @@ class ProfileController extends AbstractController
         $user = $this->getUser();
         $service = $serviceRepo->find($serviceId);
 
-
         // 1. Vérification de base (est-ce qu'on a bien un service et un profil ?)
         if (!$service || !($user instanceof \App\Entity\User) || !$user->getPrestataireProfile()) {
             $this->addFlash('error', 'Une erreur est survenue.');
+
             return $this->redirectToRoute('app_prestataire_settings');
         }
 
         // 2. Vérification d'existence (est-ce que le service est déjà lié ?)
         $exists = $em->getRepository(PrestataireService::class)->findOneBy([
             'prestataire' => $user->getPrestataireProfile(),
-            'service' => $service
+            'service' => $service,
         ]);
 
         if ($exists) {
@@ -226,13 +239,13 @@ class ProfileController extends AbstractController
         $user = $this->getUser();
 
         if (
-            !$user instanceof \App\Entity\User ||
-            !$user->getPrestataireProfile() ||
-            $ps->getPrestataire() !== $user->getPrestataireProfile()
+            !$user instanceof \App\Entity\User
+            || !$user->getPrestataireProfile()
+            || $ps->getPrestataire() !== $user->getPrestataireProfile()
         ) {
             throw $this->createAccessDeniedException();
         }
-        if ($this->isCsrfTokenValid('delete' . $ps->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$ps->getId(), $request->request->get('_token'))) {
             $em->remove($ps);
             $em->flush();
             $this->addFlash('success', 'Le service a bien été retiré de votre profil.');
@@ -249,9 +262,9 @@ class ProfileController extends AbstractController
         $user = $this->getUser();
 
         if (
-            !$user instanceof \App\Entity\User ||
-            !$user->getPrestataireProfile() ||
-            $ps->getPrestataire() !== $user->getPrestataireProfile()
+            !$user instanceof \App\Entity\User
+            || !$user->getPrestataireProfile()
+            || $ps->getPrestataire() !== $user->getPrestataireProfile()
         ) {
             throw $this->createAccessDeniedException();
         }
@@ -264,8 +277,8 @@ class ProfileController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $newReduction = $ps->getTauxReduction();
 
-            $oldReductionValue = $oldReduction !== null ? (float) $oldReduction : 0;
-            $newReductionValue = $newReduction !== null ? (float) $newReduction : 0;
+            $oldReductionValue = null !== $oldReduction ? (float) $oldReduction : 0;
+            $newReductionValue = null !== $newReduction ? (float) $newReduction : 0;
 
             if ($newReductionValue > 0) {
                 if ($oldReductionValue <= 0 || $oldReductionValue !== $newReductionValue) {
@@ -278,18 +291,18 @@ class ProfileController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'Tarifs mis à jour !');
+
             return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
         }
 
         return $this->render('prestataire/edit_service.html.twig', [
             'form' => $form->createView(),
-            'ps' => $ps
+            'ps' => $ps,
         ]);
     }
 
-
     /**
-     * PARAMETRES PROFILE CLIENT
+     * PARAMETRES PROFILE CLIENT.
      */
     #[Route('/client/parametres', name: 'app_client_settings')]
     public function clientSettings(Request $request, EntityManagerInterface $entityManager): Response
@@ -302,7 +315,7 @@ class ProfileController extends AbstractController
         }
 
         // 1. Initialisation à la volée du ClientProfile s'il n'existe pas encore
-        if ($user->getClientProfile() === null) {
+        if (null === $user->getClientProfile()) {
             $profile = new ClientProfile();
 
             $user->setClientProfile($profile);
@@ -311,13 +324,12 @@ class ProfileController extends AbstractController
 
         // 2. Utiliser le formulaire global AccountSettingsType lié au $user
         $form = $this->createForm(AccountSettingsType::class, $user, [
-            'profile_type' => in_array('ROLE_PRESTATAIRE', $user->getRoles(), true) ? 'prestataire' : 'client',
+            'profile_type' => \in_array('ROLE_PRESTATAIRE', $user->getRoles(), true) ? 'prestataire' : 'client',
         ]);
         $form->handleRequest($request);
 
         // 3. Traitement de la soumission
         if ($form->isSubmitted() && $form->isValid()) {
-
             $entityManager->persist($user);
             $entityManager->flush();
 

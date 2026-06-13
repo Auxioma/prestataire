@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Form;
 
 use App\Entity\ServiceCategory;
@@ -35,7 +45,7 @@ class HomepageSearchType extends AbstractType
                     $parent = $category->getParent();
 
                     return $parent
-                        ? sprintf('%s > %s', $parent->getName(), $category->getName())
+                        ? \sprintf('%s > %s', $parent->getName(), $category->getName())
                         : $category->getName();
                 },
                 'query_builder' => static function (EntityRepository $er) {

@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Controller;
 
 use App\Entity\PrestataireProfile;
@@ -12,7 +22,7 @@ class ShowPrestataireController extends AbstractController
 {
     #[Route('/prestataire/{slug}', name: 'app_prestataire_show', methods: ['GET'])]
     public function __invoke(
-        #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireProfile $prestataire
+        #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireProfile $prestataire,
     ): Response {
         // Sécurité : si le pro n'a pas encore configuré son entreprise, on renvoie une 404
         if (!$prestataire->getCompanyName()) {

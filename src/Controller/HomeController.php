@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Controller;
 
 use App\Form\HomepageSearchType;
@@ -16,7 +26,7 @@ class HomeController extends AbstractController
     public function index(
         ServiceCategoryRepository $categoryRepository,
         PrestataireProfileRepository $prestataireProfileRepository,
-        PrestataireServiceRepository $prestataireServiceRepository
+        PrestataireServiceRepository $prestataireServiceRepository,
     ): Response {
         $homepageSearchForm = $this->createForm(HomepageSearchType::class, null, [
             'action' => $this->generateUrl('app_homepage_search'),

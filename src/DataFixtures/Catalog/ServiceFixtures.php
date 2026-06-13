@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\DataFixtures\Catalog;
 
 use App\Entity\Service;
@@ -28,28 +38,28 @@ class ServiceFixtures extends Fixture implements DependentFixtureInterface
                     'price_min' => '90.00',
                     'price_max' => '180.00',
                     'description' => 'Intervention rapide pour localiser et réparer une fuite d’eau sur canalisation, robinetterie ou évacuation.',
-               ],
+                ],
                 [
                     'name' => 'Installation de chauffe-eau',
                     'icon' => 'fa-temperature-high',
                     'price_min' => '350.00',
                     'price_max' => '1200.00',
                     'description' => 'Pose ou remplacement de chauffe-eau électrique ou thermodynamique avec mise en service.',
-               ],
+                ],
                 [
                     'name' => 'Rénovation complète de salle de bain',
                     'icon' => 'fa-bath',
                     'price_min' => '2500.00',
                     'price_max' => '12000.00',
                     'description' => 'Rénovation globale de salle de bain comprenant plomberie, équipements sanitaires et finitions.',
-               ],
+                ],
                 [
                     'name' => 'Débouchage de canalisation',
                     'icon' => 'fa-toilet',
                     'price_min' => '80.00',
                     'price_max' => '220.00',
                     'description' => 'Débouchage de canalisations, éviers, lavabos, WC ou évacuations extérieures.',
-               ],
+                ],
             ],
             'sub_electricite' => [
                 [
@@ -58,28 +68,28 @@ class ServiceFixtures extends Fixture implements DependentFixtureInterface
                     'price_min' => '300.00',
                     'price_max' => '2500.00',
                     'description' => 'Vérification et remise en conformité d’une installation électrique existante.',
-               ],
+                ],
                 [
                     'name' => 'Installation de prises et interrupteurs',
                     'icon' => 'fa-plug-circle-plus',
                     'price_min' => '70.00',
                     'price_max' => '350.00',
                     'description' => 'Pose, remplacement ou déplacement de prises, interrupteurs et points électriques.',
-               ],
+                ],
                 [
                     'name' => 'Dépannage de tableau électrique',
                     'icon' => 'fa-bolt',
                     'price_min' => '120.00',
                     'price_max' => '450.00',
                     'description' => 'Diagnostic et réparation de tableau électrique, disjoncteurs et protections.',
-               ],
+                ],
                 [
                     'name' => 'Pose de motorisation de portail',
                     'icon' => 'fa-warehouse',
                     'price_min' => '500.00',
                     'price_max' => '1800.00',
                     'description' => 'Installation d’un système de motorisation pour portail battant ou coulissant.',
-               ],
+                ],
             ],
             'sub_peinture_platrerie' => [
                 [
@@ -88,21 +98,21 @@ class ServiceFixtures extends Fixture implements DependentFixtureInterface
                     'price_min' => '180.00',
                     'price_max' => '2500.00',
                     'description' => 'Travaux de peinture intérieure pour rafraîchissement, rénovation ou finition complète.',
-               ],
+                ],
                 [
                     'name' => 'Pose de toile de verre ou papier peint',
                     'icon' => 'fa-layer-group',
                     'price_min' => '150.00',
                     'price_max' => '1600.00',
                     'description' => 'Pose de revêtements muraux décoratifs ou techniques pour rénover vos surfaces.',
-               ],
+                ],
                 [
                     'name' => 'Rénovation de plaques de plâtre',
                     'icon' => 'fa-hammer',
                     'price_min' => '250.00',
                     'price_max' => '3500.00',
                     'description' => 'Réparation, remplacement ou création d’ouvrages en plaques de plâtre et cloisons.',
-               ],
+                ],
             ],
             'sub_entretien_espaces_verts' => [
                 [
@@ -111,28 +121,28 @@ class ServiceFixtures extends Fixture implements DependentFixtureInterface
                     'price_min' => '35.00',
                     'price_max' => '120.00',
                     'description' => 'Tonte régulière ou ponctuelle de pelouse avec finition soignée.',
-               ],
+                ],
                 [
                     'name' => 'Taille de haies et arbustes',
                     'icon' => 'fa-tree',
                     'price_min' => '60.00',
                     'price_max' => '280.00',
                     'description' => 'Taille d’entretien, mise en forme et remise à niveau de haies et arbustes.',
-               ],
+                ],
                 [
                     'name' => 'Débroussaillage et désherbage',
                     'icon' => 'fa-seedling',
                     'price_min' => '70.00',
                     'price_max' => '350.00',
                     'description' => 'Nettoyage de terrain, désherbage et débroussaillage pour entretien extérieur.',
-               ],
+                ],
                 [
                     'name' => 'Élagage et abattage d’arbres',
                     'icon' => 'fa-tree-city',
                     'price_min' => '180.00',
                     'price_max' => '1800.00',
                     'description' => 'Interventions d’élagage, taille en hauteur ou abattage d’arbres en sécurité.',
-               ],
+                ],
             ],
             'sub_amenagement_exterieur' => [
                 [
@@ -398,7 +408,7 @@ class ServiceFixtures extends Fixture implements DependentFixtureInterface
             foreach ($services as $serviceData) {
                 $service = new Service();
                 $service->setName($serviceData['name']);
-                $service->setSlug(strtolower($this->slugger->slug($serviceData['name'])->toString()));
+                $service->setSlug(mb_strtolower($this->slugger->slug($serviceData['name'])->toString()));
                 $service->setDescription($serviceData['description']);
                 $service->setIcon($serviceData['icon']);
                 $service->setAveragePriceMin($serviceData['price_min']);
@@ -407,13 +417,13 @@ class ServiceFixtures extends Fixture implements DependentFixtureInterface
                 $service->setIsActive(true);
                 $service->setCreatedAt($now);
                 $service->setCategory($subCategory);
-                
+
                 $manager->persist($service);
 
-                $referenceKey = 'service_' . strtolower($this->slugger->slug($serviceData['name'])->toString());
+                $referenceKey = 'service_'.mb_strtolower($this->slugger->slug($serviceData['name'])->toString());
                 $this->addReference($referenceKey, $service);
 
-                $position++;
+                ++$position;
             }
         }
 

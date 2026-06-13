@@ -120,7 +120,7 @@
                     %}
 
                     {% set prestataireSlug = prestataire and prestataire.slug is defined and prestataire.slug ? prestataire.slug : null %}
-                    {% set cardUrl = prestataireSlug ? path('app_prestataire_show', { slug: prestataireSlug }) : null %}
+                    {% set cardUrl = prestataireSlug ? path('app_prestataire_show', {slug: prestataireSlug}) : null %}
 
                     {% if reduction <= 15 %}
                         {% set promoLevel = 'low' %}

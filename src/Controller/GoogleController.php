@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Controller;
 
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
@@ -10,7 +20,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class GoogleController extends AbstractController
 {
-
     #[Route('/connect/google', name: 'connect_google_start')]
     public function connectAction(Request $request, ClientRegistry $clientRegistry): RedirectResponse
     {
@@ -27,9 +36,8 @@ class GoogleController extends AbstractController
             ->redirect(['email', 'profile'], []);
     }
 
-
     #[Route('/connect/google/check', name: 'connect_google_check')]
-    public function connectCheckAction(Request $request)
+    public function connectCheckAction(Request $request): void
     {
         // Intercepté par le Guard Authenticator de Symfony
     }

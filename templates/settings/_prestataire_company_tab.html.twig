@@ -2,8 +2,8 @@
     attr: {
         novalidate: 'novalidate',
         class: 'tm-form-container',
-        'data-turbo': 'false'
-    }
+        'data-turbo': 'false',
+    },
 }) }}
 
 <div class="tm-company-shell">
@@ -69,7 +69,7 @@
                                 <div class="grow">
                                     <div class="tm-vich-custom-container">
                                         {{ form_widget(companyForm.logoFile, {
-                                            attr: {'class': 'form-control form-control-sm mb-1'}
+                                            attr: {class: 'form-control form-control-sm mb-1'},
                                         }) }}
                                     </div>
                                     {{ form_errors(companyForm.logoFile) }}
@@ -92,7 +92,7 @@
                                 <div class="grow">
                                     <div class="tm-vich-custom-container">
                                         {{ form_widget(companyForm.coverImageFile, {
-                                            attr: {'class': 'form-control form-control-sm mb-1'}
+                                            attr: {class: 'form-control form-control-sm mb-1'},
                                         }) }}
                                     </div>
                                     {{ form_errors(companyForm.coverImageFile) }}
@@ -170,9 +170,9 @@
 
                     <div class="tm-company-doc-list">
                         {% set docs = [
-                            {'title': "Extrait Kbis / Justificatif d'entreprise", 'icon': '📄'},
-                            {'title': "Assurance RC Pro", 'icon': '🛡️'},
-                            {'title': "Attestation décennale", 'icon': '✅'}
+                            {title: "Extrait Kbis / Justificatif d'entreprise", icon: '📄'},
+                            {title: 'Assurance RC Pro', icon: '🛡️'},
+                            {title: 'Attestation décennale', icon: '✅'},
                         ] %}
                         {% for doc in docs %}
                             <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
@@ -251,4 +251,4 @@
     </div>
 </div>
 
-{{ form_end(companyForm, {'render_rest': false}) }}
+{{ form_end(companyForm, {render_rest: false}) }}

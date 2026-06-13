@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Form;
 
 use App\Entity\PrestataireService;
@@ -19,15 +29,15 @@ class PrestataireServiceType extends AbstractType
             ->add('service', EntityType::class, [
                 'class' => Service::class,
                 'choice_label' => 'name',
-                'label' => 'Service'
+                'label' => 'Service',
             ])
             ->add('prixCatalogue', MoneyType::class, [
                 'label' => 'Votre prix',
-                'currency' => 'EUR'
+                'currency' => 'EUR',
             ])
             ->add('tauxReduction', NumberType::class, [
                 'label' => 'Réduction (%)',
-                'required' => false
+                'required' => false,
             ]);
     }
 

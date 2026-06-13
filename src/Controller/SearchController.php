@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Controller;
 
 use App\Repository\PrestataireProfileRepository;
@@ -18,24 +28,23 @@ class SearchController extends AbstractController
         ?string $slug,
         ServiceCategoryRepository $categoryRepository,
         ServiceRepository $serviceRepository,
-        PrestataireProfileRepository $prestataireRepository
+        PrestataireProfileRepository $prestataireRepository,
     ): Response {
-
         // Variables d'état pour construire le fil d'ariane et les titres dans Twig
         $currentCategory = null;
         $currentSubCategory = null;
         $currentService = null;
-        
+
         $subCategories = [];
         $services = [];
         $prestataires = [];
 
         // Étape 1 & 2 : On a cliqué sur une catégorie ou une sous-catégorie
-        if ($type === 'categorie' && $slug) {
+        if ('categorie' === $type && $slug) {
             $category = $categoryRepository->findOneBy(['slug' => $slug]);
-            
+
             if ($category) {
-                if ($category->getParent() === null) {
+                if (null === $category->getParent()) {
                     // C'est une catégorie principale -> On récupère ses sous-catégories
                     $currentCategory = $category;
                     $subCategories = $category->getSubCategories();
@@ -46,11 +55,11 @@ class SearchController extends AbstractController
                     $services = $serviceRepository->findBy(['category' => $category, 'isActive' => true]);
                 }
             }
-        } 
+        }
         // Étape 3 : On a cliqué sur un service précis -> On cherche les prestataires associés
-        elseif ($type === 'service' && $slug) {
+        elseif ('service' === $type && $slug) {
             $currentService = $serviceRepository->findOneBy(['slug' => $slug]);
-            
+
             if ($currentService) {
                 $currentSubCategory = $currentService->getCategory();
                 if ($currentSubCategory) {
@@ -60,7 +69,7 @@ class SearchController extends AbstractController
                 // Appel au Repository avec notre méthode ManyToMany sécurisée
                 $prestataires = $prestataireRepository->findByService($currentService);
             }
-        } 
+        }
         // Par sécurité ou pour une page d'index globale (ex: /trouver-un-pro)
         else {
             $subCategories = $categoryRepository->findBy(['parent' => null, 'isActive' => true]);

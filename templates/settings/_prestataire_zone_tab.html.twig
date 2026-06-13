@@ -1,180 +1,180 @@
 <div class="tm-zone-layout d-flex flex-column gap-4">
-	<div class="row g-4">
-		<div class="col-xl-6">
-			<div class="card tm-card p-4 h-100">
-				<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
-					<div>
-						<h4 class="tm-card-title mb-1">Mes zones d’intervention</h4>
-						<p class="text-muted mb-0 small">
-							Ajoutez, modifiez ou supprimez les zones où vous intervenez.
-						</p>
-					</div>
-				</div>
+    <div class="row g-4">
+        <div class="col-xl-6">
+            <div class="card tm-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+                    <div>
+                        <h4 class="tm-card-title mb-1">Mes zones d’intervention</h4>
+                        <p class="text-muted mb-0 small">
+                            Ajoutez, modifiez ou supprimez les zones où vous intervenez.
+                        </p>
+                    </div>
+                </div>
 
-				<div class="d-flex flex-column gap-3">
-					{% for zone in zones %}
-						<div class="tm-zone-list-item">
-							<div class="tm-zone-list-left">
-								<div class="tm-zone-icon-box {% if loop.index == 1 %}tm-zone-icon-blue{% elseif loop.index == 2 %}tm-zone-icon-green{% elseif loop.index == 3 %}tm-zone-icon-yellow{% else %}tm-zone-icon-purple{% endif %}">
-									📍
-								</div>
+                <div class="d-flex flex-column gap-3">
+                    {% for zone in zones %}
+                        <div class="tm-zone-list-item">
+                            <div class="tm-zone-list-left">
+                                <div class="tm-zone-icon-box {% if loop.index == 1 %}tm-zone-icon-blue{% elseif loop.index == 2 %}tm-zone-icon-green{% elseif loop.index == 3 %}tm-zone-icon-yellow{% else %}tm-zone-icon-purple{% endif %}">
+                                    📍
+                                </div>
 
-								<div class="tm-zone-list-content">
-									<div class="d-flex align-items-center flex-wrap gap-2 mb-1">
-										<div class="tm-zone-list-title">
-											{{ zone.city ?: 'Zone sans nom' }}
-											et alentours
-										</div>
+                                <div class="tm-zone-list-content">
+                                    <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+                                        <div class="tm-zone-list-title">
+                                            {{ zone.city ?: 'Zone sans nom' }}
+                                            et alentours
+                                        </div>
 
-										{% if zone.isMainZone %}
-											<span class="tm-zone-main-badge">Zone principale</span>
-										{% endif %}
-									</div>
+                                        {% if zone.isMainZone %}
+                                            <span class="tm-zone-main-badge">Zone principale</span>
+                                        {% endif %}
+                                    </div>
 
-									<div class="tm-zone-list-cities">
-										{{ zone.city ?: 'Ville non renseignée' }}
-										{% if zone.postalCode %}
-											({{ zone.postalCode }})
-										{% endif %}
-									</div>
-								</div>
-							</div>
+                                    <div class="tm-zone-list-cities">
+                                        {{ zone.city ?: 'Ville non renseignée' }}
+                                        {% if zone.postalCode %}
+                                            ({{ zone.postalCode }})
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
 
-							<div class="tm-zone-list-meta">
-								<span class="tm-zone-radius-pill">
-									Rayon :
-									{{ zone.radiusKm ?? 20 }}
-									km
-								</span>
+                            <div class="tm-zone-list-meta">
+                                <span class="tm-zone-radius-pill">
+                                    Rayon :
+                                    {{ zone.radiusKm ?? 20 }}
+                                    km
+                                </span>
 
-								{% if zone.isActive %}
-									<span class="tm-zone-toggle-state tm-zone-toggle-state--active">Active</span>
-								{% else %}
-									<span class="tm-zone-toggle-state tm-zone-toggle-state--inactive">Inactive</span>
-								{% endif %}
+                                {% if zone.isActive %}
+                                    <span class="tm-zone-toggle-state tm-zone-toggle-state--active">Active</span>
+                                {% else %}
+                                    <span class="tm-zone-toggle-state tm-zone-toggle-state--inactive">Inactive</span>
+                                {% endif %}
 
-								<form method="post" action="{{ path('app_prestataire_zone_delete', { id: zone.id }) }}#zones-panel" data-turbo="false" onsubmit="return confirm('Confirmer la suppression de cette zone ?');">
-									<input type="hidden" name="_token" value="{{ csrf_token('delete_zone_' ~ zone.id) }}">
-									<button type="submit" class="tm-zone-delete-btn" title="Supprimer" aria-label="Supprimer la zone">
-										<i class="fa-solid fa-trash-can" aria-hidden="true"></i>
-									</button>
-								</form>
-							</div>
-						</div>
-					{% else %}
-						<div class="tm-zone-empty-box">
-							<div class="fw-bold mb-1">Aucune zone enregistrée</div>
-							<p class="text-muted mb-0">
-								Ajoutez votre première zone d’intervention pour apparaître dans les recherches locales.
-							</p>
-						</div>
-					{% endfor %}
-				</div>
+                                <form method="post" action="{{ path('app_prestataire_zone_delete', {id: zone.id}) }}#zones-panel" data-turbo="false" onsubmit="return confirm('Confirmer la suppression de cette zone ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_zone_' ~ zone.id) }}">
+                                    <button type="submit" class="tm-zone-delete-btn" title="Supprimer" aria-label="Supprimer la zone">
+                                        <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="tm-zone-empty-box">
+                            <div class="fw-bold mb-1">Aucune zone enregistrée</div>
+                            <p class="text-muted mb-0">
+                                Ajoutez votre première zone d’intervention pour apparaître dans les recherches locales.
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
 
-				<div class="tm-zone-note mt-4">
-					<span class="tm-zone-note-icon">ⓘ</span>
-					<span>
-						Les clients peuvent vous trouver uniquement si leur adresse se situe dans l’une de vos zones d’intervention actives.
-					</span>
-				</div>
-			</div>
-		</div>
+                <div class="tm-zone-note mt-4">
+                    <span class="tm-zone-note-icon">ⓘ</span>
+                    <span>
+                        Les clients peuvent vous trouver uniquement si leur adresse se situe dans l’une de vos zones d’intervention actives.
+                    </span>
+                </div>
+            </div>
+        </div>
 
-		<div class="col-xl-6">
-			<div class="card tm-card p-4 h-100">
-				<h4 class="tm-card-title mb-3">Aperçu de vos zones d’intervention</h4>
+        <div class="col-xl-6">
+            <div class="card tm-card p-4 h-100">
+                <h4 class="tm-card-title mb-3">Aperçu de vos zones d’intervention</h4>
 
-				<div class="tm-zone-real-map-wrapper" data-controller="zone-map" data-zone-map-zones-value="{{ zones|map(zone => { city: zone.city, latitude: zone.latitude, longitude: zone.longitude, radiusKm: zone.radiusKm })|json_encode|e('html_attr') }}">
-					{% if zoneMap is defined and zoneMap %}
-						{{ ux_map(zoneMap, {
-            style: 'height: 420px; width: 100%; border-radius: 18px;'
+                <div class="tm-zone-real-map-wrapper" data-controller="zone-map" data-zone-map-zones-value="{{ zones|map(zone => {city: zone.city, latitude: zone.latitude, longitude: zone.longitude, radiusKm: zone.radiusKm})|json_encode|e('html_attr') }}">
+                    {% if zoneMap is defined and zoneMap %}
+                        {{ ux_map(zoneMap, {
+            style: 'height: 420px; width: 100%; border-radius: 18px;',
         }) }}
-					{% else %}
-						<div class="tm-zone-empty-box h-100 d-flex align-items-center justify-content-center text-center">
-							<div>
-								<div class="fw-bold mb-1">Carte indisponible</div>
-								<p class="text-muted mb-0">
-									La carte s’affichera ici dès qu’une source de données lui sera transmise.
-								</p>
-							</div>
-						</div>
-					{% endif %}
-				</div>
-			</div>
-		</div>
-	</div>
+                    {% else %}
+                        <div class="tm-zone-empty-box h-100 d-flex align-items-center justify-content-center text-center">
+                            <div>
+                                <div class="fw-bold mb-1">Carte indisponible</div>
+                                <p class="text-muted mb-0">
+                                    La carte s’affichera ici dès qu’une source de données lui sera transmise.
+                                </p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<div class="card tm-card p-4">
-		<h4 class="tm-card-title mb-4">Ajouter une zone d’intervention</h4>
+    <div class="card tm-card p-4">
+        <h4 class="tm-card-title mb-4">Ajouter une zone d’intervention</h4>
 
-		<div class="row g-3 mb-4">
-			<div class="col-lg-6">
-				<button type="button" class="tm-zone-option-card active w-100 text-start" data-zone-mode="selection">
-					<div class="tm-zone-option-icon">⌖</div>
-					<div class="tm-zone-option-content">
-						<div class="tm-zone-option-title">Par sélection de villes / codes postaux</div>
-						<div class="tm-zone-option-text">
-							Sélectionnez une ville ou un code postal pour définir votre zone d’intervention.
-						</div>
-					</div>
-					<div class="tm-zone-option-arrow">›</div>
-				</button>
-			</div>
-		</div>
+        <div class="row g-3 mb-4">
+            <div class="col-lg-6">
+                <button type="button" class="tm-zone-option-card active w-100 text-start" data-zone-mode="selection">
+                    <div class="tm-zone-option-icon">⌖</div>
+                    <div class="tm-zone-option-content">
+                        <div class="tm-zone-option-title">Par sélection de villes / codes postaux</div>
+                        <div class="tm-zone-option-text">
+                            Sélectionnez une ville ou un code postal pour définir votre zone d’intervention.
+                        </div>
+                    </div>
+                    <div class="tm-zone-option-arrow">›</div>
+                </button>
+            </div>
+        </div>
 
-		<div id="zone-selection-form" class="tm-zone-mode-panel is-visible">
-			{{ form_start(zoneForm, {
+        <div id="zone-selection-form" class="tm-zone-mode-panel is-visible">
+            {{ form_start(zoneForm, {
                 attr: {
                     novalidate: 'novalidate',
                     class: 'tm-form-container',
-                    'data-turbo': 'false'
-                }
+                    'data-turbo': 'false',
+                },
             }) }}
 
-			{% if zoneForm.vars.errors|length > 0 %}
-				<div class="alert alert-danger mb-3">
-					{{ form_errors(zoneForm) }}
-				</div>
-			{% endif %}
+            {% if zoneForm.vars.errors|length > 0 %}
+                <div class="alert alert-danger mb-3">
+                    {{ form_errors(zoneForm) }}
+                </div>
+            {% endif %}
 
-			<div class="row g-3 align-items-end">
-				<div class="col-md-4">
-					<div class="tm-form-row">
-						{{ form_row(zoneForm.city) }}
-					</div>
-				</div>
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <div class="tm-form-row">
+                        {{ form_row(zoneForm.city) }}
+                    </div>
+                </div>
 
-				<div class="col-md-3">
-					<div class="tm-form-row">
-						{{ form_row(zoneForm.postalCode) }}
-					</div>
-				</div>
+                <div class="col-md-3">
+                    <div class="tm-form-row">
+                        {{ form_row(zoneForm.postalCode) }}
+                    </div>
+                </div>
 
-				<div class="col-md-2">
-					<div class="tm-form-row">
-						{{ form_row(zoneForm.radiusKm) }}
-					</div>
-				</div>
+                <div class="col-md-2">
+                    <div class="tm-form-row">
+                        {{ form_row(zoneForm.radiusKm) }}
+                    </div>
+                </div>
 
-				<div class="col-md-3">
-					<div class="tm-zone-form-switches">
-						<div class="tm-form-check-row">
-							{{ form_row(zoneForm.isMainZone) }}
-						</div>
-						<div class="tm-form-check-row">
-							{{ form_row(zoneForm.isActive) }}
-						</div>
-					</div>
-				</div>
-			</div>
+                <div class="col-md-3">
+                    <div class="tm-zone-form-switches">
+                        <div class="tm-form-check-row">
+                            {{ form_row(zoneForm.isMainZone) }}
+                        </div>
+                        <div class="tm-form-check-row">
+                            {{ form_row(zoneForm.isActive) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-			<div class="d-flex justify-content-center mt-4">
-				<button type="submit" class="btn tm-btn-service px-4 py-2 fw-bold">
-					Enregistrer les modifications
-				</button>
-			</div>
+            <div class="d-flex justify-content-center mt-4">
+                <button type="submit" class="btn tm-btn-service px-4 py-2 fw-bold">
+                    Enregistrer les modifications
+                </button>
+            </div>
 
-			{{ form_end(zoneForm) }}
-		</div>
-	</div>
+            {{ form_end(zoneForm) }}
+        </div>
+    </div>
 </div>

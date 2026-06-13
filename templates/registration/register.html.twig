@@ -4,238 +4,238 @@
 {% endblock %}
 
 {% block body %}
-	<div class="tm-register-page">
-		<div class="container-fluid px-4 px-xl-5">
-			<div class="tm-register-layout">
+    <div class="tm-register-page">
+        <div class="container-fluid px-4 px-xl-5">
+            <div class="tm-register-layout">
 
-				<section class="tm-register-hero">
-					<div class="tm-register-hero__content">
-						<h1 class="tm-register-hero__title">
-							Bienvenue sur<br>
-							TrouveMoi
-							<span>Prestataires</span>
-						</h1>
+                <section class="tm-register-hero">
+                    <div class="tm-register-hero__content">
+                        <h1 class="tm-register-hero__title">
+                            Bienvenue sur<br>
+                            TrouveMoi
+                            <span>Prestataires</span>
+                        </h1>
 
-						<p class="tm-register-hero__subtitle">
-							Connectez-vous pour accéder à des milliers de prestataires de confiance et profiter des meilleurs services partout en France.
-						</p>
+                        <p class="tm-register-hero__subtitle">
+                            Connectez-vous pour accéder à des milliers de prestataires de confiance et profiter des meilleurs services partout en France.
+                        </p>
 
-						<div class="tm-register-feature-list">
-							<div class="tm-register-feature">
-								<div class="tm-register-feature__icon">
-									<i class="bi bi-shield-check"></i>
-								</div>
-								<div class="tm-register-feature__content">
-									<strong>Des prestataires vérifiés</strong>
-									<span>Chaque professionnel est vérifié et noté</span>
-								</div>
-							</div>
+                        <div class="tm-register-feature-list">
+                            <div class="tm-register-feature">
+                                <div class="tm-register-feature__icon">
+                                    <i class="bi bi-shield-check"></i>
+                                </div>
+                                <div class="tm-register-feature__content">
+                                    <strong>Des prestataires vérifiés</strong>
+                                    <span>Chaque professionnel est vérifié et noté</span>
+                                </div>
+                            </div>
 
-							<div class="tm-register-feature">
-								<div class="tm-register-feature__icon">
-									<i class="bi bi-star"></i>
-								</div>
-								<div class="tm-register-feature__content">
-									<strong>Des avis authentiques</strong>
-									<span>Consultez les avis de vrais clients.</span>
-								</div>
-							</div>
+                            <div class="tm-register-feature">
+                                <div class="tm-register-feature__icon">
+                                    <i class="bi bi-star"></i>
+                                </div>
+                                <div class="tm-register-feature__content">
+                                    <strong>Des avis authentiques</strong>
+                                    <span>Consultez les avis de vrais clients.</span>
+                                </div>
+                            </div>
 
-							<div class="tm-register-feature">
-								<div class="tm-register-feature__icon">
-									<i class="bi bi-tag"></i>
-								</div>
-								<div class="tm-register-feature__content">
-									<strong>Des offres exclusives</strong>
-									<span>Profitez des bons plans près de chez vous.</span>
-								</div>
-							</div>
+                            <div class="tm-register-feature">
+                                <div class="tm-register-feature__icon">
+                                    <i class="bi bi-tag"></i>
+                                </div>
+                                <div class="tm-register-feature__content">
+                                    <strong>Des offres exclusives</strong>
+                                    <span>Profitez des bons plans près de chez vous.</span>
+                                </div>
+                            </div>
 
-							<div class="tm-register-feature">
-								<div class="tm-register-feature__icon">
-									<i class="bi bi-lock"></i>
-								</div>
-								<div class="tm-register-feature__content">
-									<strong>Paiement sécurisé</strong>
-									<span>Transactions protégées.</span>
-								</div>
-							</div>
-						</div>
+                            <div class="tm-register-feature">
+                                <div class="tm-register-feature__icon">
+                                    <i class="bi bi-lock"></i>
+                                </div>
+                                <div class="tm-register-feature__content">
+                                    <strong>Paiement sécurisé</strong>
+                                    <span>Transactions protégées.</span>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="tm-register-review-card">
-							<p>
-								Grâce à TrouveMoi, j'ai trouvé un plombier fiable en moins de 2 heures. Service au top !
-							</p>
-							<div class="tm-register-review-card__stars">★★★★★</div>
-							<strong>Sophie D.</strong>
-							<span>Cliente satisfaite</span>
-						</div>
-					</div>
-				</section>
+                        <div class="tm-register-review-card">
+                            <p>
+                                Grâce à TrouveMoi, j'ai trouvé un plombier fiable en moins de 2 heures. Service au top !
+                            </p>
+                            <div class="tm-register-review-card__stars">★★★★★</div>
+                            <strong>Sophie D.</strong>
+                            <span>Cliente satisfaite</span>
+                        </div>
+                    </div>
+                </section>
 
-				<section class="tm-register-panel">
-					<div class="tm-register-role-switch">
-						<span>
-							{{
+                <section class="tm-register-panel">
+                    <div class="tm-register-role-switch">
+                        <span>
+                            {{
                                 app.request.query.get('role', 'client') == 'prestataire'
                                 ? 'Professionnel 🛠️'
                                 : 'Particulier 👤'
                             }}
-						</span>
+                        </span>
 
-						<a href="{{ path('app_register_choice') }}">
-							Changer
-						</a>
-					</div>
+                        <a href="{{ path('app_register_choice') }}">
+                            Changer
+                        </a>
+                    </div>
 
-					<h2 class="tm-register-panel__title">Créer un compte</h2>
+                    <h2 class="tm-register-panel__title">Créer un compte</h2>
 
-					<p class="tm-register-panel__subtitle">
-						Remplissez les informations ci-dessous.
-					</p>
+                    <p class="tm-register-panel__subtitle">
+                        Remplissez les informations ci-dessous.
+                    </p>
 
-					{{ form_start(registrationForm) }}
+                    {{ form_start(registrationForm) }}
 
-					{# Affichage des erreurs globales nettoyé et francisé #}
-					{% if not registrationForm.vars.valid %}
-						<div class="alert alert-danger p-3 small mb-3 rounded-3 d-flex align-items-start fw-semibold">
-							<i class="bi bi-exclamation-triangle-fill me-2 fs-5 mt-0.5"></i>
-							<div>
-								{% for error in registrationForm.vars.errors %}
-									{% if 'CSRF' in error.message or 'token' in error.message %}
-										La session de votre formulaire a expiré. Veuillez réessayer de soumettre le formulaire.
-									{% else %}
-										{{ error.message }}
-									{% endif %}
-								{% endfor %}
-							</div>
-						</div>
-					{% endif %}
+                    {# Affichage des erreurs globales nettoyé et francisé #}
+                    {% if not registrationForm.vars.valid %}
+                        <div class="alert alert-danger p-3 small mb-3 rounded-3 d-flex align-items-start fw-semibold">
+                            <i class="bi bi-exclamation-triangle-fill me-2 fs-5 mt-0.5"></i>
+                            <div>
+                                {% for error in registrationForm.vars.errors %}
+                                    {% if 'CSRF' in error.message or 'token' in error.message %}
+                                        La session de votre formulaire a expiré. Veuillez réessayer de soumettre le formulaire.
+                                    {% else %}
+                                        {{ error.message }}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
 
-					{# CHAMP EMAIL ET SES ERREURS #}
-					<div class="mb-3">
-						<div class="tm-register-field {% if not registrationForm.email.vars.valid %}border border-danger rounded-3{% endif %}">
-							<i class="bi bi-envelope-fill tm-register-field__icon"></i>
-							{{
+                    {# CHAMP EMAIL ET SES ERREURS #}
+                    <div class="mb-3">
+                        <div class="tm-register-field {% if not registrationForm.email.vars.valid %}border border-danger rounded-3{% endif %}">
+                            <i class="bi bi-envelope-fill tm-register-field__icon"></i>
+                            {{
             form_widget(registrationForm.email, {
                 attr: {
                     placeholder: 'Adresse e-mail',
-                    class: 'tm-register-field__input'
-                }
+                    class: 'tm-register-field__input',
+                },
             })
         }}
-						</div>
+                        </div>
 
-						{# Nettoyage radical : on extrait uniquement le texte brut #}
-						{% if registrationForm.email.vars.errors|length > 0 %}
-							<div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
-								<i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
-								<span>{{ registrationForm.email.vars.errors[0].message }}</span>
-							</div>
-						{% endif %}
-					</div>
+                        {# Nettoyage radical : on extrait uniquement le texte brut #}
+                        {% if registrationForm.email.vars.errors|length > 0 %}
+                            <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
+                                <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+                                <span>{{ registrationForm.email.vars.errors[0].message }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
 
-					<div class="tm-register-password-block" data-controller="password">
-						<div class="tm-register-field tm-register-field--password">
-							<span class="tm-register-field__icon">
-								<i class="bi bi-lock-fill"></i>
-							</span>
+                    <div class="tm-register-password-block" data-controller="password">
+                        <div class="tm-register-field tm-register-field--password">
+                            <span class="tm-register-field__icon">
+                                <i class="bi bi-lock-fill"></i>
+                            </span>
 
-							{{
+                            {{
                                 form_widget(registrationForm.plainPassword, {
                                     attr: {
                                         placeholder: 'Mot de passe',
                                         class: 'tm-register-field__input',
                                         'data-password-target': 'input',
-                                        'data-action': 'input->password#checkPassword'
-                                    }
+                                        'data-action': 'input->password#checkPassword',
+                                    },
                                 })
                             }}
 
-							<button type="button" class="tm-register-password-toggle" data-password-target="toggle" data-action="click->password#toggleVisibility" aria-label="Afficher ou masquer le mot de passe"></button>
-						</div>
+                            <button type="button" class="tm-register-password-toggle" data-password-target="toggle" data-action="click->password#toggleVisibility" aria-label="Afficher ou masquer le mot de passe"></button>
+                        </div>
 
-						<div class="tm-register-password-rules">
-							<div class="is-invalid" data-password-target="length">❌ Au moins 8 caractères</div>
-							<div class="is-invalid" data-password-target="uppercase">❌ Au moins une majuscule</div>
-							<div class="is-invalid" data-password-target="number">❌ Au moins un chiffre</div>
-							<div class="is-invalid" data-password-target="special">❌ Au moins un caractère spécial</div>
-						</div>
-					</div>
+                        <div class="tm-register-password-rules">
+                            <div class="is-invalid" data-password-target="length">❌ Au moins 8 caractères</div>
+                            <div class="is-invalid" data-password-target="uppercase">❌ Au moins une majuscule</div>
+                            <div class="is-invalid" data-password-target="number">❌ Au moins un chiffre</div>
+                            <div class="is-invalid" data-password-target="special">❌ Au moins un caractère spécial</div>
+                        </div>
+                    </div>
 
-					<div class="tm-register-checkbox">
-						{{ form_widget(registrationForm.agreeTerms) }}
-						{{ form_label(registrationForm.agreeTerms) }}
-					</div>
+                    <div class="tm-register-checkbox">
+                        {{ form_widget(registrationForm.agreeTerms) }}
+                        {{ form_label(registrationForm.agreeTerms) }}
+                    </div>
 
-					<button type="submit" class="tm-register-submit-btn">
-						S'enregistrer
-					</button>
+                    <button type="submit" class="tm-register-submit-btn">
+                        S'enregistrer
+                    </button>
 
-					<div class="tm-register-divider">
-						<span>ou</span>
-					</div>
+                    <div class="tm-register-divider">
+                        <span>ou</span>
+                    </div>
 
-					<a href="{{ path('connect_google_start', { role: app.request.query.get('role', 'client') }) }}" class="tm-register-social-btn" data-turbo="false" data-turbo-prefetch="false">
-						<i class="bi bi-google"></i>
-						<span>S'inscrire avec Google</span>
-					</a>
+                    <a href="{{ path('connect_google_start', {role: app.request.query.get('role', 'client')}) }}" class="tm-register-social-btn" data-turbo="false" data-turbo-prefetch="false">
+                        <i class="bi bi-google"></i>
+                        <span>S'inscrire avec Google</span>
+                    </a>
 
-					<button type="button" class="tm-register-social-btn">
-						<i class="bi bi-apple"></i>
-						<span>S'inscrire avec Apple</span>
-					</button>
+                    <button type="button" class="tm-register-social-btn">
+                        <i class="bi bi-apple"></i>
+                        <span>S'inscrire avec Apple</span>
+                    </button>
 
-					<p class="tm-register-login-link">
-						Vous avez déjà un compte ?
-						<a href="{{ path('app_login') }}">Se connecter</a>
-					</p>
+                    <p class="tm-register-login-link">
+                        Vous avez déjà un compte ?
+                        <a href="{{ path('app_login') }}">Se connecter</a>
+                    </p>
 
-					{{ form_end(registrationForm) }}
-				</section>
-			</div>
+                    {{ form_end(registrationForm) }}
+                </section>
+            </div>
 
-			<div class="tm-register-bottom-features">
-				<div class="tm-register-bottom-features__item">
-					<i class="bi bi-calendar-check"></i>
-					<div>
-						<strong>Demande de devis gratuite</strong>
-						<span>Réponse rapide des prestataires</span>
-					</div>
-				</div>
+            <div class="tm-register-bottom-features">
+                <div class="tm-register-bottom-features__item">
+                    <i class="bi bi-calendar-check"></i>
+                    <div>
+                        <strong>Demande de devis gratuite</strong>
+                        <span>Réponse rapide des prestataires</span>
+                    </div>
+                </div>
 
-				<div class="tm-register-bottom-features__item">
-					<i class="bi bi-shield-check"></i>
-					<div>
-						<strong>Aucun engagement</strong>
-						<span>Comparez librement</span>
-					</div>
-				</div>
+                <div class="tm-register-bottom-features__item">
+                    <i class="bi bi-shield-check"></i>
+                    <div>
+                        <strong>Aucun engagement</strong>
+                        <span>Comparez librement</span>
+                    </div>
+                </div>
 
-				<div class="tm-register-bottom-features__item">
-					<i class="bi bi-lock"></i>
-					<div>
-						<strong>Paiement sécurisé</strong>
-						<span>100% protégé</span>
-					</div>
-				</div>
+                <div class="tm-register-bottom-features__item">
+                    <i class="bi bi-lock"></i>
+                    <div>
+                        <strong>Paiement sécurisé</strong>
+                        <span>100% protégé</span>
+                    </div>
+                </div>
 
-				<div class="tm-register-bottom-features__item">
-					<i class="bi bi-star"></i>
-					<div>
-						<strong>Satisfaction garantie</strong>
-						<span>Nous vous accompagnons</span>
-					</div>
-				</div>
+                <div class="tm-register-bottom-features__item">
+                    <i class="bi bi-star"></i>
+                    <div>
+                        <strong>Satisfaction garantie</strong>
+                        <span>Nous vous accompagnons</span>
+                    </div>
+                </div>
 
-				<div class="tm-register-bottom-features__item">
-					<i class="bi bi-headset"></i>
-					<div>
-						<strong>Support 7j/7</strong>
-						<span>Une équipe disponible</span>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                <div class="tm-register-bottom-features__item">
+                    <i class="bi bi-headset"></i>
+                    <div>
+                        <strong>Support 7j/7</strong>
+                        <span>Une équipe disponible</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

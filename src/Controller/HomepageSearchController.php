@@ -1,16 +1,26 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Controller;
 
 use App\Entity\ServiceCategory;
 use App\Form\HomepageSearchType;
 use App\Repository\PrestataireProfileRepository;
+use App\Service\ZoneGeocoder;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Service\ZoneGeocoder;
 
 class HomepageSearchController extends AbstractController
 {
@@ -19,24 +29,23 @@ class HomepageSearchController extends AbstractController
         Request $request,
         PrestataireProfileRepository $prestataireProfileRepository,
         PaginatorInterface $paginator,
-        ZoneGeocoder $zoneGeocoder
+        ZoneGeocoder $zoneGeocoder,
     ): Response {
         $form = $this->createForm(HomepageSearchType::class);
         $form->handleRequest($request);
 
         $data = $form->isSubmitted() ? ($form->getData() ?? []) : [];
 
-        $query = trim((string) ($data['query'] ?? ''));
-        $location = trim((string) ($data['location'] ?? ''));
+        $query = mb_trim((string) ($data['query'] ?? ''));
+        $location = mb_trim((string) ($data['location'] ?? ''));
         /** @var ServiceCategory|null $subCategory */
         $subCategory = $data['subCategory'] ?? null;
 
         $searchedLocation = null;
 
-        if ($location !== '') {
+        if ('' !== $location) {
             $searchedLocation = $zoneGeocoder->geocode($location, null);
         }
-
 
         $criteria = [
             'query' => $query,
@@ -49,7 +58,7 @@ class HomepageSearchController extends AbstractController
 
         $prestataires = $queryBuilder->getQuery()->getResult();
 
-        if ($searchedLocation !== null) {
+        if (null !== $searchedLocation) {
             $prestataires = array_values(array_filter(
                 $prestataires,
                 fn ($prestataire) => $this->isPrestataireMatchingSearchedLocation($prestataire, $searchedLocation)
@@ -59,7 +68,7 @@ class HomepageSearchController extends AbstractController
                 $prestataire->matchedDistanceKm = $this->getClosestMatchingDistanceKm($prestataire, $searchedLocation);
             }
 
-            usort($prestataires, function ($a, $b) {
+            usort($prestataires, static function ($a, $b) {
                 return ($a->matchedDistanceKm ?? 999999) <=> ($b->matchedDistanceKm ?? 999999);
             });
         }
@@ -83,7 +92,7 @@ class HomepageSearchController extends AbstractController
 
     private function isPrestataireMatchingSearchedLocation($prestataire, ?array $searchedLocation): bool
     {
-        if ($searchedLocation === null) {
+        if (null === $searchedLocation) {
             return true;
         }
 
@@ -99,7 +108,7 @@ class HomepageSearchController extends AbstractController
                 continue;
             }
 
-            if ($zone->getLatitude() === null || $zone->getLongitude() === null || $zone->getRadiusKm() === null) {
+            if (null === $zone->getLatitude() || null === $zone->getLongitude() || null === $zone->getRadiusKm()) {
                 continue;
             }
 
@@ -120,7 +129,7 @@ class HomepageSearchController extends AbstractController
 
     private function getClosestMatchingDistanceKm($prestataire, ?array $searchedLocation): ?float
     {
-        if ($searchedLocation === null) {
+        if (null === $searchedLocation) {
             return null;
         }
 
@@ -138,7 +147,7 @@ class HomepageSearchController extends AbstractController
                 continue;
             }
 
-            if ($zone->getLatitude() === null || $zone->getLongitude() === null || $zone->getRadiusKm() === null) {
+            if (null === $zone->getLatitude() || null === $zone->getLongitude() || null === $zone->getRadiusKm()) {
                 continue;
             }
 
@@ -150,7 +159,7 @@ class HomepageSearchController extends AbstractController
             );
 
             if ($distanceKm <= (float) $zone->getRadiusKm()) {
-                if ($bestDistance === null || $distanceKm < $bestDistance) {
+                if (null === $bestDistance || $distanceKm < $bestDistance) {
                     $bestDistance = $distanceKm;
                 }
             }

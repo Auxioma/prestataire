@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\DataFixtures\Catalog;
 
 use App\Entity\ServiceCategory;
@@ -319,7 +329,7 @@ class ServiceCategoryFixtures extends Fixture
         foreach ($catalogData as $parentData) {
             $parent = new ServiceCategory();
             $parent->setName($parentData['name']);
-            $parent->setSlug(strtolower($this->slugger->slug($parentData['name'])->toString()));
+            $parent->setSlug(mb_strtolower($this->slugger->slug($parentData['name'])->toString()));
             $parent->setDescription($parentData['description']);
             $parent->setIcon($parentData['icon']);
             $parent->setImage($parentData['image']);
@@ -336,7 +346,7 @@ class ServiceCategoryFixtures extends Fixture
             foreach ($parentData['children'] as $childData) {
                 $child = new ServiceCategory();
                 $child->setName($childData['name']);
-                $child->setSlug(strtolower($this->slugger->slug($childData['name'])->toString()));
+                $child->setSlug(mb_strtolower($this->slugger->slug($childData['name'])->toString()));
                 $child->setDescription($childData['description']);
                 $child->setIcon($childData['icon']);
                 $child->setImage($childData['image']);

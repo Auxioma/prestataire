@@ -1,17 +1,27 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Controller;
 
 use App\Entity\PrestataireInterventionZone;
 use App\Entity\User;
 use App\Form\PrestataireInterventionZoneType;
+use App\Service\ZoneGeocoder;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Form\FormFactoryInterface;
-use App\Service\ZoneGeocoder;
 
 #[Route('/prestataire/zones', name: 'app_prestataire_zone_')]
 final class PrestataireZoneController extends AbstractController
@@ -21,13 +31,14 @@ final class PrestataireZoneController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         FormFactoryInterface $formFactory,
-        ZoneGeocoder $zoneGeocoder
+        ZoneGeocoder $zoneGeocoder,
     ): Response {
         /** @var User|null $user */
         $user = $this->getUser();
 
         if (!$user || !$user->getPrestataireProfile()) {
             $this->addFlash('error', 'Profil prestataire introuvable.');
+
             return $this->redirectToRoute('app_login');
         }
 
@@ -47,7 +58,7 @@ final class PrestataireZoneController extends AbstractController
                 $zone->getPostalCode()
             );
 
-            if ($geocoded !== null) {
+            if (null !== $geocoded) {
                 $zone->setLatitude($geocoded['latitude']);
                 $zone->setLongitude($geocoded['longitude']);
                 $zone->setCity($geocoded['city']);
@@ -73,20 +84,20 @@ final class PrestataireZoneController extends AbstractController
     public function delete(
         Request $request,
         PrestataireInterventionZone $zone,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
     ): Response {
         /** @var User|null $user */
         $user = $this->getUser();
 
         if (
-            !$user ||
-            !$user->getPrestataireProfile() ||
-            $zone->getPrestataireProfile() !== $user->getPrestataireProfile()
+            !$user
+            || !$user->getPrestataireProfile()
+            || $zone->getPrestataireProfile() !== $user->getPrestataireProfile()
         ) {
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
-        if ($this->isCsrfTokenValid('delete_zone_' . $zone->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete_zone_'.$zone->getId(), $request->request->get('_token'))) {
             $em->remove($zone);
             $em->flush();
 

@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\DataFixtures\Prestataire;
 
 use App\DataFixtures\User\PrestataireUserFixtures;
@@ -795,7 +805,7 @@ class PrestataireProfileFixtures extends Fixture implements DependentFixtureInte
             $profile = new PrestataireProfile();
             $profile->setAccount($user);
             $profile->setCompanyName($data['company_name']);
-            $profile->setSlug(strtolower($this->slugger->slug($data['company_name'])->toString()));
+            $profile->setSlug(mb_strtolower($this->slugger->slug($data['company_name'])->toString()));
             $profile->setLegalName($data['legal_name']);
             $profile->setStructureType($data['structure_type']);
             $profile->setSiren($data['siren']);
