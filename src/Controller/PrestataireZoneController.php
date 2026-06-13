@@ -11,13 +11,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Form\FormFactoryInterface;
+use App\Service\ZoneGeocoder;
 
 #[Route('/prestataire/zones', name: 'app_prestataire_zone_')]
 final class PrestataireZoneController extends AbstractController
 {
     #[Route('/ajouter', name: 'add', methods: ['POST'])]
-    public function add(Request $request, EntityManagerInterface $em, FormFactoryInterface $formFactory): Response
-    {
+    public function add(
+        Request $request,
+        EntityManagerInterface $em,
+        FormFactoryInterface $formFactory,
+        ZoneGeocoder $zoneGeocoder
+    ): Response {
         /** @var User|null $user */
         $user = $this->getUser();
 
@@ -37,6 +42,20 @@ final class PrestataireZoneController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $geocoded = $zoneGeocoder->geocode(
+                $zone->getCity(),
+                $zone->getPostalCode()
+            );
+
+            if ($geocoded !== null) {
+                $zone->setLatitude($geocoded['latitude']);
+                $zone->setLongitude($geocoded['longitude']);
+                $zone->setCity($geocoded['city']);
+                $zone->setPostalCode($geocoded['postalCode']);
+                $zone->setDepartment($geocoded['department']);
+                $zone->setRegion($geocoded['region']);
+            }
+
             $em->persist($zone);
             $em->flush();
 

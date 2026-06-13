@@ -18,6 +18,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\PrestataireInterventionZone;
 use App\Form\PrestataireInterventionZoneType;
+use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
+use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
+use Symfony\UX\Map\InfoWindow;
+use Symfony\UX\Map\Map;
+use Symfony\UX\Map\Marker;
+use Symfony\UX\Map\Point;
 
 class ProfileController extends AbstractController
 {
@@ -112,6 +118,58 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'company-panel']);
         }
 
+        $zoneMap = null;
+        $firstMappableZone = null;
+
+        foreach ($zones as $existingZone) {
+            if (
+                $existingZone !== null
+                && $existingZone->getLatitude() !== null
+                && $existingZone->getLongitude() !== null
+            ) {
+                $firstMappableZone = $existingZone;
+                break;
+            }
+        }
+
+        if ($firstMappableZone !== null) {
+            $zoneMap = (new Map('default'))
+                ->center(new Point(
+                    (float) $firstMappableZone->getLatitude(),
+                    (float) $firstMappableZone->getLongitude()
+                ))
+                ->zoom(8)
+                ->options(
+                    (new LeafletOptions())
+                        ->tileLayer(new TileLayer(
+                            url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                            options: ['maxZoom' => 19]
+                        ))
+                );
+
+            foreach ($zones as $existingZone) {
+                if (
+                    $existingZone !== null
+                    && $existingZone->getLatitude() !== null
+                    && $existingZone->getLongitude() !== null
+                ) {
+                    $label = $existingZone->getCity() ?: 'Zone d’intervention';
+
+                    $zoneMap->addMarker(new Marker(
+                        position: new Point(
+                            (float) $existingZone->getLatitude(),
+                            (float) $existingZone->getLongitude()
+                        ),
+                        title: $label,
+                        infoWindow: new InfoWindow(
+                            content: '<strong>' . htmlspecialchars($label) . '</strong><br>Rayon : ' . (int) $existingZone->getRadiusKm() . ' km'
+                        )
+                    ));
+                }
+            }
+        }
+
         return $this->render('profile/prestataire_profile.html.twig', [
             'userForm' => $userForm->createView(),
             'publicProfileForm' => $publicProfileForm->createView(),
@@ -120,6 +178,7 @@ class ProfileController extends AbstractController
             'zones' => $zones,
             'user' => $user,
             'categories' => $categoryRepository->findWithSubCategories(),
+            'zoneMap' => $zoneMap
         ]);
     }
 

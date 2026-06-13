@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Test carte{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <h1 class="mb-4">Test Symfony UX Map</h1>
+
+        <div class="card p-3">
+            {{ ux_map(map, { style: 'height: 500px; width: 100%; border-radius: 16px;' }) }}
+        </div>
+    </div>
+{% endblock %}
