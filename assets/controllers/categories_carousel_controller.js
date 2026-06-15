@@ -8,7 +8,6 @@ export default class extends Controller {
     };
 
     connect() {
-        console.log("categories-carousel connected (auto-only)");
         this.currentIndex = 0;
         this.visibleItems = 1;
         this.autoplayTimer = null;

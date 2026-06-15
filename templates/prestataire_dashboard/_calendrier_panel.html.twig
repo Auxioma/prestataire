@@ -1,88 +1,67 @@
-<ul class="nav nav-tabs border-bottom gap-2 mb-4" id="calendrierSubTabs" role="tablist">
-    <li class="nav-item" role="presentation">
-        <button
-            class="nav-link active"
-            id="calendrier-planning-tab"
-            data-tab-level="sub"
-            data-bs-toggle="tab"
-            data-bs-target="#calendrier-planning-panel"
-            type="button"
-            role="tab"
-            aria-controls="calendrier-planning-panel"
-            aria-selected="true"
-        >
-            Planning
-        </button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button
-            class="nav-link"
-            id="calendrier-availability-tab"
-            data-tab-level="sub"
-            data-bs-toggle="tab"
-            data-bs-target="#calendrier-availability-panel"
-            type="button"
-            role="tab"
-            aria-controls="calendrier-availability-panel"
-            aria-selected="false"
-        >
-            Disponibilités
-        </button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button
-            class="nav-link"
-            id="calendrier-events-tab"
-            data-tab-level="sub"
-            data-bs-toggle="tab"
-            data-bs-target="#calendrier-events-panel"
-            type="button"
-            role="tab"
-            aria-controls="calendrier-events-panel"
-            aria-selected="false"
-        >
-            Événements
-        </button>
-    </li>
-</ul>
+<div class="card tm-card tm-calendar-panel p-4">
+	<div class="tm-calendar-header mb-4">
+		<h4 class="tm-card-title tm-calendar-title mb-1">Calendrier</h4>
+		<p class="tm-calendar-subtitle">Gérez vos rendez-vous, interventions et disponibilités depuis une seule vue.</p>
+	</div>
 
-<div class="tab-content" id="calendrierSubTabsContent">
-    <div
-        class="tab-pane fade show active"
-        id="calendrier-planning-panel"
-        role="tabpanel"
-        aria-labelledby="calendrier-planning-tab"
-        tabindex="0"
-    >
-        <div class="card tm-card p-4">
-            <h4 class="tm-card-title mb-3">Planning</h4>
-            <p class="text-muted mb-0">Cette tab affichera le calendrier global des interventions et des créneaux réservés.</p>
-        </div>
-    </div>
-
-    <div
-        class="tab-pane fade"
-        id="calendrier-availability-panel"
-        role="tabpanel"
-        aria-labelledby="calendrier-availability-tab"
-        tabindex="0"
-    >
-        <div class="card tm-card p-4">
-            <h4 class="tm-card-title mb-3">Disponibilités</h4>
-            <p class="text-muted mb-0">Cette tab permettra de gérer les jours ouverts, les absences et les plages horaires disponibles.</p>
-        </div>
-    </div>
-
-    <div
-        class="tab-pane fade"
-        id="calendrier-events-panel"
-        role="tabpanel"
-        aria-labelledby="calendrier-events-tab"
-        tabindex="0"
-    >
-        <div class="card tm-card p-4">
-            <h4 class="tm-card-title mb-3">Événements</h4>
-            <p class="text-muted mb-0">Cette tab affichera les rendez-vous, rappels et événements liés à l’activité du prestataire.</p>
-        </div>
-    </div>
+	<div class="tm-calendar-wrap">
+		<div id="prestataire-calendar" data-calendar-events='[
+			                {"title":"Intervention Bordeaux","start":"2026-06-18T09:00:00","end":"2026-06-18T10:30:00"},
+			                {"title":"Devis Mérignac","start":"2026-06-19T14:00:00","end":"2026-06-19T15:00:00"},
+			                {"title":"Visite client Pessac","start":"2026-06-23T11:00:00","end":"2026-06-23T12:00:00"},
+			                {"title":"Chantier Talence","start":"2026-06-25T08:30:00","end":"2026-06-25T12:30:00"}
+			            ]'></div>
+	</div>
 </div>
+
+<script src="{{ asset('vendor/fullcalendar/index.global.min.js') }}"></script>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+const calendarEl = document.getElementById('prestataire-calendar');
+
+if (! calendarEl || typeof FullCalendar === 'undefined') {
+return;
+}
+
+const rawEvents = calendarEl.dataset.calendarEvents || '[]';
+let events = [];
+
+try {
+events = JSON.parse(rawEvents);
+} catch (error) {
+console.error('Impossible de parser les événements du calendrier.', error);
+}
+
+const calendar = new FullCalendar.Calendar(calendarEl, {
+locale: 'fr',
+initialView: 'dayGridMonth',
+firstDay: 1,
+height: 'auto',
+nowIndicator: true,
+selectable: true,
+editable: false,
+dayMaxEvents: true,
+headerToolbar: {
+left: 'prev,next today',
+center: 'title',
+right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+},
+buttonText: {
+today: 'Aujourd’hui',
+month: 'Mois',
+week: 'Semaine',
+day: 'Jour',
+list: 'Liste'
+},
+events: events,
+eventTimeFormat: {
+hour: '2-digit',
+minute: '2-digit',
+hour12: false
+}
+});
+
+calendar.render();
+});
+</script>

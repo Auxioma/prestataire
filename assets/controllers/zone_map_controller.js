@@ -30,7 +30,5 @@ export default class extends Controller {
                 weight: 2,
             }).addTo(map);
         });
-
-        console.log('cercles ajoutés', this.zonesValue.length);
     }
 }
