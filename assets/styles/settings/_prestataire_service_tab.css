@@ -354,6 +354,21 @@
     border-color: #1b3fc5;
 }
 
+/* Fix unique : empêcher la coupure du menu déroulant dans la modale */
+#addServiceModal .modal-content,
+#addServiceModal .modal-body {
+    overflow: visible !important;
+}
+
+#addServiceModal .ts-wrapper.dropdown-active {
+    position: relative;
+    z-index: 2000;
+}
+
+#addServiceModal .ts-dropdown {
+    z-index: 2100 !important;
+}
+
 /* =========================
    RESPONSIVE
 ========================= */
