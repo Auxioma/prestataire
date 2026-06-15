@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
         locale: 'fr',
         initialView: 'dayGridMonth',
         firstDay: 1,
-        height: 'auto',
+        height: 650,
         nowIndicator: true,
         selectable: true,
         editable: false,
@@ -63,26 +63,5 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     calendar.render();
-
-    const refreshCalendar = () => {
-        setTimeout(() => {
-            calendar.updateSize();
-        }, 150);
-    };
-
-    const activePane = document.querySelector('#dispo-panel.active.show');
-    if (activePane) {
-        refreshCalendar();
-    }
-
-    document.querySelectorAll('#settingsTabs [data-bs-toggle="tab"]').forEach((tabTrigger) => {
-        tabTrigger.addEventListener('shown.bs.tab', function (event) {
-            const target = event.target.getAttribute('data-bs-target');
-
-            if (target === '#dispo-panel') {
-                refreshCalendar();
-            }
-        });
-    });
 });
 </script>
