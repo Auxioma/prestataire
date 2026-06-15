@@ -48,41 +48,54 @@ class DashboardController extends AbstractDashboardController
     }
 
     public function configureMenuItems(): iterable
-    {
-        yield MenuItem::linkToDashboard('Accueil', 'fa fa-home');
+{
+    yield MenuItem::linkToDashboard('Accueil', 'fa fa-home');
 
-        // POINT 1 : MODÉRATION DES INSCRIPTIONS PRESTATAIRES
-        yield MenuItem::section('Modération & Validation');
-        yield MenuItem::linkToUrl(
-            'Vérification Prestataires',
-            'fas fa-id-card',
-            $this->adminUrlGenerator->unsetAll()->setController(PrestataireProfileCrudController::class)->setAction(Action::INDEX)->generateUrl()
-        );
+    yield MenuItem::section('Modération');
+    yield MenuItem::linkToUrl(
+        'Utilisateurs',
+        'fas fa-users',
+        $this->adminUrlGenerator->unsetAll()
+            ->setController(UserCrudController::class)
+            ->setAction(Action::INDEX)
+            ->generateUrl()
+    );
 
-        // POINT 2 : GESTION DE TOUS LES UTILISATEURS
-        yield MenuItem::section('Gestion des Comptes');
+    yield MenuItem::linkToUrl(
+        'Prestataires',
+        'fas fa-briefcase',
+        $this->adminUrlGenerator->unsetAll()
+            ->setController(PrestataireProfileCrudController::class)
+            ->setAction(Action::INDEX)
+            ->generateUrl()
+    );
 
-        yield MenuItem::linkToUrl(
-            'Tous les Utilisateurs',
-            'fas fa-users',
-            $this->adminUrlGenerator->unsetAll()->setController(UserCrudController::class)->setAction(Action::INDEX)->generateUrl()
-        );
+    yield MenuItem::linkToUrl(
+        'Clients',
+        'fas fa-user-circle',
+        $this->adminUrlGenerator->unsetAll()
+            ->setController(ClientProfileCrudController::class)
+            ->setAction(Action::INDEX)
+            ->generateUrl()
+    );
 
-        yield MenuItem::linkToUrl(
-            'Profils Prestataires',
-            'fas fa-briefcase',
-            $this->adminUrlGenerator->unsetAll()->setController(PrestataireProfileCrudController::class)->setAction(Action::INDEX)->generateUrl()
-        );
+    yield MenuItem::section('Catalogue');
+    yield MenuItem::linkToUrl(
+        'Catégories / Sous-catégories',
+        'fas fa-tags',
+        $this->adminUrlGenerator->unsetAll()
+            ->setController(ServiceCategoryCrudController::class)
+            ->setAction(Action::INDEX)
+            ->generateUrl()
+    );
 
-        yield MenuItem::linkToUrl(
-            'Profils Clients',
-            'fas fa-user-circle',
-            $this->adminUrlGenerator->unsetAll()->setController(ClientProfileCrudController::class)->setAction(Action::INDEX)->generateUrl()
-        );
-
-        // POINT 3 : CATALOGUE
-        yield MenuItem::section('Catalogue');
-        yield MenuItem::linkToUrl('Catégories de Service', 'fas fa-tags', '#');
-        yield MenuItem::linkToUrl('Services / Métiers', 'fas fa-wrench', '#');
-    }
+    yield MenuItem::linkToUrl(
+        'Services / Métiers',
+        'fas fa-wrench',
+        $this->adminUrlGenerator->unsetAll()
+            ->setController(ServiceCrudController::class)
+            ->setAction(Action::INDEX)
+            ->generateUrl()
+    );
+}
 }

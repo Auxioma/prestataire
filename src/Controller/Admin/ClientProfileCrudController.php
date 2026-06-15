@@ -14,6 +14,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\ClientProfile;
 use App\Enum\ClientTypeEnum;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -27,24 +28,32 @@ class ClientProfileCrudController extends AbstractCrudController
         return ClientProfile::class;
     }
 
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setEntityLabelInSingular('Client')
+            ->setEntityLabelInPlural('Clients')
+            ->setDefaultSort(['id' => 'DESC']);
+    }
+
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id')->hideOnForm();
 
-        yield AssociationField::new('account', 'Utilisateur global');
+        yield AssociationField::new('account', 'Compte utilisateur');
 
-        yield TextField::new('account.firstName', 'Prénom du Client')->hideOnForm();
-        yield TextField::new('account.lastName', 'Nom du Client')->hideOnForm();
+        yield TextField::new('account.firstName', 'Prénom')->hideOnForm();
+        yield TextField::new('account.lastName', 'Nom')->hideOnForm();
+        yield TextField::new('account.email', 'Email')->hideOnForm();
 
-        yield TextField::new('companyName', "Nom de l'entreprise")->hideOnIndex();
+        yield ChoiceField::new('type', 'Type de client')
+            ->setChoices([
+                'Particulier' => ClientTypeEnum::PARTICULIER,
+                'Professionnel' => ClientTypeEnum::PROFESSIONNEL,
+            ])
+            ->renderAsBadges();
+
+        yield TextField::new('companyName', 'Entreprise')->hideOnIndex();
         yield TextField::new('defaultCity', 'Ville principale');
-
-        yield ChoiceField::new('type', 'Type de Client')
-            ->setChoices(ClientTypeEnum::cases())
-            ->setFormTypeOption('class', ClientTypeEnum::class)
-            ->renderAsBadges([
-                'PARTICULIER' => 'info',
-                'PROFESSIONNEL' => 'primary',
-            ]);
     }
 }

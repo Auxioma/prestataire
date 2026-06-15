@@ -190,12 +190,12 @@
                                         <div class="d-flex align-items-center gap-3 flex-wrap">
                                             <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle shadow-sm" style="width: 90px; height: 90px; object-fit: cover;" alt="Avatar">
 
-                                            <div class="flex-grow-1 tm-vich-custom-container">
+                                            <div class="grow tm-vich-custom-container">
                                                 {{ form_widget(userForm.avatarFile, {
-                attr: {
-                    class: 'form-control form-control-sm',
-                },
-            }) }}
+														attr: {
+															class: 'form-control form-control-sm',
+														},
+													}) }}
                                                 {{ form_errors(userForm.avatarFile) }}
                                                 <small class="text-muted d-block mt-2 fs-7">PNG, JPG ou WEBP. Max 2 Mo.</small>
                                             </div>
