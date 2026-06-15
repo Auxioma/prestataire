@@ -1,0 +1,60 @@
+<ul class="nav nav-tabs border-bottom gap-2 mb-4" id="dashboardSubTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button
+            class="nav-link active"
+            id="dashboard-overview-tab"
+            data-tab-level="sub"
+            data-bs-toggle="tab"
+            data-bs-target="#dashboard-overview-panel"
+            type="button"
+            role="tab"
+            aria-controls="dashboard-overview-panel"
+            aria-selected="true"
+        >
+            Vue d’ensemble
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button
+            class="nav-link"
+            id="dashboard-priority-tab"
+            data-tab-level="sub"
+            data-bs-toggle="tab"
+            data-bs-target="#dashboard-priority-panel"
+            type="button"
+            role="tab"
+            aria-controls="dashboard-priority-panel"
+            aria-selected="false"
+        >
+            Priorités
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="dashboardSubTabsContent">
+    <div
+        class="tab-pane fade show active"
+        id="dashboard-overview-panel"
+        role="tabpanel"
+        aria-labelledby="dashboard-overview-tab"
+        tabindex="0"
+    >
+        <div class="card tm-card p-4">
+            <h4 class="tm-card-title mb-3">Vue d’ensemble</h4>
+            <p class="text-muted mb-0">Ce sous-onglet regroupera les indicateurs globaux, l’activité récente et les raccourcis utiles.</p>
+        </div>
+    </div>
+
+    <div
+        class="tab-pane fade"
+        id="dashboard-priority-panel"
+        role="tabpanel"
+        aria-labelledby="dashboard-priority-tab"
+        tabindex="0"
+    >
+        <div class="card tm-card p-4">
+            <h4 class="tm-card-title mb-3">Priorités</h4>
+            <p class="text-muted mb-0">Ce sous-onglet affichera les actions prioritaires à effectuer sur le compte prestataire.</p>
+        </div>
+    </div>
+</div>
