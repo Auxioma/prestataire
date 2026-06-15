@@ -1,15 +1,5 @@
 <?php
 
-/**
- * Copyright(c) 2026 Trouve moi
- *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
- * Tous droits réservés.
- *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
- */
-
 namespace App\Controller\Admin;
 
 use App\Entity\ClientProfile;
@@ -40,20 +30,40 @@ class ClientProfileCrudController extends AbstractCrudController
     {
         yield IdField::new('id')->hideOnForm();
 
-        yield AssociationField::new('account', 'Compte utilisateur');
+        yield AssociationField::new('account', 'Compte utilisateur')
+            ->setHelp('Compte principal lié à ce profil client.');
 
-        yield TextField::new('account.firstName', 'Prénom')->hideOnForm();
-        yield TextField::new('account.lastName', 'Nom')->hideOnForm();
-        yield TextField::new('account.email', 'Email')->hideOnForm();
+        yield TextField::new('account.firstName', 'Prénom')
+            ->hideOnForm()
+            ->setHelp('Prénom du client lié au compte.');
+
+        yield TextField::new('account.lastName', 'Nom')
+            ->hideOnForm()
+            ->setHelp('Nom du client lié au compte.');
+
+        yield TextField::new('account.email', 'Email')
+            ->hideOnForm()
+            ->setHelp('Adresse email du compte client.');
 
         yield ChoiceField::new('type', 'Type de client')
             ->setChoices([
                 'Particulier' => ClientTypeEnum::PARTICULIER,
                 'Professionnel' => ClientTypeEnum::PROFESSIONNEL,
             ])
-            ->renderAsBadges();
+            ->renderAsBadges()
+            ->setHelp('Permet de distinguer un particulier d’un client professionnel.');
 
-        yield TextField::new('companyName', 'Entreprise')->hideOnIndex();
-        yield TextField::new('defaultCity', 'Ville principale');
+        yield TextField::new('companyName', 'Entreprise')
+            ->hideOnIndex()
+            ->setHelp('Nom de l’entreprise si le client est un professionnel.')
+            ->setFormTypeOption('attr', [
+                'placeholder' => 'Exemple : Agence Océane',
+            ]);
+
+        yield TextField::new('defaultCity', 'Ville principale')
+            ->setHelp('Ville principale utilisée pour les recherches ou les demandes du client.')
+            ->setFormTypeOption('attr', [
+                'placeholder' => 'Exemple : Bordeaux',
+            ]);
     }
 }

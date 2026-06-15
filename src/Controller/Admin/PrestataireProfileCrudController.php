@@ -1,15 +1,5 @@
 <?php
 
-/**
- * Copyright(c) 2026 Trouve moi
- *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
- * Tous droits réservés.
- *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
- */
-
 namespace App\Controller\Admin;
 
 use App\Entity\PrestataireProfile;
@@ -126,11 +116,33 @@ class PrestataireProfileCrudController extends AbstractCrudController
     {
         yield IdField::new('id')->hideOnForm();
 
-        yield AssociationField::new('account', 'Compte utilisateur');
-        yield TextField::new('companyName', 'Entreprise');
-        yield TextField::new('slug', 'Slug')->hideOnIndex();
-        yield TextField::new('siret', 'SIRET');
-        yield TextField::new('city', 'Ville');
+        yield AssociationField::new('account', 'Compte utilisateur')
+            ->setHelp('Compte principal lié à ce profil prestataire.');
+
+        yield TextField::new('companyName', 'Entreprise')
+            ->setHelp('Nom commercial ou nom visible du prestataire.')
+            ->setFormTypeOption('attr', [
+                'placeholder' => 'Exemple : Dupont Services',
+            ]);
+
+        yield TextField::new('slug', 'Slug')
+            ->hideOnIndex()
+            ->setHelp('Identifiant utilisé dans l’URL publique du profil.')
+            ->setFormTypeOption('attr', [
+                'placeholder' => 'dupont-services',
+            ]);
+
+        yield TextField::new('siret', 'SIRET')
+            ->setHelp('Numéro officiel d’identification de l’entreprise.')
+            ->setFormTypeOption('attr', [
+                'placeholder' => '12345678901234',
+            ]);
+
+        yield TextField::new('city', 'Ville')
+            ->setHelp('Ville principale d’activité du prestataire.')
+            ->setFormTypeOption('attr', [
+                'placeholder' => 'Exemple : Lacanau',
+            ]);
 
         yield ChoiceField::new('profileStatus', 'Statut du profil')
             ->setChoices([
@@ -140,7 +152,8 @@ class PrestataireProfileCrudController extends AbstractCrudController
                 'Suspendu' => PrestataireProfileStatusEnum::SUSPENDED,
                 'Refusé' => PrestataireProfileStatusEnum::REFUSED,
             ])
-            ->renderAsBadges();
+            ->renderAsBadges()
+            ->setHelp('État général du profil prestataire dans la plateforme.');
 
         yield ChoiceField::new('verificationStatus', 'Statut de vérification')
             ->setChoices([
@@ -151,10 +164,17 @@ class PrestataireProfileCrudController extends AbstractCrudController
                 'Documents vérifiés' => VerificationStatusEnum::DOCUMENTS_VERIFIED,
                 'Vérifié manuellement' => VerificationStatusEnum::MANUALLY_VERIFIED,
             ])
-            ->renderAsBadges();
+            ->renderAsBadges()
+            ->setHelp('Niveau de vérification atteint pour ce prestataire.');
 
-        yield IntegerField::new('completionScore', 'Complétion');
-        yield BooleanField::new('isFeatured', 'Mis en avant');
-        yield DateTimeField::new('verifiedAt', 'Vérifié le')->hideOnForm();
+        yield IntegerField::new('completionScore', 'Complétion')
+            ->setHelp('Pourcentage ou score d’avancement du profil prestataire.');
+
+        yield BooleanField::new('isFeatured', 'Mis en avant')
+            ->setHelp('Permet de mettre ce prestataire en avant sur le site.');
+
+        yield DateTimeField::new('verifiedAt', 'Vérifié le')
+            ->hideOnForm()
+            ->setHelp('Date de validation manuelle ou finale du profil.');
     }
 }

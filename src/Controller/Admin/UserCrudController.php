@@ -1,20 +1,11 @@
 <?php
 
-/**
- * Copyright(c) 2026 Trouve moi
- *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
- * Tous droits réservés.
- *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
- */
-
 namespace App\Controller\Admin;
 
 use App\Entity\User;
 use App\Enum\UserStatusEnum;
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -28,7 +19,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 
 class UserCrudController extends AbstractCrudController
 {
@@ -102,12 +92,26 @@ class UserCrudController extends AbstractCrudController
     {
         yield IdField::new('id')->hideOnForm();
 
-        yield EmailField::new('email', 'Adresse email');
+        yield EmailField::new('email', 'Adresse email')
+            ->setHelp('Adresse utilisée pour se connecter à la plateforme.')
+            ->setFormTypeOption('attr', [
+                'placeholder' => 'client@exemple.fr',
+            ]);
 
-        yield TextField::new('firstName', 'Prénom');
-        yield TextField::new('lastName', 'Nom');
+        yield TextField::new('firstName', 'Prénom')
+            ->setHelp('Prénom de l’utilisateur.')
+            ->setFormTypeOption('attr', [
+                'placeholder' => 'Exemple : Jean',
+            ]);
 
-        yield ArrayField::new('roles', 'Rôles');
+        yield TextField::new('lastName', 'Nom')
+            ->setHelp('Nom de famille de l’utilisateur.')
+            ->setFormTypeOption('attr', [
+                'placeholder' => 'Exemple : Dupont',
+            ]);
+
+        yield ArrayField::new('roles', 'Rôles')
+            ->setHelp('Définit les droits d’accès de l’utilisateur dans l’application.');
 
         yield ChoiceField::new('status', 'Statut du compte')
             ->setChoices([
@@ -116,11 +120,21 @@ class UserCrudController extends AbstractCrudController
                 'Suspendu' => UserStatusEnum::SUSPENDED,
                 'Banni' => UserStatusEnum::BANNED,
             ])
-            ->renderAsBadges();
+            ->renderAsBadges()
+            ->setHelp('État général du compte. Un compte banni ou suspendu ne doit plus être utilisé normalement.');
 
-        yield BooleanField::new('isVerified', 'Compte vérifié');
-        yield IntegerField::new('loginCount', 'Nb connexions');
-        yield DateTimeField::new('lastLoginAt', 'Dernière connexion')->hideOnForm();
-        yield DateTimeField::new('createdAt', 'Créé le')->hideOnForm();
+        yield BooleanField::new('isVerified', 'Compte vérifié')
+            ->setHelp('Indique si le compte a déjà été validé ou confirmé.');
+
+        yield IntegerField::new('loginCount', 'Nombre de connexions')
+            ->setHelp('Nombre total de connexions enregistrées pour ce compte.');
+
+        yield DateTimeField::new('lastLoginAt', 'Dernière connexion')
+            ->hideOnForm()
+            ->setHelp('Dernière date de connexion connue.');
+
+        yield DateTimeField::new('createdAt', 'Créé le')
+            ->hideOnForm()
+            ->setHelp('Date de création du compte.');
     }
 }
