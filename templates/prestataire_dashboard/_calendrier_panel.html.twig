@@ -17,51 +17,72 @@
 <script src="{{ asset('vendor/fullcalendar/index.global.min.js') }}"></script>
 
 <script>
-	document.addEventListener('DOMContentLoaded', function () {
-const calendarEl = document.getElementById('prestataire-calendar');
+document.addEventListener('DOMContentLoaded', function () {
+    const calendarEl = document.getElementById('prestataire-calendar');
 
-if (! calendarEl || typeof FullCalendar === 'undefined') {
-return;
-}
+    if (!calendarEl || typeof FullCalendar === 'undefined') {
+        return;
+    }
 
-const rawEvents = calendarEl.dataset.calendarEvents || '[]';
-let events = [];
+    const rawEvents = calendarEl.dataset.calendarEvents || '[]';
+    let events = [];
 
-try {
-events = JSON.parse(rawEvents);
-} catch (error) {
-console.error('Impossible de parser les événements du calendrier.', error);
-}
+    try {
+        events = JSON.parse(rawEvents);
+    } catch (error) {
+        console.error('Impossible de parser les événements du calendrier.', error);
+    }
 
-const calendar = new FullCalendar.Calendar(calendarEl, {
-locale: 'fr',
-initialView: 'dayGridMonth',
-firstDay: 1,
-height: 'auto',
-nowIndicator: true,
-selectable: true,
-editable: false,
-dayMaxEvents: true,
-headerToolbar: {
-left: 'prev,next today',
-center: 'title',
-right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-},
-buttonText: {
-today: 'Aujourd’hui',
-month: 'Mois',
-week: 'Semaine',
-day: 'Jour',
-list: 'Liste'
-},
-events: events,
-eventTimeFormat: {
-hour: '2-digit',
-minute: '2-digit',
-hour12: false
-}
-});
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        locale: 'fr',
+        initialView: 'dayGridMonth',
+        firstDay: 1,
+        height: 'auto',
+        nowIndicator: true,
+        selectable: true,
+        editable: false,
+        dayMaxEvents: true,
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+        },
+        buttonText: {
+            today: 'Aujourd’hui',
+            month: 'Mois',
+            week: 'Semaine',
+            day: 'Jour',
+            list: 'Liste'
+        },
+        events: events,
+        eventTimeFormat: {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }
+    });
 
-calendar.render();
+    calendar.render();
+
+    const refreshCalendar = () => {
+        setTimeout(() => {
+            calendar.updateSize();
+        }, 150);
+    };
+
+    const activePane = document.querySelector('#dispo-panel.active.show');
+    if (activePane) {
+        refreshCalendar();
+    }
+
+    document.querySelectorAll('#settingsTabs [data-bs-toggle="tab"]').forEach((tabTrigger) => {
+        tabTrigger.addEventListener('shown.bs.tab', function (event) {
+            const target = event.target.getAttribute('data-bs-target');
+
+            if (target === '#dispo-panel') {
+                refreshCalendar();
+            }
+        });
+    });
 });
 </script>

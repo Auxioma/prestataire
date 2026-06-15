@@ -7,15 +7,28 @@ export default class extends Controller {
 
     connect() {
         this.handleMapConnect = this.handleMapConnect.bind(this);
+        this.handleTabShown = this.handleTabShown.bind(this);
+
         this.element.addEventListener('ux:map:connect', this.handleMapConnect);
+
+        document.querySelectorAll('#settingsTabs [data-bs-toggle="tab"]').forEach((tabTrigger) => {
+            tabTrigger.addEventListener('shown.bs.tab', this.handleTabShown);
+        });
     }
 
     disconnect() {
         this.element.removeEventListener('ux:map:connect', this.handleMapConnect);
+
+        document.querySelectorAll('#settingsTabs [data-bs-toggle="tab"]').forEach((tabTrigger) => {
+            tabTrigger.removeEventListener('shown.bs.tab', this.handleTabShown);
+        });
     }
 
     handleMapConnect(event) {
         const { map, L } = event.detail;
+
+        this.map = map;
+        this.leaflet = L;
 
         this.zonesValue.forEach((zone) => {
             if (!zone.latitude || !zone.longitude || !zone.radiusKm) {
@@ -30,5 +43,28 @@ export default class extends Controller {
                 weight: 2,
             }).addTo(map);
         });
+
+        const activePane = document.querySelector('#zones-panel.active.show');
+        if (activePane) {
+            this.refreshMap();
+        }
+    }
+
+    handleTabShown(event) {
+        const target = event.target.getAttribute('data-bs-target');
+
+        if (target === '#zones-panel') {
+            this.refreshMap();
+        }
+    }
+
+    refreshMap() {
+        if (!this.map) {
+            return;
+        }
+
+        setTimeout(() => {
+            this.map.invalidateSize();
+        }, 150);
     }
 }
