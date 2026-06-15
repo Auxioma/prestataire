@@ -1,56 +1,87 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    // On définit les éléments HTML (les select) que le JS va manipuler
-    static targets = ["category", "subcategory", "service"];
+    static targets = ['category', 'subcategory', 'service'];
 
-    // Appelé quand le menu "Catégorie" change
     async loadSubCategories() {
         const catId = this.categoryTarget.value;
-        
-        // On réinitialise les menus suivants
-        this.resetSelect(this.subcategoryTarget);
-        this.resetSelect(this.serviceTarget);
+
+        this.resetSelect(this.subcategoryTarget, 'Choisir une sous-catégorie...');
+        this.resetSelect(this.serviceTarget, 'Choisir un service...');
 
         if (!catId) return;
 
-        // Appel API vers ton CategoryController
         const response = await fetch(`/api/subcategories/${catId}`);
         const data = await response.json();
-        
-        // Remplissage du menu sous-catégorie
-        this.populateSelect(this.subcategoryTarget, data);
-        this.subcategoryTarget.disabled = false;
+
+        this.populateSelect(this.subcategoryTarget, data, 'Choisir une sous-catégorie...');
+        this.enableSelect(this.subcategoryTarget);
     }
 
-    // Appelé quand le menu "Sous-catégorie" change
     async loadServices() {
         const subId = this.subcategoryTarget.value;
-        
-        // On réinitialise le menu service
-        this.resetSelect(this.serviceTarget);
+
+        this.resetSelect(this.serviceTarget, 'Choisir un service...');
 
         if (!subId) return;
 
-        // Appel API vers ton CategoryController
         const response = await fetch(`/api/services/${subId}`);
         const data = await response.json();
 
-        this.populateSelect(this.serviceTarget, data);
-        this.serviceTarget.disabled = false;
+        this.populateSelect(this.serviceTarget, data, 'Choisir un service...');
+        this.enableSelect(this.serviceTarget);
     }
 
-    // Fonction utilitaire pour ajouter les options dans un select
-    populateSelect(element, data) {
+    populateSelect(element, data, placeholder = 'Sélectionnez...') {
+        this.clearSelect(element, placeholder);
+
         data.forEach(item => {
             const option = new Option(item.name, item.id);
             element.add(option);
         });
+
+        this.refreshTomSelect(element);
+        this.dispatchNativeChange(element);
     }
 
-    // Fonction utilitaire pour vider un select
-    resetSelect(element) {
-        element.innerHTML = '<option value="">Sélectionnez...</option>';
+    resetSelect(element, placeholder = 'Sélectionnez...') {
+        this.clearSelect(element, placeholder);
         element.disabled = true;
+
+        this.refreshTomSelect(element);
+        this.dispatchNativeChange(element);
+    }
+
+    clearSelect(element, placeholder = 'Sélectionnez...') {
+        element.innerHTML = '';
+        element.add(new Option(placeholder, ''));
+        element.value = '';
+    }
+
+    enableSelect(element) {
+        element.disabled = false;
+
+        this.refreshTomSelect(element);
+        this.dispatchNativeChange(element);
+    }
+
+    refreshTomSelect(element) {
+        if (element.tomselect) {
+            element.tomselect.clear();
+            element.tomselect.clearOptions();
+
+            Array.from(element.options).forEach(option => {
+                element.tomselect.addOption({
+                    value: option.value,
+                    text: option.text,
+                });
+            });
+
+            element.tomselect.refreshOptions(false);
+        }
+    }
+
+    dispatchNativeChange(element) {
+        element.dispatchEvent(new Event('change', { bubbles: true }));
     }
 }
