@@ -16,7 +16,6 @@ use App\Entity\PrestataireService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -40,12 +39,34 @@ class PrestataireServicePrestationType extends AbstractType
                     'maxlength' => 255,
                 ],
             ])
+            ->add('shortDescription', TextareaType::class, [
+                'label' => 'Description courte',
+                'required' => false,
+                'attr' => [
+                    'rows' => 3,
+                    'placeholder' => 'Résumé court et percutant de votre prestation',
+                    'maxlength' => 500,
+                ],
+            ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description détaillée',
                 'required' => false,
                 'attr' => [
                     'rows' => 6,
                     'placeholder' => 'Décrivez précisément ce qui est inclus dans cette prestation.',
+                ],
+            ])
+            ->add('pricingType', ChoiceType::class, [
+                'label' => 'Mode de tarification',
+                'required' => false,
+                'placeholder' => 'Choisir un mode de tarification',
+                'choices' => [
+                    'Prix fixe' => 'fixed',
+                    'À partir de' => 'from',
+                    'Fourchette de prix' => 'range',
+                    'Sur devis' => 'quote',
+                    'Tarif horaire' => 'hourly',
+                    'Tarif journalier' => 'daily',
                 ],
             ])
             ->add('priceFrom', MoneyType::class, [
@@ -81,12 +102,12 @@ class PrestataireServicePrestationType extends AbstractType
                     'Intervention' => 'intervention',
                 ],
             ])
-            ->add('position', IntegerType::class, [
-                'label' => 'Ordre d’affichage',
+            ->add('additionalInfo', TextareaType::class, [
+                'label' => 'Informations complémentaires',
                 'required' => false,
                 'attr' => [
-                    'min' => 0,
-                    'placeholder' => '0',
+                    'rows' => 4,
+                    'placeholder' => 'Exemple : déplacement inclus dans un rayon de 20 km, fournitures non comprises, intervention sous 48h, etc.',
                 ],
             ]);
     }

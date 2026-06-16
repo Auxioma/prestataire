@@ -47,7 +47,7 @@ final class PrestataireServicePrestationController extends AbstractController
 
             $this->addFlash('success', 'Prestation détaillée enregistrée.');
 
-            return $this->redirectToRoute('appprestatairesettings', [
+            return $this->redirectToRoute('app_prestataire_settings', [
                 '_fragment' => 'services-panel',
             ]);
         }
@@ -55,6 +55,8 @@ final class PrestataireServicePrestationController extends AbstractController
         return $this->render('prestataire/edit_prestation.html.twig', [
             'form' => $form->createView(),
             'ps' => $ps,
+            'prestation' => $ps,
+            'zones' => $ps->getPrestataire()?->getPrestataireInterventionZones() ?? [],
         ]);
     }
 }

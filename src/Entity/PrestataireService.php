@@ -17,7 +17,15 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PrestataireServiceRepository::class)]
-#[ORM\Table(name: 'prestataire_profile_service')]
+#[ORM\Table(
+    name: 'prestataire_profile_service',
+    uniqueConstraints: [
+        new ORM\UniqueConstraint(
+            name: 'uniq_prestataire_profile_service',
+            columns: ['prestataire_profile_id', 'service_id']
+        ),
+    ]
+)]
 #[ORM\HasLifecycleCallbacks]
 class PrestataireService
 {
@@ -40,8 +48,14 @@ class PrestataireService
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $title = null;
 
+    #[ORM\Column(type: Types::STRING, length: 500, nullable: true)]
+    private ?string $shortDescription = null;
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
+
+    #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
+    private ?string $pricingType = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
     private ?string $priceFrom = null;
@@ -51,6 +65,9 @@ class PrestataireService
 
     #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
     private ?string $priceUnit = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $additionalInfo = null;
 
     #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
     private int $position = 0;
@@ -123,6 +140,18 @@ class PrestataireService
         return $this;
     }
 
+    public function getShortDescription(): ?string
+    {
+        return $this->shortDescription;
+    }
+
+    public function setShortDescription(?string $shortDescription): self
+    {
+        $this->shortDescription = null !== $shortDescription ? trim($shortDescription) : null;
+
+        return $this;
+    }
+
     public function getDescription(): ?string
     {
         return $this->description;
@@ -131,6 +160,18 @@ class PrestataireService
     public function setDescription(?string $description): self
     {
         $this->description = null !== $description ? trim($description) : null;
+
+        return $this;
+    }
+
+    public function getPricingType(): ?string
+    {
+        return $this->pricingType;
+    }
+
+    public function setPricingType(?string $pricingType): self
+    {
+        $this->pricingType = null !== $pricingType ? trim($pricingType) : null;
 
         return $this;
     }
@@ -167,6 +208,18 @@ class PrestataireService
     public function setPriceUnit(?string $priceUnit): self
     {
         $this->priceUnit = null !== $priceUnit ? trim($priceUnit) : null;
+
+        return $this;
+    }
+
+    public function getAdditionalInfo(): ?string
+    {
+        return $this->additionalInfo;
+    }
+
+    public function setAdditionalInfo(?string $additionalInfo): self
+    {
+        $this->additionalInfo = null !== $additionalInfo ? trim($additionalInfo) : null;
 
         return $this;
     }
@@ -267,11 +320,14 @@ class PrestataireService
     public function hasDetailedOffer(): bool
     {
         return
-            null !== $this->title && '' !== $this->title
-            || null !== $this->description && '' !== $this->description
+            (null !== $this->title && '' !== $this->title)
+            || (null !== $this->shortDescription && '' !== $this->shortDescription)
+            || (null !== $this->description && '' !== $this->description)
+            || (null !== $this->pricingType && '' !== $this->pricingType)
             || null !== $this->priceFrom
             || null !== $this->priceTo
-            || null !== $this->priceUnit && '' !== $this->priceUnit;
+            || (null !== $this->priceUnit && '' !== $this->priceUnit)
+            || (null !== $this->additionalInfo && '' !== $this->additionalInfo);
     }
 
     public function getDisplayTitle(): string
