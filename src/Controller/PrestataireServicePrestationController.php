@@ -14,14 +14,18 @@ namespace App\Controller;
 
 use App\Entity\PrestataireService;
 use App\Entity\User;
+use App\Form\PrestataireServiceCreateType;
 use App\Form\PrestataireServicePrestationType;
+use App\Repository\PrestataireServiceRepository;
+use App\Repository\ServiceCategoryRepository;
+use App\Repository\ServiceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
 use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
+use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
 use Symfony\UX\Map\InfoWindow;
 use Symfony\UX\Map\Map;
 use Symfony\UX\Map\Marker;
@@ -120,6 +124,72 @@ final class PrestataireServicePrestationController extends AbstractController
             'zones' => $zones,
             'zoneMap' => $zoneMap,
             'map' => $zoneMap,
+        ]);
+    }
+
+    #[Route('/prestataire/prestations/nouvelle', name: 'app_prestataire_service_new', methods: ['GET', 'POST'])]
+    public function new(
+        Request $request,
+        EntityManagerInterface $em,
+        PrestataireServiceRepository $prestataireServiceRepository,
+        ServiceRepository $serviceRepository,
+        ServiceCategoryRepository $categoryRepository,
+    ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        $prestataire = $user?->getPrestataireProfile();
+
+        if (!$prestataire) {
+            throw $this->createAccessDeniedException('Profil prestataire introuvable.');
+        }
+
+        $categories = $categoryRepository->findBy([
+            'parent' => null,
+            'isActive' => true,
+        ], ['position' => 'ASC']);
+
+        if ($request->isMethod('POST')) {
+            $serviceId = $request->request->get('serviceId');
+            $selectedService = $serviceId ? $serviceRepository->find($serviceId) : null;
+
+            if (!$selectedService) {
+                $this->addFlash('error', 'Veuillez sélectionner un service valide.');
+
+                return $this->render('prestataire/new_prestation.html.twig', [
+                    'categories' => $categories,
+                ]);
+            }
+
+            $existing = $prestataireServiceRepository->findOneBy([
+                'prestataire' => $prestataire,
+                'service' => $selectedService,
+            ]);
+
+            if ($existing) {
+                $this->addFlash('warning', 'Cette prestation existe déjà. Vous allez être redirigé vers sa fiche.');
+
+                return $this->redirectToRoute('app_prestataire_service_prestation_edit', [
+                    'id' => $existing->getId(),
+                ]);
+            }
+
+            $prestation = new PrestataireService();
+            $prestation->setPrestataire($prestataire);
+            $prestation->setService($selectedService);
+            $prestation->setIsActive(true);
+
+            $em->persist($prestation);
+            $em->flush();
+
+            $this->addFlash('success', 'Le service a bien été ajouté. Vous pouvez maintenant compléter la prestation.');
+
+            return $this->redirectToRoute('app_prestataire_service_prestation_edit', [
+                'id' => $prestation->getId(),
+            ]);
+        }
+
+        return $this->render('prestataire/new_prestation.html.twig', [
+            'categories' => $categories,
         ]);
     }
 }

@@ -170,12 +170,11 @@
             </li>
         {% endif %}
 
-        {% if app.user and is_granted('ROLE_PRESTATAIRE') %}
-            <li class="nav-item ms-xl-2 tm-navbar__mobile-full">
-                <a class="btn tm-navbar__btn-cta" href="#">
-                    <i class="fa-solid fa-briefcase me-2"></i>Proposer une Prestation
-                </a>
-            </li>
-        {% endif %}
-    </ul>
+{% if app.user and is_granted('ROLE_PRESTATAIRE') %}
+    <li class="nav-item ms-xl-2 tm-navbar__mobile-full">
+        <a class="btn tm-navbar__btn-cta" href="{{ path('app_prestataire_service_new') }}">
+            <i class="fa-solid fa-briefcase me-2"></i>Proposer une prestation
+        </a>
+    </li>
+{% endif %}    </ul>
 </div></div></nav>
