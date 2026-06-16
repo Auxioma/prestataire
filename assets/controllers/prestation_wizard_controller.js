@@ -1,36 +1,36 @@
-import { Controller } from '@hotwired/stimulus';
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
     static targets = [
-        'step',
-        'indicator',
-        'progressBar',
-        'prevButton',
-        'nextButton',
-        'submitButton',
-        'stepCurrent',
-        'stepTotal',
-        'previewTitle',
-        'previewShortDescription',
-        'previewDescription',
-        'previewPricing',
-        'previewAdditionalInfo',
-        'previewCategory',
-        'previewSubcategory',
-        'previewService',
-        'previewZones',
-        'sourceTitle',
-        'sourceShortDescription',
-        'sourceDescription',
-        'sourcePricingType',
-        'sourcePriceFrom',
-        'sourcePriceTo',
-        'sourcePriceUnit',
-        'sourceAdditionalInfo',
-        'pricingFixedBlock',
-        'pricingFromBlock',
-        'pricingRangeBlock',
-        'pricingQuoteBlock',
+        "step",
+        "indicator",
+        "progressBar",
+        "prevButton",
+        "nextButton",
+        "submitButton",
+        "stepCurrent",
+        "stepTotal",
+        "previewTitle",
+        "previewShortDescription",
+        "previewDescription",
+        "previewPricing",
+        "previewAdditionalInfo",
+        "previewCategory",
+        "previewSubcategory",
+        "previewService",
+        "previewZones",
+        "sourceTitle",
+        "sourceShortDescription",
+        "sourceDescription",
+        "sourcePricingType",
+        "sourcePriceFrom",
+        "sourcePriceTo",
+        "sourcePriceUnit",
+        "sourceAdditionalInfo",
+        "pricingFixedBlock",
+        "pricingFromBlock",
+        "pricingRangeBlock",
+        "pricingQuoteBlock",
     ];
 
     connect() {
@@ -88,21 +88,28 @@ export default class extends Controller {
         if (this.hasPreviewTitleTarget && this.hasSourceTitleTarget) {
             this.previewTitleTarget.textContent = this.valueOrFallback(
                 this.sourceTitleTarget.value,
-                'Titre de la prestation'
+                "Titre de la prestation",
             );
         }
 
-        if (this.hasPreviewShortDescriptionTarget && this.hasSourceShortDescriptionTarget) {
-            this.previewShortDescriptionTarget.textContent = this.valueOrFallback(
-                this.sourceShortDescriptionTarget.value,
-                'Ajoutez une description courte pour résumer votre prestation en quelques mots.'
-            );
+        if (
+            this.hasPreviewShortDescriptionTarget &&
+            this.hasSourceShortDescriptionTarget
+        ) {
+            this.previewShortDescriptionTarget.textContent =
+                this.valueOrFallback(
+                    this.sourceShortDescriptionTarget.value,
+                    "Ajoutez une description courte pour résumer votre prestation en quelques mots.",
+                );
         }
 
-        if (this.hasPreviewDescriptionTarget && this.hasSourceDescriptionTarget) {
+        if (
+            this.hasPreviewDescriptionTarget &&
+            this.hasSourceDescriptionTarget
+        ) {
             this.previewDescriptionTarget.textContent = this.valueOrFallback(
                 this.sourceDescriptionTarget.value,
-                'Ajoutez une description détaillée pour expliquer clairement votre offre.'
+                "Ajoutez une description détaillée pour expliquer clairement votre offre.",
             );
         }
 
@@ -112,33 +119,41 @@ export default class extends Controller {
             this.previewPricingTarget.textContent = this.buildPricingLabel();
         }
 
-        if (this.hasPreviewAdditionalInfoTarget && this.hasSourceAdditionalInfoTarget) {
+        if (
+            this.hasPreviewAdditionalInfoTarget &&
+            this.hasSourceAdditionalInfoTarget
+        ) {
             this.previewAdditionalInfoTarget.textContent = this.valueOrFallback(
                 this.sourceAdditionalInfoTarget.value,
-                'Aucune information complémentaire renseignée pour le moment.'
+                "Aucune information complémentaire renseignée pour le moment.",
             );
         }
 
         if (this.hasPreviewZonesTarget) {
-            const zoneItems = Array.from(this.element.querySelectorAll('[data-zone-preview-item]'));
+            const zoneItems = Array.from(
+                this.element.querySelectorAll("[data-zone-preview-item]"),
+            );
 
             if (zoneItems.length > 0) {
-                this.previewZonesTarget.innerHTML = zoneItems.map((item) => {
-                    const city = item.dataset.zoneCity || 'Zone d’intervention';
-                    const radius = item.dataset.zoneRadius || '';
-                    const postalCode = item.dataset.zonePostalCode || '';
+                this.previewZonesTarget.innerHTML = zoneItems
+                    .map((item) => {
+                        const city =
+                            item.dataset.zoneCity || "Zone d’intervention";
+                        const radius = item.dataset.zoneRadius || "";
+                        const postalCode = item.dataset.zonePostalCode || "";
 
-                    const meta = [];
-                    if (postalCode) meta.push(postalCode);
-                    if (radius) meta.push(`Rayon ${radius} km`);
+                        const meta = [];
+                        if (postalCode) meta.push(postalCode);
+                        if (radius) meta.push(`Rayon ${radius} km`);
 
-                    return `
+                        return `
                         <div class="tm-prestation-wizard-preview-zone-item">
                             <strong>${city}</strong>
-                            <span>${meta.length ? meta.join(' · ') : 'Zone configurée sur votre profil'}</span>
+                            <span>${meta.length ? meta.join(" · ") : "Zone configurée sur votre profil"}</span>
                         </div>
                     `;
-                }).join('');
+                    })
+                    .join("");
             } else {
                 this.previewZonesTarget.innerHTML = `
                     <div class="tm-prestation-wizard-preview-zone-item is-empty">
@@ -152,18 +167,22 @@ export default class extends Controller {
 
     bindLivePreview() {
         [
-            'sourceTitleTarget',
-            'sourceShortDescriptionTarget',
-            'sourceDescriptionTarget',
-            'sourcePricingTypeTarget',
-            'sourcePriceFromTarget',
-            'sourcePriceToTarget',
-            'sourcePriceUnitTarget',
-            'sourceAdditionalInfoTarget',
+            "sourceTitleTarget",
+            "sourceShortDescriptionTarget",
+            "sourceDescriptionTarget",
+            "sourcePricingTypeTarget",
+            "sourcePriceFromTarget",
+            "sourcePriceToTarget",
+            "sourcePriceUnitTarget",
+            "sourceAdditionalInfoTarget",
         ].forEach((targetName) => {
             if (this[`has${this.capitalize(targetName)}`]) {
-                this[targetName].addEventListener('input', () => this.refreshPreview());
-                this[targetName].addEventListener('change', () => this.refreshPreview());
+                this[targetName].addEventListener("input", () =>
+                    this.refreshPreview(),
+                );
+                this[targetName].addEventListener("change", () =>
+                    this.refreshPreview(),
+                );
             }
         });
     }
@@ -171,13 +190,13 @@ export default class extends Controller {
     updateUI() {
         this.stepTargets.forEach((step, index) => {
             const isActive = index === this.currentStep;
-            step.classList.toggle('is-active', isActive);
-            step.classList.toggle('d-none', !isActive);
+            step.classList.toggle("is-active", isActive);
+            step.classList.toggle("d-none", !isActive);
         });
 
         this.indicatorTargets.forEach((indicator, index) => {
-            indicator.classList.toggle('is-active', index === this.currentStep);
-            indicator.classList.toggle('is-done', index < this.currentStep);
+            indicator.classList.toggle("is-active", index === this.currentStep);
+            indicator.classList.toggle("is-done", index < this.currentStep);
         });
 
         if (this.hasProgressBarTarget) {
@@ -194,16 +213,26 @@ export default class extends Controller {
         }
 
         if (this.hasPrevButtonTarget) {
-            this.prevButtonTarget.classList.toggle('d-none', this.currentStep === 0);
+            this.prevButtonTarget.classList.toggle(
+                "d-none",
+                this.currentStep === 0,
+            );
         }
 
         if (this.hasNextButtonTarget) {
-            this.nextButtonTarget.classList.toggle('d-none', this.currentStep === this.totalSteps - 1);
+            this.nextButtonTarget.classList.toggle(
+                "d-none",
+                this.currentStep === this.totalSteps - 1,
+            );
         }
 
         if (this.hasSubmitButtonTarget) {
-            this.submitButtonTarget.classList.toggle('d-none', this.currentStep !== this.totalSteps - 1);
+            this.submitButtonTarget.classList.toggle(
+                "d-none",
+                this.currentStep !== this.totalSteps - 1,
+            );
         }
+        this.refreshLeafletMap();
     }
 
     validateStepsUntil(targetIndex) {
@@ -227,7 +256,7 @@ export default class extends Controller {
             return true;
         }
 
-        const fields = currentPanel.querySelectorAll('input, textarea, select');
+        const fields = currentPanel.querySelectorAll("input, textarea, select");
         let firstInvalidField = null;
 
         fields.forEach((field) => {
@@ -235,7 +264,11 @@ export default class extends Controller {
                 return;
             }
 
-            if (typeof field.reportValidity === 'function' && !field.reportValidity() && !firstInvalidField) {
+            if (
+                typeof field.reportValidity === "function" &&
+                !field.reportValidity() &&
+                !firstInvalidField
+            ) {
                 firstInvalidField = field;
             }
         });
@@ -249,64 +282,80 @@ export default class extends Controller {
     }
 
     togglePricingFields() {
-    if (!this.hasSourcePricingTypeTarget) {
-        return;
-    }
-
-    const pricingType = (this.sourcePricingTypeTarget.value || '').trim();
-
-    const priceFromField = this.element.querySelector('[data-pricing-field="priceFrom"]');
-    const priceToField = this.element.querySelector('[data-pricing-field="priceTo"]');
-    const priceUnitField = this.element.querySelector('[data-pricing-field="priceUnit"]');
-    const quoteNote = this.hasPricingQuoteBlockTarget
-        ? this.pricingQuoteBlockTarget.querySelector('.tm-prestation-wizard-note')
-        : null;
-
-    if (priceFromField) priceFromField.classList.add('d-none');
-    if (priceToField) priceToField.classList.add('d-none');
-    if (priceUnitField) priceUnitField.classList.add('d-none');
-    if (quoteNote) quoteNote.classList.add('d-none');
-
-    if (pricingType === 'quote') {
-        if (quoteNote) quoteNote.classList.remove('d-none');
-        return;
-    }
-
-    if (pricingType === 'from') {
-        if (priceFromField) priceFromField.classList.remove('d-none');
-        if (priceUnitField) priceUnitField.classList.remove('d-none');
-        return;
-    }
-
-    if (pricingType === 'range') {
-        if (priceFromField) priceFromField.classList.remove('d-none');
-        if (priceToField) priceToField.classList.remove('d-none');
-        if (priceUnitField) priceUnitField.classList.remove('d-none');
-        return;
-    }
-
-    if (['fixed', 'hourly', 'daily'].includes(pricingType)) {
-        if (priceToField) priceToField.classList.remove('d-none');
-        if (priceUnitField) priceUnitField.classList.remove('d-none');
-        return;
-    }
-
-    if (priceToField) priceToField.classList.remove('d-none');
-    if (priceUnitField) priceUnitField.classList.remove('d-none');
-}
-
-    buildPricingLabel() {
-        const pricingType = this.hasSourcePricingTypeTarget ? this.sourcePricingTypeTarget.value.trim() : '';
-        const priceFrom = this.hasSourcePriceFromTarget ? this.sourcePriceFromTarget.value.trim() : '';
-        const priceTo = this.hasSourcePriceToTarget ? this.sourcePriceToTarget.value.trim() : '';
-        const priceUnit = this.hasSourcePriceUnitTarget ? this.sourcePriceUnitTarget.value.trim() : '';
-        const unitLabel = priceUnit ? ` / ${priceUnit}` : '';
-
-        if (pricingType === 'quote') {
-            return 'Tarif sur devis';
+        if (!this.hasSourcePricingTypeTarget) {
+            return;
         }
 
-        if (pricingType === 'range') {
+        const pricingType = (this.sourcePricingTypeTarget.value || "").trim();
+
+        const priceFromField = this.element.querySelector(
+            '[data-pricing-field="priceFrom"]',
+        );
+        const priceToField = this.element.querySelector(
+            '[data-pricing-field="priceTo"]',
+        );
+        const priceUnitField = this.element.querySelector(
+            '[data-pricing-field="priceUnit"]',
+        );
+        const quoteNote = this.hasPricingQuoteBlockTarget
+            ? this.pricingQuoteBlockTarget.querySelector(
+                  ".tm-prestation-wizard-note",
+              )
+            : null;
+
+        if (priceFromField) priceFromField.classList.add("d-none");
+        if (priceToField) priceToField.classList.add("d-none");
+        if (priceUnitField) priceUnitField.classList.add("d-none");
+        if (quoteNote) quoteNote.classList.add("d-none");
+
+        if (pricingType === "quote") {
+            if (quoteNote) quoteNote.classList.remove("d-none");
+            return;
+        }
+
+        if (pricingType === "from") {
+            if (priceFromField) priceFromField.classList.remove("d-none");
+            if (priceUnitField) priceUnitField.classList.remove("d-none");
+            return;
+        }
+
+        if (pricingType === "range") {
+            if (priceFromField) priceFromField.classList.remove("d-none");
+            if (priceToField) priceToField.classList.remove("d-none");
+            if (priceUnitField) priceUnitField.classList.remove("d-none");
+            return;
+        }
+
+        if (["fixed", "hourly", "daily"].includes(pricingType)) {
+            if (priceToField) priceToField.classList.remove("d-none");
+            if (priceUnitField) priceUnitField.classList.remove("d-none");
+            return;
+        }
+
+        if (priceToField) priceToField.classList.remove("d-none");
+        if (priceUnitField) priceUnitField.classList.remove("d-none");
+    }
+
+    buildPricingLabel() {
+        const pricingType = this.hasSourcePricingTypeTarget
+            ? this.sourcePricingTypeTarget.value.trim()
+            : "";
+        const priceFrom = this.hasSourcePriceFromTarget
+            ? this.sourcePriceFromTarget.value.trim()
+            : "";
+        const priceTo = this.hasSourcePriceToTarget
+            ? this.sourcePriceToTarget.value.trim()
+            : "";
+        const priceUnit = this.hasSourcePriceUnitTarget
+            ? this.sourcePriceUnitTarget.value.trim()
+            : "";
+        const unitLabel = priceUnit ? ` / ${priceUnit}` : "";
+
+        if (pricingType === "quote") {
+            return "Tarif sur devis";
+        }
+
+        if (pricingType === "range") {
             if (priceFrom && priceTo) {
                 return `De ${priceFrom} € à ${priceTo} €${unitLabel}`;
             }
@@ -316,21 +365,21 @@ export default class extends Controller {
             if (priceTo) {
                 return `Jusqu’à ${priceTo} €${unitLabel}`;
             }
-            return 'Fourchette non renseignée';
+            return "Fourchette non renseignée";
         }
 
-        if (pricingType === 'from') {
+        if (pricingType === "from") {
             if (priceFrom) {
                 return `À partir de ${priceFrom} €${unitLabel}`;
             }
-            return 'Tarif à partir de non renseigné';
+            return "Tarif à partir de non renseigné";
         }
 
-        if (['fixed', 'hourly', 'daily'].includes(pricingType)) {
+        if (["fixed", "hourly", "daily"].includes(pricingType)) {
             if (priceTo) {
                 return `${priceTo} €${unitLabel}`;
             }
-            return 'Tarif non renseigné';
+            return "Tarif non renseigné";
         }
 
         if (priceFrom && priceTo) {
@@ -345,15 +394,29 @@ export default class extends Controller {
             return `${priceTo} €${unitLabel}`;
         }
 
-        return 'Tarification non renseignée';
+        return "Tarification non renseignée";
     }
 
     valueOrFallback(value, fallback) {
-        return value && value.trim() !== '' ? value.trim() : fallback;
+        return value && value.trim() !== "" ? value.trim() : fallback;
+    }
+
+    refreshLeafletMap() {
+        const mapElement = this.element.querySelector(
+            '[data-controller*="symfony--ux-leaflet-map--map"]',
+        );
+
+        if (!mapElement) {
+            return;
+        }
+
+        setTimeout(() => {
+            window.dispatchEvent(new Event("resize"));
+        }, 120);
     }
 
     scrollToTop() {
-        this.element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     capitalize(value) {

@@ -1,3 +1,5 @@
+
+
 {% extends 'base.html.twig' %}
 
 {% block title %}Éditer une prestation{% endblock %}
@@ -6,6 +8,8 @@
     {% set serviceEntity = prestation.service ?? null %}
     {% set categoryEntity = serviceEntity ? serviceEntity.category : null %}
     {% set parentCategoryEntity = categoryEntity ? categoryEntity.parent : null %}
+
+{# CSS => /assets/styles/prestataire/prestation_service_wizard.css #}
 
     <div class="container py-4 py-lg-5 tm-prestation-wizard-page">
         <div class="tm-prestation-wizard">

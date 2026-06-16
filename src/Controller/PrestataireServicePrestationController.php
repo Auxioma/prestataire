@@ -20,6 +20,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
+use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
+use Symfony\UX\Map\InfoWindow;
+use Symfony\UX\Map\Map;
+use Symfony\UX\Map\Marker;
+use Symfony\UX\Map\Point;
 
 final class PrestataireServicePrestationController extends AbstractController
 {
@@ -27,7 +33,7 @@ final class PrestataireServicePrestationController extends AbstractController
     public function edit(
         Request $request,
         PrestataireService $ps,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
     ): Response {
         $user = $this->getUser();
 
@@ -52,11 +58,70 @@ final class PrestataireServicePrestationController extends AbstractController
             ]);
         }
 
+        $zonesCollection = $ps->getPrestataire()?->getPrestataireInterventionZones();
+        $zones = $zonesCollection ? $zonesCollection->toArray() : [];
+
+        $map = null;
+        $firstMappableZone = null;
+
+        foreach ($zones as $zone) {
+            if (null !== $zone->getLatitude() && null !== $zone->getLongitude()) {
+                $firstMappableZone = $zone;
+                break;
+            }
+        }
+
+        if (null !== $firstMappableZone) {
+            $map = new Map();
+
+            $map
+                ->center(new Point(
+                    (float) $firstMappableZone->getLatitude(),
+                    (float) $firstMappableZone->getLongitude()
+                ))
+                ->zoom(9)
+                ->options(
+                    (new LeafletOptions())
+                        ->tileLayer(new TileLayer(
+                            url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                            options: ['maxZoom' => 19],
+                        ))
+                );
+
+            foreach ($zones as $zone) {
+                if (null === $zone->getLatitude() || null === $zone->getLongitude()) {
+                    continue;
+                }
+
+                $label = $zone->getCity() ?: 'Zone d’intervention';
+                $radius = $zone->getRadiusKm()
+                    ? sprintf('Rayon : %s km', $zone->getRadiusKm())
+                    : 'Rayon non renseigné';
+
+                $map->addMarker(new Marker(
+                    position: new Point(
+                        (float) $zone->getLatitude(),
+                        (float) $zone->getLongitude()
+                    ),
+                    title: $label,
+                    infoWindow: new InfoWindow(
+                        content: sprintf(
+                            '<strong>%s</strong><br>%s',
+                            htmlspecialchars($label, ENT_QUOTES),
+                            htmlspecialchars($radius, ENT_QUOTES)
+                        )
+                    )
+                ));
+            }
+        }
+
         return $this->render('prestataire/edit_prestation.html.twig', [
             'form' => $form->createView(),
             'ps' => $ps,
             'prestation' => $ps,
-            'zones' => $ps->getPrestataire()?->getPrestataireInterventionZones() ?? [],
+            'zones' => $zones,
+            'map' => $map,
         ]);
     }
 }
