@@ -28,19 +28,21 @@ class PrestataireProfileRepository extends ServiceEntityRepository
     }
 
     /**
-     * Récupère tous les prestataires actifs qui proposent un service spécifique.
+     * Récupère tous les prestataires actifs qui proposent un service spécifique
+     * avec un lien PrestataireService actif.
      */
     public function findByService(Service $service): array
     {
         return $this->createQueryBuilder('p')
-            ->join('p.prestataireServices', 'ps')
-            ->join('ps.service', 's')
-            ->andWhere('s.id = :serviceId')
-            ->setParameter('serviceId', $service->getId())
-            ->andWhere('p.profileStatus = :status')
-            ->setParameter('status', PrestataireProfileStatusEnum::ACTIVE)
+            ->innerJoin('p.prestataireServices', 'ps')
+            ->innerJoin('ps.service', 's')
             ->leftJoin('p.account', 'a')
-            ->addSelect('a')
+            ->andWhere('p.profileStatus = :status')
+            ->andWhere('ps.isActive = :isActive')
+            ->andWhere('s = :service')
+            ->setParameter('status', PrestataireProfileStatusEnum::ACTIVE)
+            ->setParameter('isActive', true)
+            ->setParameter('service', $service)
             ->orderBy('p.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
@@ -62,52 +64,56 @@ class PrestataireProfileRepository extends ServiceEntityRepository
      * Retourne le QueryBuilder de la barre de recherche d'accueil (le tri est géré par le Paginator).
      */
     public function getHomepageSearchQueryBuilder(array $criteria): QueryBuilder
-    {
-        $qb = $this->createQueryBuilder('p')
-            ->leftJoin('p.account', 'a')
-            ->addSelect('a')
-            ->leftJoin('p.prestataireServices', 'ps')
-            ->leftJoin('ps.service', 's')
-            ->leftJoin('s.category', 'c')
-            ->leftJoin('c.parent', 'parent')
-            ->leftJoin('p.prestataireInterventionZones', 'z')
-            ->andWhere('p.profileStatus = :status')
-            ->setParameter('status', PrestataireProfileStatusEnum::ACTIVE);
+{
+    $qb = $this->createQueryBuilder('p')
+        ->leftJoin('p.account', 'a')
+        ->addSelect('a')
+        ->innerJoin('p.prestataireServices', 'ps')
+        ->innerJoin('ps.service', 's')
+        ->leftJoin('s.category', 'c')
+        ->leftJoin('c.parent', 'parent')
+        ->leftJoin('p.prestataireInterventionZones', 'z')
+        ->andWhere('p.profileStatus = :status')
+        ->andWhere('ps.isActive = :psActive')
+        ->andWhere('s.isActive = :serviceActive')
+        ->setParameter('status', PrestataireProfileStatusEnum::ACTIVE)
+        ->setParameter('psActive', true)
+        ->setParameter('serviceActive', true);
 
-        $query = mb_trim((string) ($criteria['query'] ?? ''));
-        $location = mb_trim((string) ($criteria['location'] ?? ''));
-        $subCategory = $criteria['subCategory'] ?? null;
-        $searchedLocation = $criteria['searchedLocation'] ?? null;
+    $query = mb_trim((string) ($criteria['query'] ?? ''));
+    $location = mb_trim((string) ($criteria['location'] ?? ''));
+    $subCategory = $criteria['subCategory'] ?? null;
+    $searchedLocation = $criteria['searchedLocation'] ?? null;
 
-        if ('' !== $query) {
-            $qb
-                ->andWhere('(
+    if ('' !== $query) {
+        $qb
+            ->andWhere('(
                 LOWER(p.companyName) LIKE LOWER(:query)
                 OR LOWER(p.metier) LIKE LOWER(:query)
                 OR LOWER(p.shortDescription) LIKE LOWER(:query)
                 OR LOWER(s.name) LIKE LOWER(:query)
             )')
-                ->setParameter('query', '%'.$query.'%');
-        }
-
-        if ('' !== $location && null === $searchedLocation) {
-            $qb
-                ->andWhere('(
-        LOWER(p.city) LIKE LOWER(:location)
-        OR p.postalCode LIKE :locationExact
-        OR LOWER(z.city) LIKE LOWER(:location)
-        OR z.postalCode LIKE :locationExact
-    )')
-                ->setParameter('location', '%'.$location.'%')
-                ->setParameter('locationExact', '%'.$location.'%');
-        }
-
-        if (null !== $subCategory) {
-            $qb
-                ->andWhere('c = :subCategory OR parent = :subCategory')
-                ->setParameter('subCategory', $subCategory);
-        }
-
-        return $qb;
+            ->setParameter('query', '%' . $query . '%');
     }
+
+    if ('' !== $location && null === $searchedLocation) {
+        $qb
+            ->andWhere('(
+                LOWER(p.city) LIKE LOWER(:location)
+                OR p.postalCode LIKE :locationExact
+                OR LOWER(z.city) LIKE LOWER(:location)
+                OR z.postalCode LIKE :locationExact
+            )')
+            ->setParameter('location', '%' . $location . '%')
+            ->setParameter('locationExact', '%' . $location . '%');
+    }
+
+    if (null !== $subCategory) {
+        $qb
+            ->andWhere('c = :subCategory OR parent = :subCategory')
+            ->setParameter('subCategory', $subCategory);
+    }
+
+    return $qb;
+}
 }

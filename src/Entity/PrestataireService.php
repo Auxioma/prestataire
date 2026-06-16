@@ -18,6 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PrestataireServiceRepository::class)]
 #[ORM\Table(name: 'prestataire_profile_service')]
+#[ORM\HasLifecycleCallbacks]
 class PrestataireService
 {
     #[ORM\Id]
@@ -33,6 +34,27 @@ class PrestataireService
     #[ORM\JoinColumn(name: 'service_id', referencedColumnName: 'id', nullable: false)]
     private ?Service $service = null;
 
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
+    private bool $isActive = true;
+
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $title = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $priceFrom = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $priceTo = null;
+
+    #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
+    private ?string $priceUnit = null;
+
+    #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
+    private int $position = 0;
+
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, options: ['default' => 0])]
     private ?string $prixCatalogue = '0.00';
 
@@ -41,6 +63,12 @@ class PrestataireService
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $promotionCreatedAt = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function getId(): ?int
     {
@@ -67,6 +95,90 @@ class PrestataireService
     public function setService(?Service $service): self
     {
         $this->service = $service;
+
+        return $this;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): self
+    {
+        $this->title = null !== $title ? trim($title) : null;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = null !== $description ? trim($description) : null;
+
+        return $this;
+    }
+
+    public function getPriceFrom(): ?string
+    {
+        return $this->priceFrom;
+    }
+
+    public function setPriceFrom(?string $priceFrom): self
+    {
+        $this->priceFrom = $priceFrom;
+
+        return $this;
+    }
+
+    public function getPriceTo(): ?string
+    {
+        return $this->priceTo;
+    }
+
+    public function setPriceTo(?string $priceTo): self
+    {
+        $this->priceTo = $priceTo;
+
+        return $this;
+    }
+
+    public function getPriceUnit(): ?string
+    {
+        return $this->priceUnit;
+    }
+
+    public function setPriceUnit(?string $priceUnit): self
+    {
+        $this->priceUnit = null !== $priceUnit ? trim($priceUnit) : null;
+
+        return $this;
+    }
+
+    public function getPosition(): int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(int $position): self
+    {
+        $this->position = $position;
 
         return $this;
     }
@@ -107,6 +219,30 @@ class PrestataireService
         return $this;
     }
 
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
     public function getPrixRemise(): ?float
     {
         if (null === $this->prixCatalogue) {
@@ -126,5 +262,42 @@ class PrestataireService
     public function hasPromotion(): bool
     {
         return null !== $this->tauxReduction && (float) $this->tauxReduction > 0;
+    }
+
+    public function hasDetailedOffer(): bool
+    {
+        return
+            null !== $this->title && '' !== $this->title
+            || null !== $this->description && '' !== $this->description
+            || null !== $this->priceFrom
+            || null !== $this->priceTo
+            || null !== $this->priceUnit && '' !== $this->priceUnit;
+    }
+
+    public function getDisplayTitle(): string
+    {
+        if (null !== $this->title && '' !== trim($this->title)) {
+            return $this->title;
+        }
+
+        return $this->service?->getName() ?? 'Service';
+    }
+
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        $now = new \DateTimeImmutable();
+
+        if (null === $this->createdAt) {
+            $this->createdAt = $now;
+        }
+
+        $this->updatedAt = $now;
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 }
