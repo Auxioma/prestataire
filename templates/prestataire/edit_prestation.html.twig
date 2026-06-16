@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="tm-settings-container mt-5">
+        <div class="container col-lg-8 col-xl-7">
+            <div class="card shadow-sm p-4">
+                <div class="mb-4">
+                    <h4 class="mb-2 fw-bold">
+                        {{ ps.hasDetailedOffer ? 'Compléter la prestation' : 'Proposer une prestation' }}
+                    </h4>
+                    <p class="text-muted mb-0">
+                        Service catalogue associé :
+                        <strong>{{ ps.service.name }}</strong>
+                    </p>
+                </div>
+
+                {{ form_start(form, {
+                    attr: {
+                        class: 'needs-validation',
+                        'data-turbo': 'false'
+                    }
+                }) }}
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            {{ form_row(form.isActive) }}
+                        </div>
+
+                        <div class="col-12">
+                            {{ form_row(form.title) }}
+                        </div>
+
+                        <div class="col-12">
+                            {{ form_row(form.description) }}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form_row(form.priceFrom) }}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form_row(form.priceTo) }}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form_row(form.priceUnit) }}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form_row(form.position) }}
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end mt-4">
+                        <a
+                            href="{{ path('app_prestataire_settings', { _fragment: 'services-panel' }) }}"
+                            class="btn btn-secondary"
+                        >
+                            Annuler
+                        </a>
+
+                        <button type="submit" class="btn btn-primary">
+                            Enregistrer la prestation
+                        </button>
+                    </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
