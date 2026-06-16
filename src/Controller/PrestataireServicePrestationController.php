@@ -20,8 +20,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
 use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
+use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
 use Symfony\UX\Map\InfoWindow;
 use Symfony\UX\Map\Map;
 use Symfony\UX\Map\Marker;
@@ -61,7 +61,7 @@ final class PrestataireServicePrestationController extends AbstractController
         $zonesCollection = $ps->getPrestataire()?->getPrestataireInterventionZones();
         $zones = $zonesCollection ? $zonesCollection->toArray() : [];
 
-        $map = null;
+        $zoneMap = null;
         $firstMappableZone = null;
 
         foreach ($zones as $zone) {
@@ -72,21 +72,18 @@ final class PrestataireServicePrestationController extends AbstractController
         }
 
         if (null !== $firstMappableZone) {
-            $map = new Map();
-
-            $map
+            $zoneMap = (new Map())
                 ->center(new Point(
                     (float) $firstMappableZone->getLatitude(),
                     (float) $firstMappableZone->getLongitude()
                 ))
-                ->zoom(9)
+                ->zoom(8)
                 ->options(
-                    (new LeafletOptions())
-                        ->tileLayer(new TileLayer(
-                            url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                            options: ['maxZoom' => 19],
-                        ))
+                    (new LeafletOptions())->tileLayer(new TileLayer(
+                        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                        options: ['maxZoom' => 19],
+                    ))
                 );
 
             foreach ($zones as $zone) {
@@ -95,11 +92,11 @@ final class PrestataireServicePrestationController extends AbstractController
                 }
 
                 $label = $zone->getCity() ?: 'Zone d’intervention';
-                $radius = $zone->getRadiusKm()
-                    ? sprintf('Rayon : %s km', $zone->getRadiusKm())
+                $radiusText = null !== $zone->getRadiusKm()
+                    ? 'Rayon : ' . (int) $zone->getRadiusKm() . ' km'
                     : 'Rayon non renseigné';
 
-                $map->addMarker(new Marker(
+                $zoneMap->addMarker(new Marker(
                     position: new Point(
                         (float) $zone->getLatitude(),
                         (float) $zone->getLongitude()
@@ -108,8 +105,8 @@ final class PrestataireServicePrestationController extends AbstractController
                     infoWindow: new InfoWindow(
                         content: sprintf(
                             '<strong>%s</strong><br>%s',
-                            htmlspecialchars($label, ENT_QUOTES),
-                            htmlspecialchars($radius, ENT_QUOTES)
+                            htmlspecialchars($label, ENT_QUOTES, 'UTF-8'),
+                            htmlspecialchars($radiusText, ENT_QUOTES, 'UTF-8')
                         )
                     )
                 ));
@@ -121,7 +118,8 @@ final class PrestataireServicePrestationController extends AbstractController
             'ps' => $ps,
             'prestation' => $ps,
             'zones' => $zones,
-            'map' => $map,
+            'zoneMap' => $zoneMap,
+            'map' => $zoneMap,
         ]);
     }
 }

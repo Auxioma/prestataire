@@ -1,187 +1,186 @@
-
-
 {% extends 'base.html.twig' %}
 
-{% block title %}Éditer une prestation{% endblock %}
+{% block title %}Éditer une prestation
+{% endblock %}
 
 {% block body %}
-    {% set serviceEntity = prestation.service ?? null %}
-    {% set categoryEntity = serviceEntity ? serviceEntity.category : null %}
-    {% set parentCategoryEntity = categoryEntity ? categoryEntity.parent : null %}
+	{% set serviceEntity = prestation.service ?? null %}
+	{% set categoryEntity = serviceEntity ? serviceEntity.category : null %}
+	{% set parentCategoryEntity = categoryEntity ? categoryEntity.parent : null %}
 
-{# CSS => /assets/styles/prestataire/prestation_service_wizard.css #}
+	{# CSS => /assets/styles/prestataire/prestation_service_wizard.css #}
 
-    <div class="container py-4 py-lg-5 tm-prestation-wizard-page">
-        <div class="tm-prestation-wizard">
-            <div class="tm-prestation-wizard-card" data-controller="prestation-wizard">
-                <div class="tm-prestation-wizard-hero">
-                    <span class="tm-prestation-wizard-eyebrow">
-                        <i class="bi bi-magic"></i>
-                        Configuration guidée
-                    </span>
+	<div class="container py-4 py-lg-5 tm-prestation-wizard-page">
+		<div class="tm-prestation-wizard">
+			<div class="tm-prestation-wizard-card" data-controller="prestation-wizard">
+				<div class="tm-prestation-wizard-hero">
+					<span class="tm-prestation-wizard-eyebrow">
+						<i class="bi bi-magic"></i>
+						Configuration guidée
+					</span>
 
-                    <h1 class="tm-prestation-wizard-title">Compléter votre prestation en 6 étapes</h1>
-                    <p class="tm-prestation-wizard-subtitle">
-                        Renseignez les informations utiles pour présenter votre offre de manière claire,
-                        rassurante et exploitable dans les futures vues publiques.
-                    </p>
-                </div>
+					<h1 class="tm-prestation-wizard-title">Compléter votre prestation en 6 étapes</h1>
+					<p class="tm-prestation-wizard-subtitle">
+						Renseignez les informations utiles pour présenter votre offre de manière claire,
+						                        rassurante et exploitable dans les futures vues publiques.
+					</p>
+				</div>
 
-                <div class="tm-prestation-wizard-progress">
-                    <div class="tm-prestation-wizard-progress-top">
-                        <p class="tm-prestation-wizard-progress-label">
-                            Étape
-                            <span class="tm-prestation-wizard-progress-count">
-                                <span data-prestation-wizard-target="stepCurrent">1</span>/<span data-prestation-wizard-target="stepTotal">6</span>
-                            </span>
-                        </p>
-                        <p class="tm-prestation-wizard-progress-note mb-0">
-                            Vous pouvez avancer pas à pas puis vérifier l’aperçu final.
-                        </p>
-                    </div>
+				<div class="tm-prestation-wizard-progress">
+					<div class="tm-prestation-wizard-progress-top">
+						<p class="tm-prestation-wizard-progress-label">
+							Étape
+							<span class="tm-prestation-wizard-progress-count">
+								<span data-prestation-wizard-target="stepCurrent">1</span>/<span data-prestation-wizard-target="stepTotal">6</span>
+							</span>
+						</p>
+						<p class="tm-prestation-wizard-progress-note mb-0">
+							Vous pouvez avancer pas à pas puis vérifier l’aperçu final.
+						</p>
+					</div>
 
-                    <div class="tm-prestation-wizard-progress-track">
-                        <div class="tm-prestation-wizard-progress-bar" data-prestation-wizard-target="progressBar"></div>
-                    </div>
-                </div>
+					<div class="tm-prestation-wizard-progress-track">
+						<div class="tm-prestation-wizard-progress-bar" data-prestation-wizard-target="progressBar"></div>
+					</div>
+				</div>
 
-                <div class="tm-prestation-wizard-steps-nav">
-                    <button type="button" class="tm-prestation-wizard-step-indicator is-active" data-prestation-wizard-target="indicator" data-step-index-value="0" data-action="click->prestation-wizard#goToStep">
-                        <span class="tm-prestation-wizard-step-number">1</span>
-                        <span class="tm-prestation-wizard-step-name">Informations</span>
-                        <span class="tm-prestation-wizard-step-desc">Titre, service et résumé SEO.</span>
-                    </button>
+				<div class="tm-prestation-wizard-steps-nav">
+					<button type="button" class="tm-prestation-wizard-step-indicator is-active" data-prestation-wizard-target="indicator" data-step-index-value="0" data-action="click->prestation-wizard#goToStep">
+						<span class="tm-prestation-wizard-step-number">1</span>
+						<span class="tm-prestation-wizard-step-name">Informations</span>
+						<span class="tm-prestation-wizard-step-desc">Titre, service et résumé SEO.</span>
+					</button>
 
-                    <button type="button" class="tm-prestation-wizard-step-indicator" data-prestation-wizard-target="indicator" data-step-index-value="1" data-action="click->prestation-wizard#goToStep">
-                        <span class="tm-prestation-wizard-step-number">2</span>
-                        <span class="tm-prestation-wizard-step-name">Détails</span>
-                        <span class="tm-prestation-wizard-step-desc">Description longue de l’offre.</span>
-                    </button>
+					<button type="button" class="tm-prestation-wizard-step-indicator" data-prestation-wizard-target="indicator" data-step-index-value="1" data-action="click->prestation-wizard#goToStep">
+						<span class="tm-prestation-wizard-step-number">2</span>
+						<span class="tm-prestation-wizard-step-name">Détails</span>
+						<span class="tm-prestation-wizard-step-desc">Description longue de l’offre.</span>
+					</button>
 
-                    <button type="button" class="tm-prestation-wizard-step-indicator" data-prestation-wizard-target="indicator" data-step-index-value="2" data-action="click->prestation-wizard#goToStep">
-                        <span class="tm-prestation-wizard-step-number">3</span>
-                        <span class="tm-prestation-wizard-step-name">Tarifs</span>
-                        <span class="tm-prestation-wizard-step-desc">Type, prix et unité.</span>
-                    </button>
+					<button type="button" class="tm-prestation-wizard-step-indicator" data-prestation-wizard-target="indicator" data-step-index-value="2" data-action="click->prestation-wizard#goToStep">
+						<span class="tm-prestation-wizard-step-number">3</span>
+						<span class="tm-prestation-wizard-step-name">Tarifs</span>
+						<span class="tm-prestation-wizard-step-desc">Type, prix et unité.</span>
+					</button>
 
-                    <button type="button" class="tm-prestation-wizard-step-indicator" data-prestation-wizard-target="indicator" data-step-index-value="3" data-action="click->prestation-wizard#goToStep">
-                        <span class="tm-prestation-wizard-step-number">4</span>
-                        <span class="tm-prestation-wizard-step-name">Zone</span>
-                        <span class="tm-prestation-wizard-step-desc">Zones du prestataire et infos utiles.</span>
-                    </button>
+					<button type="button" class="tm-prestation-wizard-step-indicator" data-prestation-wizard-target="indicator" data-step-index-value="3" data-action="click->prestation-wizard#goToStep">
+						<span class="tm-prestation-wizard-step-number">4</span>
+						<span class="tm-prestation-wizard-step-name">Zone</span>
+						<span class="tm-prestation-wizard-step-desc">Zones du prestataire et infos utiles.</span>
+					</button>
 
-                    <button type="button" class="tm-prestation-wizard-step-indicator" data-prestation-wizard-target="indicator" data-step-index-value="4" data-action="click->prestation-wizard#goToStep">
-                        <span class="tm-prestation-wizard-step-number">5</span>
-                        <span class="tm-prestation-wizard-step-name">Photos & docs</span>
-                        <span class="tm-prestation-wizard-step-desc">Étape préparée pour plus tard.</span>
-                    </button>
+					<button type="button" class="tm-prestation-wizard-step-indicator" data-prestation-wizard-target="indicator" data-step-index-value="4" data-action="click->prestation-wizard#goToStep">
+						<span class="tm-prestation-wizard-step-number">5</span>
+						<span class="tm-prestation-wizard-step-name">Photos & docs</span>
+						<span class="tm-prestation-wizard-step-desc">Étape préparée pour plus tard.</span>
+					</button>
 
-                    <button type="button" class="tm-prestation-wizard-step-indicator" data-prestation-wizard-target="indicator" data-step-index-value="5" data-action="click->prestation-wizard#goToStep">
-                        <span class="tm-prestation-wizard-step-number">6</span>
-                        <span class="tm-prestation-wizard-step-name">Prévisualisation</span>
-                        <span class="tm-prestation-wizard-step-desc">Résumé final avant enregistrement.</span>
-                    </button>
-                </div>
+					<button type="button" class="tm-prestation-wizard-step-indicator" data-prestation-wizard-target="indicator" data-step-index-value="5" data-action="click->prestation-wizard#goToStep">
+						<span class="tm-prestation-wizard-step-number">6</span>
+						<span class="tm-prestation-wizard-step-name">Prévisualisation</span>
+						<span class="tm-prestation-wizard-step-desc">Résumé final avant enregistrement.</span>
+					</button>
+				</div>
 
-                {{ form_start(form, {
+				{{ form_start(form, {
                     attr: {
                         class: 'tm-prestation-wizard-form',
                         'data-turbo': 'false'
                     }
                 }) }}
 
-                <div class="tm-prestation-wizard-body">
-                    <section class="tm-prestation-wizard-panel is-active" data-prestation-wizard-target="step">
-                        <div class="tm-prestation-wizard-panel-head">
-                            <h2 class="tm-prestation-wizard-panel-title">Informations générales</h2>
-                            <p class="tm-prestation-wizard-panel-subtitle">
-                                Donnez un titre vendeur à votre prestation et renseignez une description courte pensée pour les listes, cartes et futurs extraits SEO.
-                            </p>
-                        </div>
+				<div class="tm-prestation-wizard-body">
+					<section class="tm-prestation-wizard-panel is-active" data-prestation-wizard-target="step">
+						<div class="tm-prestation-wizard-panel-head">
+							<h2 class="tm-prestation-wizard-panel-title">Informations générales</h2>
+							<p class="tm-prestation-wizard-panel-subtitle">
+								Donnez un titre vendeur à votre prestation et renseignez une description courte pensée pour les listes, cartes et futurs extraits SEO.
+							</p>
+						</div>
 
-                        <div class="tm-prestation-wizard-grid">
-                            {% if form.isActive is defined %}
-                                <div class="tm-prestation-wizard-col-12">
-                                    <div class="tm-prestation-wizard-visibility-card">
-                                        <div class="tm-prestation-wizard-visibility-badge">
-                                            <i class="bi bi-eye-fill"></i>
-                                            Visibilité
-                                        </div>
+						<div class="tm-prestation-wizard-grid">
+							{% if form.isActive is defined %}
+								<div class="tm-prestation-wizard-col-12">
+									<div class="tm-prestation-wizard-visibility-card">
+										<div class="tm-prestation-wizard-visibility-badge">
+											<i class="bi bi-eye-fill"></i>
+											Visibilité
+										</div>
 
-                                        <div class="tm-prestation-wizard-visibility-main">
-                                            <div>
-                                                <h3 class="tm-prestation-wizard-visibility-title">Prestation active</h3>
-                                                <p class="tm-prestation-wizard-visibility-text">
-                                                    Désactivez cette option si vous ne souhaitez pas rendre votre proposition visible.
-                                                </p>
-                                            </div>
+										<div class="tm-prestation-wizard-visibility-main">
+											<div>
+												<h3 class="tm-prestation-wizard-visibility-title">Prestation active</h3>
+												<p class="tm-prestation-wizard-visibility-text">
+													Désactivez cette option si vous ne souhaitez pas rendre votre proposition visible.
+												</p>
+											</div>
 
-                                            <div class="form-check form-switch tm-prestation-wizard-visibility-switch">
-                                                {{ form_widget(form.isActive, {
+											<div class="form-check form-switch tm-prestation-wizard-visibility-switch">
+												{{ form_widget(form.isActive, {
                                                     attr: {
                                                         class: 'form-check-input'
                                                     }
                                                 }) }}
-                                                {{ form_label(form.isActive, null, {
+												{{ form_label(form.isActive, null, {
                                                     label_attr: {
                                                         class: 'form-check-label'
                                                     }
                                                 }) }}
-                                            </div>
-                                        </div>
+											</div>
+										</div>
 
-                                        {{ form_errors(form.isActive) }}
-                                    </div>
-                                </div>
-                            {% endif %}
+										{{ form_errors(form.isActive) }}
+									</div>
+								</div>
+							{% endif %}
 
-                            <div class="tm-prestation-wizard-col-6">
-                                <div class="tm-prestation-wizard-field">
-                                    <label>Catégorie</label>
-                                    <div class="tm-prestation-wizard-static-box">
-                                        {{ parentCategoryEntity ? parentCategoryEntity.name : 'Non renseignée' }}
-                                    </div>
-                                </div>
-                            </div>
+							<div class="tm-prestation-wizard-col-6">
+								<div class="tm-prestation-wizard-field">
+									<label>Catégorie</label>
+									<div class="tm-prestation-wizard-static-box">
+										{{ parentCategoryEntity ? parentCategoryEntity.name : 'Non renseignée' }}
+									</div>
+								</div>
+							</div>
 
-                            <div class="tm-prestation-wizard-col-6">
-                                <div class="tm-prestation-wizard-field">
-                                    <label>Sous-catégorie</label>
-                                    <div class="tm-prestation-wizard-static-box">
-                                        {{ categoryEntity ? categoryEntity.name : 'Non renseignée' }}
-                                    </div>
-                                </div>
-                            </div>
+							<div class="tm-prestation-wizard-col-6">
+								<div class="tm-prestation-wizard-field">
+									<label>Sous-catégorie</label>
+									<div class="tm-prestation-wizard-static-box">
+										{{ categoryEntity ? categoryEntity.name : 'Non renseignée' }}
+									</div>
+								</div>
+							</div>
 
-                            <div class="tm-prestation-wizard-col-12">
-                                <div class="tm-prestation-wizard-field">
-                                    <label>Service rattaché</label>
-                                    <div class="tm-prestation-wizard-static-box">
-                                        {{ serviceEntity ? serviceEntity.name : 'Non renseigné' }}
-                                    </div>
-                                </div>
-                            </div>
+							<div class="tm-prestation-wizard-col-12">
+								<div class="tm-prestation-wizard-field">
+									<label>Service rattaché</label>
+									<div class="tm-prestation-wizard-static-box">
+										{{ serviceEntity ? serviceEntity.name : 'Non renseigné' }}
+									</div>
+								</div>
+							</div>
 
-                            <div class="tm-prestation-wizard-col-12">
-                                <div class="tm-prestation-wizard-field">
-                                    {{ form_label(form.title) }}
-                                    {{ form_widget(form.title, {
+							<div class="tm-prestation-wizard-col-12">
+								<div class="tm-prestation-wizard-field">
+									{{ form_label(form.title) }}
+									{{ form_widget(form.title, {
                                         attr: {
                                             class: 'form-control',
                                             placeholder: 'Ex. Pose de carrelage intérieur haut de gamme',
                                             'data-prestation-wizard-target': 'sourceTitle'
                                         }
                                     }) }}
-                                    {{ form_errors(form.title) }}
-                                    <div class="form-text">Choisissez un intitulé clair, concret et compréhensible immédiatement.</div>
-                                </div>
-                            </div>
+									{{ form_errors(form.title) }}
+									<div class="form-text">Choisissez un intitulé clair, concret et compréhensible immédiatement.</div>
+								</div>
+							</div>
 
-                            {% if form.shortDescription is defined %}
-                                <div class="tm-prestation-wizard-col-12">
-                                    <div class="tm-prestation-wizard-field">
-                                        {{ form_label(form.shortDescription) }}
-                                        {{ form_widget(form.shortDescription, {
+							{% if form.shortDescription is defined %}
+								<div class="tm-prestation-wizard-col-12">
+									<div class="tm-prestation-wizard-field">
+										{{ form_label(form.shortDescription) }}
+										{{ form_widget(form.shortDescription, {
                                             attr: {
                                                 class: 'form-control',
                                                 rows: 4,
@@ -189,27 +188,27 @@
                                                 'data-prestation-wizard-target': 'sourceShortDescription'
                                             }
                                         }) }}
-                                        {{ form_errors(form.shortDescription) }}
-                                        <div class="form-text">Idéal pour les cartes, résultats de recherche et aperçus rapides.</div>
-                                    </div>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </section>
+										{{ form_errors(form.shortDescription) }}
+										<div class="form-text">Idéal pour les cartes, résultats de recherche et aperçus rapides.</div>
+									</div>
+								</div>
+							{% endif %}
+						</div>
+					</section>
 
-                    <section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
-                        <div class="tm-prestation-wizard-panel-head">
-                            <h2 class="tm-prestation-wizard-panel-title">Détails de la prestation</h2>
-                            <p class="tm-prestation-wizard-panel-subtitle">
-                                Expliquez précisément ce que vous faites, pour qui, dans quel cadre et avec quel niveau de finition.
-                            </p>
-                        </div>
+					<section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
+						<div class="tm-prestation-wizard-panel-head">
+							<h2 class="tm-prestation-wizard-panel-title">Détails de la prestation</h2>
+							<p class="tm-prestation-wizard-panel-subtitle">
+								Expliquez précisément ce que vous faites, pour qui, dans quel cadre et avec quel niveau de finition.
+							</p>
+						</div>
 
-                        <div class="tm-prestation-wizard-grid">
-                            <div class="tm-prestation-wizard-col-12">
-                                <div class="tm-prestation-wizard-field">
-                                    {{ form_label(form.description) }}
-                                    {{ form_widget(form.description, {
+						<div class="tm-prestation-wizard-grid">
+							<div class="tm-prestation-wizard-col-12">
+								<div class="tm-prestation-wizard-field">
+									{{ form_label(form.description) }}
+									{{ form_widget(form.description, {
                                         attr: {
                                             class: 'form-control',
                                             rows: 10,
@@ -217,143 +216,140 @@
                                             'data-prestation-wizard-target': 'sourceDescription'
                                         }
                                     }) }}
-                                    {{ form_errors(form.description) }}
-                                    <div class="form-text">Les disponibilités détaillées seront gérées dans une étape future dédiée.</div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+									{{ form_errors(form.description) }}
+									<div class="form-text">Les disponibilités détaillées seront gérées dans une étape future dédiée.</div>
+								</div>
+							</div>
+						</div>
+					</section>
 
-                    <section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
-    <div class="tm-prestation-wizard-panel-head">
-        <h2 class="tm-prestation-wizard-panel-title">Tarifs</h2>
-        <p class="tm-prestation-wizard-panel-subtitle">
-            Structurez votre tarification pour qu’elle soit lisible et exploitable dans l’affichage public.
-        </p>
-    </div>
+					<section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
+						<div class="tm-prestation-wizard-panel-head">
+							<h2 class="tm-prestation-wizard-panel-title">Tarifs</h2>
+							<p class="tm-prestation-wizard-panel-subtitle">
+								Structurez votre tarification pour qu’elle soit lisible et exploitable dans l’affichage public.
+							</p>
+						</div>
 
-    <div class="tm-prestation-wizard-grid">
-        <div class="tm-prestation-wizard-col-12">
-            <div class="tm-prestation-wizard-field">
-                {{ form_label(form.pricingType) }}
-                {{ form_widget(form.pricingType, {
+						<div class="tm-prestation-wizard-grid">
+							<div class="tm-prestation-wizard-col-12">
+								<div class="tm-prestation-wizard-field">
+									{{ form_label(form.pricingType) }}
+									{{ form_widget(form.pricingType, {
                     attr: {
                         class: 'form-select',
                         'data-prestation-wizard-target': 'sourcePricingType'
                     }
                 }) }}
-                {{ form_errors(form.pricingType) }}
-                <div class="form-text">Choisissez le mode tarifaire adapté à cette prestation.</div>
-            </div>
-        </div>
+									{{ form_errors(form.pricingType) }}
+									<div class="form-text">Choisissez le mode tarifaire adapté à cette prestation.</div>
+								</div>
+							</div>
 
-        <div class="tm-prestation-wizard-col-12" data-prestation-wizard-target="pricingQuoteBlock">
-            <div class="tm-prestation-wizard-note d-none">
-                Ce mode de tarification n’affiche pas de montant chiffré. La prévisualisation indiquera automatiquement « Tarif sur devis ».
-            </div>
-        </div>
+							<div class="tm-prestation-wizard-col-12" data-prestation-wizard-target="pricingQuoteBlock">
+								<div class="tm-prestation-wizard-note d-none">
+									Ce mode de tarification n’affiche pas de montant chiffré. La prévisualisation indiquera automatiquement « Tarif sur devis ».
+								</div>
+							</div>
 
-        <div class="tm-prestation-wizard-col-6" data-pricing-field="priceFrom">
-            <div class="tm-prestation-wizard-field">
-                {{ form_label(form.priceFrom) }}
-                {{ form_widget(form.priceFrom, {
+							<div class="tm-prestation-wizard-col-6" data-pricing-field="priceFrom">
+								<div class="tm-prestation-wizard-field">
+									{{ form_label(form.priceFrom) }}
+									{{ form_widget(form.priceFrom, {
                     attr: {
                         class: 'form-control',
                         placeholder: 'Ex. 80',
                         'data-prestation-wizard-target': 'sourcePriceFrom'
                     }
                 }) }}
-                {{ form_errors(form.priceFrom) }}
-            </div>
-        </div>
+									{{ form_errors(form.priceFrom) }}
+								</div>
+							</div>
 
-        <div class="tm-prestation-wizard-col-6" data-pricing-field="priceTo">
-            <div class="tm-prestation-wizard-field">
-                {{ form_label(form.priceTo, 'Prix') }}
-                {{ form_widget(form.priceTo, {
+							<div class="tm-prestation-wizard-col-6" data-pricing-field="priceTo">
+								<div class="tm-prestation-wizard-field">
+									{{ form_label(form.priceTo, 'Prix') }}
+									{{ form_widget(form.priceTo, {
                     attr: {
                         class: 'form-control',
                         placeholder: 'Ex. 120',
                         'data-prestation-wizard-target': 'sourcePriceTo'
                     }
                 }) }}
-                {{ form_errors(form.priceTo) }}
-            </div>
-        </div>
+									{{ form_errors(form.priceTo) }}
+								</div>
+							</div>
 
-        <div class="tm-prestation-wizard-col-12" data-pricing-field="priceUnit">
-            <div class="tm-prestation-wizard-field">
-                {{ form_label(form.priceUnit) }}
-                {{ form_widget(form.priceUnit, {
+							<div class="tm-prestation-wizard-col-12" data-pricing-field="priceUnit">
+								<div class="tm-prestation-wizard-field">
+									{{ form_label(form.priceUnit) }}
+									{{ form_widget(form.priceUnit, {
                     attr: {
                         class: 'form-control',
                         placeholder: 'Ex. heure, jour, forfait',
                         'data-prestation-wizard-target': 'sourcePriceUnit'
                     }
                 }) }}
-                {{ form_errors(form.priceUnit) }}
-            </div>
-        </div>
-    </div>
-</section>
+									{{ form_errors(form.priceUnit) }}
+								</div>
+							</div>
+						</div>
+					</section>
 
-                    <section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
-                        <div class="tm-prestation-wizard-panel-head">
-                            <h2 class="tm-prestation-wizard-panel-title">Zone et informations utiles</h2>
-                            <p class="tm-prestation-wizard-panel-subtitle">
-                                Cette étape rappelle les zones déjà configurées sur votre profil et permet d’ajouter des précisions utiles pour cette prestation.
-                            </p>
-                        </div>
+					<section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
+						<div class="tm-prestation-wizard-panel-head">
+							<h2 class="tm-prestation-wizard-panel-title">Zone et informations utiles</h2>
+							<p class="tm-prestation-wizard-panel-subtitle">
+								Cette étape rappelle les zones déjà configurées sur votre profil et permet d’ajouter des précisions utiles pour cette prestation.
+							</p>
+						</div>
 
-                        <div class="tm-prestation-wizard-grid">
-                            <div class="tm-prestation-wizard-col-12">
-                                <div class="tm-prestation-wizard-note">
-                                    Les zones d’intervention sont pilotées au niveau de votre profil prestataire. Elles sont reprises ici à titre informatif pour éviter les doublons.
-                                </div>
-                            </div>
+						<div class="tm-prestation-wizard-grid">
+							<div class="tm-prestation-wizard-col-12">
+								<div class="tm-prestation-wizard-note">
+									Les zones d’intervention sont pilotées au niveau de votre profil prestataire. Elles sont reprises ici à titre informatif pour éviter les doublons.
+								</div>
+							</div>
 
-                            <div class="tm-prestation-wizard-col-12">
-                                <div class="tm-prestation-wizard-zone-list">
-                                    {% if zones is defined and zones|length > 0 %}
-                                        {% for zone in zones %}
-                                            <article
-                                                class="tm-prestation-wizard-zone-card"
-                                                data-zone-preview-item
-                                                data-zone-city="{{ zone.city ?? zone.label ?? 'Zone d’intervention' }}"
-                                                data-zone-radius="{{ zone.radiusKm ?? '' }}"
-                                                data-zone-postal-code="{{ zone.postalCode ?? '' }}"
-                                            >
-                                                <h3 class="tm-prestation-wizard-zone-title">
-                                                    {{ zone.city ?? zone.label ?? 'Zone d’intervention' }}
-                                                </h3>
-                                                <p class="tm-prestation-wizard-zone-meta">
-                                                    {% if zone.radiusKm is defined and zone.radiusKm %}
-                                                        Rayon : {{ zone.radiusKm }} km
-                                                    {% else %}
-                                                        Rayon non renseigné
-                                                    {% endif %}
-                                                    {% if zone.postalCode is defined and zone.postalCode %}
-                                                        · {{ zone.postalCode }}
-                                                    {% endif %}
-                                                </p>
-                                            </article>
-                                        {% endfor %}
-                                    {% else %}
-                                        <article class="tm-prestation-wizard-zone-card">
-                                            <h3 class="tm-prestation-wizard-zone-title">Aucune zone transmise à la vue</h3>
-                                            <p class="tm-prestation-wizard-zone-meta">
-                                                Vous pourrez enrichir cette partie dès que la liste des zones sera injectée dans le contrôleur.
-                                            </p>
-                                        </article>
-                                    {% endif %}
-                                </div>
-                            </div>
+							<div class="tm-prestation-wizard-col-12">
+								<div class="tm-prestation-wizard-zone-list">
+									{% if zones is defined and zones|length > 0 %}
+										{% for zone in zones %}
+											<article class="tm-prestation-wizard-zone-card" data-zone-preview-item data-zone-city="{{ zone.city ?? zone.label ?? 'Zone d’intervention' }}" data-zone-radius="{{ zone.radiusKm ?? '' }}" data-zone-postal-code="{{ zone.postalCode ?? '' }}">
+												<h3 class="tm-prestation-wizard-zone-title">
+													{{ zone.city ?? zone.label ?? 'Zone d’intervention' }}
+												</h3>
+												<p class="tm-prestation-wizard-zone-meta">
+													{% if zone.radiusKm is defined and zone.radiusKm %}
+														Rayon :
+														{{ zone.radiusKm }}
+														km
+													{% else %}
+														Rayon non renseigné
+													{% endif %}
+													{% if zone.postalCode is defined and zone.postalCode %}
+														·
+														{{ zone.postalCode }}
+													{% endif %}
+												</p>
+											</article>
+										{% endfor %}
+									{% else %}
+										<article class="tm-prestation-wizard-zone-card">
+											<h3 class="tm-prestation-wizard-zone-title">Aucune zone transmise à la vue</h3>
+											<p class="tm-prestation-wizard-zone-meta">
+												Vous pourrez enrichir cette partie dès que la liste des zones sera injectée dans le contrôleur.
+											</p>
+										</article>
+									{% endif %}
+								</div>
+							</div>
 
-                            {% if form.additionalInfo is defined %}
-                                <div class="tm-prestation-wizard-col-12">
-                                    <div class="tm-prestation-wizard-field">
-                                        {{ form_label(form.additionalInfo) }}
-                                        {{ form_widget(form.additionalInfo, {
+							{% if form.additionalInfo is defined %}
+								<div class="tm-prestation-wizard-col-12">
+									<div class="tm-prestation-wizard-field">
+										{{ form_label(form.additionalInfo) }}
+										{{ form_widget(form.additionalInfo, {
                                             attr: {
                                                 class: 'form-control',
                                                 rows: 6,
@@ -361,135 +357,137 @@
                                                 'data-prestation-wizard-target': 'sourceAdditionalInfo'
                                             }
                                         }) }}
-                                        {{ form_errors(form.additionalInfo) }}
-                                        <div class="form-text">Ajoutez ici ce qui complète utilement la prestation sans alourdir la description principale.</div>
-                                    </div>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </section>
+										{{ form_errors(form.additionalInfo) }}
+										<div class="form-text">Ajoutez ici ce qui complète utilement la prestation sans alourdir la description principale.</div>
+									</div>
+								</div>
+							{% endif %}
+						</div>
+					</section>
 
-                    <section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
-                        <div class="tm-prestation-wizard-panel-head">
-                            <h2 class="tm-prestation-wizard-panel-title">Photos et documents</h2>
-                            <p class="tm-prestation-wizard-panel-subtitle">
-                                Cette étape est conservée dans le parcours, mais restera non bloquante tant que les médias de prestation et les documents dédiés ne sont pas gérés en base.
-                            </p>
-                        </div>
+					<section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
+						<div class="tm-prestation-wizard-panel-head">
+							<h2 class="tm-prestation-wizard-panel-title">Photos et documents</h2>
+							<p class="tm-prestation-wizard-panel-subtitle">
+								Cette étape est conservée dans le parcours, mais restera non bloquante tant que les médias de prestation et les documents dédiés ne sont pas gérés en base.
+							</p>
+						</div>
 
-                        <div class="tm-prestation-wizard-placeholder-card">
-                            <h3 class="tm-prestation-wizard-placeholder-title">Étape préparée pour une future version</h3>
-                            <p class="tm-prestation-wizard-placeholder-text">
-                                Plus tard, vous pourrez rattacher des photos de réalisations, visuels commerciaux ou documents utiles directement à cette prestation.
-                                Pour l’instant, cette étape n’empêche ni l’enregistrement ni la publication future du contenu textuel.
-                            </p>
-                        </div>
-                    </section>
+						<div class="tm-prestation-wizard-placeholder-card">
+							<h3 class="tm-prestation-wizard-placeholder-title">Étape préparée pour une future version</h3>
+							<p class="tm-prestation-wizard-placeholder-text">
+								Plus tard, vous pourrez rattacher des photos de réalisations, visuels commerciaux ou documents utiles directement à cette prestation.
+								                                Pour l’instant, cette étape n’empêche ni l’enregistrement ni la publication future du contenu textuel.
+							</p>
+						</div>
+					</section>
 
-                    <section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
-                        <div class="tm-prestation-wizard-panel-head">
-                            <h2 class="tm-prestation-wizard-panel-title">Prévisualisation</h2>
-                            <p class="tm-prestation-wizard-panel-subtitle">
-                                Vérifiez la cohérence globale de votre prestation avant d’enregistrer.
-                            </p>
-                        </div>
+					<section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
+						<div class="tm-prestation-wizard-panel-head">
+							<h2 class="tm-prestation-wizard-panel-title">Prévisualisation</h2>
+							<p class="tm-prestation-wizard-panel-subtitle">
+								Vérifiez la cohérence globale de votre prestation avant d’enregistrer.
+							</p>
+						</div>
 
-                        <div class="tm-prestation-wizard-preview">
-                            <article class="tm-prestation-wizard-preview-card">
-                                <span class="tm-prestation-wizard-preview-eyebrow">Aperçu prestation</span>
+						<div class="tm-prestation-wizard-preview">
+							<article class="tm-prestation-wizard-preview-card">
+								<span class="tm-prestation-wizard-preview-eyebrow">Aperçu prestation</span>
 
-                                <h3 class="tm-prestation-wizard-preview-title" data-prestation-wizard-target="previewTitle">Titre de la prestation</h3>
+								<h3 class="tm-prestation-wizard-preview-title" data-prestation-wizard-target="previewTitle">Titre de la prestation</h3>
 
-                                <p class="tm-prestation-wizard-preview-short" data-prestation-wizard-target="previewShortDescription">
-                                    Ajoutez une description courte pour résumer votre prestation en quelques mots.
-                                </p>
+								<p class="tm-prestation-wizard-preview-short" data-prestation-wizard-target="previewShortDescription">
+									Ajoutez une description courte pour résumer votre prestation en quelques mots.
+								</p>
 
-                                <div class="tm-prestation-wizard-preview-meta">
-                                    <span class="tm-prestation-wizard-badge" data-prestation-wizard-target="previewCategory">
-                                        {{ parentCategoryEntity ? parentCategoryEntity.name : 'Catégorie' }}
-                                    </span>
-                                    <span class="tm-prestation-wizard-badge" data-prestation-wizard-target="previewSubcategory">
-                                        {{ categoryEntity ? categoryEntity.name : 'Sous-catégorie' }}
-                                    </span>
-                                    <span class="tm-prestation-wizard-badge" data-prestation-wizard-target="previewService">
-                                        {{ serviceEntity ? serviceEntity.name : 'Service' }}
-                                    </span>
-                                </div>
+								<div class="tm-prestation-wizard-preview-meta">
+									<span class="tm-prestation-wizard-badge" data-prestation-wizard-target="previewCategory">
+										{{ parentCategoryEntity ? parentCategoryEntity.name : 'Catégorie' }}
+									</span>
+									<span class="tm-prestation-wizard-badge" data-prestation-wizard-target="previewSubcategory">
+										{{ categoryEntity ? categoryEntity.name : 'Sous-catégorie' }}
+									</span>
+									<span class="tm-prestation-wizard-badge" data-prestation-wizard-target="previewService">
+										{{ serviceEntity ? serviceEntity.name : 'Service' }}
+									</span>
+								</div>
 
-                                <div class="tm-prestation-wizard-preview-section">
-                                    <h4 class="tm-prestation-wizard-preview-section-title">Description détaillée</h4>
-                                    <p class="tm-prestation-wizard-preview-section-text" data-prestation-wizard-target="previewDescription">
-                                        Ajoutez une description détaillée pour expliquer clairement votre offre.
-                                    </p>
-                                </div>
+								<div class="tm-prestation-wizard-preview-section">
+									<h4 class="tm-prestation-wizard-preview-section-title">Description détaillée</h4>
+									<p class="tm-prestation-wizard-preview-section-text" data-prestation-wizard-target="previewDescription">
+										Ajoutez une description détaillée pour expliquer clairement votre offre.
+									</p>
+								</div>
 
-                                <div class="tm-prestation-wizard-preview-section">
-                                    <h4 class="tm-prestation-wizard-preview-section-title">Tarification</h4>
-                                    <p class="tm-prestation-wizard-preview-section-text" data-prestation-wizard-target="previewPricing">
-                                        Tarification non renseignée
-                                    </p>
-                                </div>
+								<div class="tm-prestation-wizard-preview-section">
+									<h4 class="tm-prestation-wizard-preview-section-title">Tarification</h4>
+									<p class="tm-prestation-wizard-preview-section-text" data-prestation-wizard-target="previewPricing">
+										Tarification non renseignée
+									</p>
+								</div>
 
-                                <div class="tm-prestation-wizard-preview-section">
-                                    <h4 class="tm-prestation-wizard-preview-section-title">Zones d’intervention</h4>
-                                    <div class="tm-prestation-wizard-preview-zones" data-prestation-wizard-target="previewZones">
-                                        <div class="tm-prestation-wizard-preview-zone-item is-empty">
-                                            <strong>Aucune zone affichée</strong>
-                                            <span>Les zones configurées sur le profil apparaîtront ici.</span>
-                                        </div>
-                                    </div>
-                                </div>
+								<div class="tm-prestation-wizard-preview-section">
+									<h4 class="tm-prestation-wizard-preview-section-title">Zones d’intervention</h4>
+									<div class="tm-prestation-wizard-preview-zones" data-prestation-wizard-target="previewZones">
+										<div class="tm-prestation-wizard-preview-zone-item is-empty">
+											<strong>Aucune zone affichée</strong>
+											<span>Les zones configurées sur le profil apparaîtront ici.</span>
+										</div>
+									</div>
+								</div>
 
-                                <div class="tm-prestation-wizard-preview-section">
-                                    <h4 class="tm-prestation-wizard-preview-section-title">Carte d’intervention</h4>
-                                    <div class="tm-prestation-wizard-preview-map">
-                                        {% if map is defined %}
-                                            {{ ux_map(map, { style: 'height: 320px; width: 100%;', class: 'tm-prestation-wizard-map-canvas' }) }}
-                                        {% else %}
-                                            <div class="tm-prestation-wizard-preview-map-empty">
-                                                La carte n’est pas encore disponible dans cette vue.
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
+								<div class="tm-prestation-wizard-preview-section">
+									<h4 class="tm-prestation-wizard-preview-section-title">Carte d’intervention</h4>
+									<div class="tm-prestation-wizard-preview-map-wrapper" data-controller="zone-map" data-zone-map-zones-value="{{ zones|map(zone => { city: zone.city, latitude: zone.latitude, longitude: zone.longitude, radiusKm: zone.radiusKm })|json_encode|e('html_attr') }}">
+										{% if zoneMap is defined and zoneMap %}
+											{{ ux_map(zoneMap, {
+            style: 'height: 320px; width: 100%; border-radius: 18px;',
+        }) }}
+										{% else %}
+											<div class="tm-prestation-wizard-preview-map-empty">
+												La carte n’est pas encore disponible dans cette vue.
+											</div>
+										{% endif %}
+									</div>
+								</div>
 
-                                <div class="tm-prestation-wizard-preview-section">
-                                    <h4 class="tm-prestation-wizard-preview-section-title">Informations complémentaires</h4>
-                                    <p class="tm-prestation-wizard-preview-section-text" data-prestation-wizard-target="previewAdditionalInfo">
-                                        Aucune information complémentaire renseignée pour le moment.
-                                    </p>
-                                </div>
-                            </article>
-                        </div>
-                    </section>
+								<div class="tm-prestation-wizard-preview-section">
+									<h4 class="tm-prestation-wizard-preview-section-title">Informations complémentaires</h4>
+									<p class="tm-prestation-wizard-preview-section-text" data-prestation-wizard-target="previewAdditionalInfo">
+										Aucune information complémentaire renseignée pour le moment.
+									</p>
+								</div>
+							</article>
+						</div>
+					</section>
 
-                    {{ form_rest(form) }}
-                </div>
+					{{ form_rest(form) }}
+				</div>
 
-                <div class="tm-prestation-wizard-footer">
-                    <div class="tm-prestation-wizard-footer-left">
-                        <a href="{{ path('app_prestataire_settings', { _fragment: 'services-panel' }) }}" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-secondary">
-                            Retour au dashboard
-                        </a>
+				<div class="tm-prestation-wizard-footer">
+					<div class="tm-prestation-wizard-footer-left">
+						<a href="{{ path('app_prestataire_settings', { _fragment: 'services-panel' }) }}" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-secondary">
+							Retour au dashboard
+						</a>
 
-                        <button type="button" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-outline d-none" data-prestation-wizard-target="prevButton" data-action="click->prestation-wizard#previous">
-                            Étape précédente
-                        </button>
-                    </div>
+						<button type="button" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-outline d-none" data-prestation-wizard-target="prevButton" data-action="click->prestation-wizard#previous">
+							Étape précédente
+						</button>
+					</div>
 
-                    <div class="tm-prestation-wizard-footer-right">
-                        <button type="button" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-primary" data-prestation-wizard-target="nextButton" data-action="click->prestation-wizard#next">
-                            Étape suivante
-                        </button>
+					<div class="tm-prestation-wizard-footer-right">
+						<button type="button" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-primary" data-prestation-wizard-target="nextButton" data-action="click->prestation-wizard#next">
+							Étape suivante
+						</button>
 
-                        <button type="submit" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-primary d-none" data-prestation-wizard-target="submitButton">
-                            Enregistrer la prestation
-                        </button>
-                    </div>
-                </div>
+						<button type="submit" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-primary d-none" data-prestation-wizard-target="submitButton">
+							Enregistrer la prestation
+						</button>
+					</div>
+				</div>
 
-                {{ form_end(form) }}
-            </div>
-        </div>
-    </div>
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</div>
 {% endblock %}
