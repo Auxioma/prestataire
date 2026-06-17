@@ -123,34 +123,48 @@
                 </div>
 
                 <div class="tm-profile-show__card mb-4">
-                    <h2 class="tm-profile-show__section-title">Prestations prises en charge</h2>
+    <h2 class="tm-profile-show__section-title">Prestations prises en charge</h2>
 
-                    <div class="row row-cols-1 row-cols-sm-2 g-3">
-                        {% for service in prestataire.services %}
-                            <div class="col">
-                                <div class="tm-profile-show__service-item">
-                                    <div class="tm-profile-show__service-icon">
-                                        <i class="fa-solid {{ service.icon|default('fa-check') }}"></i>
-                                    </div>
-                                    <div>
-                                        <div class="tm-profile-show__service-name">{{ service.name }}</div>
-                                        {% if service.description %}
-                                            <div class="tm-profile-show__service-text">
-                                                {{ service.description|slice(0, 90) ~ '...' }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        {% else %}
-                            <div class="col-12">
-                                <p class="text-muted small mb-0">
-                                    Aucune prestation spécifique liée à ce profil pour le moment.
-                                </p>
-                            </div>
-                        {% endfor %}
+    <div class="row row-cols-1 row-cols-sm-2 g-3">
+        {% for ps in prestataire.prestataireServices %}
+            <div class="col">
+                {% set cardTag = ps.isActive ? 'a' : 'div' %}
+                <{{ cardTag }}
+                    {% if ps.isActive %}
+                        href="{{ path('app_prestataire_service_prestation_show', {id: ps.id}) }}"
+                    {% endif %}
+                    class="tm-profile-show__service-item{% if ps.isActive %} tm-profile-show__service-item--link{% else %} tm-profile-show__service-item--disabled{% endif %}"
+                >
+                    <div class="tm-profile-show__service-icon">
+                        <i class="fa-solid {{ ps.service.icon|default('fa-check') }}"></i>
                     </div>
-                </div>
+
+                    <div>
+                        <div class="tm-profile-show__service-name">
+                            {{ ps.title ?: ps.service.name }}
+                        </div>
+
+                        {% if ps.shortDescription %}
+                            <div class="tm-profile-show__service-text">
+                                {{ ps.shortDescription|slice(0, 90) }}{% if ps.shortDescription|length > 90 %}...{% endif %}
+                            </div>
+                        {% elseif ps.service.description %}
+                            <div class="tm-profile-show__service-text">
+                                {{ ps.service.description|slice(0, 90) }}{% if ps.service.description|length > 90 %}...{% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </{{ cardTag }}>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <p class="text-muted small mb-0">
+                    Aucune prestation spécifique liée à ce profil pour le moment.
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 
                 <div class="tm-profile-show__card mb-4">
                     <h2 class="tm-profile-show__section-title">Coordonnées & présence en ligne</h2>

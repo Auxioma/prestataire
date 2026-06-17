@@ -192,4 +192,17 @@ final class PrestataireServicePrestationController extends AbstractController
             'categories' => $categories,
         ]);
     }
+
+    #[Route('/prestataire/service/{id}/prestation/voir', name: 'app_prestataire_service_prestation_show', methods: ['GET'])]
+    public function show(PrestataireService $ps): Response
+    {
+        if (!$ps->isActive()) {
+            throw $this->createNotFoundException('Cette prestation est introuvable.');
+        }
+
+        return $this->render('prestataire/show_prestation.html.twig', [
+            'ps' => $ps,
+            'prestation' => $ps,
+        ]);
+    }
 }

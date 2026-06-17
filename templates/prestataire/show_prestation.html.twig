@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ prestation.title ?: 'Prestation' }} - TrouveMoi
+{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="mb-4">
+            <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
+                ← Retour
+            </a>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4 p-lg-5">
+                <p class="text-muted small mb-2">
+                    Prestation proposée
+                </p>
+
+                <h1 class="h3 mb-3">
+                    {{ prestation.title ?: prestation.service.name }}
+                </h1>
+
+                {% if prestation.shortDescription %}
+                    <p class="lead mb-4">
+                        {{ prestation.shortDescription }}
+                    </p>
+                {% endif %}
+
+                {% if prestation.description %}
+                    <div class="mb-4">
+                        <h2 class="h5">Description</h2>
+                        <p class="mb-0">{{ prestation.description|nl2br }}</p>
+                    </div>
+                {% endif %}
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="border rounded p-3 h-100">
+                            <div class="text-muted small mb-1">Service</div>
+                            <div class="fw-semibold">{{ prestation.service.name }}</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="border rounded p-3 h-100">
+                            <div class="text-muted small mb-1">Prestataire</div>
+                            <div class="fw-semibold">
+                                {{ prestation.prestataire.companyName ?: 'Prestataire' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
