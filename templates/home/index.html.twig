@@ -366,7 +366,11 @@
 
 						{% set prestationTitle = bonPlan.title is defined and bonPlan.title
                     ? bonPlan.title
-                    : (service and service.name is defined and service.name ? service.name : 'Service non renseigné')
+                    : (
+                        service and service.name is defined and service.name
+                        ? service.name
+                        : 'Service non renseigné'
+                    )
                 %}
 
 						{% set prestationDescription = bonPlan.shortDescription is defined and bonPlan.shortDescription
@@ -382,27 +386,6 @@
                     )
                 %}
 
-						{% set hasPublicPrestation = bonPlan.isActive
-                    and bonPlan.title is defined and bonPlan.title
-                    and (
-                        (bonPlan.shortDescription is defined and bonPlan.shortDescription)
-                        or (bonPlan.description is defined and bonPlan.description)
-                    )
-                %}
-
-						{% set prestataireSlug = prestataire and prestataire.slug is defined and prestataire.slug ? prestataire.slug : null %}
-
-						{% if hasPublicPrestation %}
-							{% set ctaUrl = path('app_prestataire_service_prestation_show', { id: bonPlan.id }) %}
-							{% set ctaLabel = 'Voir la prestation' %}
-						{% elseif prestataireSlug %}
-							{% set ctaUrl = path('app_prestataire_show', { slug: prestataireSlug }) %}
-							{% set ctaLabel = 'Voir le profil' %}
-						{% else %}
-							{% set ctaUrl = null %}
-							{% set ctaLabel = null %}
-						{% endif %}
-
 						{% if reduction <= 15 %}
 							{% set promoLevel = 'low' %}
 						{% elseif reduction <= 25 %}
@@ -413,12 +396,19 @@
 							{% set promoLevel = 'max' %}
 						{% endif %}
 
-						{% set coverImage = prestataire and prestataire.coverImage is defined and prestataire.coverImage ? prestataire.coverImage : null %}
+						{% set coverImage = prestataire and prestataire.coverImage is defined and prestataire.coverImage
+                    ? prestataire.coverImage
+                    : null
+                %}
+
+						{% set ctaUrl = path('app_prestataire_service_prestation_show', { id: bonPlan.id }) %}
+						{% set ctaLabel = 'Voir la prestation' %}
+
 						<article class="tm-home-deal-card tm-home-deal-card--{{ promoLevel }}">
 							<div class="tm-home-deal-card__glow"></div>
 
 							<div class="tm-home-deal-card__hero">
-								<img src="{{ coverImage ? asset('uploads/covers/' ~ coverImage) : asset('images/img_par_defaut.png') }}" alt="{{ companyName }}" class="tm-home-deal-card__cover"/>
+								<img src="{{ coverImage ? asset('uploads/covers/' ~ coverImage) : asset('images/img_par_defaut.png') }}" alt="{{ companyName }}" class="tm-home-deal-card__cover">
 								<div class="tm-home-deal-card__hero-overlay"></div>
 
 								<div class="tm-home-deal-card__hero-top">
@@ -479,12 +469,10 @@
 									</span>
 								</div>
 
-								{% if ctaUrl %}
-									<a href="{{ ctaUrl }}" class="tm-home-deal-card__cta">
-										<span>{{ ctaLabel }}</span>
-										<i class="fa-solid fa-arrow-right"></i>
-									</a>
-								{% endif %}
+								<a href="{{ ctaUrl }}" class="tm-home-deal-card__cta">
+									<span>{{ ctaLabel }}</span>
+									<i class="fa-solid fa-arrow-right"></i>
+								</a>
 							</div>
 						</article>
 					{% endfor %}

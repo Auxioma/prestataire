@@ -14,7 +14,6 @@ namespace App\Controller;
 
 use App\Entity\PrestataireService;
 use App\Entity\User;
-use App\Form\PrestataireServiceCreateType;
 use App\Form\PrestataireServicePrestationType;
 use App\Repository\PrestataireServiceRepository;
 use App\Repository\ServiceCategoryRepository;
@@ -200,9 +199,52 @@ final class PrestataireServicePrestationController extends AbstractController
             throw $this->createNotFoundException('Cette prestation est introuvable.');
         }
 
+        $prestataire = $ps->getPrestataire();
+        $zones = $prestataire?->getPrestataireInterventionZones() ?? [];
+
+        $centerLat = 44.8378;
+        $centerLng = -0.5792;
+        $hasMapCenter = false;
+
+        foreach ($zones as $zone) {
+            if ($zone->getLatitude() && $zone->getLongitude()) {
+                $centerLat = (float) $zone->getLatitude();
+                $centerLng = (float) $zone->getLongitude();
+                $hasMapCenter = true;
+                break;
+            }
+        }
+
+        $companyName = $prestataire?->getCompanyName() ?: 'Prestataire';
+        $serviceName = $ps->getService()?->getName() ?: 'Prestation';
+
+        $prestationMap = (new Map())
+            ->center(new Point($centerLat, $centerLng))
+            ->zoom($hasMapCenter ? 10 : 6)
+            ->options(
+                (new LeafletOptions())->tileLayer(new TileLayer(
+                    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                    options: ['maxZoom' => 19],
+                ))
+            );
+
+        if ($hasMapCenter) {
+            $prestationMap->addMarker(
+                new Marker(
+                    position: new Point($centerLat, $centerLng),
+                    title: $companyName,
+                    infoWindow: new InfoWindow(
+                        content: sprintf('<strong>%s</strong><br>%s', $companyName, $serviceName)
+                    )
+                )
+            );
+        }
+
         return $this->render('prestataire/show_prestation.html.twig', [
             'ps' => $ps,
             'prestation' => $ps,
+            'prestationMap' => $prestationMap,
         ]);
     }
 }
