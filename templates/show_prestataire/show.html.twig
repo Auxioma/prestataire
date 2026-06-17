@@ -180,7 +180,7 @@
                             </div>
                         {% endif %}
 
-                        {% if prestataire.account.email %}
+                        {# {% if prestataire.account.email %}
                             <div class="tm-profile-show__info-item">
                                 <i class="fa-regular fa-envelope"></i>
                                 <div>
@@ -188,7 +188,7 @@
                                     <strong>{{ prestataire.account.email }}</strong>
                                 </div>
                             </div>
-                        {% endif %}
+                        {% endif %} #}
 
                         {% if prestataire.website %}
                             <div class="tm-profile-show__info-item">
@@ -204,7 +204,7 @@
                             </div>
                         {% endif %}
 
-                        {% if prestataire.address or prestataire.city %}
+                        {# {% if prestataire.address or prestataire.city %}
                             <div class="tm-profile-show__info-item">
                                 <i class="fa-solid fa-map-pin"></i>
                                 <div>
@@ -218,11 +218,11 @@
                                     </strong>
                                 </div>
                             </div>
-                        {% endif %}
+                        {% endif %} #}
                     </div>
 
                     {% if prestataire.facebookUrl or prestataire.instagramUrl or prestataire.linkedinUrl %}
-                        <div class="tm-profile-show__socials mt-4">
+                        <div class="tm-profile-show__socials justify-content-center mt-4">
                             {% if prestataire.facebookUrl %}
                                 <a href="{{ prestataire.facebookUrl }}" target="_blank" rel="noopener noreferrer" class="tm-profile-show__social-link">
                                     <i class="fa-brands fa-facebook-f"></i>
@@ -248,27 +248,42 @@
                 </div>
 
                 {% if prestataire.prestataireInterventionZones|length > 0 %}
-                    <div class="tm-profile-show__card mb-4">
-                        <h2 class="tm-profile-show__section-title">Zones d’intervention</h2>
+    <div class="tm-profile-show__card mb-4">
+        <h2 class="tm-profile-show__section-title">Zones d’intervention</h2>
 
-                        <div class="tm-profile-show__zones">
-                            {% for zone in prestataire.prestataireInterventionZones %}
-                                {% if zone.isActive %}
-                                    <span class="tm-profile-show__zone-chip">
-                                        <i class="fa-solid fa-location-crosshairs"></i>
-                                        {{ zone.city|default('Zone renseignée') }}
-                                        {% if zone.postalCode %}({{ zone.postalCode }})
-                                        {% endif %}
-                                        {% if zone.radiusKm %}·
-                                            {{ zone.radiusKm }}
-                                            km
-                                        {% endif %}
-                                    </span>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
+        <div class="tm-profile-show__map-layout">
+            <div
+                class="tm-profile-show__map-wrapper"
+                data-controller="zone-map"
+                data-zone-map-zones-value="{{ zones|map(zone => {
+                    city: zone.city,
+                    latitude: zone.latitude,
+                    longitude: zone.longitude,
+                    radiusKm: zone.radiusKm
+                })|json_encode|e('html_attr') }}"
+            >
+                {% if zoneMap is defined and zoneMap %}
+                    {{ ux_map(zoneMap, { style: 'height: 360px; width: 100%; border-radius: 18px;' }) }}
+                {% else %}
+                    <div class="tm-profile-show__map-empty">
+                        La carte n’est pas disponible pour le moment.
                     </div>
                 {% endif %}
+            </div>
+
+            <div class="tm-profile-show__zones">
+                {% for zone in zones %}
+                    <span class="tm-profile-show__zone-chip mt-4">
+                        <i class="fa-solid fa-location-crosshairs"></i>
+                        {{ zone.city|default('Zone renseignée') }}
+                        {% if zone.postalCode %}({{ zone.postalCode }}){% endif %}
+                        {% if zone.radiusKm %} · {{ zone.radiusKm }} km{% endif %}
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endif %}
             </div>
 
             <div class="col-lg-4">
