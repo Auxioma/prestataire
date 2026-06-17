@@ -23,6 +23,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
+
 #[ORM\Entity(repositoryClass: PrestataireProfileRepository::class)]
 #[ORM\Table(name: 'prestataire_profile')]
 #[ORM\Index(name: 'idx_presta_user', columns: ['user_id'])]
@@ -196,7 +197,13 @@ class PrestataireProfile
         $this->isFeatured = false;
         $this->prestataireServices = new ArrayCollection();
         $this->prestataireInterventionZones = new ArrayCollection();
+        $this->availabilities = new ArrayCollection();
     }
+
+    // --- AVAILABILITY ---
+    #[ORM\OneToMany(mappedBy: 'prestataireProfile', targetEntity: PrestataireAvailability::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['dayOfWeek' => 'ASC'])]
+    private Collection $availabilities;
 
     public function getId(): ?string
     {
@@ -735,6 +742,35 @@ class PrestataireProfile
     public function setExperience(?string $experience): static
     {
         $this->experience = $experience;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PrestataireAvailability>
+     */
+    public function getAvailabilities(): Collection
+    {
+        return $this->availabilities;
+    }
+
+    public function addAvailability(PrestataireAvailability $availability): static
+    {
+        if (!$this->availabilities->contains($availability)) {
+            $this->availabilities->add($availability);
+            $availability->setPrestataireProfile($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAvailability(PrestataireAvailability $availability): static
+    {
+        if ($this->availabilities->removeElement($availability)) {
+            if ($availability->getPrestataireProfile() === $this) {
+                $availability->setPrestataireProfile(null);
+            }
+        }
 
         return $this;
     }

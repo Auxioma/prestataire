@@ -1,0 +1,122 @@
+<div class="card tm-card tm-availability-card p-4" data-controller="availability-toggle">
+    <div class="tm-availability-topbar">
+        <div>
+            <h4 class="tm-card-title mb-1">Disponibilités</h4>
+            <p class="tm-availability-intro mb-0">
+                Définissez vos horaires habituels sur la semaine.
+            </p>
+        </div>
+    </div>
+
+    {{ form_start(availabilityForm, {
+        attr: {
+            novalidate: 'novalidate',
+            class: 'tm-form-container',
+            'data-turbo': 'false'
+        }
+    }) }}
+
+    <div class="tm-availability-table-wrap">
+        <div class="tm-availability-table">
+            <div class="tm-availability-head tm-availability-row">
+                <div class="tm-availability-col tm-availability-col--day">Jour</div>
+                <div class="tm-availability-col tm-availability-col--slot">Matin</div>
+                <div class="tm-availability-col tm-availability-col--slot">Après-midi</div>
+            </div>
+
+            {% for availabilityFormRow in availabilityForm.availabilities %}
+                {% set availability = availabilities[loop.index0] %}
+
+                <div class="tm-availability-row tm-availability-day-row tm-availability-day-row--{{ loop.index }}">
+                    <div class="tm-availability-col tm-availability-col--day">
+                        <div class="tm-availability-day-name">{{ availability.dayLabel }}</div>
+                    </div>
+
+                    <div class="tm-availability-col tm-availability-col--slot">
+                        <div class="tm-availability-slot"
+                             data-availability-toggle-target="slot">
+                            <div class="tm-availability-slot-top">
+                                <div class="tm-availability-slot-title">Matin</div>
+
+                                <label class="tm-availability-switch">
+                                    {{ form_widget(availabilityFormRow.morningEnabled, {
+                                        attr: {
+                                            class: 'tm-availability-switch-input',
+                                            'data-availability-toggle-target': 'checkbox',
+                                            'data-availability-toggle-panel-selector-value': '.js-morning-panel',
+                                            'data-action': 'change->availability-toggle#toggle'
+                                        }
+                                    }) }}
+                                    <span class="tm-availability-switch-slider"></span>
+                                    <span class="tm-availability-switch-text">Ouvert</span>
+                                </label>
+                            </div>
+
+                            <div class="js-morning-panel tm-availability-panel{% if not availability.morningEnabled %} is-hidden{% endif %}">
+                                <div class="tm-availability-time-grid">
+                                    <div class="tm-form-row">
+                                        {{ form_label(availabilityFormRow.morningStart, 'Début') }}
+                                        {{ form_widget(availabilityFormRow.morningStart) }}
+                                        {{ form_errors(availabilityFormRow.morningStart) }}
+                                    </div>
+
+                                    <div class="tm-form-row">
+                                        {{ form_label(availabilityFormRow.morningEnd, 'Fin') }}
+                                        {{ form_widget(availabilityFormRow.morningEnd) }}
+                                        {{ form_errors(availabilityFormRow.morningEnd) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tm-availability-col tm-availability-col--slot">
+                        <div class="tm-availability-slot"
+                             data-availability-toggle-target="slot">
+                            <div class="tm-availability-slot-top">
+                                <div class="tm-availability-slot-title">Après-midi</div>
+
+                                <label class="tm-availability-switch">
+                                    {{ form_widget(availabilityFormRow.afternoonEnabled, {
+                                        attr: {
+                                            class: 'tm-availability-switch-input',
+                                            'data-availability-toggle-target': 'checkbox',
+                                            'data-availability-toggle-panel-selector-value': '.js-afternoon-panel',
+                                            'data-action': 'change->availability-toggle#toggle'
+                                        }
+                                    }) }}
+                                    <span class="tm-availability-switch-slider"></span>
+                                    <span class="tm-availability-switch-text">Ouvert</span>
+                                </label>
+                            </div>
+
+                            <div class="js-afternoon-panel tm-availability-panel{% if not availability.afternoonEnabled %} is-hidden{% endif %}">
+                                <div class="tm-availability-time-grid">
+                                    <div class="tm-form-row">
+                                        {{ form_label(availabilityFormRow.afternoonStart, 'Début') }}
+                                        {{ form_widget(availabilityFormRow.afternoonStart) }}
+                                        {{ form_errors(availabilityFormRow.afternoonStart) }}
+                                    </div>
+
+                                    <div class="tm-form-row">
+                                        {{ form_label(availabilityFormRow.afternoonEnd, 'Fin') }}
+                                        {{ form_widget(availabilityFormRow.afternoonEnd) }}
+                                        {{ form_errors(availabilityFormRow.afternoonEnd) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-md-start justify-content-center">
+        <button type="submit" class="btn tm-btn-service px-4 py-2 fw-bold">
+            Enregistrer les disponibilités
+        </button>
+    </div>
+
+    {{ form_end(availabilityForm) }}
+</div>

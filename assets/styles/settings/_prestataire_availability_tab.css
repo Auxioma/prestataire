@@ -1,0 +1,322 @@
+.tm-availability-card {
+    border: 0;
+}
+
+.tm-availability-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.tm-availability-intro {
+    color: #64748b;
+    font-size: 0.92rem;
+}
+
+.tm-availability-table-wrap {
+    overflow-x: auto;
+}
+
+.tm-availability-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 920px;
+}
+
+.tm-availability-row {
+    display: grid;
+    grid-template-columns: 160px 1fr 1fr;
+    gap: 0.75rem;
+    align-items: start;
+}
+
+.tm-availability-head {
+    padding: 0 0.25rem;
+    margin-bottom: 0.15rem;
+}
+
+.tm-availability-head .tm-availability-col {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+}
+
+.tm-availability-day-row {
+    padding: 0.75rem;
+    border: 1px solid #e7ecf3;
+    border-radius: 16px;
+    background: #fbfcfe;
+}
+
+.tm-availability-col--day {
+    display: flex;
+    align-items: center;
+    min-height: 100%;
+}
+
+.tm-availability-day-name {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.2;
+}
+
+.tm-availability-slot {
+    border: 1px solid #e5eaf2;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 0.75rem;
+    min-height: 100%;
+}
+
+.tm-availability-slot-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.tm-availability-slot-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.tm-availability-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.tm-availability-switch-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.tm-availability-switch-slider {
+    position: relative;
+    width: 2.2rem;
+    height: 1.25rem;
+    border-radius: 999px;
+    background: #d6deea;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.tm-availability-switch-slider::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 0.82rem;
+    height: 0.82rem;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.18);
+    transition: transform 0.2s ease;
+}
+
+.tm-availability-switch-input:checked + .tm-availability-switch-slider {
+    background: #3b82f6;
+}
+
+.tm-availability-switch-input:checked + .tm-availability-switch-slider::after {
+    transform: translateX(0.95rem);
+}
+
+.tm-availability-switch-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.tm-availability-panel {
+    margin-top: 0.75rem;
+    overflow: hidden;
+    opacity: 1;
+    max-height: 180px;
+    transition: opacity 0.2s ease, max-height 0.25s ease, margin-top 0.25s ease;
+}
+
+.tm-availability-panel.is-hidden {
+    opacity: 0;
+    max-height: 0;
+    margin-top: 0;
+    pointer-events: none;
+}
+
+.tm-availability-time-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+}
+
+.tm-availability-time-grid .tm-form-row {
+    margin-bottom: 0;
+}
+
+.tm-availability-time-grid .form-label,
+.tm-availability-time-grid label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #475569;
+}
+
+.tm-availability-time-grid input[type='time'] {
+    width: 100%;
+    min-height: 40px;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid #d9e1ec;
+    border-radius: 10px;
+    background: #fff;
+    color: #0f172a;
+    font-size: 0.9rem;
+    box-shadow: none;
+}
+
+.tm-availability-time-grid input[type='time']:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14);
+    outline: none;
+}
+
+@media (max-width: 991.98px) {
+    .tm-availability-table {
+        min-width: 860px;
+    }
+
+    .tm-availability-row {
+        grid-template-columns: 130px 1fr 1fr;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .tm-availability-card {
+        padding: 1rem !important;
+    }
+
+    .tm-availability-table {
+        min-width: 760px;
+    }
+
+    .tm-availability-day-row {
+        padding: 0.65rem;
+        border-radius: 14px;
+    }
+
+    .tm-availability-slot {
+        padding: 0.65rem;
+        border-radius: 12px;
+    }
+
+    .tm-availability-time-grid input[type='time'] {
+        min-height: 38px;
+        font-size: 0.86rem;
+    }
+}
+
+.tm-availability-day-row {
+    position: relative;
+    background: #fbfcfe;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.tm-availability-day-row .tm-availability-day-name {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.tm-availability-day-row .tm-availability-day-name::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.65;
+    flex-shrink: 0;
+}
+
+.tm-availability-day-row--1 {
+    background: #f6f8ff;
+    border-color: #dfe6ff;
+}
+
+.tm-availability-day-row--1 .tm-availability-day-name {
+    color: #4b63c9;
+}
+
+.tm-availability-day-row--2 {
+    background: #f5f9ff;
+    border-color: #dbe7f6;
+}
+
+.tm-availability-day-row--2 .tm-availability-day-name {
+    color: #4f79b8;
+}
+
+.tm-availability-day-row--3 {
+    background: #f4fbff;
+    border-color: #d8eaf1;
+}
+
+.tm-availability-day-row--3 .tm-availability-day-name {
+    color: #3f7f99;
+}
+
+.tm-availability-day-row--4 {
+    background: #f4fcfb;
+    border-color: #d8ece8;
+}
+
+.tm-availability-day-row--4 .tm-availability-day-name {
+    color: #4a8b82;
+}
+
+.tm-availability-day-row--5 {
+    background: #f8faff;
+    border-color: #e1e7f5;
+}
+
+.tm-availability-day-row--5 .tm-availability-day-name {
+    color: #5d73a6;
+}
+
+.tm-availability-day-row--6 {
+    background: #f7f7fe;
+    border-color: #e3e1f6;
+}
+
+.tm-availability-day-row--6 .tm-availability-day-name {
+    color: #6d67b0;
+}
+
+.tm-availability-day-row--7 {
+    background: #fbfaf8;
+    border-color: #ece6dc;
+}
+
+.tm-availability-day-row--7 .tm-availability-day-name {
+    color: #9a7f57;
+}
+
+.tm-availability-day-row .tm-availability-slot {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(2px);
+}
+
+.tm-availability-day-row:hover {
+    filter: saturate(1.03);
+}

@@ -34,6 +34,8 @@ use Symfony\UX\Map\InfoWindow;
 use Symfony\UX\Map\Map;
 use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
+use App\Entity\PrestataireAvailability;
+use App\Form\PrestataireAvailabilityCollectionType;
 
 class ProfileController extends AbstractController
 {
@@ -59,6 +61,29 @@ class ProfileController extends AbstractController
 
         $prestataireProfile = $user->getPrestataireProfile();
 
+        // calendrier des disponibilités
+        $existingDays = [];
+        foreach ($prestataireProfile->getAvailabilities() as $availability) {
+            $existingDays[] = $availability->getDayOfWeek();
+        }
+
+        for ($day = 1; $day <= 7; ++$day) {
+            if (!in_array($day, $existingDays, true)) {
+                $availability = new PrestataireAvailability();
+                $availability->setPrestataireProfile($prestataireProfile);
+                $availability->setDayOfWeek($day);
+
+                $prestataireProfile->addAvailability($availability);
+                $entityManager->persist($availability);
+            }
+        }
+
+        $entityManager->persist($prestataireProfile);
+        $entityManager->flush();
+
+        $availabilities = $prestataireProfile->getAvailabilities()->toArray();
+        usort($availabilities, static fn(PrestataireAvailability $a, PrestataireAvailability $b): int => $a->getDayOfWeek() <=> $b->getDayOfWeek());
+
         $userForm = $formFactory->createNamed(
             'user_profile_form',
             \App\Form\UserProfileTabType::class,
@@ -75,6 +100,15 @@ class ProfileController extends AbstractController
             'public_profile_form',
             \App\Form\PrestatairePublicProfileTabType::class,
             $prestataireProfile
+        );
+
+        $availabilityForm = $this->createForm(
+            PrestataireAvailabilityCollectionType::class,
+            $prestataireProfile,
+            [
+                'action' => $this->generateUrl('app_prestataire_settings'),
+                'method' => 'POST',
+            ]
         );
 
         $zone = new PrestataireInterventionZone();
@@ -95,7 +129,9 @@ class ProfileController extends AbstractController
         $userForm->handleRequest($request);
         $publicProfileForm->handleRequest($request);
         $companyForm->handleRequest($request);
+        $availabilityForm->handleRequest($request);
 
+        // infos utilisateur
         if ($userForm->isSubmitted() && $userForm->isValid()) {
             $entityManager->persist($user);
             $entityManager->flush();
@@ -105,6 +141,7 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'profile-panel']);
         }
 
+        // infos profil public
         if ($publicProfileForm->isSubmitted() && $publicProfileForm->isValid()) {
             if ($prestataireProfile && $prestataireProfile->getCompanyName()) {
                 $prestataireProfile->setSlug(mb_strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName())));
@@ -118,6 +155,7 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'profile-panel']);
         }
 
+        // infos entreprise
         if ($companyForm->isSubmitted() && $companyForm->isValid()) {
             if ($prestataireProfile && $prestataireProfile->getCompanyName()) {
                 $prestataireProfile->setSlug(mb_strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName())));
@@ -131,6 +169,17 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'company-panel']);
         }
 
+        // disponibilités
+        if ($availabilityForm->isSubmitted() && $availabilityForm->isValid()) {
+            $entityManager->persist($prestataireProfile);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Vos disponibilités ont bien été enregistrées.');
+
+            return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'dispo-panel']);
+        }
+
+        // zone map et radius
         $zoneMap = null;
         $firstMappableZone = null;
 
@@ -176,7 +225,7 @@ class ProfileController extends AbstractController
                         ),
                         title: $label,
                         infoWindow: new InfoWindow(
-                            content: '<strong>'.htmlspecialchars($label).'</strong><br>Rayon : '.(int) $existingZone->getRadiusKm().' km'
+                            content: '<strong>' . htmlspecialchars($label) . '</strong><br>Rayon : ' . (int) $existingZone->getRadiusKm() . ' km'
                         )
                     ));
                 }
@@ -192,6 +241,8 @@ class ProfileController extends AbstractController
             'user' => $user,
             'categories' => $categoryRepository->findWithSubCategories(),
             'zoneMap' => $zoneMap,
+            'availabilityForm' => $availabilityForm->createView(),
+            'availabilities' => $availabilities,
         ]);
     }
 
@@ -245,7 +296,7 @@ class ProfileController extends AbstractController
         ) {
             throw $this->createAccessDeniedException();
         }
-        if ($this->isCsrfTokenValid('delete'.$ps->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $ps->getId(), $request->request->get('_token'))) {
             $em->remove($ps);
             $em->flush();
             $this->addFlash('success', 'Le service a bien été retiré de votre profil.');
