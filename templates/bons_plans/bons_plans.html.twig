@@ -90,11 +90,24 @@
                         : (prixCatalogue - (prixCatalogue * reduction / 100))
                     %}
 
-                    {% set serviceName = service and service.name is defined and service.name ? service.name : 'Service non renseigné' %}
-                    {% set serviceDescription = service and service.description is defined and service.description
-                        ? service.description
-                        : 'Description non renseignée.'
+                    {% set prestationTitle = bonPlan.title is defined and bonPlan.title
+                        ? bonPlan.title
+                        : (service and service.name is defined and service.name ? service.name : 'Service non renseigné')
                     %}
+
+                    {% set prestationDescription = bonPlan.shortDescription is defined and bonPlan.shortDescription
+                        ? bonPlan.shortDescription
+                        : (
+                            bonPlan.description is defined and bonPlan.description
+                            ? bonPlan.description|slice(0, 160) ~ (bonPlan.description|length > 160 ? '…' : '')
+                            : (
+                                service and service.description is defined and service.description
+                                ? service.description
+                                : 'Description non renseignée.'
+                            )
+                        )
+                    %}
+
                     {% set serviceIcon = service and service.icon is defined and service.icon ? service.icon : 'fa-screwdriver-wrench' %}
 
                     {% set companyName = prestataire and prestataire.companyName is defined and prestataire.companyName
@@ -120,7 +133,25 @@
                     %}
 
                     {% set prestataireSlug = prestataire and prestataire.slug is defined and prestataire.slug ? prestataire.slug : null %}
-                    {% set cardUrl = prestataireSlug ? path('app_prestataire_show', {slug: prestataireSlug}) : null %}
+
+                    {% set hasPublicPrestation = bonPlan.isActive
+                        and bonPlan.title is defined and bonPlan.title
+                        and (
+                            (bonPlan.shortDescription is defined and bonPlan.shortDescription)
+                            or (bonPlan.description is defined and bonPlan.description)
+                        )
+                    %}
+
+                    {% if hasPublicPrestation %}
+                        {% set cardUrl = path('app_prestataire_service_prestation_show', { id: bonPlan.id }) %}
+                        {% set cardAriaLabel = 'Voir la prestation de ' ~ companyName %}
+                    {% elseif prestataireSlug %}
+                        {% set cardUrl = path('app_prestataire_show', { slug: prestataireSlug }) %}
+                        {% set cardAriaLabel = 'Voir le profil de ' ~ companyName %}
+                    {% else %}
+                        {% set cardUrl = null %}
+                        {% set cardAriaLabel = '' %}
+                    {% endif %}
 
                     {% if reduction <= 15 %}
                         {% set promoLevel = 'low' %}
@@ -133,7 +164,7 @@
                     {% endif %}
 
                     {% if cardUrl %}
-                        <a href="{{ cardUrl }}" class="tm-bonsplans-card-link" aria-label="Voir le profil de {{ companyName }}">
+                        <a href="{{ cardUrl }}" class="tm-bonsplans-card-link" aria-label="{{ cardAriaLabel }}">
                     {% endif %}
 
                     <article class="tm-bonsplans-card tm-bonsplans-card--{{ promoLevel }}">
@@ -158,7 +189,7 @@
                                 </div>
 
                                 <h2 class="tm-bonsplans-card__title">
-                                    {{ serviceName }}
+                                    {{ prestationTitle }}
                                 </h2>
 
                                 <p class="tm-bonsplans-card__company">
@@ -166,7 +197,7 @@
                                 </p>
 
                                 <p class="tm-bonsplans-card__description">
-                                    {{ serviceDescription }}
+                                    {{ prestationDescription }}
                                 </p>
 
                                 <p class="tm-bonsplans-card__category">
