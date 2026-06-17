@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-	{{ prestation.title ?: 'Prestation' }}
-	- TrouveMoi
+    {{ prestation.title ?: 'Prestation' }}
+    - TrouveMoi
 {% endblock %}
 
 {% set companyName = prestation.prestataire.companyName ?: 'Prestataire' %}
@@ -10,235 +10,276 @@
 {% set categoryName = prestation.service.category.name ?? null %}
 {% set coverImage = prestation.prestataire.coverImage ?? null %}
 {% set avatarLetter = companyName|slice(0, 1)|upper %}
+{% set availabilities = prestation.prestataire.availabilities ?? [] %}
 
 {% set pricingLabel = 'Tarification non renseignée' %}
 {% if prestation.pricingType == 'quote' %}
-	{% set pricingLabel = 'Tarif sur devis' %}
+    {% set pricingLabel = 'Tarif sur devis' %}
 {% elseif prestation.pricingType == 'range' %}
-	{% if prestation.priceFrom and prestation.priceTo %}
-		{% set pricingLabel = 'De ' ~ prestation.priceFrom ~ ' € à ' ~ prestation.priceTo ~ ' €' ~ (prestation.priceUnit ? ' / ' ~ prestation.priceUnit : '') %}
-	{% elseif prestation.priceFrom %}
-		{% set pricingLabel = 'À partir de ' ~ prestation.priceFrom ~ ' €' ~ (prestation.priceUnit ? ' / ' ~ prestation.priceUnit : '') %}
-	{% elseif prestation.priceTo %}
-		{% set pricingLabel = 'Jusqu’à ' ~ prestation.priceTo ~ ' €' ~ (prestation.priceUnit ? ' / ' ~ prestation.priceUnit : '') %}
-	{% endif %}
+    {% if prestation.priceFrom and prestation.priceTo %}
+        {% set pricingLabel = 'De ' ~ prestation.priceFrom ~ ' € à ' ~ prestation.priceTo ~ ' €' ~ (prestation.priceUnit ? ' / ' ~ prestation.priceUnit : '') %}
+    {% elseif prestation.priceFrom %}
+        {% set pricingLabel = 'À partir de ' ~ prestation.priceFrom ~ ' €' ~ (prestation.priceUnit ? ' / ' ~ prestation.priceUnit : '') %}
+    {% elseif prestation.priceTo %}
+        {% set pricingLabel = 'Jusqu’à ' ~ prestation.priceTo ~ ' €' ~ (prestation.priceUnit ? ' / ' ~ prestation.priceUnit : '') %}
+    {% endif %}
 {% elseif prestation.pricingType == 'from' %}
-	{% if prestation.priceFrom %}
-		{% set pricingLabel = 'À partir de ' ~ prestation.priceFrom ~ ' €' ~ (prestation.priceUnit ? ' / ' ~ prestation.priceUnit : '') %}
-	{% endif %}
+    {% if prestation.priceFrom %}
+        {% set pricingLabel = 'À partir de ' ~ prestation.priceFrom ~ ' €' ~ (prestation.priceUnit ? ' / ' ~ prestation.priceUnit : '') %}
+    {% endif %}
 {% elseif prestation.pricingType in ['fixed', 'hourly', 'daily'] %}
-	{% if prestation.priceTo %}
-		{% set pricingLabel = prestation.priceTo ~ ' €' ~ (prestation.priceUnit ? ' / ' ~ prestation.priceUnit : '') %}
-	{% endif %}
+    {% if prestation.priceTo %}
+        {% set pricingLabel = prestation.priceTo ~ ' €' ~ (prestation.priceUnit ? ' / ' ~ prestation.priceUnit : '') %}
+    {% endif %}
 {% endif %}
 
 {% block body %}
-	<section class="tm-prestation-show">
-		<div class="container tm-prestation-show__container">
-			<div class="tm-prestation-show__back">
-				<a href="javascript:history.back()" class="tm-prestation-show__back-link">
-					<i class="fa-solid fa-arrow-left"></i>
-					<span>Retour</span>
-				</a>
-			</div>
+    <section class="tm-prestation-show">
+        <div class="container tm-prestation-show__container">
+            <div class="tm-prestation-show__back">
+                <a href="javascript:history.back()" class="tm-prestation-show__back-link">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Retour</span>
+                </a>
+            </div>
 
-			<article class="tm-prestation-show__hero">
-				<div class="tm-prestation-show__hero-media">
-					<img src="{{ coverImage ? asset('uploads/covers/' ~ coverImage) : asset('images/img_par_defaut.png') }}" alt="{{ companyName }}" class="tm-prestation-show__hero-image">
-					<div class="tm-prestation-show__hero-overlay"></div>
-				</div>
+            <article class="tm-prestation-show__hero">
+                <div class="tm-prestation-show__hero-media">
+                    <img src="{{ coverImage ? asset('uploads/covers/' ~ coverImage) : asset('images/img_par_defaut.png') }}" alt="{{ companyName }}" class="tm-prestation-show__hero-image">
+                    <div class="tm-prestation-show__hero-overlay"></div>
+                </div>
 
-				<div class="tm-prestation-show__hero-content">
-					<div class="tm-prestation-show__eyebrow-wrap">
-						<span class="tm-prestation-show__eyebrow">Prestation proposée</span>
-						{% if categoryName %}
-							<span class="tm-prestation-show__chip">{{ categoryName }}</span>
-						{% endif %}
-					</div>
+                <div class="tm-prestation-show__hero-content">
+                    <div class="tm-prestation-show__eyebrow-wrap">
+                        <span class="tm-prestation-show__eyebrow">Prestation proposée</span>
+                        {% if categoryName %}
+                            <span class="tm-prestation-show__chip">{{ categoryName }}</span>
+                        {% endif %}
+                    </div>
 
-					<h1 class="tm-prestation-show__title">
-						{{ prestation.title ?: serviceName }}
-					</h1>
+                    <h1 class="tm-prestation-show__title">
+                        {{ prestation.title ?: serviceName }}
+                    </h1>
 
-					<p class="tm-prestation-show__subtitle">
-						{{ prestation.shortDescription ?: 'Une prestation claire, cadrée et adaptée à votre besoin.' }}
-					</p>
+                    <p class="tm-prestation-show__subtitle">
+                        {{ prestation.shortDescription ?: 'Une prestation claire, cadrée et adaptée à votre besoin.' }}
+                    </p>
 
-					<div class="tm-prestation-show__provider">
-						<span class="tm-prestation-show__provider-avatar">{{ avatarLetter }}</span>
+                    <div class="tm-prestation-show__provider">
+                        <span class="tm-prestation-show__provider-avatar">{{ avatarLetter }}</span>
 
-						<div class="tm-prestation-show__provider-content">
-							<span class="tm-prestation-show__provider-label">Prestataire</span>
-							<a href="{{ path('app_prestataire_show', { slug: prestation.prestataire.slug }) }}" class="tm-prestation-show__provider-name">
-								{{ companyName }}
-							</a>
-						</div>
-					</div>
+                        <div class="tm-prestation-show__provider-content">
+                            <span class="tm-prestation-show__provider-label">Prestataire</span>
+                            <a href="{{ path('app_prestataire_show', { slug: prestation.prestataire.slug }) }}" class="tm-prestation-show__provider-name">
+                                {{ companyName }}
+                            </a>
+                        </div>
+                    </div>
 
-					<div class="tm-prestation-show__hero-grid">
-						<div class="tm-prestation-show__hero-card">
-							<span class="tm-prestation-show__hero-card-label">Service</span>
-							<strong>{{ serviceName }}</strong>
-						</div>
+                    <div class="tm-prestation-show__hero-grid">
+                        <div class="tm-prestation-show__hero-card">
+                            <span class="tm-prestation-show__hero-card-label">Service</span>
+                            <strong>{{ serviceName }}</strong>
+                        </div>
 
-						<div class="tm-prestation-show__hero-card">
-							<span class="tm-prestation-show__hero-card-label">Tarification</span>
-							<strong>{{ pricingLabel }}</strong>
-						</div>
-					</div>
-				</div>
-			</article>
+                        <div class="tm-prestation-show__hero-card">
+                            <span class="tm-prestation-show__hero-card-label">Tarification</span>
+                            <strong>{{ pricingLabel }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </article>
 
-			<div class="tm-prestation-show__layout">
-				<div class="tm-prestation-show__main">
-					<section class="tm-prestation-show__panel">
-						<div class="tm-prestation-show__panel-head">
-							<span class="tm-prestation-show__panel-kicker">Présentation</span>
-							<h2 class="tm-prestation-show__panel-title">Description de la prestation</h2>
-						</div>
+            <div class="tm-prestation-show__layout">
+                <div class="tm-prestation-show__main">
+                    <section class="tm-prestation-show__panel">
+                        <div class="tm-prestation-show__panel-head">
+                            <span class="tm-prestation-show__panel-kicker">Présentation</span>
+                            <h2 class="tm-prestation-show__panel-title">Description de la prestation</h2>
+                        </div>
 
-						<div class="tm-prestation-show__richtext">
-							{% if prestation.description %}
-								{{ prestation.description|nl2br }}
-							{% else %}
-								<p class="tm-prestation-show__empty">
-									Le prestataire n’a pas encore ajouté de description détaillée.
-								</p>
-							{% endif %}
-						</div>
-					</section>
+                        <div class="tm-prestation-show__richtext">
+                            {% if prestation.description %}
+                                {{ prestation.description|nl2br }}
+                            {% else %}
+                                <p class="tm-prestation-show__empty">
+                                    Le prestataire n’a pas encore ajouté de description détaillée.
+                                </p>
+                            {% endif %}
+                        </div>
+                    </section>
 
-					<section class="tm-prestation-show__panel">
-						<div class="tm-prestation-show__panel-head">
-							<span class="tm-prestation-show__panel-kicker">Périmètre</span>
-							<h2 class="tm-prestation-show__panel-title">Zones d’intervention</h2>
-						</div>
+                    <section class="tm-prestation-show__panel">
+                        <div class="tm-prestation-show__panel-head">
+                            <span class="tm-prestation-show__panel-kicker">Périmètre</span>
+                            <h2 class="tm-prestation-show__panel-title">Zones d’intervention</h2>
+                        </div>
 
-						{% set zones = prestation.prestataire.prestataireInterventionZones ?? [] %}
-						{% set mapZones = [] %}
+                        {% set zones = prestation.prestataire.prestataireInterventionZones ?? [] %}
+                        {% set mapZones = [] %}
 
-						{% for zone in zones %}
-							{% if zone.latitude and zone.longitude and zone.radiusKm %}
-								{% set mapZones = mapZones|merge([{
-                latitude: zone.latitude,
-                longitude: zone.longitude,
-                radiusKm: zone.radiusKm
-            }]) %}
-							{% endif %}
-						{% endfor %}
+                        {% for zone in zones %}
+                            {% if zone.latitude and zone.longitude and zone.radiusKm %}
+                                {% set mapZones = mapZones|merge([{
+                                    latitude: zone.latitude,
+                                    longitude: zone.longitude,
+                                    radiusKm: zone.radiusKm
+                                }]) %}
+                            {% endif %}
+                        {% endfor %}
 
-						<div class="tm-prestation-show__zones">
-							<div class="tm-prestation-show__zones-list">
-								{% if zones|length > 0 %}
-									{% for zone in zones %}
-										<div class="tm-prestation-show__zone-item">
-											<div class="tm-prestation-show__zone-icon">
-												<i class="fa-solid fa-location-dot"></i>
-											</div>
+                        <div class="tm-prestation-show__zones">
+                            <div class="tm-prestation-show__zones-list">
+                                {% if zones|length > 0 %}
+                                    {% for zone in zones %}
+                                        <div class="tm-prestation-show__zone-item">
+                                            <div class="tm-prestation-show__zone-icon">
+                                                <i class="fa-solid fa-location-dot"></i>
+                                            </div>
 
-											<div class="tm-prestation-show__zone-content">
-												<strong>{{ zone.city ? zone.city : 'Zone d’intervention' }}</strong>
+                                            <div class="tm-prestation-show__zone-content">
+                                                <strong>{{ zone.city ? zone.city : 'Zone d’intervention' }}</strong>
 
-												<span>
-													{% if zone.postalCode %}
-														{{ zone.postalCode }}
-													{% endif %}
+                                                <span>
+                                                    {% if zone.postalCode %}
+                                                        {{ zone.postalCode }}
+                                                    {% endif %}
 
-													{% if zone.radiusKm %}
-														{% if zone.postalCode %}
-															·
-														{% endif %}
-														Rayon
-														{{ zone.radiusKm }}
-														km
-													{% endif %}
+                                                    {% if zone.radiusKm %}
+                                                        {% if zone.postalCode %}
+                                                            ·
+                                                        {% endif %}
+                                                        Rayon {{ zone.radiusKm }} km
+                                                    {% endif %}
 
-													{% if not zone.postalCode and not zone.radiusKm %}
-														Zone configurée sur le profil
-													{% endif %}
-												</span>
-											</div>
-										</div>
-									{% endfor %}
-								{% else %}
-									<p class="tm-prestation-show__empty mb-0">
-										Aucune zone d’intervention renseignée pour le moment.
-									</p>
-								{% endif %}
-							</div>
+                                                    {% if not zone.postalCode and not zone.radiusKm %}
+                                                        Zone configurée sur le profil
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <p class="tm-prestation-show__empty mb-0">
+                                        Aucune zone d’intervention renseignée pour le moment.
+                                    </p>
+                                {% endif %}
+                            </div>
 
-							<div class="tm-prestation-show__map-card" data-controller="zone-map" data-zone-map-zones-value="{{ mapZones|json_encode|e('html_attr') }}">
-								<div class="tm-prestation-show__map-shell">
-									{% if prestationMap is defined and prestationMap %}
-										{{ ux_map(prestationMap, {
-        style: 'height: 360px; width: 100%; border-radius: 18px;'
-    }) }}
-									{% endif %}
-								</div>
-							</div>
-						</div>
-					</section>
-				</div>
+                            <div class="tm-prestation-show__map-card" data-controller="zone-map" data-zone-map-zones-value="{{ mapZones|json_encode|e('html_attr') }}">
+                                <div class="tm-prestation-show__map-shell">
+                                    {% if prestationMap is defined and prestationMap %}
+                                        {{ ux_map(prestationMap, {
+                                            style: 'height: 360px; width: 100%; border-radius: 18px;'
+                                        }) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
-				<aside class="tm-prestation-show__aside">
-					<section class="tm-prestation-show__panel tm-prestation-show__panel--sticky">
-						<div class="tm-prestation-show__price-box">
-							<span class="tm-prestation-show__price-label">Tarification</span>
-							<div class="tm-prestation-show__price-value">
-								{{ pricingLabel }}
-							</div>
-						</div>
+                    <section class="tm-prestation-show__panel">
+                        <div class="tm-prestation-show__panel-head">
+                            <span class="tm-prestation-show__panel-kicker">Détails</span>
+                            <h2 class="tm-prestation-show__panel-title">Informations complémentaires</h2>
+                        </div>
 
-						<div class="tm-prestation-show__info-grid">
-							<div class="tm-prestation-show__info-item">
-								<span class="tm-prestation-show__info-label">Service</span>
-								<strong>{{ serviceName }}</strong>
-							</div>
+                        {% if prestation.additionalInfo %}
+                            <div class="tm-prestation-show__richtext tm-prestation-show__richtext--small">
+                                {{ prestation.additionalInfo|nl2br }}
+                            </div>
+                        {% else %}
+                            <p class="tm-prestation-show__empty mb-0">
+                                Aucune information complémentaire renseignée.
+                            </p>
+                        {% endif %}
+                    </section>
+                </div>
 
-							<div class="tm-prestation-show__info-item">
-								<span class="tm-prestation-show__info-label">Prestataire</span>
-								<strong>{{ companyName }}</strong>
-							</div>
+                <aside class="tm-prestation-show__aside">
+                    <section class="tm-prestation-show__panel tm-prestation-show__panel--sticky">
+                        <div class="tm-prestation-show__price-box">
+                            <span class="tm-prestation-show__price-label">Tarification</span>
+                            <div class="tm-prestation-show__price-value">
+                                {{ pricingLabel }}
+                            </div>
+                        </div>
 
-							{% if prestation.priceUnit %}
-								<div class="tm-prestation-show__info-item">
-									<span class="tm-prestation-show__info-label">Unité</span>
-									<strong>{{ prestation.priceUnit }}</strong>
-								</div>
-							{% endif %}
+                        <div class="tm-prestation-show__info-grid">
+                            <div class="tm-prestation-show__info-item">
+                                <span class="tm-prestation-show__info-label">Service</span>
+                                <strong>{{ serviceName }}</strong>
+                            </div>
 
-							{% if prestation.pricingType %}
-								<div class="tm-prestation-show__info-item">
-									<span class="tm-prestation-show__info-label">Type de tarif</span>
-									<strong>{{ prestation.pricingType }}</strong>
-								</div>
-							{% endif %}
-						</div>
+                            <div class="tm-prestation-show__info-item">
+                                <span class="tm-prestation-show__info-label">Prestataire</span>
+                                <strong>{{ companyName }}</strong>
+                            </div>
 
-						<a href="{{ path('app_prestataire_show', { slug: prestation.prestataire.slug }) }}" class="tm-prestation-show__cta">
-							Voir le profil du prestataire
-							<i class="fa-solid fa-arrow-right"></i>
-						</a>
-					</section>
+                            {% if prestation.priceUnit %}
+                                <div class="tm-prestation-show__info-item">
+                                    <span class="tm-prestation-show__info-label">Unité</span>
+                                    <strong>{{ prestation.priceUnit }}</strong>
+                                </div>
+                            {% endif %}
 
-				</aside>
-					<section class="tm-prestation-show__panel">
-						<div class="tm-prestation-show__panel-head">
-							<span class="tm-prestation-show__panel-kicker">Détails</span>
-							<h2 class="tm-prestation-show__panel-title">Informations complémentaires</h2>
-						</div>
+                            {% if prestation.pricingType %}
+                                <div class="tm-prestation-show__info-item">
+                                    <span class="tm-prestation-show__info-label">Type de tarif</span>
+                                    <strong>{{ prestation.pricingType }}</strong>
+                                </div>
+                            {% endif %}
+                        </div>
 
-						{% if prestation.additionalInfo %}
-							<div class="tm-prestation-show__richtext tm-prestation-show__richtext--small">
-								{{ prestation.additionalInfo|nl2br }}
-							</div>
-						{% else %}
-							<p class="tm-prestation-show__empty mb-0">
-								Aucune information complémentaire renseignée.
-							</p>
-						{% endif %}
-					</section>
-			</div>
-		</div>
-	</section>
+                        {% if availabilities|length > 0 %}
+                            <div class="tm-prestation-show__availability">
+                                <div class="tm-prestation-show__availability-head">
+                                    <h3 class="tm-prestation-show__availability-title">Disponibilités</h3>
+                                    <span class="tm-prestation-show__availability-badge">Semaine</span>
+                                </div>
+
+                                <div class="tm-prestation-show__availability-list">
+                                    {% for availability in availabilities %}
+                                        {% set hasMorning = availability.morningEnabled and availability.morningStart and availability.morningEnd %}
+                                        {% set hasAfternoon = availability.afternoonEnabled and availability.afternoonStart and availability.afternoonEnd %}
+
+                                        <div class="tm-prestation-show__availability-row">
+                                            <div class="tm-prestation-show__availability-day">
+                                                {{ availability.dayLabel ?? availability.dayName ?? ('Jour ' ~ loop.index) }}
+                                            </div>
+
+                                            <div class="tm-prestation-show__availability-values">
+                                                {% if hasMorning %}
+                                                    <span class="tm-prestation-show__availability-chip">
+                                                        {{ availability.morningStart|date('H:i') }} - {{ availability.morningEnd|date('H:i') }}
+                                                    </span>
+                                                {% endif %}
+
+                                                {% if hasAfternoon %}
+                                                    <span class="tm-prestation-show__availability-chip">
+                                                        {{ availability.afternoonStart|date('H:i') }} - {{ availability.afternoonEnd|date('H:i') }}
+                                                    </span>
+                                                {% endif %}
+
+                                                {% if not hasMorning and not hasAfternoon %}
+                                                    <span class="tm-prestation-show__availability-chip tm-prestation-show__availability-chip--closed">
+                                                        Fermé
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <a href="{{ path('app_prestataire_show', { slug: prestation.prestataire.slug }) }}" class="tm-prestation-show__cta">
+                            Voir le profil du prestataire
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </section>
+                </aside>
+            </div>
+        </div>
+    </section>
 {% endblock %}
