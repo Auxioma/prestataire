@@ -37,36 +37,9 @@ class ClientFixtures extends Fixture
         $plainPassword = '123Test!';
 
         $clients = [
-            [
-                'reference' => self::CLIENT_JEAN_REFERENCE,
-                'email' => 'jean.dupont@gmail.com',
-                'first_name' => 'Jean',
-                'last_name' => 'Dupont',
-                'phone' => '0612345678',
-                'avatar' => 'https://ui-avatars.com/api/?name=Jean+Dupont&background=0D6EFD&color=fff&size=150',
-                'type' => ClientTypeEnum::PARTICULIER,
-                'company_name' => null,
-            ],
-            [
-                'reference' => self::CLIENT_MARIE_REFERENCE,
-                'email' => 'marie.lefevre@gmail.com',
-                'first_name' => 'Marie',
-                'last_name' => 'Lefevre',
-                'phone' => '0623456789',
-                'avatar' => 'https://ui-avatars.com/api/?name=Marie+Lefevre&background=E83E8C&color=fff&size=150',
-                'type' => ClientTypeEnum::PARTICULIER,
-                'company_name' => null,
-            ],
-            [
-                'reference' => self::CLIENT_LUCAS_REFERENCE,
-                'email' => 'lucas.martin@gmail.com',
-                'first_name' => 'Lucas',
-                'last_name' => 'Martin',
-                'phone' => '0634567890',
-                'avatar' => 'https://ui-avatars.com/api/?name=Lucas+Martin&background=6F42C1&color=fff&size=150',
-                'type' => ClientTypeEnum::PROFESSIONNEL,
-                'company_name' => 'Martin Entreprise',
-            ],
+            ['reference' => self::CLIENT_JEAN_REFERENCE, 'email' => 'jean.dupont@gmail.com', 'firstname' => 'Jean', 'lastname' => 'Dupont', 'phone' => '0612345678', 'avatar' => 'https://ui-avatars.com/api/?name=Jean+Dupont&background=0D6EFD&color=fff&size=150', 'type' => ClientTypeEnum::PARTICULIER, 'company_name' => null],
+            ['reference' => self::CLIENT_MARIE_REFERENCE, 'email' => 'marie.lefevre@gmail.com', 'firstname' => 'Marie', 'lastname' => 'Lefevre', 'phone' => '0623456789', 'avatar' => 'https://ui-avatars.com/api/?name=Marie+Lefevre&background=E83E8C&color=fff&size=150', 'type' => ClientTypeEnum::PARTICULIER, 'company_name' => null],
+            ['reference' => self::CLIENT_LUCAS_REFERENCE, 'email' => 'lucas.martin@gmail.com', 'firstname' => 'Lucas', 'lastname' => 'Martin', 'phone' => '0634567890', 'avatar' => 'https://ui-avatars.com/api/?name=Lucas+Martin&background=6F42C1&color=fff&size=150', 'type' => ClientTypeEnum::PROFESSIONNEL, 'company_name' => 'Martin Entreprise'],
         ];
 
         foreach ($clients as $data) {
@@ -74,8 +47,8 @@ class ClientFixtures extends Fixture
             $user->setEmail($data['email']);
             $user->setRoles(['ROLE_CLIENT']);
             $user->setPassword($this->passwordHasher->hashPassword($user, $plainPassword));
-            $user->setFirstName($data['first_name']);
-            $user->setLastName($data['last_name']);
+            $user->setFirstName($data['firstname']);
+            $user->setLastName($data['lastname']);
             $user->setPhoneNumber($data['phone']);
             $user->setAvatar($data['avatar']);
             $user->setIsVerified(true);
@@ -95,7 +68,6 @@ class ClientFixtures extends Fixture
 
             $manager->persist($user);
             $manager->persist($profile);
-
             $this->addReference($data['reference'], $user);
         }
 

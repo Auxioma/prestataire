@@ -30,11 +30,12 @@ class AdminFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $now = new \DateTimeImmutable();
+        $plainPassword = 'Admin123!';
 
         $admin = new User();
         $admin->setEmail('admin@trouvemoi.fr');
         $admin->setRoles(['ROLE_ADMIN']);
-        $admin->setPassword($this->passwordHasher->hashPassword($admin, 'Admin123!'));
+        $admin->setPassword($this->passwordHasher->hashPassword($admin, $plainPassword));
         $admin->setFirstName('Admin');
         $admin->setLastName('TrouveMoi');
         $admin->setPhoneNumber('0600000000');
@@ -46,9 +47,7 @@ class AdminFixtures extends Fixture
         $admin->setUpdatedAt($now);
 
         $manager->persist($admin);
-
         $this->addReference(self::ADMIN_REFERENCE, $admin);
-
         $manager->flush();
     }
 }

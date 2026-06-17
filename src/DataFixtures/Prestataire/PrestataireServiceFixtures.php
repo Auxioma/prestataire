@@ -12,6 +12,7 @@
 
 namespace App\DataFixtures\Prestataire;
 
+use App\DataFixtures\Catalog\ServiceFixtures;
 use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
 use App\Entity\Service;
@@ -29,7 +30,7 @@ class PrestataireServiceFixtures extends Fixture implements DependentFixtureInte
             [PrestataireProfileFixtures::PROFILE_ALAIN_REFERENCE, 'Mise aux normes électriques', '95.00', null, null],
             [PrestataireProfileFixtures::PROFILE_ALAIN_REFERENCE, 'Installation de prises et interrupteurs', '75.00', '10.00', $now->modify('-10 days')],
 
-            [PrestataireProfileFixtures::PROFILE_MARIO_REFERENCE, 'Dépannage de fuite d\'eau', '89.00', '15.00', $now->modify('-6 days')],
+            [PrestataireProfileFixtures::PROFILE_MARIO_REFERENCE, 'Dépannage de fuite d’eau', '89.00', '15.00', $now->modify('-6 days')],
             [PrestataireProfileFixtures::PROFILE_MARIO_REFERENCE, 'Installation de chauffe-eau', '590.00', null, null],
             [PrestataireProfileFixtures::PROFILE_MARIO_REFERENCE, 'Débouchage de canalisation', '120.00', '20.00', $now->modify('-2 days')],
 
@@ -68,7 +69,7 @@ class PrestataireServiceFixtures extends Fixture implements DependentFixtureInte
             [PrestataireProfileFixtures::PROFILE_HUGO_REFERENCE, 'Animation DJ et sonorisation', '690.00', null, null],
 
             [PrestataireProfileFixtures::PROFILE_EMMA_REFERENCE, 'Cours particuliers de mathématiques', '38.00', null, null],
-            [PrestataireProfileFixtures::PROFILE_EMMA_REFERENCE, 'Cours d\'anglais et langues étrangères', '40.00', '10.00', $now->modify('-14 days')],
+            [PrestataireProfileFixtures::PROFILE_EMMA_REFERENCE, 'Cours d’anglais et langues étrangères', '40.00', '10.00', $now->modify('-14 days')],
 
             [PrestataireProfileFixtures::PROFILE_YASSINE_REFERENCE, 'Initiation à la programmation informatique', '55.00', '15.00', $now->modify('-6 days')],
             [PrestataireProfileFixtures::PROFILE_YASSINE_REFERENCE, 'Création de site vitrine', '1200.00', null, null],
@@ -120,6 +121,7 @@ class PrestataireServiceFixtures extends Fixture implements DependentFixtureInte
     {
         return [
             PrestataireProfileFixtures::class,
+            ServiceFixtures::class,
         ];
     }
 }
