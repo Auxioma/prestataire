@@ -76,6 +76,12 @@ export default class extends Controller {
                 minute: "2-digit",
                 hour12: false,
             },
+            eventClick: (info) => {
+                if (info.event.url) {
+                    info.jsEvent.preventDefault();
+                    window.location.href = info.event.url;
+                }
+            },
         });
 
         this.calendar.render();

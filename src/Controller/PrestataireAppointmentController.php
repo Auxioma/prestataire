@@ -19,38 +19,38 @@ final class PrestataireAppointmentController extends AbstractController
 {
 
     private function normalizeAllDayAppointment(PrestataireAppointment $appointment): void
-{
-    if (!$appointment->isAllDay()) {
-        return;
+    {
+        if (!$appointment->isAllDay()) {
+            return;
+        }
+
+        $startsAt = $appointment->getStartsAt();
+        $endsAt = $appointment->getEndsAt();
+
+        $normalizedStart = null;
+        $normalizedEnd = null;
+
+        if ($startsAt instanceof \DateTimeInterface) {
+            $normalizedStart = new \DateTime($startsAt->format('Y-m-d H:i:s'));
+            $normalizedStart->setTime(0, 0, 0);
+        }
+
+        if ($endsAt instanceof \DateTimeInterface) {
+            $normalizedEnd = new \DateTime($endsAt->format('Y-m-d H:i:s'));
+            $normalizedEnd->setTime(23, 59, 59);
+        } elseif ($normalizedStart instanceof \DateTime) {
+            $normalizedEnd = clone $normalizedStart;
+            $normalizedEnd->setTime(23, 59, 59);
+        }
+
+        if ($normalizedStart instanceof \DateTime) {
+            $appointment->setStartsAt($normalizedStart);
+        }
+
+        if ($normalizedEnd instanceof \DateTime) {
+            $appointment->setEndsAt($normalizedEnd);
+        }
     }
-
-    $startsAt = $appointment->getStartsAt();
-    $endsAt = $appointment->getEndsAt();
-
-    $normalizedStart = null;
-    $normalizedEnd = null;
-
-    if ($startsAt instanceof \DateTimeInterface) {
-        $normalizedStart = new \DateTime($startsAt->format('Y-m-d H:i:s'));
-        $normalizedStart->setTime(0, 0, 0);
-    }
-
-    if ($endsAt instanceof \DateTimeInterface) {
-        $normalizedEnd = new \DateTime($endsAt->format('Y-m-d H:i:s'));
-        $normalizedEnd->setTime(23, 59, 59);
-    } elseif ($normalizedStart instanceof \DateTime) {
-        $normalizedEnd = clone $normalizedStart;
-        $normalizedEnd->setTime(23, 59, 59);
-    }
-
-    if ($normalizedStart instanceof \DateTime) {
-        $appointment->setStartsAt($normalizedStart);
-    }
-
-    if ($normalizedEnd instanceof \DateTime) {
-        $appointment->setEndsAt($normalizedEnd);
-    }
-}
 
     // RECUPERER LES RENDEZ-VOUS
     #[Route('/events', name: 'events', methods: ['GET'])]
@@ -91,7 +91,7 @@ final class PrestataireAppointmentController extends AbstractController
 
         $appointments = $appointmentRepository->findForCalendarRange($prestataire->getId(), $startAt, $endAt);
 
-        $events = array_map(static function (PrestataireAppointment $appointment): array {
+        $events = array_map(function (PrestataireAppointment $appointment): array {
             $status = $appointment->getStatus();
 
             return [
@@ -100,6 +100,9 @@ final class PrestataireAppointmentController extends AbstractController
                 'start' => $appointment->getStartsAt()?->format(\DateTimeInterface::ATOM),
                 'end' => $appointment->getEndsAt()?->format(\DateTimeInterface::ATOM),
                 'allDay' => $appointment->isAllDay(),
+                'url' => $this->generateUrl('app_prestataire_appointment_edit', [
+                    'id' => $appointment->getId(),
+                ]),
                 'backgroundColor' => $status->getCalendarColor(),
                 'borderColor' => $status->getCalendarColor(),
                 'textColor' => '#ffffff',
