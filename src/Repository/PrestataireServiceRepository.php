@@ -39,9 +39,11 @@ class PrestataireServiceRepository extends ServiceEntityRepository
             ->leftJoin('c.parent', 'parent')
             ->addSelect('parent')
             ->andWhere('p.profileStatus = :status')
+            ->andWhere('ps.isActive = :psActive')
             ->andWhere('ps.tauxReduction IS NOT NULL')
             ->andWhere('ps.tauxReduction > 0')
-            ->setParameter('status', PrestataireProfileStatusEnum::ACTIVE);
+            ->setParameter('status', PrestataireProfileStatusEnum::ACTIVE)
+            ->setParameter('psActive', true);
     }
 
     public function findLatestBonsPlansForHome(int $limit = 4): array
@@ -61,10 +63,10 @@ class PrestataireServiceRepository extends ServiceEntityRepository
 
         if ($subCategorySlug) {
             $qb->andWhere('c.slug = :subCategorySlug')
-               ->setParameter('subCategorySlug', $subCategorySlug);
+                ->setParameter('subCategorySlug', $subCategorySlug);
         } elseif ($categorySlug) {
             $qb->andWhere('(parent.slug = :categorySlug OR c.slug = :categorySlug)')
-               ->setParameter('categorySlug', $categorySlug);
+                ->setParameter('categorySlug', $categorySlug);
         }
 
         return $qb;

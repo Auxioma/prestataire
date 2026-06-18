@@ -29,6 +29,7 @@ use Symfony\UX\Map\InfoWindow;
 use Symfony\UX\Map\Map;
 use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class PrestataireServicePrestationController extends AbstractController
 {
@@ -245,6 +246,46 @@ final class PrestataireServicePrestationController extends AbstractController
             'ps' => $ps,
             'prestation' => $ps,
             'prestationMap' => $prestationMap,
+        ]);
+    }
+
+    #[Route('/prestataire/service/{id}/toggle-active', name: 'app_prestataire_service_toggle_active', methods: ['POST'])]
+    public function toggleActive(
+        Request $request,
+        PrestataireService $ps,
+        EntityManagerInterface $em,
+    ): JsonResponse {
+        $user = $this->getUser();
+
+        if (
+            !$user instanceof User
+            || !$user->getPrestataireProfile()
+            || $ps->getPrestataire() !== $user->getPrestataireProfile()
+        ) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Accès refusé.',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $token = (string) $request->request->get('_token');
+
+        if (!$this->isCsrfTokenValid('toggle_prestation_' . $ps->getId(), $token)) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Jeton CSRF invalide.',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $ps->setIsActive(!$ps->isActive());
+        $em->flush();
+
+        return $this->json([
+            'success' => true,
+            'isActive' => $ps->isActive(),
+            'message' => $ps->isActive()
+                ? 'La prestation est maintenant active.'
+                : 'La prestation a été désactivée.',
         ]);
     }
 }
