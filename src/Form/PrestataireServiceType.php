@@ -26,11 +26,11 @@ class PrestataireServiceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('service', EntityType::class, [
-                'class' => Service::class,
-                'choice_label' => 'name',
-                'label' => 'Service',
-            ])
+            // ->add('service', EntityType::class, [
+            //     'class' => Service::class,
+            //     'choice_label' => 'name',
+            //     'label' => 'Service',
+            // ])
             ->add('prixCatalogue', MoneyType::class, [
                 'label' => 'Votre prix',
                 'currency' => 'EUR',
