@@ -2,23 +2,91 @@
 
 {% block body %}
     <div class="tm-settings-container mt-5">
-        <div class="container col-md-6">
-            <div class="card shadow-sm p-4">
-                <h4 class="mb-4 fw-bold">Modifier le service :
-                    {{ ps.service.name }}</h4>
-
-                {{ form_start(form, {attr: {class: 'needs-validation', 'data-turbo': 'false'}}) }}
-                <div class="mb-3">
-                    {{ form_row(form.prixCatalogue, {attr: {class: 'form-control'}}) }}
-                </div>
-                <div class="mb-3">
-                    {{ form_row(form.tauxReduction, {attr: {class: 'form-control'}}) }}
+        <div class="container col-lg-6 col-md-8">
+            <div class="card shadow-sm border-0 p-4">
+                <div class="d-flex flex-column gap-1 mb-4">
+                    <span class="text-muted small">Tarification du service</span>
+                    <h4 class="mb-0 fw-bold">Modifier le service : {{ ps.service.name }}</h4>
+                    <p class="text-muted mb-0">
+                        Choisissez si vous souhaitez afficher un prix ou proposer cette prestation uniquement sur devis.
+                    </p>
                 </div>
 
-                <div class="d-flex gap-2 justify-content-end">
-                    <a href="{{ path('app_prestataire_settings') }}#services-panel" class="btn btn-secondary">Annuler</a>
-                    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                {{ form_start(form, {
+                    attr: {
+                        class: 'needs-validation',
+                        'data-turbo': 'false',
+                        'data-controller': 'service-pricing-toggle'
+                    }
+                }) }}
+
+                <div class="mb-3">
+                    {{ form_row(form.pricingType, {
+                        label_attr: { class: 'form-label fw-semibold' },
+                        attr: {
+                            class: 'form-select',
+                            'data-service-pricing-toggle-target': 'pricingType',
+                            'data-action': 'change->service-pricing-toggle#toggle'
+                        }
+                    }) }}
                 </div>
+
+                <div
+                    class="mb-3"
+                    data-service-pricing-toggle-target="priceBlock"
+                >
+                    {{ form_row(form.prixCatalogue, {
+                        label_attr: { class: 'form-label fw-semibold' },
+                        attr: {
+                            class: 'form-control',
+                            placeholder: 'Ex : 80'
+                        }
+                    }) }}
+                </div>
+
+                <div
+                    class="mb-3"
+                    data-service-pricing-toggle-target="reductionBlock"
+                >
+                    {{ form_row(form.tauxReduction, {
+                        label_attr: { class: 'form-label fw-semibold' },
+                        attr: {
+                            class: 'form-control',
+                            placeholder: 'Ex : 10'
+                        }
+                    }) }}
+                </div>
+
+                <div
+                    class="alert alert-light border d-none mb-4"
+                    role="status"
+                    aria-live="polite"
+                    data-service-pricing-toggle-target="quoteInfo"
+                >
+                    <div class="d-flex align-items-start gap-2">
+                        <i class="fa-solid fa-file-signature mt-1 text-primary" aria-hidden="true"></i>
+                        <div>
+                            <strong>Mode sur devis activé</strong>
+                            <p class="mb-0 small text-muted">
+                                Aucun prix ni réduction ne sera affiché dans votre liste de services. Le service apparaîtra comme “Sur devis”.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end pt-2">
+                    <a
+                        href="{{ path('app_prestataire_settings') }}#services-panel"
+                        class="btn btn-outline-secondary"
+                    >
+                        Annuler
+                    </a>
+
+                    <button type="submit" class="btn btn-primary">
+                        Enregistrer les modifications
+                    </button>
+                </div>
+
                 {{ form_end(form) }}
             </div>
         </div>

@@ -306,26 +306,30 @@ class ProfileController extends AbstractController
         return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
     }
 
-    // Edition d'un service
-    #[Route('/prestataire/service/editer/{id}', name: 'app_prestataire_service_edit')]
-    public function edit(Request $request, PrestataireService $ps, EntityManagerInterface $em): Response
-    {
-        $user = $this->getUser();
+#[Route('/prestataire/service/editer/{id}', name: 'app_prestataire_service_edit')]
+public function edit(Request $request, PrestataireService $ps, EntityManagerInterface $em): Response
+{
+    $user = $this->getUser();
 
-        if (
-            !$user instanceof \App\Entity\User
-            || !$user->getPrestataireProfile()
-            || $ps->getPrestataire() !== $user->getPrestataireProfile()
-        ) {
-            throw $this->createAccessDeniedException();
-        }
+    if (
+        !$user instanceof \App\Entity\User
+        || !$user->getPrestataireProfile()
+        || $ps->getPrestataire() !== $user->getPrestataireProfile()
+    ) {
+        throw $this->createAccessDeniedException();
+    }
 
-        $oldReduction = $ps->getTauxReduction();
+    $oldReduction = $ps->getTauxReduction();
 
-        $form = $this->createForm(PrestataireServiceType::class, $ps);
-        $form->handleRequest($request);
+    $form = $this->createForm(PrestataireServiceType::class, $ps);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+    if ($form->isSubmitted() && $form->isValid()) {
+        if ('quote' === $ps->getPricingType()) {
+            $ps->setPrixCatalogue('0');
+            $ps->setTauxReduction(null);
+            $ps->setPromotionCreatedAt(null);
+        } else {
             $newReduction = $ps->getTauxReduction();
 
             $oldReductionValue = null !== $oldReduction ? (float) $oldReduction : 0;
@@ -338,19 +342,20 @@ class ProfileController extends AbstractController
             } else {
                 $ps->setPromotionCreatedAt(null);
             }
-
-            $em->flush();
-
-            $this->addFlash('success', 'Tarifs mis à jour !');
-
-            return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
         }
 
-        return $this->render('prestataire/edit_service.html.twig', [
-            'form' => $form->createView(),
-            'ps' => $ps,
-        ]);
+        $em->flush();
+
+        $this->addFlash('success', 'Tarifs mis à jour !');
+
+        return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
     }
+
+    return $this->render('prestataire/edit_service.html.twig', [
+        'form' => $form->createView(),
+        'ps' => $ps,
+    ]);
+}
 
     /**
      * PARAMETRES PROFILE CLIENT.

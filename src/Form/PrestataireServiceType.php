@@ -13,9 +13,8 @@
 namespace App\Form;
 
 use App\Entity\PrestataireService;
-use App\Entity\Service;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,14 +25,20 @@ class PrestataireServiceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // ->add('service', EntityType::class, [
-            //     'class' => Service::class,
-            //     'choice_label' => 'name',
-            //     'label' => 'Service',
-            // ])
+            ->add('pricingType', ChoiceType::class, [
+                'label' => 'Mode tarifaire',
+                'required' => false,
+                'choices' => [
+                    'Prix affiché' => 'fixed',
+                    'Sur devis' => 'quote',
+                ],
+                'placeholder' => 'Choisir un mode tarifaire',
+            ])
             ->add('prixCatalogue', MoneyType::class, [
                 'label' => 'Votre prix',
                 'currency' => 'EUR',
+                'required' => false,
+                'empty_data' => '',
             ])
             ->add('tauxReduction', NumberType::class, [
                 'label' => 'Réduction (%)',

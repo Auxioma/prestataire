@@ -1,121 +1,209 @@
 {# templates/settings/_prestataire_services_tab.html.twig #}
 
 <div class="card tm-card tm-services-card p-4">
-	<div class="tm-services-header mb-4">
-		<div>
-			<h5 class="tm-services-title">Vos services</h5>
-			<p class="tm-services-subtitle">Gérez vos tarifs et prestations.</p>
-		</div>
+    <div class="tm-services-header mb-4">
+        <div>
+            <h5 class="tm-services-title">Vos services</h5>
+            <p class="tm-services-subtitle">Gérez vos tarifs et prestations.</p>
+        </div>
 
-		<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addServiceModal">
-			<i class="fa-solid fa-plus me-2" aria-hidden="true"></i>
-			Ajouter un service
-		</button>
-	</div>
+        <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#addServiceModal"
+        >
+            <i class="fa-solid fa-plus me-2" aria-hidden="true"></i>
+            Ajouter un service
+        </button>
+    </div>
 
-	<div class="table-responsive tm-services-table-wrap">
-		<table class="table align-middle tm-services-table">
-			<thead>
-				<tr>
-					<th>Service</th>
-					<th>Catégorie</th>
-					<th>Prix</th>
-					<th>Réduction</th>
-					<th class="text-end">Actions</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for ps in user.prestataireProfile.prestataireServices %}
-					<tr>
-						<td class="tm-service-name">{{ ps.service.name }}</td>
-						<td class="tm-service-category">{{ ps.service.category.name }}</td>
-						<td class="tm-service-price">
-							{{ ps.prixCatalogue|number_format(2, ',', ' ') }}
-							€
-						</td>
-						<td class="{{ ps.tauxReduction ? 'tm-service-discount' : 'tm-service-discount--empty' }}">
-							{{ ps.tauxReduction ? ps.tauxReduction ~ '%' : '-' }}
-						</td>
-						<td class="text-end">
-							<div class="tm-services-actions">
+    <div class="table-responsive tm-services-table-wrap">
+        <table class="table align-middle tm-services-table">
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Catégorie</th>
+                    <th>Tarification</th>
+                    <th>Réduction</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
 
-								<a href="{{ path('app_prestataire_service_prestation_edit', { id: ps.id }) }}" class="btn btn-sm btn-outline-secondary" data-turbo="false">
-									{{ ps.hasDetailedOffer ? 'Compléter la prestation' : 'Proposer une prestation' }}
-								</a>
-								<a href="{{ path('app_prestataire_service_edit', { id: ps.id }) }}" class="btn btn-sm btn-outline-primary tm-icon-btn" title="Modifier" data-turbo="false">
-									<i class="fa-solid fa-pencil" aria-hidden="true"></i>
-								</a>
+            <tbody>
+                {% for ps in user.prestataireProfile.prestataireServices %}
+                    <tr>
+                        <td class="tm-service-name">
+                            <div class="fw-semibold">{{ ps.service.name }}</div>
+                            {% if ps.pricingType == 'quote' %}
+                                <div class="small text-muted">Fonctionne sur devis</div>
+                            {% endif %}
+                        </td>
 
-								<form method="post" action="{{ path('app_prestataire_service_delete', { id: ps.id }) }}" class="d-inline-block" data-turbo="false" onsubmit="return confirm('Confirmer la suppression de ce service ?');">
-									<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ps.id) }}">
-									<button type="submit" class="btn btn-sm btn-outline-danger tm-icon-btn" title="Supprimer" aria-label="Supprimer le service">
-										<i class="fa-solid fa-trash" aria-hidden="true"></i>
-									</button>
-								</form>
-							</div>
-						</td>
-					</tr>
-				{% else %}
-					<tr>
-						<td colspan="5" class="tm-services-empty text-center">
-							<i class="fa-solid fa-tools fa-2x mb-3 d-block" aria-hidden="true"></i>
-							<p>Aucun service ajouté pour le moment.</p>
-						</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	</div>
+                        <td class="tm-service-category">
+                            {{ ps.service.category.name }}
+                        </td>
+
+                        <td class="tm-service-price">
+                            {% if ps.pricingType == 'quote' %}
+                                <span class="badge bg-light text-dark border">
+                                    Sur devis
+                                </span>
+                            {% elseif ps.prixCatalogue is not null and ps.prixCatalogue != '' %}
+                                {{ ps.prixCatalogue|number_format(2, ',', ' ') }} €
+                            {% else %}
+                                <span class="text-muted">Non renseigné</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="{{ ps.tauxReduction ? 'tm-service-discount' : 'tm-service-discount--empty' }}">
+                            {% if ps.pricingType == 'quote' %}
+                                <span class="text-muted">-</span>
+                            {% elseif ps.tauxReduction %}
+                                {{ ps.tauxReduction }}%
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="text-end">
+                            <div class="tm-services-actions">
+                                <a
+                                    href="{{ path('app_prestataire_service_prestation_edit', { id: ps.id }) }}"
+                                    class="btn btn-sm btn-outline-secondary"
+                                    data-turbo="false"
+                                >
+                                    {{ ps.hasDetailedOffer ? 'Compléter la prestation' : 'Proposer une prestation' }}
+                                </a>
+
+                                <a
+                                    href="{{ path('app_prestataire_service_edit', { id: ps.id }) }}"
+                                    class="btn btn-sm btn-outline-primary tm-icon-btn"
+                                    title="Modifier"
+                                    aria-label="Modifier le service {{ ps.service.name }}"
+                                    data-turbo="false"
+                                >
+                                    <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+                                </a>
+
+                                <form
+                                    method="post"
+                                    action="{{ path('app_prestataire_service_delete', { id: ps.id }) }}"
+                                    class="d-inline-block"
+                                    data-turbo="false"
+                                    onsubmit="return confirm('Confirmer la suppression de ce service ?');"
+                                >
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ps.id) }}">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-sm btn-outline-danger tm-icon-btn"
+                                        title="Supprimer"
+                                        aria-label="Supprimer le service {{ ps.service.name }}"
+                                    >
+                                        <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="tm-services-empty text-center">
+                            <i class="fa-solid fa-tools fa-2x mb-3 d-block" aria-hidden="true"></i>
+                            <p class="mb-0">Aucun service ajouté pour le moment.</p>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <div class="modal fade" id="addServiceModal" tabindex="-1" aria-hidden="true">
-	<div class="modal-dialog tm-add-service-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<div>
-					<h5 class="modal-title">Ajouter un service</h5>
-					<p class="tm-modal-subtitle">
-						Choisissez une catégorie, puis affinez jusqu’au service exact.
-					</p>
-				</div>
+    <div class="modal-dialog tm-add-service-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title">Ajouter un service</h5>
+                    <p class="tm-modal-subtitle">
+                        Choisissez une catégorie, puis affinez jusqu’au service exact.
+                    </p>
+                </div>
 
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-			</div>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+            </div>
 
-			<div class="modal-body" data-controller="chained-selects">
-				<form action="{{ path('app_prestataire_add_service') }}" method="POST" data-turbo="false" class="tm-add-service-form">
-					<div class="tm-field-group">
-						<select data-chained-selects-target="category" data-action="change->chained-selects#loadSubCategories" data-controller="symfony--ux-autocomplete--autocomplete" data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false}}' required>
-							<option value="">Choisir une catégorie principale</option>
-							{% for category in categories %}
-								<option value="{{ category.id }}">{{ category.name }}</option>
-							{% endfor %}
-						</select>
-					</div>
+            <div class="modal-body" data-controller="chained-selects">
+                <form
+                    action="{{ path('app_prestataire_add_service') }}"
+                    method="POST"
+                    data-turbo="false"
+                    class="tm-add-service-form"
+                >
+                    <div class="tm-field-group">
+                        <select
+                            data-chained-selects-target="category"
+                            data-action="change->chained-selects#loadSubCategories"
+                            data-controller="symfony--ux-autocomplete--autocomplete"
+                            data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false}}'
+                            required
+                        >
+                            <option value="">Choisir une catégorie principale</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-					<div class="tm-field-group">
-						<select data-chained-selects-target="subcategory" data-action="change->chained-selects#loadServices" data-controller="symfony--ux-autocomplete--autocomplete" data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false}}' disabled required>
-							<option value="">Choisir une sous-catégorie…</option>
-						</select>
-					</div>
+                    <div class="tm-field-group">
+                        <select
+                            data-chained-selects-target="subcategory"
+                            data-action="change->chained-selects#loadServices"
+                            data-controller="symfony--ux-autocomplete--autocomplete"
+                            data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false}}'
+                            disabled
+                            required
+                        >
+                            <option value="">Choisir une sous-catégorie…</option>
+                        </select>
+                    </div>
 
-					<div class="tm-field-group">
-						<select data-chained-selects-target="service" data-controller="symfony--ux-autocomplete--autocomplete" data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false}}' name="service_id" disabled required>
-							<option value="">Choisir un service…</option>
-						</select>
-					</div>
+                    <div class="tm-field-group">
+                        <select
+                            data-chained-selects-target="service"
+                            data-controller="symfony--ux-autocomplete--autocomplete"
+                            data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false}}'
+                            name="service_id"
+                            disabled
+                            required
+                        >
+                            <option value="">Choisir un service…</option>
+                        </select>
+                    </div>
 
-					<div class="modal-footer px-0 pb-0">
-						<button type="button" class="btn btn-secondary tm-modal-btn tm-modal-btn-secondary" data-bs-dismiss="modal">
-							Annuler
-						</button>
+                    <div class="modal-footer px-0 pb-0">
+                        <button
+                            type="button"
+                            class="btn btn-secondary tm-modal-btn tm-modal-btn-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            Annuler
+                        </button>
 
-						<button type="submit" class="btn btn-primary tm-modal-btn tm-modal-btn-primary">
-							Ajouter ce service
-						</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
+                        <button
+                            type="submit"
+                            class="btn btn-primary tm-modal-btn tm-modal-btn-primary"
+                        >
+                            Ajouter ce service
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
