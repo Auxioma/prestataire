@@ -29,9 +29,13 @@
 		<div class="card shadow-sm">
 			<div class="card-body">
 				{{ form_start(form, {
+    action: path('app_prestataire_appointment_new'),
+    method: 'POST',
     attr: {
-        'data-turbo': 'false'
-    }}) }}
+        'data-turbo': 'false',
+        'data-controller': 'appointment-form'
+    }
+}) }}
 				<div class="row g-3">
 					<div class="col-12">
 						{{ form_row(form.title) }}

@@ -28,15 +28,21 @@ class PrestataireAppointmentType extends AbstractType
             ->add('startsAt', DateTimeType::class, [
                 'label' => 'Début',
                 'widget' => 'single_text',
+                'attr' => [
+                    'data-appointment-form-target' => 'startsAt',
+                ],
             ])
             ->add('endsAt', DateTimeType::class, [
                 'label' => 'Fin',
                 'widget' => 'single_text',
+                'attr' => [
+                    'data-appointment-form-target' => 'endsAt',
+                ],
             ])
             ->add('status', EnumType::class, [
                 'class' => PrestataireAppointmentStatusEnum::class,
                 'label' => 'Statut',
-                'choice_label' => static fn (PrestataireAppointmentStatusEnum $choice) => $choice->getLabel(),
+                'choice_label' => static fn(PrestataireAppointmentStatusEnum $choice) => $choice->getLabel(),
             ])
             ->add('locationLabel', TextType::class, [
                 'label' => 'Lieu',
@@ -45,6 +51,10 @@ class PrestataireAppointmentType extends AbstractType
             ->add('isAllDay', CheckboxType::class, [
                 'label' => 'Toute la journée',
                 'required' => false,
+                'attr' => [
+                    'data-appointment-form-target' => 'allDay',
+                    'data-action' => 'change->appointment-form#toggleAllDay',
+                ],
             ])
         ;
     }

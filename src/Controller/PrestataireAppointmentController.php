@@ -17,6 +17,41 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 #[Route('/prestataire/calendrier', name: 'app_prestataire_appointment_')]
 final class PrestataireAppointmentController extends AbstractController
 {
+
+    private function normalizeAllDayAppointment(PrestataireAppointment $appointment): void
+{
+    if (!$appointment->isAllDay()) {
+        return;
+    }
+
+    $startsAt = $appointment->getStartsAt();
+    $endsAt = $appointment->getEndsAt();
+
+    $normalizedStart = null;
+    $normalizedEnd = null;
+
+    if ($startsAt instanceof \DateTimeInterface) {
+        $normalizedStart = new \DateTime($startsAt->format('Y-m-d H:i:s'));
+        $normalizedStart->setTime(0, 0, 0);
+    }
+
+    if ($endsAt instanceof \DateTimeInterface) {
+        $normalizedEnd = new \DateTime($endsAt->format('Y-m-d H:i:s'));
+        $normalizedEnd->setTime(23, 59, 59);
+    } elseif ($normalizedStart instanceof \DateTime) {
+        $normalizedEnd = clone $normalizedStart;
+        $normalizedEnd->setTime(23, 59, 59);
+    }
+
+    if ($normalizedStart instanceof \DateTime) {
+        $appointment->setStartsAt($normalizedStart);
+    }
+
+    if ($normalizedEnd instanceof \DateTime) {
+        $appointment->setEndsAt($normalizedEnd);
+    }
+}
+
     // RECUPERER LES RENDEZ-VOUS
     #[Route('/events', name: 'events', methods: ['GET'])]
     public function events(
@@ -101,6 +136,7 @@ final class PrestataireAppointmentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->normalizeAllDayAppointment($appointment);
 
             $entityManager->persist($appointment);
             $entityManager->flush();
@@ -185,6 +221,8 @@ final class PrestataireAppointmentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->normalizeAllDayAppointment($appointment);
+
             $entityManager->flush();
 
             $this->addFlash('success', 'Le rendez-vous a bien été modifié.');
