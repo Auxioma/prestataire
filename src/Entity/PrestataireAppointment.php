@@ -6,6 +6,7 @@ use App\Repository\PrestataireAppointmentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Enum\PrestataireAppointmentStatusEnum;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PrestataireAppointmentRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -35,9 +36,15 @@ class PrestataireAppointment
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotNull(message: 'La date de début est obligatoire.')]
     private ?\DateTimeInterface $startsAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotNull(message: 'La date de fin est obligatoire.')]
+    #[Assert\GreaterThan(
+        propertyPath: 'startsAt',
+        message: 'La date de fin doit être postérieure à la date de début.'
+    )]
     private ?\DateTimeInterface $endsAt = null;
 
     #[ORM\Column(length: 30, enumType: PrestataireAppointmentStatusEnum::class)]

@@ -9,10 +9,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Entity\PrestataireAppointment;
+use App\Form\PrestataireAppointmentType;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 
 #[Route('/prestataire/calendrier', name: 'app_prestataire_appointment_')]
 final class PrestataireAppointmentController extends AbstractController
 {
+    // RECUPERER LES RENDEZ-VOUS
     #[Route('/events', name: 'events', methods: ['GET'])]
     public function events(
         Request $request,
@@ -51,7 +56,7 @@ final class PrestataireAppointmentController extends AbstractController
 
         $appointments = $appointmentRepository->findForCalendarRange($prestataire->getId(), $startAt, $endAt);
 
-        $events = array_map(static function ($appointment): array {
+        $events = array_map(static function (PrestataireAppointment $appointment): array {
             $status = $appointment->getStatus();
 
             return [
@@ -75,5 +80,156 @@ final class PrestataireAppointmentController extends AbstractController
         }, $appointments);
 
         return $this->json($events);
+    }
+
+    // CREATE NEW APPOINTMENT
+    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
+    public function new(
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+            throw $this->createAccessDeniedException('Accès refusé.');
+        }
+
+        $appointment = new PrestataireAppointment();
+        $appointment->setPrestataire($user->getPrestataireProfile());
+
+        $form = $this->createForm(PrestataireAppointmentType::class, $appointment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $entityManager->persist($appointment);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Le rendez-vous a bien été créé.');
+
+            return $this->redirect(
+                $this->generateUrl('app_prestataire_dashboard') . '#calendrier-main-panel'
+            );
+        }
+
+        return $this->render('prestataire/appointment/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    // READ ALL APPOINTMENTS
+    #[Route('', name: 'index', methods: ['GET'])]
+    public function index(
+        PrestataireAppointmentRepository $appointmentRepository,
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+            throw $this->createAccessDeniedException('Accès refusé.');
+        }
+
+        $prestataire = $user->getPrestataireProfile();
+
+        $appointments = $appointmentRepository->findBy(
+            ['prestataire' => $prestataire],
+            ['startsAt' => 'ASC']
+        );
+
+        return $this->render('prestataire/appointment/index.html.twig', [
+            'appointments' => $appointments,
+        ]);
+    }
+
+    // READ ONE APPOINTMENT
+    #[Route('/{id}', name: 'show', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function show(
+        #[MapEntity(id: 'id')] PrestataireAppointment $appointment,
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+            throw $this->createAccessDeniedException('Accès refusé.');
+        }
+
+        $prestataire = $user->getPrestataireProfile();
+
+        if ($appointment->getPrestataire()?->getId() !== $prestataire->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas consulter ce rendez-vous.');
+        }
+
+        return $this->render('prestataire/appointment/show.html.twig', [
+            'appointment' => $appointment,
+        ]);
+    }
+
+    // EDIT APPOINTMENT
+    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
+    public function edit(
+        Request $request,
+        #[MapEntity(id: 'id')] PrestataireAppointment $appointment,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+            throw $this->createAccessDeniedException('Accès refusé.');
+        }
+
+        $prestataire = $user->getPrestataireProfile();
+
+        if ($appointment->getPrestataire()?->getId() !== $prestataire->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas modifier ce rendez-vous.');
+        }
+
+        $form = $this->createForm(PrestataireAppointmentType::class, $appointment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Le rendez-vous a bien été modifié.');
+
+            return $this->redirect(
+                $this->generateUrl('app_prestataire_dashboard') . '#calendrier-main-panel'
+            );
+        }
+
+        return $this->render('prestataire/appointment/edit.html.twig', [
+            'appointment' => $appointment,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    // DELETE APPOINTMENT
+    #[Route('/{id}/delete', name: 'delete', methods: ['POST'], requirements: ['id' => '\d+'])]
+    public function delete(
+        Request $request,
+        #[MapEntity(id: 'id')] PrestataireAppointment $appointment,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+            throw $this->createAccessDeniedException('Accès refusé.');
+        }
+
+        $prestataire = $user->getPrestataireProfile();
+
+        if ($appointment->getPrestataire()?->getId() !== $prestataire->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer ce rendez-vous.');
+        }
+
+        if ($this->isCsrfTokenValid('delete_appointment_' . $appointment->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($appointment);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Le rendez-vous a bien été supprimé.');
+        } else {
+            $this->addFlash('danger', 'Token CSRF invalide.');
+        }
+
+        return $this->redirect(
+            $this->generateUrl('app_prestataire_dashboard') . '#calendrier-main-panel'
+        );
     }
 }

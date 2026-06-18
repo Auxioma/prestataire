@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau rendez-vous
+{% endblock %}
+
+{% block body %}
+	<div class="container py-4">
+		<div class="d-flex justify-content-between align-items-center mb-4">
+			<div>
+				<h1 class="h3 mb-1">Nouveau rendez-vous</h1>
+				<p class="text-muted mb-0">
+					Créez un rendez-vous, une intervention ou un bloc de disponibilité.
+				</p>
+			</div>
+			<a href="{{ path('app_prestataire_dashboard') }}" class="btn btn-outline-secondary">
+				Retour
+			</a>
+		</div>
+
+		{% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+			{% for message in messages %}
+				<div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+					{{ message }}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+				</div>
+			{% endfor %}
+		{% endfor %}
+
+		<div class="card shadow-sm">
+			<div class="card-body">
+				{{ form_start(form, {
+    attr: {
+        'data-turbo': 'false'
+    }}) }}
+				<div class="row g-3">
+					<div class="col-12">
+						{{ form_row(form.title) }}
+					</div>
+
+					<div class="col-12">
+						{{ form_row(form.description) }}
+					</div>
+
+					<div class="col-md-6">
+						{{ form_row(form.startsAt) }}
+					</div>
+
+					<div class="col-md-6">
+						{{ form_row(form.endsAt) }}
+					</div>
+
+					<div class="col-md-6">
+						{{ form_row(form.status) }}
+					</div>
+
+					<div class="col-md-6">
+						{{ form_row(form.locationLabel) }}
+					</div>
+
+					<div class="col-12">
+						{{ form_row(form.isAllDay) }}
+					</div>
+				</div>
+
+				<div class="mt-4 d-flex gap-2">
+					<button type="submit" class="btn btn-primary">
+						Enregistrer
+					</button>
+
+					<a href="{{ path('app_prestataire_dashboard') }}" class="btn btn-outline-secondary">
+						Annuler
+					</a>
+				</div>
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</div>
+{% endblock %}

@@ -1,4 +1,4 @@
-import { Controller } from '@hotwired/stimulus';
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
     static values = {
@@ -9,7 +9,7 @@ export default class extends Controller {
         this.initialized = false;
         this.handleTabShown = this.handleTabShown.bind(this);
 
-        document.addEventListener('shown.bs.tab', this.handleTabShown);
+        document.addEventListener("shown.bs.tab", this.handleTabShown);
 
         if (this.isVisible()) {
             this.initCalendar();
@@ -17,7 +17,7 @@ export default class extends Controller {
     }
 
     disconnect() {
-        document.removeEventListener('shown.bs.tab', this.handleTabShown);
+        document.removeEventListener("shown.bs.tab", this.handleTabShown);
 
         if (this.calendar) {
             this.calendar.destroy();
@@ -26,28 +26,32 @@ export default class extends Controller {
     }
 
     handleTabShown(event) {
-        const targetSelector = event.target.getAttribute('data-bs-target');
+        const targetSelector = event.target.getAttribute("data-bs-target");
 
-        if (targetSelector !== '#calendrier-main-panel') {
+        if (targetSelector !== "#calendrier-main-panel") {
             return;
         }
 
         if (!this.initialized) {
-            this.initCalendar();
+            window.setTimeout(() => this.initCalendar(), 30);
             return;
         }
 
-        window.setTimeout(() => this.calendar?.updateSize(), 50);
+        window.setTimeout(() => this.calendar?.updateSize(), 60);
     }
 
     initCalendar() {
-        if (this.initialized || !this.element || typeof FullCalendar === 'undefined') {
+        if (
+            this.initialized ||
+            !this.element ||
+            typeof FullCalendar === "undefined"
+        ) {
             return;
         }
 
         this.calendar = new FullCalendar.Calendar(this.element, {
-            locale: 'fr',
-            initialView: 'dayGridMonth',
+            locale: "fr",
+            initialView: "dayGridMonth",
             firstDay: 1,
             height: 650,
             nowIndicator: true,
@@ -55,21 +59,21 @@ export default class extends Controller {
             editable: false,
             dayMaxEvents: true,
             headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
+                left: "prev,next today",
+                center: "title",
+                right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
             },
             buttonText: {
-                today: 'Aujourd’hui',
-                month: 'Mois',
-                week: 'Semaine',
-                day: 'Jour',
-                list: 'Liste',
+                today: "Aujourd’hui",
+                month: "Mois",
+                week: "Semaine",
+                day: "Jour",
+                list: "Liste",
             },
             events: this.eventsUrlValue,
             eventTimeFormat: {
-                hour: '2-digit',
-                minute: '2-digit',
+                hour: "2-digit",
+                minute: "2-digit",
                 hour12: false,
             },
         });

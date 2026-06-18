@@ -1,14 +1,29 @@
 <div class="card tm-card tm-calendar-panel p-4">
-	<div class="tm-calendar-header mb-4">
-		<h4 class="tm-card-title tm-calendar-title mb-1">Calendrier</h4>
-		<p class="tm-calendar-subtitle">
-			Gérez vos rendez-vous, interventions et disponibilités depuis une seule vue.
-		</p>
-	</div>
+    <div class="tm-calendar-header mb-4 d-flex justify-content-between align-items-start gap-3">
+        <div>
+            <h4 class="tm-card-title tm-calendar-title mb-1">Calendrier</h4>
+            <p class="tm-calendar-subtitle mb-0">
+                Gérez vos rendez-vous, interventions et disponibilités depuis une seule vue.
+            </p>
+        </div>
 
-	<div class="tm-calendar-wrap">
-		<div id="prestataire-calendar" data-controller="calendar-panel" data-calendar-panel-events-url-value="{{ path('app_prestataire_appointment_events') }}"></div>
-	</div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{{ path('app_prestataire_appointment_index') }}" class="btn btn-outline-secondary btn-sm">
+                Voir la liste
+            </a>
+            <a href="{{ path('app_prestataire_appointment_new') }}" class="btn btn-primary btn-sm">
+                Nouveau rendez-vous
+            </a>
+        </div>
+    </div>
+
+    <div class="tm-calendar-wrap">
+        <div
+            id="prestataire-calendar"
+            data-controller="calendar-panel"
+            data-calendar-panel-events-url-value="{{ path('app_prestataire_appointment_events') }}"
+        ></div>
+    </div>
 </div>
 
 <script src="{{ asset('vendor/fullcalendar/index.global.min.js') }}"></script>

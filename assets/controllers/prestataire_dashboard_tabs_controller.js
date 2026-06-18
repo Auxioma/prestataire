@@ -45,11 +45,11 @@ export default class extends Controller {
                 }
 
                 if (tabLevel === 'main') {
-                    const activeSubTrigger = this.findFirstSubTabTrigger(currentTarget);
+                    const firstSubTrigger = this.findFirstSubTabTrigger(currentTarget);
 
-                    if (activeSubTrigger) {
-                        const activeSubTarget = activeSubTrigger.getAttribute('data-bs-target');
-                        history.replaceState(null, '', `${currentTarget}|${activeSubTarget.replace('#', '')}`);
+                    if (firstSubTrigger) {
+                        const firstSubTarget = firstSubTrigger.getAttribute('data-bs-target');
+                        history.replaceState(null, '', `${currentTarget}|${firstSubTarget.replace('#', '')}`);
                     } else {
                         history.replaceState(null, '', currentTarget);
                     }
@@ -63,30 +63,34 @@ export default class extends Controller {
     activateTabsFromHash() {
         const hash = window.location.hash;
 
-        if (!hash) {
+        if (!hash || !window.bootstrap?.Tab) {
             return;
         }
 
-        const cleanedHash = hash.substring(1);
+        const cleanedHash = hash.replace(/^#/, '');
         const [mainPaneId, subPaneId] = cleanedHash.split('|');
 
-        if (mainPaneId) {
-            const mainTrigger = this.element.querySelector(
-                `[data-bs-target="#${mainPaneId}"][data-tab-level="main"]`
-            );
-
-            if (mainTrigger && window.bootstrap?.Tab) {
-                window.bootstrap.Tab.getOrCreateInstance(mainTrigger).show();
-            }
+        if (!mainPaneId) {
+            return;
         }
+
+        const mainTrigger = this.element.querySelector(
+            `[data-bs-target="#${mainPaneId}"][data-tab-level="main"]`
+        );
+
+        if (!mainTrigger) {
+            return;
+        }
+
+        window.bootstrap.Tab.getOrCreateInstance(mainTrigger).show();
 
         if (subPaneId) {
             const subTrigger = this.element.querySelector(
                 `[data-bs-target="#${subPaneId}"][data-tab-level="sub"]`
             );
 
-            if (subTrigger && window.bootstrap?.Tab) {
-                setTimeout(() => {
+            if (subTrigger) {
+                window.setTimeout(() => {
                     window.bootstrap.Tab.getOrCreateInstance(subTrigger).show();
                 }, 0);
             }
@@ -94,14 +98,12 @@ export default class extends Controller {
             return;
         }
 
-        if (mainPaneId) {
-            const firstSubTrigger = this.findFirstSubTabTrigger(`#${mainPaneId}`);
+        const firstSubTrigger = this.findFirstSubTabTrigger(`#${mainPaneId}`);
 
-            if (firstSubTrigger && window.bootstrap?.Tab) {
-                setTimeout(() => {
-                    window.bootstrap.Tab.getOrCreateInstance(firstSubTrigger).show();
-                }, 0);
-            }
+        if (firstSubTrigger) {
+            window.setTimeout(() => {
+                window.bootstrap.Tab.getOrCreateInstance(firstSubTrigger).show();
+            }, 0);
         }
     }
 
