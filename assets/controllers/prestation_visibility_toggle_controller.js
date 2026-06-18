@@ -1,15 +1,24 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['checkbox', 'status', 'label'];
+    static targets = ['checkbox', 'label'];
     static values = {
         url: String,
         token: String,
         isComplete: Boolean,
+        statusSelector: String,
     };
 
     connect() {
         this.isLoading = false;
+    }
+
+    get statusElement() {
+        if (!this.hasStatusSelectorValue) {
+            return null;
+        }
+
+        return document.querySelector(this.statusSelectorValue);
     }
 
     async toggle() {
@@ -48,22 +57,24 @@ export default class extends Controller {
                 this.labelTarget.textContent = data.isActive ? 'Active' : 'Inactive';
             }
 
-            if (this.hasStatusTarget) {
-                this.statusTarget.classList.remove(
+            const statusElement = this.statusElement;
+
+            if (statusElement) {
+                statusElement.classList.remove(
                     'tm-prestations-badge--success',
                     'tm-prestations-badge--draft',
                     'tm-prestations-badge--muted'
                 );
 
                 if (!data.isActive) {
-                    this.statusTarget.textContent = 'Masquée';
-                    this.statusTarget.classList.add('tm-prestations-badge--muted');
+                    statusElement.textContent = 'Masquée';
+                    statusElement.classList.add('tm-prestations-badge--muted');
                 } else if (this.isCompleteValue) {
-                    this.statusTarget.textContent = 'Visible';
-                    this.statusTarget.classList.add('tm-prestations-badge--success');
+                    statusElement.textContent = 'Visible';
+                    statusElement.classList.add('tm-prestations-badge--success');
                 } else {
-                    this.statusTarget.textContent = 'Active mais incomplète';
-                    this.statusTarget.classList.add('tm-prestations-badge--draft');
+                    statusElement.textContent = 'Active mais incomplète';
+                    statusElement.classList.add('tm-prestations-badge--draft');
                 }
             }
         } catch (error) {
