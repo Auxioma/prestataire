@@ -28,6 +28,8 @@ class PrestataireAppointmentType extends AbstractType
             ->add('startsAt', DateTimeType::class, [
                 'label' => 'Début',
                 'widget' => 'single_text',
+                'model_timezone' => 'UTC',
+                'view_timezone' => 'Europe/Paris',
                 'attr' => [
                     'data-appointment-form-target' => 'startsAt',
                 ],
@@ -35,6 +37,8 @@ class PrestataireAppointmentType extends AbstractType
             ->add('endsAt', DateTimeType::class, [
                 'label' => 'Fin',
                 'widget' => 'single_text',
+                'model_timezone' => 'UTC',
+                'view_timezone' => 'Europe/Paris',
                 'attr' => [
                     'data-appointment-form-target' => 'endsAt',
                 ],

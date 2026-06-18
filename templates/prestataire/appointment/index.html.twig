@@ -1,83 +1,92 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes rendez-vous
-{% endblock %}
+{% block title %}Mes rendez-vous{% endblock %}
 
 {% block body %}
-	<div class="container py-4">
-		<div class="d-flex justify-content-between align-items-center mb-4">
-			<div>
-				<h1 class="h3 mb-1">Mes rendez-vous</h1>
-				<p class="text-muted mb-0">
-					Retrouvez tous vos rendez-vous planifiés.
-				</p>
-			</div>
+    <div class="tm-appointment-index-page">
+        <div class="container py-4">
+            <div class="tm-appointment-index-page__header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+                <div>
+                    <h1 class="h3 mb-1">Mes rendez-vous</h1>
+                    <p class="text-muted mb-0">
+                        Retrouvez tous vos rendez-vous planifiés.
+                    </p>
+                </div>
 
-			<a href="{{ path('app_prestataire_appointment_new') }}" class="btn btn-primary">
-				Nouveau rendez-vous
-			</a>
-		</div>
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                    <a href="{{ path('app_prestataire_appointment_new') }}" class="btn btn-primary">
+                        Nouveau rendez-vous
+                    </a>
+                </div>
+            </div>
 
-		{% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
-			{% for message in messages %}
-				<div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
-					{{ message }}
-					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-				</div>
-			{% endfor %}
-		{% endfor %}
+            {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
 
-		<div class="card shadow-sm">
-			<div class="card-body p-0">
-				{% if appointments is not empty %}
-					<div class="table-responsive">
-						<table class="table table-hover mb-0 align-middle">
-							<thead>
-								<tr>
-									<th>Titre</th>
-									<th>Début</th>
-									<th>Fin</th>
-									<th>Statut</th>
-									<th>Lieu</th>
-									<th class="text-end">Actions</th>
-								</tr>
-							</thead>
-							<tbody>
-								{% for appointment in appointments %}
-									<tr>
-										<td>{{ appointment.title }}</td>
-										<td>{{ appointment.startsAt|date('d/m/Y H:i') }}</td>
-										<td>{{ appointment.endsAt|date('d/m/Y H:i') }}</td>
-										<td>{{ appointment.status.getLabel() }}</td>
-										<td>{{ appointment.locationLabel ?: '—' }}</td>
-										<td class="text-end">
-											<a href="{{ path('app_prestataire_appointment_show', {id: appointment.id}) }}" class="btn btn-sm btn-outline-secondary">
-												Voir
-											</a>
-											<a href="{{ path('app_prestataire_appointment_edit', {id: appointment.id}) }}" class="btn btn-primary">
-												Modifier
-											</a>
-											<form method="post" action="{{ path('app_prestataire_appointment_delete', {id: appointment.id}) }}" class="d-inline" data-turbo="false" onsubmit="return confirm('Confirmer la suppression de ce rendez-vous ?');">
-												<input type="hidden" name="_token" value="{{ csrf_token('delete_appointment_' ~ appointment.id) }}">
-												<button type="submit" class="btn btn-sm btn-outline-danger">
-													Supprimer
-												</button>
-											</form>
-										</td>
-									</tr>
-								{% endfor %}
-							</tbody>
-						</table>
-					</div>
-				{% else %}
-					<div class="p-4">
-						<p class="mb-3">Aucun rendez-vous pour le moment.</p>
-						<a href="{{ path('app_prestataire_appointment_new') }}" class="btn btn-primary">
-							Créer le premier rendez-vous
-						</a>
-					</div>
-				{% endif %}
-			</div>
-		</div>
-	</div>
+            <div class="tm-appointment-index-page__card card shadow-sm">
+                <div class="card-body p-0">
+                    {% if appointments is not empty %}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Titre</th>
+                                        <th>Début</th>
+                                        <th>Fin</th>
+                                        <th>Statut</th>
+                                        <th>Lieu</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for appointment in appointments %}
+                                        <tr>
+                                            <td>{{ appointment.title }}</td>
+                                            <td>{{ appointment.startsAt|date('d/m/Y H:i') }}</td>
+                                            <td>{{ appointment.endsAt|date('d/m/Y H:i') }}</td>
+                                            <td>{{ appointment.status.getLabel() }}</td>
+                                            <td>{{ appointment.locationLabel ?: '—' }}</td>
+                                            <td class="text-end">
+                                                <div class="d-inline-flex flex-wrap justify-content-end gap-2">
+                                                    <a href="{{ path('app_prestataire_appointment_show', { id: appointment.id }) }}" class="btn btn-sm btn-outline-secondary">
+                                                        Voir
+                                                    </a>
+                                                    <a href="{{ path('app_prestataire_appointment_edit', { id: appointment.id }) }}" class="btn btn-sm btn-primary">
+                                                        Modifier
+                                                    </a>
+                                                    <form method="post"
+                                                          action="{{ path('app_prestataire_appointment_delete', { id: appointment.id }) }}"
+                                                          class="d-inline"
+                                                          data-turbo="false"
+                                                          onsubmit="return confirm('Confirmer la suppression de ce rendez-vous ?');">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_appointment_' ~ appointment.id) }}">
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                            Supprimer
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="p-4">
+                            <p class="mb-3">Aucun rendez-vous pour le moment.</p>
+                            <a href="{{ path('app_prestataire_appointment_new') }}" class="btn btn-primary">
+                                Créer le premier rendez-vous
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

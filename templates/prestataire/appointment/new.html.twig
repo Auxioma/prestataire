@@ -1,82 +1,91 @@
 {% extends 'base.html.twig' %}
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
 
-{% block title %}Nouveau rendez-vous
-{% endblock %}
+
+{% block title %}Nouveau rendez-vous{% endblock %}
 
 {% block body %}
-	<div class="container py-4">
-		<div class="d-flex justify-content-between align-items-center mb-4">
-			<div>
-				<h1 class="h3 mb-1">Nouveau rendez-vous</h1>
-				<p class="text-muted mb-0">
-					Créez un rendez-vous, une intervention ou un bloc de disponibilité.
-				</p>
-			</div>
-			<a href="{{ path('app_prestataire_dashboard') }}" class="btn btn-outline-secondary">
-				Retour
-			</a>
-		</div>
+    <div class="tm-appointment-new-page">
+        <div class="container py-4">
+            <div class="tm-appointment-new-page__header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+                <div>
+                    <h1 class="h3 mb-1">Nouveau rendez-vous</h1>
+                    <p class="text-muted mb-0">
+                        Créez un rendez-vous, une intervention ou un bloc de disponibilité.
+                    </p>
+                </div>
 
-		{% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
-			{% for message in messages %}
-				<div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
-					{{ message }}
-					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-				</div>
-			{% endfor %}
-		{% endfor %}
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                    <a href="{{ path('app_prestataire_dashboard') }}" class="btn btn-outline-secondary">
+                        Retour
+                    </a>
+                </div>
+            </div>
 
-		<div class="card shadow-sm">
-			<div class="card-body">
-				{{ form_start(form, {
-    action: path('app_prestataire_appointment_new'),
-    method: 'POST',
-    attr: {
-        'data-turbo': 'false',
-        'data-controller': 'appointment-form'
-    }
-}) }}
-				<div class="row g-3">
-					<div class="col-12">
-						{{ form_row(form.title) }}
-					</div>
+            {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
 
-					<div class="col-12">
-						{{ form_row(form.description) }}
-					</div>
+            <div class="tm-appointment-new-page__card card shadow-sm">
+                <div class="card-body">
+                    {{ form_start(form, {
+                        action: path('app_prestataire_appointment_new'),
+                        method: 'POST',
+                        attr: {
+                            'data-turbo': 'false',
+                            'data-controller': 'appointment-form',
+                            'class': 'tm-appointment-new-page__form'
+                        }
+                    }) }}
+                        <div class="row g-3">
+                            <div class="col-12">
+                                {{ form_row(form.title) }}
+                            </div>
 
-					<div class="col-md-6">
-						{{ form_row(form.startsAt) }}
-					</div>
+                            <div class="col-12">
+                                {{ form_row(form.description) }}
+                            </div>
 
-					<div class="col-md-6">
-						{{ form_row(form.endsAt) }}
-					</div>
+                            <div class="col-md-6">
+                                {{ form_row(form.startsAt) }}
+                            </div>
 
-					<div class="col-md-6">
-						{{ form_row(form.status) }}
-					</div>
+                            <div class="col-md-6">
+                                {{ form_row(form.endsAt) }}
+                            </div>
 
-					<div class="col-md-6">
-						{{ form_row(form.locationLabel) }}
-					</div>
+                            <div class="col-md-6">
+                                {{ form_row(form.status) }}
+                            </div>
 
-					<div class="col-12">
-						{{ form_row(form.isAllDay) }}
-					</div>
-				</div>
+                            <div class="col-md-6">
+                                {{ form_row(form.locationLabel) }}
+                            </div>
 
-				<div class="mt-4 d-flex gap-2">
-					<button type="submit" class="btn btn-primary">
-						Enregistrer
-					</button>
+                            <div class="col-12">
+                                <div class="tm-appointment-new-page__checkbox">
+                                    {{ form_row(form.isAllDay) }}
+                                </div>
+                            </div>
+                        </div>
 
-					<a href="{{ path('app_prestataire_dashboard') }}" class="btn btn-outline-secondary">
-						Annuler
-					</a>
-				</div>
-				{{ form_end(form) }}
-			</div>
-		</div>
-	</div>
+                        <div class="tm-appointment-new-page__footer mt-4 d-flex flex-column flex-sm-row gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                Enregistrer
+                            </button>
+
+                            <a href="{{ path('app_prestataire_dashboard') }}" class="btn btn-outline-secondary">
+                                Annuler
+                            </a>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
