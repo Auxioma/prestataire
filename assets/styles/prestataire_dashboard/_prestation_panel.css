@@ -1,0 +1,211 @@
+/* =========================
+   PRESTATIONS PANEL
+========================= */
+
+.tm-prestations-panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.tm-prestations-panel-head-copy {
+    max-width: 760px;
+}
+
+.tm-prestations-panel-title {
+    margin: 0 0 0.35rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.tm-prestations-panel-subtitle {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.tm-prestations-panel-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.tm-prestations-table-wrap {
+    border: 1px solid #e5eaf2;
+    border-radius: 20px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+}
+
+.tm-prestations-table {
+    margin-bottom: 0;
+}
+
+.tm-prestations-table thead th {
+    border-bottom: 1px solid #e5eaf2;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.95rem 1rem;
+    white-space: nowrap;
+}
+
+.tm-prestations-table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-top: 1px solid #eef2f7;
+}
+
+.tm-prestations-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.tm-prestations-prestation-title {
+    margin: 0;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.tm-prestations-prestation-meta {
+    margin-top: 0.2rem;
+    font-size: 0.82rem;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.tm-prestations-prestation-desc {
+    margin-top: 0.35rem;
+    font-size: 0.8rem;
+    color: #7c8798;
+    line-height: 1.55;
+}
+
+.tm-prestations-service-name {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(32, 70, 216, 0.08);
+    color: #2046d8;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.tm-prestations-pricing {
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 0.92rem;
+}
+
+.tm-prestations-date {
+    font-size: 0.84rem;
+    color: #64748b;
+    white-space: nowrap;
+}
+
+.tm-prestations-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+}
+
+.tm-prestations-badge--success {
+    background: rgba(22, 163, 74, 0.12);
+    color: #15803d;
+}
+
+.tm-prestations-badge--muted {
+    background: rgba(100, 116, 139, 0.12);
+    color: #475569;
+}
+
+.tm-prestations-badge--draft {
+    background: rgba(244, 169, 17, 0.14);
+    color: #9a6700;
+}
+
+.tm-prestations-empty {
+    padding: 2.8rem 1.5rem;
+    border: 1px dashed rgba(29, 36, 67, 0.15);
+    border-radius: 1.35rem;
+    background: #ffffff;
+    text-align: center;
+}
+
+.tm-prestations-empty-icon {
+    width: 84px;
+    height: 84px;
+    margin: 0 auto 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #f5f7fb;
+    color: #8b93a5;
+    font-size: 1.8rem;
+}
+
+.tm-prestations-empty-title {
+    margin: 0 0 0.45rem;
+    font-size: 1.12rem;
+    font-weight: 800;
+    color: #1f2748;
+}
+
+.tm-prestations-empty-text {
+    margin: 0 auto 1.1rem;
+    max-width: 540px;
+    color: #70798e;
+    line-height: 1.65;
+}
+
+@media (max-width: 991.98px) {
+    .tm-prestations-panel-head {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .tm-prestations-panel-actions {
+        width: 100%;
+    }
+
+    .tm-prestations-panel-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .tm-prestations-table thead th,
+    .tm-prestations-table tbody td {
+        padding: 0.8rem 0.75rem;
+    }
+
+    .tm-prestations-panel-title {
+        font-size: 1.08rem;
+    }
+
+    .tm-prestations-panel-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .tm-prestations-empty {
+        padding: 2rem 1rem;
+    }
+}

@@ -1,88 +1,546 @@
 <ul class="nav nav-tabs border-bottom gap-2 mb-4" id="prestationsSubTabs" role="tablist">
-    <li class="nav-item" role="presentation">
-        <button
-            class="nav-link active"
-            id="prestations-list-tab"
-            data-tab-level="sub"
-            data-bs-toggle="tab"
-            data-bs-target="#prestations-list-panel"
-            type="button"
-            role="tab"
-            aria-controls="prestations-list-panel"
-            aria-selected="true"
-        >
-            Liste des prestations
-        </button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button
-            class="nav-link"
-            id="prestations-pricing-tab"
-            data-tab-level="sub"
-            data-bs-toggle="tab"
-            data-bs-target="#prestations-pricing-panel"
-            type="button"
-            role="tab"
-            aria-controls="prestations-pricing-panel"
-            aria-selected="false"
-        >
-            Tarifs et remises
-        </button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button
-            class="nav-link"
-            id="prestations-visibility-tab"
-            data-tab-level="sub"
-            data-bs-toggle="tab"
-            data-bs-target="#prestations-visibility-panel"
-            type="button"
-            role="tab"
-            aria-controls="prestations-visibility-panel"
-            aria-selected="false"
-        >
-            Visibilité
-        </button>
-    </li>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link active" id="prestations-list-tab" data-tab-level="sub" data-bs-toggle="tab" data-bs-target="#prestations-list-panel" type="button" role="tab" aria-controls="prestations-list-panel" aria-selected="true">
+			Liste des prestations
+		</button>
+	</li>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="prestations-pricing-tab" data-tab-level="sub" data-bs-toggle="tab" data-bs-target="#prestations-pricing-panel" type="button" role="tab" aria-controls="prestations-pricing-panel" aria-selected="false">
+			Tarifs et remises
+		</button>
+	</li>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="prestations-visibility-tab" data-tab-level="sub" data-bs-toggle="tab" data-bs-target="#prestations-visibility-panel" type="button" role="tab" aria-controls="prestations-visibility-panel" aria-selected="false">
+			Visibilité
+		</button>
+	</li>
 </ul>
 
+{# ONGLET LISTE DES PRESTATIONS #}
 <div class="tab-content" id="prestationsSubTabsContent">
-    <div
-        class="tab-pane fade show active"
-        id="prestations-list-panel"
-        role="tabpanel"
-        aria-labelledby="prestations-list-tab"
-        tabindex="0"
-    >
-        <div class="card tm-card p-4">
-            <h4 class="tm-card-title mb-3">Liste des prestations</h4>
-            <p class="text-muted mb-0">Cette tab affichera l’ensemble des prestations proposées par le prestataire.</p>
-        </div>
-    </div>
+	<div class="tab-pane fade show active" id="prestations-list-panel" role="tabpanel" aria-labelledby="prestations-list-tab" tabindex="0">
+		<div class="card tm-card p-4">
+			<div class="tm-prestations-panel-head">
+				<div class="tm-prestations-panel-head-copy">
+					<h4 class="tm-card-title tm-prestations-panel-title">Liste des prestations</h4>
+					<p class="tm-prestations-panel-subtitle">
+						Cet espace reste en lecture seule. Pour modifier, ajouter ou supprimer une prestation,
+																		                        utilisez les Paramètres.
+					</p>
+				</div>
 
-    <div
-        class="tab-pane fade"
-        id="prestations-pricing-panel"
-        role="tabpanel"
-        aria-labelledby="prestations-pricing-tab"
-        tabindex="0"
-    >
-        <div class="card tm-card p-4">
-            <h4 class="tm-card-title mb-3">Tarifs et remises</h4>
-            <p class="text-muted mb-0">Cette tab affichera les prix catalogue, les promotions et les réductions configurées.</p>
-        </div>
-    </div>
+				<div class="tm-prestations-panel-actions">
+					<a href="{{ path('app_prestataire_settings', { _fragment: 'services-panel' }) }}" class="btn btn-outline-primary">
+						<i class="fa-solid fa-gear me-2"></i>Gérer dans les paramètres
+					</a>
 
-    <div
-        class="tab-pane fade"
-        id="prestations-visibility-panel"
-        role="tabpanel"
-        aria-labelledby="prestations-visibility-tab"
-        tabindex="0"
-    >
-        <div class="card tm-card p-4">
-            <h4 class="tm-card-title mb-3">Visibilité</h4>
-            <p class="text-muted mb-0">Cette tab permettra de gérer la mise en avant et la visibilité des prestations publiées.</p>
-        </div>
-    </div>
+					<a href="{{ path('app_prestataire_service_new') }}" class="btn btn-primary">
+						<i class="fa-solid fa-plus me-2"></i>Ajouter une prestation
+					</a>
+				</div>
+			</div>
+
+			{% if prestations is defined and prestations|length > 0 %}
+				<div class="tm-prestations-table-wrap">
+					<div class="table-responsive">
+						<table class="table align-middle tm-prestations-table">
+							<thead>
+								<tr>
+									<th>Prestation</th>
+									<th>Service</th>
+									<th>Tarification</th>
+									<th>Statut</th>
+									<th>Mise à jour</th>
+									<th class="text-end">Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for prestation in prestations %}
+									{% set service = prestation.service ?? null %}
+									{% set category = service and service.category ? service.category : null %}
+									{% set parentCategory = category and category.parent ? category.parent : null %}
+
+									{% set pricingLabel = 'Non renseignée' %}
+									{% if prestation.pricingType is defined and prestation.pricingType %}
+										{% if prestation.pricingType.value is defined %}
+											{% set pricingTypeLabel = prestation.pricingType.value %}
+										{% else %}
+											{% set pricingTypeLabel = prestation.pricingType %}
+										{% endif %}
+
+										{% if prestation.priceFrom %}
+											{% set pricingLabel = 'À partir de ' ~ prestation.priceFrom ~ ' €' %}
+											{% if prestation.priceUnit %}
+												{% set pricingLabel = pricingLabel ~ ' / ' ~ prestation.priceUnit %}
+											{% endif %}
+										{% elseif prestation.priceTo %}
+											{% set pricingLabel = prestation.priceTo ~ ' €' %}
+											{% if prestation.priceUnit %}
+												{% set pricingLabel = pricingLabel ~ ' / ' ~ prestation.priceUnit %}
+											{% endif %}
+										{% else %}
+											{% set pricingLabel = pricingTypeLabel|replace({'_': ' '})|title %}
+										{% endif %}
+									{% endif %}
+
+									<tr>
+										<td>
+											<div class="tm-prestations-prestation-title">
+												{{ prestation.title ?: 'Titre non renseigné' }}
+											</div>
+
+											<div class="tm-prestations-prestation-meta">
+												{% if parentCategory %}
+													{{ parentCategory.name }}
+													{% if category %}
+														·
+														{{ category.name }}
+													{% endif %}
+												{% elseif category %}
+													{{ category.name }}
+												{% else %}
+													Catégorie non renseignée
+												{% endif %}
+											</div>
+
+											{% if prestation.shortDescription is defined and prestation.shortDescription %}
+												<div class="tm-prestations-prestation-desc">
+													{{ prestation.shortDescription|length > 90
+                                                        ? prestation.shortDescription|slice(0, 90) ~ '…'
+                                                        : prestation.shortDescription }}
+												</div>
+											{% endif %}
+										</td>
+
+										<td>
+											<span class="tm-prestations-service-name">
+												{{ service ? service.name : 'Service non renseigné' }}
+											</span>
+										</td>
+
+										<td>
+											<span class="tm-prestations-pricing">
+												{{ pricingLabel }}
+											</span>
+										</td>
+
+										<td>
+											{% set isActive = prestation.isActive is defined ? prestation.isActive : null %}
+
+											{% if isActive is same as(true) %}
+												<span class="tm-prestations-badge tm-prestations-badge--success">Active</span>
+											{% elseif isActive is same as(false) %}
+												<span class="tm-prestations-badge tm-prestations-badge--muted">Inactive</span>
+											{% else %}
+												<span class="tm-prestations-badge tm-prestations-badge--draft">À compléter</span>
+											{% endif %}
+										</td>
+
+										<td>
+											<span class="tm-prestations-date">
+												{% if prestation.updatedAt %}
+													{{ prestation.updatedAt|date('d/m/Y H:i') }}
+												{% elseif prestation.createdAt %}
+													{{ prestation.createdAt|date('d/m/Y H:i') }}
+												{% else %}
+													—
+												{% endif %}
+											</span>
+										</td>
+
+										<td class="text-end">
+											<a href="{{ path('app_prestataire_service_edit', { id: prestation.id }) }}" class="btn btn-sm btn-outline-primary">
+												Voir / éditer
+											</a>
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			{% else %}
+				<div class="tm-prestations-empty">
+					<div class="tm-prestations-empty-icon">
+						<i class="fa-solid fa-briefcase"></i>
+					</div>
+					<h5 class="tm-prestations-empty-title">Aucune prestation pour le moment</h5>
+					<p class="tm-prestations-empty-text">
+						Vous n’avez pas encore ajouté de prestation à votre espace professionnel.
+					</p>
+					<a href="{{ path('app_prestataire_service_new') }}" class="btn btn-primary">
+						<i class="fa-solid fa-plus me-2"></i>Créer ma première prestation
+					</a>
+				</div>
+			{% endif %}
+		</div>
+	</div>
+
+
+	{# ONGLET TARIFS ET REMISES #}
+	<div class="tab-pane fade" id="prestations-pricing-panel" role="tabpanel" aria-labelledby="prestations-pricing-tab" tabindex="0">
+		<div class="card tm-card p-4">
+			<div class="tm-prestations-panel-head">
+				<div class="tm-prestations-panel-head-copy">
+					<h4 class="tm-card-title tm-prestations-panel-title">Tarifs et remises</h4>
+					<p class="tm-prestations-panel-subtitle">
+						Cette vue sert de synthèse rapide des prix affichés et des promotions actives.
+																		                    Les modifications restent gérées dans les Paramètres.
+					</p>
+				</div>
+
+				<div class="tm-prestations-panel-actions">
+					<a href="{{ path('app_prestataire_settings', { _fragment: 'services-panel' }) }}" class="btn btn-outline-primary">
+						<i class="fa-solid fa-gear me-2"></i>Ouvrir les paramètres
+					</a>
+				</div>
+			</div>
+
+			{% if prestations is defined and prestations|length > 0 %}
+				<div class="tm-prestations-table-wrap">
+					<div class="table-responsive">
+						<table class="table align-middle tm-prestations-table">
+							<thead>
+								<tr>
+									<th>Prestation</th>
+									<th>Tarif affiché</th>
+									<th>Catalogue</th>
+									<th>Remise</th>
+									<th>Promo</th>
+									<th>Mise à jour promo</th>
+									<th class="text-end">Accès</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for prestation in prestations %}
+									{% set pricingLabel = 'Tarification non renseignée' %}
+
+									{% if prestation.pricingType == 'quote' %}
+										{% set pricingLabel = 'Tarif sur devis' %}
+									{% elseif prestation.pricingType == 'range' %}
+										{% if prestation.priceFrom and prestation.priceTo %}
+											{% set pricingLabel = 'De ' ~ prestation.priceFrom ~ ' à ' ~ prestation.priceTo %}
+											{% if prestation.priceUnit %}
+												{% set pricingLabel = pricingLabel ~ ' / ' ~ prestation.priceUnit %}
+											{% endif %}
+										{% elseif prestation.priceFrom %}
+											{% set pricingLabel = 'À partir de ' ~ prestation.priceFrom %}
+											{% if prestation.priceUnit %}
+												{% set pricingLabel = pricingLabel ~ ' / ' ~ prestation.priceUnit %}
+											{% endif %}
+										{% elseif prestation.priceTo %}
+											{% set pricingLabel = 'Jusqu’à ' ~ prestation.priceTo %}
+											{% if prestation.priceUnit %}
+												{% set pricingLabel = pricingLabel ~ ' / ' ~ prestation.priceUnit %}
+											{% endif %}
+										{% endif %}
+									{% elseif prestation.pricingType == 'from' %}
+										{% if prestation.priceFrom %}
+											{% set pricingLabel = 'À partir de ' ~ prestation.priceFrom %}
+											{% if prestation.priceUnit %}
+												{% set pricingLabel = pricingLabel ~ ' / ' ~ prestation.priceUnit %}
+											{% endif %}
+										{% endif %}
+									{% elseif prestation.pricingType in ['fixed', 'hourly', 'daily'] %}
+										{% if prestation.priceTo %}
+											{% set pricingLabel = prestation.priceTo ~ ' €' %}
+											{% if prestation.priceUnit %}
+												{% set pricingLabel = pricingLabel ~ ' / ' ~ prestation.priceUnit %}
+											{% endif %}
+										{% endif %}
+									{% else %}
+										{% if prestation.priceFrom and prestation.priceTo %}
+											{% set pricingLabel = 'De ' ~ prestation.priceFrom ~ ' à ' ~ prestation.priceTo %}
+										{% elseif prestation.priceFrom %}
+											{% set pricingLabel = 'À partir de ' ~ prestation.priceFrom %}
+										{% elseif prestation.priceTo %}
+											{% set pricingLabel = prestation.priceTo ~ ' €' %}
+										{% endif %}
+
+										{% if prestation.priceUnit %}
+											{% set pricingLabel = pricingLabel ~ ' / ' ~ prestation.priceUnit %}
+										{% endif %}
+									{% endif %}
+
+									{% set hasPromo = prestation.hasPromotion is defined ? prestation.hasPromotion : false %}
+									{% set reducedPrice = prestation.prixRemise ?? null %}
+
+									<tr>
+										<td>
+											<div class="tm-prestations-prestation-title">
+												{{ prestation.title ?: 'Titre non renseigné' }}
+											</div>
+
+											<div class="tm-prestations-prestation-meta">
+												{{ prestation.service ? prestation.service.name : 'Service non renseigné' }}
+											</div>
+										</td>
+
+										<td>
+											<span class="tm-prestations-pricing">
+												{{ pricingLabel }}
+											</span>
+										</td>
+
+										<td>
+											<span class="tm-prestations-date">
+												{% if prestation.prixCatalogue %}
+													{{ prestation.prixCatalogue }}
+													€
+												{% else %}
+													—
+												{% endif %}
+											</span>
+										</td>
+
+										<td>
+											{% if hasPromo and prestation.tauxReduction %}
+												<span class="tm-prestations-badge tm-prestations-badge--draft">
+													-{{ prestation.tauxReduction }}
+													%
+												</span>
+											{% else %}
+												<span class="tm-prestations-date">Aucune</span>
+											{% endif %}
+										</td>
+
+										<td>
+											{% if hasPromo and reducedPrice %}
+												<div class="tm-prestations-prestation-title">
+													{{ reducedPrice }}
+													€
+												</div>
+												<div class="tm-prestations-prestation-desc">
+													Prix remisé calculé
+												</div>
+											{% elseif hasPromo %}
+												<span class="tm-prestations-badge tm-prestations-badge--draft">
+													Promo active
+												</span>
+											{% else %}
+												<span class="tm-prestations-badge tm-prestations-badge--muted">
+													Standard
+												</span>
+											{% endif %}
+										</td>
+
+										<td>
+											<span class="tm-prestations-date">
+												{% if prestation.promotionCreatedAt %}
+													{{ prestation.promotionCreatedAt|date('d/m/Y H:i') }}
+												{% else %}
+													—
+												{% endif %}
+											</span>
+										</td>
+
+										<td class="text-end">
+											<a href="{{ path('app_prestataire_settings', { _fragment: 'services-panel' }) }}" class="btn btn-sm btn-outline-primary">
+												Ouvrir paramètres
+											</a>
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			{% else %}
+				<div class="tm-prestations-empty">
+					<div class="tm-prestations-empty-icon">
+						<i class="fa-solid fa-tags"></i>
+					</div>
+					<h5 class="tm-prestations-empty-title">Aucune donnée tarifaire disponible</h5>
+					<p class="tm-prestations-empty-text">
+						Ajoutez une première prestation pour faire apparaître ici vos prix, remises et promotions.
+					</p>
+				</div>
+			{% endif %}
+		</div>
+	</div>
+
+
+	{# ONGLET VISIBILITE #}
+	<div class="tab-pane fade" id="prestations-visibility-panel" role="tabpanel" aria-labelledby="prestations-visibility-tab" tabindex="0">
+		<div class="card tm-card p-4">
+			<div class="tm-prestations-panel-head">
+				<div class="tm-prestations-panel-head-copy">
+					<h4 class="tm-card-title tm-prestations-panel-title">Visibilité</h4>
+					<p class="tm-prestations-panel-subtitle">
+						Cette vue permet d’identifier rapidement quelles prestations sont actives,
+												                    complètes et prêtes à être affichées correctement.
+					</p>
+				</div>
+
+				<div class="tm-prestations-panel-actions">
+					<a href="{{ path('app_prestataire_settings', { _fragment: 'services-panel' }) }}" class="btn btn-outline-primary">
+						<i class="fa-solid fa-gear me-2"></i>Ouvrir les paramètres
+					</a>
+				</div>
+			</div>
+
+			{% if prestations is defined and prestations|length > 0 %}
+				<div class="tm-prestations-table-wrap">
+					<div class="table-responsive">
+						<table class="table align-middle tm-prestations-table">
+							<thead>
+								<tr>
+									<th>Prestation</th>
+									<th>Publication</th>
+									<th>Complétude</th>
+									<th>Éléments manquants</th>
+									<th>Mise à jour</th>
+									<th class="text-end">Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for prestation in prestations %}
+									{% set missing = [] %}
+
+									{% if not prestation.title %}
+										{% set missing = missing|merge(['titre']) %}
+									{% endif %}
+									{% if not prestation.shortDescription %}
+										{% set missing = missing|merge(['description courte']) %}
+									{% endif %}
+									{% if not prestation.description %}
+										{% set missing = missing|merge(['description détaillée']) %}
+									{% endif %}
+									{% if not prestation.pricingType %}
+										{% set missing = missing|merge(['mode tarifaire']) %}
+									{% endif %}
+									{% if prestation.priceFrom is null and prestation.priceTo is null %}
+										{% if prestation.pricingType and prestation.pricingType != 'quote' %}
+											{% set missing = missing|merge(['prix']) %}
+										{% endif %}
+									{% endif %}
+									{% if not prestation.priceUnit and prestation.pricingType in ['fixed', 'hourly', 'daily', 'from', 'range'] %}
+										{% set missing = missing|merge(['unité']) %}
+									{% endif %}
+									{% if not prestation.additionalInfo %}
+										{% set missing = missing|merge(['informations complémentaires']) %}
+									{% endif %}
+
+									{% set isComplete = prestation.hasDetailedOffer %}
+									{% set isActive = prestation.isActive %}
+									{% set missingCount = missing|length %}
+
+									<tr>
+										<td>
+											<div class="tm-prestations-prestation-title">
+												{{ prestation.title ?: (prestation.service ? prestation.service.name : 'Titre non renseigné') }}
+											</div>
+
+											<div class="tm-prestations-prestation-meta">
+												{{ prestation.service ? prestation.service.name : 'Service non renseigné' }}
+											</div>
+
+											{% if prestation.shortDescription %}
+												<div class="tm-prestations-prestation-desc">
+													{{ prestation.shortDescription|length > 100
+                                                    ? prestation.shortDescription|slice(0, 100) ~ '…'
+                                                    : prestation.shortDescription }}
+												</div>
+											{% endif %}
+										</td>
+
+										<td>
+											{% if isActive and isComplete %}
+												<span class="tm-prestations-badge tm-prestations-badge--success">
+													Visible
+												</span>
+											{% elseif isActive and not isComplete %}
+												<span class="tm-prestations-badge tm-prestations-badge--draft">
+													Active mais incomplète
+												</span>
+											{% else %}
+												<span class="tm-prestations-badge tm-prestations-badge--muted">
+													Masquée
+												</span>
+											{% endif %}
+										</td>
+
+										<td>
+											{% if isComplete %}
+												<div class="tm-prestations-prestation-title">Complète</div>
+												<div class="tm-prestations-prestation-desc">
+													Tous les champs clés sont renseignés.
+												</div>
+											{% else %}
+												<div class="tm-prestations-prestation-title">
+													{{ missingCount }}
+													élément{{ missingCount > 1 ? 's' : '' }}
+													à compléter
+												</div>
+												<div class="tm-prestations-prestation-desc">
+													La fiche peut être améliorée avant mise en avant.
+												</div>
+											{% endif %}
+										</td>
+
+										<td>
+											{% if missingCount > 0 %}
+												<div class="d-flex flex-wrap gap-2">
+													{% for item in missing|slice(0, 4) %}
+														<span class="tm-prestations-badge tm-prestations-badge--muted">
+															{{ item }}
+														</span>
+													{% endfor %}
+
+													{% if missingCount > 4 %}
+														<span class="tm-prestations-badge tm-prestations-badge--muted">
+															+{{ missingCount - 4 }}
+														</span>
+													{% endif %}
+												</div>
+											{% else %}
+												<span class="tm-prestations-date">Aucun manque détecté</span>
+											{% endif %}
+										</td>
+
+										<td>
+											<span class="tm-prestations-date">
+												{% if prestation.updatedAt %}
+													{{ prestation.updatedAt|date('d/m/Y H:i') }}
+												{% elseif prestation.createdAt %}
+													{{ prestation.createdAt|date('d/m/Y H:i') }}
+												{% else %}
+													—
+												{% endif %}
+											</span>
+										</td>
+
+										<td class="text-end">
+											<div class="d-inline-flex flex-wrap justify-content-end gap-2">
+												<a href="{{ path('app_prestataire_service_edit', { id: prestation.id }) }}" class="btn btn-sm btn-outline-primary">
+													Modif. Tarifs/Promo
+												</a>
+
+												<a href="{{ path('app_prestataire_service_prestation_edit', { id: prestation.id }) }}" class="btn btn-sm btn-primary">
+													Modif. Fiche Presta
+												</a>
+											</div>
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			{% else %}
+				<div class="tm-prestations-empty">
+					<div class="tm-prestations-empty-icon">
+						<i class="fa-solid fa-eye"></i>
+					</div>
+					<h5 class="tm-prestations-empty-title">Aucune prestation à analyser</h5>
+					<p class="tm-prestations-empty-text">
+						Votre synthèse de visibilité apparaîtra ici dès qu’au moins une prestation sera créée.
+					</p>
+					<a href="{{ path('app_prestataire_service_new') }}" class="btn btn-primary">
+						<i class="fa-solid fa-plus me-2"></i>Créer une prestation
+					</a>
+				</div>
+			{% endif %}
+		</div>
+	</div>
 </div>
