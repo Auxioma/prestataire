@@ -2,7 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     static values = {
-        events: Array,
+        eventsUrl: String,
     };
 
     connect() {
@@ -37,9 +37,7 @@ export default class extends Controller {
             return;
         }
 
-        window.setTimeout(() => {
-            this.calendar?.updateSize();
-        }, 50);
+        window.setTimeout(() => this.calendar?.updateSize(), 50);
     }
 
     initCalendar() {
@@ -68,7 +66,7 @@ export default class extends Controller {
                 day: 'Jour',
                 list: 'Liste',
             },
-            events: this.eventsValue || [],
+            events: this.eventsUrlValue,
             eventTimeFormat: {
                 hour: '2-digit',
                 minute: '2-digit',
