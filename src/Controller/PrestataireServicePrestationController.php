@@ -30,7 +30,7 @@ use Symfony\UX\Map\Map;
 use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Entity\PrestationMedia;
+
 
 final class PrestataireServicePrestationController extends AbstractController
 {
@@ -64,12 +64,21 @@ final class PrestataireServicePrestationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            foreach ($ps->getMedias()->toArray() as $media) {
-                $hasFile = null !== $media->getImageFile();
-                $hasExistingFileName = !empty($media->getFileName());
+            if ($form->has('medias')) {
+                foreach ($form->get('medias') as $mediaForm) {
+                    $media = $mediaForm->getData();
 
-                if (!$hasFile && !$hasExistingFileName) {
-                    $ps->removeMedia($media);
+                    if (!$media) {
+                        continue;
+                    }
+
+                    if ($mediaForm->has('delete') && true === $mediaForm->get('delete')->getData()) {
+                        if (method_exists($ps, 'removeMedia')) {
+                            $ps->removeMedia($media);
+                        }
+
+                        $em->remove($media);
+                    }
                 }
             }
 
@@ -77,9 +86,9 @@ final class PrestataireServicePrestationController extends AbstractController
 
             $this->addFlash('success', 'Prestation détaillée enregistrée.');
 
-            return $this->redirectToRoute('app_prestataire_settings', [
-                '_fragment' => 'services-panel',
-            ]);
+            return $this->redirect(
+                $this->generateUrl('app_prestataire_settings') . '#services-panel'
+            );
         }
 
         $zonesCollection = $ps->getPrestataire()?->getPrestataireInterventionZones();
@@ -309,41 +318,4 @@ final class PrestataireServicePrestationController extends AbstractController
                 : 'La prestation a été désactivée.',
         ]);
     }
-
-    #[Route('/prestataire/prestation/media/{id}/supprimer', name: 'app_prestataire_prestation_media_delete', methods: ['POST'])]
-public function deleteMedia(
-    Request $request,
-    PrestationMedia $media,
-    EntityManagerInterface $em
-): Response {
-    $user = $this->getUser();
-
-    if (
-        !$user instanceof User ||
-        !$user->getPrestataireProfile() ||
-        $media->getPrestation()?->getPrestataire() !== $user->getPrestataireProfile()
-    ) {
-        throw $this->createAccessDeniedException('Accès refusé.');
-    }
-
-    $prestation = $media->getPrestation();
-
-    if (
-        $this->isCsrfTokenValid(
-            'delete_prestation_media_' . $media->getId(),
-            (string) $request->request->get('token')
-        )
-    ) {
-        $em->remove($media);
-        $em->flush();
-
-        $this->addFlash('success', 'La photo a bien été supprimée.');
-    } else {
-        $this->addFlash('danger', 'Jeton CSRF invalide.');
-    }
-
-    return $this->redirectToRoute('app_prestataire_service_prestation_edit', [
-        'id' => $prestation?->getId(),
-    ]);
-}
 }
