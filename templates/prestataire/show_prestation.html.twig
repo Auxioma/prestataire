@@ -111,63 +111,48 @@
 						</div>
 					</section>
 
-{% if prestationMedias|length > 0 %}
-    <section class="tm-prestation-show__panel" data-controller="image-lightbox">
-        <div class="tm-prestation-show__panel-head">
-            <span class="tm-prestation-show__panel-kicker">Photos</span>
-            <h2 class="tm-prestation-show__panel-title">Galerie de la prestation</h2>
-        </div>
+					{% if prestationMedias|length > 0 %}
+						<section class="tm-prestation-show__panel" data-controller="image-lightbox">
+							<div class="tm-prestation-show__panel-head">
+								<span class="tm-prestation-show__panel-kicker">Photos</span>
+								<h2 class="tm-prestation-show__panel-title">Galerie de la prestation</h2>
+							</div>
 
-        <div class="tm-prestation-show__gallery">
-            {% set galleryIndex = 0 %}
-            {% for media in prestationMedias %}
-                {% if media.fileName is defined and media.fileName %}
-                    <figure class="tm-prestation-show__gallery-item">
-                        <img
-                            src="{{ asset('uploads/prestations/' ~ media.fileName) }}"
-                            alt="{{ prestation.title ?: serviceName }}"
-                            class="tm-prestation-show__gallery-image"
-                            data-action="click->image-lightbox#open"
-                            data-image-lightbox-target="trigger"
-                            data-index="{{ galleryIndex }}"
-                            data-src="{{ asset('uploads/prestations/' ~ media.fileName) }}"
-                            data-alt="{{ prestation.title ?: serviceName }}"
-                        >
-                    </figure>
-                    {% set galleryIndex = galleryIndex + 1 %}
-                {% endif %}
-            {% endfor %}
-        </div>
+							<div class="tm-prestation-show__gallery">
+								{% set galleryIndex = 0 %}
+								{% for media in prestationMedias %}
+									{% if media.fileName is defined and media.fileName %}
+										<figure class="tm-prestation-show__gallery-item">
+											<img src="{{ asset('uploads/prestations/' ~ media.fileName) }}" alt="{{ prestation.title ?: serviceName }}" class="tm-prestation-show__gallery-image" data-action="click->image-lightbox#open" data-image-lightbox-target="trigger" data-index="{{ galleryIndex }}" data-src="{{ asset('uploads/prestations/' ~ media.fileName) }}" data-alt="{{ prestation.title ?: serviceName }}">
+										</figure>
+										{% set galleryIndex = galleryIndex + 1 %}
+									{% endif %}
+								{% endfor %}
+							</div>
 
-        <div class="tm-image-lightbox" data-image-lightbox-target="modal" hidden>
-            <button type="button" class="tm-image-lightbox__backdrop" data-action="click->image-lightbox#close" aria-label="Fermer"></button>
+							<div class="tm-image-lightbox" data-image-lightbox-target="modal" hidden>
+								<button type="button" class="tm-image-lightbox__backdrop" data-action="click->image-lightbox#close" aria-label="Fermer"></button>
 
-            <div class="tm-image-lightbox__dialog" role="dialog" aria-modal="true" aria-label="Galerie d’images">
-                <button type="button" class="tm-image-lightbox__close" data-action="click->image-lightbox#close" aria-label="Fermer">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+								<div class="tm-image-lightbox__dialog" role="dialog" aria-modal="true" aria-label="Galerie d’images">
+									<button type="button" class="tm-image-lightbox__close" data-action="click->image-lightbox#close" aria-label="Fermer">
+										<i class="fa-solid fa-xmark"></i>
+									</button>
 
-                <button type="button" class="tm-image-lightbox__nav tm-image-lightbox__nav--prev" data-action="click->image-lightbox#previous" aria-label="Image précédente">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
+									<button type="button" class="tm-image-lightbox__nav tm-image-lightbox__nav--prev" data-action="click->image-lightbox#previous" aria-label="Image précédente">
+										<i class="fa-solid fa-chevron-left"></i>
+									</button>
 
-                <img
-                    src=""
-                    alt=""
-                    class="tm-image-lightbox__image"
-                    data-image-lightbox-target="image"
-                >
+									<img src="" alt="" class="tm-image-lightbox__image" data-image-lightbox-target="image">
 
-                <button type="button" class="tm-image-lightbox__nav tm-image-lightbox__nav--next" data-action="click->image-lightbox#next" aria-label="Image suivante">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </button>
+									<button type="button" class="tm-image-lightbox__nav tm-image-lightbox__nav--next" data-action="click->image-lightbox#next" aria-label="Image suivante">
+										<i class="fa-solid fa-chevron-right"></i>
+									</button>
 
-                <div class="tm-image-lightbox__counter" data-image-lightbox-target="counter"></div>
-            </div>
-        </div>
-    </section>
-{% endif %}
-
+									<div class="tm-image-lightbox__counter" data-image-lightbox-target="counter"></div>
+								</div>
+							</div>
+						</section>
+					{% endif %}
 
 
 					<section class="tm-prestation-show__panel">
