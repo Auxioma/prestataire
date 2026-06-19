@@ -52,14 +52,6 @@ class PrestataireAppointmentType extends AbstractType
                 'label' => 'Lieu',
                 'required' => false,
             ])
-            ->add('isAllDay', CheckboxType::class, [
-                'label' => 'Toute la journée',
-                'required' => false,
-                'attr' => [
-                    'data-appointment-form-target' => 'allDay',
-                    'data-action' => 'change->appointment-form#toggleAllDay',
-                ],
-            ])
         ;
     }
 

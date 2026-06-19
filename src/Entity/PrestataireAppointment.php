@@ -53,8 +53,7 @@ class PrestataireAppointment
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $locationLabel = null;
 
-    #[ORM\Column]
-    private bool $isAllDay = false;
+
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
@@ -181,16 +180,6 @@ class PrestataireAppointment
     public function setLocationLabel(?string $locationLabel): self
     {
         $this->locationLabel = $locationLabel;
-        return $this;
-    }
-
-    public function isAllDay(): bool
-    {
-        return $this->isAllDay;
-    }
-    public function setIsAllDay(bool $isAllDay): self
-    {
-        $this->isAllDay = $isAllDay;
         return $this;
     }
 

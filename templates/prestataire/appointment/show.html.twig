@@ -18,7 +18,7 @@
 					<a href="{{ path('app_prestataire_appointment_index') }}" class="btn btn-outline-secondary">
 						Retour à la liste
 					</a>
-					<a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" class="btn btn-outline-info">
+					<a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" class="btn btn-outline-info" data-turbo="false">
 						Retour au calendrier
 					</a>
 					<a href="{{ path('app_prestataire_appointment_edit', { id: appointment.id }) }}" class="btn btn-outline-primary">
@@ -37,13 +37,15 @@
 						<dd class="col-sm-9">{{ appointment.description ?: '—' }}</dd>
 
 						<dt class="col-sm-3">Début</dt>
-						<dd class="col-sm-9">{{ appointment.startsAt|date('d/m/Y H:i') }}</dd>
+						<dd class="col-sm-9">
+								{{ appointment.startsAt|date('d/m/Y H:i', 'Europe/Paris') }}
+
+						</dd>
 
 						<dt class="col-sm-3">Fin</dt>
-						<dd class="col-sm-9">{{ appointment.endsAt|date('d/m/Y H:i') }}</dd>
-
-						<dt class="col-sm-3">Toute la journée</dt>
-						<dd class="col-sm-9">{{ appointment.isAllDay ? 'Oui' : 'Non' }}</dd>
+						<dd class="col-sm-9">
+								{{ appointment.endsAt|date('d/m/Y H:i', 'Europe/Paris') }}
+						</dd>
 
 						<dt class="col-sm-3">Statut</dt>
 						<dd class="col-sm-9">{{ appointment.status.getLabel() }}</dd>

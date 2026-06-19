@@ -18,40 +18,6 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 final class PrestataireAppointmentController extends AbstractController
 {
 
-    private function normalizeAllDayAppointment(PrestataireAppointment $appointment): void
-    {
-        if (!$appointment->isAllDay()) {
-            return;
-        }
-
-        $startsAt = $appointment->getStartsAt();
-        $endsAt = $appointment->getEndsAt();
-
-        $normalizedStart = null;
-        $normalizedEnd = null;
-
-        if ($startsAt instanceof \DateTimeInterface) {
-            $normalizedStart = new \DateTime($startsAt->format('Y-m-d H:i:s'));
-            $normalizedStart->setTime(0, 0, 0);
-        }
-
-        if ($endsAt instanceof \DateTimeInterface) {
-            $normalizedEnd = new \DateTime($endsAt->format('Y-m-d H:i:s'));
-            $normalizedEnd->setTime(23, 59, 59);
-        } elseif ($normalizedStart instanceof \DateTime) {
-            $normalizedEnd = clone $normalizedStart;
-            $normalizedEnd->setTime(23, 59, 59);
-        }
-
-        if ($normalizedStart instanceof \DateTime) {
-            $appointment->setStartsAt($normalizedStart);
-        }
-
-        if ($normalizedEnd instanceof \DateTime) {
-            $appointment->setEndsAt($normalizedEnd);
-        }
-    }
-
     // RECUPERER LES RENDEZ-VOUS
     #[Route('/events', name: 'events', methods: ['GET'])]
     public function events(
@@ -99,7 +65,6 @@ final class PrestataireAppointmentController extends AbstractController
                 'title' => $appointment->getTitle(),
                 'start' => $appointment->getStartsAt()?->format(\DateTimeInterface::ATOM),
                 'end' => $appointment->getEndsAt()?->format(\DateTimeInterface::ATOM),
-                'allDay' => $appointment->isAllDay(),
                 'url' => $this->generateUrl('app_prestataire_appointment_show', [
                     'id' => $appointment->getId(),
                 ]),
@@ -139,7 +104,6 @@ final class PrestataireAppointmentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->normalizeAllDayAppointment($appointment);
 
             $entityManager->persist($appointment);
             $entityManager->flush();
@@ -224,7 +188,6 @@ final class PrestataireAppointmentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->normalizeAllDayAppointment($appointment);
 
             $entityManager->flush();
 
@@ -341,10 +304,7 @@ final class PrestataireAppointmentController extends AbstractController
 
             $appointment
                 ->setStartsAt($startsAt)
-                ->setEndsAt($endsAt)
-                ->setIsAllDay((bool) ($data['isAllDay'] ?? false));
-
-            $this->normalizeAllDayAppointment($appointment);
+                ->setEndsAt($endsAt);
 
             $entityManager->flush();
 
