@@ -1,93 +1,171 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes rendez-vous
-{% endblock %}
+{% block title %}Mes rendez-vous{% endblock %}
 
 {% block body %}
-	<div class="tm-appointment-index-page">
-		<div class="container py-4">
-			<div class="tm-appointment-index-page__header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
-				<div>
-					<h1 class="h3 mb-1">Mes rendez-vous</h1>
-					<p class="text-muted mb-0">
-						Retrouvez tous vos rendez-vous planifiés.
-					</p>
-				</div>
+    {% set totalAppointments = appointments|length %}
+    {% set upcomingAppointments = 0 %}
+    {% set todayAppointments = 0 %}
+    {% set nowTs = 'now'|date('U', 'Europe/Paris') %}
+    {% set todayDate = 'now'|date('Y-m-d', 'Europe/Paris') %}
 
-				<div class="d-flex flex-column flex-sm-row gap-2">
-				<a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" class="btn btn-outline-info">
-					Retour au calendrier
-				</a>
+    {% for appointment in appointments %}
+        {% if appointment.startsAt and appointment.startsAt|date('U', 'Europe/Paris') >= nowTs %}
+            {% set upcomingAppointments = upcomingAppointments + 1 %}
+        {% endif %}
+        {% if appointment.startsAt and appointment.startsAt|date('Y-m-d', 'Europe/Paris') == todayDate %}
+            {% set todayAppointments = todayAppointments + 1 %}
+        {% endif %}
+    {% endfor %}
 
-					<a href="{{ path('app_prestataire_appointment_new') }}" class="btn btn-outline-primary">
-						Nouveau rendez-vous
-					</a>
-				</div>
-			</div>
+    <div class="tm-appointment-index-page">
+        <div class="container py-4">
+            <div class="tm-appointment-index-hero">
+                <div class="tm-appointment-index-hero__content">
+                    <span class="tm-appointment-index-hero__eyebrow">Organisation</span>
+                    <h1 class="tm-appointment-index-hero__title">Mes rendez-vous</h1>
+                    <p class="tm-appointment-index-hero__text">
+                        Suivez vos rendez-vous, visualisez rapidement les créneaux à venir et retrouvez chaque fiche en un clic.
+                    </p>
+                </div>
 
-			{% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
-				{% for message in messages %}
-					<div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
-						{{ message }}
-						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-					</div>
-				{% endfor %}
-			{% endfor %}
+                <div class="tm-appointment-index-hero__actions">
+                    <a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" class="btn btn-outline-info" data-turbo="false">
+                        Retour au calendrier
+                    </a>
+                    <a href="{{ path('app_prestataire_appointment_new') }}" class="btn btn-primary">
+                        Nouveau rendez-vous
+                    </a>
+                </div>
+            </div>
 
-			<div class="tm-appointment-index-page__card card shadow-sm">
-				<div class="card-body p-0">
-					{% if appointments is not empty %}
-						<div class="table-responsive">
-							<table class="table table-hover mb-0 align-middle">
-								<thead>
-									<tr>
-										<th>Titre</th>
-										<th>Début</th>
-										<th>Fin</th>
-										<th>Statut</th>
-										<th>Lieu</th>
-										<th class="text-end">Actions</th>
-									</tr>
-								</thead>
-								<tbody>
-									{% for appointment in appointments %}
-										<tr>
-											<td>{{ appointment.title }}</td>
-											<td>{{ appointment.startsAt|date('d/m/Y H:i') }}</td>
-											<td>{{ appointment.endsAt|date('d/m/Y H:i') }}</td>
-											<td>{{ appointment.status.getLabel() }}</td>
-											<td>{{ appointment.locationLabel ?: '—' }}</td>
-											<td class="text-end">
-												<div class="d-inline-flex flex-wrap justify-content-end gap-2">
-													<a href="{{ path('app_prestataire_appointment_show', { id: appointment.id }) }}" class="btn btn-sm btn-outline-secondary">
-														Voir
-													</a>
-													<a href="{{ path('app_prestataire_appointment_edit', { id: appointment.id }) }}" class="btn btn-sm btn-primary">
-														Modifier
-													</a>
-													<form method="post" action="{{ path('app_prestataire_appointment_delete', { id: appointment.id }) }}" class="d-inline" data-turbo="false" onsubmit="return confirm('Confirmer la suppression de ce rendez-vous ?');">
-														<input type="hidden" name="_token" value="{{ csrf_token('delete_appointment_' ~ appointment.id) }}">
-														<button type="submit" class="btn btn-sm btn-outline-danger">
-															Supprimer
-														</button>
-													</form>
-												</div>
-											</td>
-										</tr>
-									{% endfor %}
-								</tbody>
-							</table>
-						</div>
-					{% else %}
-						<div class="p-4">
-							<p class="mb-3">Aucun rendez-vous pour le moment.</p>
-							<a href="{{ path('app_prestataire_appointment_new') }}" class="btn btn-primary">
-								Créer le premier rendez-vous
-							</a>
-						</div>
-					{% endif %}
-				</div>
-			</div>
-		</div>
-	</div>
+            {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type }} alert-dismissible fade show mt-3" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            <div class="tm-appointment-index-kpis">
+                <article class="tm-appointment-kpi-card">
+                    <span class="tm-appointment-kpi-card__label">Total</span>
+                    <strong class="tm-appointment-kpi-card__value">{{ totalAppointments }}</strong>
+                    <span class="tm-appointment-kpi-card__hint">Rendez-vous enregistrés</span>
+                </article>
+
+                <article class="tm-appointment-kpi-card">
+                    <span class="tm-appointment-kpi-card__label">Aujourd’hui</span>
+                    <strong class="tm-appointment-kpi-card__value">{{ todayAppointments }}</strong>
+                    <span class="tm-appointment-kpi-card__hint">Prévu ce jour</span>
+                </article>
+
+                <article class="tm-appointment-kpi-card">
+                    <span class="tm-appointment-kpi-card__label">À venir</span>
+                    <strong class="tm-appointment-kpi-card__value">{{ upcomingAppointments }}</strong>
+                    <span class="tm-appointment-kpi-card__hint">À partir de maintenant</span>
+                </article>
+            </div>
+
+            <div class="tm-appointment-index-shell card shadow-sm">
+                <div class="tm-appointment-index-shell__head">
+                    <div>
+                        <h2>Planning détaillé</h2>
+                        <p>Vue synthétique de tous les rendez-vous avec accès rapide aux actions.</p>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    {% if appointments is not empty %}
+                        <div class="table-responsive">
+                            <table class="table tm-appointment-table align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Rendez-vous</th>
+                                        <th>Créneau</th>
+                                        <th>Statut</th>
+                                        <th>Lieu</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for appointment in appointments %}
+                                        <tr>
+                                            <td>
+                                                <div class="tm-appointment-row-main">
+                                                    <div class="tm-appointment-row-main__icon">
+                                                        <i class="fa-regular fa-calendar-check"></i>
+                                                    </div>
+                                                    <div class="tm-appointment-row-main__content">
+                                                        <div class="tm-appointment-row-main__title">
+                                                            {{ appointment.title }}
+                                                        </div>
+                                                        <div class="tm-appointment-row-main__meta">
+                                                            {{ appointment.description ? appointment.description|slice(0, 100) ~ (appointment.description|length > 100 ? '…' : '') : 'Aucune précision complémentaire.' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="tm-appointment-row-slot">
+                                                    <strong>{{ appointment.startsAt|date('d/m/Y', 'Europe/Paris') }}</strong>
+                                                    <span>
+                                                        {{ appointment.startsAt|date('H:i', 'Europe/Paris') }}
+                                                        —
+                                                        {{ appointment.endsAt|date('H:i', 'Europe/Paris') }}
+                                                    </span>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <span class="tm-appointment-status tm-appointment-status--{{ appointment.status.value }}">
+                                                    {{ appointment.status.getLabel() }}
+                                                </span>
+                                            </td>
+
+                                            <td>
+                                                <span class="tm-appointment-location">
+                                                    {{ appointment.locationLabel ?: 'Non renseigné' }}
+                                                </span>
+                                            </td>
+
+                                            <td class="text-end">
+                                                <div class="d-inline-flex flex-wrap justify-content-end gap-2">
+                                                    <a href="{{ path('app_prestataire_appointment_show', { id: appointment.id }) }}" class="btn btn-sm btn-outline-secondary">
+                                                        Voir
+                                                    </a>
+                                                    <a href="{{ path('app_prestataire_appointment_edit', { id: appointment.id }) }}" class="btn btn-sm btn-primary">
+                                                        Modifier
+                                                    </a>
+                                                    <form method="post" action="{{ path('app_prestataire_appointment_delete', { id: appointment.id }) }}" class="d-inline" data-turbo="false" onsubmit="return confirm('Confirmer la suppression de ce rendez-vous ?');">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_appointment_' ~ appointment.id) }}">
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                            Supprimer
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="tm-appointment-empty-state">
+                            <div class="tm-appointment-empty-state__icon">
+                                <i class="fa-regular fa-calendar-xmark"></i>
+                            </div>
+                            <h3>Aucun rendez-vous enregistré</h3>
+                            <p>Commencez par créer votre premier rendez-vous pour structurer votre planning.</p>
+                            <a href="{{ path('app_prestataire_appointment_new') }}" class="btn btn-primary">
+                                Créer le premier rendez-vous
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

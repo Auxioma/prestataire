@@ -1,76 +1,133 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détail du rendez-vous
-{% endblock %}
+{% block title %}Détail du rendez-vous{% endblock %}
 
 {% block body %}
-	<div class="tm-appointment-show-page">
-		<div class="container py-4">
-			<div class="tm-appointment-show-page__header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
-				<div>
-					<h1 class="h3 mb-1">{{ appointment.title }}</h1>
-					<p class="text-muted mb-0">
-						Détail du rendez-vous.
-					</p>
-				</div>
+    <div class="tm-appointment-show-page">
+        <div class="container py-4">
+            <div class="tm-appointment-show-topbar">
+                <div>
+                    <a href="{{ path('app_prestataire_appointment_index') }}" class="tm-appointment-show-back">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Retour à la liste</span>
+                    </a>
+                </div>
 
-				<div class="d-flex flex-column flex-sm-row gap-2">
-					<a href="{{ path('app_prestataire_appointment_index') }}" class="btn btn-outline-secondary">
-						Retour à la liste
-					</a>
-					<a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" class="btn btn-outline-info" data-turbo="false">
-						Retour au calendrier
-					</a>
-					<a href="{{ path('app_prestataire_appointment_edit', { id: appointment.id }) }}" class="btn btn-outline-primary">
-						Modifier
-					</a>
-				</div>
-			</div>
+                <div class="tm-appointment-show-topbar__actions">
+                    <a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" class="btn btn-outline-info" data-turbo="false">
+                        Retour au calendrier
+                    </a>
+                </div>
+            </div>
 
-			<div class="tm-appointment-show-page__card card shadow-sm">
-				<div class="card-body">
-					<dl class="row mb-0">
-						<dt class="col-sm-3">Titre</dt>
-						<dd class="col-sm-9">{{ appointment.title }}</dd>
+            <div class="tm-appointment-show-layout">
+                <section class="tm-appointment-show-main">
+                    <div class="tm-appointment-show-hero card shadow-sm">
+                        <div class="card-body">
+                            <div class="tm-appointment-show-hero__badge-wrap">
+                                <span class="tm-appointment-status tm-appointment-status--{{ appointment.status.value }}">
+                                    {{ appointment.status.getLabel() }}
+                                </span>
+                            </div>
 
-						<dt class="col-sm-3">Description</dt>
-						<dd class="col-sm-9">{{ appointment.description ?: '—' }}</dd>
+                            <h1 class="tm-appointment-show-title">{{ appointment.title }}</h1>
+                            <p class="tm-appointment-show-subtitle">
+                                {{ appointment.description ?: 'Aucune note complémentaire n’a été ajoutée pour ce rendez-vous.' }}
+                            </p>
 
-						<dt class="col-sm-3">Début</dt>
-						<dd class="col-sm-9">
-								{{ appointment.startsAt|date('d/m/Y H:i', 'Europe/Paris') }}
+                            <div class="tm-appointment-show-summary">
+                                <article class="tm-appointment-show-summary__card">
+                                    <span class="tm-appointment-show-summary__label">Début</span>
+                                    <strong>{{ appointment.startsAt|date('d/m/Y', 'Europe/Paris') }}</strong>
+                                    <span>{{ appointment.startsAt|date('H:i', 'Europe/Paris') }}</span>
+                                </article>
 
-						</dd>
+                                <article class="tm-appointment-show-summary__card">
+                                    <span class="tm-appointment-show-summary__label">Fin</span>
+                                    <strong>{{ appointment.endsAt|date('d/m/Y', 'Europe/Paris') }}</strong>
+                                    <span>{{ appointment.endsAt|date('H:i', 'Europe/Paris') }}</span>
+                                </article>
 
-						<dt class="col-sm-3">Fin</dt>
-						<dd class="col-sm-9">
-								{{ appointment.endsAt|date('d/m/Y H:i', 'Europe/Paris') }}
-						</dd>
+                                <article class="tm-appointment-show-summary__card">
+                                    <span class="tm-appointment-show-summary__label">Lieu</span>
+                                    <strong>{{ appointment.locationLabel ?: 'Non renseigné' }}</strong>
+                                </article>
+                            </div>
+                        </div>
+                    </div>
 
-						<dt class="col-sm-3">Statut</dt>
-						<dd class="col-sm-9">{{ appointment.status.getLabel() }}</dd>
+                    <div class="tm-appointment-show-panel card shadow-sm">
+                        <div class="card-body">
+                            <h2>Informations détaillées</h2>
 
-						<dt class="col-sm-3">Lieu</dt>
-						<dd class="col-sm-9">{{ appointment.locationLabel ?: '—' }}</dd>
+                            <div class="tm-appointment-show-details">
+                                <div class="tm-appointment-show-detail">
+                                    <span>Titre</span>
+                                    <strong>{{ appointment.title }}</strong>
+                                </div>
 
-						<dt class="col-sm-3">Créé le</dt>
-						<dd class="col-sm-9">{{ appointment.createdAt|date('d/m/Y H:i') }}</dd>
+                                <div class="tm-appointment-show-detail">
+                                    <span>Statut</span>
+                                    <strong>{{ appointment.status.getLabel() }}</strong>
+                                </div>
 
-						<dt class="col-sm-3">Mis à jour le</dt>
-						<dd class="col-sm-9">{{ appointment.updatedAt|date('d/m/Y H:i') }}</dd>
-					</dl>
-				</div>
-			</div>
+                                <div class="tm-appointment-show-detail">
+                                    <span>Début</span>
+                                    <strong>{{ appointment.startsAt|date('d/m/Y à H:i', 'Europe/Paris') }}</strong>
+                                </div>
 
-			<div class="tm-appointment-show-page__footer mt-4">
-				<form method="post" action="{{ path('app_prestataire_appointment_delete', { id: appointment.id }) }}" data-turbo="false" onsubmit="return confirm('Confirmer la suppression de ce rendez-vous ?');">
-					<input type="hidden" name="_token" value="{{ csrf_token('delete_appointment_' ~ appointment.id) }}">
+                                <div class="tm-appointment-show-detail">
+                                    <span>Fin</span>
+                                    <strong>{{ appointment.endsAt|date('d/m/Y à H:i', 'Europe/Paris') }}</strong>
+                                </div>
 
-					<button type="submit" class="btn btn-danger">
-						Supprimer
-					</button>
-				</form>
-			</div>
-		</div>
-	</div>
+                                <div class="tm-appointment-show-detail">
+                                    <span>Lieu</span>
+                                    <strong>{{ appointment.locationLabel ?: 'Non renseigné' }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <aside class="tm-appointment-show-side">
+                    <div class="tm-appointment-show-panel card shadow-sm">
+                        <div class="card-body">
+                            <h2>Suivi</h2>
+
+                            <div class="tm-appointment-show-timeline">
+                                <div class="tm-appointment-show-timeline__item">
+                                    <span>Créé le</span>
+                                    <strong>{{ appointment.createdAt|date('d/m/Y à H:i', 'Europe/Paris') }}</strong>
+                                </div>
+                                <div class="tm-appointment-show-timeline__item">
+                                    <span>Mis à jour le</span>
+                                    <strong>{{ appointment.updatedAt|date('d/m/Y à H:i', 'Europe/Paris') }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tm-appointment-show-panel card shadow-sm">
+                        <div class="card-body">
+                            <h2>Actions rapides</h2>
+
+                            <div class="tm-appointment-show-side__actions">
+                                <a href="{{ path('app_prestataire_appointment_edit', { id: appointment.id }) }}" class="btn btn-primary">
+                                    Modifier le rendez-vous
+                                </a>
+
+                                <form method="post" action="{{ path('app_prestataire_appointment_delete', { id: appointment.id }) }}" data-turbo="false" onsubmit="return confirm('Confirmer la suppression de ce rendez-vous ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_appointment_' ~ appointment.id) }}">
+                                    <button type="submit" class="btn btn-danger w-100">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
 {% endblock %}

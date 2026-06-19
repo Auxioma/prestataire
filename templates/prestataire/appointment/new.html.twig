@@ -1,87 +1,153 @@
 {% extends 'base.html.twig' %}
 {% form_theme form 'bootstrap_5_layout.html.twig' %}
 
-
-{% block title %}Nouveau rendez-vous
-{% endblock %}
+{% block title %}Nouveau rendez-vous{% endblock %}
 
 {% block body %}
-	<div class="tm-appointment-new-page">
-		<div class="container py-4">
-			<div class="tm-appointment-new-page__header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
-				<div>
-					<h1 class="h3 mb-1">Nouveau rendez-vous</h1>
-					<p class="text-muted mb-0">
-						Créez un rendez-vous, une intervention ou un bloc de disponibilité.
-					</p>
-				</div>
+    <div class="tm-appointment-form-page tm-appointment-form-page--new">
+        <div class="container py-4">
+            <div class="tm-appointment-form-hero">
+                <div class="tm-appointment-form-hero__content">
+                    <span class="tm-appointment-form-hero__eyebrow">Planification</span>
+                    <h1 class="tm-appointment-form-hero__title">Nouveau rendez-vous</h1>
+                    <p class="tm-appointment-form-hero__text">
+                        Créez un rendez-vous clair, précis et facile à retrouver dans votre planning.
+                    </p>
+                </div>
 
-				<div class="d-flex flex-column flex-sm-row gap-2">
-					<a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" class="btn btn-outline-info" data-turbo="false">
-						Retour au calendrier
-					</a>
-				</div>
-			</div>
+                <div class="tm-appointment-form-hero__actions">
+                    <a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" class="btn btn-outline-info" data-turbo="false">
+                        Retour au calendrier
+                    </a>
+                </div>
+            </div>
 
-			{% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
-				{% for message in messages %}
-					<div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
-						{{ message }}
-						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-					</div>
-				{% endfor %}
-			{% endfor %}
+            {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type }} alert-dismissible fade show mt-3" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
 
-			<div class="tm-appointment-new-page__card card shadow-sm">
-				<div class="card-body">
-					{{ form_start(form, {
-                        action: path('app_prestataire_appointment_new'),
-                        method: 'POST',
-                        attr: {
-                            'data-turbo': 'false',
-                            'data-controller': 'appointment-form',
-                            'class': 'tm-appointment-new-page__form'
-                        }
-                    }) }}
-					<div class="row g-3">
-						<div class="col-12">
-							{{ form_row(form.title) }}
-						</div>
+            <div class="tm-appointment-form-layout">
+                <section class="tm-appointment-form-main">
+                    <div class="tm-appointment-form-card card shadow-sm">
+                        <div class="card-body">
+                            {{ form_start(form, {
+                                action: path('app_prestataire_appointment_new'),
+                                method: 'POST',
+                                attr: {
+                                    'data-turbo': 'false',
+                                    'data-controller': 'appointment-form',
+                                    'class': 'tm-appointment-form'
+                                }
+                            }) }}
 
-						<div class="col-12">
-							{{ form_row(form.description) }}
-						</div>
+                            <div class="tm-appointment-form-section">
+                                <div class="tm-appointment-form-section__head">
+                                    <h2>Informations principales</h2>
+                                    <p>Renseignez l’intitulé et le contexte du rendez-vous.</p>
+                                </div>
 
-						<div class="col-md-6">
-							{{ form_row(form.startsAt) }}
-						</div>
+                                <div class="row g-4">
+                                    <div class="col-12">
+                                        <div class="tm-appointment-field">
+                                            {{ form_row(form.title) }}
+                                        </div>
+                                    </div>
 
-						<div class="col-md-6">
-							{{ form_row(form.endsAt) }}
-						</div>
+                                    <div class="col-12">
+                                        <div class="tm-appointment-field">
+                                            {{ form_row(form.description) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-						<div class="col-md-6">
-							{{ form_row(form.status) }}
-						</div>
+                            <div class="tm-appointment-form-section">
+                                <div class="tm-appointment-form-section__head">
+                                    <h2>Créneau</h2>
+                                    <p>Définissez précisément le début et la fin de l’intervention.</p>
+                                </div>
 
-						<div class="col-md-6">
-							{{ form_row(form.locationLabel) }}
-						</div>
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <div class="tm-appointment-field tm-appointment-field--highlight">
+                                            {{ form_row(form.startsAt) }}
+                                        </div>
+                                    </div>
 
-					</div>
+                                    <div class="col-md-6">
+                                        <div class="tm-appointment-field tm-appointment-field--highlight">
+                                            {{ form_row(form.endsAt) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-					<div class="tm-appointment-new-page__footer mt-4 d-flex flex-column flex-sm-row gap-2">
-						<button type="submit" class="btn btn-primary">
-							Enregistrer
-						</button>
+                            <div class="tm-appointment-form-section">
+                                <div class="tm-appointment-form-section__head">
+                                    <h2>Organisation</h2>
+                                    <p>Ajoutez les informations utiles pour le suivi et la lecture rapide.</p>
+                                </div>
 
-						<a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" class="btn btn-outline-secondary">
-							Annuler
-						</a>
-					</div>
-					{{ form_end(form) }}
-				</div>
-			</div>
-		</div>
-	</div>
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <div class="tm-appointment-field">
+                                            {{ form_row(form.status) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="tm-appointment-field">
+                                            {{ form_row(form.locationLabel) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tm-appointment-form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    Enregistrer le rendez-vous
+                                </button>
+
+                                <a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" class="btn btn-outline-secondary">
+                                    Annuler
+                                </a>
+                            </div>
+
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                </section>
+
+                <aside class="tm-appointment-form-side">
+                    <div class="tm-appointment-side-card card shadow-sm">
+                        <div class="card-body">
+                            <h3>Bonnes pratiques</h3>
+                            <ul class="tm-appointment-side-list">
+                                <li>Choisissez un titre explicite, facile à repérer dans le calendrier.</li>
+                                <li>Ajoutez une courte description si le rendez-vous demande un contexte particulier.</li>
+                                <li>Vérifiez l’horaire de fin pour éviter les chevauchements.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="tm-appointment-side-card card shadow-sm">
+                        <div class="card-body">
+                            <h3>À renseigner en priorité</h3>
+                            <div class="tm-appointment-side-tags">
+                                <span>Titre clair</span>
+                                <span>Créneau précis</span>
+                                <span>Statut cohérent</span>
+                                <span>Lieu utile</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
 {% endblock %}
