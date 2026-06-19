@@ -53,6 +53,7 @@ export default class extends Controller {
 
         this.calendar = new FullCalendar.Calendar(this.element, {
             locale: "fr",
+            timeZone: "local",
             initialView: "dayGridMonth",
             firstDay: 1,
             height: 650,
@@ -92,11 +93,26 @@ export default class extends Controller {
         this.initialized = true;
     }
 
+    formatLocalDateTime(date) {
+        if (!(date instanceof Date)) {
+            return null;
+        }
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+        const seconds = String(date.getSeconds()).padStart(2, "0");
+
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+    }
+
     async persistEventDates(info) {
         const payload = {
             id: info.event.id,
-            startsAt: info.event.start ? info.event.start.toISOString() : null,
-            endsAt: info.event.end ? info.event.end.toISOString() : null,
+            startsAt: this.formatLocalDateTime(info.event.start),
+            endsAt: this.formatLocalDateTime(info.event.end),
             isAllDay: info.event.allDay,
         };
 
@@ -115,6 +131,16 @@ export default class extends Controller {
 
             if (!response.ok || !data.success) {
                 throw new Error(data.message || "Erreur");
+            }
+
+            if (data.event) {
+                if (data.event.start) {
+                    info.event.setStart(data.event.start);
+                }
+
+                if (data.event.end) {
+                    info.event.setEnd(data.event.end);
+                }
             }
         } catch (error) {
             info.revert();

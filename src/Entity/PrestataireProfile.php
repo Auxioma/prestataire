@@ -22,6 +22,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
+use App\Entity\PrestataireAppointment;
 
 
 #[ORM\Entity(repositoryClass: PrestataireProfileRepository::class)]
@@ -185,6 +186,12 @@ class PrestataireProfile
     #[ORM\OneToMany(targetEntity: PrestataireInterventionZone::class, mappedBy: 'prestataireProfile')]
     private Collection $prestataireInterventionZones;
 
+    /**
+     * @var Collection<int, PrestataireAppointment>
+     */
+    #[ORM\OneToMany(mappedBy: 'prestataire', targetEntity: PrestataireAppointment::class, orphanRemoval: true)]
+    private Collection $appointments;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -198,6 +205,7 @@ class PrestataireProfile
         $this->prestataireServices = new ArrayCollection();
         $this->prestataireInterventionZones = new ArrayCollection();
         $this->availabilities = new ArrayCollection();
+        $this->appointments = new ArrayCollection();
     }
 
     // --- AVAILABILITY ---
@@ -842,6 +850,35 @@ class PrestataireProfile
     public function removePrestataireInterventionZone(PrestataireInterventionZone $prestataireInterventionZone): static
     {
         $this->prestataireInterventionZones->removeElement($prestataireInterventionZone);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PrestataireAppointment>
+     */
+    public function getAppointments(): Collection
+    {
+        return $this->appointments;
+    }
+
+    public function addAppointment(PrestataireAppointment $appointment): self
+    {
+        if (!$this->appointments->contains($appointment)) {
+            $this->appointments->add($appointment);
+            $appointment->setPrestataire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAppointment(PrestataireAppointment $appointment): self
+    {
+        if ($this->appointments->removeElement($appointment)) {
+            if ($appointment->getPrestataire() === $this) {
+                $appointment->setPrestataire(null);
+            }
+        }
 
         return $this;
     }

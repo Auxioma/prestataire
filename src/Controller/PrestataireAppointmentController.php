@@ -34,11 +34,12 @@ final class PrestataireAppointmentController extends AbstractController
         }
 
         $prestataire = $user->getPrestataireProfile();
+        $timezone = new \DateTimeZone('Europe/Paris');
 
         $start = $request->query->get('start');
         $end = $request->query->get('end');
 
-        if (!$start || !$end) {
+        if (!is_string($start) || !is_string($end) || '' === trim($start) || '' === trim($end)) {
             return $this->json([
                 'success' => false,
                 'message' => 'Période invalide.',
@@ -46,8 +47,8 @@ final class PrestataireAppointmentController extends AbstractController
         }
 
         try {
-            $startAt = new \DateTimeImmutable($start);
-            $endAt = new \DateTimeImmutable($end);
+            $startAt = new \DateTimeImmutable($start, $timezone);
+            $endAt = new \DateTimeImmutable($end, $timezone);
         } catch (\Throwable) {
             return $this->json([
                 'success' => false,
@@ -55,16 +56,36 @@ final class PrestataireAppointmentController extends AbstractController
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $appointments = $appointmentRepository->findForCalendarRange($prestataire->getId(), $startAt, $endAt);
+        $appointments = $appointmentRepository->findForCalendarRange(
+            $prestataire->getId(),
+            $startAt,
+            $endAt
+        );
 
-        $events = array_map(function (PrestataireAppointment $appointment): array {
+        $events = array_map(function (PrestataireAppointment $appointment) use ($timezone): array {
             $status = $appointment->getStatus();
+
+            $startsAt = $appointment->getStartsAt();
+            $endsAt = $appointment->getEndsAt();
+
+            $startFormatted = $startsAt instanceof \DateTimeInterface
+                ? \DateTimeImmutable::createFromInterface($startsAt)
+                ->setTimezone($timezone)
+                ->format('Y-m-d\TH:i:s')
+                : null;
+
+            $endFormatted = $endsAt instanceof \DateTimeInterface
+                ? \DateTimeImmutable::createFromInterface($endsAt)
+                ->setTimezone($timezone)
+                ->format('Y-m-d\TH:i:s')
+                : null;
 
             return [
                 'id' => $appointment->getId(),
                 'title' => $appointment->getTitle(),
-                'start' => $appointment->getStartsAt()?->format(\DateTimeInterface::ATOM),
-                'end' => $appointment->getEndsAt()?->format(\DateTimeInterface::ATOM),
+                'start' => $startFormatted,
+                'end' => $endFormatted,
+                'allDay' => false,
                 'url' => $this->generateUrl('app_prestataire_appointment_show', [
                     'id' => $appointment->getId(),
                 ]),
@@ -85,7 +106,7 @@ final class PrestataireAppointmentController extends AbstractController
         return $this->json($events);
     }
 
-    // CREATE NEW APPOINTMENT
+    // AJOUTER UN RENDEZ-VOUS
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     public function new(
         Request $request,
@@ -100,11 +121,31 @@ final class PrestataireAppointmentController extends AbstractController
         $appointment = new PrestataireAppointment();
         $appointment->setPrestataire($user->getPrestataireProfile());
 
+        if (null === $appointment->getStartsAt() && null === $appointment->getEndsAt()) {
+            $timezone = new \DateTimeZone('Europe/Paris');
+            $now = new \DateTimeImmutable('now', $timezone);
+
+            $minute = (int) $now->format('i');
+            $minutesToAdd = (15 - ($minute % 15)) % 15;
+
+            $roundedStart = $now
+                ->setTime((int) $now->format('H'), (int) $now->format('i'), 0)
+                ->modify(sprintf('+%d minutes', $minutesToAdd));
+
+            if ($minutesToAdd === 0) {
+                $roundedStart = $roundedStart->modify('+15 minutes');
+            }
+
+            $roundedEnd = $roundedStart->modify('+1 hour');
+
+            $appointment->setStartsAt(\DateTime::createFromImmutable($roundedStart));
+            $appointment->setEndsAt(\DateTime::createFromImmutable($roundedEnd));
+        }
+
         $form = $this->createForm(PrestataireAppointmentType::class, $appointment);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $entityManager->persist($appointment);
             $entityManager->flush();
 
@@ -120,7 +161,7 @@ final class PrestataireAppointmentController extends AbstractController
         ]);
     }
 
-    // READ ALL APPOINTMENTS
+    // LISTE DE TOUS LES RENDEZ-VOUS
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(
         PrestataireAppointmentRepository $appointmentRepository,
@@ -143,7 +184,7 @@ final class PrestataireAppointmentController extends AbstractController
         ]);
     }
 
-    // READ ONE APPOINTMENT
+    // VISUALISER UN RENDEZ-VOUS
     #[Route('/{id}', name: 'show', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function show(
         #[MapEntity(id: 'id')] PrestataireAppointment $appointment,
@@ -165,7 +206,7 @@ final class PrestataireAppointmentController extends AbstractController
         ]);
     }
 
-    // EDIT APPOINTMENT
+    // MODIFIER UN RENDEZ-VOUS
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     public function edit(
         Request $request,
@@ -188,7 +229,6 @@ final class PrestataireAppointmentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $entityManager->flush();
 
             $this->addFlash('success', 'Le rendez-vous a bien été modifié.');
@@ -204,7 +244,7 @@ final class PrestataireAppointmentController extends AbstractController
         ]);
     }
 
-    // DELETE APPOINTMENT
+    // SUPPRIMER UN RENDEZ-VOUS
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function delete(
         Request $request,
@@ -237,6 +277,7 @@ final class PrestataireAppointmentController extends AbstractController
         );
     }
 
+    // DEPLACER UN RENDEZ-VOUS DRAG & DROP
     #[Route('/move', name: 'move', methods: ['POST'])]
     public function move(
         Request $request,
@@ -292,14 +333,23 @@ final class PrestataireAppointmentController extends AbstractController
             ], Response::HTTP_FORBIDDEN);
         }
 
-        try {
-            $startsAt = new \DateTime($data['startsAt']);
+        $timezone = new \DateTimeZone('Europe/Paris');
 
-            if (!empty($data['endsAt'])) {
-                $endsAt = new \DateTime($data['endsAt']);
+        try {
+            $startsAt = new \DateTime($data['startsAt'], $timezone);
+
+            if (!empty($data['endsAt']) && is_string($data['endsAt'])) {
+                $endsAt = new \DateTime($data['endsAt'], $timezone);
             } else {
                 $endsAt = clone $startsAt;
                 $endsAt->modify('+1 hour');
+            }
+
+            if ($endsAt <= $startsAt) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'La date de fin doit être postérieure à la date de début.',
+                ], Response::HTTP_BAD_REQUEST);
             }
 
             $appointment
@@ -310,11 +360,16 @@ final class PrestataireAppointmentController extends AbstractController
 
             return $this->json([
                 'success' => true,
+                'event' => [
+                    'id' => $appointment->getId(),
+                    'start' => $startsAt->format('Y-m-d\TH:i:s'),
+                    'end' => $endsAt->format('Y-m-d\TH:i:s'),
+                ],
             ]);
         } catch (\Throwable) {
             return $this->json([
                 'success' => false,
-                'message' => 'Erreur lors de la mise à jour.',
+                'message' => 'Erreur lors de la mise à jour du rendez-vous.',
             ], Response::HTTP_BAD_REQUEST);
         }
     }

@@ -64,26 +64,26 @@ class PrestataireAppointment
     #[ORM\PrePersist]
     public function onPrePersist(): void
     {
-        $now = new \DateTime();
+        $now = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
 
         if (null === $this->createdAt) {
             $this->createdAt = $now;
         }
 
-        $this->updatedAt = $now;
+        $this->updatedAt = clone $now;
     }
 
     #[ORM\PreUpdate]
     public function onPreUpdate(): void
     {
-        $this->updatedAt = new \DateTime();
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
     }
 
     public function __construct()
     {
-        $now = new \DateTimeImmutable();
-        $this->createdAt = \DateTime::createFromImmutable($now);
-        $this->updatedAt = \DateTime::createFromImmutable($now);
+        $now = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+        $this->createdAt = clone $now;
+        $this->updatedAt = clone $now;
     }
 
     public function getId(): ?int
@@ -95,6 +95,7 @@ class PrestataireAppointment
     {
         return $this->prestataire;
     }
+    
     public function setPrestataire(?PrestataireProfile $prestataire): self
     {
         $this->prestataire = $prestataire;
@@ -145,9 +146,14 @@ class PrestataireAppointment
     {
         return $this->startsAt;
     }
+
     public function setStartsAt(\DateTimeInterface $startsAt): self
     {
-        $this->startsAt = $startsAt;
+        $this->startsAt = new \DateTime(
+            $startsAt->format('Y-m-d H:i:s'),
+            new \DateTimeZone('Europe/Paris')
+        );
+
         return $this;
     }
 
@@ -155,9 +161,14 @@ class PrestataireAppointment
     {
         return $this->endsAt;
     }
+
     public function setEndsAt(\DateTimeInterface $endsAt): self
     {
-        $this->endsAt = $endsAt;
+        $this->endsAt = new \DateTime(
+            $endsAt->format('Y-m-d H:i:s'),
+            new \DateTimeZone('Europe/Paris')
+        );
+
         return $this;
     }
 

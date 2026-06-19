@@ -4,29 +4,26 @@ export default class extends Controller {
     static targets = ['allDay', 'startsAt', 'endsAt'];
 
     connect() {
-        console.log('appointment-form connected');
-        this.toggleAllDay();
+        if (this.hasAllDayTarget) {
+            this.toggleAllDay();
+        }
     }
 
     toggleAllDay() {
+        if (!this.hasAllDayTarget || !this.hasStartsAtTarget || !this.hasEndsAtTarget) {
+            return;
+        }
+
         const allDay = this.allDayTarget.checked;
 
-        if (allDay) {
-            if (!this.startsAtTarget.value) {
-                const today = new Date().toISOString().slice(0, 10);
-                this.startsAtTarget.value = `${today}T00:00`;
-            } else {
-                const startDate = this.startsAtTarget.value.slice(0, 10);
-                this.startsAtTarget.value = `${startDate}T00:00`;
-            }
-
-            if (!this.endsAtTarget.value) {
-                const endDate = this.startsAtTarget.value.slice(0, 10);
-                this.endsAtTarget.value = `${endDate}T23:59`;
-            } else {
-                const endDate = this.endsAtTarget.value.slice(0, 10);
-                this.endsAtTarget.value = `${endDate}T23:59`;
-            }
+        if (!allDay) {
+            return;
         }
+
+        const startDate = this.startsAtTarget.value?.slice(0, 10);
+        const endDate = this.endsAtTarget.value?.slice(0, 10) || startDate;
+
+        if (startDate) this.startsAtTarget.value = `${startDate}T00:00`;
+        if (endDate) this.endsAtTarget.value = `${endDate}T23:59`;
     }
 }
