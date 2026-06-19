@@ -22,7 +22,7 @@
 					<h1 class="tm-prestation-wizard-title">Compléter votre prestation en 6 étapes</h1>
 					<p class="tm-prestation-wizard-subtitle">
 						Renseignez les informations utiles pour présenter votre offre de manière claire,
-						                        rassurante et exploitable dans les futures vues publiques.
+																																				                        rassurante et exploitable dans les futures vues publiques.
 					</p>
 				</div>
 
@@ -89,7 +89,9 @@
                     }
                 }) }}
 
-				<div class="tm-prestation-wizard-body">
+				<div
+					class="tm-prestation-wizard-body">
+					{# SECTION INFORMATIONS #}
 					<section class="tm-prestation-wizard-panel is-active" data-prestation-wizard-target="step">
 						<div class="tm-prestation-wizard-panel-head">
 							<h2 class="tm-prestation-wizard-panel-title">Informations générales</h2>
@@ -196,6 +198,7 @@
 						</div>
 					</section>
 
+					{# SECTION DESCRIPTION #}
 					<section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
 						<div class="tm-prestation-wizard-panel-head">
 							<h2 class="tm-prestation-wizard-panel-title">Détails de la prestation</h2>
@@ -223,6 +226,7 @@
 						</div>
 					</section>
 
+					{# SECTION TARIFS #}
 					<section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
 						<div class="tm-prestation-wizard-panel-head">
 							<h2 class="tm-prestation-wizard-panel-title">Tarifs</h2>
@@ -296,6 +300,8 @@
 						</div>
 					</section>
 
+
+					{# SECTION ZONES #}
 					<section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
 						<div class="tm-prestation-wizard-panel-head">
 							<h2 class="tm-prestation-wizard-panel-title">Zone et informations utiles</h2>
@@ -365,23 +371,107 @@
 						</div>
 					</section>
 
+					{# SECTION PHOTOS #}
 					<section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
 						<div class="tm-prestation-wizard-panel-head">
 							<h2 class="tm-prestation-wizard-panel-title">Photos et documents</h2>
 							<p class="tm-prestation-wizard-panel-subtitle">
-								Cette étape est conservée dans le parcours, mais restera non bloquante tant que les médias de prestation et les documents dédiés ne sont pas gérés en base.
+								Ajoutez jusqu’à 5 photos pour illustrer votre prestation.
 							</p>
 						</div>
 
-						<div class="tm-prestation-wizard-placeholder-card">
-							<h3 class="tm-prestation-wizard-placeholder-title">Étape préparée pour une future version</h3>
-							<p class="tm-prestation-wizard-placeholder-text">
-								Plus tard, vous pourrez rattacher des photos de réalisations, visuels commerciaux ou documents utiles directement à cette prestation.
-								                                Pour l’instant, cette étape n’empêche ni l’enregistrement ni la publication future du contenu textuel.
-							</p>
+						<div class="tm-prestation-wizard-media-grid">
+							{% for mediaForm in form.medias|slice(0, 5) %}
+								{% set media = mediaForm.vars.data %}
+								{% set mediaId = media and attribute(media, 'id') ? attribute(media, 'id') : null %}
+								{% set existingFile = media and attribute(media, 'fileName') ? attribute(media, 'fileName') : null %}
+
+								<article class="tm-prestation-wizard-media-card" data-controller="media-preview">
+									<div class="tm-prestation-wizard-media-card-head">
+										<div>
+											<span class="tm-prestation-wizard-media-index">Photo
+												{{ loop.index }}/5</span>
+											<h3 class="tm-prestation-wizard-media-title">Visuel de la prestation</h3>
+										</div>
+
+										<div class="tm-prestation-wizard-media-actions">
+											{% if existingFile and mediaId %}
+												<form method="post" action="{{ path('app_prestataire_prestation_media_delete', { id: mediaId }) }}" class="d-inline" data-turbo="false" onsubmit="return confirm('Confirmer la suppression de cette photo ?')">
+													<input type="hidden" name="token" value="{{ csrf_token('delete_prestation_media_' ~ mediaId) }}">
+
+													<button type="submit" class="tm-prestation-wizard-media-delete-btn" title="Supprimer cette photo" aria-label="Supprimer cette photo">
+														<i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+													</button>
+												</form>
+											{% endif %}
+										</div>
+									</div>
+
+									<div class="tm-media-preview">
+										<img data-media-preview-target="preview" class="tm-media-preview__image {{ existingFile ? '' : 'd-none' }}" src="{{ existingFile ? asset('uploads/prestations/' ~ existingFile) : '' }}" alt="Aperçu de l’image sélectionnée">
+
+										<div data-media-preview-target="placeholder" class="tm-media-preview__placeholder {{ existingFile ? 'd-none' : '' }}">
+											<div class="tm-media-preview__placeholder-icon">
+												<i class="fa-regular fa-image"></i>
+											</div>
+
+											<p class="tm-media-preview__placeholder-text">
+												Aucun visuel sélectionné
+											</p>
+
+											<span class="tm-media-preview__placeholder-help">
+												Format conseillé : JPG ou PNG, visuel net et bien cadré.
+											</span>
+										</div>
+									</div>
+
+									<div class="tm-prestation-wizard-media-fields">
+										<div class="tm-prestation-wizard-field">
+											{{ form_label(mediaForm.imageFile) }}
+											{{ form_widget(mediaForm.imageFile, {
+                            attr: {
+                                class: 'form-control',
+                                'data-media-preview-target': 'input',
+                                'data-action': 'change->media-preview#update'
+                            }
+                        }) }}
+											{{ form_errors(mediaForm.imageFile) }}
+
+											<div class="form-text">
+												{% if existingFile %}
+													Sélectionnez une nouvelle image pour remplacer la photo actuelle.
+												{% else %}
+													Ajoutez une image pour illustrer cette prestation.
+												{% endif %}
+											</div>
+										</div>
+
+										<div class="tm-prestation-wizard-grid">
+											<div class="tm-prestation-wizard-col-6">
+												<div class="tm-prestation-wizard-field">
+													{{ form_row(mediaForm.title) }}
+												</div>
+											</div>
+
+											<div class="tm-prestation-wizard-col-6">
+												<div class="tm-prestation-wizard-field">
+													{{ form_row(mediaForm.altText) }}
+												</div>
+											</div>
+
+											<div class="tm-prestation-wizard-col-12">
+												<div class="tm-prestation-wizard-field">
+													{{ form_row(mediaForm.position) }}
+												</div>
+											</div>
+										</div>
+									</div>
+								</article>
+							{% endfor %}
 						</div>
 					</section>
 
+					{# SECTION PREVIEW #}
 					<section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
 						<div class="tm-prestation-wizard-panel-head">
 							<h2 class="tm-prestation-wizard-panel-title">Prévisualisation</h2>

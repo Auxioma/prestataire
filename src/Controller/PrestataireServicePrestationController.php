@@ -30,6 +30,7 @@ use Symfony\UX\Map\Map;
 use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\PrestationMedia;
 
 final class PrestataireServicePrestationController extends AbstractController
 {
@@ -49,10 +50,29 @@ final class PrestataireServicePrestationController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
+        if ($ps->getMedias()->count() < 5) {
+            $missing = 5 - $ps->getMedias()->count();
+
+            for ($i = 0; $i < $missing; $i++) {
+                $media = new \App\Entity\PrestationMedia();
+                $media->setPosition($ps->getMedias()->count());
+                $ps->addMedia($media);
+            }
+        }
+
         $form = $this->createForm(PrestataireServicePrestationType::class, $ps);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($ps->getMedias()->toArray() as $media) {
+                $hasFile = null !== $media->getImageFile();
+                $hasExistingFileName = !empty($media->getFileName());
+
+                if (!$hasFile && !$hasExistingFileName) {
+                    $ps->removeMedia($media);
+                }
+            }
+
             $em->flush();
 
             $this->addFlash('success', 'Prestation détaillée enregistrée.');
@@ -89,6 +109,7 @@ final class PrestataireServicePrestationController extends AbstractController
                         options: ['maxZoom' => 19],
                     ))
                 );
+
 
             foreach ($zones as $zone) {
                 if (null === $zone->getLatitude() || null === $zone->getLongitude()) {
@@ -288,4 +309,41 @@ final class PrestataireServicePrestationController extends AbstractController
                 : 'La prestation a été désactivée.',
         ]);
     }
+
+    #[Route('/prestataire/prestation/media/{id}/supprimer', name: 'app_prestataire_prestation_media_delete', methods: ['POST'])]
+public function deleteMedia(
+    Request $request,
+    PrestationMedia $media,
+    EntityManagerInterface $em
+): Response {
+    $user = $this->getUser();
+
+    if (
+        !$user instanceof User ||
+        !$user->getPrestataireProfile() ||
+        $media->getPrestation()?->getPrestataire() !== $user->getPrestataireProfile()
+    ) {
+        throw $this->createAccessDeniedException('Accès refusé.');
+    }
+
+    $prestation = $media->getPrestation();
+
+    if (
+        $this->isCsrfTokenValid(
+            'delete_prestation_media_' . $media->getId(),
+            (string) $request->request->get('token')
+        )
+    ) {
+        $em->remove($media);
+        $em->flush();
+
+        $this->addFlash('success', 'La photo a bien été supprimée.');
+    } else {
+        $this->addFlash('danger', 'Jeton CSRF invalide.');
+    }
+
+    return $this->redirectToRoute('app_prestataire_service_prestation_edit', [
+        'id' => $prestation?->getId(),
+    ]);
+}
 }

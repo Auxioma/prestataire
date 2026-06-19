@@ -21,6 +21,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use App\Form\PrestationMediaType;
 
 class PrestataireServicePrestationType extends AbstractType
 {
@@ -109,6 +111,15 @@ class PrestataireServicePrestationType extends AbstractType
                     'rows' => 4,
                     'placeholder' => 'Exemple : déplacement inclus dans un rayon de 20 km, fournitures non comprises, intervention sous 48h, etc.',
                 ],
+            ])
+            ->add('medias', CollectionType::class, [
+                'label' => 'Ajoutez vos photos',
+                'entry_type' => PrestationMediaType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'prototype' => true,
+                'required' => false,
             ]);
     }
 

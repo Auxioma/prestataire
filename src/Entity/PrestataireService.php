@@ -15,6 +15,9 @@ namespace App\Entity;
 use App\Repository\PrestataireServiceRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use App\Entity\PrestationMedia;
 
 #[ORM\Entity(repositoryClass: PrestataireServiceRepository::class)]
 #[ORM\Table(
@@ -86,6 +89,21 @@ class PrestataireService
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\OneToMany(
+        mappedBy: 'prestation',
+        targetEntity: PrestationMedia::class,
+        orphanRemoval: true,
+        cascade: ['persist', 'remove']
+    )]
+    #[ORM\OrderBy(['position' => 'ASC', 'createdAt' => 'ASC'])]
+    private Collection $medias;
+
+
+    public function __construct()
+    {
+        $this->medias = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -296,6 +314,31 @@ class PrestataireService
         return $this;
     }
 
+    /**
+     * @return Collection<int, PrestationMedia>
+     */
+    public function getMedias(): Collection
+    {
+        return $this->medias;
+    }
+
+    public function addMedia(PrestationMedia $media): static
+    {
+        if (!$this->medias->contains($media)) {
+            $this->medias->add($media);
+            $media->setPrestation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMedia(PrestationMedia $media): static
+    {
+        $this->medias->removeElement($media);
+
+        return $this;
+    }
+
     public function getPrixRemise(): ?float
     {
         if (null === $this->prixCatalogue) {
@@ -319,8 +362,7 @@ class PrestataireService
 
     public function hasDetailedOffer(): bool
     {
-        return
-            (null !== $this->title && '' !== $this->title)
+        return (null !== $this->title && '' !== $this->title)
             || (null !== $this->shortDescription && '' !== $this->shortDescription)
             || (null !== $this->description && '' !== $this->description)
             || (null !== $this->pricingType && '' !== $this->pricingType)
