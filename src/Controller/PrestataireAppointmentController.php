@@ -100,7 +100,7 @@ final class PrestataireAppointmentController extends AbstractController
                 'start' => $appointment->getStartsAt()?->format(\DateTimeInterface::ATOM),
                 'end' => $appointment->getEndsAt()?->format(\DateTimeInterface::ATOM),
                 'allDay' => $appointment->isAllDay(),
-                'url' => $this->generateUrl('app_prestataire_appointment_edit', [
+                'url' => $this->generateUrl('app_prestataire_appointment_show', [
                     'id' => $appointment->getId(),
                 ]),
                 'backgroundColor' => $status->getCalendarColor(),

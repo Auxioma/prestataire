@@ -61,7 +61,7 @@
 			</div>
 
 			<div class="tm-appointment-show-page__footer mt-4">
-				<form method="post" action="{{ path('app_prestataire_appointment_delete', { id: appointment.id }) }}" onsubmit="return confirm('Confirmer la suppression de ce rendez-vous ?');">
+				<form method="post" action="{{ path('app_prestataire_appointment_delete', { id: appointment.id }) }}" data-turbo="false" onsubmit="return confirm('Confirmer la suppression de ce rendez-vous ?');">
 					<input type="hidden" name="_token" value="{{ csrf_token('delete_appointment_' ~ appointment.id) }}">
 
 					<button type="submit" class="btn btn-danger">
