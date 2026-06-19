@@ -17,13 +17,13 @@
         </div>
     </div>
 
-    <div class="tm-calendar-wrap">
-        <div
-            id="prestataire-calendar"
-            data-controller="calendar-panel"
-            data-calendar-panel-events-url-value="{{ path('app_prestataire_appointment_events') }}"
-        ></div>
-    </div>
+<div
+    id="prestataire-calendar"
+    data-controller="calendar-panel"
+    data-calendar-panel-events-url-value="{{ path('app_prestataire_appointment_events') }}"
+    data-calendar-panel-update-url-value="{{ path('app_prestataire_appointment_move') }}"
+    data-calendar-panel-csrf-token-value="{{ csrf_token('move_appointment') }}"
+></div>
 </div>
 
 <script src="{{ asset('vendor/fullcalendar/index.global.min.js') }}"></script>

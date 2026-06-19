@@ -273,4 +273,89 @@ final class PrestataireAppointmentController extends AbstractController
             $this->generateUrl('app_prestataire_dashboard') . '#calendrier-main-panel'
         );
     }
+
+    #[Route('/move', name: 'move', methods: ['POST'])]
+    public function move(
+        Request $request,
+        PrestataireAppointmentRepository $appointmentRepository,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Accès refusé.',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $csrfToken = $request->headers->get('X-CSRF-TOKEN');
+
+        if (!$this->isCsrfTokenValid('move_appointment', $csrfToken)) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Jeton CSRF invalide.',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $data = json_decode($request->getContent(), true);
+
+        if (
+            !is_array($data)
+            || empty($data['id'])
+            || empty($data['startsAt'])
+        ) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Données invalides.',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $appointment = $appointmentRepository->find($data['id']);
+
+        if (!$appointment instanceof PrestataireAppointment) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Rendez-vous introuvable.',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $prestataire = $user->getPrestataireProfile();
+
+        if ($appointment->getPrestataire()?->getId() !== $prestataire->getId()) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Vous ne pouvez pas modifier ce rendez-vous.',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        try {
+            $startsAt = new \DateTime($data['startsAt']);
+
+            if (!empty($data['endsAt'])) {
+                $endsAt = new \DateTime($data['endsAt']);
+            } else {
+                $endsAt = clone $startsAt;
+                $endsAt->modify('+1 hour');
+            }
+
+            $appointment
+                ->setStartsAt($startsAt)
+                ->setEndsAt($endsAt)
+                ->setIsAllDay((bool) ($data['isAllDay'] ?? false));
+
+            $this->normalizeAllDayAppointment($appointment);
+
+            $entityManager->flush();
+
+            return $this->json([
+                'success' => true,
+            ]);
+        } catch (\Throwable) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Erreur lors de la mise à jour.',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+    }
 }

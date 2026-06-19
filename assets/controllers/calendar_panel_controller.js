@@ -3,6 +3,8 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
     static values = {
         eventsUrl: String,
+        updateUrl: String,
+        csrfToken: String,
     };
 
     connect() {
@@ -56,7 +58,7 @@ export default class extends Controller {
             height: 650,
             nowIndicator: true,
             selectable: true,
-            editable: false,
+            editable: true,
             dayMaxEvents: true,
             headerToolbar: {
                 left: "prev,next today",
@@ -82,10 +84,42 @@ export default class extends Controller {
                     window.location.href = info.event.url;
                 }
             },
+            eventDrop: (info) => this.persistEventDates(info),
+            eventResize: (info) => this.persistEventDates(info),
         });
 
         this.calendar.render();
         this.initialized = true;
+    }
+
+    async persistEventDates(info) {
+        const payload = {
+            id: info.event.id,
+            startsAt: info.event.start ? info.event.start.toISOString() : null,
+            endsAt: info.event.end ? info.event.end.toISOString() : null,
+            isAllDay: info.event.allDay,
+        };
+
+        try {
+            const response = await fetch(this.updateUrlValue, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": this.csrfTokenValue,
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "Erreur");
+            }
+        } catch (error) {
+            info.revert();
+            window.alert("Impossible de mettre à jour le rendez-vous.");
+        }
     }
 
     isVisible() {
