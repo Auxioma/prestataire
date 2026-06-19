@@ -22,7 +22,7 @@
 					<h1 class="tm-prestation-wizard-title">Compléter votre prestation en 6 étapes</h1>
 					<p class="tm-prestation-wizard-subtitle">
 						Renseignez les informations utiles pour présenter votre offre de manière claire,
-																																				                        rassurante et exploitable dans les futures vues publiques.
+																																										                        rassurante et exploitable dans les futures vues publiques.
 					</p>
 				</div>
 
@@ -370,119 +370,121 @@
 							{% endif %}
 						</div>
 					</section>
-{# SECTION PHOTOS #}
-<section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
-    <div class="tm-prestation-wizard-panel-head">
-        <h2 class="tm-prestation-wizard-panel-title">Photos et documents</h2>
-        <p class="tm-prestation-wizard-panel-subtitle">
-            Ajoutez jusqu’à 5 photos pour illustrer votre prestation.
-        </p>
-    </div>
 
-    <div class="tm-prestation-wizard-media-grid">
-        {% for mediaForm in form.medias|slice(0, 5) %}
-            {% set media = mediaForm.vars.data %}
-            {% set mediaId = media and attribute(media, 'id') ? attribute(media, 'id') : null %}
-            {% set existingFile = media and attribute(media, 'fileName') ? attribute(media, 'fileName') : null %}
+					{# SECTION PHOTOS #}
+					<section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
+						<div class="tm-prestation-wizard-panel-head">
+							<h2 class="tm-prestation-wizard-panel-title">Photos et documents</h2>
+							<p class="tm-prestation-wizard-panel-subtitle">
+								Ajoutez jusqu’à 5 photos pour illustrer votre prestation.
+							</p>
+						</div>
 
-            <article class="tm-prestation-wizard-media-card" data-controller="media-preview">
-                <div class="tm-prestation-wizard-media-card-head">
-                    <div>
-                        <span class="tm-prestation-wizard-media-index">Photo {{ loop.index }}/5</span>
-                        <h3 class="tm-prestation-wizard-media-title">Visuel de la prestation</h3>
-                    </div>
+						<div class="tm-prestation-wizard-media-grid">
+							{% for mediaForm in form.medias|slice(0, 5) %}
+								{% set media = mediaForm.vars.data %}
+								{% set mediaId = media and attribute(media, 'id') ? attribute(media, 'id') : null %}
+								{% set existingFile = media and attribute(media, 'fileName') ? attribute(media, 'fileName') : null %}
 
-                    <div class="tm-prestation-wizard-media-actions">
-                        {% if existingFile and mediaId and mediaForm.delete is defined %}
-                            <div class="form-check">
-                                {{ form_widget(mediaForm.delete, {
+								<article class="tm-prestation-wizard-media-card" data-controller="media-preview">
+									<div class="tm-prestation-wizard-media-card-head">
+										<div>
+											<span class="tm-prestation-wizard-media-index">Photo
+												{{ loop.index }}/5</span>
+											<h3 class="tm-prestation-wizard-media-title">Visuel de la prestation</h3>
+										</div>
+
+										<div class="tm-prestation-wizard-media-actions">
+											{% if existingFile and mediaId and mediaForm.delete is defined %}
+												<div class="form-check">
+													{{ form_widget(mediaForm.delete, {
                                     attr: {
                                         class: 'form-check-input'
                                     }
                                 }) }}
-                                {{ form_label(mediaForm.delete, null, {
+													{{ form_label(mediaForm.delete, null, {
                                     label_attr: {
                                         class: 'form-check-label'
                                     }
                                 }) }}
-                                {{ form_errors(mediaForm.delete) }}
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
+													{{ form_errors(mediaForm.delete) }}
+												</div>
+											{% endif %}
+										</div>
+									</div>
 
-                <div class="tm-media-preview">
-                    <img
-                        data-media-preview-target="preview"
-                        class="tm-media-preview__image {{ existingFile ? '' : 'd-none' }}"
-                        src="{{ existingFile ? asset('uploads/prestations/' ~ existingFile) : '' }}"
-                        alt="Aperçu de l’image sélectionnée"
-                    >
+									<div class="tm-media-preview">
+										<img data-media-preview-target="preview" 
+										class="tm-media-preview__image {{ existingFile ? '' : 'd-none' }}" 
+										src="{{ existingFile ? asset('uploads/prestations/' ~ existingFile) : '' }}" 
+										alt="Aperçu de l’image sélectionnée"
+										data-existing-media-preview
+										>
 
-                    <div data-media-preview-target="placeholder" class="tm-media-preview__placeholder {{ existingFile ? 'd-none' : '' }}">
-                        <div class="tm-media-preview__placeholder-icon">
-                            <i class="fa-regular fa-image"></i>
-                        </div>
+										<div data-media-preview-target="placeholder" class="tm-media-preview__placeholder {{ existingFile ? 'd-none' : '' }}">
+											<div class="tm-media-preview__placeholder-icon">
+												<i class="fa-regular fa-image"></i>
+											</div>
 
-                        <p class="tm-media-preview__placeholder-text">
-                            Aucun visuel sélectionné
-                        </p>
+											<p class="tm-media-preview__placeholder-text">
+												Aucun visuel sélectionné
+											</p>
 
-                        <span class="tm-media-preview__placeholder-help">
-                            Format conseillé : JPG ou PNG, visuel net et bien cadré.
-                        </span>
-                    </div>
-                </div>
+											<span class="tm-media-preview__placeholder-help">
+												Format conseillé : JPG ou PNG, visuel net et bien cadré.
+											</span>
+										</div>
+									</div>
 
-                <div class="tm-prestation-wizard-media-fields">
-                    <div class="tm-prestation-wizard-field">
-                        {{ form_label(mediaForm.imageFile) }}
-                        {{ form_widget(mediaForm.imageFile, {
+									<div class="tm-prestation-wizard-media-fields">
+										<div class="tm-prestation-wizard-field">
+											{{ form_label(mediaForm.imageFile) }}
+											{{ form_widget(mediaForm.imageFile, {
                             attr: {
                                 class: 'form-control',
                                 'data-media-preview-target': 'input',
                                 'data-action': 'change->media-preview#update'
                             }
                         }) }}
-                        {{ form_errors(mediaForm.imageFile) }}
+											{{ form_errors(mediaForm.imageFile) }}
 
-                        <div class="form-text">
-                            {% if existingFile %}
-                                Sélectionnez une nouvelle image pour remplacer la photo actuelle.
-                            {% else %}
-                                Ajoutez une image pour illustrer cette prestation.
-                            {% endif %}
-                        </div>
-                    </div>
+											<div class="form-text">
+												{% if existingFile %}
+													Sélectionnez une nouvelle image pour remplacer la photo actuelle.
+												{% else %}
+													Ajoutez une image pour illustrer cette prestation.
+												{% endif %}
+											</div>
+										</div>
 
-                    <div class="tm-prestation-wizard-grid">
-                        <div class="tm-prestation-wizard-col-6">
-                            <div class="tm-prestation-wizard-field">
-                                {{ form_row(mediaForm.title) }}
-                            </div>
-                        </div>
+										<div class="tm-prestation-wizard-grid">
+											<div class="tm-prestation-wizard-col-6">
+												<div class="tm-prestation-wizard-field">
+													{{ form_row(mediaForm.title) }}
+												</div>
+											</div>
 
-                        <div class="tm-prestation-wizard-col-6">
-                            <div class="tm-prestation-wizard-field">
-                                {{ form_row(mediaForm.altText) }}
-                            </div>
-                        </div>
+											<div class="tm-prestation-wizard-col-6">
+												<div class="tm-prestation-wizard-field">
+													{{ form_row(mediaForm.altText) }}
+												</div>
+											</div>
 
-                        <div class="tm-prestation-wizard-col-12">
-                            <div class="tm-prestation-wizard-field">
-                                {{ form_row(mediaForm.position) }}
-                            </div>
-                        </div>
+											<div class="tm-prestation-wizard-col-12">
+												<div class="tm-prestation-wizard-field">
+													{{ form_row(mediaForm.position) }}
+												</div>
+											</div>
 
-                        {% if not existingFile and mediaForm.delete is defined %}
-                            {{ form_widget(mediaForm.delete, { attr: { class: 'd-none' } }) }}
-                        {% endif %}
-                    </div>
-                </div>
-            </article>
-        {% endfor %}
-    </div>
-</section>
+											{% if not existingFile and mediaForm.delete is defined %}
+												{{ form_widget(mediaForm.delete, { attr: { class: 'd-none' } }) }}
+											{% endif %}
+										</div>
+									</div>
+								</article>
+							{% endfor %}
+						</div>
+					</section>
 
 					{# SECTION PREVIEW #}
 					<section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
@@ -521,6 +523,18 @@
 										Ajoutez une description détaillée pour expliquer clairement votre offre.
 									</p>
 								</div>
+
+<div class="tm-prestation-wizard-preview-section">
+    <h4 class="tm-prestation-wizard-preview-section-title">Photos</h4>
+    <div
+        class="tm-prestation-wizard-preview-media-grid"
+        data-prestation-wizard-target="previewMedia"
+    >
+        <div class="tm-prestation-wizard-preview-media-empty">
+            Aucune image sélectionnée pour le moment.
+        </div>
+    </div>
+</div>
 
 								<div class="tm-prestation-wizard-preview-section">
 									<h4 class="tm-prestation-wizard-preview-section-title">Tarification</h4>

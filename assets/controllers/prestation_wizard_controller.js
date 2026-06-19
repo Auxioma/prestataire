@@ -19,6 +19,7 @@ export default class extends Controller {
         "previewSubcategory",
         "previewService",
         "previewZones",
+        "previewMedia",
         "sourceTitle",
         "sourceShortDescription",
         "sourceDescription",
@@ -143,15 +144,21 @@ export default class extends Controller {
                         const postalCode = item.dataset.zonePostalCode || "";
 
                         const meta = [];
-                        if (postalCode) meta.push(postalCode);
-                        if (radius) meta.push(`Rayon ${radius} km`);
+
+                        if (postalCode) {
+                            meta.push(postalCode);
+                        }
+
+                        if (radius) {
+                            meta.push(`Rayon ${radius} km`);
+                        }
 
                         return `
-                        <div class="tm-prestation-wizard-preview-zone-item">
-                            <strong>${city}</strong>
-                            <span>${meta.length ? meta.join(" · ") : "Zone configurée sur votre profil"}</span>
-                        </div>
-                    `;
+                            <div class="tm-prestation-wizard-preview-zone-item">
+                                <strong>${city}</strong>
+                                <span>${meta.length ? meta.join(" · ") : "Zone configurée sur votre profil"}</span>
+                            </div>
+                        `;
                     })
                     .join("");
             } else {
@@ -163,6 +170,49 @@ export default class extends Controller {
                 `;
             }
         }
+
+        if (typeof this.refreshMediaPreview === "function") {
+            this.refreshMediaPreview();
+        }
+    }
+
+    refreshMediaPreview() {
+        if (!this.hasPreviewMediaTarget) {
+            return;
+        }
+
+        const existingImages = Array.from(
+            this.element.querySelectorAll("[data-existing-media-preview]"),
+        );
+
+        if (existingImages.length === 0) {
+            this.previewMediaTarget.innerHTML = `
+                <div class="tm-prestation-wizard-preview-media-empty">
+                    Aucune image sélectionnée pour le moment.
+                </div>
+            `;
+            return;
+        }
+
+        this.previewMediaTarget.innerHTML = existingImages
+            .map((image) => {
+                const src = image.getAttribute("src") || "";
+
+                if (!src) {
+                    return "";
+                }
+
+                return `
+                    <figure class="tm-prestation-wizard-preview-media-item">
+                        <img
+                            src="${src}"
+                            alt="Prévisualisation média prestation"
+                            class="tm-prestation-wizard-preview-media-image"
+                        >
+                    </figure>
+                `;
+            })
+            .join("");
     }
 
     bindLivePreview() {
