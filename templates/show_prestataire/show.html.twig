@@ -55,7 +55,13 @@
 					</div>
 
 					<div class="tm-profile-show__hero-meta">
-						<h1 class="tm-profile-show__title">{{ prestataire.companyName }}</h1>
+						<div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+							<h1 class="tm-profile-show__title mb-0">{{ prestataire.companyName }}</h1>
+
+							<button type="button" class="btn btn-light favorite-btn border-0 shadow-sm shrink-0" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="prestataire" data-favorite-toggle-target-id-value="{{ prestataire.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="{{ isFavoriteProvider ? 'true' : 'false' }}" data-favorite-toggle-login-url-value="{{ path('app_login') }}" aria-pressed="{{ isFavoriteProvider ? 'true' : 'false' }}" aria-label="{{ isFavoriteProvider ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
+								<i data-favorite-toggle-target="icon" class="{{ isFavoriteProvider ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"></i>
+							</button>
+						</div>
 
 						<p class="tm-profile-show__subtitle">
 							{{ prestataire.shortDescription|default('Un professionnel engagé, disponible et sélectionné pour la qualité de son savoir-faire.') }}
@@ -186,14 +192,14 @@
 						{% endif %}
 
 						{# {% if prestataire.account.email %}
-												                            <div class="tm-profile-show__info-item">
-												                                <i class="fa-regular fa-envelope"></i>
-												                                <div>
-												                                    <span>Email</span>
-												                                    <strong>{{ prestataire.account.email }}</strong>
-												                                </div>
-												                            </div>
-												                        {% endif %} #}
+																		                            <div class="tm-profile-show__info-item">
+																		                                <i class="fa-regular fa-envelope"></i>
+																		                                <div>
+																		                                    <span>Email</span>
+																		                                    <strong>{{ prestataire.account.email }}</strong>
+																		                                </div>
+																		                            </div>
+																		                        {% endif %} #}
 
 						{% if prestataire.website %}
 							<div class="tm-profile-show__info-item">
@@ -210,20 +216,20 @@
 						{% endif %}
 
 						{# {% if prestataire.address or prestataire.city %}
-												                            <div class="tm-profile-show__info-item">
-												                                <i class="fa-solid fa-map-pin"></i>
-												                                <div>
-												                                    <span>Adresse</span>
-												                                    <strong>
-												                                        {{ prestataire.address|default('Adresse non renseignée') }}
-												                                        {% if prestataire.city %}
-												                                            -
-												                                            {{ prestataire.city }}
-												                                        {% endif %}
-												                                    </strong>
-												                                </div>
-												                            </div>
-												                        {% endif %} #}
+																		                            <div class="tm-profile-show__info-item">
+																		                                <i class="fa-solid fa-map-pin"></i>
+																		                                <div>
+																		                                    <span>Adresse</span>
+																		                                    <strong>
+																		                                        {{ prestataire.address|default('Adresse non renseignée') }}
+																		                                        {% if prestataire.city %}
+																		                                            -
+																		                                            {{ prestataire.city }}
+																		                                        {% endif %}
+																		                                    </strong>
+																		                                </div>
+																		                            </div>
+																		                        {% endif %} #}
 					</div>
 
 					{% if prestataire.facebookUrl or prestataire.instagramUrl or prestataire.linkedinUrl %}

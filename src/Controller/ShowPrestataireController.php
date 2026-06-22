@@ -23,12 +23,16 @@ use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
 use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
 use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
+use App\Entity\User;
+use App\Enum\FavoriteTypeEnum;
+use App\Repository\FavoriteRepository;
 
 class ShowPrestataireController extends AbstractController
 {
     #[Route('/prestataire/{slug}', name: 'app_prestataire_show', methods: ['GET'])]
     public function __invoke(
         #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireProfile $prestataire,
+        FavoriteRepository $favoriteRepository,
     ): Response {
         if (!$prestataire->getCompanyName()) {
             throw $this->createNotFoundException('Ce profil professionnel n\'est pas encore actif.');
@@ -36,7 +40,7 @@ class ShowPrestataireController extends AbstractController
 
         $zones = array_values(array_filter(
             $prestataire->getPrestataireInterventionZones()->toArray(),
-            static fn ($zone) => $zone->isActive()
+            static fn($zone) => $zone->isActive()
         ));
 
         $zoneMap = null;
@@ -92,10 +96,22 @@ class ShowPrestataireController extends AbstractController
             }
         }
 
+        $isFavoriteProvider = false;
+        $user = $this->getUser();
+
+        if ($user instanceof User && $this->isGranted('ROLE_CLIENT')) {
+            $isFavoriteProvider = null !== $favoriteRepository->findOneBy([
+                'user' => $user,
+                'type' => FavoriteTypeEnum::PRESTATAIRE,
+                'targetId' => $prestataire->getId(),
+            ]);
+        }
+
         return $this->render('show_prestataire/show.html.twig', [
             'prestataire' => $prestataire,
             'zones' => $zones,
             'zoneMap' => $zoneMap,
+            'isFavoriteProvider' => $isFavoriteProvider,
         ]);
     }
 }
