@@ -100,9 +100,17 @@ class PrestataireService
     private Collection $medias;
 
 
+    /**
+     * @var Collection<int, QuoteRequest>
+     */
+    #[ORM\OneToMany(mappedBy: 'prestation', targetEntity: QuoteRequest::class)]
+    private Collection $quoteRequests;
+
+
     public function __construct()
     {
         $this->medias = new ArrayCollection();
+        $this->quoteRequests = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -320,6 +328,34 @@ class PrestataireService
     public function getMedias(): Collection
     {
         return $this->medias;
+    }
+    /**
+     * @return Collection<int, QuoteRequest>
+     */
+    public function getQuoteRequests(): Collection
+    {
+        return $this->quoteRequests;
+    }
+
+    public function addQuoteRequest(QuoteRequest $quoteRequest): static
+    {
+        if (!$this->quoteRequests->contains($quoteRequest)) {
+            $this->quoteRequests->add($quoteRequest);
+            $quoteRequest->setPrestation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuoteRequest(QuoteRequest $quoteRequest): static
+    {
+        if ($this->quoteRequests->removeElement($quoteRequest)) {
+            if ($quoteRequest->getPrestation() === $this) {
+                $quoteRequest->setPrestation(null);
+            }
+        }
+
+        return $this;
     }
 
     public function addMedia(PrestationMedia $media): static

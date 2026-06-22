@@ -192,6 +192,12 @@ class PrestataireProfile
     #[ORM\OneToMany(mappedBy: 'prestataire', targetEntity: PrestataireAppointment::class, orphanRemoval: true)]
     private Collection $appointments;
 
+    /**
+     * @var Collection<int, QuoteRequest>
+     */
+    #[ORM\OneToMany(mappedBy: 'prestataire', targetEntity: QuoteRequest::class)]
+    private Collection $quoteRequests;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -206,6 +212,7 @@ class PrestataireProfile
         $this->prestataireInterventionZones = new ArrayCollection();
         $this->availabilities = new ArrayCollection();
         $this->appointments = new ArrayCollection();
+        $this->quoteRequests = new ArrayCollection();
     }
 
     // --- AVAILABILITY ---
@@ -877,6 +884,35 @@ class PrestataireProfile
         if ($this->appointments->removeElement($appointment)) {
             if ($appointment->getPrestataire() === $this) {
                 $appointment->setPrestataire(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, QuoteRequest>
+     */
+    public function getQuoteRequests(): Collection
+    {
+        return $this->quoteRequests;
+    }
+
+    public function addQuoteRequest(QuoteRequest $quoteRequest): static
+    {
+        if (!$this->quoteRequests->contains($quoteRequest)) {
+            $this->quoteRequests->add($quoteRequest);
+            $quoteRequest->setPrestataire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuoteRequest(QuoteRequest $quoteRequest): static
+    {
+        if ($this->quoteRequests->removeElement($quoteRequest)) {
+            if ($quoteRequest->getPrestataire() === $this) {
+                $quoteRequest->setPrestataire(null);
             }
         }
 

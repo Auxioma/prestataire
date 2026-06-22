@@ -16,6 +16,8 @@ use App\Enum\ClientTypeEnum;
 use App\Repository\ClientProfileRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: ClientProfileRepository::class)]
 #[ORM\Table(name: 'client_profile')]
@@ -261,5 +263,41 @@ class ClientProfile
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->quoteRequests = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection<int, QuoteRequest>
+     */
+    public function getQuoteRequests(): Collection
+    {
+        return $this->quoteRequests;
+    }
+
+    /**
+     * @var Collection<int, QuoteRequest>
+     */
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: QuoteRequest::class, orphanRemoval: false)]
+    private Collection $quoteRequests;
+
+    public function addQuoteRequest(QuoteRequest $quoteRequest): static
+    {
+        if (!$this->quoteRequests->contains($quoteRequest)) {
+            $this->quoteRequests->add($quoteRequest);
+            $quoteRequest->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuoteRequest(QuoteRequest $quoteRequest): static
+    {
+        if ($this->quoteRequests->removeElement($quoteRequest)) {
+            if ($quoteRequest->getClient() === $this) {
+                $quoteRequest->setClient(null);
+            }
+        }
+
+        return $this;
     }
 }
