@@ -1,103 +1,111 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes demandes de devis{% endblock %}
+{% block title %}Mes demandes de devis
+{% endblock %}
 
 {% block body %}
-<div class="tm-client-quotes-page">
-    <div class="container py-4 py-lg-5">
-        <section class="tm-client-quotes-hero">
-            <div class="tm-client-quotes-hero__content">
-                <span class="tm-client-quotes-eyebrow">Espace client</span>
-                <h1 class="tm-client-quotes-title">Mes demandes de devis</h1>
-                <p class="tm-client-quotes-subtitle">
-                    Suivez l’ensemble de vos demandes envoyées, consultez leur statut et retrouvez rapidement les informations importantes pour chaque projet.
-                </p>
-            </div>
-        </section>
 
-        {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
-            {% for message in messages %}
-                <div class="alert alert-{{ type }} alert-dismissible fade show mb-4" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-                </div>
-            {% endfor %}
-        {% endfor %}
+	<div class="tm-client-quotes-page">
+		<div class="container py-4 py-lg-5">
 
-        <section class="tm-client-quotes-panel">
-            {% if quoteRequests is not empty %}
-                <div class="tm-client-quotes-table-wrap table-responsive">
-                    <table class="table align-middle mb-0 tm-client-quotes-table">
-                        <thead>
-                            <tr>
-                                <th>Demande</th>
-                                <th>Date souhaitée</th>
-                                <th>Budget</th>
-                                <th>Statut</th>
-                                <th>Créée le</th>
-                                <th class="text-end">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for quoteRequest in quoteRequests %}
-                                <tr>
-                                    <td>
-                                        <div class="tm-client-quotes-main">
-                                            <div class="tm-client-quotes-main__title">
-                                                {{ quoteRequest.title }}
-                                            </div>
-                                            <div class="tm-client-quotes-main__desc">
-                                                {{ quoteRequest.description ? quoteRequest.description|slice(0, 110) ~ (quoteRequest.description|length > 110 ? '…' : '') : 'Aucune description fournie.' }}
-                                            </div>
-                                        </div>
-                                    </td>
+			<a href="{{ path('app_client_settings') }}" class="tm-client-quotes-backlink">
+				<i class="fa-solid fa-arrow-left"></i>
+				<span>Retour aux paramètres</span>
+			</a>
 
-                                    <td>
-                                        <span class="tm-client-quotes-table__text">
-                                            {{ quoteRequest.desiredDate ? quoteRequest.desiredDate|date('d/m/Y') : 'Non renseignée' }}
-                                        </span>
-                                    </td>
+			<section class="tm-client-quotes-hero">
+				<div class="tm-client-quotes-hero__content">
+					<span class="tm-client-quotes-eyebrow">Espace client</span>
+					<h1 class="tm-client-quotes-title">Mes demandes de devis</h1>
+					<p class="tm-client-quotes-subtitle">
+						Suivez l’ensemble de vos demandes envoyées, consultez leur statut et retrouvez rapidement les informations importantes pour chaque projet.
+					</p>
+				</div>
+			</section>
 
-                                    <td>
-                                        <span class="tm-client-quotes-table__text tm-client-quotes-table__text--strong">
-                                            {{ quoteRequest.budgetAmount is not null ? quoteRequest.budgetAmount|number_format(2, ',', ' ') ~ ' €' : 'Non renseigné' }}
-                                        </span>
-                                    </td>
+			{% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+				{% for message in messages %}
+					<div class="alert alert-{{ type }} alert-dismissible fade show mb-4" role="alert">
+						{{ message }}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+					</div>
+				{% endfor %}
+			{% endfor %}
 
-                                    <td>
-                                        <span class="tm-client-quotes-status tm-client-quotes-status--{{ quoteRequest.status.getBadgeClass() }}">
-                                            {{ quoteRequest.status.getLabel() }}
-                                        </span>
-                                    </td>
+			<section class="tm-client-quotes-panel">
+				{% if quoteRequests is not empty %}
+					<div class="tm-client-quotes-table-wrap table-responsive">
+						<table class="table align-middle mb-0 tm-client-quotes-table">
+							<thead>
+								<tr>
+									<th>Demande</th>
+									<th>Date souhaitée</th>
+									<th>Budget</th>
+									<th>Statut</th>
+									<th>Créée le</th>
+									<th class="text-end">Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for quoteRequest in quoteRequests %}
+									<tr>
+										<td>
+											<div class="tm-client-quotes-main">
+												<div class="tm-client-quotes-main__title">
+													{{ quoteRequest.title }}
+												</div>
+												<div class="tm-client-quotes-main__desc">
+													{{ quoteRequest.description ? quoteRequest.description|slice(0, 110) ~ (quoteRequest.description|length > 110 ? '…' : '') : 'Aucune description fournie.' }}
+												</div>
+											</div>
+										</td>
 
-                                    <td>
-                                        <span class="tm-client-quotes-table__text">
-                                            {{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y H:i') : '—' }}
-                                        </span>
-                                    </td>
+										<td>
+											<span class="tm-client-quotes-table__text">
+												{{ quoteRequest.desiredDate ? quoteRequest.desiredDate|date('d/m/Y') : 'Non renseignée' }}
+											</span>
+										</td>
 
-                                    <td class="text-end">
-                                        <a href="{{ path('app_quote_request_show', { id: quoteRequest.id }) }}" class="btn tm-client-quotes-btn tm-client-quotes-btn--ghost btn-sm">
-                                            Voir le détail
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <div class="tm-client-quotes-empty">
-                    <div class="tm-client-quotes-empty__icon">
-                        <i class="fa-regular fa-file-lines"></i>
-                    </div>
-                    <h2 class="tm-client-quotes-empty__title">Aucune demande enregistrée</h2>
-                    <p class="tm-client-quotes-empty__text">
-                        Vos futures demandes de devis apparaîtront ici avec leur statut, leur budget et leur suivi détaillé.
-                    </p>
-                </div>
-            {% endif %}
-        </section>
-    </div>
-</div>
+										<td>
+											<span class="tm-client-quotes-table__text tm-client-quotes-table__text--strong">
+												{{ quoteRequest.budgetAmount is not null ? quoteRequest.budgetAmount|number_format(2, ',', ' ') ~ ' €' : 'Non renseigné' }}
+											</span>
+										</td>
+
+										<td>
+											<span class="tm-client-quotes-status tm-client-quotes-status--{{ quoteRequest.status.getBadgeClass() }}">
+												{{ quoteRequest.status.getLabel() }}
+											</span>
+										</td>
+
+										<td>
+											<span class="tm-client-quotes-table__text">
+												{{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y H:i') : '—' }}
+											</span>
+										</td>
+
+										<td class="text-end">
+											<a href="{{ path('app_quote_request_show', { id: quoteRequest.id }) }}" class="btn tm-client-quotes-btn tm-client-quotes-btn--ghost btn-sm">
+												Voir le détail
+											</a>
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				{% else %}
+					<div class="tm-client-quotes-empty">
+						<div class="tm-client-quotes-empty__icon">
+							<i class="fa-regular fa-file-lines"></i>
+						</div>
+						<h2 class="tm-client-quotes-empty__title">Aucune demande enregistrée</h2>
+						<p class="tm-client-quotes-empty__text">
+							Vos futures demandes de devis apparaîtront ici avec leur statut, leur budget et leur suivi détaillé.
+						</p>
+					</div>
+				{% endif %}
+			</section>
+		</div>
+	</div>
 {% endblock %}

@@ -44,7 +44,7 @@
 
 					<ul class="nav flex-column gap-2 tm-cp-nav-menu">
 						<li class="nav-item">
-							<a href="#" class="nav-link">
+							<a href="{{ path('app_quote_request_index') }}" class="nav-link {{ app.request.attributes.get('_route') starts with 'app_quote_request_' ? 'active' : '' }}">
 								<span class="me-2">📋</span>
 								Mes Demandes
 							</a>
