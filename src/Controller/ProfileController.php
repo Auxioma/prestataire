@@ -36,6 +36,11 @@ use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
 use App\Entity\PrestataireAvailability;
 use App\Form\PrestataireAvailabilityCollectionType;
+use App\Entity\User;
+use App\Enum\FavoriteTypeEnum;
+use App\Repository\FavoriteRepository;
+use App\Repository\PrestataireProfileRepository;
+use App\Repository\PrestataireServiceRepository;
 
 class ProfileController extends AbstractController
 {
@@ -400,4 +405,61 @@ public function edit(Request $request, PrestataireService $ps, EntityManagerInte
             'user' => $user,
         ]);
     }
+
+    #[Route('/client/parametres/favoris', name: 'app_client_settings_favorites', methods: ['GET'])]
+public function clientFavorites(
+    FavoriteRepository $favoriteRepository,
+    PrestataireProfileRepository $prestataireProfileRepository,
+    PrestataireServiceRepository $prestataireServiceRepository,
+): Response {
+    $user = $this->getUser();
+
+    if (!$user instanceof User) {
+        return $this->redirectToRoute('app_login');
+    }
+
+    $favorites = $favoriteRepository->findBy(
+        ['user' => $user],
+        ['createdAt' => 'DESC']
+    );
+
+    $providerIds = [];
+    $prestationIds = [];
+    $bonsPlanIds = [];
+
+    foreach ($favorites as $favorite) {
+        $type = $favorite->getType();
+
+        if ($type === FavoriteTypeEnum::PRESTATAIRE) {
+            $providerIds[] = $favorite->getTargetId();
+        }
+
+        if ($type === FavoriteTypeEnum::PRESTATION) {
+            $prestationIds[] = $favorite->getTargetId();
+        }
+
+        if ($type === FavoriteTypeEnum::BON_PLAN) {
+            $bonsPlanIds[] = $favorite->getTargetId();
+        }
+    }
+
+    $favoriteProviders = !empty($providerIds)
+        ? $prestataireProfileRepository->findBy(['id' => array_unique($providerIds)])
+        : [];
+
+    $favoritePrestations = !empty($prestationIds)
+        ? $prestataireServiceRepository->findBy(['id' => array_unique($prestationIds)])
+        : [];
+
+    $favoriteBonsPlans = !empty($bonsPlanIds)
+        ? $prestataireServiceRepository->findBy(['id' => array_unique($bonsPlanIds)])
+        : [];
+
+    return $this->render('client/client_favorite.html.twig', [
+        'user' => $user,
+        'favoriteProviders' => $favoriteProviders,
+        'favoritePrestations' => $favoritePrestations,
+        'favoriteBonsPlans' => $favoriteBonsPlans,
+    ]);
+}
 }

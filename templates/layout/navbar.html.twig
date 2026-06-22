@@ -105,7 +105,7 @@
 		{% if app.user %}
 			{% if is_granted('ROLE_CLIENT') %}
 				<li class="nav-item">
-					<a class="nav-link tm-navbar__link tm-navbar__link--icon" href="#">
+					<a class="nav-link tm-navbar__link tm-navbar__link--icon" href="{{ path('app_client_settings_favorites') }}">
 						<i class="fa-regular fa-heart"></i>
 						<span>Mes favoris</span>
 					</a>

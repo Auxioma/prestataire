@@ -1,0 +1,542 @@
+<div class="tm-cp-favorites-hero mb-4">
+    <div class="tm-cp-favorites-hero-main">
+        <span class="tm-cp-favorites-hero-eyebrow">Sélection personnelle</span>
+        <h3 class="tm-cp-favorites-hero-title">
+            Vos favoris, réunis dans un espace plus élégant et plus rapide à parcourir
+        </h3>
+        <p class="tm-cp-favorites-hero-subtitle mb-0">
+            Retrouvez vos artisans, prestations et bons plans enregistrés, puis revenez en un clic vers les profils et offres qui comptent pour vous.
+        </p>
+    </div>
+
+    <div class="tm-cp-favorites-hero-badges">
+        <span class="tm-cp-favorites-hero-badge">
+            <i class="fa-solid fa-heart"></i>
+            {{ favoriteProviders|length + favoritePrestations|length + favoriteBonsPlans|length }}
+            élément{{ (favoriteProviders|length + favoritePrestations|length + favoriteBonsPlans|length) > 1 ? 's' : '' }}
+        </span>
+
+        <span class="tm-cp-favorites-hero-badge">
+            <i class="fa-solid fa-bolt"></i>
+            Accès rapide
+        </span>
+
+        <span class="tm-cp-favorites-hero-badge">
+            <i class="fa-solid fa-bookmark"></i>
+            Espace client
+        </span>
+    </div>
+</div>
+
+<div class="row g-4 tm-cp-favorites">
+
+    {# Artisans favoris #}
+    <div class="col-12">
+        <div class="card tm-cp-card tm-cp-favorites-section p-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 tm-cp-favorites-section-head">
+                <div class="tm-cp-favorites-section-copy">
+                    <span class="tm-cp-favorites-kicker">Sélection client</span>
+                    <h4 class="tm-cp-card-title tm-cp-favorites-title mb-1">Mes artisans favoris</h4>
+                    <p class="tm-cp-favorites-subtitle mb-0">
+                        Retrouvez les prestataires que vous avez enregistrés.
+                    </p>
+                </div>
+
+                <span class="badge rounded-pill tm-cp-favorites-count">
+                    {{ favoriteProviders|length }}
+                    favori{{ favoriteProviders|length > 1 ? 's' : '' }}
+                </span>
+            </div>
+
+            {% if favoriteProviders|length > 0 %}
+                <div class="row g-3">
+                    {% for provider in favoriteProviders|slice(0, 6) %}
+                        <div class="col-md-6 col-xl-4">
+                            <article class="tm-cp-favorite-provider-card h-100">
+                                <div class="tm-cp-favorite-provider-card-cover">
+                                    {% if provider.coverImage is defined and provider.coverImage %}
+                                        <img src="{{ asset('uploads/covers/' ~ provider.coverImage) }}" alt="{{ provider.companyName }}">
+                                    {% else %}
+                                        <img src="{{ asset('images/img_par_defaut.png') }}" alt="{{ provider.companyName }}" class="tm-cp-favorite-provider-card-cover-default">
+                                    {% endif %}
+
+                                    <div class="tm-cp-favorite-provider-card-overlay"></div>
+
+                                    <div class="tm-cp-favorite-provider-card-badges">
+                                        <span class="tm-cp-favorite-provider-card-badge tm-cp-favorite-provider-card-badge--favorite">
+                                            <i class="fa-solid fa-heart"></i>
+                                            Favori
+                                        </span>
+
+                                        {% if provider.averageRating %}
+                                            <span class="tm-cp-favorite-provider-card-badge tm-cp-favorite-provider-card-badge--rating">
+                                                <i class="fa-solid fa-star"></i>
+                                                {{ provider.averageRating|number_format(1, ',', ' ') }}/5
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="tm-cp-favorite-provider-card-body">
+                                    <div class="tm-cp-favorite-provider-card-identity">
+                                        <div class="tm-cp-favorite-provider-card-logo">
+                                            <img src="{{ provider.logo ? asset('uploads/logos/' ~ provider.logo) : asset('images/logo_trouvemoipresta_black.png') }}" alt="{{ provider.companyName }}">
+                                        </div>
+
+                                        <div class="tm-cp-favorite-provider-card-identity-text">
+                                            <h5 class="tm-cp-favorite-provider-card-title">
+                                                {{ provider.companyName }}
+                                            </h5>
+
+                                            <div class="tm-cp-favorite-provider-card-meta">
+                                                <span>
+                                                    <i class="fa-solid fa-location-dot"></i>
+                                                    {{ provider.city ?: 'Ville non renseignée' }}
+                                                </span>
+
+                                                {% if provider.reviewsCount is defined %}
+                                                    <span>
+                                                        <i class="fa-regular fa-message"></i>
+                                                        {{ provider.reviewsCount }}
+                                                        avis
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p class="tm-cp-favorite-provider-card-description">
+                                        {% if provider.shortDescription is defined and provider.shortDescription %}
+                                            {{ provider.shortDescription|slice(0, 135) }}{% if provider.shortDescription|length > 135 %}...{% endif %}
+                                        {% else %}
+                                            Ce prestataire fait partie de votre sélection enregistrée pour un accès plus rapide à son profil public.
+                                        {% endif %}
+                                    </p>
+
+                                    <div class="tm-cp-favorite-provider-card-footer">
+                                        <div class="tm-cp-favorite-provider-card-stat">
+                                            <span class="tm-cp-favorite-provider-card-stat-label">Statut</span>
+                                            <strong>Dans vos favoris</strong>
+                                        </div>
+
+                                        <a href="{{ path('app_prestataire_show', { slug: provider.slug }) }}" class="tm-cp-favorite-provider-card-link">
+                                            Voir le profil
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if favoriteProviders|length > 6 %}
+                    <div class="collapse mt-3" id="favoriteProvidersMore">
+                        <div class="row g-3">
+                            {% for provider in favoriteProviders|slice(6) %}
+                                <div class="col-md-6 col-xl-4">
+                                    <article class="tm-cp-favorite-provider-card h-100">
+                                        <div class="tm-cp-favorite-provider-card-cover">
+                                            {% if provider.coverImage is defined and provider.coverImage %}
+                                                <img src="{{ asset('uploads/covers/' ~ provider.coverImage) }}" alt="{{ provider.companyName }}">
+                                            {% else %}
+                                                <img src="{{ asset('images/img_par_defaut.png') }}" alt="{{ provider.companyName }}" class="tm-cp-favorite-provider-card-cover-default">
+                                            {% endif %}
+
+                                            <div class="tm-cp-favorite-provider-card-overlay"></div>
+
+                                            <div class="tm-cp-favorite-provider-card-badges">
+                                                <span class="tm-cp-favorite-provider-card-badge tm-cp-favorite-provider-card-badge--favorite">
+                                                    <i class="fa-solid fa-heart"></i>
+                                                    Favori
+                                                </span>
+
+                                                {% if provider.averageRating %}
+                                                    <span class="tm-cp-favorite-provider-card-badge tm-cp-favorite-provider-card-badge--rating">
+                                                        <i class="fa-solid fa-star"></i>
+                                                        {{ provider.averageRating|number_format(1, ',', ' ') }}/5
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="tm-cp-favorite-provider-card-body">
+                                            <div class="tm-cp-favorite-provider-card-identity">
+                                                <div class="tm-cp-favorite-provider-card-logo">
+                                                    <img src="{{ provider.logo ? asset('uploads/logos/' ~ provider.logo) : asset('images/logo_trouvemoipresta_black.png') }}" alt="{{ provider.companyName }}">
+                                                </div>
+
+                                                <div class="tm-cp-favorite-provider-card-identity-text">
+                                                    <h5 class="tm-cp-favorite-provider-card-title">
+                                                        {{ provider.companyName }}
+                                                    </h5>
+
+                                                    <div class="tm-cp-favorite-provider-card-meta">
+                                                        <span>
+                                                            <i class="fa-solid fa-location-dot"></i>
+                                                            {{ provider.city ?: 'Ville non renseignée' }}
+                                                        </span>
+
+                                                        {% if provider.reviewsCount is defined %}
+                                                            <span>
+                                                                <i class="fa-regular fa-message"></i>
+                                                                {{ provider.reviewsCount }}
+                                                                avis
+                                                            </span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <p class="tm-cp-favorite-provider-card-description">
+                                                {% if provider.shortDescription is defined and provider.shortDescription %}
+                                                    {{ provider.shortDescription|slice(0, 135) }}{% if provider.shortDescription|length > 135 %}...{% endif %}
+                                                {% else %}
+                                                    Ce prestataire fait partie de votre sélection enregistrée pour un accès plus rapide à son profil public.
+                                                {% endif %}
+                                            </p>
+
+                                            <div class="tm-cp-favorite-provider-card-footer">
+                                                <div class="tm-cp-favorite-provider-card-stat">
+                                                    <span class="tm-cp-favorite-provider-card-stat-label">Statut</span>
+                                                    <strong>Dans vos favoris</strong>
+                                                </div>
+
+                                                <a href="{{ path('app_prestataire_show', { slug: provider.slug }) }}" class="tm-cp-favorite-provider-card-link">
+                                                    Voir le profil
+                                                    <i class="fa-solid fa-arrow-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mt-3 text-center">
+                        <button
+                            class="btn tm-cp-favorites-more-btn"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#favoriteProvidersMore"
+                            aria-expanded="false"
+                            aria-controls="favoriteProvidersMore"
+                        >
+                            Voir/Cacher
+                        </button>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="tm-cp-favorite-empty tm-cp-favorite-empty--hero border rounded-4 p-4 text-center">
+                            <div class="tm-cp-favorite-empty-icon">
+                                <i class="fa-regular fa-heart"></i>
+                            </div>
+                            <p class="tm-cp-favorite-empty-title mb-2">Aucun artisan favori pour le moment.</p>
+                            <p class="tm-cp-favorite-empty-text mb-0">
+                                Ajoutez des prestataires à vos favoris depuis les pages profils publiques.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Prestations favorites #}
+    <div class="col-12">
+        <div class="card tm-cp-card tm-cp-favorites-section p-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 tm-cp-favorites-section-head">
+                <div class="tm-cp-favorites-section-copy">
+                    <span class="tm-cp-favorites-kicker">Prestations suivies</span>
+                    <h4 class="tm-cp-card-title tm-cp-favorites-title mb-1">Mes prestations favorites</h4>
+                    <p class="tm-cp-favorites-subtitle mb-0">
+                        Gardez sous la main les prestations qui vous intéressent.
+                    </p>
+                </div>
+
+                <span class="badge rounded-pill tm-cp-favorites-count">
+                    {{ favoritePrestations|length }}
+                    favori{{ favoritePrestations|length > 1 ? 's' : '' }}
+                </span>
+            </div>
+
+            {% if favoritePrestations|length > 0 %}
+                <div class="row g-3">
+                    {% for prestation in favoritePrestations|slice(0, 6) %}
+                        <div class="col-md-6 col-xl-4">
+                            <article class="card border-0 shadow-sm rounded-4 h-100 tm-cp-favorite-card tm-cp-favorite-card--service">
+                                <div class="tm-cp-favorite-card-body p-3 d-flex flex-column h-100">
+                                    <div class="tm-cp-favorite-card-top d-flex align-items-start justify-content-between gap-3 mb-3">
+                                        <span class="tm-cp-favorite-pill">
+                                            <i class="fa-solid fa-wrench"></i>
+                                            Prestation
+                                        </span>
+
+                                        <span class="tm-cp-favorite-heart" aria-hidden="true">
+                                            <i class="fa-solid fa-heart"></i>
+                                        </span>
+                                    </div>
+
+                                    <h5 class="tm-cp-favorite-name tm-cp-favorite-name--service mb-2">
+                                        {{ prestation.title ?: prestation.service.name }}
+                                    </h5>
+
+                                    <p class="tm-cp-favorite-meta mb-2">
+                                        <i class="fa-solid fa-building"></i>
+                                        <span>{{ prestation.prestataire.companyName ?: 'Prestataire' }}</span>
+                                    </p>
+
+                                    <p class="tm-cp-favorite-description mb-3">
+                                        {% if prestation.shortDescription %}
+                                            {{ prestation.shortDescription|slice(0, 110) }}{% if prestation.shortDescription|length > 110 %}...{% endif %}
+                                        {% else %}
+                                            Prestation enregistrée dans vos favoris.
+                                        {% endif %}
+                                    </p>
+
+                                    <div class="mt-auto">
+                                        <a href="{{ path('app_prestataire_service_prestation_show', { id: prestation.id }) }}" class="btn tm-cp-favorite-btn w-100">
+                                            Voir la prestation
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if favoritePrestations|length > 6 %}
+                    <div class="collapse mt-3" id="favoritePrestationsMore">
+                        <div class="row g-3">
+                            {% for prestation in favoritePrestations|slice(6) %}
+                                <div class="col-md-6 col-xl-4">
+                                    <article class="card border-0 shadow-sm rounded-4 h-100 tm-cp-favorite-card tm-cp-favorite-card--service">
+                                        <div class="tm-cp-favorite-card-body p-3 d-flex flex-column h-100">
+                                            <div class="tm-cp-favorite-card-top d-flex align-items-start justify-content-between gap-3 mb-3">
+                                                <span class="tm-cp-favorite-pill">
+                                                    <i class="fa-solid fa-wrench"></i>
+                                                    Prestation
+                                                </span>
+
+                                                <span class="tm-cp-favorite-heart" aria-hidden="true">
+                                                    <i class="fa-solid fa-heart"></i>
+                                                </span>
+                                            </div>
+
+                                            <h5 class="tm-cp-favorite-name tm-cp-favorite-name--service mb-2">
+                                                {{ prestation.title ?: prestation.service.name }}
+                                            </h5>
+
+                                            <p class="tm-cp-favorite-meta mb-2">
+                                                <i class="fa-solid fa-building"></i>
+                                                <span>{{ prestation.prestataire.companyName ?: 'Prestataire' }}</span>
+                                            </p>
+
+                                            <p class="tm-cp-favorite-description mb-3">
+                                                {% if prestation.shortDescription %}
+                                                    {{ prestation.shortDescription|slice(0, 110) }}{% if prestation.shortDescription|length > 110 %}...{% endif %}
+                                                {% else %}
+                                                    Prestation enregistrée dans vos favoris.
+                                                {% endif %}
+                                            </p>
+
+                                            <div class="mt-auto">
+                                                <a href="{{ path('app_prestataire_service_prestation_show', { id: prestation.id }) }}" class="btn tm-cp-favorite-btn w-100">
+                                                    Voir la prestation
+                                                    <i class="fa-solid fa-arrow-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mt-3 text-center">
+                        <button
+                            class="btn tm-cp-favorites-more-btn"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#favoritePrestationsMore"
+                            aria-expanded="false"
+                            aria-controls="favoritePrestationsMore"
+                        >
+                            Voir/Cacher
+                        </button>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="tm-cp-favorite-empty border rounded-4 p-4 text-center">
+                            <div class="tm-cp-favorite-empty-icon">
+                                <i class="fa-solid fa-screwdriver-wrench"></i>
+                            </div>
+                            <p class="tm-cp-favorite-empty-title mb-2">Aucune prestation favorite pour le moment.</p>
+                            <p class="tm-cp-favorite-empty-text mb-0">
+                                Enregistrez des prestations depuis les cartes publiques.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Bons plans favoris #}
+    <div class="col-12">
+        <div class="card tm-cp-card tm-cp-favorites-section p-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 tm-cp-favorites-section-head">
+                <div class="tm-cp-favorites-section-copy">
+                    <span class="tm-cp-favorites-kicker">Offres enregistrées</span>
+                    <h4 class="tm-cp-card-title tm-cp-favorites-title mb-1">Mes bons plans favoris</h4>
+                    <p class="tm-cp-favorites-subtitle mb-0">
+                        Retrouvez les offres promotionnelles enregistrées.
+                    </p>
+                </div>
+
+                <span class="badge rounded-pill tm-cp-favorites-count">
+                    {{ favoriteBonsPlans|length }}
+                    favori{{ favoriteBonsPlans|length > 1 ? 's' : '' }}
+                </span>
+            </div>
+
+            {% if favoriteBonsPlans|length > 0 %}
+                <div class="row g-3">
+                    {% for bonPlan in favoriteBonsPlans|slice(0, 6) %}
+                        <div class="col-md-6 col-xl-4">
+                            <article class="card border-0 shadow-sm rounded-4 h-100 tm-cp-favorite-card tm-cp-favorite-card--deal">
+                                <div class="tm-cp-favorite-card-body p-3 d-flex flex-column h-100">
+                                    <div class="tm-cp-favorite-card-top d-flex align-items-start justify-content-between gap-3 mb-3">
+                                        <span class="tm-cp-favorite-pill tm-cp-favorite-pill--deal">
+                                            <i class="fa-solid fa-percent"></i>
+                                            Bon plan
+                                        </span>
+
+                                        <span class="tm-cp-favorite-heart" aria-hidden="true">
+                                            <i class="fa-solid fa-heart"></i>
+                                        </span>
+                                    </div>
+
+                                    <h5 class="tm-cp-favorite-name tm-cp-favorite-name--service mb-2">
+                                        {{ bonPlan.title ?: bonPlan.service.name }}
+                                    </h5>
+
+                                    <p class="tm-cp-favorite-meta mb-2">
+                                        <i class="fa-solid fa-building"></i>
+                                        <span>{{ bonPlan.prestataire.companyName ?: 'Prestataire' }}</span>
+                                    </p>
+
+                                    <div class="mb-3">
+                                        {% if bonPlan.tauxReduction %}
+                                            <span class="badge tm-cp-favorite-badge tm-cp-favorite-badge--promo">
+                                                -{{ bonPlan.tauxReduction }}%
+                                            </span>
+                                        {% else %}
+                                            <span class="badge tm-cp-favorite-badge tm-cp-favorite-badge--neutral">
+                                                Offre enregistrée
+                                            </span>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="mt-auto">
+                                        <a href="{{ path('app_prestataire_service_prestation_show', { id: bonPlan.id }) }}" class="btn tm-cp-favorite-btn w-100">
+                                            Voir le bon plan
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if favoriteBonsPlans|length > 6 %}
+                    <div class="collapse mt-3" id="favoriteBonsPlansMore">
+                        <div class="row g-3">
+                            {% for bonPlan in favoriteBonsPlans|slice(6) %}
+                                <div class="col-md-6 col-xl-4">
+                                    <article class="card border-0 shadow-sm rounded-4 h-100 tm-cp-favorite-card tm-cp-favorite-card--deal">
+                                        <div class="tm-cp-favorite-card-body p-3 d-flex flex-column h-100">
+                                            <div class="tm-cp-favorite-card-top d-flex align-items-start justify-content-between gap-3 mb-3">
+                                                <span class="tm-cp-favorite-pill tm-cp-favorite-pill--deal">
+                                                    <i class="fa-solid fa-percent"></i>
+                                                    Bon plan
+                                                </span>
+
+                                                <span class="tm-cp-favorite-heart" aria-hidden="true">
+                                                    <i class="fa-solid fa-heart"></i>
+                                                </span>
+                                            </div>
+
+                                            <h5 class="tm-cp-favorite-name tm-cp-favorite-name--service mb-2">
+                                                {{ bonPlan.title ?: bonPlan.service.name }}
+                                            </h5>
+
+                                            <p class="tm-cp-favorite-meta mb-2">
+                                                <i class="fa-solid fa-building"></i>
+                                                <span>{{ bonPlan.prestataire.companyName ?: 'Prestataire' }}</span>
+                                            </p>
+
+                                            <div class="mb-3">
+                                                {% if bonPlan.tauxReduction %}
+                                                    <span class="badge tm-cp-favorite-badge tm-cp-favorite-badge--promo">
+                                                        -{{ bonPlan.tauxReduction }}%
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge tm-cp-favorite-badge tm-cp-favorite-badge--neutral">
+                                                        Offre enregistrée
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="mt-auto">
+                                                <a href="{{ path('app_prestataire_service_prestation_show', { id: bonPlan.id }) }}" class="btn tm-cp-favorite-btn w-100">
+                                                    Voir le bon plan
+                                                    <i class="fa-solid fa-arrow-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mt-3 text-center">
+                        <button
+                            class="btn tm-cp-favorites-more-btn"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#favoriteBonsPlansMore"
+                            aria-expanded="false"
+                            aria-controls="favoriteBonsPlansMore"
+                        >
+                            Voir/Cacher
+                        </button>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="tm-cp-favorite-empty border rounded-4 p-4 text-center">
+                            <div class="tm-cp-favorite-empty-icon">
+                                <i class="fa-solid fa-tags"></i>
+                            </div>
+                            <p class="tm-cp-favorite-empty-title mb-2">Aucun bon plan favori pour le moment.</p>
+                            <p class="tm-cp-favorite-empty-text mb-0">
+                                Ajoutez vos meilleures offres en favori pour les retrouver plus vite.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>

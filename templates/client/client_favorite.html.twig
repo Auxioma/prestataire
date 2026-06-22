@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes favoris - TrouveMoi{% endblock %}
+
+{% block body %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <div class="container-fluid p-0 tm-cp-page-wrapper">
+        <div class="d-flex flex-column flex-md-row align-items-stretch">
+
+            {# Navbar Mobile #}
+            <div class="w-100 p-3 d-flex justify-content-between align-items-center d-md-none tm-cp-mobile-navbar">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fs-4 fw-bold tm-cp-mobile-brand">🔍 TrouveMoi</span>
+                </div>
+                <div class="d-flex gap-3 tm-cp-mobile-nav">
+                    <a href="#" class="text-dark text-decoration-none fs-5">📋</a>
+                    <a href="{{ path('app_client_settings_favorites') }}" class="text-dark text-decoration-none fs-5 active-mobile">❤️</a>
+                    <a href="{{ path('app_client_settings') }}" class="text-dark text-decoration-none fs-5">⚙️</a>
+                </div>
+            </div>
+
+            {# Sidebar Desktop #}
+            <div class="tm-cp-client-sidebar p-4 d-none d-md-flex flex-column justify-content-between tm-cp-sidebar-desktop">
+                <div>
+
+                    <div class="text-center mb-5">
+                        <div class="position-relative d-inline-block mb-3">
+                            <img
+                                src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80' }}"
+                                class="rounded-circle border-3 shadow-sm tm-cp-sidebar-avatar"
+                                alt="Avatar"
+                            >
+                        </div>
+                        <h5 class="mb-1 fw-semibold fs-5 tm-cp-sidebar-username">
+                            {{ user.firstName }} {{ user.lastName }}
+                        </h5>
+                        <p class="small mb-2 tm-cp-sidebar-date">
+                            Membre depuis {{ user.createdAt|date('Y') }}
+                        </p>
+                    </div>
+
+                    <ul class="nav flex-column gap-2 tm-cp-nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <span class="me-2">📋</span>
+                                Mes Demandes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('app_client_settings_favorites') }}" class="nav-link active">
+                                <span class="me-2">❤️</span>
+                                Mes Artisans Favoris
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <span class="me-2">💬</span>
+                                Mes Messages
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('app_client_settings') }}" class="nav-link">
+                                <span class="me-2">⚙️</span>
+                                Paramètres
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card border-0 p-3 rounded-4 text-center mt-5 tm-cp-sidebar-support-card">
+                    <p class="small mb-2 fw-medium tm-cp-sidebar-support-text">Besoin d'aide pour vos travaux ?</p>
+                    <button class="btn btn-sm w-100 fw-bold tm-cp-btn-sidebar-support">Contacter le support</button>
+                </div>
+            </div>
+
+            {# Contenu Principal #}
+            <div class="grow p-3 p-md-5 tm-cp-main-content-inner">
+
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4 fw-medium" role="alert">
+                        ✨ {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+
+                {% include 'settings/_client_favorite_tab.html.twig' with {
+                    favoriteProviders: favoriteProviders,
+                    favoritePrestations: favoritePrestations,
+                    favoriteBonsPlans: favoriteBonsPlans
+                } %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
