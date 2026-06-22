@@ -219,8 +219,25 @@
 
 									<a href="{{ path('app_prestataire_show', {slug: provider.slug}) }}" class="stretched-link"></a>
 
-									<button class="btn btn-light favorite-btn border-0 shadow-sm">
-										<i class="fa-regular fa-heart text-muted"></i>
+									{% set isFavorite = provider.id in (favoriteProviderIds|default([])) %}
+									<button
+										type="button"
+										class="btn btn-light favorite-btn border-0 shadow-sm"
+										data-controller="favorite-toggle"
+										data-action="click->favorite-toggle#toggle"
+										data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}"
+										data-favorite-toggle-type-value="prestataire"
+										data-favorite-toggle-target-id-value="{{ provider.id }}"
+										data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}"
+										data-favorite-toggle-is-favorite-value="{{ isFavorite ? 'true' : 'false' }}"
+										data-favorite-toggle-login-url-value="{{ path('app_login') }}"
+										aria-pressed="{{ isFavorite ? 'true' : 'false' }}"
+										aria-label="{{ isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' }}"
+									>
+										<i
+											data-favorite-toggle-target="icon"
+											class="{{ isFavorite ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"
+										></i>
 									</button>
 
 									<div class="position-relative">
@@ -404,8 +421,29 @@
 						{% set ctaUrl = path('app_prestataire_service_prestation_show', { id: bonPlan.id }) %}
 						{% set ctaLabel = 'Voir la prestation' %}
 
+    {% set isFavoriteBonPlan = bonPlan.id in (favoriteBonPlanIds|default([])) %}
 						<article class="tm-home-deal-card tm-home-deal-card--{{ promoLevel }}">
 							<div class="tm-home-deal-card__glow"></div>
+
+						        <button
+            type="button"
+            class="btn btn-light favorite-btn border-0 shadow-sm"
+            data-controller="favorite-toggle"
+            data-action="click->favorite-toggle#toggle"
+            data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}"
+            data-favorite-toggle-type-value="bon_plan"
+            data-favorite-toggle-target-id-value="{{ bonPlan.id }}"
+            data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}"
+            data-favorite-toggle-is-favorite-value="{{ isFavoriteBonPlan ? 'true' : 'false' }}"
+            data-favorite-toggle-login-url-value="{{ path('app_login') }}"
+            aria-pressed="{{ isFavoriteBonPlan ? 'true' : 'false' }}"
+            aria-label="{{ isFavoriteBonPlan ? 'Retirer des favoris' : 'Ajouter aux favoris' }}"
+        >
+            <i
+                data-favorite-toggle-target="icon"
+                class="{{ isFavoriteBonPlan ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"
+            ></i>
+        </button>	
 
 							<div class="tm-home-deal-card__hero">
 								<img src="{{ coverImage ? asset('uploads/covers/' ~ coverImage) : asset('images/img_par_defaut.png') }}" alt="{{ companyName }}" class="tm-home-deal-card__cover">
