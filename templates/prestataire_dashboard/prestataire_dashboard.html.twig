@@ -71,6 +71,11 @@
 							<span>Calendrier</span>
 						</button>
 
+						<button class="tm-sidebar-link nav-link" id="demandes-main-tab" data-bs-toggle="tab" data-bs-target="#demandes-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="demandes-main-panel" aria-selected="false">
+							<span class="tm-sidebar-link-icon">📄</span>
+							<span>Demandes Reçues</span>
+						</button>
+
 						<button class="tm-sidebar-link nav-link" id="messages-main-tab" data-bs-toggle="tab" data-bs-target="#messages-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="messages-main-panel" aria-selected="false">
 							<span class="tm-sidebar-link-icon">✉</span>
 							<span>Messages</span>
@@ -128,6 +133,10 @@
 
 					<div class="tab-pane fade" id="calendrier-main-panel" role="tabpanel" aria-labelledby="calendrier-main-tab">
 						{{ include('prestataire_dashboard/_calendrier_panel.html.twig') }}
+					</div>
+
+					<div class="tab-pane fade" id="demandes-main-panel" role="tabpanel" aria-labelledby="demandes-main-tab">
+						{{ include('prestataire_dashboard/_demandes_panel.html.twig') }}
 					</div>
 
 					<div class="tab-pane fade" id="messages-main-panel" role="tabpanel" aria-labelledby="messages-main-tab">

@@ -1,0 +1,92 @@
+<div class="card tm-card tm-quote-panel p-4">
+    <div class="tm-quote-panel__head">
+        <div>
+            <h4 class="tm-card-title tm-quote-panel__title mb-1">Demandes reçues</h4>
+            <p class="tm-quote-panel__subtitle mb-0">
+                Les dernières demandes de devis envoyées par vos clients.
+            </p>
+        </div>
+
+        {% if quoteRequests is not empty %}
+<form
+    method="get"
+    action="{{ path('app_prestataire_dashboard') }}#demandes-main-panel"
+    class="tm-quote-panel__filter"
+>
+    <label for="quote_sort" class="visually-hidden">Trier les demandes</label>
+    <select
+        id="quote_sort"
+        name="quote_sort"
+        class="form-select"
+        onchange="this.form.submit()"
+    >
+        <option value="recent" {{ quoteSort|default('recent') == 'recent' ? 'selected' : '' }}>
+            Plus récentes
+        </option>
+        <option value="oldest" {{ quoteSort|default('recent') == 'oldest' ? 'selected' : '' }}>
+            Plus anciennes
+        </option>
+        <option value="budget_asc" {{ quoteSort|default('recent') == 'budget_asc' ? 'selected' : '' }}>
+            Budget croissant
+        </option>
+        <option value="budget_desc" {{ quoteSort|default('recent') == 'budget_desc' ? 'selected' : '' }}>
+            Budget décroissant
+        </option>
+    </select>
+</form>
+        {% endif %}
+    </div>
+
+    {% if quoteRequests is empty %}
+        <div class="tm-quote-empty">
+            <div class="tm-quote-empty__icon">
+                <i class="fa-regular fa-file-lines"></i>
+            </div>
+            <h5 class="tm-quote-empty__title">Aucune demande pour le moment</h5>
+            <p class="tm-quote-empty__text mb-0">
+                Vos futures demandes de devis apparaîtront ici dès qu’un client vous contactera.
+            </p>
+        </div>
+    {% else %}
+        <div class="tm-quote-list">
+            {% for quoteRequest in quoteRequests|slice(0, 5) %}
+                <a href="{{ path('app_prestataire_quote_request_show', { id: quoteRequest.id }) }}" class="tm-quote-item">
+                    <div class="tm-quote-item__main">
+                        <div class="tm-quote-item__top">
+                            <h5 class="tm-quote-item__title mb-0">{{ quoteRequest.title }}</h5>
+
+                            <span class="tm-quote-badge tm-quote-badge--{{ quoteRequest.status.value|lower }}">
+                                {{ quoteRequest.status.value }}
+                            </span>
+                        </div>
+
+                        <div class="tm-quote-item__meta">
+                            <span>
+                                <i class="fa-regular fa-clock"></i>
+                                {{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y H:i') : '—' }}
+                            </span>
+
+                            {% if quoteRequest.budgetAmount %}
+                                <span>
+                                    <i class="fa-solid fa-wallet"></i>
+                                    {{ quoteRequest.budgetAmount }}
+                                </span>
+                            {% endif %}
+
+                            {% if quoteRequest.client and quoteRequest.client.account %}
+                                <span>
+                                    <i class="fa-regular fa-user"></i>
+                                    {{ quoteRequest.client.account.firstName }} {{ quoteRequest.client.account.lastName }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <span class="tm-quote-item__arrow">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </span>
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

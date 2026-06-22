@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demande reçue
+{% endblock %}
+
+{% block body %}
+	<div class="container py-4 tm-quote-detail">
+		<div class="tm-quote-page__hero tm-quote-page__hero--detail">
+			<div>
+
+				<h1 class="tm-quote-page__title mb-2">{{ quoteRequest.title }}</h1>
+				<p class="tm-quote-page__subtitle mb-0">
+					Demande reçue le
+					{{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y à H:i') : '—' }}
+				</p>
+			</div>
+
+			<div>
+				<span class="tm-quote-badge tm-quote-badge--{{ quoteRequest.status.value|lower }}">
+					{{ quoteRequest.status.value }}
+				</span>
+			</div>
+		</div>
+
+		<div class="row g-4">
+			<div class="col-lg-8">
+				<div class="card tm-card tm-quote-detail-card p-4">
+					<h2 class="tm-card-title mb-3">Description du besoin</h2>
+
+					<div class="tm-quote-detail__content">
+						{% if quoteRequest.description %}
+							{{ quoteRequest.description|nl2br }}
+						{% else %}
+							Aucune description fournie.
+						{% endif %}
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-4">
+				<div class="card tm-card tm-quote-detail-card p-4 mb-4">
+					<h3 class="tm-card-title mb-3">Informations</h3>
+
+					<dl class="tm-quote-info-list mb-0">
+						<div>
+							<dt>Client</dt>
+							<dd>
+								{% if quoteRequest.client and quoteRequest.client.account %}
+									{{ quoteRequest.client.account.firstName }}
+									{{ quoteRequest.client.account.lastName }}
+									{% if quoteRequest.client.companyName %}
+										<br>
+										<span class="text-muted">{{ quoteRequest.client.companyName }}</span>
+									{% endif %}
+								{% else %}
+									Non renseigné
+								{% endif %}
+							</dd>
+						</div>
+
+						<div>
+							<dt>Date souhaitée</dt>
+							<dd>
+								{{ quoteRequest.desiredDate ? quoteRequest.desiredDate|date('d/m/Y') : 'Non précisée' }}
+							</dd>
+						</div>
+
+						<div>
+							<dt>Budget</dt>
+							<dd>{{ quoteRequest.budgetAmount ?: 'Non renseigné' }}</dd>
+						</div>
+
+						<div>
+							<dt>Prestation liée</dt>
+							<dd>
+								{% if quoteRequest.prestation %}
+									{{ quoteRequest.prestation.title is defined and quoteRequest.prestation.title
+                                        ? quoteRequest.prestation.title
+                                        : (quoteRequest.prestation.service and quoteRequest.prestation.service.name
+                                            ? quoteRequest.prestation.service.name
+                                            : 'Prestation liée')
+                                    }}
+								{% else %}
+									Aucune
+								{% endif %}
+							</dd>
+						</div>
+					</dl>
+				</div>
+
+				<div class="card tm-card tm-quote-detail-card p-4">
+					<h3 class="tm-card-title mb-3">Action</h3>
+					<p class="text-muted mb-3">
+						Cette demande est disponible en lecture dans votre espace professionnel.
+					</p>
+
+<a href="{{ path('app_prestataire_dashboard') ~ '#demandes-main-panel' }}" class="btn btn-outline-primary w-100">
+    Retour aux demandes
+</a>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

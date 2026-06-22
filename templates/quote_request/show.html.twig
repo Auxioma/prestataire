@@ -3,24 +3,22 @@
 {% block title %}Détail de la demande de devis{% endblock %}
 
 {% block body %}
-    <div class="container py-4">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-            <div>
-                <a href="{{ path('app_quote_request_index') }}" class="btn btn-outline-secondary mb-3">
-                    Retour à la liste
+<div class="tm-client-quotes-page">
+    <div class="container py-4 py-lg-5">
+        <section class="tm-client-quotes-hero">
+            <div class="tm-client-quotes-hero__content">
+                <a href="{{ path('app_quote_request_index') }}" class="tm-client-quotes-backlink">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Retour à mes demandes</span>
                 </a>
-                <h1 class="fw-bold mb-1">{{ quoteRequest.title }}</h1>
-                <p class="text-muted mb-0">
-                    Consultez le détail de votre demande de devis et son état d’avancement.
+
+                <span class="tm-client-quotes-eyebrow">Détail de la demande</span>
+                <h1 class="tm-client-quotes-title tm-client-quotes-title--wide">{{ quoteRequest.title }}</h1>
+                <p class="tm-client-quotes-subtitle">
+                    Consultez les informations de votre demande, son état actuel et les éléments utiles pour relancer ou recréer une demande similaire.
                 </p>
             </div>
-
-            <div>
-                <span class="badge text-bg-{{ quoteRequest.status.getBadgeClass() }}">
-                    {{ quoteRequest.status.getLabel() }}
-                </span>
-            </div>
-        </div>
+        </section>
 
         {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
             {% for message in messages %}
@@ -32,118 +30,119 @@
         {% endfor %}
 
         <div class="row g-4">
-            <div class="col-lg-8">
-                <div class="card shadow-sm border-0 mb-4">
+            <div class="col-xl-8">
+                <section class="tm-client-quotes-detailcard mb-4">
                     <div class="card-body">
-                        <h2 class="h5 fw-bold mb-3">Description</h2>
-                        <p class="mb-0 text-muted" style="white-space: pre-line;">
+                        <div class="tm-client-quotes-section-head">
+                            <h2 class="tm-client-quotes-section-title">Description</h2>
+                            <p class="tm-client-quotes-section-text mb-0">
+                                Les détails transmis au prestataire pour comprendre votre besoin.
+                            </p>
+                        </div>
+
+                        <div class="tm-client-quotes-description">
                             {{ quoteRequest.description ?: 'Aucune description fournie.' }}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="card shadow-sm border-0">
-                    <div class="card-body">
-                        <h2 class="h5 fw-bold mb-3">Informations complémentaires</h2>
-
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="border rounded p-3 h-100">
-                                    <div class="small text-muted mb-1">Prestataire</div>
-                                    <div class="fw-semibold">
-                                        {{ quoteRequest.prestataire.companyName ?? 'Non renseigné' }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="border rounded p-3 h-100">
-                                    <div class="small text-muted mb-1">Service concerné</div>
-                                    <div class="fw-semibold">
-                                        {{ quoteRequest.prestation.service.name ?? 'Non renseigné' }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="border rounded p-3 h-100">
-                                    <div class="small text-muted mb-1">Date souhaitée</div>
-                                    <div class="fw-semibold">
-                                        {{ quoteRequest.desiredDate ? quoteRequest.desiredDate|date('d/m/Y') : 'Non renseignée' }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="border rounded p-3 h-100">
-                                    <div class="small text-muted mb-1">Budget</div>
-                                    <div class="fw-semibold">
-                                        {{ quoteRequest.budgetAmount is not null ? quoteRequest.budgetAmount|number_format(2, ',', ' ') ~ ' €' : 'Non renseigné' }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="border rounded p-3 h-100">
-                                    <div class="small text-muted mb-1">Créée le</div>
-                                    <div class="fw-semibold">
-                                        {{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y H:i') : '—' }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="border rounded p-3 h-100">
-                                    <div class="small text-muted mb-1">Mise à jour le</div>
-                                    <div class="fw-semibold">
-                                        {{ quoteRequest.updatedAt ? quoteRequest.updatedAt|date('d/m/Y H:i') : '—' }}
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
-                </div>
+                </section>
+
+                <section class="tm-client-quotes-detailcard">
+                    <div class="card-body">
+                        <div class="tm-client-quotes-section-head">
+                            <h2 class="tm-client-quotes-section-title">Informations complémentaires</h2>
+                            <p class="tm-client-quotes-section-text mb-0">
+                                Un résumé clair des éléments associés à cette demande.
+                            </p>
+                        </div>
+
+                        <div class="tm-client-quotes-infos-grid">
+                            <article class="tm-client-quotes-info">
+                                <span class="tm-client-quotes-info__label">Prestataire</span>
+                                <strong class="tm-client-quotes-info__value">
+                                    {{ quoteRequest.prestataire.companyName ?? 'Non renseigné' }}
+                                </strong>
+                            </article>
+
+                            <article class="tm-client-quotes-info">
+                                <span class="tm-client-quotes-info__label">Service concerné</span>
+                                <strong class="tm-client-quotes-info__value">
+                                    {{ quoteRequest.prestation.service.name ?? 'Non renseigné' }}
+                                </strong>
+                            </article>
+
+                            <article class="tm-client-quotes-info">
+                                <span class="tm-client-quotes-info__label">Date souhaitée</span>
+                                <strong class="tm-client-quotes-info__value">
+                                    {{ quoteRequest.desiredDate ? quoteRequest.desiredDate|date('d/m/Y') : 'Non renseignée' }}
+                                </strong>
+                            </article>
+
+                            <article class="tm-client-quotes-info">
+                                <span class="tm-client-quotes-info__label">Budget</span>
+                                <strong class="tm-client-quotes-info__value">
+                                    {{ quoteRequest.budgetAmount is not null ? quoteRequest.budgetAmount|number_format(2, ',', ' ') ~ ' €' : 'Non renseigné' }}
+                                </strong>
+                            </article>
+
+                            <article class="tm-client-quotes-info">
+                                <span class="tm-client-quotes-info__label">Créée le</span>
+                                <strong class="tm-client-quotes-info__value">
+                                    {{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y H:i') : '—' }}
+                                </strong>
+                            </article>
+
+                            <article class="tm-client-quotes-info">
+                                <span class="tm-client-quotes-info__label">Dernière mise à jour</span>
+                                <strong class="tm-client-quotes-info__value">
+                                    {{ quoteRequest.updatedAt ? quoteRequest.updatedAt|date('d/m/Y H:i') : '—' }}
+                                </strong>
+                            </article>
+                        </div>
+                    </div>
+                </section>
             </div>
 
-            <div class="col-lg-4">
-                <div class="card shadow-sm border-0 mb-4">
+            <div class="col-xl-4">
+                <aside class="tm-client-quotes-sidecard tm-client-quotes-sidecard--status mb-4">
                     <div class="card-body">
-                        <h3 class="h6 fw-bold">Statut</h3>
-                        <p class="mb-3 text-muted">
-                            Suivez ici l’état actuel de votre demande.
+                        <h2 class="tm-client-quotes-sidecard__title">Statut</h2>
+                        <p class="tm-client-quotes-sidecard__text">
+                            Suivez ici l’état d’avancement actuel de votre demande de devis.
                         </p>
 
-                        <span class="badge text-bg-{{ quoteRequest.status.getBadgeClass() }}">
+                        <span class="tm-client-quotes-status tm-client-quotes-status--{{ quoteRequest.status.getBadgeClass() }}">
                             {{ quoteRequest.status.getLabel() }}
                         </span>
                     </div>
-                </div>
+                </aside>
 
-                <div class="card shadow-sm border-0">
+                <aside class="tm-client-quotes-sidecard">
                     <div class="card-body">
-                        <h3 class="h6 fw-bold">Navigation</h3>
+                        <h2 class="tm-client-quotes-sidecard__title">Actions</h2>
+
                         <div class="d-grid gap-2">
-                            <a href="{{ path('app_quote_request_index') }}" class="btn btn-outline-secondary">
+                            <a href="{{ path('app_quote_request_index') }}" class="btn tm-client-quotes-btn tm-client-quotes-btn--ghost">
                                 Retour aux demandes
                             </a>
 
                             {% if quoteRequest.prestation %}
-                                <a href="{{ path('app_quote_request_new', { prestation: quoteRequest.prestation.id }) }}" class="btn btn-primary">
+                                <a href="{{ path('app_quote_request_new', { prestation: quoteRequest.prestation.id }) }}" class="btn tm-client-quotes-btn tm-client-quotes-btn--primary">
                                     Nouvelle demande similaire
                                 </a>
                             {% elseif quoteRequest.prestataire %}
-                                <a href="{{ path('app_quote_request_new', { prestataire: quoteRequest.prestataire.id }) }}" class="btn btn-primary">
+                                <a href="{{ path('app_quote_request_new', { prestataire: quoteRequest.prestataire.id }) }}" class="btn tm-client-quotes-btn tm-client-quotes-btn--primary">
                                     Nouvelle demande similaire
                                 </a>
                             {% else %}
-                                <span class="btn btn-primary disabled">
+                                <span class="btn tm-client-quotes-btn tm-client-quotes-btn--primary disabled">
                                     Nouvelle demande similaire
                                 </span>
                             {% endif %}
                         </div>
                     </div>
-                </div>
+                </aside>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}

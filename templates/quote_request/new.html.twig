@@ -5,21 +5,22 @@
 {% block title %}Nouvelle demande de devis{% endblock %}
 
 {% block body %}
-    <div class="container py-4">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-            <div>
-                <h1 class="fw-bold mb-1">Nouvelle demande de devis</h1>
-                <p class="text-muted mb-0">
-                    Décrivez votre besoin pour envoyer une demande claire et complète.
+<div class="tm-client-quotes-page">
+    <div class="container py-4 py-lg-5">
+        <section class="tm-client-quotes-hero">
+            <div class="tm-client-quotes-hero__content">
+                <a href="{{ path('app_quote_request_index') }}" class="tm-client-quotes-backlink">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Retour à mes demandes</span>
+                </a>
+
+                <span class="tm-client-quotes-eyebrow">Nouvelle demande</span>
+                <h1 class="tm-client-quotes-title tm-client-quotes-title--wide">Décrivez votre besoin avec précision</h1>
+                <p class="tm-client-quotes-subtitle">
+                    Une demande claire facilite la comparaison, améliore la pertinence des réponses et permet au prestataire de mieux comprendre votre projet.
                 </p>
             </div>
-
-            <div>
-                <a href="{{ path('app_quote_request_index') }}" class="btn btn-outline-secondary">
-                    Retour à la liste
-                </a>
-            </div>
-        </div>
+        </section>
 
         {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
             {% for message in messages %}
@@ -31,38 +32,41 @@
         {% endfor %}
 
         <div class="row g-4">
-            <div class="col-lg-8">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body">
+            <div class="col-xl-8">
+                <section class="tm-client-quotes-panel">
+                    <div class="tm-client-quotes-panel__body">
                         {{ form_start(form, {
                             attr: {
                                 novalidate: 'novalidate',
-                                'data-turbo': 'false'
+                                'data-turbo': 'false',
+                                class: 'tm-client-quotes-form'
                             }
                         }) }}
 
-                            <div class="mb-4">
-                                <h2 class="h5 fw-bold mb-1">Votre besoin</h2>
-                                <p class="text-muted mb-0">
-                                    Renseignez les informations principales de votre demande.
+                            <div class="tm-client-quotes-highlight mb-4">
+                                <div class="tm-client-quotes-highlight__title">Conseil</div>
+                                <p class="tm-client-quotes-highlight__text mb-0">
+                                    Plus votre besoin est concret, plus les retours seront utiles, comparables et rapides à exploiter.
                                 </p>
                             </div>
 
                             {% if prestataire is defined and prestataire %}
-                                <div class="alert alert-light border mb-4">
-                                    <div class="fw-semibold mb-1">Prestataire sélectionné</div>
-                                    <div class="text-muted">
+                                <div class="tm-client-quotes-locked mb-4">
+                                    <div class="tm-client-quotes-locked__label">Prestataire sélectionné</div>
+                                    <div class="tm-client-quotes-locked__value">
                                         {{ prestataire.companyName ?? 'Prestataire' }}
                                     </div>
                                 </div>
                             {% endif %}
 
-                            <div class="row g-4">
+                            <div class="row g-4 tm-client-quotes-form-fields">
                                 {% if prestation is defined and prestation %}
                                     <div class="col-12">
-                                        <label class="form-label">Service concerné</label>
-                                        <div class="form-control bg-light">
-                                            {{ prestation.service.name ?? 'Service sélectionné' }}
+                                        <div class="tm-client-quotes-locked">
+                                            <div class="tm-client-quotes-locked__label">Service concerné</div>
+                                            <div class="tm-client-quotes-locked__value">
+                                                {{ prestation.service.name ?? 'Service sélectionné' }}
+                                            </div>
                                         </div>
                                     </div>
                                 {% else %}
@@ -88,52 +92,56 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex flex-column flex-md-row gap-2 mt-4">
-                                <button type="submit" class="btn btn-primary">
+                            <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
+                                <button type="submit" class="btn tm-client-quotes-btn tm-client-quotes-btn--primary">
                                     Envoyer la demande
                                 </button>
 
-                                <a href="{{ path('app_quote_request_index') }}" class="btn btn-outline-secondary">
+                                <a href="{{ path('app_quote_request_index') }}" class="btn tm-client-quotes-btn tm-client-quotes-btn--ghost">
                                     Annuler
                                 </a>
                             </div>
 
                         {{ form_end(form) }}
                     </div>
-                </div>
+                </section>
             </div>
 
-            <div class="col-lg-4">
-                <div class="card shadow-sm border-0 mb-4">
+            <div class="col-xl-4">
+                <aside class="tm-client-quotes-sidecard mb-4">
                     <div class="card-body">
-                        <h3 class="h6 fw-bold">Conseils</h3>
-                        <ul class="mb-0 text-muted">
+                        <h2 class="tm-client-quotes-sidecard__title">Bonnes pratiques</h2>
+                        <ul class="tm-client-quotes-tips">
                             {% if prestation is not defined or not prestation %}
-                                <li>Choisissez le service correspondant à votre besoin.</li>
+                                <li>Choisissez le service le plus proche de votre besoin.</li>
                             {% endif %}
-                            <li>Donnez un titre simple et précis.</li>
-                            <li>Expliquez le contexte et le résultat attendu.</li>
-                            <li>Ajoutez une date souhaitée si vous avez une contrainte.</li>
-                            <li>Indiquez un budget si vous voulez cadrer la demande.</li>
+                            <li>Formulez un titre lisible et direct.</li>
+                            <li>Décrivez le contexte, la contrainte et le résultat attendu.</li>
+                            <li>Ajoutez une échéance si le timing compte.</li>
+                            <li>Indiquez un budget pour mieux cadrer les réponses.</li>
                         </ul>
                     </div>
-                </div>
+                </aside>
 
-                <div class="card shadow-sm border-0">
+                <aside class="tm-client-quotes-sidecard">
                     <div class="card-body">
-                        <h3 class="h6 fw-bold">Exemple</h3>
-                        <p class="text-muted mb-2">
-                            Titre : Rénovation salle de bain
-                        </p>
-                        <p class="text-muted mb-2">
-                            Description : Remplacement du meuble vasque, reprise de faïence et installation d’une douche.
-                        </p>
-                        <p class="text-muted mb-0">
-                            Plus la demande est précise, plus la réponse du prestataire sera utile.
-                        </p>
+                        <h2 class="tm-client-quotes-sidecard__title">Exemple de demande</h2>
+                        <div class="tm-client-quotes-example">
+                            <div class="tm-client-quotes-example__item">
+                                <span class="tm-client-quotes-example__label">Titre</span>
+                                <strong>Rénovation de salle de bain</strong>
+                            </div>
+                            <div class="tm-client-quotes-example__item">
+                                <span class="tm-client-quotes-example__label">Description</span>
+                                <p class="mb-0">
+                                    Remplacement du meuble vasque, reprise de faïence et installation d’une douche, avec contrainte de délai avant fin de mois.
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </aside>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
