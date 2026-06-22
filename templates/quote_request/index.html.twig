@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes demandes de devis
+{% endblock %}
+
+{% block body %}
+	<div class="container py-4">
+		<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+			<div>
+				<h1 class="fw-bold mb-1">Mes demandes de devis</h1>
+				<p class="text-muted mb-0">
+					Retrouvez ici toutes vos demandes de devis envoyées aux prestataires.
+				</p>
+			</div>
+
+
+		</div>
+
+		{% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+			{% for message in messages %}
+				<div class="alert alert-{{ type }} alert-dismissible fade show mb-4" role="alert">
+					{{ message }}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+				</div>
+			{% endfor %}
+		{% endfor %}
+
+		<div class="card shadow-sm border-0">
+			<div class="card-body p-0">
+				{% if quoteRequests is not empty %}
+					<div class="table-responsive">
+						<table class="table align-middle mb-0">
+							<thead>
+								<tr>
+									<th>Titre</th>
+									<th>Date souhaitée</th>
+									<th>Budget</th>
+									<th>Statut</th>
+									<th>Créée le</th>
+									<th class="text-end">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for quoteRequest in quoteRequests %}
+									<tr>
+										<td>
+											<div class="fw-semibold">{{ quoteRequest.title }}</div>
+											<div class="small text-muted">
+												{{ quoteRequest.description ? quoteRequest.description|slice(0, 90) ~ (quoteRequest.description|length > 90 ? '…' : '') : 'Aucune description.' }}
+											</div>
+										</td>
+
+										<td>
+											{{ quoteRequest.desiredDate ? quoteRequest.desiredDate|date('d/m/Y') : 'Non renseignée' }}
+										</td>
+
+										<td>
+											{{ quoteRequest.budgetAmount is not null ? quoteRequest.budgetAmount|number_format(2, ',', ' ') ~ ' €' : 'Non renseigné' }}
+										</td>
+
+										<td>
+											<span class="badge text-bg-{{ quoteRequest.status.getBadgeClass() }}">
+												{{ quoteRequest.status.getLabel() }}
+											</span>
+										</td>
+
+										<td>
+											{{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y H:i') : '—' }}
+										</td>
+
+										<td class="text-end">
+											<a href="{{ path('app_quote_request_show', { id: quoteRequest.id }) }}" class="btn btn-sm btn-outline-secondary">
+												Voir
+											</a>
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				{% else %}
+					<div class="p-5 text-center">
+						<h2 class="h5 fw-bold mb-2">Aucune demande de devis</h2>
+						<p class="text-muted mb-4">
+							Vous n’avez pas encore créé de demande de devis.
+						</p>
+						<a href="{{ path('app_quote_request_new') }}" class="btn btn-primary">
+							Créer ma première demande
+						</a>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+{% endblock %}

@@ -311,10 +311,17 @@
 						Décrivez votre besoin en quelques instants. Ce professionnel pourra étudier votre demande et revenir vers vous rapidement.
 					</p>
 
-					<a href="#" class="btn tm-profile-show__btn-action">
-						<i class="fa-regular fa-paper-plane me-2"></i>
-						Contacter ce pro
-					</a>
+{% if app.user and is_granted('ROLE_CLIENT') %}
+    <a href="{{ path('app_quote_request_new', { prestataire: prestataire.id }) }}" class="btn tm-profile-show__btn-action">
+        <i class="fa-regular fa-paper-plane me-2"></i>
+        Demander un devis
+    </a>
+{% else %}
+    <a href="{{ path('app_login') }}" class="btn tm-profile-show__btn-action">
+        <i class="fa-regular fa-paper-plane me-2"></i>
+        Connectez-vous pour demander un devis
+    </a>
+{% endif %}
 
 					<div class="tm-profile-show__quick-points">
 						<div class="tm-profile-show__quick-point">

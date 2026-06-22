@@ -134,9 +134,9 @@
 								<i class="fa-solid fa-gauge me-2"></i>Espace Pro
 							</a>
 						</li>
-					{% else %}
+					{% elseif is_granted('ROLE_CLIENT') %}
 						<li>
-							<a class="dropdown-item tm-navbar__dropdown-link" href="#">
+							<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_quote_request_index') }}">
 								<i class="fa-solid fa-file-invoice me-2"></i>Mes Demandes
 							</a>
 						</li>

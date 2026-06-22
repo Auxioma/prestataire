@@ -1,0 +1,139 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+{% block title %}Nouvelle demande de devis{% endblock %}
+
+{% block body %}
+    <div class="container py-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <h1 class="fw-bold mb-1">Nouvelle demande de devis</h1>
+                <p class="text-muted mb-0">
+                    Décrivez votre besoin pour envoyer une demande claire et complète.
+                </p>
+            </div>
+
+            <div>
+                <a href="{{ path('app_quote_request_index') }}" class="btn btn-outline-secondary">
+                    Retour à la liste
+                </a>
+            </div>
+        </div>
+
+        {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+            {% for message in messages %}
+                <div class="alert alert-{{ type }} alert-dismissible fade show mb-4" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        {{ form_start(form, {
+                            attr: {
+                                novalidate: 'novalidate',
+                                'data-turbo': 'false'
+                            }
+                        }) }}
+
+                            <div class="mb-4">
+                                <h2 class="h5 fw-bold mb-1">Votre besoin</h2>
+                                <p class="text-muted mb-0">
+                                    Renseignez les informations principales de votre demande.
+                                </p>
+                            </div>
+
+                            {% if prestataire is defined and prestataire %}
+                                <div class="alert alert-light border mb-4">
+                                    <div class="fw-semibold mb-1">Prestataire sélectionné</div>
+                                    <div class="text-muted">
+                                        {{ prestataire.companyName ?? 'Prestataire' }}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <div class="row g-4">
+                                {% if prestation is defined and prestation %}
+                                    <div class="col-12">
+                                        <label class="form-label">Service concerné</label>
+                                        <div class="form-control bg-light">
+                                            {{ prestation.service.name ?? 'Service sélectionné' }}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="col-12">
+                                        {{ form_row(form.prestation) }}
+                                    </div>
+                                {% endif %}
+
+                                <div class="col-12">
+                                    {{ form_row(form.title) }}
+                                </div>
+
+                                <div class="col-12">
+                                    {{ form_row(form.description) }}
+                                </div>
+
+                                <div class="col-md-6">
+                                    {{ form_row(form.desiredDate) }}
+                                </div>
+
+                                <div class="col-md-6">
+                                    {{ form_row(form.budgetAmount) }}
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-column flex-md-row gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    Envoyer la demande
+                                </button>
+
+                                <a href="{{ path('app_quote_request_index') }}" class="btn btn-outline-secondary">
+                                    Annuler
+                                </a>
+                            </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body">
+                        <h3 class="h6 fw-bold">Conseils</h3>
+                        <ul class="mb-0 text-muted">
+                            {% if prestation is not defined or not prestation %}
+                                <li>Choisissez le service correspondant à votre besoin.</li>
+                            {% endif %}
+                            <li>Donnez un titre simple et précis.</li>
+                            <li>Expliquez le contexte et le résultat attendu.</li>
+                            <li>Ajoutez une date souhaitée si vous avez une contrainte.</li>
+                            <li>Indiquez un budget si vous voulez cadrer la demande.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h3 class="h6 fw-bold">Exemple</h3>
+                        <p class="text-muted mb-2">
+                            Titre : Rénovation salle de bain
+                        </p>
+                        <p class="text-muted mb-2">
+                            Description : Remplacement du meuble vasque, reprise de faïence et installation d’une douche.
+                        </p>
+                        <p class="text-muted mb-0">
+                            Plus la demande est précise, plus la réponse du prestataire sera utile.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

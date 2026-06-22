@@ -331,7 +331,17 @@
 								</div>
 							</div>
 						{% endif %}
-
+{% if app.user and is_granted('ROLE_CLIENT') %}
+    <a href="{{ path('app_quote_request_new', { prestation: prestation.id }) }}" class="tm-prestation-show__cta mb-3">
+        Demander un devis
+        <i class="fa-regular fa-paper-plane"></i>
+    </a>
+{% else %}
+    <a href="{{ path('app_login') }}" class="tm-prestation-show__cta mb-3">
+        Connectez-vous pour demander un devis
+        <i class="fa-regular fa-paper-plane"></i>
+    </a>
+{% endif %}
 						<a href="{{ path('app_prestataire_show', { slug: prestation.prestataire.slug }) }}" class="tm-prestation-show__cta">
 							Voir le profil du prestataire
 							<i class="fa-solid fa-arrow-right"></i>
