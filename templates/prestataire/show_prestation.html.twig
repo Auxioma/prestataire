@@ -53,10 +53,17 @@
 
 				<div class="tm-prestation-show__hero-content">
 					<div class="tm-prestation-show__eyebrow-wrap">
-						<span class="tm-prestation-show__eyebrow">Prestation proposée</span>
-						{% if categoryName %}
-							<span class="tm-prestation-show__chip">{{ categoryName }}</span>
-						{% endif %}
+						<div class="d-flex align-items-center gap-2 flex-wrap">
+							<span class="tm-prestation-show__eyebrow">Prestation proposée</span>
+
+							{% if categoryName %}
+								<span class="tm-prestation-show__chip">{{ categoryName }}</span>
+							{% endif %}
+						</div>
+
+						<button type="button" class="btn btn-light favorite-btn border-0 shadow-sm flex-shrink-0" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="prestation" data-favorite-toggle-target-id-value="{{ prestation.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="{{ isFavoritePrestation ? 'true' : 'false' }}" data-favorite-toggle-login-url-value="{{ path('app_login') }}" aria-pressed="{{ isFavoritePrestation ? 'true' : 'false' }}" aria-label="{{ isFavoritePrestation ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
+							<i data-favorite-toggle-target="icon" class="{{ isFavoritePrestation ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"></i>
+						</button>
 					</div>
 
 					<h1 class="tm-prestation-show__title">

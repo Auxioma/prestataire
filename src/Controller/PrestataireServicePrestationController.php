@@ -30,6 +30,8 @@ use Symfony\UX\Map\Map;
 use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Enum\FavoriteTypeEnum;
+use App\Repository\FavoriteRepository;
 
 
 final class PrestataireServicePrestationController extends AbstractController
@@ -224,7 +226,7 @@ final class PrestataireServicePrestationController extends AbstractController
     }
 
     #[Route('/prestataire/service/{id}/prestation/voir', name: 'app_prestataire_service_prestation_show', methods: ['GET'])]
-    public function show(PrestataireService $ps): Response
+    public function show(PrestataireService $ps, FavoriteRepository $favoriteRepository): Response
     {
         if (!$ps->isActive()) {
             throw $this->createNotFoundException('Cette prestation est introuvable.');
@@ -272,10 +274,22 @@ final class PrestataireServicePrestationController extends AbstractController
             );
         }
 
+        $isFavoritePrestation = false;
+        $user = $this->getUser();
+
+        if ($user instanceof User && $this->isGranted('ROLE_CLIENT')) {
+            $isFavoritePrestation = null !== $favoriteRepository->findOneBy([
+                'user' => $user,
+                'type' => FavoriteTypeEnum::PRESTATION,
+                'targetId' => $ps->getId(),
+            ]);
+        }
+
         return $this->render('prestataire/show_prestation.html.twig', [
             'ps' => $ps,
             'prestation' => $ps,
             'prestationMap' => $prestationMap,
+            'isFavoritePrestation' => $isFavoritePrestation,
         ]);
     }
 
