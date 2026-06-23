@@ -2,9 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Message;
 use App\Entity\QuoteRequest;
 use App\Entity\User;
+use App\Form\MessageType;
 use App\Form\QuoteRequestType;
+use App\Repository\ConversationRepository;
+use App\Repository\MessageRepository;
 use App\Repository\PrestataireProfileRepository;
 use App\Repository\PrestataireServiceRepository;
 use App\Repository\QuoteRequestRepository;
@@ -87,7 +91,7 @@ final class QuoteRequestController extends AbstractController
 
             $activePrestations = $prestataire
                 ->getPrestataireServices()
-                ->filter(static fn ($ps) => $ps->isActive());
+                ->filter(static fn($ps) => $ps->isActive());
 
             if ($activePrestations->isEmpty()) {
                 $this->addFlash('warning', 'Ce prestataire ne propose actuellement aucune prestation disponible pour une demande de devis.');
@@ -141,9 +145,14 @@ final class QuoteRequestController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: '_show', methods: ['GET'], requirements: ['id' => '\d+'])]
-    public function show(QuoteRequest $quoteRequest): Response
-    {
+    #[Route('/{id}', name: '_show', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
+    public function show(
+        Request $request,
+        QuoteRequest $quoteRequest,
+        ConversationRepository $conversationRepository,
+        MessageRepository $messageRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
         $user = $this->getUser();
 
         if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
@@ -154,8 +163,39 @@ final class QuoteRequestController extends AbstractController
             throw $this->createAccessDeniedException('Vous ne pouvez pas consulter cette demande.');
         }
 
+        $conversation = $conversationRepository->findOneByQuoteRequest($quoteRequest);
+        $messages = $conversation ? $messageRepository->findByConversationOrderedByCreatedAt($conversation) : [];
+
+        $messageForm = null;
+        $canSendMessage = $conversation && \in_array($quoteRequest->getStatus()->value, ['accepted', 'answered'], true);
+
+        if ($canSendMessage) {
+            $message = new Message();
+            $message->setConversation($conversation);
+            $message->setAuthor($user);
+
+            $messageForm = $this->createForm(MessageType::class, $message);
+            $messageForm->handleRequest($request);
+
+            if ($messageForm->isSubmitted() && $messageForm->isValid()) {
+                $entityManager->persist($message);
+
+                $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
+                $entityManager->flush();
+
+                return $this->redirect(
+                    $this->generateUrl('app_quote_request_show', [
+                        'id' => $quoteRequest->getId(),
+                    ]) . '#quote-message-form'
+                );
+            }
+        }
+
         return $this->render('quote_request/show.html.twig', [
             'quoteRequest' => $quoteRequest,
+            'conversation' => $conversation,
+            'messages' => $messages,
+            'messageForm' => $messageForm?->createView(),
         ]);
     }
 }

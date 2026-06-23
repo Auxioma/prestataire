@@ -1,0 +1,434 @@
+.tm-quote-index-page {
+    --tmqi-primary: #102a72;
+    --tmqi-primary-strong: #091a4d;
+    --tmqi-accent: #2858ff;
+    --tmqi-accent-hover: #1f49d6;
+    --tmqi-accent-soft: #edf3ff;
+    --tmqi-success: #12945f;
+    --tmqi-success-soft: #ebfaf2;
+    --tmqi-warning: #c98900;
+    --tmqi-warning-soft: #fff4d8;
+    --tmqi-danger: #cc4168;
+    --tmqi-danger-soft: #ffe9ef;
+    --tmqi-text: #1d2542;
+    --tmqi-text-muted: #69748d;
+    --tmqi-text-faint: #9aa4ba;
+    --tmqi-border: rgba(18, 31, 72, 0.08);
+    --tmqi-shadow-sm: 0 12px 28px rgba(15, 23, 42, 0.05);
+    --tmqi-shadow-md: 0 20px 48px rgba(15, 23, 42, 0.08);
+    --tmqi-radius-xl: 1.6rem;
+    --tmqi-radius-lg: 1.2rem;
+    --tmqi-radius-md: 1rem;
+    --tmqi-transition: 180ms cubic-bezier(.16,1,.3,1);
+
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top right, rgba(40, 88, 255, 0.09), transparent 24%),
+        radial-gradient(circle at left 14%, rgba(255, 179, 39, 0.07), transparent 18%),
+        linear-gradient(180deg, #f8fbff 0%, #f3f6fc 100%);
+    color: var(--tmqi-text);
+}
+
+.tm-quote-index-page .container {
+    max-width: 1280px;
+}
+
+.tm-quote-index-backlink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 1rem;
+    color: var(--tmqi-accent);
+    font-size: 0.95rem;
+    font-weight: 800;
+    text-decoration: none;
+    transition: color var(--tmqi-transition), transform var(--tmqi-transition);
+}
+
+.tm-quote-index-backlink:hover {
+    color: var(--tmqi-accent-hover);
+    text-decoration: none;
+    transform: translateX(-3px);
+}
+
+.tm-quote-index-hero {
+    overflow: hidden;
+    margin-bottom: 1.9rem;
+    padding: 2rem 2rem 1.9rem;
+    border: 1px solid rgba(40, 88, 255, 0.10);
+    border-radius: var(--tmqi-radius-xl);
+    background:
+        radial-gradient(circle at 100% 0%, rgba(40, 88, 255, 0.12), transparent 28%),
+        radial-gradient(circle at 12% 16%, rgba(255, 179, 39, 0.10), transparent 16%),
+        linear-gradient(135deg, #ffffff 0%, #f7faff 55%, #f2f6ff 100%);
+    box-shadow: var(--tmqi-shadow-md);
+}
+
+.tm-quote-index-hero__content {
+    max-width: 860px;
+}
+
+.tm-quote-index-hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0.45rem 0.85rem;
+    border: 1px solid rgba(40, 88, 255, 0.10);
+    border-radius: 999px;
+    background: rgba(40, 88, 255, 0.08);
+    color: var(--tmqi-accent);
+    font-size: 0.76rem;
+    font-weight: 900;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.tm-quote-index-hero__title {
+    margin: 0.9rem 0 0.5rem;
+    color: var(--tmqi-primary-strong);
+    font-size: clamp(2.2rem, 3vw, 3.35rem);
+    line-height: 1.02;
+    letter-spacing: -0.05em;
+    font-weight: 900;
+}
+
+.tm-quote-index-hero__subtitle {
+    max-width: 70ch;
+    margin: 0;
+    color: var(--tmqi-text-muted);
+    font-size: 1.03rem;
+    line-height: 1.78;
+}
+
+.tm-quote-index-alert {
+    margin-bottom: 1.3rem;
+    border-radius: 1rem;
+    border: 1px solid transparent;
+    box-shadow: var(--tmqi-shadow-sm);
+}
+
+.tm-quote-index-panel {
+    overflow: hidden;
+    border: 1px solid var(--tmqi-border);
+    border-radius: var(--tmqi-radius-xl);
+    background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+    box-shadow: var(--tmqi-shadow-sm);
+}
+
+.tm-quote-index-panel__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.6rem 1.6rem 1.1rem;
+    border-bottom: 1px solid rgba(18, 31, 72, 0.06);
+}
+
+.tm-quote-index-panel__title {
+    margin: 0 0 0.22rem;
+    color: var(--tmqi-primary-strong);
+    font-size: 1.15rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+}
+
+.tm-quote-index-panel__subtitle {
+    color: var(--tmqi-text-muted);
+    font-size: 0.96rem;
+    line-height: 1.65;
+}
+
+.tm-quote-index-panel__count {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 0.5rem 0.88rem;
+    border-radius: 999px;
+    background: var(--tmqi-accent-soft);
+    color: var(--tmqi-accent);
+    font-size: 0.8rem;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.tm-quote-index-list {
+    display: grid;
+    gap: 1.15rem;
+    padding: 1.25rem;
+}
+
+.tm-quote-index-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1.25rem;
+    align-items: center;
+    padding: 1.35rem 1.35rem;
+    border: 1px solid rgba(18, 31, 72, 0.08);
+    border-radius: 1.25rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+    transition:
+        transform var(--tmqi-transition),
+        box-shadow var(--tmqi-transition),
+        border-color var(--tmqi-transition);
+}
+
+.tm-quote-index-item:hover {
+    transform: translateY(-2px);
+    border-color: rgba(40, 88, 255, 0.14);
+    box-shadow: var(--tmqi-shadow-md);
+}
+
+.tm-quote-index-item__main {
+    min-width: 0;
+}
+
+.tm-quote-index-item__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.7rem;
+}
+
+.tm-quote-index-item__title {
+    margin: 0;
+    color: var(--tmqi-primary-strong);
+    font-size: 1.12rem;
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+}
+
+.tm-quote-index-item__desc {
+    max-width: 78ch;
+    color: var(--tmqi-text-muted);
+    font-size: 0.97rem;
+    line-height: 1.78;
+    margin-bottom: 1rem;
+}
+
+.tm-quote-index-item__meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.9rem;
+}
+
+.tm-quote-index-meta {
+    padding: 0.95rem 1rem;
+    border: 1px solid rgba(18, 31, 72, 0.07);
+    border-radius: 1rem;
+    background: #ffffff;
+}
+
+.tm-quote-index-meta__label {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: var(--tmqi-text-faint);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.tm-quote-index-meta__value {
+    display: block;
+    color: var(--tmqi-primary-strong);
+    font-size: 0.95rem;
+    font-weight: 900;
+    line-height: 1.45;
+    word-break: break-word;
+}
+
+.tm-quote-index-item__aside {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.tm-quote-index-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0.48rem 0.92rem;
+    border-radius: 999px;
+    font-size: 0.79rem;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    flex-shrink: 0;
+}
+
+.tm-quote-index-status--success,
+.tm-quote-index-status--accepted,
+.tm-quote-index-status--accepte,
+.tm-quote-index-status--validee {
+    border-color: rgba(18, 148, 95, 0.18);
+    background: var(--tmqi-success-soft);
+    color: #0d8a56;
+}
+
+.tm-quote-index-status--warning,
+.tm-quote-index-status--pending,
+.tm-quote-index-status--en_attente,
+.tm-quote-index-status--attente {
+    border-color: rgba(201, 137, 0, 0.18);
+    background: var(--tmqi-warning-soft);
+    color: #9a6a00;
+}
+
+.tm-quote-index-status--danger,
+.tm-quote-index-status--rejected,
+.tm-quote-index-status--refuse,
+.tm-quote-index-status--refusee,
+.tm-quote-index-status--denied,
+.tm-quote-index-status--cancelled {
+    border-color: rgba(204, 65, 104, 0.18);
+    background: var(--tmqi-danger-soft);
+    color: #c43761;
+}
+
+.tm-quote-index-status--info,
+.tm-quote-index-status--primary,
+.tm-quote-index-status--default,
+.tm-quote-index-status--submitted,
+.tm-quote-index-status--answered,
+.tm-quote-index-status--closed {
+    border-color: rgba(40, 88, 255, 0.14);
+    background: var(--tmqi-accent-soft);
+    color: var(--tmqi-accent);
+}
+
+.tm-quote-index-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0.82rem 1.1rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-decoration: none;
+    transition:
+        transform var(--tmqi-transition),
+        background-color var(--tmqi-transition),
+        border-color var(--tmqi-transition),
+        color var(--tmqi-transition),
+        box-shadow var(--tmqi-transition);
+}
+
+.tm-quote-index-btn:hover {
+    text-decoration: none;
+}
+
+.tm-quote-index-btn--primary {
+    border: 1px solid #2858ff;
+    background: linear-gradient(135deg, #2858ff 0%, #3f69ff 100%);
+    color: #ffffff;
+    box-shadow: 0 16px 30px rgba(40, 88, 255, 0.20);
+}
+
+.tm-quote-index-btn--primary:hover {
+    color: #ffffff;
+    border-color: #1f49d6;
+    background: linear-gradient(135deg, #1f49d6 0%, #335cff 100%);
+    transform: translateY(-2px);
+}
+
+.tm-quote-index-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4.2rem 1.5rem;
+    text-align: center;
+}
+
+.tm-quote-index-empty__icon {
+    width: 76px;
+    height: 76px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    border-radius: 1.4rem;
+    background: rgba(40, 88, 255, 0.08);
+    color: var(--tmqi-accent);
+    font-size: 1.55rem;
+}
+
+.tm-quote-index-empty__title {
+    margin: 0 0 0.45rem;
+    color: var(--tmqi-primary-strong);
+    font-size: 1.28rem;
+    font-weight: 900;
+}
+
+.tm-quote-index-empty__text {
+    max-width: 56ch;
+    margin: 0;
+    color: var(--tmqi-text-muted);
+    line-height: 1.78;
+}
+
+@media (max-width: 991.98px) {
+    .tm-quote-index-panel__head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .tm-quote-index-item {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+    }
+
+    .tm-quote-index-item__aside {
+        justify-content: flex-start;
+    }
+
+    .tm-quote-index-item__meta {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .tm-quote-index-hero {
+        padding: 1.35rem;
+        border-radius: 1.2rem;
+    }
+
+    .tm-quote-index-hero__title {
+        font-size: 2rem;
+        line-height: 1.06;
+    }
+
+    .tm-quote-index-list {
+        padding: 0.95rem;
+        gap: 0.95rem;
+    }
+
+    .tm-quote-index-item {
+        padding: 1.05rem;
+        border-radius: 1.05rem;
+    }
+
+    .tm-quote-index-item__top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .tm-quote-index-item__desc {
+        font-size: 0.94rem;
+        line-height: 1.72;
+    }
+
+    .tm-quote-index-btn {
+        width: 100%;
+    }
+
+    .tm-quote-index-empty {
+        padding: 3rem 1rem;
+    }
+}

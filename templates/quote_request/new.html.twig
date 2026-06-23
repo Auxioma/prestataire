@@ -5,18 +5,18 @@
 {% block title %}Nouvelle demande de devis{% endblock %}
 
 {% block body %}
-<div class="tm-client-quotes-page">
+<div class="tm-quote-create-page">
     <div class="container py-4 py-lg-5">
-        <section class="tm-client-quotes-hero">
-            <div class="tm-client-quotes-hero__content">
-                <a href="{{ path('app_quote_request_index') }}" class="tm-client-quotes-backlink">
+        <section class="tm-quote-create-hero">
+            <div class="tm-quote-create-hero__content">
+                <a href="{{ path('app_quote_request_index') }}" class="tm-quote-create-backlink">
                     <i class="fa-solid fa-arrow-left"></i>
                     <span>Retour à mes demandes</span>
                 </a>
 
-                <span class="tm-client-quotes-eyebrow">Nouvelle demande</span>
-                <h1 class="tm-client-quotes-title tm-client-quotes-title--wide">Décrivez votre besoin avec précision</h1>
-                <p class="tm-client-quotes-subtitle">
+                <span class="tm-quote-create-hero__eyebrow">Nouvelle demande</span>
+                <h1 class="tm-quote-create-hero__title">Décrivez votre besoin avec précision</h1>
+                <p class="tm-quote-create-hero__subtitle">
                     Une demande claire facilite la comparaison, améliore la pertinence des réponses et permet au prestataire de mieux comprendre votre projet.
                 </p>
             </div>
@@ -24,7 +24,7 @@
 
         {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
             {% for message in messages %}
-                <div class="alert alert-{{ type }} alert-dismissible fade show mb-4" role="alert">
+                <div class="alert alert-{{ type }} alert-dismissible fade show tm-quote-create-alert" role="alert">
                     {{ message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
                 </div>
@@ -33,38 +33,38 @@
 
         <div class="row g-4">
             <div class="col-xl-8">
-                <section class="tm-client-quotes-panel">
-                    <div class="tm-client-quotes-panel__body">
+                <section class="tm-quote-create-panel">
+                    <div class="tm-quote-create-panel__body">
                         {{ form_start(form, {
                             attr: {
                                 novalidate: 'novalidate',
                                 'data-turbo': 'false',
-                                class: 'tm-client-quotes-form'
+                                class: 'tm-quote-create-form'
                             }
                         }) }}
 
-                            <div class="tm-client-quotes-highlight mb-4">
-                                <div class="tm-client-quotes-highlight__title">Conseil</div>
-                                <p class="tm-client-quotes-highlight__text mb-0">
+                            <div class="tm-quote-create-highlight">
+                                <div class="tm-quote-create-highlight__title">Conseil</div>
+                                <p class="tm-quote-create-highlight__text mb-0">
                                     Plus votre besoin est concret, plus les retours seront utiles, comparables et rapides à exploiter.
                                 </p>
                             </div>
 
                             {% if prestataire is defined and prestataire %}
-                                <div class="tm-client-quotes-locked mb-4">
-                                    <div class="tm-client-quotes-locked__label">Prestataire sélectionné</div>
-                                    <div class="tm-client-quotes-locked__value">
+                                <div class="tm-quote-create-locked">
+                                    <div class="tm-quote-create-locked__label">Prestataire sélectionné</div>
+                                    <div class="tm-quote-create-locked__value">
                                         {{ prestataire.companyName ?? 'Prestataire' }}
                                     </div>
                                 </div>
                             {% endif %}
 
-                            <div class="row g-4 tm-client-quotes-form-fields">
+                            <div class="row g-4 tm-quote-create-form__fields">
                                 {% if prestation is defined and prestation %}
                                     <div class="col-12">
-                                        <div class="tm-client-quotes-locked">
-                                            <div class="tm-client-quotes-locked__label">Service concerné</div>
-                                            <div class="tm-client-quotes-locked__value">
+                                        <div class="tm-quote-create-locked">
+                                            <div class="tm-quote-create-locked__label">Service concerné</div>
+                                            <div class="tm-quote-create-locked__value">
                                                 {{ prestation.service.name ?? 'Service sélectionné' }}
                                             </div>
                                         </div>
@@ -92,12 +92,12 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
-                                <button type="submit" class="btn tm-client-quotes-btn tm-client-quotes-btn--primary">
+                            <div class="tm-quote-create-actions">
+                                <button type="submit" class="btn tm-quote-create-btn tm-quote-create-btn--primary">
                                     Envoyer la demande
                                 </button>
 
-                                <a href="{{ path('app_quote_request_index') }}" class="btn tm-client-quotes-btn tm-client-quotes-btn--ghost">
+                                <a href="{{ path('app_quote_request_index') }}" class="btn tm-quote-create-btn tm-quote-create-btn--ghost">
                                     Annuler
                                 </a>
                             </div>
@@ -108,10 +108,10 @@
             </div>
 
             <div class="col-xl-4">
-                <aside class="tm-client-quotes-sidecard mb-4">
+                <aside class="tm-quote-create-sidecard mb-4">
                     <div class="card-body">
-                        <h2 class="tm-client-quotes-sidecard__title">Bonnes pratiques</h2>
-                        <ul class="tm-client-quotes-tips">
+                        <h2 class="tm-quote-create-sidecard__title">Bonnes pratiques</h2>
+                        <ul class="tm-quote-create-tips">
                             {% if prestation is not defined or not prestation %}
                                 <li>Choisissez le service le plus proche de votre besoin.</li>
                             {% endif %}
@@ -123,16 +123,16 @@
                     </div>
                 </aside>
 
-                <aside class="tm-client-quotes-sidecard">
+                <aside class="tm-quote-create-sidecard">
                     <div class="card-body">
-                        <h2 class="tm-client-quotes-sidecard__title">Exemple de demande</h2>
-                        <div class="tm-client-quotes-example">
-                            <div class="tm-client-quotes-example__item">
-                                <span class="tm-client-quotes-example__label">Titre</span>
+                        <h2 class="tm-quote-create-sidecard__title">Exemple de demande</h2>
+                        <div class="tm-quote-create-example">
+                            <div class="tm-quote-create-example__item">
+                                <span class="tm-quote-create-example__label">Titre</span>
                                 <strong>Rénovation de salle de bain</strong>
                             </div>
-                            <div class="tm-client-quotes-example__item">
-                                <span class="tm-client-quotes-example__label">Description</span>
+                            <div class="tm-quote-create-example__item">
+                                <span class="tm-quote-create-example__label">Description</span>
                                 <p class="mb-0">
                                     Remplacement du meuble vasque, reprise de faïence et installation d’une douche, avec contrainte de délai avant fin de mois.
                                 </p>

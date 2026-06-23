@@ -26,4 +26,15 @@ class MessageRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+        public function findByConversationOrderedByCreatedAt(Conversation $conversation): array
+    {
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.conversation = :conversation')
+            ->setParameter('conversation', $conversation)
+            ->orderBy('m.createdAt', 'ASC')
+            ->addOrderBy('m.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

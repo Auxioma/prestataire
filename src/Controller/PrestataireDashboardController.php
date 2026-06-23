@@ -152,7 +152,6 @@ final class PrestataireDashboardController extends AbstractController
             $entityManager->persist($message);
             $entityManager->flush();
 
-            $this->addFlash('danger', 'Impossible d’envoyer le message.');
         }
 
         return $this->redirectToRoute('app_prestataire_dashboard', [
