@@ -100,7 +100,7 @@
 
 							<div class="alert alert-info mb-3">
 								En acceptant d’étudier cette demande, vous vous engagez uniquement à apporter une réponse au client
-																																            dans les meilleurs délais. Cela ne vaut pas acceptation ferme et définitive de la prestation telle quelle.
+																																								            dans les meilleurs délais. Cela ne vaut pas acceptation ferme et définitive de la prestation telle quelle.
 							</div>
 
 							<div class="d-flex flex-column flex-md-row gap-2">
@@ -124,10 +124,10 @@
 					<a href="{{ path('app_prestataire_dashboard') ~ '#demandes-main-panel' }}" class="btn btn-outline-primary w-100">
 						Retour aux demandes
 					</a>
-					{% if quoteRequest.status == constant('App\\Enum\\QuoteRequestStatusEnum::ACCEPTED') %}
-						<div class="alert alert-success mt-3 mb-0">
-							Cette demande est en cours d’étude. La conversation avec le client est ouverte.
-						</div>
+					{% if quoteRequest.status == constant('App\\Enum\\QuoteRequestStatusEnum::ACCEPTED') and quoteRequest.conversation %}
+						<a href="{{ path('app_prestataire_dashboard', {conversation: quoteRequest.conversation.id}) ~ '#messages-main-panel' }}" class="btn btn-primary w-100 mt-3">
+							Vous avez accepté cette demande d'etude de projet. Ouvrir la conversation
+						</a>
 					{% endif %}
 					{% if quoteRequest.status == constant('App\\Enum\\QuoteRequestStatusEnum::DENIED') %}
 						<div class="alert alert-danger mt-3 mb-0">

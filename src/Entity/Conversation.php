@@ -28,7 +28,7 @@ class Conversation
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?PrestataireProfile $prestataire = null;
 
-    #[ORM\OneToMany(mappedBy: 'conversation', targetEntity: Message::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'conversation', targetEntity: Message::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
     private Collection $messages;
 
