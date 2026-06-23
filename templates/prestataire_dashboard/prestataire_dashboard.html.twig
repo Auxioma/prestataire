@@ -46,7 +46,7 @@
 					</div>
 
 					<nav class="tm-sidebar-nav nav nav-pills flex-column" id="dashboardMainTabs" role="tablist" aria-label="Navigation principale du dashboard">
-						<button class="tm-sidebar-link nav-link active" id="dashboard-main-tab" data-bs-toggle="tab" data-bs-target="#dashboard-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="dashboard-main-panel" aria-selected="true">
+						<button class="tm-sidebar-link nav-link {{ activeTab == 'dashboard' ? 'active' : '' }}" id="dashboard-main-tab" data-bs-toggle="tab" data-bs-target="#dashboard-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="dashboard-main-panel" aria-selected="{{ activeTab == 'dashboard' ? 'true' : 'false' }}">
 							<span class="tm-sidebar-link-icon">⌂</span>
 							<span>Tableau de bord</span>
 						</button>
@@ -76,7 +76,7 @@
 							<span>Demandes Reçues</span>
 						</button>
 
-						<button class="tm-sidebar-link nav-link" id="messages-main-tab" data-bs-toggle="tab" data-bs-target="#messages-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="messages-main-panel" aria-selected="false">
+						<button class="tm-sidebar-link nav-link {{ activeTab == 'messages' ? 'active' : '' }}" id="messages-main-tab" data-bs-toggle="tab" data-bs-target="#messages-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="messages-main-panel" aria-selected="{{ activeTab == 'messages' ? 'true' : 'false' }}">
 							<span class="tm-sidebar-link-icon">✉</span>
 							<span>Messages</span>
 						</button>
@@ -115,7 +115,7 @@
 				{% endfor %}
 
 				<div class="tab-content" id="dashboardMainTabsContent">
-					<div class="tab-pane fade show active" id="dashboard-main-panel" role="tabpanel" aria-labelledby="dashboard-main-tab">
+					<div class="tab-pane fade {{ activeTab == 'dashboard' ? 'show active' : '' }}" id="dashboard-main-panel" role="tabpanel" aria-labelledby="dashboard-main-tab">
 						{{ include('prestataire_dashboard/_dashboard_panel.html.twig') }}
 					</div>
 
@@ -139,7 +139,7 @@
 						{{ include('prestataire_dashboard/_demandes_panel.html.twig') }}
 					</div>
 
-					<div class="tab-pane fade" id="messages-main-panel" role="tabpanel" aria-labelledby="messages-main-tab">
+					<div class="tab-pane fade {{ activeTab == 'messages' ? 'show active' : '' }}" id="messages-main-panel" role="tabpanel" aria-labelledby="messages-main-tab">
 						{{ include('prestataire_dashboard/_messages_panel.html.twig') }}
 					</div>
 				</div>

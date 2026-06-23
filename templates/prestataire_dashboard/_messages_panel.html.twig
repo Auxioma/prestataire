@@ -1,7 +1,7 @@
-<div class="card tm-card p-0 overflow-hidden">
+<div class="tm-msg card tm-card p-0 overflow-hidden">
 	<div class="row g-0">
-		<div class="col-lg-4 border-end">
-			<div class="p-4 border-bottom">
+		<div class="col-lg-4 tm-msg-sidebar">
+			<div class="tm-msg-sidebar-head">
 				<h4 class="tm-card-title mb-1">Toutes les conversations</h4>
 				<p class="text-muted mb-0">
 					Retrouvez ici les échanges liés aux demandes de devis acceptées.
@@ -9,52 +9,52 @@
 			</div>
 
 			{% if conversations is empty %}
-				<div class="p-4">
-					<div class="alert alert-light mb-0">
+				<div class="tm-msg-empty tm-msg-empty--sidebar">
+					<div class="tm-msg-empty-box">
 						Aucune conversation ouverte pour le moment.
 					</div>
 				</div>
 			{% else %}
-				<div class="list-group list-group-flush">
+				<div class="tm-msg-list">
 					{% for conversation in conversations %}
 						{% set quoteRequest = conversation.quoteRequest %}
 						{% set lastMessage = conversation.messages|last %}
-						<a href="{{ path('app_prestataire_dashboard', {conversation: conversation.id}) ~ '#messages-main-panel' }}" class="list-group-item list-group-item-action p-3 {% if activeConversation and activeConversation.id == conversation.id %}active{% endif %}">
-							<div class="d-flex justify-content-between align-items-start gap-3">
-								<div class="flex-grow-1">
-									<div class="fw-semibold mb-1">
-										{{ quoteRequest ? quoteRequest.title : 'Conversation sans demande liée' }}
-									</div>
+						{% set isActive = activeConversation and activeConversation.id == conversation.id %}
 
-									<div class="small {% if activeConversation and activeConversation.id == conversation.id %}text-white-50{% else %}text-muted{% endif %}">
-										{% if quoteRequest and quoteRequest.client and quoteRequest.client.account %}
-											{{ quoteRequest.client.account.firstName }}
-											{{ quoteRequest.client.account.lastName }}
-										{% else %}
-											Client non renseigné
-										{% endif %}
-									</div>
-
-									<div class="small mt-2 {% if activeConversation and activeConversation.id == conversation.id %}text-white-50{% else %}text-muted{% endif %}">
-										{% if lastMessage %}
-											{% set preview = lastMessage.content ?? '' %}
-											{{ preview|length > 90 ? preview|slice(0, 90) ~ '...' : preview }}
-										{% else %}
-											Conversation ouverte, aucun message affichable pour le moment.
-										{% endif %}
-									</div>
+						<a href="{{ path('app_prestataire_dashboard', {conversation: conversation.id, tab: 'messages'}) }}" class="tm-msg-thread {% if isActive %}is-active{% endif %}">
+							<div class="tm-msg-thread-main">
+								<div class="tm-msg-thread-title">
+									{{ quoteRequest ? quoteRequest.title : 'Conversation sans demande liée' }}
 								</div>
 
-								<div class="text-end">
-									{% if quoteRequest %}
-										<span class="tm-quote-badge tm-quote-badge--{{ quoteRequest.status.value|lower }}">
-											{{ quoteRequest.status.value }}
-										</span>
+								<div class="tm-msg-thread-client">
+									{% if quoteRequest and quoteRequest.client and quoteRequest.client.account %}
+										{{ quoteRequest.client.account.firstName }}
+										{{ quoteRequest.client.account.lastName }}
+									{% else %}
+										Client non renseigné
 									{% endif %}
+								</div>
 
-									<div class="small mt-2 {% if activeConversation and activeConversation.id == conversation.id %}text-white-50{% else %}text-muted{% endif %}">
-										{{ conversation.lastMessageAt ? conversation.lastMessageAt|date('d/m/Y') : '—' }}
-									</div>
+								<div class="tm-msg-thread-preview">
+									{% if lastMessage %}
+										{% set preview = lastMessage.content ?? '' %}
+										{{ preview|length > 90 ? preview|slice(0, 90) ~ '...' : preview }}
+									{% else %}
+										Conversation ouverte, aucun message affichable pour le moment.
+									{% endif %}
+								</div>
+							</div>
+
+							<div class="tm-msg-thread-side">
+								{% if quoteRequest %}
+									<span class="tm-quote-badge tm-quote-badge--{{ quoteRequest.status.value|lower }}">
+										{{ quoteRequest.status.value }}
+									</span>
+								{% endif %}
+
+								<div class="tm-msg-thread-date">
+									{{ conversation.lastMessageAt ? conversation.lastMessageAt|date('d/m/Y') : '—' }}
 								</div>
 							</div>
 						</a>
@@ -63,12 +63,12 @@
 			{% endif %}
 		</div>
 
-		<div class="col-lg-8">
+		<div class="col-lg-8 tm-msg-main">
 			{% if activeConversation %}
 				{% set quoteRequest = activeConversation.quoteRequest %}
 
-				<div class="p-4 border-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-					<div>
+				<div class="tm-msg-head">
+					<div class="tm-msg-head-copy">
 						<h4 class="tm-card-title mb-1">
 							{{ quoteRequest ? quoteRequest.title : 'Conversation' }}
 						</h4>
@@ -84,41 +84,47 @@
 					</div>
 
 					{% if quoteRequest %}
-						<button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#quoteRequestDetailsModal">
+						<button type="button" class="btn btn-outline-primary tm-msg-head-btn" data-bs-toggle="modal" data-bs-target="#quoteRequestDetailsModal">
 							Voir la demande
 						</button>
 					{% endif %}
 				</div>
 
-				<div class="p-4" style="min-height: 420px; max-height: 620px; overflow-y: auto;">
+				<div class="tm-msg-body">
 					{% if activeConversation.messages is empty %}
-						<div class="alert alert-light mb-0">
-							Aucun message dans cette conversation pour le moment.
+						<div class="tm-msg-empty tm-msg-empty--body">
+							<div class="tm-msg-empty-box">
+								Aucun message dans cette conversation pour le moment.
+							</div>
 						</div>
 					{% else %}
-						<div class="d-flex flex-column gap-3">
+						<div class="tm-msg-stream">
 							{% for message in activeConversation.messages %}
 								{% set isPrestataireAuthor = message.author and app.user and message.author.id == app.user.id %}
 								{% set isSystem = message.type and message.type.value == 'system' %}
 
-								<div class="d-flex {% if isSystem %}justify-content-center{% elseif isPrestataireAuthor %}justify-content-end{% else %}justify-content-start{% endif %}">
+								<div class="tm-msg-row {% if isSystem %}is-system{% elseif isPrestataireAuthor %}is-own{% else %}is-other{% endif %}">
 									{% if isSystem %}
-										<div class="badge text-bg-light px-3 py-2">
+										<div class="tm-msg-system">
 											{{ message.content }}
 										</div>
 									{% else %}
-										<div class="p-3 rounded-4 {% if isPrestataireAuthor %}bg-primary text-white{% else %}bg-light border{% endif %}" style="max-width: 75%;">
-											<div class="small {% if isPrestataireAuthor %}text-white-50{% else %}text-muted{% endif %} mb-1">
+										<div class="tm-msg-bubble">
+											<div class="tm-msg-meta">
 												{% if message.author %}
-													{{ message.author.firstName }}
-													{{ message.author.lastName }}
+													{{ message.author.prestataireProfile and message.author.prestataireProfile.companyName
+                                                        ? message.author.prestataireProfile.companyName
+                                                        : (message.author.firstName ~ ' ' ~ message.author.lastName) }}
 												{% else %}
 													Système
 												{% endif %}
-												·
-												{{ message.createdAt ? message.createdAt|date('d/m/Y à H:i') : '—' }}
+												<span>·</span>
+												<span>{{ message.createdAt ? message.createdAt|date('d/m/Y à H:i') : '—' }}</span>
 											</div>
-											<div>{{ message.content|nl2br }}</div>
+
+											<div class="tm-msg-content">
+												{{ message.content|nl2br }}
+											</div>
 										</div>
 									{% endif %}
 								</div>
@@ -127,29 +133,32 @@
 					{% endif %}
 				</div>
 
-				<div class="border-top p-4 bg-light">
-					<div class="border-top p-4 bg-light">
-						{% if messageForm %}
-							{{ form_start(messageForm) }}
-							<div class="mb-3">
-								{{ form_widget(messageForm.content, {
-                    attr: {
-                        class: 'form-control',
-                        rows: 4,
-                        placeholder: 'Écrivez votre message...'
-                    }
-                }) }}
-								{{ form_errors(messageForm.content) }}
-							</div>
+				<div class="tm-msg-compose">
+					{% if messageForm %}
+						{{ form_start(messageForm, {
+                            attr: {
+                                'data-turbo': 'false',
+                                'class': 'tm-msg-form'
+                            }
+                        }) }}
+						<div class="tm-msg-compose-field">
+							{{ form_widget(messageForm.content, {
+                                    attr: {
+                                        class: 'form-control tm-msg-textarea',
+                                        rows: 4,
+                                        placeholder: 'Écrivez votre message...'
+                                    }
+                                }) }}
+							{{ form_errors(messageForm.content) }}
+						</div>
 
-							<div class="d-flex justify-content-end">
-								<button type="submit" class="btn btn-primary">
-									Envoyer
-								</button>
-							</div>
-							{{ form_end(messageForm) }}
-						{% endif %}
-					</div>
+						<div class="tm-msg-compose-actions">
+							<button type="submit" class="btn btn-primary tm-msg-submit">
+								Envoyer
+							</button>
+						</div>
+						{{ form_end(messageForm) }}
+					{% endif %}
 				</div>
 
 				{% if quoteRequest %}
@@ -157,9 +166,7 @@
 						<div class="modal-dialog modal-lg modal-dialog-scrollable">
 							<div class="modal-content">
 								<div class="modal-header">
-									<h5 class="modal-title" id="quoteRequestDetailsModalLabel">
-										Détails de la demande
-									</h5>
+									<h5 class="modal-title" id="quoteRequestDetailsModalLabel">Détails de la demande</h5>
 									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
 								</div>
 
@@ -226,8 +233,8 @@
 					</div>
 				{% endif %}
 			{% else %}
-				<div class="p-5">
-					<div class="alert alert-light mb-0">
+				<div class="tm-msg-empty tm-msg-empty--body tm-msg-empty--full">
+					<div class="tm-msg-empty-box">
 						Sélectionnez une conversation pour afficher les échanges.
 					</div>
 				</div>

@@ -71,6 +71,7 @@ final class PrestataireDashboardController extends AbstractController
         );
 
         $activeConversation = null;
+        $activeTab = $request->query->get('tab', 'dashboard');
 
         if (!empty($conversations)) {
             if (is_string($conversationId) || is_numeric($conversationId)) {
@@ -109,6 +110,7 @@ final class PrestataireDashboardController extends AbstractController
             'conversations' => $conversations,
             'activeConversation' => $activeConversation,
             'messageForm' => $messageForm,
+            'activeTab' => $activeTab,
         ]);
     }
 
@@ -150,13 +152,12 @@ final class PrestataireDashboardController extends AbstractController
             $entityManager->persist($message);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Votre message a bien été envoyé.');
-        } else {
             $this->addFlash('danger', 'Impossible d’envoyer le message.');
         }
 
         return $this->redirectToRoute('app_prestataire_dashboard', [
             'conversation' => $conversation->getId(),
+            'tab' => 'messages',
         ], 303);
     }
 }
