@@ -12,6 +12,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Enum\QuoteRequestStatusEnum;
+use App\Enum\MessageTypeEnum;
+use App\Entity\Conversation;
+use App\Entity\Message;
+use App\Repository\ConversationRepository;
+
 
 #[Route('/prestataire/demandes', name: 'app_prestataire_quote_request_')]
 final class PrestataireQuoteRequestController extends AbstractController
@@ -61,6 +66,7 @@ final class PrestataireQuoteRequestController extends AbstractController
     public function acceptStudy(
         Request $request,
         QuoteRequest $quoteRequest,
+        ConversationRepository $conversationRepository,
         EntityManagerInterface $entityManager
     ): RedirectResponse {
         $user = $this->getUser();
@@ -94,9 +100,36 @@ final class PrestataireQuoteRequestController extends AbstractController
         $quoteRequest->setStatus(QuoteRequestStatusEnum::ACCEPTED);
         $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
 
+        $conversation = $conversationRepository->findOneByQuoteRequest($quoteRequest);
+
+        if (!$conversation instanceof Conversation) {
+            $conversation = new Conversation();
+            $conversation
+                ->setQuoteRequest($quoteRequest)
+                ->setClient($quoteRequest->getClient())
+                ->setPrestataire($quoteRequest->getPrestataire())
+                ->touch();
+
+            $entityManager->persist($conversation);
+
+            $message = new Message();
+            $message
+                ->setConversation($conversation)
+                ->setType(MessageTypeEnum::SYSTEM)
+                ->setAuthor(null)
+                ->setContent('Le prestataire a accepté d’étudier votre demande de devis.');
+
+            $conversation->addMessage($message);
+            $conversation->markLastMessageAt($message->getCreatedAt());
+
+            $entityManager->persist($message);
+        } else {
+            $conversation->touch();
+        }
+
         $entityManager->flush();
 
-        $this->addFlash('success', 'Vous avez accepté d’étudier cette demande. Vous pouvez désormais y répondre.');
+        $this->addFlash('success', 'Vous avez accepté d’étudier cette demande. La conversation avec le client est maintenant ouverte.');
 
         return $this->redirectToRoute('app_prestataire_quote_request_show', [
             'id' => $quoteRequest->getId(),
