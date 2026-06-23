@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\ConversationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: ConversationRepository::class)]
 #[ORM\Table(name: 'conversation')]
@@ -26,6 +28,10 @@ class Conversation
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?PrestataireProfile $prestataire = null;
 
+    #[ORM\OneToMany(mappedBy: 'conversation', targetEntity: Message::class, orphanRemoval: true)]
+    #[ORM\OrderBy(['createdAt' => 'ASC'])]
+    private Collection $messages;
+
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
@@ -41,6 +47,7 @@ class Conversation
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->messages = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -132,6 +139,52 @@ class Conversation
     public function setIsClosed(bool $isClosed): static
     {
         $this->isClosed = $isClosed;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): static
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+            $message->setConversation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): static
+    {
+        if ($this->messages->removeElement($message)) {
+            if ($message->getConversation() === $this) {
+                $message->setConversation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function touch(?\DateTimeImmutable $date = null): static
+    {
+        $now = $date ?? new \DateTimeImmutable();
+        $this->updatedAt = $now;
+
+        return $this;
+    }
+
+    public function markLastMessageAt(?\DateTimeImmutable $date = null): static
+    {
+        $now = $date ?? new \DateTimeImmutable();
+        $this->lastMessageAt = $now;
+        $this->updatedAt = $now;
 
         return $this;
     }
