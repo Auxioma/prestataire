@@ -93,10 +93,37 @@
 					<p class="text-muted mb-3">
 						Cette demande est disponible en lecture dans votre espace professionnel.
 					</p>
+					
+					{% if quoteRequest.status.value == 'submitted' %}
+						<div class="card tm-card p-4 mb-4">
+							<h2 class="h5 mb-3">Traitement de la demande</h2>
 
-<a href="{{ path('app_prestataire_dashboard') ~ '#demandes-main-panel' }}" class="btn btn-outline-primary w-100">
-    Retour aux demandes
-</a>
+							<div class="alert alert-info mb-3">
+								En acceptant d’étudier cette demande, vous vous engagez uniquement à apporter une réponse au client
+								            dans les meilleurs délais. Cela ne vaut pas acceptation ferme et définitive de la prestation telle quelle.
+							</div>
+
+							<div class="d-flex flex-column flex-md-row gap-2">
+								<form method="post" action="{{ path('app_prestataire_quote_request_accept_study', {id: quoteRequest.id}) }}">
+									<input type="hidden" name="_token" value="{{ csrf_token('accept-study-' ~ quoteRequest.id) }}">
+									<button type="submit" class="btn btn-primary">
+										Accepter d’étudier la demande
+									</button>
+								</form>
+
+								<form method="post" action="{{ path('app_prestataire_quote_request_deny', {id: quoteRequest.id}) }}">
+									<input type="hidden" name="_token" value="{{ csrf_token('deny-quote-request-' ~ quoteRequest.id) }}">
+									<button type="submit" class="btn btn-outline-danger" onclick="return confirm('Confirmez-vous le refus de cette demande ?');">
+										Refuser la demande
+									</button>
+								</form>
+							</div>
+						</div>
+					{% endif %}
+
+					<a href="{{ path('app_prestataire_dashboard') ~ '#demandes-main-panel' }}" class="btn btn-outline-primary w-100">
+						Retour aux demandes
+					</a>
 				</div>
 			</div>
 		</div>

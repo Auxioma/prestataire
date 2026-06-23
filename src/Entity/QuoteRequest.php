@@ -28,6 +28,9 @@ class QuoteRequest
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?PrestataireService $prestation = null;
 
+    #[ORM\OneToOne(mappedBy: 'quoteRequest', targetEntity: Conversation::class)]
+    private ?Conversation $conversation = null;
+
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
@@ -176,6 +179,26 @@ class QuoteRequest
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getConversation(): ?Conversation
+    {
+        return $this->conversation;
+    }
+
+    public function setConversation(?Conversation $conversation): static
+    {
+        if ($conversation === null && $this->conversation !== null) {
+            $this->conversation->setQuoteRequest(null);
+        }
+
+        if ($conversation !== null && $conversation->getQuoteRequest() !== $this) {
+            $conversation->setQuoteRequest($this);
+        }
+
+        $this->conversation = $conversation;
 
         return $this;
     }
