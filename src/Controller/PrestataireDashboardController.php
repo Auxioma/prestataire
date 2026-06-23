@@ -11,6 +11,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Conversation;
 use App\Repository\ConversationRepository;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use App\Entity\Message;
+use App\Form\MessageType;
+use App\Enum\MessageTypeEnum;
+use Doctrine\ORM\EntityManagerInterface;
 
 final class PrestataireDashboardController extends AbstractController
 {
@@ -82,6 +87,19 @@ final class PrestataireDashboardController extends AbstractController
             }
         }
 
+        $messageForm = null;
+
+        if ($activeConversation) {
+            $message = new Message();
+
+            $messageForm = $this->createForm(MessageType::class, $message, [
+                'action' => $this->generateUrl('app_prestataire_conversation_message_send', [
+                    'id' => $activeConversation->getId(),
+                ]),
+                'method' => 'POST',
+            ])->createView();
+        }
+
         return $this->render('prestataire_dashboard/prestataire_dashboard.html.twig', [
             'user' => $user,
             'prestataireProfile' => $prestataireProfile,
@@ -90,6 +108,55 @@ final class PrestataireDashboardController extends AbstractController
             'quoteSort' => $quoteSort,
             'conversations' => $conversations,
             'activeConversation' => $activeConversation,
+            'messageForm' => $messageForm,
         ]);
+    }
+
+    #[Route('/prestataire/espace-pro/conversation/{id}/message', name: 'app_prestataire_conversation_message_send', methods: ['POST'])]
+    public function sendMessage(
+        #[MapEntity(id: 'id')] Conversation $conversation,
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof \App\Entity\User || !$user->getPrestataireProfile()) {
+            throw $this->createAccessDeniedException('Accès refusé.');
+        }
+
+        $prestataireProfile = $user->getPrestataireProfile();
+
+        if ($conversation->getPrestataire()?->getId() !== $prestataireProfile->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas répondre à cette conversation.');
+        }
+
+        $message = new Message();
+        $form = $this->createForm(MessageType::class, $message);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $message->setConversation($conversation);
+            $message->setAuthor($user);
+            $message->setType(MessageTypeEnum::USER);
+
+            if (method_exists($conversation, 'setLastMessageAt')) {
+                $conversation->setLastMessageAt(new \DateTimeImmutable());
+            }
+
+            if (method_exists($conversation, 'setUpdatedAt')) {
+                $conversation->setUpdatedAt(new \DateTimeImmutable());
+            }
+
+            $entityManager->persist($message);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Votre message a bien été envoyé.');
+        } else {
+            $this->addFlash('danger', 'Impossible d’envoyer le message.');
+        }
+
+        return $this->redirectToRoute('app_prestataire_dashboard', [
+            'conversation' => $conversation->getId(),
+        ], 303);
     }
 }
