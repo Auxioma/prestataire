@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use App\Entity\PrestataireService;
 
 #[Route('/demandes-de-devis', name: 'app_quote_request')]
 final class QuoteRequestController extends AbstractController
@@ -43,13 +44,13 @@ final class QuoteRequestController extends AbstractController
         ]);
     }
 
-    #[Route('/nouvelle', name: '_new', methods: ['GET', 'POST'])]
+    #[Route('/nouvelle/{slug}', name: '_new', methods: ['GET', 'POST'], defaults: ['slug' => null])]
     public function new(
         Request $request,
         EntityManagerInterface $entityManager,
-        PrestataireServiceRepository $prestataireServiceRepository,
         PrestataireProfileRepository $prestataireProfileRepository,
-        SluggerInterface $slugger
+        SluggerInterface $slugger,
+        #[MapEntity(mapping: ['slug' => 'slug'])] ?PrestataireService $prestation = null
     ): Response {
         $user = $this->getUser();
 
@@ -60,20 +61,15 @@ final class QuoteRequestController extends AbstractController
         $quoteRequest = new QuoteRequest();
         $quoteRequest->setClient($user->getClientProfile());
 
-        $prestation = null;
         $prestataire = null;
-
-        $prestationId = $request->query->get('prestation');
         $prestataireId = $request->query->get('prestataire');
 
-        if (!$prestationId && !$prestataireId) {
+        if (!$prestation && !$prestataireId) {
             throw $this->createNotFoundException('Contexte manquant pour créer une demande de devis.');
         }
 
-        if ($prestationId) {
-            $prestation = $prestataireServiceRepository->find($prestationId);
-
-            if (!$prestation || !$prestation->isActive()) {
+        if ($prestation) {
+            if (!$prestation->isActive()) {
                 throw $this->createNotFoundException('Prestation introuvable.');
             }
 
@@ -134,7 +130,7 @@ final class QuoteRequestController extends AbstractController
                     ->lower()
                     ->toString();
 
-                $quoteRequest->setSlug($baseSlug . '-' . substr(uniqid(), -6));
+                $quoteRequest->setSlug($baseSlug . '-' . substr(bin2hex(random_bytes(4)), 0, 8));
 
                 $entityManager->persist($quoteRequest);
                 $entityManager->flush();
