@@ -67,7 +67,7 @@ final class PrestataireQuoteRequestController extends AbstractController
     #[Route('/{slug}/accept-study', name: 'accept_study', methods: ['POST'])]
     public function acceptStudy(
         Request $request,
-        QuoteRequest $quoteRequest,
+        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
         ConversationRepository $conversationRepository,
         EntityManagerInterface $entityManager
     ): RedirectResponse {

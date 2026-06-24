@@ -64,9 +64,15 @@
 
 						<td class="text-end">
 							<div class="tm-services-actions">
-								<a href="{{ path('app_prestataire_service_prestation_edit', { slug: ps.slug }) }}" class="btn btn-sm btn-outline-secondary" data-turbo="false">
-									{{ ps.hasDetailedOffer ? 'Compléter la prestation' : 'Proposer une prestation' }}
-								</a>
+								{% if ps.slug %}
+									<a href="{{ path('app_prestataire_service_prestation_edit', { slug: ps.slug }) }}" class="btn btn-sm btn-outline-secondary" data-turbo="false">
+										{{ ps.hasDetailedOffer ? 'Compléter la prestation' : 'Proposer une prestation' }}
+									</a>
+								{% else %}
+									<span class="btn btn-sm btn-outline-secondary disabled" aria-disabled="true">
+										Prestation indisponible
+									</span>
+								{% endif %}
 								<a href="{{ path('app_prestataire_service_edit', { id: ps.id }) }}" class="btn btn-sm btn-outline-primary tm-icon-btn" title="Modifier" aria-label="Modifier le service {{ ps.service.name }}" data-turbo="false">
 									<i class="fa-solid fa-pencil" aria-hidden="true"></i>
 								</a>

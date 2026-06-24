@@ -13,13 +13,20 @@
 namespace App\Controller;
 
 use App\Entity\ClientProfile;
+use App\Entity\PrestataireAvailability;
 use App\Entity\PrestataireInterventionZone;
 use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
+use App\Entity\User;
+use App\Enum\FavoriteTypeEnum;
 use App\Form\AccountSettingsType;
+use App\Form\PrestataireAvailabilityCollectionType;
 use App\Form\PrestataireCompanyTabType;
 use App\Form\PrestataireInterventionZoneType;
 use App\Form\PrestataireServiceType;
+use App\Repository\FavoriteRepository;
+use App\Repository\PrestataireProfileRepository;
+use App\Repository\PrestataireServiceRepository;
 use App\Repository\ServiceCategoryRepository;
 use App\Repository\ServiceRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,19 +35,13 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
 use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
 use Symfony\UX\Map\InfoWindow;
 use Symfony\UX\Map\Map;
 use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
-use App\Entity\PrestataireAvailability;
-use App\Form\PrestataireAvailabilityCollectionType;
-use App\Entity\User;
-use App\Enum\FavoriteTypeEnum;
-use App\Repository\FavoriteRepository;
-use App\Repository\PrestataireProfileRepository;
-use App\Repository\PrestataireServiceRepository;
 
 class ProfileController extends AbstractController
 {
@@ -251,22 +252,23 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    // Ajouter un service au profil
     #[Route('/prestataire/service/ajouter', name: 'app_prestataire_add_service', methods: ['POST'])]
-    public function addService(Request $request, EntityManagerInterface $em, ServiceRepository $serviceRepo): Response
-    {
+    public function addService(
+        Request $request,
+        EntityManagerInterface $em,
+        ServiceRepository $serviceRepo,
+        SluggerInterface $slugger,
+    ): Response {
         $serviceId = $request->request->get('service_id');
         $user = $this->getUser();
         $service = $serviceRepo->find($serviceId);
 
-        // 1. Vérification de base (est-ce qu'on a bien un service et un profil ?)
         if (!$service || !($user instanceof \App\Entity\User) || !$user->getPrestataireProfile()) {
             $this->addFlash('error', 'Une erreur est survenue.');
 
             return $this->redirectToRoute('app_prestataire_settings');
         }
 
-        // 2. Vérification d'existence (est-ce que le service est déjà lié ?)
         $exists = $em->getRepository(PrestataireService::class)->findOneBy([
             'prestataire' => $user->getPrestataireProfile(),
             'service' => $service,
@@ -275,13 +277,18 @@ class ProfileController extends AbstractController
         if ($exists) {
             $this->addFlash('warning', 'Vous proposez déjà ce service !');
         } else {
-            // 3. Persistance
             $pService = new PrestataireService();
             $pService->setPrestataire($user->getPrestataireProfile());
             $pService->setService($service);
+            $pService->setIsActive(true);
+
+            $baseSlug = (string) $slugger->slug($service->getName() ?: 'prestation')->lower();
+            $uniqueSlug = sprintf('%s-%s', $baseSlug, substr(bin2hex(random_bytes(4)), 0, 8));
+            $pService->setSlug($uniqueSlug);
 
             $em->persist($pService);
             $em->flush();
+
             $this->addFlash('success', 'Service ajouté !');
         }
 
@@ -311,56 +318,56 @@ class ProfileController extends AbstractController
         return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
     }
 
-#[Route('/prestataire/service/editer/{id}', name: 'app_prestataire_service_edit')]
-public function edit(Request $request, PrestataireService $ps, EntityManagerInterface $em): Response
-{
-    $user = $this->getUser();
+    #[Route('/prestataire/service/editer/{id}', name: 'app_prestataire_service_edit')]
+    public function edit(Request $request, PrestataireService $ps, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
 
-    if (
-        !$user instanceof \App\Entity\User
-        || !$user->getPrestataireProfile()
-        || $ps->getPrestataire() !== $user->getPrestataireProfile()
-    ) {
-        throw $this->createAccessDeniedException();
-    }
-
-    $oldReduction = $ps->getTauxReduction();
-
-    $form = $this->createForm(PrestataireServiceType::class, $ps);
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
-        if ('quote' === $ps->getPricingType()) {
-            $ps->setPrixCatalogue('0');
-            $ps->setTauxReduction(null);
-            $ps->setPromotionCreatedAt(null);
-        } else {
-            $newReduction = $ps->getTauxReduction();
-
-            $oldReductionValue = null !== $oldReduction ? (float) $oldReduction : 0;
-            $newReductionValue = null !== $newReduction ? (float) $newReduction : 0;
-
-            if ($newReductionValue > 0) {
-                if ($oldReductionValue <= 0 || $oldReductionValue !== $newReductionValue) {
-                    $ps->setPromotionCreatedAt(new \DateTimeImmutable());
-                }
-            } else {
-                $ps->setPromotionCreatedAt(null);
-            }
+        if (
+            !$user instanceof \App\Entity\User
+            || !$user->getPrestataireProfile()
+            || $ps->getPrestataire() !== $user->getPrestataireProfile()
+        ) {
+            throw $this->createAccessDeniedException();
         }
 
-        $em->flush();
+        $oldReduction = $ps->getTauxReduction();
 
-        $this->addFlash('success', 'Tarifs mis à jour !');
+        $form = $this->createForm(PrestataireServiceType::class, $ps);
+        $form->handleRequest($request);
 
-        return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ('quote' === $ps->getPricingType()) {
+                $ps->setPrixCatalogue('0');
+                $ps->setTauxReduction(null);
+                $ps->setPromotionCreatedAt(null);
+            } else {
+                $newReduction = $ps->getTauxReduction();
+
+                $oldReductionValue = null !== $oldReduction ? (float) $oldReduction : 0;
+                $newReductionValue = null !== $newReduction ? (float) $newReduction : 0;
+
+                if ($newReductionValue > 0) {
+                    if ($oldReductionValue <= 0 || $oldReductionValue !== $newReductionValue) {
+                        $ps->setPromotionCreatedAt(new \DateTimeImmutable());
+                    }
+                } else {
+                    $ps->setPromotionCreatedAt(null);
+                }
+            }
+
+            $em->flush();
+
+            $this->addFlash('success', 'Tarifs mis à jour !');
+
+            return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
+        }
+
+        return $this->render('prestataire/edit_service.html.twig', [
+            'form' => $form->createView(),
+            'ps' => $ps,
+        ]);
     }
-
-    return $this->render('prestataire/edit_service.html.twig', [
-        'form' => $form->createView(),
-        'ps' => $ps,
-    ]);
-}
 
     /**
      * PARAMETRES PROFILE CLIENT.
@@ -407,59 +414,59 @@ public function edit(Request $request, PrestataireService $ps, EntityManagerInte
     }
 
     #[Route('/client/parametres/favoris', name: 'app_client_settings_favorites', methods: ['GET'])]
-public function clientFavorites(
-    FavoriteRepository $favoriteRepository,
-    PrestataireProfileRepository $prestataireProfileRepository,
-    PrestataireServiceRepository $prestataireServiceRepository,
-): Response {
-    $user = $this->getUser();
+    public function clientFavorites(
+        FavoriteRepository $favoriteRepository,
+        PrestataireProfileRepository $prestataireProfileRepository,
+        PrestataireServiceRepository $prestataireServiceRepository,
+    ): Response {
+        $user = $this->getUser();
 
-    if (!$user instanceof User) {
-        return $this->redirectToRoute('app_login');
+        if (!$user instanceof User) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $favorites = $favoriteRepository->findBy(
+            ['user' => $user],
+            ['createdAt' => 'DESC']
+        );
+
+        $providerIds = [];
+        $prestationIds = [];
+        $bonsPlanIds = [];
+
+        foreach ($favorites as $favorite) {
+            $type = $favorite->getType();
+
+            if ($type === FavoriteTypeEnum::PRESTATAIRE) {
+                $providerIds[] = $favorite->getTargetId();
+            }
+
+            if ($type === FavoriteTypeEnum::PRESTATION) {
+                $prestationIds[] = $favorite->getTargetId();
+            }
+
+            if ($type === FavoriteTypeEnum::BON_PLAN) {
+                $bonsPlanIds[] = $favorite->getTargetId();
+            }
+        }
+
+        $favoriteProviders = !empty($providerIds)
+            ? $prestataireProfileRepository->findBy(['id' => array_unique($providerIds)])
+            : [];
+
+        $favoritePrestations = !empty($prestationIds)
+            ? $prestataireServiceRepository->findBy(['id' => array_unique($prestationIds)])
+            : [];
+
+        $favoriteBonsPlans = !empty($bonsPlanIds)
+            ? $prestataireServiceRepository->findBy(['id' => array_unique($bonsPlanIds)])
+            : [];
+
+        return $this->render('client/client_favorite.html.twig', [
+            'user' => $user,
+            'favoriteProviders' => $favoriteProviders,
+            'favoritePrestations' => $favoritePrestations,
+            'favoriteBonsPlans' => $favoriteBonsPlans,
+        ]);
     }
-
-    $favorites = $favoriteRepository->findBy(
-        ['user' => $user],
-        ['createdAt' => 'DESC']
-    );
-
-    $providerIds = [];
-    $prestationIds = [];
-    $bonsPlanIds = [];
-
-    foreach ($favorites as $favorite) {
-        $type = $favorite->getType();
-
-        if ($type === FavoriteTypeEnum::PRESTATAIRE) {
-            $providerIds[] = $favorite->getTargetId();
-        }
-
-        if ($type === FavoriteTypeEnum::PRESTATION) {
-            $prestationIds[] = $favorite->getTargetId();
-        }
-
-        if ($type === FavoriteTypeEnum::BON_PLAN) {
-            $bonsPlanIds[] = $favorite->getTargetId();
-        }
-    }
-
-    $favoriteProviders = !empty($providerIds)
-        ? $prestataireProfileRepository->findBy(['id' => array_unique($providerIds)])
-        : [];
-
-    $favoritePrestations = !empty($prestationIds)
-        ? $prestataireServiceRepository->findBy(['id' => array_unique($prestationIds)])
-        : [];
-
-    $favoriteBonsPlans = !empty($bonsPlanIds)
-        ? $prestataireServiceRepository->findBy(['id' => array_unique($bonsPlanIds)])
-        : [];
-
-    return $this->render('client/client_favorite.html.twig', [
-        'user' => $user,
-        'favoriteProviders' => $favoriteProviders,
-        'favoritePrestations' => $favoritePrestations,
-        'favoriteBonsPlans' => $favoriteBonsPlans,
-    ]);
-}
 }
