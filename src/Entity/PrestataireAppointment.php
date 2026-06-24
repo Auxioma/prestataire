@@ -79,6 +79,9 @@ class PrestataireAppointment
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
     }
 
+    #[ORM\Column(length: 255, unique: true, nullable: true)]
+    private ?string $slug = null;
+
     public function __construct()
     {
         $now = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
@@ -95,7 +98,7 @@ class PrestataireAppointment
     {
         return $this->prestataire;
     }
-    
+
     public function setPrestataire(?PrestataireProfile $prestataire): self
     {
         $this->prestataire = $prestataire;
@@ -211,6 +214,17 @@ class PrestataireAppointment
     public function setUpdatedAt(\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug;
         return $this;
     }
 }

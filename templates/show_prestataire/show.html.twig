@@ -141,7 +141,7 @@
 						{% for ps in prestataire.prestataireServices %}
 							<div class="col">
 								{% set cardTag = ps.isActive ? 'a' : 'div' %}
-								<{{cardTag}} {% if ps.isActive %} href="{{ path('app_prestataire_service_prestation_show', {id: ps.id}) }}" {% endif %} class="tm-profile-show__service-item{% if ps.isActive %} tm-profile-show__service-item--link{% else %} tm-profile-show__service-item--disabled{% endif %}">
+								<{{cardTag}} {% if ps.isActive %} href="{{ path('app_prestataire_service_prestation_show', { slug: ps.slug }) }}" {% endif %} class="tm-profile-show__service-item{% if ps.isActive %} tm-profile-show__service-item--link{% else %} tm-profile-show__service-item--disabled{% endif %}">
 									<div class="tm-profile-show__service-icon">
 										<i class="fa-solid {{ ps.service.icon|default('fa-check') }}"></i>
 									</div>
@@ -192,14 +192,14 @@
 						{% endif %}
 
 						{# {% if prestataire.account.email %}
-																		                            <div class="tm-profile-show__info-item">
-																		                                <i class="fa-regular fa-envelope"></i>
-																		                                <div>
-																		                                    <span>Email</span>
-																		                                    <strong>{{ prestataire.account.email }}</strong>
-																		                                </div>
-																		                            </div>
-																		                        {% endif %} #}
+																								                            <div class="tm-profile-show__info-item">
+																								                                <i class="fa-regular fa-envelope"></i>
+																								                                <div>
+																								                                    <span>Email</span>
+																								                                    <strong>{{ prestataire.account.email }}</strong>
+																								                                </div>
+																								                            </div>
+																								                        {% endif %} #}
 
 						{% if prestataire.website %}
 							<div class="tm-profile-show__info-item">
@@ -216,20 +216,20 @@
 						{% endif %}
 
 						{# {% if prestataire.address or prestataire.city %}
-																		                            <div class="tm-profile-show__info-item">
-																		                                <i class="fa-solid fa-map-pin"></i>
-																		                                <div>
-																		                                    <span>Adresse</span>
-																		                                    <strong>
-																		                                        {{ prestataire.address|default('Adresse non renseignée') }}
-																		                                        {% if prestataire.city %}
-																		                                            -
-																		                                            {{ prestataire.city }}
-																		                                        {% endif %}
-																		                                    </strong>
-																		                                </div>
-																		                            </div>
-																		                        {% endif %} #}
+																								                            <div class="tm-profile-show__info-item">
+																								                                <i class="fa-solid fa-map-pin"></i>
+																								                                <div>
+																								                                    <span>Adresse</span>
+																								                                    <strong>
+																								                                        {{ prestataire.address|default('Adresse non renseignée') }}
+																								                                        {% if prestataire.city %}
+																								                                            -
+																								                                            {{ prestataire.city }}
+																								                                        {% endif %}
+																								                                    </strong>
+																								                                </div>
+																								                            </div>
+																								                        {% endif %} #}
 					</div>
 
 					{% if prestataire.facebookUrl or prestataire.instagramUrl or prestataire.linkedinUrl %}
@@ -311,17 +311,17 @@
 						Décrivez votre besoin en quelques instants. Ce professionnel pourra étudier votre demande et revenir vers vous rapidement.
 					</p>
 
-{% if app.user and is_granted('ROLE_CLIENT') %}
-    <a href="{{ path('app_quote_request_new', { prestataire: prestataire.id }) }}" class="btn tm-profile-show__btn-action">
-        <i class="fa-regular fa-paper-plane me-2"></i>
-        Demander un devis
-    </a>
-{% else %}
-    <a href="{{ path('app_login') }}" class="btn tm-profile-show__btn-action">
-        <i class="fa-regular fa-paper-plane me-2"></i>
-        Connectez-vous pour demander un devis
-    </a>
-{% endif %}
+					{% if app.user and is_granted('ROLE_CLIENT') %}
+						<a href="{{ path('app_quote_request_new', { prestataire: prestataire.id }) }}" class="btn tm-profile-show__btn-action">
+							<i class="fa-regular fa-paper-plane me-2"></i>
+							Demander un devis
+						</a>
+					{% else %}
+						<a href="{{ path('app_login') }}" class="btn tm-profile-show__btn-action">
+							<i class="fa-regular fa-paper-plane me-2"></i>
+							Connectez-vous pour demander un devis
+						</a>
+					{% endif %}
 
 					<div class="tm-profile-show__quick-points">
 						<div class="tm-profile-show__quick-point">

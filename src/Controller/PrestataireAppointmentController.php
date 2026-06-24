@@ -13,6 +13,8 @@ use App\Entity\PrestataireAppointment;
 use App\Form\PrestataireAppointmentType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/prestataire/calendrier', name: 'app_prestataire_appointment_')]
 final class PrestataireAppointmentController extends AbstractController
@@ -87,7 +89,7 @@ final class PrestataireAppointmentController extends AbstractController
                 'end' => $endFormatted,
                 'allDay' => false,
                 'url' => $this->generateUrl('app_prestataire_appointment_show', [
-                    'id' => $appointment->getId(),
+                    'slug' => $appointment->getSlug(),
                 ]),
                 'backgroundColor' => $status->getCalendarColor(),
                 'borderColor' => $status->getCalendarColor(),
@@ -111,6 +113,7 @@ final class PrestataireAppointmentController extends AbstractController
     public function new(
         Request $request,
         EntityManagerInterface $entityManager,
+        SluggerInterface $slugger,
     ): Response {
         $user = $this->getUser();
 
@@ -146,6 +149,12 @@ final class PrestataireAppointmentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $baseLabel = $appointment->getTitle() ?: 'rendez-vous';
+            $baseSlug = (string) $slugger->slug($baseLabel)->lower();
+            $uniqueSlug = sprintf('%s-%s', $baseSlug, substr(bin2hex(random_bytes(4)), 0, 8));
+
+            $appointment->setSlug($uniqueSlug);
             $entityManager->persist($appointment);
             $entityManager->flush();
 
@@ -185,9 +194,9 @@ final class PrestataireAppointmentController extends AbstractController
     }
 
     // VISUALISER UN RENDEZ-VOUS
-    #[Route('/{id}', name: 'show', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[Route('/{slug}', name: 'show', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     public function show(
-        #[MapEntity(id: 'id')] PrestataireAppointment $appointment,
+        #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireAppointment $appointment,
     ): Response {
         $user = $this->getUser();
 

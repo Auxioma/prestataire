@@ -100,18 +100,18 @@
 
 							<div class="alert alert-info mb-3">
 								En acceptant d’étudier cette demande, vous vous engagez uniquement à apporter une réponse au client
-																																								            dans les meilleurs délais. Cela ne vaut pas acceptation ferme et définitive de la prestation telle quelle.
+																																																								            dans les meilleurs délais. Cela ne vaut pas acceptation ferme et définitive de la prestation telle quelle.
 							</div>
 
 							<div class="d-flex flex-column flex-md-row gap-2">
-								<form method="post" action="{{ path('app_prestataire_quote_request_accept_study', {id: quoteRequest.id}) }}">
+								<form method="post" action="{{ path('app_prestataire_quote_request_accept_study', { slug: quoteRequest.slug }) }}">
 									<input type="hidden" name="_token" value="{{ csrf_token('accept-study-' ~ quoteRequest.id) }}">
 									<button type="submit" class="btn btn-primary">
 										Accepter d’étudier la demande
 									</button>
 								</form>
 
-								<form method="post" action="{{ path('app_prestataire_quote_request_deny', {id: quoteRequest.id}) }}">
+								<form method="post" action="{{ path('app_prestataire_quote_request_deny', { slug: quoteRequest.slug }) }}">
 									<input type="hidden" name="_token" value="{{ csrf_token('deny-quote-request-' ~ quoteRequest.id) }}">
 									<button type="submit" class="btn btn-outline-danger" onclick="return confirm('Confirmez-vous le refus de cette demande ?');">
 										Refuser la demande

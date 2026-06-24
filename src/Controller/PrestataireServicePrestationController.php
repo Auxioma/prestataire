@@ -32,14 +32,17 @@ use Symfony\UX\Map\Point;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Enum\FavoriteTypeEnum;
 use App\Repository\FavoriteRepository;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 
 final class PrestataireServicePrestationController extends AbstractController
 {
-    #[Route('/prestataire/service/{id}/prestation', name: 'app_prestataire_service_prestation_edit')]
+    #[Route('/prestataire/service/{slug}/prestation', name: 'app_prestataire_service_prestation_edit', requirements: ['slug' => Requirement::ASCII_SLUG])]
     public function edit(
         Request $request,
-        PrestataireService $ps,
+        #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireService $ps,
         EntityManagerInterface $em,
     ): Response {
         $user = $this->getUser();
@@ -166,6 +169,7 @@ final class PrestataireServicePrestationController extends AbstractController
         PrestataireServiceRepository $prestataireServiceRepository,
         ServiceRepository $serviceRepository,
         ServiceCategoryRepository $categoryRepository,
+        SluggerInterface $slugger,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -201,7 +205,7 @@ final class PrestataireServicePrestationController extends AbstractController
                 $this->addFlash('warning', 'Cette prestation existe déjà. Vous allez être redirigé vers sa fiche.');
 
                 return $this->redirectToRoute('app_prestataire_service_prestation_edit', [
-                    'id' => $existing->getId(),
+                    'slug' => $existing->getSlug(),
                 ]);
             }
 
@@ -210,13 +214,19 @@ final class PrestataireServicePrestationController extends AbstractController
             $prestation->setService($selectedService);
             $prestation->setIsActive(true);
 
+            $baseLabel = $selectedService->getName() ?: 'prestation';
+            $baseSlug = (string) $slugger->slug($baseLabel)->lower();
+
+            $uniqueSlug = sprintf('%s-%s', $baseSlug, substr(bin2hex(random_bytes(4)), 0, 8));
+            $prestation->setSlug($uniqueSlug);
+
             $em->persist($prestation);
             $em->flush();
 
             $this->addFlash('success', 'Le service a bien été ajouté. Vous pouvez maintenant compléter la prestation.');
 
             return $this->redirectToRoute('app_prestataire_service_prestation_edit', [
-                'id' => $prestation->getId(),
+                'slug' => $prestation->getSlug(),
             ]);
         }
 
@@ -225,9 +235,11 @@ final class PrestataireServicePrestationController extends AbstractController
         ]);
     }
 
-    #[Route('/prestataire/service/{id}/prestation/voir', name: 'app_prestataire_service_prestation_show', methods: ['GET'])]
-    public function show(PrestataireService $ps, FavoriteRepository $favoriteRepository): Response
-    {
+    #[Route('/prestataire/service/{slug}/prestation/voir', name: 'app_prestataire_service_prestation_show', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    public function show(
+        #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireService $ps,
+        FavoriteRepository $favoriteRepository
+    ): Response {
         if (!$ps->isActive()) {
             throw $this->createNotFoundException('Cette prestation est introuvable.');
         }

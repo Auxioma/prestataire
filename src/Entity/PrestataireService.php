@@ -90,6 +90,9 @@ class PrestataireService
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true, nullable: true)]
+    private ?string $slug = null;
+
     #[ORM\OneToMany(
         mappedBy: 'prestation',
         targetEntity: PrestationMedia::class,
@@ -318,6 +321,18 @@ class PrestataireService
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

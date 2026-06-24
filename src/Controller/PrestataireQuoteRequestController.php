@@ -16,6 +16,7 @@ use App\Enum\MessageTypeEnum;
 use App\Entity\Conversation;
 use App\Entity\Message;
 use App\Repository\ConversationRepository;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 
 
 #[Route('/prestataire/demandes', name: 'app_prestataire_quote_request_')]
@@ -42,9 +43,10 @@ final class PrestataireQuoteRequestController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'show', methods: ['GET'], requirements: ['id' => '\d+'])]
-    public function show(QuoteRequest $quoteRequest): Response
-    {
+    #[Route('/{slug}', name: 'show', methods: ['GET'])]
+    public function show(
+        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest
+    ): Response {
         $user = $this->getUser();
 
         if (!$user instanceof User || !$user->getPrestataireProfile()) {
@@ -62,7 +64,7 @@ final class PrestataireQuoteRequestController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/accept-study', name: 'accept_study', methods: ['POST'], requirements: ['id' => '\d+'])]
+    #[Route('/{slug}/accept-study', name: 'accept_study', methods: ['POST'])]
     public function acceptStudy(
         Request $request,
         QuoteRequest $quoteRequest,
@@ -93,7 +95,7 @@ final class PrestataireQuoteRequestController extends AbstractController
             $this->addFlash('warning', 'Cette demande ne peut plus être acceptée pour étude.');
 
             return $this->redirectToRoute('app_prestataire_quote_request_show', [
-                'id' => $quoteRequest->getId(),
+                'slug' => $quoteRequest->getSlug(),
             ]);
         }
 
@@ -132,11 +134,11 @@ final class PrestataireQuoteRequestController extends AbstractController
         $this->addFlash('success', 'Vous avez accepté d’étudier cette demande. La conversation avec le client est maintenant ouverte.');
 
         return $this->redirectToRoute('app_prestataire_quote_request_show', [
-            'id' => $quoteRequest->getId(),
+            'slug' => $quoteRequest->getSlug(),
         ]);
     }
 
-    #[Route('/{id}/deny', name: 'deny', methods: ['POST'], requirements: ['id' => '\d+'])]
+    #[Route('/{slug}/deny', name: 'deny', methods: ['POST'])]
     public function deny(
         Request $request,
         QuoteRequest $quoteRequest,
@@ -178,7 +180,7 @@ final class PrestataireQuoteRequestController extends AbstractController
         $this->addFlash('success', 'Vous avez refusé cette demande.');
 
         return $this->redirectToRoute('app_prestataire_quote_request_show', [
-            'id' => $quoteRequest->getId(),
+            'slug' => $quoteRequest->getSlug(),
         ]);
     }
 }

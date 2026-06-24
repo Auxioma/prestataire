@@ -18,6 +18,8 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 
 #[Route('/demandes-de-devis', name: 'app_quote_request')]
 final class QuoteRequestController extends AbstractController
@@ -46,7 +48,8 @@ final class QuoteRequestController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         PrestataireServiceRepository $prestataireServiceRepository,
-        PrestataireProfileRepository $prestataireProfileRepository
+        PrestataireProfileRepository $prestataireProfileRepository,
+        SluggerInterface $slugger
     ): Response {
         $user = $this->getUser();
 
@@ -126,13 +129,20 @@ final class QuoteRequestController extends AbstractController
                 $quoteRequest->setPrestataire($selectedPrestation->getPrestataire());
                 $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
 
+                $baseSlug = $slugger
+                    ->slug($quoteRequest->getTitle() ?: 'demande-de-devis')
+                    ->lower()
+                    ->toString();
+
+                $quoteRequest->setSlug($baseSlug . '-' . substr(uniqid(), -6));
+
                 $entityManager->persist($quoteRequest);
                 $entityManager->flush();
 
                 $this->addFlash('success', 'Votre demande de devis a bien été envoyée.');
 
                 return $this->redirectToRoute('app_quote_request_show', [
-                    'id' => $quoteRequest->getId(),
+                    'slug' => $quoteRequest->getSlug(),
                 ]);
             }
         }
@@ -145,10 +155,10 @@ final class QuoteRequestController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: '_show', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
+    #[Route('/{slug}', name: '_show', methods: ['GET', 'POST'])]
     public function show(
         Request $request,
-        QuoteRequest $quoteRequest,
+        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
         ConversationRepository $conversationRepository,
         MessageRepository $messageRepository,
         EntityManagerInterface $entityManager
@@ -185,7 +195,7 @@ final class QuoteRequestController extends AbstractController
 
                 return $this->redirect(
                     $this->generateUrl('app_quote_request_show', [
-                        'id' => $quoteRequest->getId(),
+                        'slug' => $quoteRequest->getSlug(),
                     ]) . '#quote-message-form'
                 );
             }

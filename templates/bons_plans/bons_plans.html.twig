@@ -1,101 +1,85 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Bons plans - TrouveMoi{% endblock %}
+{% block title %}Bons plans - TrouveMoi
+{% endblock %}
 
 {% block body %}
-<div class="tm-bonsplans-page">
-    <div class="container tm-bonsplans-container">
-        <section class="tm-bonsplans-hero">
-            <div class="tm-bonsplans-hero__content">
-                <span class="tm-bonsplans-hero__eyebrow">Offres du moment</span>
-                <h1 class="tm-bonsplans-hero__title">Les bons plans</h1>
-                <p class="tm-bonsplans-hero__subtitle">
-                    Découvrez les promotions les plus récentes proposées par les prestataires de confiance sur TrouveMoi.
-                </p>
-            </div>
-        </section>
+	<div class="tm-bonsplans-page">
+		<div class="container tm-bonsplans-container">
+			<section class="tm-bonsplans-hero">
+				<div class="tm-bonsplans-hero__content">
+					<span class="tm-bonsplans-hero__eyebrow">Offres du moment</span>
+					<h1 class="tm-bonsplans-hero__title">Les bons plans</h1>
+					<p class="tm-bonsplans-hero__subtitle">
+						Découvrez les promotions les plus récentes proposées par les prestataires de confiance sur TrouveMoi.
+					</p>
+				</div>
+			</section>
 
-        <section class="tm-bonsplans-toolbar">
-            <form method="get" action="{{ path('app_bons_plans') }}" class="tm-bonsplans-filters">
-                <div class="tm-bonsplans-filters__grid">
-                    <div class="tm-bonsplans-field">
-                        <label for="category" class="tm-bonsplans-field__label">Catégorie</label>
-                        <div class="tm-bonsplans-field__control">
-                            <select
-                                name="category"
-                                id="category"
-                                class="tm-bonsplans-select"
-                                onchange="this.form.submit()"
-                            >
-                                <option value="">Toutes les catégories</option>
-                                {% for category in categories|default([]) %}
-                                    {% set categorySlug = category.slug|default('') %}
-                                    <option
-                                        value="{{ categorySlug }}"
-                                        {{ selectedCategorySlug|default('') == categorySlug ? 'selected' : '' }}
-                                    >
-                                        {{ category.name|default('Catégorie') }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
+			<section class="tm-bonsplans-toolbar">
+				<form method="get" action="{{ path('app_bons_plans') }}" class="tm-bonsplans-filters">
+					<div class="tm-bonsplans-filters__grid">
+						<div class="tm-bonsplans-field">
+							<label for="category" class="tm-bonsplans-field__label">Catégorie</label>
+							<div class="tm-bonsplans-field__control">
+								<select name="category" id="category" class="tm-bonsplans-select" onchange="this.form.submit()">
+									<option value="">Toutes les catégories</option>
+									{% for category in categories|default([]) %}
+										{% set categorySlug = category.slug|default('') %}
+										<option value="{{ categorySlug }}" {{ selectedCategorySlug|default('') == categorySlug ? 'selected' : '' }}>
+											{{ category.name|default('Catégorie') }}
+										</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
 
-                    <div class="tm-bonsplans-field">
-                        <label for="subCategory" class="tm-bonsplans-field__label">Sous-catégorie</label>
-                        <div class="tm-bonsplans-field__control">
-                            <select
-                                name="subCategory"
-                                id="subCategory"
-                                class="tm-bonsplans-select"
-                                onchange="this.form.submit()"
-                                {{ subCategories|default([]) is empty ? 'disabled' : '' }}
-                            >
-                                <option value="">Toutes les sous-catégories</option>
-                                {% for subCategory in subCategories|default([]) %}
-                                    {% set subCategorySlug = subCategory.slug|default('') %}
-                                    <option
-                                        value="{{ subCategorySlug }}"
-                                        {{ selectedSubCategorySlug|default('') == subCategorySlug ? 'selected' : '' }}
-                                    >
-                                        {{ subCategory.name|default('Sous-catégorie') }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
+						<div class="tm-bonsplans-field">
+							<label for="subCategory" class="tm-bonsplans-field__label">Sous-catégorie</label>
+							<div class="tm-bonsplans-field__control">
+								<select name="subCategory" id="subCategory" class="tm-bonsplans-select" onchange="this.form.submit()" {{ subCategories|default([]) is empty ? 'disabled' : '' }}>
+									<option value="">Toutes les sous-catégories</option>
+									{% for subCategory in subCategories|default([]) %}
+										{% set subCategorySlug = subCategory.slug|default('') %}
+										<option value="{{ subCategorySlug }}" {{ selectedSubCategorySlug|default('') == subCategorySlug ? 'selected' : '' }}>
+											{{ subCategory.name|default('Sous-catégorie') }}
+										</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
 
-                    <div class="tm-bonsplans-actions">
-                        <a href="{{ path('app_bons_plans') }}" class="tm-bonsplans-reset">
-                            Réinitialiser
-                        </a>
-                    </div>
-                </div>
-            </form>
-        </section>
+						<div class="tm-bonsplans-actions">
+							<a href="{{ path('app_bons_plans') }}" class="tm-bonsplans-reset">
+								Réinitialiser
+							</a>
+						</div>
+					</div>
+				</form>
+			</section>
 
-        <section class="tm-bonsplans-results">
-            <div class="tm-bonsplans-grid">
-                {% for bonPlan in bonsPlans|default([]) %}
-                    {% set service = bonPlan.service|default(null) %}
-                    {% set prestataire = bonPlan.prestataire|default(null) %}
-                    {% set account = prestataire and prestataire.account is defined ? prestataire.account : null %}
-                    {% set category = service and service.category is defined ? service.category : null %}
-                    {% set parentCategory = category and category.parent is defined ? category.parent : null %}
+			<section class="tm-bonsplans-results">
+				<div class="tm-bonsplans-grid">
+					{% for bonPlan in bonsPlans|default([]) %}
+						{% set service = bonPlan.service|default(null) %}
+						{% set prestataire = bonPlan.prestataire|default(null) %}
+						{% set account = prestataire and prestataire.account is defined ? prestataire.account : null %}
+						{% set category = service and service.category is defined ? service.category : null %}
+						{% set parentCategory = category and category.parent is defined ? category.parent : null %}
 
-                    {% set reduction = bonPlan.tauxReduction|default(0) %}
-                    {% set prixCatalogue = bonPlan.prixCatalogue|default(0) %}
-                    {% set prixRemise = bonPlan.prixRemise is defined and bonPlan.prixRemise is not null
+						{% set reduction = bonPlan.tauxReduction|default(0) %}
+						{% set prixCatalogue = bonPlan.prixCatalogue|default(0) %}
+						{% set prixRemise = bonPlan.prixRemise is defined and bonPlan.prixRemise is not null
                         ? bonPlan.prixRemise
                         : (prixCatalogue - (prixCatalogue * reduction / 100))
                     %}
 
-                    {% set prestationTitle = bonPlan.title is defined and bonPlan.title
+						{% set prestationTitle = bonPlan.title is defined and bonPlan.title
                         ? bonPlan.title
                         : (service and service.name is defined and service.name ? service.name : 'Service non renseigné')
                     %}
 
-                    {% set prestationDescription = bonPlan.shortDescription is defined and bonPlan.shortDescription
+						{% set prestationDescription = bonPlan.shortDescription is defined and bonPlan.shortDescription
                         ? bonPlan.shortDescription
                         : (
                             bonPlan.description is defined and bonPlan.description
@@ -108,9 +92,9 @@
                         )
                     %}
 
-                    {% set serviceIcon = service and service.icon is defined and service.icon ? service.icon : 'fa-screwdriver-wrench' %}
+						{% set serviceIcon = service and service.icon is defined and service.icon ? service.icon : 'fa-screwdriver-wrench' %}
 
-                    {% set companyName = prestataire and prestataire.companyName is defined and prestataire.companyName
+						{% set companyName = prestataire and prestataire.companyName is defined and prestataire.companyName
                         ? prestataire.companyName
                         : (
                             account
@@ -121,20 +105,20 @@
                         )
                     %}
 
-                    {% set cityName = prestataire and prestataire.city is defined and prestataire.city
+						{% set cityName = prestataire and prestataire.city is defined and prestataire.city
                         ? prestataire.city
                         : 'Ville non renseignée'
                     %}
 
-                    {% set categoryLabel = category and category.name is defined and category.name ? category.name : 'Catégorie non renseignée' %}
-                    {% set categoryPrefix = parentCategory and parentCategory.name is defined and parentCategory.name
+						{% set categoryLabel = category and category.name is defined and category.name ? category.name : 'Catégorie non renseignée' %}
+						{% set categoryPrefix = parentCategory and parentCategory.name is defined and parentCategory.name
                         ? parentCategory.name ~ ' • '
                         : ''
                     %}
 
-                    {% set prestataireSlug = prestataire and prestataire.slug is defined and prestataire.slug ? prestataire.slug : null %}
+						{% set prestataireSlug = prestataire and prestataire.slug is defined and prestataire.slug ? prestataire.slug : null %}
 
-                    {% set hasPublicPrestation = bonPlan.isActive
+						{% set hasPublicPrestation = bonPlan.isActive
                         and bonPlan.title is defined and bonPlan.title
                         and (
                             (bonPlan.shortDescription is defined and bonPlan.shortDescription)
@@ -142,109 +126,111 @@
                         )
                     %}
 
-                    {% if hasPublicPrestation %}
-                        {% set cardUrl = path('app_prestataire_service_prestation_show', { id: bonPlan.id }) %}
-                        {% set cardAriaLabel = 'Voir la prestation de ' ~ companyName %}
-                    {% elseif prestataireSlug %}
-                        {% set cardUrl = path('app_prestataire_show', { slug: prestataireSlug }) %}
-                        {% set cardAriaLabel = 'Voir le profil de ' ~ companyName %}
-                    {% else %}
-                        {% set cardUrl = null %}
-                        {% set cardAriaLabel = '' %}
-                    {% endif %}
+						{% if hasPublicPrestation %}
+							{% set cardUrl = path('app_prestataire_service_prestation_show', { slug: bonPlan.slug }) %}
+							{% set cardAriaLabel = 'Voir la prestation de ' ~ companyName %}
+						{% elseif prestataireSlug %}
+							{% set cardUrl = path('app_prestataire_show', { slug: prestataireSlug }) %}
+							{% set cardAriaLabel = 'Voir le profil de ' ~ companyName %}
+						{% else %}
+							{% set cardUrl = null %}
+							{% set cardAriaLabel = '' %}
+						{% endif %}
 
-                    {% if reduction <= 15 %}
-                        {% set promoLevel = 'low' %}
-                    {% elseif reduction <= 25 %}
-                        {% set promoLevel = 'medium' %}
-                    {% elseif reduction <= 40 %}
-                        {% set promoLevel = 'high' %}
-                    {% else %}
-                        {% set promoLevel = 'max' %}
-                    {% endif %}
+						{% if reduction <= 15 %}
+							{% set promoLevel = 'low' %}
+						{% elseif reduction <= 25 %}
+							{% set promoLevel = 'medium' %}
+						{% elseif reduction <= 40 %}
+							{% set promoLevel = 'high' %}
+						{% else %}
+							{% set promoLevel = 'max' %}
+						{% endif %}
 
-                    {% if cardUrl %}
-                        <a href="{{ cardUrl }}" class="tm-bonsplans-card-link" aria-label="{{ cardAriaLabel }}">
-                    {% endif %}
+						{% if cardUrl %}
+							<a href="{{ cardUrl }}" class="tm-bonsplans-card-link" aria-label="{{ cardAriaLabel }}">
+							{% endif %}
 
-                    <article class="tm-bonsplans-card tm-bonsplans-card--{{ promoLevel }}">
-                        <div class="tm-bonsplans-card__inner">
-                            <div class="tm-bonsplans-card__top">
-                                <span class="tm-bonsplans-card__discount tm-bonsplans-card__discount--{{ promoLevel }}">
-                                    -{{ reduction|number_format(0, ',', ' ') }}%
-                                </span>
+							<article class="tm-bonsplans-card tm-bonsplans-card--{{ promoLevel }}">
+								<div class="tm-bonsplans-card__inner">
+									<div class="tm-bonsplans-card__top">
+										<span class="tm-bonsplans-card__discount tm-bonsplans-card__discount--{{ promoLevel }}">
+											-{{ reduction|number_format(0, ',', ' ') }}%
+										</span>
 
-                                {% if bonPlan.promotionCreatedAt is defined and bonPlan.promotionCreatedAt %}
-                                    <span class="tm-bonsplans-card__date">
-                                        {{ bonPlan.promotionCreatedAt|date('d/m/Y H:i') }}
-                                    </span>
-                                {% endif %}
-                            </div>
+										{% if bonPlan.promotionCreatedAt is defined and bonPlan.promotionCreatedAt %}
+											<span class="tm-bonsplans-card__date">
+												{{ bonPlan.promotionCreatedAt|date('d/m/Y H:i') }}
+											</span>
+										{% endif %}
+									</div>
 
-                            <div class="tm-bonsplans-card__body">
-                                <div class="tm-bonsplans-card__service-icon-row">
-                                    <div class="tm-bonsplans-card__service-icon">
-                                        <i class="fa-solid {{ serviceIcon }}"></i>
-                                    </div>
-                                </div>
+									<div class="tm-bonsplans-card__body">
+										<div class="tm-bonsplans-card__service-icon-row">
+											<div class="tm-bonsplans-card__service-icon">
+												<i class="fa-solid {{ serviceIcon }}"></i>
+											</div>
+										</div>
 
-                                <h2 class="tm-bonsplans-card__title">
-                                    {{ prestationTitle }}
-                                </h2>
+										<h2 class="tm-bonsplans-card__title">
+											{{ prestationTitle }}
+										</h2>
 
-                                <p class="tm-bonsplans-card__company">
-                                    {{ companyName }}
-                                </p>
+										<p class="tm-bonsplans-card__company">
+											{{ companyName }}
+										</p>
 
-                                <p class="tm-bonsplans-card__description">
-                                    {{ prestationDescription }}
-                                </p>
+										<p class="tm-bonsplans-card__description">
+											{{ prestationDescription }}
+										</p>
 
-                                <p class="tm-bonsplans-card__category">
-                                    {{ categoryPrefix }}{{ categoryLabel }}
-                                </p>
+										<p class="tm-bonsplans-card__category">
+											{{ categoryPrefix }}{{ categoryLabel }}
+										</p>
 
-                                <p class="tm-bonsplans-card__city">
-                                    {{ cityName }}
-                                </p>
-                            </div>
+										<p class="tm-bonsplans-card__city">
+											{{ cityName }}
+										</p>
+									</div>
 
-                            <div class="tm-bonsplans-card__footer">
-                                <div class="tm-bonsplans-card__prices">
-                                    <span class="tm-bonsplans-card__old-price">
-                                        {{ prixCatalogue|number_format(2, ',', ' ') }} €
-                                    </span>
-                                    <span class="tm-bonsplans-card__new-price">
-                                        {{ prixRemise|number_format(2, ',', ' ') }} €
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
+									<div class="tm-bonsplans-card__footer">
+										<div class="tm-bonsplans-card__prices">
+											<span class="tm-bonsplans-card__old-price">
+												{{ prixCatalogue|number_format(2, ',', ' ') }}
+												€
+											</span>
+											<span class="tm-bonsplans-card__new-price">
+												{{ prixRemise|number_format(2, ',', ' ') }}
+												€
+											</span>
+										</div>
+									</div>
+								</div>
+							</article>
 
-                    {% if cardUrl %}
-                        </a>
-                    {% endif %}
-                {% else %}
-                    <div class="tm-bonsplans-empty">
-                        <div class="tm-bonsplans-empty__icon">🏷️</div>
-                        <h3 class="tm-bonsplans-empty__title">Aucun bon plan trouvé</h3>
-                        <p class="tm-bonsplans-empty__text">
-                            Aucun bon plan ne correspond à votre sélection actuelle. Essayez une autre catégorie ou réinitialisez les filtres.
-                        </p>
-                        <a href="{{ path('app_bons_plans') }}" class="tm-bonsplans-empty__cta">
-                            Voir toutes les offres
-                        </a>
-                    </div>
-                {% endfor %}
-            </div>
+							{% if cardUrl %}
+							</a>
+						{% endif %}
+					{% else %}
+						<div class="tm-bonsplans-empty">
+							<div class="tm-bonsplans-empty__icon">🏷️</div>
+							<h3 class="tm-bonsplans-empty__title">Aucun bon plan trouvé</h3>
+							<p class="tm-bonsplans-empty__text">
+								Aucun bon plan ne correspond à votre sélection actuelle. Essayez une autre catégorie ou réinitialisez les filtres.
+							</p>
+							<a href="{{ path('app_bons_plans') }}" class="tm-bonsplans-empty__cta">
+								Voir toutes les offres
+							</a>
+						</div>
+					{% endfor %}
+				</div>
 
-            {% if bonsPlans|default([]) is not empty %}
-                <div class="tm-bonsplans-pagination">
-                    {{ knp_pagination_render(bonsPlans) }}
-                </div>
-            {% endif %}
-        </section>
-    </div>
-</div>
+				{% if bonsPlans|default([]) is not empty %}
+					<div class="tm-bonsplans-pagination">
+						{{ knp_pagination_render(bonsPlans) }}
+					</div>
+				{% endif %}
+			</section>
+		</div>
+	</div>
 {% endblock %}

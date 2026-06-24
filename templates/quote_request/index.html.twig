@@ -1,112 +1,115 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes demandes de devis{% endblock %}
+{% block title %}Mes demandes de devis
+{% endblock %}
 
 {% block body %}
-<div class="tm-quote-index-page">
-    <div class="container py-4 py-lg-5">
+	<div class="tm-quote-index-page">
+		<div class="container py-4 py-lg-5">
 
-        <a href="{{ path('app_client_settings') }}" class="tm-quote-index-backlink">
-            <i class="fa-solid fa-arrow-left"></i>
-            <span>Retour aux paramètres</span>
-        </a>
+			<a href="{{ path('app_client_settings') }}" class="tm-quote-index-backlink">
+				<i class="fa-solid fa-arrow-left"></i>
+				<span>Retour aux paramètres</span>
+			</a>
 
-        <section class="tm-quote-index-hero">
-            <div class="tm-quote-index-hero__content">
-                <span class="tm-quote-index-hero__eyebrow">Espace client</span>
-                <h1 class="tm-quote-index-hero__title">Mes demandes de devis</h1>
-                <p class="tm-quote-index-hero__subtitle">
-                    Suivez l’ensemble de vos demandes envoyées, consultez leur statut et retrouvez rapidement les informations importantes pour chaque projet.
-                </p>
-            </div>
-        </section>
+			<section class="tm-quote-index-hero">
+				<div class="tm-quote-index-hero__content">
+					<span class="tm-quote-index-hero__eyebrow">Espace client</span>
+					<h1 class="tm-quote-index-hero__title">Mes demandes de devis</h1>
+					<p class="tm-quote-index-hero__subtitle">
+						Suivez l’ensemble de vos demandes envoyées, consultez leur statut et retrouvez rapidement les informations importantes pour chaque projet.
+					</p>
+				</div>
+			</section>
 
-        {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
-            {% for message in messages %}
-                <div class="alert alert-{{ type }} alert-dismissible fade show tm-quote-index-alert" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-                </div>
-            {% endfor %}
-        {% endfor %}
+			{% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+				{% for message in messages %}
+					<div class="alert alert-{{ type }} alert-dismissible fade show tm-quote-index-alert" role="alert">
+						{{ message }}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+					</div>
+				{% endfor %}
+			{% endfor %}
 
-        <section class="tm-quote-index-panel">
-            {% if quoteRequests is not empty %}
-                <div class="tm-quote-index-panel__head">
-                    <div>
-                        <h2 class="tm-quote-index-panel__title">Demandes enregistrées</h2>
-                        <p class="tm-quote-index-panel__subtitle mb-0">
-                            Retrouvez ici toutes vos demandes et leur état d’avancement.
-                        </p>
-                    </div>
+			<section class="tm-quote-index-panel">
+				{% if quoteRequests is not empty %}
+					<div class="tm-quote-index-panel__head">
+						<div>
+							<h2 class="tm-quote-index-panel__title">Demandes enregistrées</h2>
+							<p class="tm-quote-index-panel__subtitle mb-0">
+								Retrouvez ici toutes vos demandes et leur état d’avancement.
+							</p>
+						</div>
 
-                    <div class="tm-quote-index-panel__count">
-                        {{ quoteRequests|length }} demande{{ quoteRequests|length > 1 ? 's' : '' }}
-                    </div>
-                </div>
+						<div class="tm-quote-index-panel__count">
+							{{ quoteRequests|length }}
+							demande{{ quoteRequests|length > 1 ? 's' : '' }}
+						</div>
+					</div>
 
-                <div class="tm-quote-index-list">
-                    {% for quoteRequest in quoteRequests %}
-                        <article class="tm-quote-index-item">
-                            <div class="tm-quote-index-item__main">
-                                <div class="tm-quote-index-item__top">
-                                    <h3 class="tm-quote-index-item__title">
-                                        {{ quoteRequest.title }}
-                                    </h3>
+					<div class="tm-quote-index-list">
+						{% for quoteRequest in quoteRequests %}
+							<article class="tm-quote-index-item">
+								<div class="tm-quote-index-item__main">
+									<div class="tm-quote-index-item__top">
+										<h3 class="tm-quote-index-item__title">
+											{{ quoteRequest.title }}
+										</h3>
 
-                                    <span class="tm-quote-index-status tm-quote-index-status--{{ quoteRequest.status.getBadgeClass() }}">
-                                        {{ quoteRequest.status.getLabel() }}
-                                    </span>
-                                </div>
+										<span class="tm-quote-index-status tm-quote-index-status--{{ quoteRequest.status.getBadgeClass() }}">
+											{{ quoteRequest.status.getLabel() }}
+										</span>
+									</div>
 
-                                <p class="tm-quote-index-item__desc mb-0">
-                                    {{ quoteRequest.description ? quoteRequest.description|slice(0, 180) ~ (quoteRequest.description|length > 180 ? '…' : '') : 'Aucune description fournie.' }}
-                                </p>
+									<p class="tm-quote-index-item__desc mb-0">
+										{{ quoteRequest.description ? quoteRequest.description|slice(0, 180) ~ (quoteRequest.description|length > 180 ? '…' : '') : 'Aucune description fournie.' }}
+									</p>
 
-                                <div class="tm-quote-index-item__meta">
-                                    <div class="tm-quote-index-meta">
-                                        <span class="tm-quote-index-meta__label">Date souhaitée</span>
-                                        <strong class="tm-quote-index-meta__value">
-                                            {{ quoteRequest.desiredDate ? quoteRequest.desiredDate|date('d/m/Y') : 'Non renseignée' }}
-                                        </strong>
-                                    </div>
+									<div class="tm-quote-index-item__meta">
+										<div class="tm-quote-index-meta">
+											<span class="tm-quote-index-meta__label">Date souhaitée</span>
+											<strong class="tm-quote-index-meta__value">
+												{{ quoteRequest.desiredDate ? quoteRequest.desiredDate|date('d/m/Y') : 'Non renseignée' }}
+											</strong>
+										</div>
 
-                                    <div class="tm-quote-index-meta">
-                                        <span class="tm-quote-index-meta__label">Budget</span>
-                                        <strong class="tm-quote-index-meta__value">
-                                            {{ quoteRequest.budgetAmount is not null ? quoteRequest.budgetAmount|number_format(2, ',', ' ') ~ ' €' : 'Non renseigné' }}
-                                        </strong>
-                                    </div>
+										<div class="tm-quote-index-meta">
+											<span class="tm-quote-index-meta__label">Budget</span>
+											<strong class="tm-quote-index-meta__value">
+												{{ quoteRequest.budgetAmount is not null ? quoteRequest.budgetAmount|number_format(2, ',', ' ') ~ ' €' : 'Non renseigné' }}
+											</strong>
+										</div>
 
-                                    <div class="tm-quote-index-meta">
-                                        <span class="tm-quote-index-meta__label">Créée le</span>
-                                        <strong class="tm-quote-index-meta__value">
-                                            {{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y à H:i') : '—' }}
-                                        </strong>
-                                    </div>
-                                </div>
-                            </div>
+										<div class="tm-quote-index-meta">
+											<span class="tm-quote-index-meta__label">Créée le</span>
+											<strong class="tm-quote-index-meta__value">
+												{{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y à H:i') : '—' }}
+											</strong>
+										</div>
+									</div>
+								</div>
 
-                            <div class="tm-quote-index-item__aside">
-                                <a href="{{ path('app_quote_request_show', { id: quoteRequest.id }) }}" class="btn tm-quote-index-btn tm-quote-index-btn--primary">
-                                    Voir le détail
-                                </a>
-                            </div>
-                        </article>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="tm-quote-index-empty">
-                    <div class="tm-quote-index-empty__icon">
-                        <i class="fa-regular fa-file-lines"></i>
-                    </div>
-                    <h2 class="tm-quote-index-empty__title">Aucune demande enregistrée</h2>
-                    <p class="tm-quote-index-empty__text">
-                        Vos futures demandes de devis apparaîtront ici avec leur statut, leur budget et leur suivi détaillé.
-                    </p>
-                </div>
-            {% endif %}
-        </section>
-    </div>
-</div>
-{% endblock %}
+								<div class="tm-quote-index-item__aside">
+									<div class="tm-quote-index-item__aside">
+										<a href="{{ path('app_quote_request_show', { slug: quoteRequest.slug }) }}" class="btn tm-quote-index-btn tm-quote-index-btn--primary">
+											Voir le détail
+										</a>
+									</div>
+								</article>
+							{% endfor %}
+						</div>
+					{% else %}
+						<div class="tm-quote-index-empty">
+							<div class="tm-quote-index-empty__icon">
+								<i class="fa-regular fa-file-lines"></i>
+							</div>
+							<h2 class="tm-quote-index-empty__title">Aucune demande enregistrée</h2>
+							<p class="tm-quote-index-empty__text">
+								Vos futures demandes de devis apparaîtront ici avec leur statut, leur budget et leur suivi détaillé.
+							</p>
+						</div>
+					{% endif %}
+				</section>
+			</div>
+		</div>
+	{% endblock %}
