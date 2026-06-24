@@ -39,7 +39,7 @@ class QuoteRequestType extends AbstractType
                 'choice_label' => static function (PrestataireService $prestation): string {
                     return $prestation->getService()?->getName() ?? ('Prestation #' . $prestation->getId());
                 },
-                'placeholder' => 'Choisir un service',
+                'placeholder' => 'Sélectionnez le service concerné',
                 'required' => true,
             ]);
         }
