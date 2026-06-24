@@ -9,8 +9,6 @@ use App\Form\MessageType;
 use App\Form\QuoteRequestType;
 use App\Repository\ConversationRepository;
 use App\Repository\MessageRepository;
-use App\Repository\PrestataireProfileRepository;
-use App\Repository\PrestataireServiceRepository;
 use App\Repository\QuoteRequestRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
 
 #[Route('/demandes-de-devis', name: 'app_quote_request')]
@@ -44,13 +43,14 @@ final class QuoteRequestController extends AbstractController
         ]);
     }
 
+    #[Route('/nouvelle/prestataire/{prestataireSlug}', name: '_new_by_prestataire', methods: ['GET', 'POST'])]
     #[Route('/nouvelle/{slug}', name: '_new', methods: ['GET', 'POST'], defaults: ['slug' => null])]
     public function new(
         Request $request,
         EntityManagerInterface $entityManager,
-        PrestataireProfileRepository $prestataireProfileRepository,
         SluggerInterface $slugger,
-        #[MapEntity(mapping: ['slug' => 'slug'])] ?PrestataireService $prestation = null
+        #[MapEntity(mapping: ['slug' => 'slug'])] ?PrestataireService $prestation = null,
+        #[MapEntity(mapping: ['prestataireSlug' => 'slug'])] ?PrestataireProfile $prestataire = null
     ): Response {
         $user = $this->getUser();
 
@@ -61,10 +61,7 @@ final class QuoteRequestController extends AbstractController
         $quoteRequest = new QuoteRequest();
         $quoteRequest->setClient($user->getClientProfile());
 
-        $prestataire = null;
-        $prestataireId = $request->query->get('prestataire');
-
-        if (!$prestation && !$prestataireId) {
+        if (!$prestation && !$prestataire) {
             throw $this->createNotFoundException('Contexte manquant pour créer une demande de devis.');
         }
 
@@ -82,12 +79,6 @@ final class QuoteRequestController extends AbstractController
             $quoteRequest->setPrestation($prestation);
             $quoteRequest->setPrestataire($prestataire);
         } else {
-            $prestataire = $prestataireProfileRepository->find($prestataireId);
-
-            if (!$prestataire) {
-                throw $this->createNotFoundException('Prestataire introuvable.');
-            }
-
             $activePrestations = $prestataire
                 ->getPrestataireServices()
                 ->filter(static fn($ps) => $ps->isActive());

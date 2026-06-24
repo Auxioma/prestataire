@@ -192,14 +192,14 @@
 						{% endif %}
 
 						{# {% if prestataire.account.email %}
-																								                            <div class="tm-profile-show__info-item">
-																								                                <i class="fa-regular fa-envelope"></i>
-																								                                <div>
-																								                                    <span>Email</span>
-																								                                    <strong>{{ prestataire.account.email }}</strong>
-																								                                </div>
-																								                            </div>
-																								                        {% endif %} #}
+																																				                            <div class="tm-profile-show__info-item">
+																																				                                <i class="fa-regular fa-envelope"></i>
+																																				                                <div>
+																																				                                    <span>Email</span>
+																																				                                    <strong>{{ prestataire.account.email }}</strong>
+																																				                                </div>
+																																				                            </div>
+																																				                        {% endif %} #}
 
 						{% if prestataire.website %}
 							<div class="tm-profile-show__info-item">
@@ -216,20 +216,20 @@
 						{% endif %}
 
 						{# {% if prestataire.address or prestataire.city %}
-																								                            <div class="tm-profile-show__info-item">
-																								                                <i class="fa-solid fa-map-pin"></i>
-																								                                <div>
-																								                                    <span>Adresse</span>
-																								                                    <strong>
-																								                                        {{ prestataire.address|default('Adresse non renseignée') }}
-																								                                        {% if prestataire.city %}
-																								                                            -
-																								                                            {{ prestataire.city }}
-																								                                        {% endif %}
-																								                                    </strong>
-																								                                </div>
-																								                            </div>
-																								                        {% endif %} #}
+																																				                            <div class="tm-profile-show__info-item">
+																																				                                <i class="fa-solid fa-map-pin"></i>
+																																				                                <div>
+																																				                                    <span>Adresse</span>
+																																				                                    <strong>
+																																				                                        {{ prestataire.address|default('Adresse non renseignée') }}
+																																				                                        {% if prestataire.city %}
+																																				                                            -
+																																				                                            {{ prestataire.city }}
+																																				                                        {% endif %}
+																																				                                    </strong>
+																																				                                </div>
+																																				                            </div>
+																																				                        {% endif %} #}
 					</div>
 
 					{% if prestataire.facebookUrl or prestataire.instagramUrl or prestataire.linkedinUrl %}
@@ -312,7 +312,7 @@
 					</p>
 
 					{% if app.user and is_granted('ROLE_CLIENT') %}
-						<a href="{{ path('app_quote_request_new', { prestataire: prestataire.id }) }}" class="btn tm-profile-show__btn-action">
+						<a href="{{ path('app_quote_request_new_by_prestataire', { prestataireSlug: prestataire.slug }) }}" class="btn tm-profile-show__btn-action">
 							<i class="fa-regular fa-paper-plane me-2"></i>
 							Demander un devis
 						</a>
