@@ -1,0 +1,89 @@
+{% set formView = formView ?? null %}
+{% set submitLabel = submitLabel ?? 'Rechercher' %}
+{% set toolbarClass = toolbarClass ?? '' %}
+
+{% if formView is not null %}
+    <div class="tm-homepage-search-toolbar {{ toolbarClass }}">
+        <div class="tm-homepage-search-form-card">
+            <div class="tm-homepage-search-form-card-body">
+                {{ form_start(formView, {
+                    attr: {
+                        class: 'tm-homepage-search-form',
+                        'data-controller': 'homepage-search',
+                        'data-homepage-search-default-radius-value': formView.radiusKm.vars.value ?: 25
+                    }
+                }) }}
+
+                    <div class="tm-homepage-search-field tm-homepage-search-field--query">
+                        {{ form_label(formView.query, null, {
+                            label_attr: { class: 'tm-homepage-search-label' }
+                        }) }}
+                        <div class="tm-homepage-search-control">
+                            {{ form_widget(formView.query, {
+                                attr: {
+                                    class: 'tm-homepage-search-input',
+                                    placeholder: 'Ex. plomberie, jardinage...'
+                                }
+                            }) }}
+                        </div>
+                    </div>
+
+                    <div class="tm-homepage-search-field tm-homepage-search-field--category">
+                        {{ form_label(formView.subCategory, null, {
+                            label_attr: { class: 'tm-homepage-search-label' }
+                        }) }}
+                        <div class="tm-homepage-search-control">
+                            {{ form_widget(formView.subCategory, {
+                                attr: {
+                                    class: 'tm-homepage-search-select'
+                                }
+                            }) }}
+                        </div>
+                    </div>
+
+                    <div class="tm-homepage-search-field tm-homepage-search-field--location">
+                        {{ form_label(formView.location, null, {
+                            label_attr: { class: 'tm-homepage-search-label' }
+                        }) }}
+                        <div class="tm-homepage-search-control">
+                            {{ form_widget(formView.location, {
+                                attr: {
+                                    class: 'tm-homepage-search-input',
+                                    placeholder: 'Ville ou code postal...'
+                                }
+                            }) }}
+                        </div>
+                    </div>
+
+                    <div class="tm-homepage-search-field tm-homepage-search-field--radius">
+                        <div class="tm-homepage-search-radius-head">
+                            {{ form_label(formView.radiusKm, null, {
+                                label_attr: { class: 'tm-homepage-search-label mb-0' }
+                            }) }}
+                            <span class="tm-homepage-search-radius-value" data-homepage-search-target="value">
+                                {{ formView.radiusKm.vars.value ?: 25 }} km
+                            </span>
+                        </div>
+
+                        <div class="tm-homepage-search-radius-wrap">
+                            {{ form_widget(formView.radiusKm, {
+                                attr: {
+                                    class: 'tm-homepage-search-range',
+                                    'data-homepage-search-target': 'range',
+                                    'data-action': 'input->homepage-search#update change->homepage-search#update'
+                                }
+                            }) }}
+                        </div>
+                    </div>
+
+                    <div class="tm-homepage-search-action">
+                        <button type="submit" class="tm-homepage-search-submit">
+                            {{ submitLabel }}
+                        </button>
+                    </div>
+
+                {{ form_end(formView) }}
+            </div>
+        </div>
+    </div>
+{% endif %}
