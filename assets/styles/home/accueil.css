@@ -23,90 +23,302 @@
 }
 
 /* --- BARRE DE RECHERCHE RAFFINÉE --- */
-.search-overlap-wrapper { 
-    position: relative; 
-    z-index: 10; 
-    height: 60px; /* Donne une hauteur équivalente à la moitié de la hauteur du bloc */
-    margin-bottom: 50px; /* Ajuste selon la taille réelle de ton bloc de recherche */
-}.search-overlap-card { 
-    transform: translateY(-50%); 
-    border-radius: 20px !important; /* Plus arrondi pour un look moderne */
-    padding: 1rem !important; 
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+/* =========================================================
+   HOME — SEARCH TOOLBAR
+   Alignée sur la même largeur visuelle que la navbar
+========================================================= */
+
+.tm-homepage-search-toolbar {
+    position: relative;
+    z-index: 12;
+    margin-top: -54px;
+    margin-bottom: 2rem;
 }
 
-/* Zone de saisie avec fond léger pour les distinguer */
-.search-field-container {
-    background-color: #f8f9fa;
-    border-radius: 12px;
-    padding: 8px 15px;
-    transition: background-color 0.2s ease;
-    border: 1px solid transparent;
-}
-.search-field-container:focus-within {
-    background-color: #ffffff;
-    border-color: var(--tm-service);
-}
-
-.search-input, .search-select {
-    border: 0 !important;
-    background-color: transparent !important;
-    font-size: 14px;
-    color: #333;
-    box-shadow: none !important;
-    padding: 0 !important;
+.tm-homepage-search-form-card {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    border: 1px solid rgba(28, 44, 107, 0.08);
+    border-radius: 1.2rem;
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 16px 38px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+    backdrop-filter: blur(10px);
 }
 
-.search-label {
-    font-size: 10px;
+.tm-homepage-search-form-card-body {
+    padding: 1rem;
+}
+
+.tm-homepage-search-form {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.2fr)
+        minmax(0, 1fr)
+        minmax(0, 1fr)
+        minmax(170px, 0.75fr)
+        148px;
+    gap: 0.85rem;
+    align-items: end;
+    width: 100%;
+}
+
+.tm-homepage-search-field {
+    min-width: 0;
+}
+
+.tm-homepage-search-label {
+    display: inline-block;
+    margin-bottom: 0.48rem;
+    color: #7b8396;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    font-weight: 700;
-    color: #88909a !important;
-    margin-bottom: 0px !important;
+    line-height: 1;
 }
 
-/* Bouton aligné et dynamique */
-.search-submit-btn {
-    background-color: var(--tm-service);
+.tm-homepage-search-control {
+    position: relative;
+}
+
+.tm-homepage-search-input,
+.tm-homepage-search-select {
+    width: 100%;
+    min-height: 52px;
+    padding: 0.85rem 0.95rem;
+    border: 1px solid #dbe3ef;
+    border-radius: 0.95rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+    color: #1f2a44;
+    font-size: 0.94rem;
+    font-weight: 500;
+    box-shadow: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.tm-homepage-search-input::placeholder {
+    color: #98a2b3;
+    font-weight: 400;
+}
+
+.tm-homepage-search-input:focus,
+.tm-homepage-search-select:focus {
+    outline: none;
+    border-color: rgba(32, 70, 216, 0.32);
+    box-shadow: 0 0 0 4px rgba(32, 70, 216, 0.08);
+    background: #ffffff;
+}
+
+.tm-homepage-search-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 2.6rem;
+    background-image:
+        linear-gradient(45deg, transparent 50%, #2046d8 50%),
+        linear-gradient(135deg, #2046d8 50%, transparent 50%);
+    background-position:
+        calc(100% - 20px) calc(50% - 3px),
+        calc(100% - 14px) calc(50% - 3px);
+    background-size:
+        6px 6px,
+        6px 6px;
+    background-repeat: no-repeat;
+}
+
+.tm-homepage-search-field--radius {
+    min-width: 0;
+}
+
+.tm-homepage-search-radius-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+    margin-bottom: 0.45rem;
+}
+
+.tm-homepage-search-radius-value {
+    color: #2046d8;
+    font-size: 0.9rem;
+    font-weight: 800;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.tm-homepage-search-radius-wrap {
+    display: flex;
+    align-items: center;
+    min-height: 52px;
+    padding: 0.55rem 0.9rem;
+    border: 1px solid #dbe3ef;
+    border-radius: 0.95rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+}
+
+.tm-homepage-search-range {
+    width: 100%;
+    margin: 0;
+    background: transparent;
+    accent-color: #2046d8;
+    cursor: pointer;
+}
+
+.tm-homepage-search-range:focus {
+    outline: none;
+}
+
+.tm-homepage-search-range::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #2046d8 0%, #5b79ff 100%);
+}
+
+.tm-homepage-search-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 17px;
+    height: 17px;
+    margin-top: -5.5px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    background: #2046d8;
+    box-shadow: 0 5px 12px rgba(32, 70, 216, 0.24);
+    cursor: pointer;
+}
+
+.tm-homepage-search-range::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #2046d8 0%, #5b79ff 100%);
+}
+
+.tm-homepage-search-range::-moz-range-thumb {
+    width: 17px;
+    height: 17px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    background: #2046d8;
+    box-shadow: 0 5px 12px rgba(32, 70, 216, 0.24);
+    cursor: pointer;
+}
+
+.tm-homepage-search-action {
+    display: flex;
+    align-items: end;
+}
+
+.tm-homepage-search-submit {
+    width: 100%;
+    min-height: 52px;
+    padding: 0.85rem 1rem;
     border: 0;
-    color: #fff;
-    height: 60px; /* Aligné avec la hauteur des blocs de saisie */
-    font-weight: 600;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    border-radius: 12px !important;
-}
-.search-submit-btn:hover {
-    background-color: #03470d; /* Vert foncé demandé */
-    color: #fff;
-}
-
-/* Séparateur */
-.search-divider {
-    height: 40px;
-    width: 1px;
-    background-color: #dee2e6;
+    border-radius: 0.95rem;
+    background: linear-gradient(180deg, #2046d8 0%, #1735a6 100%);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow: 0 12px 24px rgba(32, 70, 216, 0.18);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
 }
 
-@media (min-width: 992px) {
-    .search-overlap-wrapper {
-        height: 60px; /* Espace réservé pour que le bloc flottant ne cache rien */
-        margin-bottom: 20px;
+.tm-homepage-search-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 28px rgba(32, 70, 216, 0.22);
+    filter: brightness(0.98);
+}
+
+.tm-homepage-search-submit:focus-visible {
+    outline: none;
+    box-shadow:
+        0 16px 28px rgba(32, 70, 216, 0.22),
+        0 0 0 4px rgba(32, 70, 216, 0.12);
+}
+
+/* Large desktop */
+@media (max-width: 1399.98px) {
+    .tm-homepage-search-form {
+        grid-template-columns:
+            minmax(0, 1.1fr)
+            minmax(0, 1fr)
+            minmax(0, 1fr)
+            minmax(160px, 0.72fr)
+            140px;
     }
 }
 
-@media (max-width: 991.98px) {
-    .search-overlap-wrapper {
-        height: 250px; /* Ajuste cette valeur selon la hauteur réelle de ton bloc mobile */
-        margin-bottom: 0;
+/* Tablet / small desktop */
+@media (max-width: 1199.98px) {
+    .tm-homepage-search-toolbar {
+        margin-top: -44px;
     }
-    
-    /* On s'assure que le bloc ne soit pas en absolute/transform si ça pose problème */
-    .search-overlap-card {
-        transform: none !important;
-        margin-top: -110px; /* Remonte le bloc juste ce qu'il faut */
+
+    .tm-homepage-search-form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tm-homepage-search-field--radius,
+    .tm-homepage-search-action {
+        grid-column: 1 / -1;
+    }
+
+    .tm-homepage-search-action {
+        display: block;
+    }
+
+    .tm-homepage-search-submit {
+        width: 100%;
     }
 }
+
+/* Mobile */
+@media (max-width: 767.98px) {
+    .tm-homepage-search-toolbar {
+        margin-top: -24px;
+        margin-bottom: 1.5rem;
+    }
+
+    .tm-homepage-search-form-card {
+        border-radius: 1rem;
+    }
+
+    .tm-homepage-search-form-card-body {
+        padding: 0.9rem;
+    }
+
+    .tm-homepage-search-form {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+
+    .tm-homepage-search-field--radius,
+    .tm-homepage-search-action {
+        grid-column: auto;
+    }
+
+    .tm-homepage-search-input,
+    .tm-homepage-search-select,
+    .tm-homepage-search-radius-wrap,
+    .tm-homepage-search-submit {
+        min-height: 50px;
+    }
+
+    .tm-homepage-search-submit {
+        width: 100%;
+    }
+}
+
 /* --- 3. CATÉGORIES (Slider & Cartes) --- */
 .main-content-section {
     margin-top: 45px;
@@ -379,7 +591,7 @@
     background: #ffffff;
     border: 1px solid #eef2f6;
     border-radius: 24px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
     margin-top: 3rem;
     margin-bottom: 3rem;
 }
@@ -446,11 +658,13 @@
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    color: var(--tm-service, #2046D8);
+    color: var(--tm-service, #2046d8);
     font-size: 0.92rem;
     font-weight: 700;
     text-decoration: none;
-    transition: color 0.2s ease, transform 0.2s ease;
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
 .tm-home-deals-link:hover {
@@ -475,7 +689,10 @@
     background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
     box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
     overflow: hidden;
-    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease,
+        border-color 0.22s ease;
 }
 
 .tm-home-deal-card::before {
@@ -500,7 +717,11 @@
     width: 180px;
     height: 180px;
     border-radius: 999px;
-    background: radial-gradient(circle, rgba(32, 70, 216, 0.10) 0%, rgba(32, 70, 216, 0) 72%);
+    background: radial-gradient(
+        circle,
+        rgba(32, 70, 216, 0.1) 0%,
+        rgba(32, 70, 216, 0) 72%
+    );
     pointer-events: none;
     z-index: 0;
 }
@@ -512,7 +733,7 @@
     border-radius: 1.1rem;
     overflow: hidden;
     background: #eef3ff;
-    box-shadow: 0 14px 28px rgba(16, 24, 40, 0.10);
+    box-shadow: 0 14px 28px rgba(16, 24, 40, 0.1);
     z-index: 2;
 }
 
@@ -532,8 +753,13 @@
 .tm-home-deal-card__hero-overlay {
     position: absolute;
     inset: 0;
-    background:
-        linear-gradient(to top, rgba(8, 15, 35, 0.26) 0%, rgba(8, 15, 35, 0.08) 38%, rgba(8, 15, 35, 0.02) 68%, rgba(8, 15, 35, 0.00) 100%);
+    background: linear-gradient(
+        to top,
+        rgba(8, 15, 35, 0.26) 0%,
+        rgba(8, 15, 35, 0.08) 38%,
+        rgba(8, 15, 35, 0.02) 68%,
+        rgba(8, 15, 35, 0) 100%
+    );
     pointer-events: none;
 }
 
@@ -695,7 +921,11 @@
     margin-top: 1rem;
     padding: 1rem 1rem 1rem;
     border-top: 1px solid rgba(20, 30, 70, 0.08);
-    background: linear-gradient(180deg, rgba(245, 247, 255, 0.42) 0%, rgba(255, 255, 255, 0) 100%);
+    background: linear-gradient(
+        180deg,
+        rgba(245, 247, 255, 0.42) 0%,
+        rgba(255, 255, 255, 0) 100%
+    );
 }
 
 .tm-home-deal-card__prices {
@@ -735,8 +965,11 @@
     font-size: 0.94rem;
     font-weight: 700;
     text-decoration: none;
-    box-shadow: 0 14px 26px rgba(47, 73, 221, 0.20);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    box-shadow: 0 14px 26px rgba(47, 73, 221, 0.2);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
 }
 
 .tm-home-deal-card__cta:hover {
@@ -812,7 +1045,7 @@
 
 .tm-home-deal-card__badge--low {
     background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-    box-shadow: 0 8px 18px rgba(34, 197, 94, 0.20);
+    box-shadow: 0 8px 18px rgba(34, 197, 94, 0.2);
 }
 
 .tm-home-deal-card__badge--medium {
@@ -823,7 +1056,7 @@
 
 .tm-home-deal-card__badge--high {
     background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
-    box-shadow: 0 8px 18px rgba(249, 115, 22, 0.20);
+    box-shadow: 0 8px 18px rgba(249, 115, 22, 0.2);
 }
 
 .tm-home-deal-card__badge--max {
@@ -914,7 +1147,10 @@
     background-color: whitesmoke;
     color: #061b56;
     border-color: #061b56;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease;
 }
 
 .reassurance-more-btn--about-theme:hover,
@@ -925,10 +1161,14 @@
 }
 
 .reassurance-more-btn--about-theme__icon {
-    transition: transform 0.25s ease, color 0.3s ease;
+    transition:
+        transform 0.25s ease,
+        color 0.3s ease;
 }
 
-.reassurance-more-btn--about-theme:hover .reassurance-more-btn--about-theme__icon,
-.reassurance-more-btn--about-theme:focus .reassurance-more-btn--about-theme__icon {
+.reassurance-more-btn--about-theme:hover
+    .reassurance-more-btn--about-theme__icon,
+.reassurance-more-btn--about-theme:focus
+    .reassurance-more-btn--about-theme__icon {
     transform: translateX(4px);
 }

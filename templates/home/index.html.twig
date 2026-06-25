@@ -50,67 +50,93 @@
 			</div>
 		</div>
 
-		{# 2. BARRE DE RECHERCHE #}
-		<div class="container search-overlap-wrapper">
-			<div class="card border-0 p-2 search-overlap-card bg-white">
-				{{ form_start(homepageSearchForm, {
-            attr: {
-                class: 'row g-2 align-items-center w-100 m-0',
-            },
-        }) }}
+{# BARRE DE RECHERCHE #}
+<div class="container">
+    <div class="tm-homepage-search-toolbar">
+        <div class="tm-homepage-search-form-card">
+            <div class="tm-homepage-search-form-card-body">
+                {{ form_start(homepageSearchForm, {
+                    attr: {
+                        class: 'tm-homepage-search-form',
+                        'data-controller': 'homepage-search',
+                        'data-homepage-search-default-radius-value': homepageSearchForm.radiusKm.vars.value ?: 25
+                    }
+                }) }}
 
-				{# Champ 1 #}
-				<div class="col-lg-3">
-					<div class="search-field-container d-flex align-items-center gap-3">
-						<i class="fa-solid fa-magnifying-glass text-tm-service fs-5"></i>
-						<div class="w-100">
-							{{ form_label(homepageSearchForm.query, null, {
-                            label_attr: {class: 'search-label'},
+                    <div class="tm-homepage-search-field tm-homepage-search-field--query">
+                        {{ form_label(homepageSearchForm.query, null, {
+                            label_attr: { class: 'tm-homepage-search-label' }
                         }) }}
-							{{ form_widget(homepageSearchForm.query) }}
-						</div>
-					</div>
-				</div>
+                        <div class="tm-homepage-search-control">
+                            {{ form_widget(homepageSearchForm.query, {
+                                attr: {
+                                    class: 'tm-homepage-search-input',
+                                    placeholder: 'Ex. plomberie, jardinage...'
+                                }
+                            }) }}
+                        </div>
+                    </div>
 
-				{# Champ 2 #}
-				<div class="col-lg-3 d-flex align-items-center">
-					<div class="search-divider d-none d-lg-block me-3"></div>
-					<div class="search-field-container d-flex align-items-center gap-3 w-100">
-						<i class="fa-solid fa-briefcase text-tm-service fs-5"></i>
-						<div class="w-100">
-							{{ form_label(homepageSearchForm.subCategory, null, {
-                            label_attr: {class: 'search-label'},
+                    <div class="tm-homepage-search-field tm-homepage-search-field--category">
+                        {{ form_label(homepageSearchForm.subCategory, null, {
+                            label_attr: { class: 'tm-homepage-search-label' }
                         }) }}
-							{{ form_widget(homepageSearchForm.subCategory) }}
-						</div>
-					</div>
-				</div>
+                        <div class="tm-homepage-search-control">
+                            {{ form_widget(homepageSearchForm.subCategory, {
+                                attr: {
+                                    class: 'tm-homepage-search-select'
+                                }
+                            }) }}
+                        </div>
+                    </div>
 
-				{# Champ 3 #}
-				<div class="col-lg-3 d-flex align-items-center">
-					<div class="search-divider d-none d-lg-block me-3"></div>
-					<div class="search-field-container d-flex align-items-center gap-3 w-100">
-						<i class="fa-solid fa-location-dot text-tm-service fs-5"></i>
-						<div class="w-100">
-							{{ form_label(homepageSearchForm.location, null, {
-                            label_attr: {class: 'search-label'},
+                    <div class="tm-homepage-search-field tm-homepage-search-field--location">
+                        {{ form_label(homepageSearchForm.location, null, {
+                            label_attr: { class: 'tm-homepage-search-label' }
                         }) }}
-							{{ form_widget(homepageSearchForm.location) }}
-						</div>
-					</div>
-				</div>
+                        <div class="tm-homepage-search-control">
+                            {{ form_widget(homepageSearchForm.location, {
+                                attr: {
+                                    class: 'tm-homepage-search-input',
+                                    placeholder: 'Ville ou code postal...'
+                                }
+                            }) }}
+                        </div>
+                    </div>
 
-				{# Bouton #}
-				<div class="col-lg-3">
-					<button type="submit" class="btn search-submit-btn w-100">
-						<i class="fa-solid fa-magnifying-glass me-2"></i>
-						Rechercher
-					</button>
-				</div>
+                    <div class="tm-homepage-search-field tm-homepage-search-field--radius">
+                        <div class="tm-homepage-search-radius-head">
+                            {{ form_label(homepageSearchForm.radiusKm, null, {
+                                label_attr: { class: 'tm-homepage-search-label mb-0' }
+                            }) }}
+                            <span class="tm-homepage-search-radius-value" data-homepage-search-target="value">
+                                {{ homepageSearchForm.radiusKm.vars.value ?: 25 }} km
+                            </span>
+                        </div>
 
-				{{ form_end(homepageSearchForm) }}
-			</div>
-		</div>
+                        <div class="tm-homepage-search-radius-wrap">
+                            {{ form_widget(homepageSearchForm.radiusKm, {
+                                attr: {
+                                    class: 'tm-homepage-search-range',
+                                    'data-homepage-search-target': 'range',
+                                    'data-action': 'input->homepage-search#update change->homepage-search#update'
+                                }
+                            }) }}
+                        </div>
+                    </div>
+
+                    <div class="tm-homepage-search-action">
+                        <button type="submit" class="tm-homepage-search-submit">
+                            Rechercher
+                        </button>
+                    </div>
+
+                {{ form_end(homepageSearchForm) }}
+            </div>
+        </div>
+    </div>
+</div>
+
 
 		{# CHIFFRES CLÉS #}
 		<div class="container tm-stats-container">
@@ -309,10 +335,10 @@
 							</div>
 						</div>
 
-<a href="{{ path('app_static_page', { slug: 'about' }) }}" class="btn btn-white w-100 py-2 rounded-3 fw-bold border shadow-xs d-flex align-items-center justify-content-between px-3 mt-auto reassurance-more-btn reassurance-more-btn--about-theme">
-    En savoir plus
-    <i class="fa-solid fa-chevron-right arrow-indicator reassurance-more-btn--about-theme__icon"></i>
-</a>
+						<a href="{{ path('app_static_page', { slug: 'about' }) }}" class="btn btn-white w-100 py-2 rounded-3 fw-bold border shadow-xs d-flex align-items-center justify-content-between px-3 mt-auto reassurance-more-btn reassurance-more-btn--about-theme">
+							En savoir plus
+							<i class="fa-solid fa-chevron-right arrow-indicator reassurance-more-btn--about-theme__icon"></i>
+						</a>
 					</div>
 				</div>
 			</div>

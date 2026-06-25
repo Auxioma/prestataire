@@ -1,25 +1,17 @@
 <?php
 
-/**
- * Copyright(c) 2026 Trouve moi
- *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
- * Tous droits réservés.
- *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
- */
-
 namespace App\Form;
 
 use App\Entity\ServiceCategory;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\RangeType;
 
 class HomepageSearchType extends AbstractType
 {
@@ -32,7 +24,7 @@ class HomepageSearchType extends AbstractType
                 'trim' => true,
                 'attr' => [
                     'class' => 'form-control search-input',
-                    'placeholder' => 'Ex : plomberie, jardinage...',
+                    'placeholder' => 'Ex. plomberie, jardinage...',
                     'autocomplete' => 'off',
                 ],
             ])
@@ -45,7 +37,7 @@ class HomepageSearchType extends AbstractType
                     $parent = $category->getParent();
 
                     return $parent
-                        ? \sprintf('%s > %s', $parent->getName(), $category->getName())
+                        ? sprintf('%s — %s', $parent->getName(), $category->getName())
                         : $category->getName();
                 },
                 'query_builder' => static function (EntityRepository $er) {
@@ -72,7 +64,19 @@ class HomepageSearchType extends AbstractType
                     'placeholder' => 'Ville ou code postal...',
                     'autocomplete' => 'off',
                 ],
-            ]);
+            ])
+            ->add('radiusKm', RangeType::class, [
+                'label' => 'Rayon',
+                'required' => false,
+                'empty_data' => '25',
+                'attr' => [
+                    'class' => 'form-range tm-homepage-radius-range',
+                    'min' => 5,
+                    'max' => 100,
+                    'step' => 5,
+                ],
+            ])
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
