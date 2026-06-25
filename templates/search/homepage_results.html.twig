@@ -6,8 +6,111 @@
 
 {% block body %}
     {% set hasFilters = query is not empty or location is not empty or subCategory is not null %}
+    {% set hasDirectResults = directResults is defined and directResults|length > 0 %}
+    {% set hasFallbackResults = fallbackResults is defined and fallbackResults|length > 0 %}
+    {% set hasAnyResults = hasDirectResults or hasFallbackResults %}
+    {% set fallbackPreviewLimit = 6 %}
+    {% set visibleFallbackResults = fallbackResults is defined ? fallbackResults|slice(0, fallbackPreviewLimit) : [] %}
+    {% set hasMoreFallbackResults = totalFallbackResults is defined and totalFallbackResults > fallbackPreviewLimit %}
     {% set startPage = currentPage - 2 > 1 ? currentPage - 2 : 1 %}
     {% set endPage = currentPage + 2 < totalPages ? currentPage + 2 : totalPages %}
+
+    {% macro prestataire_card(profile, matchLabel) %}
+        <article class="tm-search-results-card">
+            <div class="tm-search-results-card__inner">
+                <div class="tm-search-results-card__top">
+                    <div class="tm-search-results-card__identity">
+                        <div class="tm-search-results-card__avatar" aria-hidden="true">
+                            <i class="fa-solid fa-briefcase"></i>
+                        </div>
+
+                        <div class="tm-search-results-card__identity-text">
+                            <div class="tm-search-results-card__title-row">
+                                <h2 class="tm-search-results-card__title">
+                                    {{ profile.companyName|default(profile.account.userIdentifier) }}
+                                </h2>
+
+                                {% if matchLabel is not empty %}
+                                    <span class="tm-search-results-meta-pill tm-search-results-meta-pill--match-type">
+                                        {{ matchLabel }}
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            {% if profile.metier %}
+                                <p class="tm-search-results-card__job">
+                                    {{ profile.metier }}
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="tm-search-results-card__rating" aria-label="Note moyenne">
+                        <i class="fa-solid fa-star"></i>
+                        <span>{{ profile.averageRating|default('0.0') }}</span>
+                    </div>
+                </div>
+
+                <div class="tm-search-results-card__body">
+                    {% if profile.shortDescription %}
+                        <p class="tm-search-results-card__description">
+                            {{ profile.shortDescription|length > 140
+                                ? profile.shortDescription|slice(0, 140) ~ '…'
+                                : profile.shortDescription }}
+                        </p>
+                    {% else %}
+                        <p class="tm-search-results-card__description tm-search-results-card__description--empty">
+                            Ce prestataire n’a pas encore rédigé de description courte.
+                        </p>
+                    {% endif %}
+                </div>
+
+                <div class="tm-search-results-card__meta">
+                    {% if profile.city %}
+                        <span class="tm-search-results-meta-pill">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span>{{ profile.city }}</span>
+                        </span>
+                    {% endif %}
+
+                    {% if profile.postalCode %}
+                        <span class="tm-search-results-meta-pill">
+                            <span>{{ profile.postalCode }}</span>
+                        </span>
+                    {% endif %}
+
+                    {% if profile.matchedDistanceKm is defined and profile.matchedDistanceKm is not null %}
+                        <span class="tm-search-results-meta-pill tm-search-results-meta-pill--distance">
+                            <i class="fa-solid fa-route"></i>
+                            <span>À {{ profile.matchedDistanceKm|round(1) }} km</span>
+                        </span>
+                    {% endif %}
+
+                    {% if profile.verificationStatus is defined and profile.verificationStatus %}
+                        <span class="tm-search-results-meta-pill tm-search-results-meta-pill--verified">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>Vérifié</span>
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div class="tm-search-results-card__footer">
+                    <div class="tm-search-results-card__reviews">
+                        {{ profile.reviewsCount|default(0) }} avis
+                    </div>
+
+                    {% if profile.slug %}
+                        <a href="{{ path('app_prestataire_show', { slug: profile.slug }) }}" class="tm-search-results-card__cta">
+                            <span>Voir le profil</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+    {% endmacro %}
+
+    {% import _self as cards %}
 
     <section class="tm-search-results-page">
         <div class="container tm-search-results-shell">
@@ -43,6 +146,16 @@
                             résultat{{ totalResults > 1 ? 's' : '' }}
                         </span>
                     </div>
+
+                    {% if totalFallbackResults is defined and totalFallbackResults > 0 %}
+                        <div class="tm-search-results-summary__card tm-search-results-summary__card--secondary">
+                            <span class="tm-search-results-summary__label">Suggestions de couverture</span>
+                            <strong class="tm-search-results-summary__value">{{ totalFallbackResults }}</strong>
+                            <span class="tm-search-results-summary__meta">
+                                prestataire{{ totalFallbackResults > 1 ? 's' : '' }} pouvant intervenir
+                            </span>
+                        </div>
+                    {% endif %}
                 </div>
             </header>
 
@@ -88,170 +201,126 @@
                 </section>
             {% endif %}
 
-            {% if results|length > 0 %}
-                <section class="tm-search-results-list" aria-label="Liste des prestataires">
-                    <div class="tm-search-results-grid">
-                        {% for profile in results %}
-                            <article class="tm-search-results-card">
-                                <div class="tm-search-results-card__inner">
-                                    <div class="tm-search-results-card__top">
-                                        <div class="tm-search-results-card__identity">
-                                            <div class="tm-search-results-card__avatar" aria-hidden="true">
-                                                <i class="fa-solid fa-briefcase"></i>
-                                            </div>
+            {% if hasAnyResults %}
+                {% if hasDirectResults %}
+                    <section class="tm-search-results-list" aria-label="Résultats principaux">
+                        <div class="tm-search-results-section-heading">
+                            <h2 class="tm-search-results-section-heading__title">Résultats dans votre zone de recherche</h2>
+                            <p class="tm-search-results-section-heading__text">
+                                Ces prestataires correspondent directement à votre recherche et à la zone demandée.
+                            </p>
+                        </div>
 
-                                            <div class="tm-search-results-card__identity-text">
-                                                <h2 class="tm-search-results-card__title">
-                                                    {{ profile.companyName|default(profile.account.userIdentifier) }}
-                                                </h2>
+                        <div class="tm-search-results-grid">
+                            {% for profile in directResults %}
+                                {{ cards.prestataire_card(profile, 'Dans votre zone') }}
+                            {% endfor %}
+                        </div>
+                    </section>
 
-                                                {% if profile.metier %}
-                                                    <p class="tm-search-results-card__job">
-                                                        {{ profile.metier }}
-                                                    </p>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-
-                                        <div class="tm-search-results-card__rating" aria-label="Note moyenne">
-                                            <i class="fa-solid fa-star"></i>
-                                            <span>{{ profile.averageRating|default('0.0') }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="tm-search-results-card__body">
-                                        {% if profile.shortDescription %}
-                                            <p class="tm-search-results-card__description">
-                                                {{ profile.shortDescription|length > 140
-                                                    ? profile.shortDescription|slice(0, 140) ~ '…'
-                                                    : profile.shortDescription }}
-                                            </p>
-                                        {% else %}
-                                            <p class="tm-search-results-card__description tm-search-results-card__description--empty">
-                                                Ce prestataire n’a pas encore rédigé de description courte.
-                                            </p>
-                                        {% endif %}
-                                    </div>
-
-                                    <div class="tm-search-results-card__meta">
-                                        {% if profile.city %}
-                                            <span class="tm-search-results-meta-pill">
-                                                <i class="fa-solid fa-location-dot"></i>
-                                                <span>{{ profile.city }}</span>
-                                            </span>
-                                        {% endif %}
-
-                                        {% if profile.postalCode %}
-                                            <span class="tm-search-results-meta-pill">
-                                                <span>{{ profile.postalCode }}</span>
-                                            </span>
-                                        {% endif %}
-
-                                        {% if profile.matchedDistanceKm is defined and profile.matchedDistanceKm is not null %}
-                                            <span class="tm-search-results-meta-pill tm-search-results-meta-pill--distance">
-                                                <i class="fa-solid fa-route"></i>
-                                                <span>À {{ profile.matchedDistanceKm|round(1) }} km</span>
-                                            </span>
-                                        {% endif %}
-
-                                        {% if profile.verificationStatus is defined and profile.verificationStatus %}
-                                            <span class="tm-search-results-meta-pill tm-search-results-meta-pill--verified">
-                                                <i class="fa-solid fa-circle-check"></i>
-                                                <span>Vérifié</span>
-                                            </span>
-                                        {% endif %}
-                                    </div>
-
-                                    <div class="tm-search-results-card__footer">
-                                        <div class="tm-search-results-card__reviews">
-                                            {{ profile.reviewsCount|default(0) }} avis
-                                        </div>
-
-                                        {% if profile.slug %}
-                                            <a href="{{ path('app_prestataire_show', { slug: profile.slug }) }}" class="tm-search-results-card__cta">
-                                                <span>Voir le profil</span>
-                                                <i class="fa-solid fa-arrow-right"></i>
-                                            </a>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </article>
-                        {% endfor %}
-                    </div>
-                </section>
-
-                {% if totalPages > 1 %}
-                    <nav class="tm-search-results-pagination" aria-label="Pagination des résultats">
-                        <div class="tm-search-results-pagination__inner">
-                            {% if currentPage > 1 %}
-                                <a
-                                    href="{{ path('app_homepage_search', app.request.query.all|merge({ page: currentPage - 1 })) }}"
-                                    class="tm-search-results-pagination__control tm-search-results-pagination__control--prev"
-                                >
-                                    <i class="fa-solid fa-chevron-left"></i>
-                                    <span>Précédent</span>
-                                </a>
-                            {% else %}
-                                <span class="tm-search-results-pagination__control tm-search-results-pagination__control--prev is-disabled">
-                                    <i class="fa-solid fa-chevron-left"></i>
-                                    <span>Précédent</span>
-                                </span>
-                            {% endif %}
-
-                            <div class="tm-search-results-pagination__pages">
-                                {% if startPage > 1 %}
+                    {% if totalPages > 1 %}
+                        <nav class="tm-search-results-pagination" aria-label="Pagination des résultats">
+                            <div class="tm-search-results-pagination__inner">
+                                {% if currentPage > 1 %}
                                     <a
-                                        href="{{ path('app_homepage_search', app.request.query.all|merge({ page: 1 })) }}"
-                                        class="tm-search-results-pagination__page"
+                                        href="{{ path('app_homepage_search', app.request.query.all|merge({ page: currentPage - 1 })) }}"
+                                        class="tm-search-results-pagination__control tm-search-results-pagination__control--prev"
                                     >
-                                        1
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                        <span>Précédent</span>
                                     </a>
-
-                                    {% if startPage > 2 %}
-                                        <span class="tm-search-results-pagination__ellipsis">…</span>
-                                    {% endif %}
+                                {% else %}
+                                    <span class="tm-search-results-pagination__control tm-search-results-pagination__control--prev is-disabled">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                        <span>Précédent</span>
+                                    </span>
                                 {% endif %}
 
-                                {% for pageNumber in startPage..endPage %}
-                                    <a
-                                        href="{{ path('app_homepage_search', app.request.query.all|merge({ page: pageNumber })) }}"
-                                        class="tm-search-results-pagination__page {{ pageNumber == currentPage ? 'is-active' : '' }}"
-                                        {% if pageNumber == currentPage %}aria-current="page"{% endif %}
-                                    >
-                                        {{ pageNumber }}
-                                    </a>
-                                {% endfor %}
+                                <div class="tm-search-results-pagination__pages">
+                                    {% if startPage > 1 %}
+                                        <a
+                                            href="{{ path('app_homepage_search', app.request.query.all|merge({ page: 1 })) }}"
+                                            class="tm-search-results-pagination__page"
+                                        >
+                                            1
+                                        </a>
 
-                                {% if endPage < totalPages %}
-                                    {% if endPage < totalPages - 1 %}
-                                        <span class="tm-search-results-pagination__ellipsis">…</span>
+                                        {% if startPage > 2 %}
+                                            <span class="tm-search-results-pagination__ellipsis">…</span>
+                                        {% endif %}
                                     {% endif %}
 
+                                    {% for pageNumber in startPage..endPage %}
+                                        <a
+                                            href="{{ path('app_homepage_search', app.request.query.all|merge({ page: pageNumber })) }}"
+                                            class="tm-search-results-pagination__page {{ pageNumber == currentPage ? 'is-active' : '' }}"
+                                            {% if pageNumber == currentPage %}aria-current="page"{% endif %}
+                                        >
+                                            {{ pageNumber }}
+                                        </a>
+                                    {% endfor %}
+
+                                    {% if endPage < totalPages %}
+                                        {% if endPage < totalPages - 1 %}
+                                            <span class="tm-search-results-pagination__ellipsis">…</span>
+                                        {% endif %}
+
+                                        <a
+                                            href="{{ path('app_homepage_search', app.request.query.all|merge({ page: totalPages })) }}"
+                                            class="tm-search-results-pagination__page"
+                                        >
+                                            {{ totalPages }}
+                                        </a>
+                                    {% endif %}
+                                </div>
+
+                                {% if currentPage < totalPages %}
                                     <a
-                                        href="{{ path('app_homepage_search', app.request.query.all|merge({ page: totalPages })) }}"
-                                        class="tm-search-results-pagination__page"
+                                        href="{{ path('app_homepage_search', app.request.query.all|merge({ page: currentPage + 1 })) }}"
+                                        class="tm-search-results-pagination__control tm-search-results-pagination__control--next"
                                     >
-                                        {{ totalPages }}
+                                        <span>Suivant</span>
+                                        <i class="fa-solid fa-chevron-right"></i>
                                     </a>
+                                {% else %}
+                                    <span class="tm-search-results-pagination__control tm-search-results-pagination__control--next is-disabled">
+                                        <span>Suivant</span>
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </span>
                                 {% endif %}
                             </div>
+                        </nav>
+                    {% endif %}
+                {% endif %}
 
-                            {% if currentPage < totalPages %}
-                                <a
-                                    href="{{ path('app_homepage_search', app.request.query.all|merge({ page: currentPage + 1 })) }}"
-                                    class="tm-search-results-pagination__control tm-search-results-pagination__control--next"
-                                >
-                                    <span>Suivant</span>
-                                    <i class="fa-solid fa-chevron-right"></i>
-                                </a>
-                            {% else %}
-                                <span class="tm-search-results-pagination__control tm-search-results-pagination__control--next is-disabled">
-                                    <span>Suivant</span>
-                                    <i class="fa-solid fa-chevron-right"></i>
-                                </span>
-                            {% endif %}
+                {% if hasFallbackResults %}
+                    <section class="tm-search-results-list tm-search-results-list--fallback" aria-label="Suggestions de prestataires">
+                        <div class="tm-search-results-section-heading">
+                            <h2 class="tm-search-results-section-heading__title">Prestataires pouvant intervenir dans votre zone</h2>
+                            <p class="tm-search-results-section-heading__text">
+                                Ces prestataires ne sont pas forcément dans votre rayon initial, mais leur zone d’intervention leur permet de couvrir votre secteur.
+                            </p>
                         </div>
-                    </nav>
+
+                        <div class="tm-search-results-grid">
+                            {% for profile in visibleFallbackResults %}
+                                {{ cards.prestataire_card(profile, 'Zone élargie') }}
+                            {% endfor %}
+                        </div>
+
+                        {% if hasMoreFallbackResults %}
+                            <div class="tm-search-results-fallback-more">
+                                <div class="tm-search-results-fallback-more__card">
+                                    <span class="tm-search-results-fallback-more__label">Suggestions supplémentaires</span>
+                                    <p class="tm-search-results-fallback-more__text">
+                                        {{ totalFallbackResults - fallbackPreviewLimit }} autre{{ (totalFallbackResults - fallbackPreviewLimit) > 1 ? 's' : '' }}
+                                        prestataire{{ (totalFallbackResults - fallbackPreviewLimit) > 1 ? 's' : '' }}
+                                        peuvent aussi intervenir dans cette zone.
+                                    </p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </section>
                 {% endif %}
             {% else %}
                 <section class="tm-search-results-empty" aria-label="Aucun résultat">

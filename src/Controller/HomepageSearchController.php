@@ -27,19 +27,14 @@ class HomepageSearchController extends AbstractController
 
         $data = $form->isSubmitted() ? ($form->getData() ?? []) : [];
 
-        $radiusKm = (int) ($data['radiusKm'] ?? 25);
-        $radiusKm = max(5, min(100, $radiusKm));
-
+        $radiusKm = max(5, min(100, (int) ($data['radiusKm'] ?? 25)));
         $query = mb_trim((string) ($data['query'] ?? ''));
         $location = mb_trim((string) ($data['location'] ?? ''));
 
         /** @var ServiceCategory|null $subCategory */
         $subCategory = $data['subCategory'] ?? null;
 
-        $searchedLocation = null;
-        if ('' !== $location) {
-            $searchedLocation = $zoneGeocoder->geocode($location, null);
-        }
+        $searchedLocation = '' !== $location ? $zoneGeocoder->geocode($location, null) : null;
 
         $criteria = [
             'query' => $query,
@@ -51,23 +46,20 @@ class HomepageSearchController extends AbstractController
 
         $page = max(1, $request->query->getInt('page', 1));
         $perPage = 9;
-        $from = ($page - 1) * $perPage;
 
-        $searchResult = $prestataireSearchService->search(
+        $searchResponse = $prestataireSearchService->search(
             '' !== $query ? $query : null,
             '' !== $location ? $location : null,
             $subCategory?->getSlug(),
-            $perPage,
-            $from,
+            200,
+            0,
             $searchedLocation,
             $radiusKm,
         );
 
-        $hits = $searchResult['hits'] ?? [];
-        $total = (int) ($searchResult['total'] ?? 0);
-
+        $hits = $searchResponse['hits'] ?? [];
         $hitIds = array_values(array_filter(array_map(
-            static fn (array $hit): ?int => isset($hit['id']) ? (int) $hit['id'] : null,
+            static fn(array $hit): ?int => isset($hit['id']) ? (int) $hit['id'] : null,
             $hits
         )));
 
@@ -90,7 +82,9 @@ class HomepageSearchController extends AbstractController
             }
         }
 
-        $prestataires = [];
+        $directResults = [];
+        $fallbackResults = [];
+
         foreach ($hits as $hit) {
             $id = isset($hit['id']) ? (int) $hit['id'] : null;
             if (null === $id || !isset($profilesById[$id])) {
@@ -99,57 +93,69 @@ class HomepageSearchController extends AbstractController
 
             $profile = $profilesById[$id];
 
-            if (null !== $searchedLocation) {
-                if (!$this->isPrestataireMatchingSearchedLocation($profile, $searchedLocation, $radiusKm)) {
-                    continue;
-                }
-
-                $profile->matchedDistanceKm = $this->getClosestMatchingDistanceKm($profile, $searchedLocation, $radiusKm);
+            if (null === $searchedLocation) {
+                $directResults[] = $profile;
+                continue;
             }
 
-            $prestataires[] = $profile;
+            $matchType = $this->getPrestataireMatchType($profile, $searchedLocation, $radiusKm);
+            if (null === $matchType) {
+                continue;
+            }
+
+            $profile->matchedDistanceKm = $this->getClosestReachableDistanceKm($profile, $searchedLocation, $radiusKm);
+
+            if ('direct' === $matchType) {
+                $directResults[] = $profile;
+                continue;
+            }
+
+            $fallbackResults[] = $profile;
         }
 
-        if (null !== $searchedLocation) {
-            usort($prestataires, static function ($a, $b): int {
-                return ($a->matchedDistanceKm ?? 999999) <=> ($b->matchedDistanceKm ?? 999999);
-            });
-        }
+        usort($directResults, static fn($a, $b): int => ($a->matchedDistanceKm ?? 999999) <=> ($b->matchedDistanceKm ?? 999999));
+        usort($fallbackResults, static fn($a, $b): int => ($a->matchedDistanceKm ?? 999999) <=> ($b->matchedDistanceKm ?? 999999));
 
-        $filteredTotal = count($prestataires);
-        $totalPages = max(1, (int) ceil($filteredTotal / $perPage));
+        $totalPages = max(1, (int) ceil(count($directResults) / $perPage));
         $page = min($page, $totalPages);
+        $offset = ($page - 1) * $perPage;
+        $pagedDirectResults = array_slice($directResults, $offset, $perPage);
 
         return $this->render('search/homepage_results.html.twig', [
             'searchForm' => $form->createView(),
-            'results' => $prestataires,
+            'results' => $pagedDirectResults,
+            'directResults' => $pagedDirectResults,
+            'fallbackResults' => $fallbackResults,
             'query' => $query,
             'location' => $location,
             'subCategory' => $subCategory,
             'criteria' => $criteria,
             'pageTitle' => 'Résultats de recherche',
-            'totalResults' => $filteredTotal,
+            'totalResults' => count($directResults),
+            'totalFallbackResults' => count($fallbackResults),
             'currentPage' => $page,
             'perPage' => $perPage,
             'totalPages' => $totalPages,
         ]);
     }
 
-    private function isPrestataireMatchingSearchedLocation(
+    private function getPrestataireMatchType(
         PrestataireProfile $prestataire,
         ?array $searchedLocation,
         int $radiusKm = 25,
-    ): bool {
+    ): ?string {
         if (null === $searchedLocation) {
-            return true;
+            return 'direct';
         }
 
         if (!isset($searchedLocation['latitude'], $searchedLocation['longitude'])) {
-            return true;
+            return 'direct';
         }
 
         $searchedLat = (float) $searchedLocation['latitude'];
         $searchedLng = (float) $searchedLocation['longitude'];
+
+        $hasFallbackMatch = false;
 
         foreach ($prestataire->getPrestataireInterventionZones() as $zone) {
             if (!$zone->isActive()) {
@@ -168,14 +174,20 @@ class HomepageSearchController extends AbstractController
             );
 
             if ($distanceKm <= $radiusKm) {
-                return true;
+                return 'direct';
+            }
+
+            $zoneRadiusKm = max(0, (int) $zone->getRadiusKm());
+
+            if ($zoneRadiusKm > 0 && $distanceKm <= ($radiusKm + $zoneRadiusKm)) {
+                $hasFallbackMatch = true;
             }
         }
 
-        return false;
+        return $hasFallbackMatch ? 'fallback' : null;
     }
 
-    private function getClosestMatchingDistanceKm(
+    private function getClosestReachableDistanceKm(
         PrestataireProfile $prestataire,
         ?array $searchedLocation,
         int $radiusKm = 25,
@@ -209,7 +221,9 @@ class HomepageSearchController extends AbstractController
                 (float) $zone->getLongitude(),
             );
 
-            if ($distanceKm <= $radiusKm) {
+            $zoneRadiusKm = max(0, (int) $zone->getRadiusKm());
+
+            if ($distanceKm <= ($radiusKm + $zoneRadiusKm)) {
                 if (null === $bestDistance || $distanceKm < $bestDistance) {
                     $bestDistance = $distanceKm;
                 }
