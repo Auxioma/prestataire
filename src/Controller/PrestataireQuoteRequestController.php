@@ -141,7 +141,7 @@ final class PrestataireQuoteRequestController extends AbstractController
     #[Route('/{slug}/deny', name: 'deny', methods: ['POST'])]
     public function deny(
         Request $request,
-        QuoteRequest $quoteRequest,
+        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
         EntityManagerInterface $entityManager
     ): RedirectResponse {
         $user = $this->getUser();

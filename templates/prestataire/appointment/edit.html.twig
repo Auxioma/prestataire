@@ -1,44 +1,45 @@
 {% extends 'base.html.twig' %}
 {% form_theme form 'bootstrap_5_layout.html.twig' %}
 
-{% block title %}Modifier le rendez-vous{% endblock %}
+{% block title %}Modifier le rendez-vous
+{% endblock %}
 
 {% block body %}
-    <div class="tm-appointment-form-page tm-appointment-form-page--edit">
-        <div class="container py-4">
-            <div class="tm-appointment-form-hero">
-                <div class="tm-appointment-form-hero__content">
-                    <span class="tm-appointment-form-hero__eyebrow">Mise à jour</span>
-                    <h1 class="tm-appointment-form-hero__title">Modifier le rendez-vous</h1>
-                    <p class="tm-appointment-form-hero__text">
-                        Ajustez les informations du rendez-vous sans perdre la lisibilité de votre planning.
-                    </p>
-                </div>
+	<div class="tm-appointment-form-page tm-appointment-form-page--edit">
+		<div class="container py-4">
+			<div class="tm-appointment-form-hero">
+				<div class="tm-appointment-form-hero__content">
+					<span class="tm-appointment-form-hero__eyebrow">Mise à jour</span>
+					<h1 class="tm-appointment-form-hero__title">Modifier le rendez-vous</h1>
+					<p class="tm-appointment-form-hero__text">
+						Ajustez les informations du rendez-vous sans perdre la lisibilité de votre planning.
+					</p>
+				</div>
 
-                <div class="tm-appointment-form-hero__actions">
-                    <a href="{{ path('app_prestataire_appointment_show', { id: appointment.id }) }}" class="btn btn-outline-secondary">
-                        Retour au détail
-                    </a>
-                    <a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" class="btn btn-outline-info" data-turbo="false">
-                        Retour au calendrier
-                    </a>
-                </div>
-            </div>
+				<div class="tm-appointment-form-hero__actions">
+					<a href="{{ path('app_prestataire_appointment_show', { slug: appointment.slug }) }}" class="btn btn-outline-secondary">
+						Retour au détail
+					</a>
+					<a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" class="btn btn-outline-info" data-turbo="false">
+						Retour au calendrier
+					</a>
+				</div>
+			</div>
 
-            {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ type }} alert-dismissible fade show mt-3" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-                    </div>
-                {% endfor %}
-            {% endfor %}
+			{% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+				{% for message in messages %}
+					<div class="alert alert-{{ type }} alert-dismissible fade show mt-3" role="alert">
+						{{ message }}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+					</div>
+				{% endfor %}
+			{% endfor %}
 
-            <div class="tm-appointment-form-layout">
-                <section class="tm-appointment-form-main">
-                    <div class="tm-appointment-form-card card shadow-sm">
-                        <div class="card-body">
-                            {{ form_start(form, {
+			<div class="tm-appointment-form-layout">
+				<section class="tm-appointment-form-main">
+					<div class="tm-appointment-form-card card shadow-sm">
+						<div class="card-body">
+							{{ form_start(form, {
                                 action: path('app_prestataire_appointment_edit', { id: appointment.id }),
                                 method: 'POST',
                                 attr: {
@@ -48,117 +49,117 @@
                                 }
                             }) }}
 
-                            <div class="tm-appointment-form-section">
-                                <div class="tm-appointment-form-section__head">
-                                    <h2>Informations principales</h2>
-                                    <p>Mettez à jour le titre et les informations visibles au premier coup d’œil.</p>
-                                </div>
+							<div class="tm-appointment-form-section">
+								<div class="tm-appointment-form-section__head">
+									<h2>Informations principales</h2>
+									<p>Mettez à jour le titre et les informations visibles au premier coup d’œil.</p>
+								</div>
 
-                                <div class="row g-4">
-                                    <div class="col-12">
-                                        <div class="tm-appointment-field">
-                                            {{ form_row(form.title) }}
-                                        </div>
-                                    </div>
+								<div class="row g-4">
+									<div class="col-12">
+										<div class="tm-appointment-field">
+											{{ form_row(form.title) }}
+										</div>
+									</div>
 
-                                    <div class="col-12">
-                                        <div class="tm-appointment-field">
-                                            {{ form_row(form.description) }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+									<div class="col-12">
+										<div class="tm-appointment-field">
+											{{ form_row(form.description) }}
+										</div>
+									</div>
+								</div>
+							</div>
 
-                            <div class="tm-appointment-form-section">
-                                <div class="tm-appointment-form-section__head">
-                                    <h2>Créneau</h2>
-                                    <p>Ajustez l’horaire si le rendez-vous a été déplacé ou prolongé.</p>
-                                </div>
+							<div class="tm-appointment-form-section">
+								<div class="tm-appointment-form-section__head">
+									<h2>Créneau</h2>
+									<p>Ajustez l’horaire si le rendez-vous a été déplacé ou prolongé.</p>
+								</div>
 
-                                <div class="row g-4">
-                                    <div class="col-md-6">
-                                        <div class="tm-appointment-field tm-appointment-field--highlight">
-                                            {{ form_row(form.startsAt) }}
-                                        </div>
-                                    </div>
+								<div class="row g-4">
+									<div class="col-md-6">
+										<div class="tm-appointment-field tm-appointment-field--highlight">
+											{{ form_row(form.startsAt) }}
+										</div>
+									</div>
 
-                                    <div class="col-md-6">
-                                        <div class="tm-appointment-field tm-appointment-field--highlight">
-                                            {{ form_row(form.endsAt) }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+									<div class="col-md-6">
+										<div class="tm-appointment-field tm-appointment-field--highlight">
+											{{ form_row(form.endsAt) }}
+										</div>
+									</div>
+								</div>
+							</div>
 
-                            <div class="tm-appointment-form-section">
-                                <div class="tm-appointment-form-section__head">
-                                    <h2>Organisation</h2>
-                                    <p>Affinez le suivi du rendez-vous et les repères affichés dans l’interface.</p>
-                                </div>
+							<div class="tm-appointment-form-section">
+								<div class="tm-appointment-form-section__head">
+									<h2>Organisation</h2>
+									<p>Affinez le suivi du rendez-vous et les repères affichés dans l’interface.</p>
+								</div>
 
-                                <div class="row g-4">
-                                    <div class="col-md-6">
-                                        <div class="tm-appointment-field">
-                                            {{ form_row(form.status) }}
-                                        </div>
-                                    </div>
+								<div class="row g-4">
+									<div class="col-md-6">
+										<div class="tm-appointment-field">
+											{{ form_row(form.status) }}
+										</div>
+									</div>
 
-                                    <div class="col-md-6">
-                                        <div class="tm-appointment-field">
-                                            {{ form_row(form.locationLabel) }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+									<div class="col-md-6">
+										<div class="tm-appointment-field">
+											{{ form_row(form.locationLabel) }}
+										</div>
+									</div>
+								</div>
+							</div>
 
-                            <div class="tm-appointment-form-actions">
-                                <button type="submit" class="btn btn-primary">
-                                    Enregistrer les modifications
-                                </button>
+							<div class="tm-appointment-form-actions">
+								<button type="submit" class="btn btn-primary">
+									Enregistrer les modifications
+								</button>
 
-                                <a href="{{ path('app_prestataire_appointment_show', { id: appointment.id }) }}" class="btn btn-outline-secondary">
-                                    Annuler
-                                </a>
-                            </div>
+								<a href="{{ path('app_prestataire_appointment_show', { slug: appointment.slug }) }}" class="btn btn-outline-secondary">
+									Annuler
+								</a>
+							</div>
 
-                            {{ form_end(form) }}
-                        </div>
-                    </div>
-                </section>
+							{{ form_end(form) }}
+						</div>
+					</div>
+				</section>
 
-                <aside class="tm-appointment-form-side">
-                    <div class="tm-appointment-side-card card shadow-sm">
-                        <div class="card-body">
-                            <h3>Repères rapides</h3>
-                            <div class="tm-appointment-side-summary">
-                                <div>
-                                    <span>Début actuel</span>
-                                    <strong>{{ appointment.startsAt|date('d/m/Y à H:i', 'Europe/Paris') }}</strong>
-                                </div>
-                                <div>
-                                    <span>Fin actuelle</span>
-                                    <strong>{{ appointment.endsAt|date('d/m/Y à H:i', 'Europe/Paris') }}</strong>
-                                </div>
-                                <div>
-                                    <span>Statut actuel</span>
-                                    <strong>{{ appointment.status.getLabel() }}</strong>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+				<aside class="tm-appointment-form-side">
+					<div class="tm-appointment-side-card card shadow-sm">
+						<div class="card-body">
+							<h3>Repères rapides</h3>
+							<div class="tm-appointment-side-summary">
+								<div>
+									<span>Début actuel</span>
+									<strong>{{ appointment.startsAt|date('d/m/Y à H:i', 'Europe/Paris') }}</strong>
+								</div>
+								<div>
+									<span>Fin actuelle</span>
+									<strong>{{ appointment.endsAt|date('d/m/Y à H:i', 'Europe/Paris') }}</strong>
+								</div>
+								<div>
+									<span>Statut actuel</span>
+									<strong>{{ appointment.status.getLabel() }}</strong>
+								</div>
+							</div>
+						</div>
+					</div>
 
-                    <div class="tm-appointment-side-card card shadow-sm">
-                        <div class="card-body">
-                            <h3>Navigation</h3>
-                            <div class="tm-appointment-side-links">
-                                <a href="{{ path('app_prestataire_appointment_show', { id: appointment.id }) }}">Voir la fiche du rendez-vous</a>
-                                <a href="{{ path('app_prestataire_appointment_index') }}">Revenir à la liste</a>
-                                <a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" data-turbo="false">Retour au calendrier</a>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
-            </div>
-        </div>
-    </div>
+					<div class="tm-appointment-side-card card shadow-sm">
+						<div class="card-body">
+							<h3>Navigation</h3>
+							<div class="tm-appointment-side-links">
+								<a href="{{ path('app_prestataire_appointment_show', { slug: appointment.slug }) }}">Voir la fiche du rendez-vous</a>
+								<a href="{{ path('app_prestataire_appointment_index') }}">Revenir à la liste</a>
+								<a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" data-turbo="false">Retour au calendrier</a>
+							</div>
+						</div>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</div>
 {% endblock %}
