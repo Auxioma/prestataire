@@ -10,8 +10,7 @@ final class PrestataireSearchService
 
     public function __construct(
         private readonly ElasticsearchClient $elasticsearchClient,
-    ) {
-    }
+    ) {}
 
     public function search(
         ?string $query = null,
@@ -20,17 +19,18 @@ final class PrestataireSearchService
         int $size = 10,
         int $from = 0,
     ): array {
-        $must = [];
-        $filters = [
-            ['term' => ['profileStatus' => 'active']],
-        ];
+        $query = $query !== null ? trim($query) : null;
+        $location = $location !== null ? trim($location) : null;
+        $subCategorySlug = $subCategorySlug !== null ? trim($subCategorySlug) : null;
 
+        $must = [];
+        $filters = [];
         $should = [];
 
-        if ($query && '' !== trim($query)) {
+        if ($query) {
             $must[] = [
                 'multi_match' => [
-                    'query' => trim($query),
+                    'query' => $query,
                     'type' => 'best_fields',
                     'fields' => [
                         'companyName^5',
@@ -47,11 +47,11 @@ final class PrestataireSearchService
             ];
         }
 
-        if ($location && '' !== trim($location)) {
+        if ($location) {
             $should[] = [
                 'match' => [
                     'city' => [
-                        'query' => trim($location),
+                        'query' => $location,
                         'boost' => 4,
                     ],
                 ],
@@ -66,7 +66,7 @@ final class PrestataireSearchService
                                 [
                                     'match' => [
                                         'zones.city' => [
-                                            'query' => trim($location),
+                                            'query' => $location,
                                             'boost' => 3,
                                         ],
                                     ],
@@ -74,7 +74,7 @@ final class PrestataireSearchService
                                 [
                                     'match' => [
                                         'zones.region' => [
-                                            'query' => trim($location),
+                                            'query' => $location,
                                             'boost' => 2,
                                         ],
                                     ],
@@ -82,14 +82,14 @@ final class PrestataireSearchService
                                 [
                                     'match' => [
                                         'zones.department' => [
-                                            'query' => trim($location),
+                                            'query' => $location,
                                             'boost' => 2,
                                         ],
                                     ],
                                 ],
                                 [
                                     'term' => [
-                                        'zones.postalCode' => trim($location),
+                                        'zones.postalCode' => $location,
                                     ],
                                 ],
                             ],
@@ -100,13 +100,13 @@ final class PrestataireSearchService
             ];
         }
 
-        if ($subCategorySlug && '' !== trim($subCategorySlug)) {
+        if ($subCategorySlug) {
             $filters[] = [
                 'nested' => [
                     'path' => 'subCategories',
                     'query' => [
                         'term' => [
-                            'subCategories.slug' => trim($subCategorySlug),
+                            'subCategories.slug' => $subCategorySlug,
                         ],
                     ],
                 ],
@@ -141,7 +141,7 @@ final class PrestataireSearchService
                     'filter' => $filters,
                     'should' => $should,
                     'minimum_should_match' => !empty($should) ? 1 : 0,
-                ]),
+                ], static fn($value): bool => [] !== $value),
             ],
             'sort' => [
                 ['_score' => ['order' => 'desc']],
@@ -159,7 +159,7 @@ final class PrestataireSearchService
         return [
             'total' => $response['hits']['total']['value'] ?? 0,
             'hits' => array_map(
-                static fn (array $hit): array => [
+                static fn(array $hit): array => [
                     'score' => $hit['_score'] ?? null,
                     ...($hit['_source'] ?? []),
                 ],
@@ -168,62 +168,78 @@ final class PrestataireSearchService
         ];
     }
 
-public function autocomplete(string $query, int $size = 5): array
-{
-    $query = trim($query);
+    public function autocomplete(string $query, int $size = 5): array
+    {
+        $query = trim($query);
 
-    if ('' === $query || mb_strlen($query) < 3) {
-        return [];
-    }
+        if ('' === $query || mb_strlen($query) < 3) {
+            return [];
+        }
 
-    $response = $this->elasticsearchClient->getClient()->search([
-        'index' => self::INDEX_NAME,
-        'body' => [
-            'size' => $size,
-            '_source' => [
-                'id',
-                'slug',
-                'companyName',
-                'metier',
-                'shortDescription',
-                'city',
-                'averageRating',
-                'reviewsCount',
-                'categories',
-                'subCategories',
-                'services',
-            ],
-            'query' => [
-                'bool' => [
-                    'must' => [
-                        [
-                            'multi_match' => [
-                                'query' => $query,
-                                'type' => 'phrase_prefix',
-                                'fields' => [
-                                    'metier^8',
-                                    'companyName^6',
-                                    'searchText^2',
+        $response = $this->elasticsearchClient->getClient()->search([
+            'index' => self::INDEX_NAME,
+            'body' => [
+                'size' => $size,
+                '_source' => [
+                    'id',
+                    'slug',
+                    'companyName',
+                    'metier',
+                    'shortDescription',
+                    'city',
+                    'averageRating',
+                    'reviewsCount',
+                    'categories',
+                    'subCategories',
+                    'services',
+                ],
+                'query' => [
+                    'bool' => [
+                        'should' => [
+                            [
+                                'multi_match' => [
+                                    'query' => $query,
+                                    'type' => 'phrase_prefix',
+                                    'fields' => [
+                                        'metier^8',
+                                        'companyName^6',
+                                        'city^6',
+                                        'searchText^3',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'multi_match' => [
+                                    'query' => $query,
+                                    'type' => 'best_fields',
+                                    'fields' => [
+                                        'metier^8',
+                                        'companyName^6',
+                                        'city^6',
+                                        'searchText^2',
+                                    ],
+                                    'operator' => 'and',
+                                    'fuzziness' => 'AUTO',
                                 ],
                             ],
                         ],
+                        'minimum_should_match' => 1,
                     ],
                 ],
+                'sort' => [
+                    ['_score' => ['order' => 'desc']],
+                    ['averageRating' => ['order' => 'desc']],
+                    ['reviewsCount' => ['order' => 'desc']],
+                ],
             ],
-            'sort' => [
-                ['_score' => ['order' => 'desc']],
-                ['averageRating' => ['order' => 'desc']],
-                ['reviewsCount' => ['order' => 'desc']],
-            ],
-        ],
-    ])->asArray();
+        ])->asArray();
 
-    return array_map(
-        static fn (array $hit): array => [
-            'score' => $hit['_score'] ?? null,
-            ...($hit['_source'] ?? []),
-        ],
-        $response['hits']['hits'] ?? []
-    );
-}
+        return array_map(
+            static fn(array $hit): array => [
+                'score' => $hit['_score'] ?? null,
+                ...($hit['_source'] ?? []),
+            ],
+            $response['hits']['hits'] ?? []
+        );
+    }
 }
