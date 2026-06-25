@@ -1,5 +1,5 @@
 {# NAVBAR #}
-<nav class="navbar navbar-expand-xl navbar-dark sticky-top tm-navbar" data-controller="navbar">
+<nav class="navbar navbar-expand-xl navbar-dark sticky-top tm-navbar" data-controller="navbar" data-navbar-autocomplete-url-value="{{ path('app_search_autocomplete') }}">
 	<div class="container tm-navbar__container">
 
 		<a class="navbar-brand tm-navbar__brand" href="{{ path('app_home') }}">
@@ -8,7 +8,8 @@
 
 		<div class="tm-navbar__search tm-navbar__search--desktop">
 			<div class="tm-navbar__search-wrap">
-				<input type="text" class="form-control tm-navbar__search-input" placeholder="Rechercher un prestataire...">
+				<input type="text" class="form-control tm-navbarsearch-input" placeholder="Rechercher un prestataire..." data-navbar-target="input" data-action="input->navbar#onInput focus->navbar#onInput"/>
+				<div class="tm-navbarsearch-results d-none" data-navbar-target="results desktopResults"></div>
 				<span class="tm-navbar__search-icon">
 					<i class="fa-solid fa-magnifying-glass"></i>
 				</span>
@@ -23,7 +24,8 @@
 
 			<div class="tm-navbar__search tm-navbar__search--mobile">
 				<div class="tm-navbar__search-wrap">
-					<input type="text" class="form-control tm-navbar__search-input" placeholder="Rechercher un prestataire...">
+					<input type="text" class="form-control tm-navbarsearch-input" placeholder="Rechercher un prestataire..." data-navbar-target="input" data-action="input->navbar#onInput focus->navbar#onInput"/>
+					<div class="tm-navbarsearch-results d-none" data-navbar-target="results mobileResults"></div>
 					<span class="tm-navbar__search-icon">
 						<i class="fa-solid fa-magnifying-glass"></i>
 					</span>
