@@ -10,7 +10,8 @@
                     attr: {
                         class: 'tm-homepage-search-form',
                         'data-controller': 'homepage-search',
-                        'data-homepage-search-default-radius-value': formView.radiusKm.vars.value ?: 25
+                        'data-homepage-search-default-radius-value': formView.radiusKm.vars.value ?: 25,
+                        'data-homepage-search-autocomplete-url-value': path('app_search_autocomplete')
                     }
                 }) }}
 
@@ -22,9 +23,17 @@
                             {{ form_widget(formView.query, {
                                 attr: {
                                     class: 'tm-homepage-search-input',
-                                    placeholder: 'Ex. plomberie, jardinage...'
+                                    placeholder: 'Ex. plomberie, jardinage...',
+                                    autocomplete: 'off',
+                                    'data-homepage-search-target': 'query',
+                                    'data-action': 'input->homepage-search#onQueryInput keydown->homepage-search#onQueryKeydown'
                                 }
                             }) }}
+                            <div
+                                class="tm-homepage-search-suggestions"
+                                data-homepage-search-target="suggestions"
+                                hidden
+                            ></div>
                         </div>
                     </div>
 
