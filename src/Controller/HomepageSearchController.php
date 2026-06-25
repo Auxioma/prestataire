@@ -1,27 +1,17 @@
 <?php
 
-/**
- * Copyright(c) 2026 Trouve moi
- *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
- * Tous droits réservés.
- *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
- */
-
 namespace App\Controller;
 
+use App\Entity\PrestataireProfile;
 use App\Entity\ServiceCategory;
 use App\Form\HomepageSearchType;
 use App\Repository\PrestataireProfileRepository;
+use App\Search\PrestataireSearchService;
 use App\Service\ZoneGeocoder;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Entity\PrestataireProfile;
 
 class HomepageSearchController extends AbstractController
 {
@@ -29,25 +19,24 @@ class HomepageSearchController extends AbstractController
     public function index(
         Request $request,
         PrestataireProfileRepository $prestataireProfileRepository,
-        PaginatorInterface $paginator,
+        PrestataireSearchService $prestataireSearchService,
         ZoneGeocoder $zoneGeocoder,
     ): Response {
         $form = $this->createForm(HomepageSearchType::class);
         $form->handleRequest($request);
 
         $data = $form->isSubmitted() ? ($form->getData() ?? []) : [];
-        
+
         $radiusKm = (int) ($data['radiusKm'] ?? 25);
         $radiusKm = max(5, min(100, $radiusKm));
 
-
         $query = mb_trim((string) ($data['query'] ?? ''));
         $location = mb_trim((string) ($data['location'] ?? ''));
+
         /** @var ServiceCategory|null $subCategory */
         $subCategory = $data['subCategory'] ?? null;
 
         $searchedLocation = null;
-
         if ('' !== $location) {
             $searchedLocation = $zoneGeocoder->geocode($location, null);
         }
@@ -60,39 +49,89 @@ class HomepageSearchController extends AbstractController
             'radiusKm' => $radiusKm,
         ];
 
-        $queryBuilder = $prestataireProfileRepository->getHomepageSearchQueryBuilder($criteria);
+        $page = max(1, $request->query->getInt('page', 1));
+        $perPage = 9;
+        $from = ($page - 1) * $perPage;
 
-        $prestataires = $queryBuilder->getQuery()->getResult();
+        $searchResult = $prestataireSearchService->search(
+            '' !== $query ? $query : null,
+            '' !== $location ? $location : null,
+            $subCategory?->getSlug(),
+            $perPage,
+            $from,
+            $searchedLocation,
+            $radiusKm,
+        );
 
-        if (null !== $searchedLocation) {
-            $prestataires = array_values(array_filter(
-                $prestataires,
-                fn($prestataire) => $this->isPrestataireMatchingSearchedLocation($prestataire, $searchedLocation, $radiusKm)
-            ));
+        $hits = $searchResult['hits'] ?? [];
+        $total = (int) ($searchResult['total'] ?? 0);
 
-            foreach ($prestataires as $prestataire) {
-                $prestataire->matchedDistanceKm = $this->getClosestMatchingDistanceKm($prestataire, $searchedLocation, $radiusKm);
+        $hitIds = array_values(array_filter(array_map(
+            static fn (array $hit): ?int => isset($hit['id']) ? (int) $hit['id'] : null,
+            $hits
+        )));
+
+        $profilesById = [];
+        if ([] !== $hitIds) {
+            $profiles = $prestataireProfileRepository->createQueryBuilder('p')
+                ->leftJoin('p.account', 'a')->addSelect('a')
+                ->leftJoin('p.prestataireServices', 'ps')->addSelect('ps')
+                ->leftJoin('ps.service', 's')->addSelect('s')
+                ->leftJoin('s.category', 'c')->addSelect('c')
+                ->leftJoin('c.parent', 'parent')->addSelect('parent')
+                ->leftJoin('p.prestataireInterventionZones', 'z')->addSelect('z')
+                ->andWhere('p.id IN (:ids)')
+                ->setParameter('ids', $hitIds)
+                ->getQuery()
+                ->getResult();
+
+            foreach ($profiles as $profile) {
+                $profilesById[$profile->getId()] = $profile;
+            }
+        }
+
+        $prestataires = [];
+        foreach ($hits as $hit) {
+            $id = isset($hit['id']) ? (int) $hit['id'] : null;
+            if (null === $id || !isset($profilesById[$id])) {
+                continue;
             }
 
-            usort($prestataires, static function ($a, $b) {
+            $profile = $profilesById[$id];
+
+            if (null !== $searchedLocation) {
+                if (!$this->isPrestataireMatchingSearchedLocation($profile, $searchedLocation, $radiusKm)) {
+                    continue;
+                }
+
+                $profile->matchedDistanceKm = $this->getClosestMatchingDistanceKm($profile, $searchedLocation, $radiusKm);
+            }
+
+            $prestataires[] = $profile;
+        }
+
+        if (null !== $searchedLocation) {
+            usort($prestataires, static function ($a, $b): int {
                 return ($a->matchedDistanceKm ?? 999999) <=> ($b->matchedDistanceKm ?? 999999);
             });
         }
 
-        $pagination = $paginator->paginate(
-            $prestataires,
-            $request->query->getInt('page', 1),
-            9
-        );
+        $filteredTotal = count($prestataires);
+        $totalPages = max(1, (int) ceil($filteredTotal / $perPage));
+        $page = min($page, $totalPages);
 
         return $this->render('search/homepage_results.html.twig', [
             'searchForm' => $form->createView(),
-            'pagination' => $pagination,
+            'results' => $prestataires,
             'query' => $query,
             'location' => $location,
             'subCategory' => $subCategory,
             'criteria' => $criteria,
             'pageTitle' => 'Résultats de recherche',
+            'totalResults' => $filteredTotal,
+            'currentPage' => $page,
+            'perPage' => $perPage,
+            'totalPages' => $totalPages,
         ]);
     }
 
@@ -125,7 +164,7 @@ class HomepageSearchController extends AbstractController
                 $searchedLat,
                 $searchedLng,
                 (float) $zone->getLatitude(),
-                (float) $zone->getLongitude()
+                (float) $zone->getLongitude(),
             );
 
             if ($distanceKm <= $radiusKm) {
@@ -151,6 +190,7 @@ class HomepageSearchController extends AbstractController
 
         $searchedLat = (float) $searchedLocation['latitude'];
         $searchedLng = (float) $searchedLocation['longitude'];
+
         $bestDistance = null;
 
         foreach ($prestataire->getPrestataireInterventionZones() as $zone) {
@@ -166,7 +206,7 @@ class HomepageSearchController extends AbstractController
                 $searchedLat,
                 $searchedLng,
                 (float) $zone->getLatitude(),
-                (float) $zone->getLongitude()
+                (float) $zone->getLongitude(),
             );
 
             if ($distanceKm <= $radiusKm) {

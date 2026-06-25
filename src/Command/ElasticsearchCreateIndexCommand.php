@@ -10,10 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(
-    name: 'app:elasticsearch:create-index',
-    description: 'Crée l’index Elasticsearch des prestataires'
-)]
+#[AsCommand(name: 'app:elasticsearch:create-index')]
 final class ElasticsearchCreateIndexCommand extends Command
 {
     private const INDEX_NAME = 'prestataires_search_v1';
@@ -30,14 +27,8 @@ final class ElasticsearchCreateIndexCommand extends Command
         $client = $this->elasticsearchClient->getClient();
 
         try {
-            $exists = $client->indices()->exists([
-                'index' => self::INDEX_NAME,
-            ])->asBool();
-
-            if ($exists) {
-                $io->warning(sprintf('L’index "%s" existe déjà.', self::INDEX_NAME));
-
-                return Command::SUCCESS;
+            if ($client->indices()->exists(['index' => self::INDEX_NAME])->asBool()) {
+                $client->indices()->delete(['index' => self::INDEX_NAME]);
             }
 
             $client->indices()->create([
@@ -46,7 +37,7 @@ final class ElasticsearchCreateIndexCommand extends Command
                     'settings' => [
                         'analysis' => [
                             'normalizer' => [
-                                'keyword_lowercase' => [
+                                'lowercase_normalizer' => [
                                     'type' => 'custom',
                                     'filter' => ['lowercase', 'asciifolding'],
                                 ],
@@ -55,47 +46,61 @@ final class ElasticsearchCreateIndexCommand extends Command
                     ],
                     'mappings' => [
                         'properties' => [
-                            'id' => ['type' => 'keyword'],
+                            'id' => ['type' => 'integer'],
                             'slug' => ['type' => 'keyword'],
-                            'companyName' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword']]],
-                            'metier' => [
+
+                            'companyName' => [
                                 'type' => 'text',
                                 'fields' => [
                                     'keyword' => [
                                         'type' => 'keyword',
-                                        'normalizer' => 'keyword_lowercase',
+                                        'normalizer' => 'lowercase_normalizer',
                                     ],
                                 ],
                             ],
+
+                            'metier' => ['type' => 'text'],
                             'shortDescription' => ['type' => 'text'],
                             'description' => ['type' => 'text'],
                             'longDescription' => ['type' => 'text'],
-                            'city' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'normalizer' => 'keyword_lowercase']]],
+
+                            'city' => [
+                                'type' => 'text',
+                                'fields' => [
+                                    'keyword' => [
+                                        'type' => 'keyword',
+                                        'normalizer' => 'lowercase_normalizer',
+                                    ],
+                                ],
+                            ],
+
                             'postalCode' => ['type' => 'keyword'],
                             'averageRating' => ['type' => 'float'],
                             'reviewsCount' => ['type' => 'integer'],
-                            'profileStatus' => ['type' => 'keyword'],
                             'verificationStatus' => ['type' => 'keyword'],
                             'isFeatured' => ['type' => 'boolean'],
                             'searchText' => ['type' => 'text'],
+
                             'categories' => [
                                 'type' => 'nested',
                                 'properties' => [
-                                    'id' => ['type' => 'keyword'],
-                                    'name' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword']]],
+                                    'id' => ['type' => 'integer'],
+                                    'name' => ['type' => 'text'],
                                     'slug' => ['type' => 'keyword'],
                                     'description' => ['type' => 'text'],
                                 ],
                             ],
+
                             'subCategories' => [
                                 'type' => 'nested',
                                 'properties' => [
-                                    'id' => ['type' => 'keyword'],
-                                    'name' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword']]],
+                                    'id' => ['type' => 'integer'],
+                                    'name' => ['type' => 'text'],
                                     'slug' => ['type' => 'keyword'],
                                     'description' => ['type' => 'text'],
                                 ],
                             ],
+
                             'services' => [
                                 'type' => 'nested',
                                 'properties' => [
@@ -110,23 +115,33 @@ final class ElasticsearchCreateIndexCommand extends Command
                                     'priceUnit' => ['type' => 'keyword'],
                                     'service' => [
                                         'properties' => [
-                                            'id' => ['type' => 'keyword'],
-                                            'name' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword']]],
+                                            'id' => ['type' => 'integer'],
+                                            'name' => ['type' => 'text'],
                                             'slug' => ['type' => 'keyword'],
                                             'description' => ['type' => 'text'],
                                         ],
                                     ],
                                 ],
                             ],
+
                             'zones' => [
                                 'type' => 'nested',
                                 'properties' => [
-                                    'city' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'normalizer' => 'keyword_lowercase']]],
+                                    'city' => [
+                                        'type' => 'text',
+                                        'fields' => [
+                                            'keyword' => [
+                                                'type' => 'keyword',
+                                                'normalizer' => 'lowercase_normalizer',
+                                            ],
+                                        ],
+                                    ],
                                     'postalCode' => ['type' => 'keyword'],
                                     'department' => ['type' => 'text'],
                                     'region' => ['type' => 'text'],
                                     'radiusKm' => ['type' => 'integer'],
                                     'isMainZone' => ['type' => 'boolean'],
+                                    'location' => ['type' => 'geo_point'],
                                 ],
                             ],
                         ],
@@ -134,7 +149,7 @@ final class ElasticsearchCreateIndexCommand extends Command
                 ],
             ]);
 
-            $io->success(sprintf('Index "%s" créé avec succès.', self::INDEX_NAME));
+            $io->success(sprintf('Index %s créé avec succès.', self::INDEX_NAME));
 
             return Command::SUCCESS;
         } catch (ClientResponseException $e) {

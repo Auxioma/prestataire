@@ -6,6 +6,8 @@
 
 {% block body %}
     {% set hasFilters = query is not empty or location is not empty or subCategory is not null %}
+    {% set startPage = currentPage - 2 > 1 ? currentPage - 2 : 1 %}
+    {% set endPage = currentPage + 2 < totalPages ? currentPage + 2 : totalPages %}
 
     <section class="tm-search-results-page">
         <div class="container tm-search-results-shell">
@@ -36,11 +38,9 @@
                 <div class="tm-search-results-summary">
                     <div class="tm-search-results-summary__card">
                         <span class="tm-search-results-summary__label">Résultats trouvés</span>
-                        <strong class="tm-search-results-summary__value">
-                            {{ pagination.getTotalItemCount }}
-                        </strong>
+                        <strong class="tm-search-results-summary__value">{{ totalResults }}</strong>
                         <span class="tm-search-results-summary__meta">
-                            résultat{{ pagination.getTotalItemCount > 1 ? 's' : '' }}
+                            résultat{{ totalResults > 1 ? 's' : '' }}
                         </span>
                     </div>
                 </div>
@@ -88,10 +88,10 @@
                 </section>
             {% endif %}
 
-            {% if pagination|length > 0 %}
+            {% if results|length > 0 %}
                 <section class="tm-search-results-list" aria-label="Liste des prestataires">
                     <div class="tm-search-results-grid">
-                        {% for profile in pagination %}
+                        {% for profile in results %}
                             <article class="tm-search-results-card">
                                 <div class="tm-search-results-card__inner">
                                     <div class="tm-search-results-card__top">
@@ -180,9 +180,79 @@
                     </div>
                 </section>
 
-                <div class="tm-search-results-pagination">
-                    {{ knp_pagination_render(pagination) }}
-                </div>
+                {% if totalPages > 1 %}
+                    <nav class="tm-search-results-pagination" aria-label="Pagination des résultats">
+                        <div class="tm-search-results-pagination__inner">
+                            {% if currentPage > 1 %}
+                                <a
+                                    href="{{ path('app_homepage_search', app.request.query.all|merge({ page: currentPage - 1 })) }}"
+                                    class="tm-search-results-pagination__control tm-search-results-pagination__control--prev"
+                                >
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                    <span>Précédent</span>
+                                </a>
+                            {% else %}
+                                <span class="tm-search-results-pagination__control tm-search-results-pagination__control--prev is-disabled">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                    <span>Précédent</span>
+                                </span>
+                            {% endif %}
+
+                            <div class="tm-search-results-pagination__pages">
+                                {% if startPage > 1 %}
+                                    <a
+                                        href="{{ path('app_homepage_search', app.request.query.all|merge({ page: 1 })) }}"
+                                        class="tm-search-results-pagination__page"
+                                    >
+                                        1
+                                    </a>
+
+                                    {% if startPage > 2 %}
+                                        <span class="tm-search-results-pagination__ellipsis">…</span>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% for pageNumber in startPage..endPage %}
+                                    <a
+                                        href="{{ path('app_homepage_search', app.request.query.all|merge({ page: pageNumber })) }}"
+                                        class="tm-search-results-pagination__page {{ pageNumber == currentPage ? 'is-active' : '' }}"
+                                        {% if pageNumber == currentPage %}aria-current="page"{% endif %}
+                                    >
+                                        {{ pageNumber }}
+                                    </a>
+                                {% endfor %}
+
+                                {% if endPage < totalPages %}
+                                    {% if endPage < totalPages - 1 %}
+                                        <span class="tm-search-results-pagination__ellipsis">…</span>
+                                    {% endif %}
+
+                                    <a
+                                        href="{{ path('app_homepage_search', app.request.query.all|merge({ page: totalPages })) }}"
+                                        class="tm-search-results-pagination__page"
+                                    >
+                                        {{ totalPages }}
+                                    </a>
+                                {% endif %}
+                            </div>
+
+                            {% if currentPage < totalPages %}
+                                <a
+                                    href="{{ path('app_homepage_search', app.request.query.all|merge({ page: currentPage + 1 })) }}"
+                                    class="tm-search-results-pagination__control tm-search-results-pagination__control--next"
+                                >
+                                    <span>Suivant</span>
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </a>
+                            {% else %}
+                                <span class="tm-search-results-pagination__control tm-search-results-pagination__control--next is-disabled">
+                                    <span>Suivant</span>
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </span>
+                            {% endif %}
+                        </div>
+                    </nav>
+                {% endif %}
             {% else %}
                 <section class="tm-search-results-empty" aria-label="Aucun résultat">
                     <div class="tm-search-results-empty__card">

@@ -10,7 +10,8 @@ final class PrestataireSearchService
 
     public function __construct(
         private readonly ElasticsearchClient $elasticsearchClient,
-    ) {}
+    ) {
+    }
 
     public function search(
         ?string $query = null,
@@ -18,13 +19,16 @@ final class PrestataireSearchService
         ?string $subCategorySlug = null,
         int $size = 10,
         int $from = 0,
+        ?array $searchedLocation = null,
+        int $radiusKm = 25,
     ): array {
-        $query = $query !== null ? trim($query) : null;
-        $location = $location !== null ? trim($location) : null;
-        $subCategorySlug = $subCategorySlug !== null ? trim($subCategorySlug) : null;
+        $query = null !== $query ? trim($query) : null;
+        $location = null !== $location ? trim($location) : null;
+        $subCategorySlug = null !== $subCategorySlug ? trim($subCategorySlug) : null;
+        $radiusKm = max(5, min(100, $radiusKm));
 
         $must = [];
-        $filters = [];
+        $filter = [];
         $should = [];
 
         if ($query) {
@@ -47,6 +51,19 @@ final class PrestataireSearchService
             ];
         }
 
+        if ($subCategorySlug) {
+            $filter[] = [
+                'nested' => [
+                    'path' => 'subCategories',
+                    'query' => [
+                        'term' => [
+                            'subCategories.slug' => $subCategorySlug,
+                        ],
+                    ],
+                ],
+            ];
+        }
+
         if ($location) {
             $should[] = [
                 'match' => [
@@ -63,50 +80,12 @@ final class PrestataireSearchService
                     'query' => [
                         'bool' => [
                             'should' => [
-                                [
-                                    'match' => [
-                                        'zones.city' => [
-                                            'query' => $location,
-                                            'boost' => 3,
-                                        ],
-                                    ],
-                                ],
-                                [
-                                    'match' => [
-                                        'zones.region' => [
-                                            'query' => $location,
-                                            'boost' => 2,
-                                        ],
-                                    ],
-                                ],
-                                [
-                                    'match' => [
-                                        'zones.department' => [
-                                            'query' => $location,
-                                            'boost' => 2,
-                                        ],
-                                    ],
-                                ],
-                                [
-                                    'term' => [
-                                        'zones.postalCode' => $location,
-                                    ],
-                                ],
+                                ['match' => ['zones.city' => ['query' => $location, 'boost' => 3]]],
+                                ['match' => ['zones.region' => ['query' => $location, 'boost' => 2]]],
+                                ['match' => ['zones.department' => ['query' => $location, 'boost' => 2]]],
+                                ['term' => ['zones.postalCode' => $location]],
                             ],
                             'minimum_should_match' => 1,
-                        ],
-                    ],
-                ],
-            ];
-        }
-
-        if ($subCategorySlug) {
-            $filters[] = [
-                'nested' => [
-                    'path' => 'subCategories',
-                    'query' => [
-                        'term' => [
-                            'subCategories.slug' => $subCategorySlug,
                         ],
                     ],
                 ],
@@ -138,10 +117,9 @@ final class PrestataireSearchService
             'query' => [
                 'bool' => array_filter([
                     'must' => $must,
-                    'filter' => $filters,
+                    'filter' => $filter,
                     'should' => $should,
-                    'minimum_should_match' => !empty($should) ? 1 : 0,
-                ], static fn($value): bool => [] !== $value),
+                ], static fn ($value): bool => !empty($value)),
             ],
             'sort' => [
                 ['_score' => ['order' => 'desc']],
@@ -151,6 +129,7 @@ final class PrestataireSearchService
             ],
         ];
 
+
         $response = $this->elasticsearchClient->getClient()->search([
             'index' => self::INDEX_NAME,
             'body' => $body,
@@ -159,7 +138,7 @@ final class PrestataireSearchService
         return [
             'total' => $response['hits']['total']['value'] ?? 0,
             'hits' => array_map(
-                static fn(array $hit): array => [
+                static fn (array $hit): array => [
                     'score' => $hit['_score'] ?? null,
                     ...($hit['_source'] ?? []),
                 ],
@@ -172,7 +151,7 @@ final class PrestataireSearchService
     {
         $query = trim($query);
 
-        if ('' === $query || mb_strlen($query) < 3) {
+        if (mb_strlen($query) < 2) {
             return [];
         }
 
@@ -185,7 +164,6 @@ final class PrestataireSearchService
                     'slug',
                     'companyName',
                     'metier',
-                    'shortDescription',
                     'city',
                     'averageRating',
                     'reviewsCount',
@@ -205,6 +183,10 @@ final class PrestataireSearchService
                                         'companyName^6',
                                         'city^6',
                                         'searchText^3',
+                                        'services.title^5',
+                                        'services.service.name^5',
+                                        'subCategories.name^4',
+                                        'categories.name^3',
                                     ],
                                 ],
                             ],
@@ -217,6 +199,10 @@ final class PrestataireSearchService
                                         'companyName^6',
                                         'city^6',
                                         'searchText^2',
+                                        'services.title^5',
+                                        'services.service.name^5',
+                                        'subCategories.name^4',
+                                        'categories.name^3',
                                     ],
                                     'operator' => 'and',
                                     'fuzziness' => 'AUTO',
@@ -228,17 +214,14 @@ final class PrestataireSearchService
                 ],
                 'sort' => [
                     ['_score' => ['order' => 'desc']],
+                    ['isFeatured' => ['order' => 'desc']],
                     ['averageRating' => ['order' => 'desc']],
-                    ['reviewsCount' => ['order' => 'desc']],
                 ],
             ],
         ])->asArray();
 
         return array_map(
-            static fn(array $hit): array => [
-                'score' => $hit['_score'] ?? null,
-                ...($hit['_source'] ?? []),
-            ],
+            static fn (array $hit): array => $hit['_source'] ?? [],
             $response['hits']['hits'] ?? []
         );
     }

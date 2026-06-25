@@ -70,7 +70,6 @@ final class PrestataireDocumentMapper
 
                 if (null !== $parentCategory && $parentCategory->isActive()) {
                     $subCategories[$category->getId()] = $categoryItem;
-
                     $categories[$parentCategory->getId()] = [
                         'id' => $parentCategory->getId(),
                         'name' => $parentCategory->getName(),
@@ -84,7 +83,6 @@ final class PrestataireDocumentMapper
                     $searchParts[] = $parentCategory->getDescription();
                 } else {
                     $categories[$category->getId()] = $categoryItem;
-
                     $searchParts[] = $category->getName();
                     $searchParts[] = $category->getDescription();
                 }
@@ -96,7 +94,7 @@ final class PrestataireDocumentMapper
                 continue;
             }
 
-            $zones[] = [
+            $zoneItem = [
                 'city' => $zone->getCity(),
                 'postalCode' => $zone->getPostalCode(),
                 'department' => $zone->getDepartment(),
@@ -105,6 +103,15 @@ final class PrestataireDocumentMapper
                 'isMainZone' => $zone->isMainZone(),
             ];
 
+            if (null !== $zone->getLatitude() && null !== $zone->getLongitude()) {
+                $zoneItem['location'] = [
+                    'lat' => (float) $zone->getLatitude(),
+                    'lon' => (float) $zone->getLongitude(),
+                ];
+            }
+
+            $zones[] = $zoneItem;
+
             $searchParts[] = $zone->getCity();
             $searchParts[] = $zone->getPostalCode();
             $searchParts[] = $zone->getDepartment();
@@ -112,7 +119,7 @@ final class PrestataireDocumentMapper
         }
 
         $searchText = implode(' ', array_filter(array_map(
-            static fn (mixed $value): ?string => is_string($value) && '' !== trim($value) ? trim($value) : null,
+            static fn(mixed $value): ?string => is_string($value) && '' !== trim($value) ? trim($value) : null,
             $searchParts
         )));
 

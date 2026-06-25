@@ -558,3 +558,113 @@
         padding: 2.25rem 1.1rem;
     }
 }
+
+.tm-search-results-pagination {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+}
+
+.tm-search-results-pagination__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    padding: 0.75rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 999px;
+    background: #ffffff;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+
+.tm-search-results-pagination__pages {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tm-search-results-pagination__page,
+.tm-search-results-pagination__control {
+    min-width: 2.75rem;
+    height: 2.75rem;
+    padding: 0 1rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #334155;
+    background: #f8fafc;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.tm-search-results-pagination__page:hover,
+.tm-search-results-pagination__control:hover {
+    background: #eff6ff;
+    border-color: rgba(59, 130, 246, 0.2);
+    color: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.tm-search-results-pagination__page.is-active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
+}
+
+.tm-search-results-pagination__page.is-active:hover {
+    color: #ffffff;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    transform: none;
+}
+
+.tm-search-results-pagination__control.is-disabled {
+    opacity: 0.45;
+    pointer-events: none;
+    background: #f8fafc;
+    color: #94a3b8;
+}
+
+.tm-search-results-pagination__ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    color: #94a3b8;
+    font-weight: 700;
+}
+
+@media (max-width: 767.98px) {
+    .tm-search-results-pagination__inner {
+        width: 100%;
+        border-radius: 1.25rem;
+        padding: 0.875rem;
+    }
+
+    .tm-search-results-pagination__control {
+        min-width: auto;
+        flex: 1 1 calc(50% - 0.5rem);
+    }
+
+    .tm-search-results-pagination__pages {
+        width: 100%;
+        justify-content: center;
+        order: -1;
+    }
+
+    .tm-search-results-pagination__page {
+        min-width: 2.5rem;
+        height: 2.5rem;
+        padding: 0 0.85rem;
+    }
+}
