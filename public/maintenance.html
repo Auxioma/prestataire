@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trouve-moi — Artisans & Particuliers</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #061B56;
+            --secondary: #2046D8;
+            --accent: #F4A911;
+            --white: #ffffff;
+            --soft: rgba(255, 255, 255, .76);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            font-family: "Manrope", sans-serif;
+            background: var(--primary);
+            color: var(--white);
+            overflow: hidden;
+        }
+
+        .hero-page {
+            position: relative;
+            min-height: 100vh;
+            overflow: hidden;
+            background: var(--primary);
+        }
+
+        .youtube-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            overflow: hidden;
+            background: var(--primary);
+        }
+
+        #youtube-player {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 177.78vh;
+            height: 100vh;
+            min-width: 100vw;
+            min-height: 56.25vw;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(6, 27, 86, .97) 0%,
+                    rgba(6, 27, 86, .88) 42%,
+                    rgba(6, 27, 86, .50) 100%
+                ),
+                radial-gradient(
+                    circle at 20% 45%,
+                    rgba(244, 169, 17, .24),
+                    transparent 34%
+                );
+        }
+
+        .hero-header {
+            position: relative;
+            z-index: 4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 28px 7vw;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: var(--accent);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-weight: 900;
+            box-shadow: 0 12px 30px rgba(244, 169, 17, .28);
+        }
+
+        .header-badge {
+            padding: 10px 15px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .10);
+            border: 1px solid rgba(255, 255, 255, .18);
+            font-size: 13px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, .78);
+            backdrop-filter: blur(14px);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            min-height: calc(100vh - 98px);
+            display: flex;
+            align-items: center;
+            padding: 20px 7vw 80px;
+        }
+
+        .hero-card {
+            width: 100%;
+            max-width: 660px;
+        }
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            padding: 9px 15px;
+            border-radius: 999px;
+            background: rgba(244, 169, 17, .14);
+            color: #FFD78B;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .hero-label::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 0 6px rgba(244, 169, 17, .16);
+        }
+
+        .hero-title {
+            margin: 0;
+            max-width: 640px;
+            font-size: clamp(42px, 5vw, 74px);
+            line-height: .98;
+            font-weight: 800;
+            letter-spacing: -0.06em;
+        }
+
+        .hero-title span {
+            color: var(--accent);
+        }
+
+        .hero-text {
+            max-width: 570px;
+            margin: 24px 0 30px;
+            color: var(--soft);
+            font-size: 17px;
+            line-height: 1.8;
+            font-weight: 500;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            height: 54px;
+            padding: 0 24px;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 800;
+            transition: .25s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--primary);
+            box-shadow: 0 18px 44px rgba(244, 169, 17, .28);
+        }
+
+        .btn-secondary {
+            color: var(--white);
+            background: rgba(255, 255, 255, .10);
+            border: 1px solid rgba(255, 255, 255, .18);
+            backdrop-filter: blur(14px);
+        }
+
+        .btn-primary:hover,
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            max-width: 620px;
+        }
+
+        .stat-card {
+            padding: 18px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, .10);
+            border: 1px solid rgba(255, 255, 255, .16);
+            backdrop-filter: blur(18px);
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 23px;
+            font-weight: 800;
+            color: var(--white);
+            letter-spacing: -0.04em;
+        }
+
+        .stat-label {
+            display: block;
+            margin-top: 4px;
+            font-size: 13px;
+            line-height: 1.45;
+            color: rgba(255, 255, 255, .68);
+            font-weight: 600;
+        }
+
+        .floating-panel {
+            position: absolute;
+            right: 7vw;
+            bottom: 80px;
+            z-index: 4;
+            width: 330px;
+            padding: 22px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, .12);
+            border: 1px solid rgba(255, 255, 255, .18);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 28px 90px rgba(0, 0, 0, .32);
+        }
+
+        .panel-title {
+            margin: 0 0 14px;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .panel-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .panel-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            color: rgba(255, 255, 255, .78);
+            font-size: 13px;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+
+        .panel-item span {
+            flex: 0 0 28px;
+            width: 28px;
+            height: 28px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            background: rgba(244, 169, 17, .18);
+            color: #FFD78B;
+            font-weight: 900;
+        }
+
+        .hero-footer {
+            position: absolute;
+            left: 7vw;
+            right: 7vw;
+            bottom: 24px;
+            z-index: 5;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            color: rgba(255, 255, 255, .58);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 1050px) {
+            .floating-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                overflow: auto;
+            }
+
+            .hero-page {
+                min-height: 100svh;
+            }
+
+            .hero-header {
+                padding: 20px;
+            }
+
+            .header-badge {
+                display: none;
+            }
+
+            .hero-content {
+                min-height: calc(100svh - 82px);
+                align-items: flex-end;
+                padding: 40px 20px 86px;
+            }
+
+            .hero-title {
+                font-size: 42px;
+            }
+
+            .hero-text {
+                font-size: 15px;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+            }
+
+            .hero-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-footer {
+                left: 20px;
+                right: 20px;
+                bottom: 18px;
+                flex-direction: column;
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<main class="hero-page">
+
+    <div class="youtube-bg">
+        <div id="youtube-player"></div>
+    </div>
+
+    <div class="hero-overlay"></div>
+
+    <header class="hero-header">
+        <div class="brand">
+            <div class="brand-icon">TM</div>
+            <div>Trouve-moi</div>
+        </div>
+
+        <div class="header-badge">
+            Plateforme artisans & particuliers
+        </div>
+    </header>
+
+    <section class="hero-content">
+        <div class="hero-card">
+
+            <div class="hero-label">Ouverture prochaine</div>
+
+            <h1 class="hero-title">
+                Trouvez le bon <span>artisan</span><br>
+                près de chez vous.
+            </h1>
+
+            <p class="hero-text">
+                Trouve-moi prépare une plateforme simple, rapide et humaine pour mettre en relation
+                les particuliers avec des professionnels de l’artisanat fiables : travaux, rénovation,
+                dépannage, entretien, aménagement et services du quotidien.
+            </p>
+
+            <div class="hero-actions">
+                <a href="#" class="btn-primary">Être prévenu au lancement</a>
+                <a href="#" class="btn-secondary">Je suis professionnel</a>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <span class="stat-number">01</span>
+                    <span class="stat-label">Décrivez votre besoin simplement</span>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-number">02</span>
+                    <span class="stat-label">Recevez des contacts qualifiés</span>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-number">03</span>
+                    <span class="stat-label">Choisissez le bon professionnel</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <aside class="floating-panel">
+        <h2 class="panel-title">Pourquoi Trouve-moi ?</h2>
+
+        <div class="panel-list">
+            <div class="panel-item">
+                <span>✓</span>
+                <div>Des artisans visibles localement auprès des particuliers.</div>
+            </div>
+
+            <div class="panel-item">
+                <span>✓</span>
+                <div>Une mise en relation claire, sans complexité inutile.</div>
+            </div>
+
+            <div class="panel-item">
+                <span>✓</span>
+                <div>Une plateforme pensée pour inspirer confiance dès le premier contact.</div>
+            </div>
+        </div>
+    </aside>
+
+    <footer class="hero-footer">
+        <div>© Trouve-moi</div>
+        <div>Artisans, services, travaux & rénovation</div>
+    </footer>
+
+</main>
+
+<script>
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    let player;
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('youtube-player', {
+            videoId: 'vTIa5L3dnJw',
+            playerVars: {
+                autoplay: 1,
+                mute: 1,
+                controls: 0,
+                showinfo: 0,
+                rel: 0,
+                loop: 1,
+                playlist: 'vTIa5L3dnJw',
+                modestbranding: 1,
+                playsinline: 1,
+                disablekb: 1,
+                fs: 0,
+                iv_load_policy: 3,
+                cc_load_policy: 0,
+                start: 4
+            },
+            events: {
+                onReady: function (event) {
+                    event.target.mute();
+                    event.target.setVolume(0);
+                    event.target.playVideo();
+                },
+                onStateChange: function (event) {
+                    if (event.data === YT.PlayerState.ENDED) {
+                        player.seekTo(4);
+                        player.playVideo();
+                    }
+                },
+                onError: function () {
+                    document.body.classList.add('youtube-error');
+                }
+            }
+        });
+    }
+
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden && player && typeof player.playVideo === 'function') {
+            player.mute();
+            player.playVideo();
+        }
+    });
+</script>
+
+</body>
+</html>
