@@ -143,59 +143,59 @@ final class QuoteRequestController extends AbstractController
         ]);
     }
 
-#[Route('/{slug}', name: '_show', methods: ['GET', 'POST'])]
-public function show(
-    Request $request,
-    #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
-    ConversationRepository $conversationRepository,
-    MessageRepository $messageRepository,
-    EntityManagerInterface $entityManager,
-    RealtimeNotifier $realtimeNotifier,
-): Response {
-    $user = $this->getUser();
+    #[Route('/{slug}', name: '_show', methods: ['GET', 'POST'])]
+    public function show(
+        Request $request,
+        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
+        ConversationRepository $conversationRepository,
+        MessageRepository $messageRepository,
+        EntityManagerInterface $entityManager,
+        RealtimeNotifier $realtimeNotifier,
+    ): Response {
+        $user = $this->getUser();
 
-    if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
-        throw $this->createAccessDeniedException('Accès réservé aux clients.');
-    }
-
-    if ($quoteRequest->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
-        throw $this->createAccessDeniedException('Vous ne pouvez pas consulter cette demande.');
-    }
-
-    $conversation = $conversationRepository->findOneByQuoteRequest($quoteRequest);
-    $messages = $conversation ? $messageRepository->findByConversationOrderedByCreatedAt($conversation) : [];
-
-    $messageForm = null;
-    $canSendMessage = $conversation && \in_array($quoteRequest->getStatus()->value, ['accepted', 'answered'], true);
-
-    if ($canSendMessage) {
-        $message = new Message();
-        $message->setConversation($conversation);
-        $message->setAuthor($user);
-
-        $messageForm = $this->createForm(MessageType::class, $message);
-        $messageForm->handleRequest($request);
-
-        if ($messageForm->isSubmitted() && $messageForm->isValid()) {
-            $entityManager->persist($message);
-
-            $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
-            $entityManager->flush();
-
-            $realtimeNotifier->notifyMessageCreated($conversation->getId(), $message);
-
-            return $this->redirect(
-                $this->generateUrl('app_quote_request_show', [
-                    'slug' => $quoteRequest->getSlug(),
-                ]) . '#quote-message-form'
-            );
+        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
+            throw $this->createAccessDeniedException('Accès réservé aux clients.');
         }
-    }
 
-    return $this->render('quote_request/show.html.twig', [
-        'quoteRequest' => $quoteRequest,
-        'conversation' => $conversation,
-        'messages' => $messages,
-        'messageForm' => $messageForm?->createView(),
-    ]);
-}}
+        if ($quoteRequest->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas consulter cette demande.');
+        }
+
+        $conversation = $conversationRepository->findOneByQuoteRequest($quoteRequest);
+        $messages = $conversation ? $messageRepository->findByConversationOrderedByCreatedAt($conversation) : [];
+
+        $messageForm = null;
+        $canSendMessage = $conversation && \in_array($quoteRequest->getStatus()->value, ['accepted', 'answered'], true);
+
+        if ($canSendMessage) {
+            $message = new Message();
+            $message->setConversation($conversation);
+            $message->setAuthor($user);
+
+            $messageForm = $this->createForm(MessageType::class, $message);
+            $messageForm->handleRequest($request);
+
+            if ($messageForm->isSubmitted() && $messageForm->isValid()) {
+                $entityManager->persist($message);
+
+                $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
+                $entityManager->flush();
+
+                $realtimeNotifier->notifyMessageCreated($conversation->getId(), $message);
+
+                return $this->redirectToRoute('app_quote_request_show', [
+                    'slug' => $quoteRequest->getSlug(),
+                    '_fragment' => 'quote-conversation',
+                ], 303);
+            }
+        }
+
+        return $this->render('quote_request/show.html.twig', [
+            'quoteRequest' => $quoteRequest,
+            'conversation' => $conversation,
+            'messages' => $messages,
+            'messageForm' => $messageForm?->createView(),
+        ]);
+    }
+}

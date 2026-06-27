@@ -10,7 +10,8 @@ export default class extends Controller {
         bodySelector: { type: String, default: ".tm-msg-body" },
         emptySelector: { type: String, default: ".tm-msg-empty--body" },
         currentUserType: { type: String, default: "" },
-        layout: { type: String, default: "dashboard" }
+        layout: { type: String, default: "dashboard" },
+        scrollPageToSelf: { type: Boolean, default: false },
     };
 
     connect() {
@@ -24,7 +25,7 @@ export default class extends Controller {
         }
 
         this.socket = io(this.urlValue || "http://localhost:3001", {
-            transports: ["websocket", "polling"]
+            transports: ["websocket", "polling"],
         });
 
         this.socket.on("connect", () => {
@@ -38,6 +39,17 @@ export default class extends Controller {
         this.socket.on(this.eventNameValue, (payload) => {
             this.handleMessage(payload);
         });
+
+        requestAnimationFrame(() => {
+            if (this.scrollPageToSelfValue) {
+                this.element.scrollIntoView({
+                    behavior: "auto",
+                    block: "start",
+                });
+            }
+
+            this.scrollStreamToBottom("auto");
+        });
     }
 
     disconnect() {
@@ -48,7 +60,10 @@ export default class extends Controller {
     }
 
     handleMessage(payload) {
-        if (!payload || Number(payload.conversationId) !== Number(this.conversationIdValue)) {
+        if (
+            !payload ||
+            Number(payload.conversationId) !== Number(this.conversationIdValue)
+        ) {
             return;
         }
 
@@ -69,18 +84,63 @@ export default class extends Controller {
             body.appendChild(stream);
         }
 
+        const shouldStickToBottom = this.isNearBottom(stream);
         const message = payload.message || {};
         const row = this.buildMessageElement(message);
 
         stream.appendChild(row);
-        stream.scrollTop = stream.scrollHeight;
+
+        if (shouldStickToBottom) {
+            this.scrollStreamToBottom("smooth");
+        }
+    }
+
+    scrollStreamToBottom(behavior = "smooth") {
+        const stream = this.element.querySelector(this.streamSelectorValue);
+
+        if (!stream) {
+            return;
+        }
+
+        const scroll = () => {
+            const lastMessage = stream.lastElementChild;
+
+            if (lastMessage) {
+                lastMessage.scrollIntoView({
+                    behavior,
+                    block: "end",
+                    inline: "nearest",
+                });
+            } else {
+                stream.scrollTo({
+                    top: stream.scrollHeight,
+                    behavior,
+                });
+            }
+        };
+
+        requestAnimationFrame(() => {
+            scroll();
+
+            setTimeout(() => {
+                scroll();
+            }, 60);
+        });
+    }
+
+    isNearBottom(stream, threshold = 120) {
+        return (
+            stream.scrollHeight - stream.scrollTop - stream.clientHeight <=
+            threshold
+        );
     }
 
     buildStreamElement() {
         const stream = document.createElement("div");
 
         if (this.layoutValue === "client") {
-            stream.className = "tm-client-quotes-messages tm-client-quotes-messages--scroll";
+            stream.className =
+                "tm-client-quotes-messages tm-client-quotes-messages--scroll";
         } else {
             stream.className = "tm-msg-stream";
         }
