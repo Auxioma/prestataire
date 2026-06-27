@@ -139,7 +139,7 @@
 						{{ include('prestataire_dashboard/_demandes_panel.html.twig') }}
 					</div>
 
-					<div class="tab-pane fade {{ activeTab == 'messages' ? 'show active' : '' }}" id="messages-main-panel" role="tabpanel" aria-labelledby="messages-main-tab">
+					<div class="tab-pane fade {{ activeTab == 'messages' ? 'show active' : '' }}" id="messages-main-panel" role="tabpanel" aria-labelledby="messages-main-tab" {{ stimulus_controller('realtime-conversation', { url: 'http://localhost:3001', conversationId: activeConversation ? activeConversation.id : 0, eventName: 'message_created', joinEventName: 'join_conversation', streamSelector: '.tm-msg-stream', bodySelector: '.tm-msg-body', emptySelector: '.tm-msg-empty--body', currentUserType: 'prestataire', layout: 'dashboard' } ) }}>
 						{{ include('prestataire_dashboard/_messages_panel.html.twig') }}
 					</div>
 				</div>
@@ -147,3 +147,5 @@
 		</div>
 	</div>
 {% endblock %}
+
+

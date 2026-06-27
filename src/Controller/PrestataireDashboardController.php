@@ -16,6 +16,7 @@ use App\Entity\Message;
 use App\Form\MessageType;
 use App\Enum\MessageTypeEnum;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\RealtimeNotifier;
 
 final class PrestataireDashboardController extends AbstractController
 {
@@ -114,49 +115,50 @@ final class PrestataireDashboardController extends AbstractController
         ]);
     }
 
-    #[Route('/prestataire/espace-pro/conversation/{id}/message', name: 'app_prestataire_conversation_message_send', methods: ['POST'])]
-    public function sendMessage(
-        #[MapEntity(id: 'id')] Conversation $conversation,
-        Request $request,
-        EntityManagerInterface $entityManager,
-    ): Response {
-        $user = $this->getUser();
+#[Route('/prestataire/espace-pro/conversation/{id}/message', name: 'app_prestataire_conversation_message_send', methods: ['POST'])]
+public function sendMessage(
+    #[MapEntity(id: 'id')] Conversation $conversation,
+    Request $request,
+    EntityManagerInterface $entityManager,
+    RealtimeNotifier $realtimeNotifier,
+): Response {
+    $user = $this->getUser();
 
-        if (!$user instanceof \App\Entity\User || !$user->getPrestataireProfile()) {
-            throw $this->createAccessDeniedException('Accès refusé.');
-        }
-
-        $prestataireProfile = $user->getPrestataireProfile();
-
-        if ($conversation->getPrestataire()?->getId() !== $prestataireProfile->getId()) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas répondre à cette conversation.');
-        }
-
-        $message = new Message();
-        $form = $this->createForm(MessageType::class, $message);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $message->setConversation($conversation);
-            $message->setAuthor($user);
-            $message->setType(MessageTypeEnum::USER);
-
-            if (method_exists($conversation, 'setLastMessageAt')) {
-                $conversation->setLastMessageAt(new \DateTimeImmutable());
-            }
-
-            if (method_exists($conversation, 'setUpdatedAt')) {
-                $conversation->setUpdatedAt(new \DateTimeImmutable());
-            }
-
-            $entityManager->persist($message);
-            $entityManager->flush();
-
-        }
-
-        return $this->redirectToRoute('app_prestataire_dashboard', [
-            'conversation' => $conversation->getId(),
-            'tab' => 'messages',
-        ], 303);
+    if (!$user instanceof \App\Entity\User || !$user->getPrestataireProfile()) {
+        throw $this->createAccessDeniedException('Accès refusé.');
     }
-}
+
+    $prestataireProfile = $user->getPrestataireProfile();
+
+    if ($conversation->getPrestataire()?->getId() !== $prestataireProfile->getId()) {
+        throw $this->createAccessDeniedException('Vous ne pouvez pas répondre à cette conversation.');
+    }
+
+    $message = new Message();
+    $form = $this->createForm(MessageType::class, $message);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $message->setConversation($conversation);
+        $message->setAuthor($user);
+        $message->setType(MessageTypeEnum::USER);
+
+        if (method_exists($conversation, 'setLastMessageAt')) {
+            $conversation->setLastMessageAt(new \DateTimeImmutable());
+        }
+
+        if (method_exists($conversation, 'setUpdatedAt')) {
+            $conversation->setUpdatedAt(new \DateTimeImmutable());
+        }
+
+        $entityManager->persist($message);
+        $entityManager->flush();
+
+        $realtimeNotifier->notifyMessageCreated($conversation->getId(), $message);
+    }
+
+    return $this->redirectToRoute('app_prestataire_dashboard', [
+        'conversation' => $conversation->getId(),
+        'tab' => 'messages',
+    ], 303);
+}}

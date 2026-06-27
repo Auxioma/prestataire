@@ -20,6 +20,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
+use App\Service\RealtimeNotifier;
 
 #[Route('/demandes-de-devis', name: 'app_quote_request')]
 final class QuoteRequestController extends AbstractController
@@ -142,57 +143,59 @@ final class QuoteRequestController extends AbstractController
         ]);
     }
 
-    #[Route('/{slug}', name: '_show', methods: ['GET', 'POST'])]
-    public function show(
-        Request $request,
-        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
-        ConversationRepository $conversationRepository,
-        MessageRepository $messageRepository,
-        EntityManagerInterface $entityManager
-    ): Response {
-        $user = $this->getUser();
+#[Route('/{slug}', name: '_show', methods: ['GET', 'POST'])]
+public function show(
+    Request $request,
+    #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
+    ConversationRepository $conversationRepository,
+    MessageRepository $messageRepository,
+    EntityManagerInterface $entityManager,
+    RealtimeNotifier $realtimeNotifier,
+): Response {
+    $user = $this->getUser();
 
-        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
-            throw $this->createAccessDeniedException('Accès réservé aux clients.');
-        }
-
-        if ($quoteRequest->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas consulter cette demande.');
-        }
-
-        $conversation = $conversationRepository->findOneByQuoteRequest($quoteRequest);
-        $messages = $conversation ? $messageRepository->findByConversationOrderedByCreatedAt($conversation) : [];
-
-        $messageForm = null;
-        $canSendMessage = $conversation && \in_array($quoteRequest->getStatus()->value, ['accepted', 'answered'], true);
-
-        if ($canSendMessage) {
-            $message = new Message();
-            $message->setConversation($conversation);
-            $message->setAuthor($user);
-
-            $messageForm = $this->createForm(MessageType::class, $message);
-            $messageForm->handleRequest($request);
-
-            if ($messageForm->isSubmitted() && $messageForm->isValid()) {
-                $entityManager->persist($message);
-
-                $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
-                $entityManager->flush();
-
-                return $this->redirect(
-                    $this->generateUrl('app_quote_request_show', [
-                        'slug' => $quoteRequest->getSlug(),
-                    ]) . '#quote-message-form'
-                );
-            }
-        }
-
-        return $this->render('quote_request/show.html.twig', [
-            'quoteRequest' => $quoteRequest,
-            'conversation' => $conversation,
-            'messages' => $messages,
-            'messageForm' => $messageForm?->createView(),
-        ]);
+    if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
+        throw $this->createAccessDeniedException('Accès réservé aux clients.');
     }
-}
+
+    if ($quoteRequest->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
+        throw $this->createAccessDeniedException('Vous ne pouvez pas consulter cette demande.');
+    }
+
+    $conversation = $conversationRepository->findOneByQuoteRequest($quoteRequest);
+    $messages = $conversation ? $messageRepository->findByConversationOrderedByCreatedAt($conversation) : [];
+
+    $messageForm = null;
+    $canSendMessage = $conversation && \in_array($quoteRequest->getStatus()->value, ['accepted', 'answered'], true);
+
+    if ($canSendMessage) {
+        $message = new Message();
+        $message->setConversation($conversation);
+        $message->setAuthor($user);
+
+        $messageForm = $this->createForm(MessageType::class, $message);
+        $messageForm->handleRequest($request);
+
+        if ($messageForm->isSubmitted() && $messageForm->isValid()) {
+            $entityManager->persist($message);
+
+            $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
+            $entityManager->flush();
+
+            $realtimeNotifier->notifyMessageCreated($conversation->getId(), $message);
+
+            return $this->redirect(
+                $this->generateUrl('app_quote_request_show', [
+                    'slug' => $quoteRequest->getSlug(),
+                ]) . '#quote-message-form'
+            );
+        }
+    }
+
+    return $this->render('quote_request/show.html.twig', [
+        'quoteRequest' => $quoteRequest,
+        'conversation' => $conversation,
+        'messages' => $messages,
+        'messageForm' => $messageForm?->createView(),
+    ]);
+}}
