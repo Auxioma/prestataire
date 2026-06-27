@@ -3,24 +3,26 @@
 namespace App\Controller;
 
 use App\Entity\Message;
+use App\Entity\PrestataireProfile;
+use App\Entity\PrestataireService;
 use App\Entity\QuoteRequest;
 use App\Entity\User;
+use App\Enum\NotificationTypeEnum;
 use App\Form\MessageType;
 use App\Form\QuoteRequestType;
 use App\Repository\ConversationRepository;
 use App\Repository\MessageRepository;
 use App\Repository\QuoteRequestRepository;
+use App\Service\NotificationManager;
+use App\Service\RealtimeNotifier;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use App\Entity\PrestataireProfile;
-use App\Entity\PrestataireService;
-use App\Service\RealtimeNotifier;
 
 #[Route('/demandes-de-devis', name: 'app_quote_request')]
 final class QuoteRequestController extends AbstractController
@@ -50,6 +52,7 @@ final class QuoteRequestController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         SluggerInterface $slugger,
+        NotificationManager $notificationManager,
         #[MapEntity(mapping: ['slug' => 'slug'])] ?PrestataireService $prestation = null,
         #[MapEntity(mapping: ['prestataireSlug' => 'slug'])] ?PrestataireProfile $prestataire = null
     ): Response {
@@ -126,6 +129,40 @@ final class QuoteRequestController extends AbstractController
 
                 $entityManager->persist($quoteRequest);
                 $entityManager->flush();
+
+                $prestataireUser = $quoteRequest->getPrestataire()?->getAccount();
+
+                if ($prestataireUser instanceof User) {
+                    $clientLabel = trim(sprintf(
+                        '%s %s',
+                        $user->getFirstName() ?? '',
+                        $user->getLastName() ?? ''
+                    ));
+
+                    if ('' === $clientLabel) {
+                        $clientLabel = 'Un client';
+                    }
+
+                    $notificationManager->notify(
+                        $prestataireUser,
+                        NotificationTypeEnum::QUOTE_REQUEST_RECEIVED,
+                        'Nouvelle demande de prestation',
+                        sprintf(
+                            '%s vous a envoyé une nouvelle demande%s.',
+                            $clientLabel,
+                            $quoteRequest->getTitle() ? ' : ' . $quoteRequest->getTitle() : ''
+                        ),
+                        $this->generateUrl('app_prestataire_quote_request_show', [
+                            'slug' => $quoteRequest->getSlug(),
+                        ]),
+                        [
+                            'quoteRequestId' => $quoteRequest->getId(),
+                            'quoteRequestSlug' => $quoteRequest->getSlug(),
+                            'clientId' => $user->getId(),
+                            'prestationId' => $selectedPrestation->getId(),
+                        ]
+                    );
+                }
 
                 $this->addFlash('success', 'Votre demande de devis a bien été envoyée.');
 
