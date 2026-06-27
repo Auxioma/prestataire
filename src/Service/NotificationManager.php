@@ -11,6 +11,7 @@ class NotificationManager
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly RealtimeNotifier $realtimeNotifier,
     ) {
     }
 
@@ -29,13 +30,13 @@ class NotificationManager
             ->setTitle($title)
             ->setBody($body)
             ->setTargetUrl($targetUrl)
-            ->setMetadata($metadata)
-        ;
+            ->setMetadata($metadata);
 
         $this->entityManager->persist($notification);
 
         if ($flush) {
             $this->entityManager->flush();
+            $this->realtimeNotifier->notifyNotificationCreated($recipient, $notification);
         }
 
         return $notification;
@@ -68,8 +69,7 @@ class NotificationManager
                 ->setTitle($title)
                 ->setBody($body)
                 ->setTargetUrl($targetUrl)
-                ->setMetadata($metadata)
-            ;
+                ->setMetadata($metadata);
 
             $this->entityManager->persist($notification);
             $notifications[] = $notification;
@@ -77,6 +77,14 @@ class NotificationManager
 
         if ($flush && [] !== $notifications) {
             $this->entityManager->flush();
+
+            foreach ($notifications as $notification) {
+                $recipient = $notification->getRecipient();
+
+                if ($recipient instanceof User) {
+                    $this->realtimeNotifier->notifyNotificationCreated($recipient, $notification);
+                }
+            }
         }
 
         return $notifications;

@@ -3,7 +3,11 @@
 namespace App\Service;
 
 use App\Entity\Message;
+use App\Entity\Notification;
+use App\Entity\User;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class RealtimeNotifier
@@ -13,6 +17,8 @@ final class RealtimeNotifier
         private readonly LoggerInterface $logger,
         private readonly string $realtimeBaseUrl,
         private readonly string $internalToken,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly CsrfTokenManagerInterface $csrfTokenManager,
     ) {
     }
 
@@ -51,9 +57,56 @@ final class RealtimeNotifier
 
             $response->getStatusCode();
         } catch (\Throwable $e) {
-            $this->logger->error('Realtime notification failed', [
+            $this->logger->error('Realtime message broadcast failed', [
                 'conversationId' => $conversationId,
                 'messageId' => $message->getId(),
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function notifyNotificationCreated(User $recipient, Notification $notification): void
+    {
+        $notificationId = $notification->getId();
+
+        if (null === $notificationId) {
+            return;
+        }
+
+        $readUrl = $this->urlGenerator->generate('app_notification_mark_read', [
+            'id' => $notificationId,
+        ]);
+
+        $csrfToken = $this->csrfTokenManager
+            ->getToken('mark-notification-read-' . $notificationId)
+            ->getValue();
+
+        try {
+            $response = $this->httpClient->request('POST', rtrim($this->realtimeBaseUrl, '/') . '/emit/notification', [
+                'headers' => [
+                    'x-internal-token' => $this->internalToken,
+                ],
+                'json' => [
+                    'userId' => $recipient->getId(),
+                    'notification' => [
+                        'id' => $notificationId,
+                        'type' => $notification->getType()?->value,
+                        'title' => $notification->getTitle(),
+                        'body' => $notification->getBody(),
+                        'targetUrl' => $notification->getTargetUrl(),
+                        'readUrl' => $readUrl,
+                        'csrfToken' => $csrfToken,
+                        'isRead' => $notification->isRead(),
+                        'createdAt' => $notification->getCreatedAt()?->format('d/m/Y H:i'),
+                    ],
+                ],
+            ]);
+
+            $response->getStatusCode();
+        } catch (\Throwable $e) {
+            $this->logger->error('Realtime notification broadcast failed', [
+                'recipientId' => $recipient->getId(),
+                'notificationId' => $notificationId,
                 'error' => $e->getMessage(),
             ]);
         }

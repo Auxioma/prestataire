@@ -183,85 +183,81 @@
 		{% endif %}
 
 		{% if app.user %}
-			<li class="nav-item dropdown">
+			<li class="nav-item dropdown" data-controller="realtime-notifications" data-realtime-notifications-url-value="http://localhost:3001" data-realtime-notifications-user-id-value="{{ app.user.id }}" data-realtime-notifications-event-name-value="notification_created" data-realtime-notifications-join-event-name-value="join_user" data-realtime-notifications-max-items-value="5" data-realtime-notifications-mark-read-url-pattern-value="/notifications/__ID__/read">
 				<a class="nav-link tm-navbarlink position-relative" href="#" id="tmNavbarNotificationsDropdown" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
 					<i class="bi bi-bell-fill"></i>
 
-					{% if navbarUnreadNotificationCount > 0 %}
-						<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger tm-navbar-notification-badge">
-							{{ navbarUnreadNotificationCount > 99 ? '99+' : navbarUnreadNotificationCount }}
-							<span class="visually-hidden">notifications non lues</span>
-						</span>
-					{% endif %}
+					<span data-realtime-notifications-target="badge" data-count-value="{{ navbarUnreadNotificationCount }}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger tm-navbar-notification-badge {{ navbarUnreadNotificationCount > 0 ? '' : 'd-none' }}">
+						{{ navbarUnreadNotificationCount > 99 ? '99+' : navbarUnreadNotificationCount }}
+						<span class="visually-hidden">notifications non lues</span>
+					</span>
 				</a>
 
 				<div class="dropdown-menu dropdown-menu-end tm-navbardropdown tm-navbar-notification-menu p-0 overflow-hidden" aria-labelledby="tmNavbarNotificationsDropdown">
 					<div class="px-3 py-3 border-bottom d-flex justify-content-between align-items-center">
 						<div>
 							<div class="fw-bold text-dark">Notifications</div>
-							<div class="small text-muted">
+							<div class="small text-muted" data-realtime-notifications-target="countText" data-count-value="{{ navbarUnreadNotificationCount }}">
 								{{ navbarUnreadNotificationCount }}
 								non lue{{ navbarUnreadNotificationCount > 1 ? 's' : '' }}
 							</div>
 						</div>
 					</div>
 
-					{% if navbarLatestNotifications is not empty %}
-						<div class="py-2">
+					<div class="py-2" data-realtime-notifications-target="list">
+						{% if navbarLatestNotifications is not empty %}
 							{% for notification in navbarLatestNotifications %}
-    <form method="post" action="{{ path('app_notification_mark_read', {id: notification.id}) }}">
-        <input type="hidden" name="_token" value="{{ csrf_token('mark-notification-read-' ~ notification.id) }}">
+								<form method="post" action="{{ path('app_notification_mark_read', {id: notification.id}) }}" data-notification-item>
+									<input type="hidden" name="_token" value="{{ csrf_token('mark-notification-read-' ~ notification.id) }}">
 
-        <button
-            type="submit"
-            class="dropdown-item tm-navbardropdown-link tm-navbar-notification-item px-3 py-3 border-bottom w-100 text-start {{ not notification.isRead ? 'tm-navbar-notification-item-unread' : '' }}"
-        >
-            <div class="d-flex align-items-start gap-3">
-                <div class="mt-1">
-                    <i class="bi {{ notification.isRead ? 'bi-bell text-secondary' : 'bi-bell-fill text-primary' }}"></i>
-                </div>
+									<button type="submit" class="dropdown-item tm-navbardropdown-link tm-navbar-notification-item px-3 py-3 border-bottom w-100 text-start {{ not notification.isRead ? 'tm-navbar-notification-item-unread' : '' }}">
+										<div class="d-flex align-items-start gap-3">
+											<div class="mt-1">
+												<i class="bi {{ notification.isRead ? 'bi-bell text-secondary' : 'bi-bell-fill text-primary' }}"></i>
+											</div>
 
-                <div class="flex-grow-1 min-w-0">
-                    <div class="d-flex justify-content-between align-items-start gap-2">
-                        <span class="tm-navbar-notification-title">
-                            {{ notification.title }}
-                        </span>
+											<div class="flex-grow-1 min-w-0">
+												<div class="d-flex justify-content-between align-items-start gap-2">
+													<span class="tm-navbar-notification-title">
+														{{ notification.title }}
+													</span>
 
-                        {% if not notification.isRead %}
-                            <span class="badge rounded-pill text-bg-primary">Nouveau</span>
-                        {% endif %}
-                    </div>
+													{% if not notification.isRead %}
+														<span class="badge rounded-pill text-bg-primary">Nouveau</span>
+													{% endif %}
+												</div>
 
-                    <div class="tm-navbar-notification-content mt-1">
-                        {{ notification.body|length > 100 ? notification.body|slice(0, 100) ~ '…' : notification.body }}
-                    </div>
+												<div class="tm-navbar-notification-content mt-1">
+													{{ notification.body|length > 100 ? notification.body|slice(0, 100) ~ '…' : notification.body }}
+												</div>
 
-                    <div class="tm-navbar-notification-date mt-2">
-                        {{ notification.createdAt|date('d/m/Y H:i') }}
-                    </div>
-                </div>
-            </div>
-        </button>
-    </form>
-{% endfor %}
-						</div>
+												<div class="tm-navbar-notification-date mt-2">
+													{{ notification.createdAt|date('d/m/Y H:i') }}
+												</div>
+											</div>
+										</div>
+									</button>
+								</form>
+							{% endfor %}
+						{% endif %}
+					</div>
 
-						<div class="px-3 py-2 bg-light border-top d-grid gap-2">
-							<a href="{{ path('app_notification_index') }}" class="btn btn-sm btn-outline-secondary">
-								Voir toutes les notifications
-							</a>
-							<form method="post" action="{{ path('app_notification_mark_all_read') }}">
-								<input type="hidden" name="_token" value="{{ csrf_token('mark-all-notifications-read') }}">
-								<button type="submit" class="btn btn-sm btn-primary w-100">
-									Tout marquer comme lu
-								</button>
-							</form>
-						</div>
-					{% else %}
-						<div class="px-3 py-4 text-center tm-navbar-notification-empty">
-							Aucune notification pour le moment.
-						</div>
-					{% endif %}
+					<div class="px-3 py-4 text-center tm-navbar-notification-empty {{ navbarLatestNotifications is not empty ? 'd-none' : '' }}" data-realtime-notifications-target="empty">
+						Aucune notification pour le moment.
+					</div>
+
+					<div class="px-3 py-2 bg-light border-top d-grid gap-2">
+						<a href="{{ path('app_notification_index') }}" class="btn btn-sm btn-outline-secondary">
+							Voir toutes les notifications
+						</a>
+
+						<form method="post" action="{{ path('app_notification_mark_all_read') }}">
+							<input type="hidden" name="_token" value="{{ csrf_token('mark-all-notifications-read') }}">
+							<button type="submit" class="btn btn-sm btn-primary w-100">
+								Tout marquer comme lu
+							</button>
+						</form>
+					</div>
 				</div>
 			</li>
 		{% endif %}
