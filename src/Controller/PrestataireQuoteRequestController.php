@@ -17,6 +17,8 @@ use App\Entity\Conversation;
 use App\Entity\Message;
 use App\Repository\ConversationRepository;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use App\Enum\NotificationTypeEnum;
+use App\Service\NotificationManager;
 
 
 #[Route('/prestataire/demandes', name: 'app_prestataire_quote_request_')]
@@ -69,7 +71,8 @@ final class PrestataireQuoteRequestController extends AbstractController
         Request $request,
         #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
         ConversationRepository $conversationRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        NotificationManager $notificationManager
     ): RedirectResponse {
         $user = $this->getUser();
 
@@ -131,6 +134,25 @@ final class PrestataireQuoteRequestController extends AbstractController
 
         $entityManager->flush();
 
+        $clientUser = $quoteRequest->getClient()?->getAccount();
+
+        if ($clientUser instanceof User) {
+            $notificationManager->notify(
+                $clientUser,
+                NotificationTypeEnum::QUOTE_REQUEST_ACCEPTED,
+                'Demande acceptée',
+                'Votre demande de prestation a été acceptée pour étude.',
+                $this->generateUrl('app_quote_request_show', [
+                    'slug' => $quoteRequest->getSlug(),
+                ]),
+                [
+                    'quoteRequestId' => $quoteRequest->getId(),
+                    'conversationId' => $conversation->getId(),
+                    'prestataireId' => $quoteRequest->getPrestataire()?->getId(),
+                ],
+            );
+        }
+
         $this->addFlash('success', 'Vous avez accepté d’étudier cette demande. La conversation avec le client est maintenant ouverte.');
 
         return $this->redirectToRoute('app_prestataire_quote_request_show', [
@@ -142,7 +164,8 @@ final class PrestataireQuoteRequestController extends AbstractController
     public function deny(
         Request $request,
         #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        NotificationManager $notificationManager
     ): RedirectResponse {
         $user = $this->getUser();
 
@@ -176,6 +199,24 @@ final class PrestataireQuoteRequestController extends AbstractController
         $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
 
         $entityManager->flush();
+
+        $clientUser = $quoteRequest->getClient()?->getAccount();
+
+        if ($clientUser instanceof User) {
+            $notificationManager->notify(
+                $clientUser,
+                NotificationTypeEnum::QUOTE_REQUEST_DENIED,
+                'Demande refusée',
+                'Votre demande de prestation a été refusée par le prestataire.',
+                $this->generateUrl('app_quote_request_show', [
+                    'slug' => $quoteRequest->getSlug(),
+                ]),
+                [
+                    'quoteRequestId' => $quoteRequest->getId(),
+                    'prestataireId' => $quoteRequest->getPrestataire()?->getId(),
+                ],
+            );
+        }
 
         $this->addFlash('success', 'Vous avez refusé cette demande.');
 
