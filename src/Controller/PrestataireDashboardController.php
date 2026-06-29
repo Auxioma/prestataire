@@ -138,6 +138,9 @@ final class PrestataireDashboardController extends AbstractController
         EntityManagerInterface $entityManager,
         RealtimeNotifier $realtimeNotifier,
         NotificationManager $notificationManager,
+        QuoteRequestRepository $quoteRequestRepository,
+        ConversationRepository $conversationRepository,
+        PrestataireServiceRepository $prestataireServiceRepository,
     ): Response {
         $user = $this->getUser();
 
@@ -152,7 +155,13 @@ final class PrestataireDashboardController extends AbstractController
         }
 
         $message = new Message();
-        $form = $this->createForm(MessageType::class, $message);
+        $form = $this->createForm(MessageType::class, $message, [
+            'action' => $this->generateUrl('app_prestataire_conversation_message_send', [
+                'id' => $conversation->getId(),
+            ]),
+            'method' => 'POST',
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -194,12 +203,48 @@ final class PrestataireDashboardController extends AbstractController
                     ]
                 );
             }
+
+            return $this->redirectToRoute('app_prestataire_dashboard', [
+                'conversation' => $conversation->getId(),
+                'tab' => 'messages',
+                '_fragment' => 'messages-main-panel',
+            ], 303);
         }
 
-        return $this->redirectToRoute('app_prestataire_dashboard', [
-            'conversation' => $conversation->getId(),
-            'tab' => 'messages',
-            '_fragment' => 'messages-main-panel',
-        ], 303);
+        $quoteSort = $request->query->get('quoteSort', 'latest');
+
+        $quoteOrderBy = match ($quoteSort) {
+            'oldest' => ['createdAt' => 'ASC'],
+            'budget_asc' => ['budgetAmount' => 'ASC'],
+            'budget_desc' => ['budgetAmount' => 'DESC'],
+            default => ['createdAt' => 'DESC'],
+        };
+
+        $prestations = $prestataireServiceRepository->findBy(
+            ['prestataire' => $prestataireProfile],
+            ['createdAt' => 'DESC']
+        );
+
+        $quoteRequests = $quoteRequestRepository->findBy(
+            ['prestataire' => $prestataireProfile],
+            $quoteOrderBy
+        );
+
+        $conversations = $conversationRepository->findBy(
+            ['prestataire' => $prestataireProfile],
+            ['lastMessageAt' => 'DESC', 'createdAt' => 'DESC']
+        );
+
+        return $this->render('prestataire_dashboard/prestataire_dashboard.html.twig', [
+            'user' => $user,
+            'prestataireProfile' => $prestataireProfile,
+            'prestations' => $prestations,
+            'quoteRequests' => $quoteRequests,
+            'quoteSort' => $quoteSort,
+            'conversations' => $conversations,
+            'activeConversation' => $conversation,
+            'messageForm' => $form->createView(),
+            'activeTab' => 'messages',
+        ]);
     }
 }

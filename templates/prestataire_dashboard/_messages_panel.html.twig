@@ -142,14 +142,19 @@
                             }
                         }) }}
 						<div class="tm-msg-compose-field">
-							{{ form_widget(messageForm.content, {
-                                    attr: {
-                                        class: 'form-control tm-msg-textarea',
-                                        rows: 4,
-                                        placeholder: 'Écrivez votre message...'
-                                    }
-                                }) }}
-							{{ form_errors(messageForm.content) }}
+{{ form_widget(messageForm.content, {
+    attr: {
+        class: 'form-control tm-msg-textarea' ~ (messageForm.content.vars.errors|length > 0 ? ' is-invalid' : ''),
+        rows: 4,
+        placeholder: 'Écrivez votre message...'
+    }
+}) }}
+
+{% if messageForm.content.vars.errors|length > 0 %}
+    <div class="invalid-feedback d-block tm-msg-error">
+        {{ form_errors(messageForm.content) }}
+    </div>
+{% endif %}
 						</div>
 
 						<div class="tm-msg-compose-actions">

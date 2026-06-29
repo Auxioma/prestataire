@@ -247,19 +247,18 @@
 												{% set isSystemMessage = message.type is defined and message.type and message.type.value == 'system' %}
 												{% set isClientMessage = not isSystemMessage and message.author is defined and message.author and app.user and message.author.id == app.user.id %}
 												{% set authorLabel = isSystemMessage
-                                            ? 'Système'
-                                            : (isClientMessage ? 'Vous' : (quoteRequest.prestataire.companyName ?? 'Prestataire'))
-                                        %}
+                                ? 'Système'
+                                : (isClientMessage ? 'Vous' : (quoteRequest.prestataire.companyName ?? 'Prestataire'))
+                            %}
 
 												<article class="tm-client-quotes-message
-																																																																																																																																				                                            {% if isSystemMessage %}
-																																																																																																																																				                                                tm-client-quotes-message--system
-																																																																																																																																				                                            {% elseif isClientMessage %}
-																																																																																																																																				                                                tm-client-quotes-message--outgoing
-																																																																																																																																				                                            {% else %}
-																																																																																																																																				                                                tm-client-quotes-message--incoming
-																																																																																																																																				                                            {% endif %}
-																																																																																																																																				                                        ">
+														                                {% if isSystemMessage %}
+														                                    tm-client-quotes-message--system
+														                                {% elseif isClientMessage %}
+														                                    tm-client-quotes-message--outgoing
+														                                {% else %}
+														                                    tm-client-quotes-message--incoming
+														                                {% endif %}">
 													<div class="tm-client-quotes-message__meta">
 														<strong>{{ authorLabel }}</strong>
 														<span>{{ message.createdAt ? message.createdAt|date('d/m/Y H:i') : '—' }}</span>
@@ -284,25 +283,29 @@
 												</div>
 
 												{{ form_start(messageForm, {
-                                            attr: {
-                                                class: 'tm-client-quotes-message-composer__form',
-                                                'data-turbo': 'false'
-                                            }
-                                        }) }}
+                                attr: {
+                                    class: 'tm-client-quotes-message-composer__form',
+                                    'data-turbo': 'false'
+                                }
+                            }) }}
 												<div class="tm-client-quotes-message-composer__field">
 													{{ form_label(messageForm.content, 'Votre message', {
-                                                    label_attr: { class: 'tm-client-quotes-message-composer__label' }
-                                                }) }}
+                                        label_attr: { class: 'tm-client-quotes-message-composer__label' }
+                                    }) }}
 
 													{{ form_widget(messageForm.content, {
-                                                    attr: {
-                                                        class: 'tm-client-quotes-message-composer__textarea',
-                                                        placeholder: 'Décrivez votre question ou ajoutez une précision utile…',
-                                                        rows: 6
-                                                    }
-                                                }) }}
+                                        attr: {
+                                            class: 'tm-client-quotes-message-composer__textarea' ~ (messageForm.content.vars.errors|length > 0 ? ' is-invalid' : ''),
+                                            placeholder: 'Décrivez votre question ou ajoutez une précision utile…',
+                                            rows: 6
+                                        }
+                                    }) }}
 
-													{{ form_errors(messageForm.content) }}
+													{% if messageForm.content.vars.errors|length > 0 %}
+														<div class="invalid-feedback d-block tm-client-quotes-message-composer__error">
+															{{ form_errors(messageForm.content) }}
+														</div>
+													{% endif %}
 												</div>
 
 												<div class="tm-client-quotes-message-composer__footer">
@@ -343,24 +346,29 @@
 												</div>
 
 												{{ form_start(messageForm, {
-                                            attr: {
-                                                class: 'tm-client-quotes-message-composer__form'
-                                            }
-                                        }) }}
+                                attr: {
+                                    class: 'tm-client-quotes-message-composer__form',
+                                    'data-turbo': 'false'
+                                }
+                            }) }}
 												<div class="tm-client-quotes-message-composer__field">
 													{{ form_label(messageForm.content, 'Votre message', {
-                                                    label_attr: { class: 'tm-client-quotes-message-composer__label' }
-                                                }) }}
+                                        label_attr: { class: 'tm-client-quotes-message-composer__label' }
+                                    }) }}
 
 													{{ form_widget(messageForm.content, {
-                                                    attr: {
-                                                        class: 'tm-client-quotes-message-composer__textarea',
-                                                        placeholder: 'Bonjour, je souhaite vous apporter une précision sur ma demande…',
-                                                        rows: 6
-                                                    }
-                                                }) }}
+                                        attr: {
+                                            class: 'tm-client-quotes-message-composer__textarea' ~ (messageForm.content.vars.errors|length > 0 ? ' is-invalid' : ''),
+                                            placeholder: 'Bonjour, je souhaite vous apporter une précision sur ma demande…',
+                                            rows: 6
+                                        }
+                                    }) }}
 
-													{{ form_errors(messageForm.content) }}
+													{% if messageForm.content.vars.errors|length > 0 %}
+														<div class="invalid-feedback d-block tm-client-quotes-message-composer__error">
+															{{ form_errors(messageForm.content) }}
+														</div>
+													{% endif %}
 												</div>
 
 												<div class="tm-client-quotes-message-composer__footer">
@@ -424,10 +432,10 @@
 									{% set isInactive = loopIndex > currentTimelineIndex %}
 
 									<article class="tm-client-quotes-timeline__item
-																																																																																																															                                    {% if isDone %} tm-client-quotes-timeline__item--done{% endif %}
-																																																																																																															                                    {% if isCurrent %} tm-client-quotes-timeline__item--current{% endif %}
-																																																																																																															                                    {% if isInactive %} tm-client-quotes-timeline__item--inactive{% endif %}
-																																																																																																															                                ">
+																																																																																																																																																                                    {% if isDone %} tm-client-quotes-timeline__item--done{% endif %}
+																																																																																																																																																                                    {% if isCurrent %} tm-client-quotes-timeline__item--current{% endif %}
+																																																																																																																																																                                    {% if isInactive %} tm-client-quotes-timeline__item--inactive{% endif %}
+																																																																																																																																																                                ">
 										<div class="tm-client-quotes-timeline__marker">
 											{% if isDone %}
 												<i class="fa-solid fa-check"></i>
