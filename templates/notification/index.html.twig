@@ -3,99 +3,88 @@
 {% block title %}Notifications - TrouveMoi{% endblock %}
 
 {% block body %}
-    <div class="tm-notifications-page">
-        <div class="container py-4 py-lg-5">
-            <section class="tm-notifications-hero mb-4 mb-lg-5">
-                <div class="tm-notifications-hero__content">
-                    <span class="tm-notifications-hero__eyebrow">Centre de notifications</span>
-                    <h1 class="tm-notifications-hero__title">Notifications</h1>
-                    <p class="tm-notifications-hero__subtitle mb-0">
-                        Suivez vos nouveaux messages, demandes et mises à jour en temps réel.
-                    </p>
-                </div>
+    <div class="container py-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div>
+                <h1 class="h3 mb-1">Notifications</h1>
+                <p class="text-muted mb-0">
+                    {{ unreadCount }} non lue{{ unreadCount > 1 ? 's' : '' }}
+                </p>
+            </div>
 
-                <div class="tm-notifications-hero__actions">
-                    <div class="tm-notifications-hero__count">
-                        <span class="tm-notifications-hero__count-value">{{ unreadCount }}</span>
-                        <span class="tm-notifications-hero__count-label">
-                            non lue{{ unreadCount > 1 ? 's' : '' }}
-                        </span>
-                    </div>
+            <div class="d-flex flex-wrap gap-2">
+                {% if unreadCount > 0 %}
+                    <form method="post" action="{{ path('app_notification_mark_all_read') }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('mark-all-notifications-read') }}">
+                        <button type="submit" class="btn btn-primary">
+                            Tout marquer comme lu
+                        </button>
+                    </form>
+                {% endif %}
 
-                    {% if unreadCount > 0 %}
-                        <form method="post" action="{{ path('app_notification_mark_all_read') }}">
-                            <input type="hidden" name="_token" value="{{ csrf_token('mark-all-notifications-read') }}">
-                            <button type="submit" class="btn tm-notifications-btn-primary">
-                                <i class="bi bi-check2-all"></i>
-                                <span>Tout marquer comme lu</span>
-                            </button>
-                        </form>
-                    {% endif %}
-                </div>
-            </section>
-
-            <section class="tm-notifications-panel">
                 {% if notifications is not empty %}
-                    <div class="tm-notifications-list">
-                        {% for notification in notifications %}
-                            <article class="tm-notification-card {{ not notification.isRead ? 'is-unread' : '' }}">
-                                <div class="tm-notification-card__icon">
-                                    <i class="bi bi-bell-fill"></i>
-                                </div>
+                    <form method="post" action="{{ path('app_notification_delete_all') }}" onsubmit="return confirm('Supprimer toutes les notifications ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete-all-notifications') }}">
+                        <button type="submit" class="btn btn-outline-danger">
+                            Tout supprimer
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
 
-                                <div class="tm-notification-card__body">
-                                    <div class="tm-notification-card__top">
-                                        <div class="tm-notification-card__heading">
-                                            <h2 class="tm-notification-card__title">
-                                                {{ notification.title }}
-                                            </h2>
-
-                                            {% if not notification.isRead %}
-                                                <span class="tm-notification-card__badge">Nouveau</span>
-                                            {% endif %}
-                                        </div>
-
-                                        <time class="tm-notification-card__date">
-                                            {{ notification.createdAt|date('d/m/Y H:i') }}
-                                        </time>
-                                    </div>
-
-                                    <p class="tm-notification-card__text">
-                                        {{ notification.body }}
-                                    </p>
-                                </div>
-
-                                <div class="tm-notification-card__actions">
-                                    {% if notification.targetUrl %}
-                                        <a href="{{ notification.targetUrl }}" class="btn tm-notification-btn-secondary">
-                                            Ouvrir
-                                        </a>
-                                    {% endif %}
+        <div class="card shadow-sm border-0">
+            <div class="list-group list-group-flush">
+                {% for notification in notifications %}
+                    <div class="list-group-item py-3 {{ not notification.isRead ? 'bg-primary bg-opacity-10' : '' }}">
+                        <div class="d-flex justify-content-between align-items-start gap-3">
+                            <div class="grow">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <strong>{{ notification.title }}</strong>
 
                                     {% if not notification.isRead %}
-                                        <form method="post" action="{{ path('app_notification_mark_read', {id: notification.id}) }}">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('mark-notification-read-' ~ notification.id) }}">
-                                            <button type="submit" class="btn tm-notification-btn-primary">
-                                                Marquer comme lu
-                                            </button>
-                                        </form>
+                                        <span class="badge text-bg-primary">Nouveau</span>
                                     {% endif %}
                                 </div>
-                            </article>
-                        {% endfor %}
+
+                                <p class="mb-2 text-muted">{{ notification.body }}</p>
+
+                                <div class="small text-muted">
+                                    {{ notification.createdAt|date('d/m/Y H:i') }}
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-column gap-2 align-items-end">
+                                {% if notification.targetUrl %}
+                                    <a href="{{ notification.targetUrl }}" class="btn btn-sm btn-outline-secondary">
+                                        Ouvrir
+                                    </a>
+                                {% endif %}
+
+                                {% if not notification.isRead %}
+                                    <form method="post" action="{{ path('app_notification_mark_read', {id: notification.id}) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('mark-notification-read-' ~ notification.id) }}">
+                                        <button type="submit" class="btn btn-sm btn-primary">
+                                            Marquer comme lu
+                                        </button>
+                                    </form>
+                                {% endif %}
+
+                                <form method="post" action="{{ path('app_notification_delete', {id: notification.id}) }}" onsubmit="return confirm('Supprimer cette notification ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete-notification-' ~ notification.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 {% else %}
-                    <div class="tm-notifications-empty">
-                        <div class="tm-notifications-empty__icon">
-                            <i class="bi bi-bell"></i>
-                        </div>
-                        <h2 class="tm-notifications-empty__title">Aucune notification pour le moment</h2>
-                        <p class="tm-notifications-empty__text">
-                            Lorsqu’un message ou une mise à jour arrivera, vous la retrouverez ici.
-                        </p>
+                    <div class="list-group-item py-5 text-center text-muted">
+                        Aucune notification pour le moment.
                     </div>
-                {% endif %}
-            </section>
+                {% endfor %}
+            </div>
         </div>
     </div>
 {% endblock %}
