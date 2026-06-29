@@ -38,7 +38,7 @@ final class NotificationController extends AbstractController
         $pagination = $paginator->paginate(
             $queryBuilder,
             $request->query->getInt('page', 1),
-            1
+            10
         );
 
         return $this->render('notification/index.html.twig', [
