@@ -168,49 +168,44 @@ export default class extends Controller {
         this.countTextTarget.textContent = `${count} non lue${count > 1 ? 's' : ''}`;
     }
 
-    buildNotificationItem(notification) {
-        const title = this.escapeHtml(notification.title ?? '');
-        const body = this.escapeHtml(this.truncate(notification.body ?? '', 100));
-        const createdAt = this.escapeHtml(notification.createdAt ?? 'À l’instant');
-        const readUrl = this.escapeAttribute(this.resolveReadUrl(notification));
-        const csrfToken = this.escapeAttribute(notification.csrfToken ?? '');
-        const targetUrl = this.escapeAttribute(notification.targetUrl ?? '');
+buildNotificationItem(notification) {
+    const title = this.escapeHtml(notification.title ?? '')
+    const body = this.escapeHtml(this.truncate(notification.body ?? '', 100))
+    const createdAt = this.escapeHtml(notification.createdAt ?? 'à l’instant')
+    const openUrl = this.escapeAttribute(this.resolveReadUrl(notification))
 
-        return `
-            <form method="post" action="${readUrl}" data-notification-item>
-                <input type="hidden" name="_token" value="${csrfToken}">
-                ${targetUrl ? `<input type="hidden" name="_target_url" value="${targetUrl}">` : ''}
+    return `
+        <a
+            href="${openUrl}"
+            class="dropdown-item tm-navbardropdown-link tm-navbar-notification-item px-3 py-3 border-bottom w-100 text-start tm-navbar-notification-item-unread"
+            data-notification-item
+        >
+            <div class="d-flex align-items-start gap-3">
+                <div class="mt-1">
+                    <i class="bi bi-bell-fill text-primary"></i>
+                </div>
 
-                <button
-                    type="submit"
-                    class="dropdown-item tm-navbardropdown-link tm-navbar-notification-item px-3 py-3 border-bottom w-100 text-start tm-navbar-notification-item-unread"
-                >
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="mt-1">
-                            <i class="bi bi-bell-fill text-primary"></i>
-                        </div>
+                <div class="grow min-w-0">
+                    <div class="d-flex justify-content-between align-items-start gap-2">
+                        <span class="tm-navbar-notification-title">
+                            ${title || 'Nouvelle notification'}
+                        </span>
 
-                        <div class="flex-grow-1 min-w-0">
-                            <div class="d-flex justify-content-between align-items-start gap-2">
-                                <span class="tm-navbar-notification-title">
-                                    ${title || 'Nouvelle notification'}
-                                </span>
-                                <span class="badge rounded-pill text-bg-primary">Nouveau</span>
-                            </div>
-
-                            <div class="tm-navbar-notification-content mt-1">
-                                ${body}
-                            </div>
-
-                            <div class="tm-navbar-notification-date mt-2">
-                                ${createdAt}
-                            </div>
-                        </div>
+                        <span class="badge rounded-pill text-bg-primary">Nouveau</span>
                     </div>
-                </button>
-            </form>
-        `;
-    }
+
+                    <div class="tm-navbar-notification-content mt-1">
+                        ${body}
+                    </div>
+
+                    <div class="tm-navbar-notification-date mt-2">
+                        ${createdAt}
+                    </div>
+                </div>
+            </div>
+        </a>
+    `
+}
 
     resolveReadUrl(notification) {
         if (notification.readUrl) {

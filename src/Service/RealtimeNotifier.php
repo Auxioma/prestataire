@@ -7,7 +7,6 @@ use App\Entity\Notification;
 use App\Entity\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class RealtimeNotifier
@@ -18,7 +17,6 @@ final class RealtimeNotifier
         private readonly string $realtimeBaseUrl,
         private readonly string $internalToken,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly CsrfTokenManagerInterface $csrfTokenManager,
     ) {
     }
 
@@ -73,13 +71,9 @@ final class RealtimeNotifier
             return;
         }
 
-        $readUrl = $this->urlGenerator->generate('app_notification_mark_read', [
+        $openUrl = $this->urlGenerator->generate('app_notification_open', [
             'id' => $notificationId,
         ]);
-
-        $csrfToken = $this->csrfTokenManager
-            ->getToken('mark-notification-read-' . $notificationId)
-            ->getValue();
 
         try {
             $response = $this->httpClient->request('POST', rtrim($this->realtimeBaseUrl, '/') . '/emit/notification', [
@@ -94,8 +88,7 @@ final class RealtimeNotifier
                         'title' => $notification->getTitle(),
                         'body' => $notification->getBody(),
                         'targetUrl' => $notification->getTargetUrl(),
-                        'readUrl' => $readUrl,
-                        'csrfToken' => $csrfToken,
+                        'readUrl' => $openUrl,
                         'isRead' => $notification->isRead(),
                         'createdAt' => $notification->getCreatedAt()?->format('d/m/Y H:i'),
                     ],
