@@ -19,14 +19,17 @@ use App\Repository\ConversationRepository;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use App\Enum\NotificationTypeEnum;
 use App\Service\NotificationManager;
-
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/prestataire/demandes', name: 'app_prestataire_quote_request_')]
 final class PrestataireQuoteRequestController extends AbstractController
 {
     #[Route('', name: 'index', methods: ['GET'])]
-    public function index(QuoteRequestRepository $quoteRequestRepository): Response
-    {
+    public function index(
+        Request $request,
+        QuoteRequestRepository $quoteRequestRepository,
+        PaginatorInterface $paginator
+    ): Response {
         $user = $this->getUser();
 
         if (!$user instanceof User || !$user->getPrestataireProfile()) {
@@ -35,15 +38,19 @@ final class PrestataireQuoteRequestController extends AbstractController
 
         $prestataire = $user->getPrestataireProfile();
 
-        $quoteRequests = $quoteRequestRepository->findBy(
-            [
-                'prestataire' => $prestataire,
-                'deletedAt' => null,
-            ],
-            ['createdAt' => 'DESC']
+        $queryBuilder = $quoteRequestRepository->createQueryBuilder('qr')
+            ->where('qr.prestataire = :prestataire')
+            ->andWhere('qr.deletedAt IS NULL')
+            ->setParameter('prestataire', $prestataire)
+            ->orderBy('qr.createdAt', 'DESC');
+
+        $quoteRequests = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            3
         );
 
-        return $this->render('prestataire_quote_request/index.html.twig', [
+        return $this->render('prestataire_quote_request/show.html.twig', [
             'quoteRequests' => $quoteRequests,
         ]);
     }

@@ -14,6 +14,7 @@ use App\Repository\QuoteRequestRepository;
 use App\Service\NotificationManager;
 use App\Service\RealtimeNotifier;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,6 +30,7 @@ final class PrestataireDashboardController extends AbstractController
         PrestataireServiceRepository $prestataireServiceRepository,
         QuoteRequestRepository $quoteRequestRepository,
         ConversationRepository $conversationRepository,
+        PaginatorInterface $paginator,
     ): Response {
         $user = $this->getUser();
 
@@ -62,9 +64,21 @@ final class PrestataireDashboardController extends AbstractController
             default => ['createdAt' => 'DESC'],
         };
 
-        $quoteRequests = $quoteRequestRepository->findBy(
-            ['prestataire' => $prestataireProfile],
-            $quoteOrderBy
+        $quoteQueryBuilder = $quoteRequestRepository->createQueryBuilder('qr')
+            ->where('qr.prestataire = :prestataire')
+            ->setParameter('prestataire', $prestataireProfile);
+
+        foreach ($quoteOrderBy as $field => $direction) {
+            $quoteQueryBuilder->addOrderBy('qr.' . $field, $direction);
+        }
+
+        $quoteRequests = $paginator->paginate(
+            $quoteQueryBuilder,
+            $request->query->getInt('quotePage', 1),
+            5,
+            [
+                'pageParameterName' => 'quotePage',
+            ]
         );
 
         $conversationId = $request->query->get('conversation');
@@ -117,74 +131,75 @@ final class PrestataireDashboardController extends AbstractController
         ]);
     }
 
-#[Route('/prestataire/espace-pro/conversation/{id}/message', name: 'app_prestataire_conversation_message_send', methods: ['POST'])]
-public function sendMessage(
-    #[MapEntity(id: 'id')] Conversation $conversation,
-    Request $request,
-    EntityManagerInterface $entityManager,
-    RealtimeNotifier $realtimeNotifier,
-    NotificationManager $notificationManager,
-): Response {
-    $user = $this->getUser();
+    #[Route('/prestataire/espace-pro/conversation/{id}/message', name: 'app_prestataire_conversation_message_send', methods: ['POST'])]
+    public function sendMessage(
+        #[MapEntity(id: 'id')] Conversation $conversation,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        RealtimeNotifier $realtimeNotifier,
+        NotificationManager $notificationManager,
+    ): Response {
+        $user = $this->getUser();
 
-    if (!$user instanceof \App\Entity\User || !$user->getPrestataireProfile()) {
-        throw $this->createAccessDeniedException('Accès refusé.');
-    }
-
-    $prestataireProfile = $user->getPrestataireProfile();
-
-    if ($conversation->getPrestataire()?->getId() !== $prestataireProfile->getId()) {
-        throw $this->createAccessDeniedException('Vous ne pouvez pas répondre à cette conversation.');
-    }
-
-    $message = new Message();
-    $form = $this->createForm(MessageType::class, $message);
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
-        $message->setConversation($conversation);
-        $message->setAuthor($user);
-        $message->setType(MessageTypeEnum::USER);
-
-        if (method_exists($conversation, 'setLastMessageAt')) {
-            $conversation->setLastMessageAt(new \DateTimeImmutable());
+        if (!$user instanceof \App\Entity\User || !$user->getPrestataireProfile()) {
+            throw $this->createAccessDeniedException('Accès refusé.');
         }
 
-        if (method_exists($conversation, 'setUpdatedAt')) {
-            $conversation->setUpdatedAt(new \DateTimeImmutable());
+        $prestataireProfile = $user->getPrestataireProfile();
+
+        if ($conversation->getPrestataire()?->getId() !== $prestataireProfile->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas répondre à cette conversation.');
         }
 
-        $entityManager->persist($message);
-        $entityManager->flush();
+        $message = new Message();
+        $form = $this->createForm(MessageType::class, $message);
+        $form->handleRequest($request);
 
-        $realtimeNotifier->notifyMessageCreated($conversation->getId(), $message);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $message->setConversation($conversation);
+            $message->setAuthor($user);
+            $message->setType(MessageTypeEnum::USER);
 
-        $clientUser = $conversation->getClient()?->getAccount();
+            if (method_exists($conversation, 'setLastMessageAt')) {
+                $conversation->setLastMessageAt(new \DateTimeImmutable());
+            }
 
-        if ($clientUser instanceof \App\Entity\User && $clientUser->getId() !== $user->getId()) {
-            $notificationManager->notify(
-                $clientUser,
-                NotificationTypeEnum::MESSAGE_RECEIVED,
-                'Nouveau message',
-                'Vous avez reçu un nouveau message de la part d’un prestataire.',
-                $this->generateUrl('app_quote_request_show', [
-                    'slug' => $conversation->getQuoteRequest()?->getSlug(),
-                    '_fragment' => 'quote-conversation',
-                ]),
-                [
-                    'conversationId' => $conversation->getId(),
-                    'messageId' => $message->getId(),
-                    'quoteRequestId' => $conversation->getQuoteRequest()?->getId(),
-                    'quoteRequestSlug' => $conversation->getQuoteRequest()?->getSlug(),
-                    'senderId' => $user->getId(),
-                ]
-            );
+            if (method_exists($conversation, 'setUpdatedAt')) {
+                $conversation->setUpdatedAt(new \DateTimeImmutable());
+            }
+
+            $entityManager->persist($message);
+            $entityManager->flush();
+
+            $realtimeNotifier->notifyMessageCreated($conversation->getId(), $message);
+
+            $clientUser = $conversation->getClient()?->getAccount();
+
+            if ($clientUser instanceof \App\Entity\User && $clientUser->getId() !== $user->getId()) {
+                $notificationManager->notify(
+                    $clientUser,
+                    NotificationTypeEnum::MESSAGE_RECEIVED,
+                    'Nouveau message',
+                    'Vous avez reçu un nouveau message de la part d’un prestataire.',
+                    $this->generateUrl('app_quote_request_show', [
+                        'slug' => $conversation->getQuoteRequest()?->getSlug(),
+                        '_fragment' => 'quote-conversation',
+                    ]),
+                    [
+                        'conversationId' => $conversation->getId(),
+                        'messageId' => $message->getId(),
+                        'quoteRequestId' => $conversation->getQuoteRequest()?->getId(),
+                        'quoteRequestSlug' => $conversation->getQuoteRequest()?->getSlug(),
+                        'senderId' => $user->getId(),
+                    ]
+                );
+            }
         }
+
+        return $this->redirectToRoute('app_prestataire_dashboard', [
+            'conversation' => $conversation->getId(),
+            'tab' => 'messages',
+            '_fragment' => 'messages-main-panel',
+        ], 303);
     }
-
-    return $this->redirectToRoute('app_prestataire_dashboard', [
-        'conversation' => $conversation->getId(),
-        'tab' => 'messages',
-        '_fragment' => 'messages-main-panel',
-    ], 303);
-}}
+}

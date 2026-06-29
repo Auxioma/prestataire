@@ -1,117 +1,188 @@
-<div class="card tm-card tm-quote-panel p-4">
-	<div class="tm-quote-panel__head">
-		<div>
-			<h4 class="tm-card-title tm-quote-panel__title mb-1">Demandes reçues</h4>
-			<p class="tm-quote-panel__subtitle mb-0">
-				Les dernières demandes de devis envoyées par vos clients.
-			</p>
-		</div>
+<div class="tm-quote-panel__head">
+<div class="tm-quote-panel__intro">
+    <h4 class="tm-card-title tm-quote-panel__title mb-1">Demandes reçues</h4>
+    <p class="tm-quote-panel__subtitle mb-0">
+        Les dernières demandes de devis envoyées par vos clients.
+    </p>
 
-		{% if quoteRequests is not empty %}
-			<form method="get" action="{{ path('app_prestataire_dashboard') }}#demandes-main-panel" class="tm-quote-panel__filter">
-				<label for="quote_sort" class="visually-hidden">Trier les demandes</label>
-				<select id="quote_sort" name="quote_sort" class="form-select" onchange="this.form.submit()">
-					<option value="recent" {{ quoteSort|default('recent') == 'recent' ? 'selected' : '' }}>
-						Plus récentes
-					</option>
-					<option value="oldest" {{ quoteSort|default('recent') == 'oldest' ? 'selected' : '' }}>
-						Plus anciennes
-					</option>
-					<option value="budget_asc" {{ quoteSort|default('recent') == 'budget_asc' ? 'selected' : '' }}>
-						Budget croissant
-					</option>
-					<option value="budget_desc" {{ quoteSort|default('recent') == 'budget_desc' ? 'selected' : '' }}>
-						Budget décroissant
-					</option>
-				</select>
-			</form>
-		{% endif %}
-	</div>
+    {% if quoteRequests is not empty and quoteRequests.getTotalItemCount is defined %}
+        <div class="tm-quote-panel__meta">
+            <span class="tm-quote-panel__count">
+                {{ quoteRequests.getTotalItemCount }}
+                demande{{ quoteRequests.getTotalItemCount > 1 ? 's' : '' }}
+            </span>
+        </div>
+    {% elseif quoteRequests is not empty %}
+        <div class="tm-quote-panel__meta">
+            <span class="tm-quote-panel__count">
+                {{ quoteRequests|length }}
+                demande{{ quoteRequests|length > 1 ? 's' : '' }}
+            </span>
+        </div>
+    {% endif %}
+</div>
 
-	{% if quoteRequests is empty %}
-		<div class="tm-quote-empty">
-			<div class="tm-quote-empty__icon">
-				<i class="fa-regular fa-file-lines"></i>
-			</div>
-			<h5 class="tm-quote-empty__title">Aucune demande pour le moment</h5>
-			<p class="tm-quote-empty__text mb-0">
-				Vos futures demandes de devis apparaîtront ici dès qu’un client vous contactera.
-			</p>
-		</div>
-	{% else %}
-		<div class="tm-quote-list">
-			{% for quoteRequest in quoteRequests|slice(0, 5) %}
-				<article class="tm-quote-item">
-					<div class="tm-quote-item__infos">
-						<h5 class="tm-quote-item__title mb-1">{{ quoteRequest.title }}</h5>
+    {% if quoteRequests is not empty %}
+        <form method="get" action="{{ path('app_prestataire_dashboard') }}#demandes-main-panel" class="tm-quote-panel__filter">
+            <input type="hidden" name="tab" value="demandes">
+            {% if activeConversation %}
+                <input type="hidden" name="conversation" value="{{ activeConversation.id }}">
+            {% endif %}
 
-						{% if quoteRequest.client and quoteRequest.client.account %}
-							<p class="tm-quote-item__client mb-0">
-								<i class="fa-regular fa-user"></i>
-								{{ quoteRequest.client.account.firstName }}
-								{{ quoteRequest.client.account.lastName }}
-							</p>
-						{% endif %}
+            <label for="quote_sort" class="visually-hidden">Trier les demandes</label>
+            <select id="quote_sort" name="quote_sort" class="form-select" onchange="this.form.submit()">
+                <option value="recent" {{ quoteSort|default('recent') == 'recent' ? 'selected' : '' }}>
+                    Plus récentes
+                </option>
+                <option value="oldest" {{ quoteSort|default('recent') == 'oldest' ? 'selected' : '' }}>
+                    Plus anciennes
+                </option>
+                <option value="budget_asc" {{ quoteSort|default('recent') == 'budget_asc' ? 'selected' : '' }}>
+                    Budget croissant
+                </option>
+                <option value="budget_desc" {{ quoteSort|default('recent') == 'budget_desc' ? 'selected' : '' }}>
+                    Budget décroissant
+                </option>
+            </select>
+        </form>
+    {% endif %}
+</div>
 
-						<div class="tm-quote-item__meta">
-							<span class="tm-quote-item__meta-item">
-								<i class="fa-regular fa-clock"></i>
-								Reçue le
-								{{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y à H:i') : '—' }}
-							</span>
+    {% if quoteRequests is empty %}
+        <div class="tm-quote-empty">
+            <div class="tm-quote-empty__icon">
+                <i class="fa-regular fa-file-lines"></i>
+            </div>
+            <h5 class="tm-quote-empty__title">Aucune demande pour le moment</h5>
+            <p class="tm-quote-empty__text mb-0">
+                Vos futures demandes de devis apparaîtront ici dès qu’un client vous contactera.
+            </p>
+        </div>
+    {% else %}
+        <div class="tm-quote-list">
+            {% for quoteRequest in quoteRequests %}
+                <article class="tm-quote-item">
+                    <div class="tm-quote-item__infos">
+                        <h5 class="tm-quote-item__title mb-1">{{ quoteRequest.title }}</h5>
 
-							{% if quoteRequest.budgetAmount %}
-								<span class="tm-quote-item__meta-item">
-									<i class="fa-solid fa-wallet"></i>
-									Budget :
-									{{ quoteRequest.budgetAmount }}
-								</span>
-							{% endif %}
+                        {% if quoteRequest.client and quoteRequest.client.account %}
+                            <p class="tm-quote-item__client mb-0">
+                                <i class="fa-regular fa-user"></i>
+                                {{ quoteRequest.client.account.firstName }}
+                                {{ quoteRequest.client.account.lastName }}
+                            </p>
+                        {% endif %}
 
-							{% if quoteRequest.desiredDate %}
-								<span class="tm-quote-item__meta-item">
-									<i class="fa-regular fa-calendar"></i>
-									Besoin pour le
-									{{ quoteRequest.desiredDate|date('d/m/Y') }}
-								</span>
-							{% endif %}
-						</div>
+                        <div class="tm-quote-item__meta">
+                            <span class="tm-quote-item__meta-item">
+                                <i class="fa-regular fa-clock"></i>
+                                Reçue le
+                                {{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y à H:i') : '—' }}
+                            </span>
 
-						{% if quoteRequest.description %}
-							<p class="tm-quote-item__excerpt mb-0">
-								{{ quoteRequest.description|length > 180
-                                ? quoteRequest.description|slice(0, 180) ~ '…'
-                                : quoteRequest.description }}
-							</p>
-						{% endif %}
-					</div>
+                            {% if quoteRequest.budgetAmount %}
+                                <span class="tm-quote-item__meta-item">
+                                    <i class="fa-solid fa-wallet"></i>
+                                    Budget :
+                                    {{ quoteRequest.budgetAmount }}
+                                </span>
+                            {% endif %}
 
-					<div class="tm-quote-item__status-col">
-						<span class="tm-quote-status-chip tm-quote-status-chip--{{ quoteRequest.status.badgeClass }}">
-							{{ quoteRequest.status.label }}
-						</span>
-					</div>
+                            {% if quoteRequest.desiredDate %}
+                                <span class="tm-quote-item__meta-item">
+                                    <i class="fa-regular fa-calendar"></i>
+                                    Besoin pour le
+                                    {{ quoteRequest.desiredDate|date('d/m/Y') }}
+                                </span>
+                            {% endif %}
+                        </div>
 
-					<aside class="tm-quote-item__actions">
-						<a href="{{ path('app_prestataire_quote_request_show', { slug: quoteRequest.slug }) }}" class="btn tm-quote-index-btn tm-quote-index-btn--primary">
-							Ouvrir la demande
-						</a>
+                        {% if quoteRequest.description %}
+                            <p class="tm-quote-item__excerpt mb-0">
+                                {{ quoteRequest.description|length > 180
+                                    ? quoteRequest.description|slice(0, 180) ~ '…'
+                                    : quoteRequest.description }}
+                            </p>
+                        {% endif %}
+                    </div>
 
-						{% if quoteRequest.canBeDeleted %}
-							<form method="post" action="{{ path('app_prestataire_quote_request_delete', { slug: quoteRequest.slug }) }}" onsubmit="return confirm('Supprimer cette demande de devis ?');">
-								<input type="hidden" name="_token" value="{{ csrf_token('delete-quote-request-' ~ quoteRequest.id) }}">
-								<button type="submit" class="btn btn-outline-danger w-100">
-									Supprimer
-								</button>
-							</form>
-						{% else %}
-							<div class="tm-quote-item__helper">
-								Demande conservée
-							</div>
-						{% endif %}
-					</aside>
-				</article>
-			{% endfor %}
-		</div>
-	{% endif %}
+                    <div class="tm-quote-item__status-col">
+                        <span class="tm-quote-status-chip tm-quote-status-chip--{{ quoteRequest.status.badgeClass }}">
+                            {{ quoteRequest.status.label }}
+                        </span>
+                    </div>
+
+                    <aside class="tm-quote-item__actions">
+                        <div class="d-grid gap-2 w-100">
+                            <a href="{{ path('app_prestataire_quote_request_show', { slug: quoteRequest.slug }) }}" class="btn tm-quote-index-btn tm-quote-index-btn--primary w-100">
+                                Ouvrir la demande
+                            </a>
+
+                            {% if quoteRequest.canBeDeleted %}
+                                <form method="post" action="{{ path('app_prestataire_quote_request_delete', { slug: quoteRequest.slug }) }}" onsubmit="return confirm('Supprimer cette demande de devis ?');" class="w-100">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete-quote-request-' ~ quoteRequest.id) }}">
+                                    <button type="submit" class="btn btn-outline-danger w-100">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            {% else %}
+                                <div class="tm-quote-item__helper">
+                                    Demande conservée
+                                </div>
+                            {% endif %}
+                        </div>
+                    </aside>
+                </article>
+            {% endfor %}
+        </div>
+
+        {% if quoteRequests.pageCount is defined and quoteRequests.pageCount > 1 %}
+            <nav class="mt-4 d-flex justify-content-center" aria-label="Pagination des demandes">
+                <ul class="pagination mb-0">
+                    <li class="page-item {{ quoteRequests.currentPageNumber == 1 ? 'disabled' : '' }}">
+                        {% if quoteRequests.currentPageNumber == 1 %}
+                            <span class="page-link">Précédent</span>
+                        {% else %}
+                            <a class="page-link" href="{{ path('app_prestataire_dashboard', {
+                                tab: 'demandes',
+                                quote_sort: quoteSort|default('recent'),
+                                conversation: activeConversation ? activeConversation.id : null,
+                                quotePage: quoteRequests.currentPageNumber - 1
+                            }) ~ '#demandes-main-panel' }}">
+                                Précédent
+                            </a>
+                        {% endif %}
+                    </li>
+
+                    {% for page in 1..quoteRequests.pageCount %}
+                        <li class="page-item {{ page == quoteRequests.currentPageNumber ? 'active' : '' }}">
+                            <a class="page-link" href="{{ path('app_prestataire_dashboard', {
+                                tab: 'demandes',
+                                quote_sort: quoteSort|default('recent'),
+                                conversation: activeConversation ? activeConversation.id : null,
+                                quotePage: page
+                            }) ~ '#demandes-main-panel' }}">
+                                {{ page }}
+                            </a>
+                        </li>
+                    {% endfor %}
+
+                    <li class="page-item {{ quoteRequests.currentPageNumber == quoteRequests.pageCount ? 'disabled' : '' }}">
+                        {% if quoteRequests.currentPageNumber == quoteRequests.pageCount %}
+                            <span class="page-link">Suivant</span>
+                        {% else %}
+                            <a class="page-link" href="{{ path('app_prestataire_dashboard', {
+                                tab: 'demandes',
+                                quote_sort: quoteSort|default('recent'),
+                                conversation: activeConversation ? activeConversation.id : null,
+                                quotePage: quoteRequests.currentPageNumber + 1
+                            }) ~ '#demandes-main-panel' }}">
+                                Suivant
+                            </a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </nav>
+        {% endif %}
+    {% endif %}
 </div>

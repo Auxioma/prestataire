@@ -24,32 +24,40 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/demandes-de-devis', name: 'app_quote_request')]
 final class QuoteRequestController extends AbstractController
 {
     #[Route('', name: '_index', methods: ['GET'])]
-    public function index(QuoteRequestRepository $quoteRequestRepository): Response
-    {
+    public function index(
+        Request $request,
+        QuoteRequestRepository $quoteRequestRepository,
+        PaginatorInterface $paginator
+    ): Response {
         $user = $this->getUser();
 
         if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
             throw $this->createAccessDeniedException('Accès réservé aux clients.');
         }
 
-        $quoteRequests = $quoteRequestRepository->findBy(
-            [
-                'client' => $user->getClientProfile(),
-                'deletedAt' => null,
-            ],
-            ['createdAt' => 'DESC']
+        $queryBuilder = $quoteRequestRepository->createQueryBuilder('qr')
+            ->where('qr.client = :client')
+            ->andWhere('qr.deletedAt IS NULL')
+            ->setParameter('client', $user->getClientProfile())
+            ->orderBy('qr.createdAt', 'DESC');
+
+        $quoteRequests = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            3
         );
 
         return $this->render('quote_request/index.html.twig', [
             'quoteRequests' => $quoteRequests,
         ]);
     }
-
+    
     #[Route('/nouvelle/prestataire/{prestataireSlug}', name: '_new_by_prestataire', methods: ['GET', 'POST'])]
     #[Route('/nouvelle/{slug}', name: '_new', methods: ['GET', 'POST'], defaults: ['slug' => null])]
     public function new(
