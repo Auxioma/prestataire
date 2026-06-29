@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Repository\NotificationRepository;
 use App\Service\NotificationManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,16 +18,31 @@ use Symfony\Component\Routing\Attribute\Route;
 final class NotificationController extends AbstractController
 {
     #[Route('', name: 'index', methods: ['GET'])]
-    public function index(NotificationRepository $notificationRepository): Response
-    {
+    public function index(
+        Request $request,
+        NotificationRepository $notificationRepository,
+        PaginatorInterface $paginator
+    ): Response {
         $user = $this->getUser();
 
         if (!$user instanceof User) {
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
+        $queryBuilder = $notificationRepository
+            ->createQueryBuilder('n')
+            ->andWhere('n.recipient = :user')
+            ->setParameter('user', $user)
+            ->orderBy('n.createdAt', 'DESC');
+
+        $pagination = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            1
+        );
+
         return $this->render('notification/index.html.twig', [
-            'notifications' => $notificationRepository->findLatestForUser($user, 50),
+            'notifications' => $pagination,
             'unreadCount' => $notificationRepository->countUnreadForUser($user),
         ]);
     }
