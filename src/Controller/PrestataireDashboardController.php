@@ -12,6 +12,7 @@ use App\Repository\ConversationRepository;
 use App\Repository\PrestataireProfileRepository;
 use App\Repository\PrestataireServiceRepository;
 use App\Repository\QuoteRequestRepository;
+use App\Service\ConversationMessageManager;
 use App\Service\NotificationManager;
 use App\Service\RealtimeNotifier;
 use Doctrine\ORM\EntityManagerInterface;
@@ -169,167 +170,74 @@ final class PrestataireDashboardController extends AbstractController
         ]);
     }
 
-    #[Route('/prestataire/espace-pro/conversation/{id}/message', name: 'app_prestataire_conversation_message_send', methods: ['POST'])]
-    public function sendMessage(
-        #[MapEntity(id: 'id')] Conversation $conversation,
-        Request $request,
-        EntityManagerInterface $entityManager,
-        RealtimeNotifier $realtimeNotifier,
-        NotificationManager $notificationManager,
-        QuoteRequestRepository $quoteRequestRepository,
-        ConversationRepository $conversationRepository,
-        PrestataireServiceRepository $prestataireServiceRepository,
-    ): Response {
-        /*
-         * ------------------------------------------------------------
-         * 1. Sécurité : utilisateur connecté + profil prestataire valide
-         * ------------------------------------------------------------
-         */
-        $user = $this->getUser();
+#[Route('/prestataire/espace-pro/conversation/{id}/message', name: 'app_prestataire_conversation_message_send', methods: ['POST'])]
+public function sendMessage(
+    #[MapEntity(id: 'id')] Conversation $conversation,
+    Request $request,
+    EntityManagerInterface $entityManager,
+    RealtimeNotifier $realtimeNotifier,
+    NotificationManager $notificationManager,
+    QuoteRequestRepository $quoteRequestRepository,
+    ConversationRepository $conversationRepository,
+    PrestataireServiceRepository $prestataireServiceRepository,
+    ConversationMessageManager $conversationMessageManager,
+): Response {
+    /*
+     * ------------------------------------------------------------
+     * 1. Sécurité : utilisateur connecté + profil prestataire valide
+     * ------------------------------------------------------------
+     */
+    $user = $this->getUser();
 
-        if (!$user instanceof \App\Entity\User || !$user->getPrestataireProfile()) {
-            throw $this->createAccessDeniedException('Accès refusé.');
-        }
+    if (!$user instanceof \App\Entity\User || !$user->getPrestataireProfile()) {
+        throw $this->createAccessDeniedException('Accès refusé.');
+    }
 
-        $prestataireProfile = $user->getPrestataireProfile();
+    $prestataireProfile = $user->getPrestataireProfile();
 
-        if ($conversation->getPrestataire()?->getId() !== $prestataireProfile->getId()) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas répondre à cette conversation.');
-        }
+    if ($conversation->getPrestataire()?->getId() !== $prestataireProfile->getId()) {
+        throw $this->createAccessDeniedException('Vous ne pouvez pas répondre à cette conversation.');
+    }
 
-        /*
-         * ------------------------------------------------------------
-         * 2. Préparation du message et du formulaire
-         *    Version simple : un seul champ multiple non mappé
-         * ------------------------------------------------------------
-         */
-        $message = new Message();
+    /*
+     * ------------------------------------------------------------
+     * 2. Préparation du message et du formulaire
+     * ------------------------------------------------------------
+     */
+    $message = new Message();
 
-        $form = $this->createForm(MessageType::class, $message, [
-            'action' => $this->generateUrl('app_prestataire_conversation_message_send', [
-                'id' => $conversation->getId(),
-            ]),
-            'method' => 'POST',
-        ]);
+    $form = $this->createForm(MessageType::class, $message, [
+        'action' => $this->generateUrl('app_prestataire_conversation_message_send', [
+            'id' => $conversation->getId(),
+        ]),
+        'method' => 'POST',
+    ]);
 
-        $form->handleRequest($request);
+    $form->handleRequest($request);
 
-        /*
-         * ------------------------------------------------------------
-         * 3. Traitement du submit valide
-         *    - lecture du contenu texte
-         *    - lecture du champ multiple attachments
-         *    - création d’un MessageAttachment par photo
-         *    - refus d’un message totalement vide
-         * ------------------------------------------------------------
-         */
-        if ($form->isSubmitted() && $form->isValid()) {
-            $content = $message->getContent();
-            $content = is_string($content) ? trim($content) : '';
+    /*
+     * ------------------------------------------------------------
+     * 3. Traitement du submit valide
+     * ------------------------------------------------------------
+     */
+    if ($form->isSubmitted() && $form->isValid()) {
+        /** @var array<\Symfony\Component\HttpFoundation\File\UploadedFile>|null $uploadedFiles */
+        $uploadedFiles = $form->get('attachments')->getData();
+        $uploadedFiles = is_array($uploadedFiles) ? $uploadedFiles : [];
 
-            /** @var array<\Symfony\Component\HttpFoundation\File\UploadedFile>|null $uploadedFiles */
-            $uploadedFiles = $form->get('attachments')->getData();
-            $uploadedFiles = is_array($uploadedFiles) ? $uploadedFiles : [];
+        $message->setConversation($conversation);
 
-            $message->setConversation($conversation);
-            $message->setAuthor($user);
-            $message->setType(MessageTypeEnum::USER);
+        $isPrepared = $conversationMessageManager->prepareMessage(
+            $message,
+            $user,
+            $message->getContent(),
+            $uploadedFiles,
+            MessageTypeEnum::USER,
+        );
 
-            if ($content === '' && count($uploadedFiles) === 0) {
-                $this->addFlash('danger', 'Vous devez saisir un message ou ajouter au moins une photo.');
+        if (!$isPrepared) {
+            $this->addFlash('danger', 'Vous devez saisir un message ou ajouter au moins une photo.');
 
-                return $this->redirectToRoute('app_prestataire_dashboard', [
-                    'conversation' => $conversation->getId(),
-                    'tab' => 'messages',
-                    '_fragment' => 'messages-main-panel',
-                ], 303);
-            }
-
-            if ($content !== '') {
-                $message->setContent($content);
-            } else {
-                $message->setContent('');
-            }
-
-            $position = 0;
-
-            foreach ($uploadedFiles as $uploadedFile) {
-                if (!$uploadedFile) {
-                    continue;
-                }
-
-                $attachment = new MessageAttachment();
-                $attachment->setMessage($message);
-                $attachment->setFile($uploadedFile);
-                $attachment->setPosition($position++);
-                $attachment->setOriginalName($uploadedFile->getClientOriginalName());
-                $attachment->setMimeType($uploadedFile->getClientMimeType());
-                $attachment->setFileSize((int) $uploadedFile->getSize());
-
-                $message->addAttachment($attachment);
-            }
-
-            /*
-             * ------------------------------------------------------------
-             * 4. Mise à jour des dates de conversation
-             * ------------------------------------------------------------
-             */
-            if (method_exists($conversation, 'setLastMessageAt')) {
-                $conversation->setLastMessageAt(new \DateTimeImmutable());
-            }
-
-            if (method_exists($conversation, 'setUpdatedAt')) {
-                $conversation->setUpdatedAt(new \DateTimeImmutable());
-            }
-
-            /*
-             * ------------------------------------------------------------
-             * 5. Persistance du message et des pièces jointes
-             *    VichUploader gère l’upload au moment du flush
-             * ------------------------------------------------------------
-             */
-            $entityManager->persist($message);
-            $entityManager->flush();
-
-            /*
-             * ------------------------------------------------------------
-             * 6. Temps réel : diffusion immédiate du nouveau message
-             * ------------------------------------------------------------
-             */
-            $realtimeNotifier->notifyMessageCreated($conversation->getId(), $message);
-
-            /*
-             * ------------------------------------------------------------
-             * 7. Notification applicative au client
-             * ------------------------------------------------------------
-             */
-            $clientUser = $conversation->getClient()?->getAccount();
-
-            if ($clientUser instanceof \App\Entity\User && $clientUser->getId() !== $user->getId()) {
-                $notificationManager->notify(
-                    $clientUser,
-                    NotificationTypeEnum::MESSAGE_RECEIVED,
-                    'Nouveau message',
-                    'Vous avez reçu un nouveau message de la part d’un prestataire.',
-                    $this->generateUrl('app_quote_request_show', [
-                        'slug' => $conversation->getQuoteRequest()?->getSlug(),
-                        '_fragment' => 'quote-conversation',
-                    ]),
-                    [
-                        'conversationId' => $conversation->getId(),
-                        'messageId' => $message->getId(),
-                        'quoteRequestId' => $conversation->getQuoteRequest()?->getId(),
-                        'quoteRequestSlug' => $conversation->getQuoteRequest()?->getSlug(),
-                        'senderId' => $user->getId(),
-                    ]
-                );
-            }
-
-            /*
-             * ------------------------------------------------------------
-             * 8. Redirection post-submit
-             * ------------------------------------------------------------
-             */
             return $this->redirectToRoute('app_prestataire_dashboard', [
                 'conversation' => $conversation->getId(),
                 'tab' => 'messages',
@@ -339,48 +247,115 @@ final class PrestataireDashboardController extends AbstractController
 
         /*
          * ------------------------------------------------------------
-         * 9. Rechargement des données du dashboard si formulaire invalide
+         * 4. Mise à jour des dates de conversation
          * ------------------------------------------------------------
          */
-        $quoteSort = $request->query->get('quoteSort', 'latest');
+        if (method_exists($conversation, 'setLastMessageAt')) {
+            $conversation->setLastMessageAt(new \DateTimeImmutable());
+        }
 
-        $quoteOrderBy = match ($quoteSort) {
-            'oldest' => ['createdAt' => 'ASC'],
-            'budget_asc' => ['budgetAmount' => 'ASC'],
-            'budget_desc' => ['budgetAmount' => 'DESC'],
-            default => ['createdAt' => 'DESC'],
-        };
-
-        $prestations = $prestataireServiceRepository->findBy(
-            ['prestataire' => $prestataireProfile],
-            ['createdAt' => 'DESC']
-        );
-
-        $quoteRequests = $quoteRequestRepository->findBy(
-            ['prestataire' => $prestataireProfile],
-            $quoteOrderBy
-        );
-
-        $conversations = $conversationRepository->findBy(
-            ['prestataire' => $prestataireProfile],
-            ['lastMessageAt' => 'DESC', 'createdAt' => 'DESC']
-        );
+        if (method_exists($conversation, 'setUpdatedAt')) {
+            $conversation->setUpdatedAt(new \DateTimeImmutable());
+        }
 
         /*
          * ------------------------------------------------------------
-         * 10. Réaffichage du dashboard avec le formulaire et ses erreurs
+         * 5. Persistance du message et des pièces jointes
          * ------------------------------------------------------------
          */
-        return $this->render('prestataire_dashboard/prestataire_dashboard.html.twig', [
-            'user' => $user,
-            'prestataireProfile' => $prestataireProfile,
-            'prestations' => $prestations,
-            'quoteRequests' => $quoteRequests,
-            'quoteSort' => $quoteSort,
-            'conversations' => $conversations,
-            'activeConversation' => $conversation,
-            'messageForm' => $form->createView(),
-            'activeTab' => 'messages',
-        ], new Response('', Response::HTTP_UNPROCESSABLE_ENTITY));
+        $entityManager->persist($message);
+        $entityManager->flush();
+
+        /*
+         * ------------------------------------------------------------
+         * 6. Temps réel : diffusion immédiate du nouveau message
+         * ------------------------------------------------------------
+         */
+        $realtimeNotifier->notifyMessageCreated($conversation->getId(), $message);
+
+        /*
+         * ------------------------------------------------------------
+         * 7. Notification applicative au client
+         * ------------------------------------------------------------
+         */
+        $clientUser = $conversation->getClient()?->getAccount();
+
+        if ($clientUser instanceof \App\Entity\User && $clientUser->getId() !== $user->getId()) {
+            $notificationManager->notify(
+                $clientUser,
+                NotificationTypeEnum::MESSAGE_RECEIVED,
+                'Nouveau message',
+                'Vous avez reçu un nouveau message de la part d’un prestataire.',
+                $this->generateUrl('app_quote_request_show', [
+                    'slug' => $conversation->getQuoteRequest()?->getSlug(),
+                    '_fragment' => 'quote-conversation',
+                ]),
+                [
+                    'conversationId' => $conversation->getId(),
+                    'messageId' => $message->getId(),
+                    'quoteRequestId' => $conversation->getQuoteRequest()?->getId(),
+                    'quoteRequestSlug' => $conversation->getQuoteRequest()?->getSlug(),
+                    'senderId' => $user->getId(),
+                ]
+            );
+        }
+
+        /*
+         * ------------------------------------------------------------
+         * 8. Redirection post-submit
+         * ------------------------------------------------------------
+         */
+        return $this->redirectToRoute('app_prestataire_dashboard', [
+            'conversation' => $conversation->getId(),
+            'tab' => 'messages',
+            '_fragment' => 'messages-main-panel',
+        ], 303);
     }
+
+    /*
+     * ------------------------------------------------------------
+     * 9. Rechargement des données du dashboard si formulaire invalide
+     * ------------------------------------------------------------
+     */
+    $quoteSort = $request->query->get('quoteSort', 'latest');
+
+    $quoteOrderBy = match ($quoteSort) {
+        'oldest' => ['createdAt' => 'ASC'],
+        'budget_asc' => ['budgetAmount' => 'ASC'],
+        'budget_desc' => ['budgetAmount' => 'DESC'],
+        default => ['createdAt' => 'DESC'],
+    };
+
+    $prestations = $prestataireServiceRepository->findBy(
+        ['prestataire' => $prestataireProfile],
+        ['createdAt' => 'DESC']
+    );
+
+    $quoteRequests = $quoteRequestRepository->findBy(
+        ['prestataire' => $prestataireProfile],
+        $quoteOrderBy
+    );
+
+    $conversations = $conversationRepository->findBy(
+        ['prestataire' => $prestataireProfile],
+        ['lastMessageAt' => 'DESC', 'createdAt' => 'DESC']
+    );
+
+    /*
+     * ------------------------------------------------------------
+     * 10. Réaffichage du dashboard avec le formulaire et ses erreurs
+     * ------------------------------------------------------------
+     */
+    return $this->render('prestataire_dashboard/prestataire_dashboard.html.twig', [
+        'user' => $user,
+        'prestataireProfile' => $prestataireProfile,
+        'prestations' => $prestations,
+        'quoteRequests' => $quoteRequests,
+        'quoteSort' => $quoteSort,
+        'conversations' => $conversations,
+        'activeConversation' => $conversation,
+        'messageForm' => $form->createView(),
+        'activeTab' => 'messages',
+    ], new Response('', Response::HTTP_UNPROCESSABLE_ENTITY));
+}
 }

@@ -8,6 +8,7 @@ use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
 use App\Entity\QuoteRequest;
 use App\Entity\User;
+use App\Enum\MessageTypeEnum;
 use App\Enum\NotificationTypeEnum;
 use App\Enum\QuoteRequestStatusEnum;
 use App\Form\MessageType;
@@ -15,6 +16,7 @@ use App\Form\QuoteRequestType;
 use App\Repository\ConversationRepository;
 use App\Repository\MessageRepository;
 use App\Repository\QuoteRequestRepository;
+use App\Service\ConversationMessageManager;
 use App\Service\NotificationManager;
 use App\Service\RealtimeNotifier;
 use Doctrine\ORM\EntityManagerInterface;
@@ -58,7 +60,7 @@ final class QuoteRequestController extends AbstractController
             'quoteRequests' => $quoteRequests,
         ]);
     }
-    
+
     #[Route('/nouvelle/prestataire/{prestataireSlug}', name: '_new_by_prestataire', methods: ['GET', 'POST'])]
     #[Route('/nouvelle/{slug}', name: '_new', methods: ['GET', 'POST'], defaults: ['slug' => null])]
     public function new(
@@ -193,129 +195,111 @@ final class QuoteRequestController extends AbstractController
         ]);
     }
 
-#[Route('/{slug}', name: '_show', methods: ['GET', 'POST'])]
-public function show(
-    Request $request,
-    #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
-    ConversationRepository $conversationRepository,
-    MessageRepository $messageRepository,
-    EntityManagerInterface $entityManager,
-    RealtimeNotifier $realtimeNotifier,
-    NotificationManager $notificationManager,
-): Response {
-    $user = $this->getUser();
+    #[Route('/{slug}', name: '_show', methods: ['GET', 'POST'])]
+    public function show(
+        Request $request,
+        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
+        ConversationRepository $conversationRepository,
+        MessageRepository $messageRepository,
+        EntityManagerInterface $entityManager,
+        RealtimeNotifier $realtimeNotifier,
+        NotificationManager $notificationManager,
+        ConversationMessageManager $conversationMessageManager,
+    ): Response {
+        $user = $this->getUser();
 
-    if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
-        throw $this->createAccessDeniedException('Accès réservé aux clients.');
-    }
+        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
+            throw $this->createAccessDeniedException('Accès réservé aux clients.');
+        }
 
-    if ($quoteRequest->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
-        throw $this->createAccessDeniedException('Vous ne pouvez pas consulter cette demande.');
-    }
+        if ($quoteRequest->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas consulter cette demande.');
+        }
 
-    if ($quoteRequest->isDeleted()) {
-        throw $this->createNotFoundException('Cette demande n’est plus disponible.');
-    }
+        if ($quoteRequest->isDeleted()) {
+            throw $this->createNotFoundException('Cette demande n’est plus disponible.');
+        }
 
-    $conversation = $conversationRepository->findOneByQuoteRequest($quoteRequest);
-    $messages = $conversation ? $messageRepository->findByConversationOrderedByCreatedAt($conversation) : [];
+        $conversation = $conversationRepository->findOneByQuoteRequest($quoteRequest);
+        $messages = $conversation ? $messageRepository->findByConversationOrderedByCreatedAt($conversation) : [];
 
-    $messageForm = null;
-    $canSendMessage = $conversation && \in_array($quoteRequest->getStatus()->value, ['accepted', 'answered'], true);
+        $messageForm = null;
+        $canSendMessage = $conversation && \in_array($quoteRequest->getStatus()->value, ['accepted', 'answered'], true);
 
-    if ($canSendMessage) {
-        $message = new Message();
-        $message->setConversation($conversation);
-        $message->setAuthor($user);
+        if ($canSendMessage) {
+            $message = new Message();
+            $message->setConversation($conversation);
+            $message->setAuthor($user);
 
-        $messageForm = $this->createForm(MessageType::class, $message);
-        $messageForm->handleRequest($request);
+            $messageForm = $this->createForm(MessageType::class, $message);
+            $messageForm->handleRequest($request);
 
-        if ($messageForm->isSubmitted() && $messageForm->isValid()) {
-            $content = $message->getContent();
-            $content = is_string($content) ? trim($content) : '';
+            if ($messageForm->isSubmitted() && $messageForm->isValid()) {
+                /** @var array<\Symfony\Component\HttpFoundation\File\UploadedFile>|null $uploadedFiles */
+                $uploadedFiles = $messageForm->get('attachments')->getData();
+                $uploadedFiles = is_array($uploadedFiles) ? $uploadedFiles : [];
 
-            /** @var array<\Symfony\Component\HttpFoundation\File\UploadedFile>|null $uploadedFiles */
-            $uploadedFiles = $messageForm->get('attachments')->getData();
-            $uploadedFiles = is_array($uploadedFiles) ? $uploadedFiles : [];
+                $isPrepared = $conversationMessageManager->prepareMessage(
+                    $message,
+                    $user,
+                    $message->getContent(),
+                    $uploadedFiles,
+                    MessageTypeEnum::USER
+                );
 
-            if ($content === '' && count($uploadedFiles) === 0) {
-                $this->addFlash('danger', 'Vous devez saisir un message ou ajouter au moins une photo.');
+                if (!$isPrepared) {
+                    $this->addFlash('danger', 'Vous devez saisir un message ou ajouter au moins une photo.');
+
+                    return $this->redirectToRoute('app_quote_request_show', [
+                        'slug' => $quoteRequest->getSlug(),
+                        '_fragment' => 'quote-conversation',
+                    ], 303);
+                }
+
+                $entityManager->persist($message);
+
+                $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
+                $entityManager->flush();
+
+                $realtimeNotifier->notifyMessageCreated($conversation->getId(), $message);
+
+                $prestataireUser = $conversation->getPrestataire()?->getAccount();
+
+                if ($prestataireUser instanceof User && $prestataireUser->getId() !== $user->getId()) {
+                    $notificationManager->notify(
+                        $prestataireUser,
+                        NotificationTypeEnum::MESSAGE_RECEIVED,
+                        'Nouveau message',
+                        'Vous avez reçu un nouveau message de la part d’un client.',
+                        $this->generateUrl('app_prestataire_dashboard', [
+                            'conversation' => $conversation->getId(),
+                            'tab' => 'messages',
+                            '_fragment' => 'messages-main-panel',
+                        ]),
+                        [
+                            'conversationId' => $conversation->getId(),
+                            'messageId' => $message->getId(),
+                            'quoteRequestId' => $quoteRequest->getId(),
+                            'quoteRequestSlug' => $quoteRequest->getSlug(),
+                            'senderId' => $user->getId(),
+                        ]
+                    );
+                }
 
                 return $this->redirectToRoute('app_quote_request_show', [
                     'slug' => $quoteRequest->getSlug(),
                     '_fragment' => 'quote-conversation',
                 ], 303);
             }
-
-            if ($content !== '') {
-                $message->setContent($content);
-            } else {
-                $message->setContent('');
-            }
-
-            $position = 0;
-
-            foreach ($uploadedFiles as $uploadedFile) {
-                if (!$uploadedFile) {
-                    continue;
-                }
-
-                $attachment = new MessageAttachment();
-                $attachment->setMessage($message);
-                $attachment->setFile($uploadedFile);
-                $attachment->setPosition($position++);
-                $attachment->setOriginalName($uploadedFile->getClientOriginalName());
-                $attachment->setMimeType($uploadedFile->getClientMimeType());
-                $attachment->setFileSize((int) $uploadedFile->getSize());
-
-                $message->addAttachment($attachment);
-            }
-
-            $entityManager->persist($message);
-
-            $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
-            $entityManager->flush();
-
-            $realtimeNotifier->notifyMessageCreated($conversation->getId(), $message);
-
-            $prestataireUser = $conversation->getPrestataire()?->getAccount();
-
-            if ($prestataireUser instanceof User && $prestataireUser->getId() !== $user->getId()) {
-                $notificationManager->notify(
-                    $prestataireUser,
-                    NotificationTypeEnum::MESSAGE_RECEIVED,
-                    'Nouveau message',
-                    'Vous avez reçu un nouveau message de la part d’un client.',
-                    $this->generateUrl('app_prestataire_dashboard', [
-                        'conversation' => $conversation->getId(),
-                        'tab' => 'messages',
-                        '_fragment' => 'messages-main-panel',
-                    ]),
-                    [
-                        'conversationId' => $conversation->getId(),
-                        'messageId' => $message->getId(),
-                        'quoteRequestId' => $quoteRequest->getId(),
-                        'quoteRequestSlug' => $quoteRequest->getSlug(),
-                        'senderId' => $user->getId(),
-                    ]
-                );
-            }
-
-            return $this->redirectToRoute('app_quote_request_show', [
-                'slug' => $quoteRequest->getSlug(),
-                '_fragment' => 'quote-conversation',
-            ], 303);
         }
-    }
 
-    return $this->render('quote_request/show.html.twig', [
-        'quoteRequest' => $quoteRequest,
-        'conversation' => $conversation,
-        'messages' => $messages,
-        'messageForm' => $messageForm?->createView(),
-    ]);
-}
+        return $this->render('quote_request/show.html.twig', [
+            'quoteRequest' => $quoteRequest,
+            'conversation' => $conversation,
+            'messages' => $messages,
+            'messageForm' => $messageForm?->createView(),
+        ]);
+    }
 
     #[Route('/{slug}/delete', name: '_delete', methods: ['POST'])]
     public function delete(
