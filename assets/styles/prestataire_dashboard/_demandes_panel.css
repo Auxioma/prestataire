@@ -1,0 +1,164 @@
+.tm-quote-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tm-quote-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 180px 220px;
+    gap: 1.25rem;
+    align-items: stretch;
+    padding: 1.15rem 1.2rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+}
+
+.tm-quote-item__infos {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.tm-quote-item__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #172033;
+    line-height: 1.35;
+}
+
+.tm-quote-item__client {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: #64748b;
+    font-size: 0.92rem;
+}
+
+.tm-quote-item__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+}
+
+.tm-quote-item__meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: #475569;
+    font-size: 0.9rem;
+}
+
+.tm-quote-item__excerpt {
+    color: #5b6475;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    max-width: 72ch;
+}
+
+.tm-quote-item__status-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 0.5rem;
+}
+
+.tm-quote-status-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 42px;
+    padding: 0.65rem 1rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1.25;
+    max-width: 100%;
+}
+
+.tm-quote-status-chip--warning {
+    background: #fff7db;
+    color: #a16207;
+    border: 1px solid #f7d778;
+}
+
+.tm-quote-status-chip--primary {
+    background: #e8f1ff;
+    color: #1d4ed8;
+    border: 1px solid #bfd3ff;
+}
+
+.tm-quote-status-chip--info {
+    background: #e6f7fb;
+    color: #0f7490;
+    border: 1px solid #b8e7f2;
+}
+
+.tm-quote-status-chip--secondary {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #d7dee7;
+}
+
+.tm-quote-status-chip--success {
+    background: #eaf8ef;
+    color: #15803d;
+    border: 1px solid #bae6c6;
+}
+
+.tm-quote-status-chip--danger {
+    background: #fdecec;
+    color: #b42318;
+    border: 1px solid #f5b8b5;
+}
+
+.tm-quote-item__actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.tm-quote-item__actions form {
+    margin: 0;
+}
+
+.tm-quote-item__actions .btn {
+    width: 100%;
+}
+
+.tm-quote-item__helper {
+    text-align: center;
+    padding: 0.7rem 0.85rem;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 0.86rem;
+    font-weight: 500;
+    border: 1px dashed rgba(100, 116, 139, 0.35);
+}
+
+@media (max-width: 1199.98px) {
+    .tm-quote-item {
+        grid-template-columns: minmax(0, 1fr) 160px 200px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .tm-quote-item {
+        grid-template-columns: 1fr;
+    }
+
+    .tm-quote-item__status-col {
+        justify-content: flex-start;
+        padding-inline: 0;
+    }
+
+    .tm-quote-item__actions {
+        width: 100%;
+    }
+}

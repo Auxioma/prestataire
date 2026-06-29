@@ -36,7 +36,10 @@ final class PrestataireQuoteRequestController extends AbstractController
         $prestataire = $user->getPrestataireProfile();
 
         $quoteRequests = $quoteRequestRepository->findBy(
-            ['prestataire' => $prestataire],
+            [
+                'prestataire' => $prestataire,
+                'deletedAt' => null,
+            ],
             ['createdAt' => 'DESC']
         );
 
@@ -61,6 +64,10 @@ final class PrestataireQuoteRequestController extends AbstractController
             throw $this->createAccessDeniedException('Vous ne pouvez pas consulter cette demande.');
         }
 
+        if ($quoteRequest->isDeleted()) {
+            throw $this->createNotFoundException('Cette demande n’est plus disponible.');
+        }
+
         return $this->render('prestataire_quote_request/show.html.twig', [
             'quoteRequest' => $quoteRequest,
         ]);
@@ -75,6 +82,10 @@ final class PrestataireQuoteRequestController extends AbstractController
         NotificationManager $notificationManager
     ): RedirectResponse {
         $user = $this->getUser();
+
+        if ($quoteRequest->isDeleted()) {
+            throw $this->createNotFoundException('Cette demande n’est plus disponible.');
+        }
 
         if (!$user instanceof User || !$user->getPrestataireProfile()) {
             throw $this->createAccessDeniedException('Accès refusé.');
@@ -169,6 +180,10 @@ final class PrestataireQuoteRequestController extends AbstractController
     ): RedirectResponse {
         $user = $this->getUser();
 
+        if ($quoteRequest->isDeleted()) {
+            throw $this->createNotFoundException('Cette demande n’est plus disponible.');
+        }
+
         if (!$user instanceof User || !$user->getPrestataireProfile()) {
             throw $this->createAccessDeniedException('Accès refusé.');
         }
@@ -223,5 +238,73 @@ final class PrestataireQuoteRequestController extends AbstractController
         return $this->redirectToRoute('app_prestataire_quote_request_show', [
             'slug' => $quoteRequest->getSlug(),
         ]);
+    }
+
+    #[Route('/{slug}/delete', name: 'delete', methods: ['POST'])]
+    public function delete(
+        Request $request,
+        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
+        EntityManagerInterface $entityManager
+    ): RedirectResponse {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+            throw $this->createAccessDeniedException('Accès refusé.');
+        }
+
+        $prestataire = $user->getPrestataireProfile();
+
+        if ($quoteRequest->getPrestataire()?->getId() !== $prestataire->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer cette demande.');
+        }
+
+        if ($quoteRequest->isDeleted()) {
+            $this->addFlash('warning', 'Cette demande a déjà été supprimée.');
+
+            return $this->redirectToRoute('app_prestataire_quote_request_index');
+        }
+
+        if (
+            !$this->isCsrfTokenValid(
+                'delete-quote-request-' . $quoteRequest->getId(),
+                (string) $request->request->get('_token')
+            )
+        ) {
+            $this->addFlash('danger', 'Jeton CSRF invalide.');
+
+            return $this->redirectToRoute('app_prestataire_quote_request_show', [
+                'slug' => $quoteRequest->getSlug(),
+            ]);
+        }
+
+        if (null !== $quoteRequest->getConversation()) {
+            $this->addFlash('warning', 'Cette demande ne peut plus être supprimée car une conversation est déjà liée.');
+
+            return $this->redirectToRoute('app_prestataire_quote_request_show', [
+                'slug' => $quoteRequest->getSlug(),
+            ]);
+        }
+
+        $quoteRequest
+            ->setDeletedAt(new \DateTimeImmutable())
+            ->setUpdatedAt(new \DateTimeImmutable());
+
+        if (!in_array(
+            $quoteRequest->getStatus(),
+            [QuoteRequestStatusEnum::SUBMITTED, QuoteRequestStatusEnum::DENIED],
+            true
+        )) {
+            $this->addFlash('warning', 'Cette demande ne peut plus être supprimée dans son état actuel.');
+
+            return $this->redirectToRoute('app_quote_request_show', [
+                'slug' => $quoteRequest->getSlug(),
+            ]);
+        }
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La demande de devis a bien été supprimée.');
+
+        return $this->redirectToRoute('app_prestataire_quote_request_index');
     }
 }

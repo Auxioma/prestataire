@@ -90,11 +90,20 @@
 								</div>
 
 								<div class="tm-quote-index-item__aside">
-									<div class="tm-quote-index-item__aside">
-										<a href="{{ path('app_quote_request_show', { slug: quoteRequest.slug }) }}" class="btn tm-quote-index-btn tm-quote-index-btn--primary">
-											Voir le détail
-										</a>
-									</div>
+{% if quoteRequest.canBeDeleted %}
+    <form method="post"
+          action="{{ path('app_quote_request_delete', { slug: quoteRequest.slug }) }}"
+          onsubmit="return confirm('Supprimer cette demande de devis ?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete-quote-request-' ~ quoteRequest.id) }}">
+        <button type="submit" class="btn btn-outline-danger w-100">
+            Supprimer la demande
+        </button>
+    </form>
+{% else %}
+    <span class="btn btn-outline-secondary disabled w-100">
+        À archiver plus tard
+    </span>
+{% endif %}
 								</article>
 							{% endfor %}
 						</div>

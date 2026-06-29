@@ -41,43 +41,76 @@
 	{% else %}
 		<div class="tm-quote-list">
 			{% for quoteRequest in quoteRequests|slice(0, 5) %}
-				<a href="{{ path('app_prestataire_quote_request_show', { slug: quoteRequest.slug }) }}" class="tm-quote-item">
-					<div class="tm-quote-item__main">
-						<div class="tm-quote-item__top">
-							<h5 class="tm-quote-item__title mb-0">{{ quoteRequest.title }}</h5>
+				<article class="tm-quote-item">
+					<div class="tm-quote-item__infos">
+						<h5 class="tm-quote-item__title mb-1">{{ quoteRequest.title }}</h5>
 
-							<span class="tm-quote-badge tm-quote-badge--{{ quoteRequest.status.value|lower }}">
-								{{ quoteRequest.status.value }}
-							</span>
-						</div>
+						{% if quoteRequest.client and quoteRequest.client.account %}
+							<p class="tm-quote-item__client mb-0">
+								<i class="fa-regular fa-user"></i>
+								{{ quoteRequest.client.account.firstName }}
+								{{ quoteRequest.client.account.lastName }}
+							</p>
+						{% endif %}
 
 						<div class="tm-quote-item__meta">
-							<span>
+							<span class="tm-quote-item__meta-item">
 								<i class="fa-regular fa-clock"></i>
-								{{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y H:i') : '—' }}
+								Reçue le
+								{{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y à H:i') : '—' }}
 							</span>
 
 							{% if quoteRequest.budgetAmount %}
-								<span>
+								<span class="tm-quote-item__meta-item">
 									<i class="fa-solid fa-wallet"></i>
+									Budget :
 									{{ quoteRequest.budgetAmount }}
 								</span>
 							{% endif %}
 
-							{% if quoteRequest.client and quoteRequest.client.account %}
-								<span>
-									<i class="fa-regular fa-user"></i>
-									{{ quoteRequest.client.account.firstName }}
-									{{ quoteRequest.client.account.lastName }}
+							{% if quoteRequest.desiredDate %}
+								<span class="tm-quote-item__meta-item">
+									<i class="fa-regular fa-calendar"></i>
+									Besoin pour le
+									{{ quoteRequest.desiredDate|date('d/m/Y') }}
 								</span>
 							{% endif %}
 						</div>
+
+						{% if quoteRequest.description %}
+							<p class="tm-quote-item__excerpt mb-0">
+								{{ quoteRequest.description|length > 180
+                                ? quoteRequest.description|slice(0, 180) ~ '…'
+                                : quoteRequest.description }}
+							</p>
+						{% endif %}
 					</div>
 
-					<span class="tm-quote-item__arrow">
-						<i class="fa-solid fa-chevron-right"></i>
-					</span>
-				</a>
+					<div class="tm-quote-item__status-col">
+						<span class="tm-quote-status-chip tm-quote-status-chip--{{ quoteRequest.status.badgeClass }}">
+							{{ quoteRequest.status.label }}
+						</span>
+					</div>
+
+					<aside class="tm-quote-item__actions">
+						<a href="{{ path('app_prestataire_quote_request_show', { slug: quoteRequest.slug }) }}" class="btn tm-quote-index-btn tm-quote-index-btn--primary">
+							Ouvrir la demande
+						</a>
+
+						{% if quoteRequest.canBeDeleted %}
+							<form method="post" action="{{ path('app_prestataire_quote_request_delete', { slug: quoteRequest.slug }) }}" onsubmit="return confirm('Supprimer cette demande de devis ?');">
+								<input type="hidden" name="_token" value="{{ csrf_token('delete-quote-request-' ~ quoteRequest.id) }}">
+								<button type="submit" class="btn btn-outline-danger w-100">
+									Supprimer
+								</button>
+							</form>
+						{% else %}
+							<div class="tm-quote-item__helper">
+								Demande conservée
+							</div>
+						{% endif %}
+					</aside>
+				</article>
 			{% endfor %}
 		</div>
 	{% endif %}

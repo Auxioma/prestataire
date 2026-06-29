@@ -8,6 +8,7 @@ use App\Entity\PrestataireService;
 use App\Entity\QuoteRequest;
 use App\Entity\User;
 use App\Enum\NotificationTypeEnum;
+use App\Enum\QuoteRequestStatusEnum;
 use App\Form\MessageType;
 use App\Form\QuoteRequestType;
 use App\Repository\ConversationRepository;
@@ -37,7 +38,10 @@ final class QuoteRequestController extends AbstractController
         }
 
         $quoteRequests = $quoteRequestRepository->findBy(
-            ['client' => $user->getClientProfile()],
+            [
+                'client' => $user->getClientProfile(),
+                'deletedAt' => null,
+            ],
             ['createdAt' => 'DESC']
         );
 
@@ -180,82 +184,153 @@ final class QuoteRequestController extends AbstractController
         ]);
     }
 
-#[Route('/{slug}', name: '_show', methods: ['GET', 'POST'])]
-public function show(
-    Request $request,
-    #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
-    ConversationRepository $conversationRepository,
-    MessageRepository $messageRepository,
-    EntityManagerInterface $entityManager,
-    RealtimeNotifier $realtimeNotifier,
-    NotificationManager $notificationManager,
-): Response {
-    $user = $this->getUser();
+    #[Route('/{slug}', name: '_show', methods: ['GET', 'POST'])]
+    public function show(
+        Request $request,
+        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
+        ConversationRepository $conversationRepository,
+        MessageRepository $messageRepository,
+        EntityManagerInterface $entityManager,
+        RealtimeNotifier $realtimeNotifier,
+        NotificationManager $notificationManager,
+    ): Response {
+        $user = $this->getUser();
 
-    if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
-        throw $this->createAccessDeniedException('Accès réservé aux clients.');
-    }
+        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
+            throw $this->createAccessDeniedException('Accès réservé aux clients.');
+        }
 
-    if ($quoteRequest->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
-        throw $this->createAccessDeniedException('Vous ne pouvez pas consulter cette demande.');
-    }
+        if ($quoteRequest->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas consulter cette demande.');
+        }
 
-    $conversation = $conversationRepository->findOneByQuoteRequest($quoteRequest);
-    $messages = $conversation ? $messageRepository->findByConversationOrderedByCreatedAt($conversation) : [];
+        if ($quoteRequest->isDeleted()) {
+            throw $this->createNotFoundException('Cette demande n’est plus disponible.');
+        }
 
-    $messageForm = null;
-    $canSendMessage = $conversation && \in_array($quoteRequest->getStatus()->value, ['accepted', 'answered'], true);
+        $conversation = $conversationRepository->findOneByQuoteRequest($quoteRequest);
+        $messages = $conversation ? $messageRepository->findByConversationOrderedByCreatedAt($conversation) : [];
 
-    if ($canSendMessage) {
-        $message = new Message();
-        $message->setConversation($conversation);
-        $message->setAuthor($user);
+        $messageForm = null;
+        $canSendMessage = $conversation && \in_array($quoteRequest->getStatus()->value, ['accepted', 'answered'], true);
 
-        $messageForm = $this->createForm(MessageType::class, $message);
-        $messageForm->handleRequest($request);
+        if ($canSendMessage) {
+            $message = new Message();
+            $message->setConversation($conversation);
+            $message->setAuthor($user);
 
-        if ($messageForm->isSubmitted() && $messageForm->isValid()) {
-            $entityManager->persist($message);
+            $messageForm = $this->createForm(MessageType::class, $message);
+            $messageForm->handleRequest($request);
 
-            $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
-            $entityManager->flush();
+            if ($messageForm->isSubmitted() && $messageForm->isValid()) {
+                $entityManager->persist($message);
 
-            $realtimeNotifier->notifyMessageCreated($conversation->getId(), $message);
+                $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
+                $entityManager->flush();
 
-            $prestataireUser = $conversation->getPrestataire()?->getAccount();
+                $realtimeNotifier->notifyMessageCreated($conversation->getId(), $message);
 
-            if ($prestataireUser instanceof User && $prestataireUser->getId() !== $user->getId()) {
-                $notificationManager->notify(
-                    $prestataireUser,
-                    NotificationTypeEnum::MESSAGE_RECEIVED,
-                    'Nouveau message',
-                    'Vous avez reçu un nouveau message de la part d’un client.',
-                    $this->generateUrl('app_prestataire_dashboard', [
-                        'conversation' => $conversation->getId(),
-                        'tab' => 'messages',
-                        '_fragment' => 'messages-main-panel',
-                    ]),
-                    [
-                        'conversationId' => $conversation->getId(),
-                        'messageId' => $message->getId(),
-                        'quoteRequestId' => $quoteRequest->getId(),
-                        'quoteRequestSlug' => $quoteRequest->getSlug(),
-                        'senderId' => $user->getId(),
-                    ]
-                );
+                $prestataireUser = $conversation->getPrestataire()?->getAccount();
+
+                if ($prestataireUser instanceof User && $prestataireUser->getId() !== $user->getId()) {
+                    $notificationManager->notify(
+                        $prestataireUser,
+                        NotificationTypeEnum::MESSAGE_RECEIVED,
+                        'Nouveau message',
+                        'Vous avez reçu un nouveau message de la part d’un client.',
+                        $this->generateUrl('app_prestataire_dashboard', [
+                            'conversation' => $conversation->getId(),
+                            'tab' => 'messages',
+                            '_fragment' => 'messages-main-panel',
+                        ]),
+                        [
+                            'conversationId' => $conversation->getId(),
+                            'messageId' => $message->getId(),
+                            'quoteRequestId' => $quoteRequest->getId(),
+                            'quoteRequestSlug' => $quoteRequest->getSlug(),
+                            'senderId' => $user->getId(),
+                        ]
+                    );
+                }
+
+                return $this->redirectToRoute('app_quote_request_show', [
+                    'slug' => $quoteRequest->getSlug(),
+                    '_fragment' => 'quote-conversation',
+                ], 303);
             }
+        }
+
+        return $this->render('quote_request/show.html.twig', [
+            'quoteRequest' => $quoteRequest,
+            'conversation' => $conversation,
+            'messages' => $messages,
+            'messageForm' => $messageForm?->createView(),
+        ]);
+    }
+
+    #[Route('/{slug}/delete', name: '_delete', methods: ['POST'])]
+    public function delete(
+        Request $request,
+        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
+            throw $this->createAccessDeniedException('Accès réservé aux clients.');
+        }
+
+        if ($quoteRequest->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer cette demande.');
+        }
+
+        if ($quoteRequest->isDeleted()) {
+            $this->addFlash('warning', 'Cette demande a déjà été supprimée.');
+
+            return $this->redirectToRoute('app_quote_request_index');
+        }
+
+        if (
+            !$this->isCsrfTokenValid(
+                'delete-quote-request-' . $quoteRequest->getId(),
+                (string) $request->request->get('_token')
+            )
+        ) {
+            $this->addFlash('danger', 'Jeton CSRF invalide.');
 
             return $this->redirectToRoute('app_quote_request_show', [
                 'slug' => $quoteRequest->getSlug(),
-                '_fragment' => 'quote-conversation',
-            ], 303);
+            ]);
         }
-    }
 
-    return $this->render('quote_request/show.html.twig', [
-        'quoteRequest' => $quoteRequest,
-        'conversation' => $conversation,
-        'messages' => $messages,
-        'messageForm' => $messageForm?->createView(),
-    ]);
-}}
+        if (null !== $quoteRequest->getConversation()) {
+            $this->addFlash('warning', 'Cette demande ne peut plus être supprimée car une conversation est déjà liée.');
+
+            return $this->redirectToRoute('app_quote_request_show', [
+                'slug' => $quoteRequest->getSlug(),
+            ]);
+        }
+
+        $quoteRequest
+            ->setDeletedAt(new \DateTimeImmutable())
+            ->setUpdatedAt(new \DateTimeImmutable());
+
+        if (!in_array(
+            $quoteRequest->getStatus(),
+            [QuoteRequestStatusEnum::SUBMITTED, QuoteRequestStatusEnum::DENIED],
+            true
+        )) {
+            $this->addFlash('warning', 'Cette demande ne peut plus être supprimée dans son état actuel.');
+
+            return $this->redirectToRoute('app_quote_request_show', [
+                'slug' => $quoteRequest->getSlug(),
+            ]);
+        }
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La demande de devis a bien été supprimée.');
+
+        return $this->redirectToRoute('app_quote_request_index');
+    }
+}

@@ -55,6 +55,9 @@ class QuoteRequest
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $deletedAt = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -216,5 +219,44 @@ class QuoteRequest
         $this->conversation = $conversation;
 
         return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeImmutable $deletedAt): static
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    public function isDeleted(): bool
+    {
+        return null !== $this->deletedAt;
+    }
+
+    public function canBeDeleted(): bool
+    {
+        if (null !== $this->deletedAt) {
+            return false;
+        }
+
+        if (null !== $this->conversation) {
+            return false;
+        }
+
+        return in_array(
+            $this->status,
+            [QuoteRequestStatusEnum::SUBMITTED, QuoteRequestStatusEnum::DENIED],
+            true
+        );
+    }
+
+    public function shouldBeArchivedInsteadOfDeleted(): bool
+    {
+        return !$this->canBeDeleted();
     }
 }
