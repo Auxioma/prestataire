@@ -130,8 +130,7 @@ export default class extends Controller {
 
     isNearBottom(stream, threshold = 120) {
         return (
-            stream.scrollHeight - stream.scrollTop - stream.clientHeight <=
-            threshold
+            stream.scrollHeight - stream.scrollTop - stream.clientHeight <= threshold
         );
     }
 
@@ -157,6 +156,7 @@ export default class extends Controller {
     buildDashboardMessageElement(message) {
         const row = document.createElement("div");
         const isOwn = this.isOwnMessage(message);
+        const attachmentsHtml = this.buildDashboardAttachmentsHtml(message.attachments ?? []);
 
         row.className = `tm-msg-row ${isOwn ? "is-own" : "is-other"}`;
         row.innerHTML = `
@@ -166,7 +166,8 @@ export default class extends Controller {
                     <span>·</span>
                     <span>${this.escapeHtml(message.createdAt ?? "À l’instant")}</span>
                 </div>
-                <div class="tm-msg-content">${this.nl2br(message.content ?? "")}</div>
+                ${message.content ? `<div class="tm-msg-content">${this.nl2br(message.content)}</div>` : ""}
+                ${attachmentsHtml}
             </div>
         `;
 
@@ -178,6 +179,7 @@ export default class extends Controller {
         const isOwn = this.isOwnMessage(message);
         const authorType = message.authorType ?? "";
         const isSystem = authorType === "system";
+        const attachmentsHtml = this.buildClientAttachmentsHtml(message.attachments ?? []);
 
         let variantClass = "tm-client-quotes-message--incoming";
         let authorLabel = message.authorName ?? "Prestataire";
@@ -196,12 +198,81 @@ export default class extends Controller {
                 <strong>${this.escapeHtml(authorLabel)}</strong>
                 <span>${this.escapeHtml(message.createdAt ?? "À l’instant")}</span>
             </div>
-            <div class="tm-client-quotes-message__content">
-                ${this.nl2br(message.content ?? "")}
-            </div>
+            ${message.content ? `<div class="tm-client-quotes-message__content">${this.nl2br(message.content)}</div>` : ""}
+            ${attachmentsHtml}
         `;
 
         return article;
+    }
+
+    buildDashboardAttachmentsHtml(attachments) {
+        if (!Array.isArray(attachments) || attachments.length === 0) {
+            return "";
+        }
+
+        const items = attachments
+            .filter((attachment) => attachment && attachment.url)
+            .map((attachment) => {
+                const url = this.escapeAttribute(attachment.url);
+                const alt = this.escapeAttribute(attachment.originalName || "Photo jointe");
+
+                return `
+                    <a
+                        href="${url}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="tm-msg-attachment"
+                    >
+                        <img
+                            src="${url}"
+                            alt="${alt}"
+                            loading="lazy"
+                        >
+                    </a>
+                `;
+            })
+            .join("");
+
+        if (!items) {
+            return "";
+        }
+
+        return `<div class="tm-msg-attachments">${items}</div>`;
+    }
+
+    buildClientAttachmentsHtml(attachments) {
+        if (!Array.isArray(attachments) || attachments.length === 0) {
+            return "";
+        }
+
+        const items = attachments
+            .filter((attachment) => attachment && attachment.url)
+            .map((attachment) => {
+                const url = this.escapeAttribute(attachment.url);
+                const alt = this.escapeAttribute(attachment.originalName || "Photo jointe");
+
+                return `
+                    <a
+                        href="${url}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="tm-client-quotes-message__attachment"
+                    >
+                        <img
+                            src="${url}"
+                            alt="${alt}"
+                            loading="lazy"
+                        >
+                    </a>
+                `;
+            })
+            .join("");
+
+        if (!items) {
+            return "";
+        }
+
+        return `<div class="tm-client-quotes-message__attachments">${items}</div>`;
     }
 
     isOwnMessage(message) {
@@ -216,6 +287,10 @@ export default class extends Controller {
         const div = document.createElement("div");
         div.textContent = value ?? "";
         return div.innerHTML;
+    }
+
+    escapeAttribute(value) {
+        return this.escapeHtml(value).replace(/"/g, "&quot;");
     }
 
     nl2br(value) {

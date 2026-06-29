@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Conversation;
 use App\Entity\Message;
+use App\Entity\MessageAttachment;
 use App\Enum\MessageTypeEnum;
 use App\Enum\NotificationTypeEnum;
 use App\Form\MessageType;
@@ -32,6 +33,11 @@ final class PrestataireDashboardController extends AbstractController
         ConversationRepository $conversationRepository,
         PaginatorInterface $paginator,
     ): Response {
+        /*
+         * ------------------------------------------------------------
+         * 1. Sécurité : utilisateur connecté + rôle prestataire requis
+         * ------------------------------------------------------------
+         */
         $user = $this->getUser();
 
         if (!$user) {
@@ -42,6 +48,11 @@ final class PrestataireDashboardController extends AbstractController
             throw $this->createAccessDeniedException('Accès réservé aux prestataires.');
         }
 
+        /*
+         * ------------------------------------------------------------
+         * 2. Chargement du profil prestataire connecté
+         * ------------------------------------------------------------
+         */
         $prestataireProfile = $prestataireProfileRepository->findOneBy([
             'account' => $user,
         ]);
@@ -50,11 +61,21 @@ final class PrestataireDashboardController extends AbstractController
             throw $this->createAccessDeniedException('Profil prestataire introuvable.');
         }
 
+        /*
+         * ------------------------------------------------------------
+         * 3. Chargement des prestations du prestataire
+         * ------------------------------------------------------------
+         */
         $prestations = $prestataireServiceRepository->findBy(
             ['prestataire' => $prestataireProfile],
             ['updatedAt' => 'DESC', 'createdAt' => 'DESC']
         );
 
+        /*
+         * ------------------------------------------------------------
+         * 4. Préparation du tri et pagination des demandes de devis
+         * ------------------------------------------------------------
+         */
         $quoteSort = $request->query->get('quote_sort', 'recent');
 
         $quoteOrderBy = match ($quoteSort) {
@@ -81,7 +102,13 @@ final class PrestataireDashboardController extends AbstractController
             ]
         );
 
+        /*
+         * ------------------------------------------------------------
+         * 5. Chargement des conversations et détermination de l’active
+         * ------------------------------------------------------------
+         */
         $conversationId = $request->query->get('conversation');
+
         $conversations = $conversationRepository->findBy(
             ['prestataire' => $prestataireProfile],
             ['lastMessageAt' => 'DESC', 'createdAt' => 'DESC']
@@ -105,6 +132,12 @@ final class PrestataireDashboardController extends AbstractController
             }
         }
 
+        /*
+         * ------------------------------------------------------------
+         * 6. Construction du formulaire de message
+         *    Version simple : un seul champ fichier multiple
+         * ------------------------------------------------------------
+         */
         $messageForm = null;
 
         if ($activeConversation) {
@@ -118,6 +151,11 @@ final class PrestataireDashboardController extends AbstractController
             ])->createView();
         }
 
+        /*
+         * ------------------------------------------------------------
+         * 7. Rendu final du dashboard prestataire
+         * ------------------------------------------------------------
+         */
         return $this->render('prestataire_dashboard/prestataire_dashboard.html.twig', [
             'user' => $user,
             'prestataireProfile' => $prestataireProfile,
@@ -142,6 +180,11 @@ final class PrestataireDashboardController extends AbstractController
         ConversationRepository $conversationRepository,
         PrestataireServiceRepository $prestataireServiceRepository,
     ): Response {
+        /*
+         * ------------------------------------------------------------
+         * 1. Sécurité : utilisateur connecté + profil prestataire valide
+         * ------------------------------------------------------------
+         */
         $user = $this->getUser();
 
         if (!$user instanceof \App\Entity\User || !$user->getPrestataireProfile()) {
@@ -154,7 +197,14 @@ final class PrestataireDashboardController extends AbstractController
             throw $this->createAccessDeniedException('Vous ne pouvez pas répondre à cette conversation.');
         }
 
+        /*
+         * ------------------------------------------------------------
+         * 2. Préparation du message et du formulaire
+         *    Version simple : un seul champ multiple non mappé
+         * ------------------------------------------------------------
+         */
         $message = new Message();
+
         $form = $this->createForm(MessageType::class, $message, [
             'action' => $this->generateUrl('app_prestataire_conversation_message_send', [
                 'id' => $conversation->getId(),
@@ -164,11 +214,66 @@ final class PrestataireDashboardController extends AbstractController
 
         $form->handleRequest($request);
 
+        /*
+         * ------------------------------------------------------------
+         * 3. Traitement du submit valide
+         *    - lecture du contenu texte
+         *    - lecture du champ multiple attachments
+         *    - création d’un MessageAttachment par photo
+         *    - refus d’un message totalement vide
+         * ------------------------------------------------------------
+         */
         if ($form->isSubmitted() && $form->isValid()) {
+            $content = $message->getContent();
+            $content = is_string($content) ? trim($content) : '';
+
+            /** @var array<\Symfony\Component\HttpFoundation\File\UploadedFile>|null $uploadedFiles */
+            $uploadedFiles = $form->get('attachments')->getData();
+            $uploadedFiles = is_array($uploadedFiles) ? $uploadedFiles : [];
+
             $message->setConversation($conversation);
             $message->setAuthor($user);
             $message->setType(MessageTypeEnum::USER);
 
+            if ($content === '' && count($uploadedFiles) === 0) {
+                $this->addFlash('danger', 'Vous devez saisir un message ou ajouter au moins une photo.');
+
+                return $this->redirectToRoute('app_prestataire_dashboard', [
+                    'conversation' => $conversation->getId(),
+                    'tab' => 'messages',
+                    '_fragment' => 'messages-main-panel',
+                ], 303);
+            }
+
+            if ($content !== '') {
+                $message->setContent($content);
+            } else {
+                $message->setContent('');
+            }
+
+            $position = 0;
+
+            foreach ($uploadedFiles as $uploadedFile) {
+                if (!$uploadedFile) {
+                    continue;
+                }
+
+                $attachment = new MessageAttachment();
+                $attachment->setMessage($message);
+                $attachment->setFile($uploadedFile);
+                $attachment->setPosition($position++);
+                $attachment->setOriginalName($uploadedFile->getClientOriginalName());
+                $attachment->setMimeType($uploadedFile->getClientMimeType());
+                $attachment->setFileSize((int) $uploadedFile->getSize());
+
+                $message->addAttachment($attachment);
+            }
+
+            /*
+             * ------------------------------------------------------------
+             * 4. Mise à jour des dates de conversation
+             * ------------------------------------------------------------
+             */
             if (method_exists($conversation, 'setLastMessageAt')) {
                 $conversation->setLastMessageAt(new \DateTimeImmutable());
             }
@@ -177,11 +282,27 @@ final class PrestataireDashboardController extends AbstractController
                 $conversation->setUpdatedAt(new \DateTimeImmutable());
             }
 
+            /*
+             * ------------------------------------------------------------
+             * 5. Persistance du message et des pièces jointes
+             *    VichUploader gère l’upload au moment du flush
+             * ------------------------------------------------------------
+             */
             $entityManager->persist($message);
             $entityManager->flush();
 
+            /*
+             * ------------------------------------------------------------
+             * 6. Temps réel : diffusion immédiate du nouveau message
+             * ------------------------------------------------------------
+             */
             $realtimeNotifier->notifyMessageCreated($conversation->getId(), $message);
 
+            /*
+             * ------------------------------------------------------------
+             * 7. Notification applicative au client
+             * ------------------------------------------------------------
+             */
             $clientUser = $conversation->getClient()?->getAccount();
 
             if ($clientUser instanceof \App\Entity\User && $clientUser->getId() !== $user->getId()) {
@@ -204,6 +325,11 @@ final class PrestataireDashboardController extends AbstractController
                 );
             }
 
+            /*
+             * ------------------------------------------------------------
+             * 8. Redirection post-submit
+             * ------------------------------------------------------------
+             */
             return $this->redirectToRoute('app_prestataire_dashboard', [
                 'conversation' => $conversation->getId(),
                 'tab' => 'messages',
@@ -211,6 +337,11 @@ final class PrestataireDashboardController extends AbstractController
             ], 303);
         }
 
+        /*
+         * ------------------------------------------------------------
+         * 9. Rechargement des données du dashboard si formulaire invalide
+         * ------------------------------------------------------------
+         */
         $quoteSort = $request->query->get('quoteSort', 'latest');
 
         $quoteOrderBy = match ($quoteSort) {
@@ -235,6 +366,11 @@ final class PrestataireDashboardController extends AbstractController
             ['lastMessageAt' => 'DESC', 'createdAt' => 'DESC']
         );
 
+        /*
+         * ------------------------------------------------------------
+         * 10. Réaffichage du dashboard avec le formulaire et ses erreurs
+         * ------------------------------------------------------------
+         */
         return $this->render('prestataire_dashboard/prestataire_dashboard.html.twig', [
             'user' => $user,
             'prestataireProfile' => $prestataireProfile,
@@ -245,6 +381,6 @@ final class PrestataireDashboardController extends AbstractController
             'activeConversation' => $conversation,
             'messageForm' => $form->createView(),
             'activeTab' => 'messages',
-        ]);
+        ], new Response('', Response::HTTP_UNPROCESSABLE_ENTITY));
     }
 }

@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Enum\MessageTypeEnum;
 use App\Repository\MessageRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 #[ORM\Table(name: 'message')]
@@ -35,10 +37,18 @@ class Message
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $readAt = null;
 
+    /**
+     * @var Collection<int, MessageAttachment>
+     */
+    #[ORM\OneToMany(mappedBy: 'message', targetEntity: MessageAttachment::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
+    private Collection $attachments;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->type = MessageTypeEnum::USER;
+        $this->attachments = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -126,5 +136,34 @@ class Message
     public function isUserMessage(): bool
     {
         return $this->type === MessageTypeEnum::USER;
+    }
+
+    /**
+     * @return Collection<int, MessageAttachment>
+     */
+    public function getAttachments(): Collection
+    {
+        return $this->attachments;
+    }
+
+    public function addAttachment(MessageAttachment $attachment): static
+    {
+        if (!$this->attachments->contains($attachment)) {
+            $this->attachments->add($attachment);
+            $attachment->setMessage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAttachment(MessageAttachment $attachment): static
+    {
+        if ($this->attachments->removeElement($attachment)) {
+            if ($attachment->getMessage() === $this) {
+                $attachment->setMessage(null);
+            }
+        }
+
+        return $this;
     }
 }

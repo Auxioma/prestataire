@@ -17,8 +17,7 @@ final class RealtimeNotifier
         private readonly string $realtimeBaseUrl,
         private readonly string $internalToken,
         private readonly UrlGeneratorInterface $urlGenerator,
-    ) {
-    }
+    ) {}
 
     public function notifyMessageCreated(int $conversationId, Message $message): void
     {
@@ -36,6 +35,24 @@ final class RealtimeNotifier
                 : 'client';
         }
 
+        $attachments = [];
+
+        foreach ($message->getAttachments() as $attachment) {
+            $fileName = $attachment->getFileName();
+
+            if (!$fileName) {
+                continue;
+            }
+
+            $attachments[] = [
+                'id' => $attachment->getId(),
+                'fileName' => $fileName,
+                'originalName' => $attachment->getOriginalName(),
+                'mimeType' => $attachment->getMimeType(),
+                'url' => '/uploads/messages/' . $fileName,
+            ];
+        }
+
         try {
             $response = $this->httpClient->request('POST', rtrim($this->realtimeBaseUrl, '/') . '/emit/message', [
                 'headers' => [
@@ -49,6 +66,7 @@ final class RealtimeNotifier
                         'authorName' => $authorName,
                         'authorType' => $authorType,
                         'createdAt' => $message->getCreatedAt()?->format('Y-m-d H:i:s'),
+                        'attachments' => $attachments,
                     ],
                 ],
             ]);
