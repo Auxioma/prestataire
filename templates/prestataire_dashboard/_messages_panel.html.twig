@@ -1,183 +1,190 @@
 <div class="tm-msg card tm-card p-0 overflow-hidden">
-    <div class="row g-0">
-        <div class="col-lg-4 tm-msg-sidebar">
-            <div class="tm-msg-sidebar-head">
-                <h4 class="tm-card-title mb-1">Toutes les conversations</h4>
-                <p class="text-muted mb-0">
-                    Retrouvez ici les échanges liés aux demandes de devis acceptées.
-                </p>
-            </div>
+	<div class="row g-0">
+		<div class="col-lg-4 tm-msg-sidebar">
+			<div class="tm-msg-sidebar-head">
+				<h4 class="tm-card-title mb-1">Toutes les conversations</h4>
+				<p class="text-muted mb-0">
+					Retrouvez ici les échanges liés aux demandes de devis acceptées.
+				</p>
+			</div>
 
-            {% if conversations is empty %}
-                <div class="tm-msg-empty tm-msg-empty--sidebar">
-                    <div class="tm-msg-empty-box">
-                        Aucune conversation ouverte pour le moment.
-                    </div>
-                </div>
+			{% if conversations is empty %}
+				<div class="tm-msg-empty tm-msg-empty--sidebar">
+					<div class="tm-msg-empty-box">
+						Aucune conversation ouverte pour le moment.
+					</div>
+				</div>
+			{% else %}
+				<div class="tm-msg-list">
+					{% for conversation in conversations %}
+						{% set quoteRequest = conversation.quoteRequest %}
+						{% set lastMessage = conversation.messages|last %}
+						{% set isActive = activeConversation and activeConversation.id == conversation.id %}
+
+						<a href="{{ path('app_prestataire_dashboard', { conversation: conversation.id, tab: 'messages' }) }}" class="tm-msg-thread {% if isActive %}is-active{% endif %}">
+							<div class="tm-msg-thread-main">
+								<div class="tm-msg-thread-title">
+									{{ quoteRequest ? quoteRequest.title : 'Conversation sans demande liée' }}
+								</div>
+
+								<div class="tm-msg-thread-client">
+									{% if quoteRequest and quoteRequest.client and quoteRequest.client.account %}
+										{{ quoteRequest.client.account.firstName }}
+										{{ quoteRequest.client.account.lastName }}
+									{% else %}
+										Client non renseigné
+									{% endif %}
+								</div>
+
+								<div class="tm-msg-thread-preview">
+									{% if lastMessage %}
+										{% set preview = lastMessage.content ?? '' %}
+										{% if preview is not empty %}
+											{{ preview|length > 90 ? preview|slice(0, 90) ~ '...' : preview }}
+										{% elseif lastMessage.attachments is defined and lastMessage.attachments is not empty %}
+											{{ lastMessage.attachments|length }}
+											photo{{ lastMessage.attachments|length > 1 ? 's' : '' }}
+										{% else %}
+											Nouveau message
+										{% endif %}
+									{% else %}
+										Conversation ouverte, aucun message affichable pour le moment.
+									{% endif %}
+								</div>
+							</div>
+
+							<div class="tm-msg-thread-side">
+								{% if quoteRequest %}
+									<span class="tm-quote-badge tm-quote-badge--{{ quoteRequest.status.value|lower }}">
+										{{ quoteRequest.status.value }}
+									</span>
+								{% endif %}
+
+								<div class="tm-msg-thread-date">
+									{{ conversation.lastMessageAt ? conversation.lastMessageAt|date('d/m/Y') : '—' }}
+								</div>
+							</div>
+						</a>
+					{% endfor %}
+				</div>
+			{% endif %}
+		</div>
+
+		<div class="col-lg-8 tm-msg-main">
+			{% if activeConversation %}
+				{% set quoteRequest = activeConversation.quoteRequest %}
+
+<div class="tm-msg-head">
+    <div class="tm-msg-head-copy">
+        <h4 class="tm-card-title mb-1">
+            {{ quoteRequest ? quoteRequest.title : 'Conversation' }}
+        </h4>
+        <p class="text-muted mb-0">
+            {% if quoteRequest and quoteRequest.client and quoteRequest.client.account %}
+                Échange avec
+                {{ quoteRequest.client.account.firstName }}
+                {{ quoteRequest.client.account.lastName }}
             {% else %}
-                <div class="tm-msg-list">
-                    {% for conversation in conversations %}
-                        {% set quoteRequest = conversation.quoteRequest %}
-                        {% set lastMessage = conversation.messages|last %}
-                        {% set isActive = activeConversation and activeConversation.id == conversation.id %}
-
-                        <a href="{{ path('app_prestataire_dashboard', { conversation: conversation.id, tab: 'messages' }) }}" class="tm-msg-thread {% if isActive %}is-active{% endif %}">
-                            <div class="tm-msg-thread-main">
-                                <div class="tm-msg-thread-title">
-                                    {{ quoteRequest ? quoteRequest.title : 'Conversation sans demande liée' }}
-                                </div>
-
-                                <div class="tm-msg-thread-client">
-                                    {% if quoteRequest and quoteRequest.client and quoteRequest.client.account %}
-                                        {{ quoteRequest.client.account.firstName }}
-                                        {{ quoteRequest.client.account.lastName }}
-                                    {% else %}
-                                        Client non renseigné
-                                    {% endif %}
-                                </div>
-
-                                <div class="tm-msg-thread-preview">
-                                    {% if lastMessage %}
-                                        {% set preview = lastMessage.content ?? '' %}
-                                        {% if preview is not empty %}
-                                            {{ preview|length > 90 ? preview|slice(0, 90) ~ '...' : preview }}
-                                        {% elseif lastMessage.attachments is defined and lastMessage.attachments is not empty %}
-                                            {{ lastMessage.attachments|length }} photo{{ lastMessage.attachments|length > 1 ? 's' : '' }}
-                                        {% else %}
-                                            Nouveau message
-                                        {% endif %}
-                                    {% else %}
-                                        Conversation ouverte, aucun message affichable pour le moment.
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <div class="tm-msg-thread-side">
-                                {% if quoteRequest %}
-                                    <span class="tm-quote-badge tm-quote-badge--{{ quoteRequest.status.value|lower }}">
-                                        {{ quoteRequest.status.value }}
-                                    </span>
-                                {% endif %}
-
-                                <div class="tm-msg-thread-date">
-                                    {{ conversation.lastMessageAt ? conversation.lastMessageAt|date('d/m/Y') : '—' }}
-                                </div>
-                            </div>
-                        </a>
-                    {% endfor %}
-                </div>
+                Conversation liée à une demande de devis.
             {% endif %}
-        </div>
+        </p>
+    </div>
 
-        <div class="col-lg-8 tm-msg-main">
-            {% if activeConversation %}
-                {% set quoteRequest = activeConversation.quoteRequest %}
+    <div class="tm-msg-head-actions">
+        {% if hasConversationPhotos %}
+            <a
+                href="{{ path('app_prestataire_conversation_photos', { id: activeConversation.id }) }}"
+                class="btn btn-outline-secondary tm-msg-head-btn"
+            >
+                Accès photos conversation
+            </a>
+        {% endif %}
 
-                <div class="tm-msg-head">
-                    <div class="tm-msg-head-copy">
-                        <h4 class="tm-card-title mb-1">
-                            {{ quoteRequest ? quoteRequest.title : 'Conversation' }}
-                        </h4>
-                        <p class="text-muted mb-0">
-                            {% if quoteRequest and quoteRequest.client and quoteRequest.client.account %}
-                                Échange avec
-                                {{ quoteRequest.client.account.firstName }}
-                                {{ quoteRequest.client.account.lastName }}
-                            {% else %}
-                                Conversation liée à une demande de devis.
-                            {% endif %}
-                        </p>
-                    </div>
+        {% if quoteRequest %}
+            <button
+                type="button"
+                class="btn btn-outline-primary tm-msg-head-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#quoteRequestDetailsModal"
+            >
+                Voir la demande
+            </button>
+        {% endif %}
+    </div>
+</div>
+				<div class="tm-msg-body">
+					{% if activeConversation.messages is empty %}
+						<div class="tm-msg-empty tm-msg-empty--body">
+							<div class="tm-msg-empty-box">
+								Aucun message dans cette conversation pour le moment.
+							</div>
+						</div>
+					{% else %}
+						<div class="tm-msg-stream">
+							{% for message in activeConversation.messages %}
+								{% set isPrestataireAuthor = message.author and app.user and message.author.id == app.user.id %}
+								{% set isSystem = message.type and message.type.value == 'system' %}
 
-                    {% if quoteRequest %}
-                        <button type="button" class="btn btn-outline-primary tm-msg-head-btn" data-bs-toggle="modal" data-bs-target="#quoteRequestDetailsModal">
-                            Voir la demande
-                        </button>
-                    {% endif %}
-                </div>
-
-                <div class="tm-msg-body">
-                    {% if activeConversation.messages is empty %}
-                        <div class="tm-msg-empty tm-msg-empty--body">
-                            <div class="tm-msg-empty-box">
-                                Aucun message dans cette conversation pour le moment.
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="tm-msg-stream">
-                            {% for message in activeConversation.messages %}
-                                {% set isPrestataireAuthor = message.author and app.user and message.author.id == app.user.id %}
-                                {% set isSystem = message.type and message.type.value == 'system' %}
-
-                                <div class="tm-msg-row {% if isSystem %}is-system{% elseif isPrestataireAuthor %}is-own{% else %}is-other{% endif %}">
-                                    {% if isSystem %}
-                                        <div class="tm-msg-system">
-                                            {{ message.content }}
-                                        </div>
-                                    {% else %}
-                                        <div class="tm-msg-bubble">
-                                            <div class="tm-msg-meta">
-                                                {% if message.author %}
-                                                    {{ message.author.prestataireProfile and message.author.prestataireProfile.companyName
+								<div class="tm-msg-row {% if isSystem %}is-system{% elseif isPrestataireAuthor %}is-own{% else %}is-other{% endif %}">
+									{% if isSystem %}
+										<div class="tm-msg-system">
+											{{ message.content }}
+										</div>
+									{% else %}
+										<div class="tm-msg-bubble">
+											<div class="tm-msg-meta">
+												{% if message.author %}
+													{{ message.author.prestataireProfile and message.author.prestataireProfile.companyName
                                                         ? message.author.prestataireProfile.companyName
                                                         : (message.author.firstName ~ ' ' ~ message.author.lastName) }}
-                                                {% else %}
-                                                    Système
-                                                {% endif %}
-                                                <span>·</span>
-                                                <span>{{ message.createdAt ? message.createdAt|date('d/m/Y à H:i') : '—' }}</span>
-                                            </div>
+												{% else %}
+													Système
+												{% endif %}
+												<span>·</span>
+												<span>{{ message.createdAt ? message.createdAt|date('d/m/Y à H:i') : '—' }}</span>
+											</div>
 
-                                            {% if (message.content ?? '') is not empty %}
-                                                <div class="tm-msg-content">
-                                                    {{ message.content|nl2br }}
-                                                </div>
-                                            {% endif %}
+											{% if (message.content ?? '') is not empty %}
+												<div class="tm-msg-content">
+													{{ message.content|nl2br }}
+												</div>
+											{% endif %}
 
-                                            {% if message.attachments is defined and message.attachments is not empty %}
-                                                <div class="tm-msg-attachments">
-                                                    {% for attachment in message.attachments %}
-                                                        {% if attachment.fileName %}
-                                                            <a
-                                                                href="{{ asset('uploads/messages/' ~ attachment.fileName) }}"
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                class="tm-msg-attachment"
-                                                            >
-                                                                <img
-                                                                    src="{{ asset('uploads/messages/' ~ attachment.fileName) }}"
-                                                                    alt="{{ attachment.originalName ?: 'Photo jointe' }}"
-                                                                    loading="lazy"
-                                                                >
-                                                            </a>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
+											{% if message.attachments is defined and message.attachments is not empty %}
+												<div class="tm-msg-attachments">
+													{% for attachment in message.attachments %}
+														{% if attachment.fileName %}
+															<a href="{{ asset('uploads/messages/' ~ attachment.fileName) }}" target="_blank" rel="noopener noreferrer" class="tm-msg-attachment">
+																<img src="{{ asset('uploads/messages/' ~ attachment.fileName) }}" alt="{{ attachment.originalName ?: 'Photo jointe' }}" loading="lazy">
+															</a>
+														{% endif %}
+													{% endfor %}
+												</div>
+											{% endif %}
+										</div>
+									{% endif %}
+								</div>
+							{% endfor %}
+						</div>
+					{% endif %}
+				</div>
 
-                <div class="tm-msg-compose">
-                    {% if messageForm %}
-                        {{ form_start(messageForm, {
+				<div class="tm-msg-compose">
+					{% if messageForm %}
+						{{ form_start(messageForm, {
                             attr: {
                                 class: 'tm-msg-form'
                             }
                         }) }}
 
-{% if messageForm.vars.errors|length > 0 %}
-    <div class="alert alert-danger">
-        {{ form_errors(messageForm) }}
-    </div>
-{% endif %}
+						{% if messageForm.vars.errors|length > 0 %}
+							<div class="alert alert-danger">
+								{{ form_errors(messageForm) }}
+							</div>
+						{% endif %}
 
-                        <div class="tm-msg-compose-field">
-                            {{ form_widget(messageForm.content, {
+						<div class="tm-msg-compose-field">
+							{{ form_widget(messageForm.content, {
                                 attr: {
                                     class: 'form-control tm-msg-textarea' ~ (messageForm.content.vars.errors|length > 0 ? ' is-invalid' : ''),
                                     rows: 4,
@@ -185,19 +192,19 @@
                                 }
                             }) }}
 
-                            {% if messageForm.content.vars.errors|length > 0 %}
-                                <div class="invalid-feedback d-block tm-msg-error">
-                                    {{ form_errors(messageForm.content) }}
-                                </div>
-                            {% endif %}
-                        </div>
+							{% if messageForm.content.vars.errors|length > 0 %}
+								<div class="invalid-feedback d-block tm-msg-error">
+									{{ form_errors(messageForm.content) }}
+								</div>
+							{% endif %}
+						</div>
 
-                        <div class="tm-msg-compose-field">
-                            <label class="form-label" for="{{ messageForm.attachments.vars.id }}">
-                                Photos
-                            </label>
+						<div class="tm-msg-compose-field">
+							<label class="form-label" for="{{ messageForm.attachments.vars.id }}">
+								Photos
+							</label>
 
-                            {{ form_widget(messageForm.attachments, {
+							{{ form_widget(messageForm.attachments, {
                                 attr: {
                                     class: 'form-control' ~ (messageForm.attachments.vars.errors|length > 0 ? ' is-invalid' : ''),
                                     accept: 'image/jpeg,image/png,image/webp',
@@ -205,105 +212,105 @@
                                 }
                             }) }}
 
-                            <div class="form-text">
-                                Vous pouvez sélectionner jusqu’à 5 photos.
-                            </div>
+							<div class="form-text">
+								Vous pouvez sélectionner jusqu’à 5 photos.
+							</div>
 
-                            {% if messageForm.attachments.vars.errors|length > 0 %}
-                                <div class="invalid-feedback d-block tm-msg-error">
-                                    {{ form_errors(messageForm.attachments) }}
-                                </div>
-                            {% endif %}
-                        </div>
+							{% if messageForm.attachments.vars.errors|length > 0 %}
+								<div class="invalid-feedback d-block tm-msg-error">
+									{{ form_errors(messageForm.attachments) }}
+								</div>
+							{% endif %}
+						</div>
 
-                        <div class="tm-msg-compose-actions">
-                            <button type="submit" class="btn btn-primary tm-msg-submit">
-                                Envoyer
-                            </button>
-                        </div>
-{{ form_widget(messageForm._token) }}
-                        {{ form_end(messageForm, { render_rest: false }) }}
-                    {% endif %}
-                </div>
+						<div class="tm-msg-compose-actions">
+							<button type="submit" class="btn btn-primary tm-msg-submit">
+								Envoyer
+							</button>
+						</div>
+						{{ form_widget(messageForm._token) }}
+						{{ form_end(messageForm, { render_rest: false }) }}
+					{% endif %}
+				</div>
 
-                {% if quoteRequest %}
-                    <div class="modal fade" id="quoteRequestDetailsModal" tabindex="-1" aria-labelledby="quoteRequestDetailsModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="quoteRequestDetailsModalLabel">Détails de la demande</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-                                </div>
+				{% if quoteRequest %}
+					<div class="modal fade" id="quoteRequestDetailsModal" tabindex="-1" aria-labelledby="quoteRequestDetailsModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-lg modal-dialog-scrollable">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="quoteRequestDetailsModalLabel">Détails de la demande</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+								</div>
 
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <h6 class="mb-1">{{ quoteRequest.title }}</h6>
-                                        <div class="text-muted small">
-                                            Reçue le
-                                            {{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y à H:i') : '—' }}
-                                        </div>
-                                    </div>
+								<div class="modal-body">
+									<div class="mb-3">
+										<h6 class="mb-1">{{ quoteRequest.title }}</h6>
+										<div class="text-muted small">
+											Reçue le
+											{{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y à H:i') : '—' }}
+										</div>
+									</div>
 
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-md-6">
-                                            <strong>Client</strong><br>
-                                            {% if quoteRequest.client and quoteRequest.client.account %}
-                                                {{ quoteRequest.client.account.firstName }}
-                                                {{ quoteRequest.client.account.lastName }}
-                                            {% else %}
-                                                Non renseigné
-                                            {% endif %}
-                                        </div>
+									<div class="row g-3 mb-3">
+										<div class="col-md-6">
+											<strong>Client</strong><br>
+											{% if quoteRequest.client and quoteRequest.client.account %}
+												{{ quoteRequest.client.account.firstName }}
+												{{ quoteRequest.client.account.lastName }}
+											{% else %}
+												Non renseigné
+											{% endif %}
+										</div>
 
-                                        <div class="col-md-6">
-                                            <strong>Statut</strong><br>
-                                            <span class="tm-quote-badge tm-quote-badge--{{ quoteRequest.status.value|lower }}">
-                                                {{ quoteRequest.status.value }}
-                                            </span>
-                                        </div>
+										<div class="col-md-6">
+											<strong>Statut</strong><br>
+											<span class="tm-quote-badge tm-quote-badge--{{ quoteRequest.status.value|lower }}">
+												{{ quoteRequest.status.value }}
+											</span>
+										</div>
 
-                                        <div class="col-md-6">
-                                            <strong>Date souhaitée</strong><br>
-                                            {{ quoteRequest.desiredDate ? quoteRequest.desiredDate|date('d/m/Y') : 'Non précisée' }}
-                                        </div>
+										<div class="col-md-6">
+											<strong>Date souhaitée</strong><br>
+											{{ quoteRequest.desiredDate ? quoteRequest.desiredDate|date('d/m/Y') : 'Non précisée' }}
+										</div>
 
-                                        <div class="col-md-6">
-                                            <strong>Budget</strong><br>
-                                            {{ quoteRequest.budgetAmount ?: 'Non renseigné' }}
-                                        </div>
-                                    </div>
+										<div class="col-md-6">
+											<strong>Budget</strong><br>
+											{{ quoteRequest.budgetAmount ?: 'Non renseigné' }}
+										</div>
+									</div>
 
-                                    <div>
-                                        <strong>Description du besoin</strong>
-                                        <div class="mt-2">
-                                            {% if quoteRequest.description %}
-                                                {{ quoteRequest.description|nl2br }}
-                                            {% else %}
-                                                Aucune description fournie.
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
+									<div>
+										<strong>Description du besoin</strong>
+										<div class="mt-2">
+											{% if quoteRequest.description %}
+												{{ quoteRequest.description|nl2br }}
+											{% else %}
+												Aucune description fournie.
+											{% endif %}
+										</div>
+									</div>
+								</div>
 
-                                <div class="modal-footer">
-                                    <a href="{{ path('app_prestataire_quote_request_show', { slug: quoteRequest.slug }) }}" class="btn btn-outline-secondary">
-                                        Ouvrir la fiche demande
-                                    </a>
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
-                                        Fermer
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-            {% else %}
-                <div class="tm-msg-empty tm-msg-empty--body tm-msg-empty--full">
-                    <div class="tm-msg-empty-box">
-                        Sélectionnez une conversation pour afficher les échanges.
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
+								<div class="modal-footer">
+									<a href="{{ path('app_prestataire_quote_request_show', { slug: quoteRequest.slug }) }}" class="btn btn-outline-secondary">
+										Ouvrir la fiche demande
+									</a>
+									<button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+										Fermer
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				{% endif %}
+			{% else %}
+				<div class="tm-msg-empty tm-msg-empty--body tm-msg-empty--full">
+					<div class="tm-msg-empty-box">
+						Sélectionnez une conversation pour afficher les échanges.
+					</div>
+				</div>
+			{% endif %}
+		</div>
+	</div>
 </div>

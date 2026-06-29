@@ -221,142 +221,127 @@
 						</div>
 					</section>
 
-{# Conversation Messagerie #}
-<section
-    id="quote-conversation"
-    class="tm-client-quotes-detailcard tm-client-quotes-detailcard--conversation"
-    {{ stimulus_controller('realtime-conversation', {
-        url: 'http://localhost:3001',
-        conversationId: conversation ? conversation.id : 0,
-        eventName: 'message_created',
-        joinEventName: 'join_conversation',
-        streamSelector: '.tm-client-quotes-messages--scroll',
-        bodySelector: '.tm-client-quotes-conversation-body',
-        emptySelector: '.tm-client-quotes-empty-state',
-        currentUserType: 'client',
-        layout: 'client',
-        scrollPageToSelf: true
-    }) }}
->
-    <div class="card-body">
-        <div class="tm-client-quotes-conversation-body">
-            <div class="tm-client-quotes-section-head tm-client-quotes-section-head--conversation">
-                <div>
-                    <h2 class="tm-client-quotes-section-title">Messagerie liée</h2>
-                    <p class="tm-client-quotes-section-text mb-0">
-                        La conversation associée à cette demande pour échanger avec le prestataire.
-                    </p>
-                </div>
+					{# Conversation Messagerie #}
+					<section id="quote-conversation" class="tm-client-quotes-detailcard tm-client-quotes-detailcard--conversation" {{ stimulus_controller('realtime-conversation', { url: 'http://localhost:3001', conversationId: conversation ? conversation.id : 0, eventName: 'message_created', joinEventName: 'join_conversation', streamSelector: '.tm-client-quotes-messages--scroll', bodySelector: '.tm-client-quotes-conversation-body', emptySelector: '.tm-client-quotes-empty-state', currentUserType: 'client', layout: 'client', scrollPageToSelf: true } ) }}>
+						<div class="card-body">
+							<div class="tm-client-quotes-conversation-body">
+								<div class="tm-client-quotes-section-head tm-client-quotes-section-head--conversation">
+									<div>
+										<h2 class="tm-client-quotes-section-title">Messagerie liée</h2>
+										<p class="tm-client-quotes-section-text mb-0">
+											La conversation associée à cette demande pour échanger avec le prestataire.
+										</p>
+									</div>
 
-                {% if messages is defined and messages is not empty %}
-                    <span class="tm-client-quotes-conversation-count">
-                        {{ messages|length }} message{{ messages|length > 1 ? 's' : '' }}
-                    </span>
-                {% endif %}
-            </div>
+									<div class="tm-client-quotes-conversation-head-actions">
+										{% if conversation is defined and conversation and hasConversationPhotos %}
+											<a href="{{ path('app_quote_request_photos', { slug: quoteRequest.slug }) }}" class="c-conversation-media-access-btn">
+												Accès photos conversation
+											</a>
+										{% endif %}
 
-            {% if conversation is defined and conversation %}
-                {% if messages is defined and messages is not empty %}
-                    <div class="tm-client-quotes-messages tm-client-quotes-messages--scroll">
-                        {% for message in messages %}
-                            {% set isSystemMessage = message.type is defined and message.type and message.type.value == 'system' %}
-                            {% set isClientMessage = not isSystemMessage and message.author is defined and message.author and app.user and message.author.id == app.user.id %}
-                            {% set authorLabel = isSystemMessage
+										{% if messages is defined and messages is not empty %}
+											<span class="tm-client-quotes-conversation-count">
+												{{ messages|length }}
+												message{{ messages|length > 1 ? 's' : '' }}
+											</span>
+										{% endif %}
+									</div>
+								</div>
+
+								{% if conversation is defined and conversation %}
+									{% if messages is defined and messages is not empty %}
+										<div class="tm-client-quotes-messages tm-client-quotes-messages--scroll">
+											{% for message in messages %}
+												{% set isSystemMessage = message.type is defined and message.type and message.type.value == 'system' %}
+												{% set isClientMessage = not isSystemMessage and message.author is defined and message.author and app.user and message.author.id == app.user.id %}
+												{% set authorLabel = isSystemMessage
                                 ? 'Système'
                                 : (isClientMessage ? 'Vous' : (quoteRequest.prestataire.companyName ?? 'Prestataire'))
                             %}
 
-                            <article class="tm-client-quotes-message
-                                {% if isSystemMessage %}
-                                    tm-client-quotes-message--system
-                                {% elseif isClientMessage %}
-                                    tm-client-quotes-message--outgoing
-                                {% else %}
-                                    tm-client-quotes-message--incoming
-                                {% endif %}
-                            ">
-                                <div class="tm-client-quotes-message__meta">
-                                    <strong>{{ authorLabel }}</strong>
-                                    <span>{{ message.createdAt ? message.createdAt|date('d/m/Y H:i') : '—' }}</span>
-                                </div>
+												<article class="tm-client-quotes-message
+														                                {% if isSystemMessage %}
+														                                    tm-client-quotes-message--system
+														                                {% elseif isClientMessage %}
+														                                    tm-client-quotes-message--outgoing
+														                                {% else %}
+														                                    tm-client-quotes-message--incoming
+														                                {% endif %}
+														                            ">
+													<div class="tm-client-quotes-message__meta">
+														<strong>{{ authorLabel }}</strong>
+														<span>{{ message.createdAt ? message.createdAt|date('d/m/Y H:i') : '—' }}</span>
+													</div>
 
-                                {% if (message.content ?? '') is not empty %}
-                                    <div class="tm-client-quotes-message__content">
-                                        {{ message.content|nl2br }}
-                                    </div>
-                                {% endif %}
+													{% if (message.content ?? '') is not empty %}
+														<div class="tm-client-quotes-message__content">
+															{{ message.content|nl2br }}
+														</div>
+													{% endif %}
 
-                                {% if message.attachments is defined and message.attachments is not empty %}
-                                    <div class="tm-client-quotes-message__attachments">
-                                        {% for attachment in message.attachments %}
-                                            {% if attachment.fileName %}
-                                                <a
-                                                    href="{{ asset('uploads/messages/' ~ attachment.fileName) }}"
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    class="tm-client-quotes-message__attachment"
-                                                >
-                                                    <img
-                                                        src="{{ asset('uploads/messages/' ~ attachment.fileName) }}"
-                                                        alt="{{ attachment.originalName ?: 'Photo jointe' }}"
-                                                        loading="lazy"
-                                                    >
-                                                </a>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </article>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="tm-client-quotes-empty-state">
-                        <div class="tm-client-quotes-empty-state__icon">
-                            <i class="fa-regular fa-comments"></i>
-                        </div>
-                        <div class="tm-client-quotes-empty-state__content">
-                            <h3 class="tm-client-quotes-empty-state__title">Conversation ouverte</h3>
-                            <p class="tm-client-quotes-empty-state__text mb-0">
-                                Le prestataire a accepté votre demande. Vous pouvez maintenant démarrer l’échange.
-                            </p>
-                        </div>
-                    </div>
-                {% endif %}
+													{% if message.attachments is defined and message.attachments is not empty %}
+														<div class="tm-client-quotes-message__attachments">
+															{% for attachment in message.attachments %}
+																{% if attachment.fileName %}
+																	<a href="{{ asset('uploads/messages/' ~ attachment.fileName) }}" target="_blank" rel="noopener noreferrer" class="tm-client-quotes-message__attachment">
+																		<img src="{{ asset('uploads/messages/' ~ attachment.fileName) }}" alt="{{ attachment.originalName ?: 'Photo jointe' }}" loading="lazy">
+																	</a>
+																{% endif %}
+															{% endfor %}
+														</div>
+													{% endif %}
+												</article>
+											{% endfor %}
+										</div>
+									{% else %}
+										<div class="tm-client-quotes-empty-state">
+											<div class="tm-client-quotes-empty-state__icon">
+												<i class="fa-regular fa-comments"></i>
+											</div>
+											<div class="tm-client-quotes-empty-state__content">
+												<h3 class="tm-client-quotes-empty-state__title">Conversation ouverte</h3>
+												<p class="tm-client-quotes-empty-state__text mb-0">
+													Le prestataire a accepté votre demande. Vous pouvez maintenant démarrer l’échange.
+												</p>
+											</div>
+										</div>
+									{% endif %}
 
-                {% if messageForm is defined and messageForm %}
-                    <div id="quote-message-form" class="tm-client-quotes-message-composer">
-                        <div class="tm-client-quotes-message-composer__header">
-                            <div>
-                                <h3 class="tm-client-quotes-message-composer__title">
-                                    {% if messages is defined and messages is not empty %}
-                                        Répondre à la conversation
-                                    {% else %}
-                                        Envoyer le premier message
-                                    {% endif %}
-                                </h3>
-                                <p class="tm-client-quotes-message-composer__text mb-0">
-                                    {% if messages is defined and messages is not empty %}
-                                        Ajoutez une précision, une question ou une information utile pour le prestataire.
-                                    {% else %}
-                                        Ouvrez la discussion pour apporter un complément ou poser votre première question.
-                                    {% endif %}
-                                </p>
-                            </div>
-                        </div>
+									{% if messageForm is defined and messageForm %}
+										<div id="quote-message-form" class="tm-client-quotes-message-composer">
+											<div class="tm-client-quotes-message-composer__header">
+												<div>
+													<h3 class="tm-client-quotes-message-composer__title">
+														{% if messages is defined and messages is not empty %}
+															Répondre à la conversation
+														{% else %}
+															Envoyer le premier message
+														{% endif %}
+													</h3>
+													<p class="tm-client-quotes-message-composer__text mb-0">
+														{% if messages is defined and messages is not empty %}
+															Ajoutez une précision, une question ou une information utile pour le prestataire.
+														{% else %}
+															Ouvrez la discussion pour apporter un complément ou poser votre première question.
+														{% endif %}
+													</p>
+												</div>
+											</div>
 
-                        {{ form_start(messageForm, {
+											{{ form_start(messageForm, {
                             attr: {
                                 class: 'tm-client-quotes-message-composer__form',
                                 'data-turbo': 'false'
                             }
                         }) }}
 
-                        <div class="tm-client-quotes-message-composer__field">
-                            {{ form_label(messageForm.content, 'Votre message', {
+											<div class="tm-client-quotes-message-composer__field">
+												{{ form_label(messageForm.content, 'Votre message', {
                                 label_attr: { class: 'tm-client-quotes-message-composer__label' }
                             }) }}
 
-                            {{ form_widget(messageForm.content, {
+												{{ form_widget(messageForm.content, {
                                 attr: {
                                     class: 'tm-client-quotes-message-composer__textarea' ~ (messageForm.content.vars.errors|length > 0 ? ' is-invalid' : ''),
                                     placeholder: messages is defined and messages is not empty
@@ -366,19 +351,19 @@
                                 }
                             }) }}
 
-                            {% if messageForm.content.vars.errors|length > 0 %}
-                                <div class="invalid-feedback d-block tm-client-quotes-message-composer__error">
-                                    {{ form_errors(messageForm.content) }}
-                                </div>
-                            {% endif %}
-                        </div>
+												{% if messageForm.content.vars.errors|length > 0 %}
+													<div class="invalid-feedback d-block tm-client-quotes-message-composer__error">
+														{{ form_errors(messageForm.content) }}
+													</div>
+												{% endif %}
+											</div>
 
-                        <div class="tm-client-quotes-message-composer__field">
-                            <label class="tm-client-quotes-message-composer__label" for="{{ messageForm.attachments.vars.id }}">
-                                Photos
-                            </label>
+											<div class="tm-client-quotes-message-composer__field">
+												<label class="tm-client-quotes-message-composer__label" for="{{ messageForm.attachments.vars.id }}">
+													Photos
+												</label>
 
-                            {{ form_widget(messageForm.attachments, {
+												{{ form_widget(messageForm.attachments, {
                                 attr: {
                                     class: 'form-control' ~ (messageForm.attachments.vars.errors|length > 0 ? ' is-invalid' : ''),
                                     accept: 'image/jpeg,image/png,image/webp',
@@ -386,48 +371,48 @@
                                 }
                             }) }}
 
-                            <div class="form-text">
-                                Vous pouvez sélectionner jusqu’à 5 photos.
-                            </div>
+												<div class="form-text">
+													Vous pouvez sélectionner jusqu’à 5 photos.
+												</div>
 
-                            {% if messageForm.attachments.vars.errors|length > 0 %}
-                                <div class="invalid-feedback d-block tm-client-quotes-message-composer__error">
-                                    {{ form_errors(messageForm.attachments) }}
-                                </div>
-                            {% endif %}
-                        </div>
+												{% if messageForm.attachments.vars.errors|length > 0 %}
+													<div class="invalid-feedback d-block tm-client-quotes-message-composer__error">
+														{{ form_errors(messageForm.attachments) }}
+													</div>
+												{% endif %}
+											</div>
 
-                        <div class="tm-client-quotes-message-composer__footer">
-                            <p class="tm-client-quotes-message-composer__hint mb-0">
-                                Vous pouvez envoyer un texte, des photos, ou les deux.
-                            </p>
+											<div class="tm-client-quotes-message-composer__footer">
+												<p class="tm-client-quotes-message-composer__hint mb-0">
+													Vous pouvez envoyer un texte, des photos, ou les deux.
+												</p>
 
-                            <button type="submit" class="btn tm-client-quotes-btn tm-client-quotes-btn--primary">
-                                <i class="fa-regular fa-paper-plane"></i>
-                                <span>Envoyer le message</span>
-                            </button>
-                        </div>
+												<button type="submit" class="btn tm-client-quotes-btn tm-client-quotes-btn--primary">
+													<i class="fa-regular fa-paper-plane"></i>
+													<span>Envoyer le message</span>
+												</button>
+											</div>
 
-                        {{ form_widget(messageForm._token) }}
-                        {{ form_end(messageForm, { render_rest: false }) }}
-                    </div>
-                {% endif %}
-            {% else %}
-                <div class="tm-client-quotes-empty-state">
-                    <div class="tm-client-quotes-empty-state__icon">
-                        <i class="fa-regular fa-comments"></i>
-                    </div>
-                    <div class="tm-client-quotes-empty-state__content">
-                        <h3 class="tm-client-quotes-empty-state__title">Messagerie non encore disponible</h3>
-                        <p class="tm-client-quotes-empty-state__text mb-0">
-                            La conversation s’ouvrira lorsque le prestataire aura accepté l’étude de votre demande.
-                        </p>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-</section>
+											{{ form_widget(messageForm._token) }}
+											{{ form_end(messageForm, { render_rest: false }) }}
+										</div>
+									{% endif %}
+								{% else %}
+									<div class="tm-client-quotes-empty-state">
+										<div class="tm-client-quotes-empty-state__icon">
+											<i class="fa-regular fa-comments"></i>
+										</div>
+										<div class="tm-client-quotes-empty-state__content">
+											<h3 class="tm-client-quotes-empty-state__title">Messagerie non encore disponible</h3>
+											<p class="tm-client-quotes-empty-state__text mb-0">
+												La conversation s’ouvrira lorsque le prestataire aura accepté l’étude de votre demande.
+											</p>
+										</div>
+									</div>
+								{% endif %}
+							</div>
+						</div>
+					</section>
 				</div>
 
 				<div class="col-xl-4">
@@ -459,10 +444,10 @@
 									{% set isInactive = loopIndex > currentTimelineIndex %}
 
 									<article class="tm-client-quotes-timeline__item
-																																																																																																																																																																						                                    {% if isDone %} tm-client-quotes-timeline__item--done{% endif %}
-																																																																																																																																																																						                                    {% if isCurrent %} tm-client-quotes-timeline__item--current{% endif %}
-																																																																																																																																																																						                                    {% if isInactive %} tm-client-quotes-timeline__item--inactive{% endif %}
-																																																																																																																																																																						                                ">
+																																																																																																																																																																																	                                    {% if isDone %} tm-client-quotes-timeline__item--done{% endif %}
+																																																																																																																																																																																	                                    {% if isCurrent %} tm-client-quotes-timeline__item--current{% endif %}
+																																																																																																																																																																																	                                    {% if isInactive %} tm-client-quotes-timeline__item--inactive{% endif %}
+																																																																																																																																																																																	                                ">
 										<div class="tm-client-quotes-timeline__marker">
 											{% if isDone %}
 												<i class="fa-solid fa-check"></i>

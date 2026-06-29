@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Photos de la conversation
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('styles/conversation-gallery.css') }}">
+{% endblock %}
+
+{% block body %}
+	<section class="c-conversation-gallery-page" {% if mediaItems is not empty %} data-controller="conversation-gallery" {% endif %}>
+		<div class="c-conversation-gallery-page__container">
+			<header class="c-conversation-gallery-page__header">
+				<div class="c-conversation-gallery-page__heading">
+					<h1 class="c-conversation-gallery-page__title">Photos de la conversation</h1>
+					<p class="c-conversation-gallery-page__subtitle">
+						Retrouvez ici toutes les photos envoyées et reçues dans cette conversation.
+					</p>
+				</div>
+
+				<a href="{{ backUrl }}" class="c-conversation-gallery-page__back-link">
+					Retour à la conversation
+				</a>
+			</header>
+
+			{% if mediaItems is empty %}
+				<div class="c-conversation-gallery-empty">
+					<p class="c-conversation-gallery-empty__text">
+						Aucune photo n’a encore été échangée dans cette conversation.
+					</p>
+
+					<a href="{{ backUrl }}" class="c-conversation-gallery-empty__back-link">
+						Retour à la conversation
+					</a>
+				</div>
+			{% else %}
+				<div class="c-conversation-gallery" data-conversation-gallery-target="root">
+					<div class="c-conversation-gallery__viewer">
+						<div class="c-conversation-gallery__stage">
+							<button type="button" class="c-conversation-gallery__nav c-conversation-gallery__nav--prev" data-action="click->conversation-gallery#prev" aria-label="Photo précédente">
+								‹
+							</button>
+
+							<figure class="c-conversation-gallery__figure">
+								<img src="{{ mediaItems[0].url }}" alt="{{ mediaItems[0].attachment.originalName ?: 'Photo de la conversation' }}" class="c-conversation-gallery__main-image" data-conversation-gallery-target="mainImage">
+
+								<figcaption class="c-conversation-gallery__caption">
+									<div class="c-conversation-gallery__caption-meta">
+										<strong class="c-conversation-gallery__author" data-conversation-gallery-target="author">
+											{{ mediaItems[0].authorName ?: 'Utilisateur' }}
+										</strong>
+
+										<span class="c-conversation-gallery__date" data-conversation-gallery-target="date">
+											{{ mediaItems[0].createdAt ? mediaItems[0].createdAt|date('d/m/Y H:i') : '—' }}
+										</span>
+									</div>
+
+									{# Suppression temporairement désactivée tant que la route backend n'existe pas #}
+									<div class="c-conversation-gallery__delete-wrap" data-conversation-gallery-target="deleteWrapper" hidden></div>
+								</figcaption>
+							</figure>
+
+							<button type="button" class="c-conversation-gallery__nav c-conversation-gallery__nav--next" data-action="click->conversation-gallery#next" aria-label="Photo suivante">
+								›
+							</button>
+						</div>
+					</div>
+
+					<div class="c-conversation-gallery__thumbs" data-conversation-gallery-target="thumbs">
+						{% for item in mediaItems %}
+							<button type="button" class="c-conversation-gallery__thumb{% if loop.first %} is-active{% endif %}" data-action="click->conversation-gallery#select" data-index="{{ loop.index0 }}" data-url="{{ item.url }}" data-alt="{{ item.attachment.originalName ?: 'Photo de la conversation' }}" data-author="{{ item.authorName ?: 'Utilisateur' }}" data-date="{{ item.createdAt ? item.createdAt|date('d/m/Y H:i') : '—' }}" data-can-delete="{{ item.canDelete ? '1' : '0' }}" aria-label="Voir la photo {{ loop.index }}">
+								<img src="{{ item.url }}" alt="{{ item.attachment.originalName ?: 'Miniature de la photo' }}" class="c-conversation-gallery__thumb-image" loading="lazy">
+							</button>
+						{% endfor %}
+					</div>
+				</div>
+			{% endif %}
+		</div>
+	</section>
+{% endblock %}

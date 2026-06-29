@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Conversation;
 use App\Entity\Message;
-use App\Entity\MessageAttachment;
 use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
 use App\Entity\QuoteRequest;
@@ -208,6 +208,9 @@ final class QuoteRequestController extends AbstractController
     ): Response {
         $user = $this->getUser();
 
+        // =========================
+        // Sécurité d'accès client
+        // =========================
         if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
             throw $this->createAccessDeniedException('Accès réservé aux clients.');
         }
@@ -220,9 +223,31 @@ final class QuoteRequestController extends AbstractController
             throw $this->createNotFoundException('Cette demande n’est plus disponible.');
         }
 
+        // =========================
+        // Chargement conversation
+        // =========================
         $conversation = $conversationRepository->findOneByQuoteRequest($quoteRequest);
         $messages = $conversation ? $messageRepository->findByConversationOrderedByCreatedAt($conversation) : [];
 
+        // =========================
+        // Présence de photos
+        // =========================
+        $hasConversationPhotos = false;
+
+        if ($conversation instanceof Conversation) {
+            foreach ($conversation->getMessages() as $message) {
+                foreach ($message->getAttachments() as $attachment) {
+                    if ($attachment->getFileName()) {
+                        $hasConversationPhotos = true;
+                        break 2;
+                    }
+                }
+            }
+        }
+
+        // =========================
+        // Formulaire de message
+        // =========================
         $messageForm = null;
         $canSendMessage = $conversation && \in_array($quoteRequest->getStatus()->value, ['accepted', 'answered'], true);
 
@@ -234,6 +259,9 @@ final class QuoteRequestController extends AbstractController
             $messageForm = $this->createForm(MessageType::class, $message);
             $messageForm->handleRequest($request);
 
+            // =========================
+            // Envoi d'un message
+            // =========================
             if ($messageForm->isSubmitted() && $messageForm->isValid()) {
                 /** @var array<\Symfony\Component\HttpFoundation\File\UploadedFile>|null $uploadedFiles */
                 $uploadedFiles = $messageForm->get('attachments')->getData();
@@ -261,6 +289,9 @@ final class QuoteRequestController extends AbstractController
                 $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
                 $entityManager->flush();
 
+                // =========================
+                // Temps réel + notification
+                // =========================
                 $realtimeNotifier->notifyMessageCreated($conversation->getId(), $message);
 
                 $prestataireUser = $conversation->getPrestataire()?->getAccount();
@@ -293,11 +324,15 @@ final class QuoteRequestController extends AbstractController
             }
         }
 
+        // =========================
+        // Rendu de la page
+        // =========================
         return $this->render('quote_request/show.html.twig', [
             'quoteRequest' => $quoteRequest,
             'conversation' => $conversation,
             'messages' => $messages,
             'messageForm' => $messageForm?->createView(),
+            'hasConversationPhotos' => $hasConversationPhotos,
         ]);
     }
 
@@ -365,5 +400,68 @@ final class QuoteRequestController extends AbstractController
         $this->addFlash('success', 'La demande de devis a bien été supprimée.');
 
         return $this->redirectToRoute('app_quote_request_index');
+    }
+
+    #[Route('/{slug}/photos', name: '_photos', methods: ['GET'])]
+    public function photos(
+        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
+            throw $this->createAccessDeniedException('Accès réservé aux clients.');
+        }
+
+        if ($quoteRequest->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas consulter les photos de cette demande.');
+        }
+
+        if ($quoteRequest->isDeleted()) {
+            throw $this->createNotFoundException('Cette demande n’est plus disponible.');
+        }
+
+        $conversation = $quoteRequest->getConversation();
+
+        if (!$conversation) {
+            throw $this->createNotFoundException('Aucune conversation disponible.');
+        }
+
+        $mediaItems = [];
+
+        foreach ($conversation->getMessages() as $message) {
+            foreach ($message->getAttachments() as $attachment) {
+                if (!$attachment->getFileName()) {
+                    continue;
+                }
+
+                $author = $message->getAuthor();
+                $isOwner = $author && $author->getId() === $user->getId();
+
+                $mediaItems[] = [
+                    'attachment' => $attachment,
+                    'message' => $message,
+                    'url' => '/uploads/messages/' . $attachment->getFileName(),
+                    'authorName' => $author
+                        ? trim(($author->getFirstName() ?? '') . ' ' . ($author->getLastName() ?? ''))
+                        : 'Système',
+                    'createdAt' => $message->getCreatedAt(),
+                    'canDelete' => $isOwner,
+                ];
+            }
+        }
+
+        usort($mediaItems, static fn(array $a, array $b) => ($a['createdAt'] <=> $b['createdAt']));
+
+        return $this->render('conversation/gallery.html.twig', [
+            'conversation' => $conversation,
+            'quoteRequest' => $quoteRequest,
+            'mediaItems' => $mediaItems,
+            'backUrl' => $this->generateUrl('app_quote_request_show', [
+                'slug' => $quoteRequest->getSlug(),
+                '_fragment' => 'quote-conversation',
+            ]),
+            // 'deleteRouteName' => 'app_conversation_attachment_delete',
+            'galleryContext' => 'client',
+        ]);
     }
 }
