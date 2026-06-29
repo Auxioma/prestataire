@@ -251,12 +251,13 @@
 							Voir toutes les notifications
 						</a>
 
-						<form method="post" action="{{ path('app_notification_mark_all_read') }}">
-							<input type="hidden" name="_token" value="{{ csrf_token('mark-all-notifications-read') }}">
-							<button type="submit" class="btn btn-sm btn-primary w-100">
-								Tout marquer comme lu
-							</button>
-						</form>
+<form method="post" action="{{ path('app_notification_mark_all_read') }}">
+    <input type="hidden" name="_token" value="{{ csrf_token('mark-all-notifications-read') }}">
+    <input type="hidden" name="redirect" value="{{ app.request.uri }}">
+    <button type="submit" class="btn btn-sm btn-primary w-100">
+        Tout marquer comme lu
+    </button>
+</form>
 					</div>
 				</div>
 			</li>

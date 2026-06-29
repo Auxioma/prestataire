@@ -84,9 +84,7 @@ final class NotificationController extends AbstractController
             $notificationManager->markAsRead($notification);
         }
 
-        return $this->redirect(
-            $notification->getTargetUrl() ?: $this->generateUrl('app_notification_index')
-        );
+        return $this->redirectToRoute('app_notification_index');
     }
 
     #[Route('/read-all', name: 'mark_all_read', methods: ['POST'])]
@@ -113,6 +111,12 @@ final class NotificationController extends AbstractController
 
         $notificationManager->markAllAsReadForUser($user);
         $this->addFlash('success', 'Toutes les notifications ont été marquées comme lues.');
+
+        $redirect = (string) $request->request->get('redirect', '');
+
+        if ($redirect !== '') {
+            return $this->redirect($redirect, 303);
+        }
 
         return $this->redirectToRoute('app_notification_index');
     }
