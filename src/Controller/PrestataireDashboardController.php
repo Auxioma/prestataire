@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Conversation;
 use App\Entity\Message;
+use App\Entity\MessageAttachment;
+use App\Entity\User;
 use App\Enum\MessageTypeEnum;
 use App\Enum\NotificationTypeEnum;
 use App\Form\MessageType;
@@ -429,8 +431,50 @@ final class PrestataireDashboardController extends AbstractController
                 'tab' => 'messages',
                 '_fragment' => 'messages-main-panel',
             ]),
-            // 'deleteRouteName' => 'app_conversation_attachment_delete',
+            'deleteRouteName' => 'app_conversation_attachment_delete',
             'galleryContext' => 'prestataire',
         ]);
+    }
+
+
+    #[Route('/conversation/attachment/{id}/delete', name: 'app_conversation_attachment_delete', methods: ['POST'])]
+    public function deleteAttachment(
+        Request $request,
+        MessageAttachment $attachment,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException('Accès refusé.');
+        }
+
+        $message = $attachment->getMessage();
+        $conversation = $message?->getConversation();
+        $author = $message?->getAuthor();
+
+        if (!$message || !$conversation || !$author || $author->getId() !== $user->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer cette photo.');
+        }
+
+        if (!$this->isCsrfTokenValid(
+            'delete_attachment_' . $attachment->getId(),
+            (string) $request->request->get('_token')
+        )) {
+            throw $this->createAccessDeniedException('Jeton CSRF invalide.');
+        }
+
+        $redirect = (string) $request->request->get('redirect', '');
+
+        $entityManager->remove($attachment);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La photo a bien été supprimée.');
+
+        if ($redirect !== '') {
+            return $this->redirect($redirect, 303);
+        }
+
+        return $this->redirectToRoute('app_home');
     }
 }

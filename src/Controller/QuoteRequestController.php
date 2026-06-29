@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Conversation;
 use App\Entity\Message;
+use App\Entity\MessageAttachment;
 use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
 use App\Entity\QuoteRequest;
@@ -28,6 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+
 
 #[Route('/demandes-de-devis', name: 'app_quote_request')]
 final class QuoteRequestController extends AbstractController
@@ -460,7 +462,7 @@ final class QuoteRequestController extends AbstractController
                 'slug' => $quoteRequest->getSlug(),
                 '_fragment' => 'quote-conversation',
             ]),
-            // 'deleteRouteName' => 'app_conversation_attachment_delete',
+            'deleteRouteName' => 'app_conversation_attachment_delete',
             'galleryContext' => 'client',
         ]);
     }

@@ -8,17 +8,25 @@ export default class extends Controller {
         'thumbs',
         'deleteWrapper',
         'deleteForm',
+        'lightbox',
+        'lightboxImage',
     ];
 
     connect() {
         this.currentIndex = 0;
         this.items = this.thumbButtons;
+        this.boundKeydownHandler = this.handleKeydown.bind(this);
 
         if (this.items.length === 0) {
             return;
         }
 
         this.show(this.currentIndex);
+        document.addEventListener('keydown', this.boundKeydownHandler);
+    }
+
+    disconnect() {
+        document.removeEventListener('keydown', this.boundKeydownHandler);
     }
 
     select(event) {
@@ -58,6 +66,63 @@ export default class extends Controller {
         this.show(nextIndex);
     }
 
+    prevFromLightbox(event) {
+        this.prev(event);
+    }
+
+    nextFromLightbox(event) {
+        this.next(event);
+    }
+
+    openLightbox(event) {
+        event?.preventDefault();
+
+        if (!this.hasLightboxTarget || !this.hasLightboxImageTarget) {
+            return;
+        }
+
+        this.syncLightboxImage();
+        this.lightboxTarget.hidden = false;
+        document.body.classList.add('is-conversation-gallery-lightbox-open');
+    }
+
+    closeLightbox(event) {
+        event?.preventDefault();
+
+        if (!this.hasLightboxTarget) {
+            return;
+        }
+
+        this.lightboxTarget.hidden = true;
+        document.body.classList.remove('is-conversation-gallery-lightbox-open');
+    }
+
+    stopPropagation(event) {
+        event.stopPropagation();
+    }
+
+    handleKeydown(event) {
+        if (!this.hasLightboxTarget || this.lightboxTarget.hidden) {
+            return;
+        }
+
+        if (event.key === 'Escape') {
+            this.closeLightbox();
+            return;
+        }
+
+        if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            this.prev();
+            return;
+        }
+
+        if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            this.next();
+        }
+    }
+
     show(index) {
         const item = this.items[index];
 
@@ -80,6 +145,7 @@ export default class extends Controller {
 
         this.updateActiveThumb();
         this.updateDeleteState(item);
+        this.syncLightboxImage();
     }
 
     updateActiveThumb() {
@@ -115,6 +181,21 @@ export default class extends Controller {
         if (tokenField) {
             tokenField.value = deleteToken;
         }
+    }
+
+    syncLightboxImage() {
+        if (!this.hasLightboxImageTarget) {
+            return;
+        }
+
+        const item = this.items[this.currentIndex];
+
+        if (!item) {
+            return;
+        }
+
+        this.lightboxImageTarget.src = item.dataset.url || '';
+        this.lightboxImageTarget.alt = item.dataset.alt || 'Photo de la conversation';
     }
 
     get thumbButtons() {
