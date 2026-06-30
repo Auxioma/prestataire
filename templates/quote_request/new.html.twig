@@ -6,148 +6,187 @@
 {% endblock %}
 
 {% block body %}
-	<div class="tm-quote-create-page">
-		<div class="container py-4 py-lg-5">
-			<section class="tm-quote-create-hero">
-				<div class="tm-quote-create-hero__content">
-					<a href="{{ path('app_quote_request_index') }}" class="tm-quote-create-backlink">
-						<i class="fa-solid fa-arrow-left"></i>
-						<span>Retour à mes demandes</span>
-					</a>
+    <div class="tm-quote-create-page">
+        <div class="container py-4 py-lg-5">
+            <section class="tm-quote-create-hero">
+                <div class="tm-quote-create-hero__orb tm-quote-create-hero__orb--one" aria-hidden="true"></div>
+                <div class="tm-quote-create-hero__orb tm-quote-create-hero__orb--two" aria-hidden="true"></div>
+                <div class="tm-quote-create-hero__grid" aria-hidden="true"></div>
 
-					<span class="tm-quote-create-hero__eyebrow">Nouvelle demande</span>
-					<h1 class="tm-quote-create-hero__title">Décrivez votre besoin avec précision</h1>
-					<p class="tm-quote-create-hero__subtitle">
-						Une demande claire facilite la comparaison, améliore la pertinence des réponses et permet au prestataire de mieux comprendre votre projet.
-					</p>
-				</div>
-			</section>
+                <div class="tm-quote-create-hero__content">
+                    <a href="{{ path('app_quote_request_index') }}" class="tm-quote-create-backlink">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Retour à mes demandes</span>
+                    </a>
 
-			{% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
-				{% for message in messages %}
-					<div class="alert alert-{{ type }} alert-dismissible fade show tm-quote-create-alert" role="alert">
-						{{ message }}
-						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-					</div>
-				{% endfor %}
-			{% endfor %}
+                    <span class="tm-quote-create-hero__eyebrow">Nouvelle demande</span>
+                    <h1 class="tm-quote-create-hero__title">Décrivez votre besoin avec précision</h1>
+                    <p class="tm-quote-create-hero__subtitle">
+                        Une demande claire facilite la comparaison, améliore la pertinence des réponses et permet au prestataire de mieux comprendre votre projet.
+                    </p>
+                </div>
 
-			<div class="row g-4">
-				<div class="col-xl-8">
-					<section class="tm-quote-create-panel">
-						<div class="tm-quote-create-panel__body">
-							{{ form_start(form, {
-                            attr: {
-                                novalidate: 'novalidate',
-                                'data-turbo': 'false',
-                                class: 'tm-quote-create-form'
-                            }
-                        }) }}
+                <div class="tm-quote-create-hero__aside">
+                    <div class="tm-quote-create-hero-stat">
+                        <span class="tm-quote-create-hero-stat__label">Objectif</span>
+                        <strong class="tm-quote-create-hero-stat__value">Demande claire</strong>
+                    </div>
+                    <div class="tm-quote-create-hero-stat">
+                        <span class="tm-quote-create-hero-stat__label">Bénéfice</span>
+                        <strong class="tm-quote-create-hero-stat__value">Réponses plus pertinentes</strong>
+                    </div>
+                </div>
+            </section>
 
-							<div class="tm-quote-create-highlight">
-								<div class="tm-quote-create-highlight__title">Conseil</div>
-								<p class="tm-quote-create-highlight__text mb-0">
-									Plus votre besoin est concret, plus les retours seront utiles, comparables et rapides à exploiter.
-								</p>
-							</div>
+            {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type }} alert-dismissible fade show tm-quote-create-alert" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
 
-							{% if prestataire is defined and prestataire %}
-								<div class="tm-quote-create-locked">
-									<div class="tm-quote-create-locked__label">Prestataire sélectionné</div>
-									<div class="tm-quote-create-locked__value">
-										{{ prestataire.companyName ?? 'Prestataire' }}
-									</div>
-								</div>
-							{% endif %}
+            <div class="row g-4">
+                <div class="col-xl-8">
+                    <section class="tm-quote-create-panel">
+                        <div class="tm-quote-create-panel__head">
+                            <div>
+                                <span class="tm-quote-create-panel__eyebrow">Formulaire de demande</span>
+                                <h2 class="tm-quote-create-panel__title">Renseignez les détails du projet</h2>
+                                <p class="tm-quote-create-panel__subtitle">
+                                    Plus votre brief est précis, plus les devis seront comparables, rapides et utiles.
+                                </p>
+                            </div>
+                        </div>
 
-							<div class="row g-4 tm-quote-create-form__fields">
-								{% if prestation is defined and prestation %}
-									<div class="col-12">
-										<div class="tm-quote-create-locked">
-											<div class="tm-quote-create-locked__label">Service concerné</div>
-											<div class="tm-quote-create-locked__value">
-												{{ prestation.service.name ?? 'Service sélectionné' }}
-											</div>
-										</div>
-									</div>
-								{% else %}
-									<div class="col-12">
-										<div class="tm-select-wrap">
-											{{ form_row(form.prestation) }}
-											<span class="tm-select-wrap__chevron" aria-hidden="true">
-												<i class="fa-solid fa-chevron-down"></i>
-											</span>
-										</div>
-									</div>
-								{% endif %}
+                        <div class="tm-quote-create-panel__body">
+                            {{ form_start(form, {
+                                attr: {
+                                    novalidate: 'novalidate',
+                                    'data-turbo': 'false',
+                                    class: 'tm-quote-create-form'
+                                }
+                            }) }}
 
-								<div class="col-12">
-									{{ form_row(form.title) }}
-								</div>
+                            <div class="tm-quote-create-highlight">
+    <div class="tm-quote-create-highlight__icon">
+        <i class="fa-solid fa-lightbulb"></i>
+    </div>
+    <div>
+        <div class="tm-quote-create-highlight__title">Conseil</div>
+        <p class="tm-quote-create-highlight__text mb-0">
+            Plus votre besoin est concret, plus les retours seront utiles, comparables et rapides à exploiter.
+        </p>
+    </div>
+</div>
 
-								<div class="col-12">
-									{{ form_row(form.description) }}
-								</div>
+                            {% if prestataire is defined and prestataire %}
+                                <div class="tm-quote-create-locked">
+                                    <div class="tm-quote-create-locked__label">Prestataire sélectionné</div>
+                                    <div class="tm-quote-create-locked__value">
+                                        {{ prestataire.companyName ?? 'Prestataire' }}
+                                    </div>
+                                </div>
+                            {% endif %}
 
-								<div class="col-md-6">
-									{{ form_row(form.desiredDate) }}
-								</div>
+                            <div class="row g-4 tm-quote-create-form__fields">
+                                {% if prestation is defined and prestation %}
+                                    <div class="col-12">
+                                        <div class="tm-quote-create-locked">
+                                            <div class="tm-quote-create-locked__label">Service concerné</div>
+                                            <div class="tm-quote-create-locked__value">
+                                                {{ prestation.service.name ?? 'Service sélectionné' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="col-12">
+                                        <div class="tm-select-wrap">
+                                            {{ form_row(form.prestation) }}
+                                            <span class="tm-select-wrap__chevron" aria-hidden="true">
+                                                <i class="fa-solid fa-chevron-down"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                {% endif %}
 
-								<div class="col-md-6">
-									{{ form_row(form.budgetAmount) }}
-								</div>
-							</div>
+                                <div class="col-12">
+                                    {{ form_row(form.title) }}
+                                </div>
 
-							<div class="tm-quote-create-actions">
-								<button type="submit" class="btn tm-quote-create-btn tm-quote-create-btn--primary">
-									Envoyer la demande
-								</button>
+                                <div class="col-12">
+                                    {{ form_row(form.description) }}
+                                </div>
 
-								<a href="{{ path('app_quote_request_index') }}" class="btn tm-quote-create-btn tm-quote-create-btn--ghost">
-									Annuler
-								</a>
-							</div>
+                                <div class="col-md-6">
+                                    {{ form_row(form.desiredDate) }}
+                                </div>
 
-							{{ form_end(form) }}
-						</div>
-					</section>
-				</div>
+                                <div class="col-md-6">
+                                    {{ form_row(form.budgetAmount) }}
+                                </div>
+                            </div>
 
-				<div class="col-xl-4">
-					<aside class="tm-quote-create-sidecard mb-4">
-						<div class="card-body">
-							<h2 class="tm-quote-create-sidecard__title">Bonnes pratiques</h2>
-							<ul class="tm-quote-create-tips">
-								{% if prestation is not defined or not prestation %}
-									<li>Choisissez le service le plus proche de votre besoin.</li>
-								{% endif %}
-								<li>Formulez un titre lisible et direct.</li>
-								<li>Décrivez le contexte, la contrainte et le résultat attendu.</li>
-								<li>Ajoutez une échéance si le timing compte.</li>
-								<li>Indiquez un budget pour mieux cadrer les réponses.</li>
-							</ul>
-						</div>
-					</aside>
+                            <div class="tm-quote-create-actions">
+                                <button type="submit" class="btn tm-quote-create-btn tm-quote-create-btn--primary">
+                                    <span>Envoyer la demande</span>
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </button>
 
-					<aside class="tm-quote-create-sidecard">
-						<div class="card-body">
-							<h2 class="tm-quote-create-sidecard__title">Exemple de demande</h2>
-							<div class="tm-quote-create-example">
-								<div class="tm-quote-create-example__item">
-									<span class="tm-quote-create-example__label">Titre</span>
-									<strong>Rénovation de salle de bain</strong>
-								</div>
-								<div class="tm-quote-create-example__item">
-									<span class="tm-quote-create-example__label">Description</span>
-									<p class="mb-0">
-										Remplacement du meuble vasque, reprise de faïence et installation d’une douche, avec contrainte de délai avant fin de mois.
-									</p>
-								</div>
-							</div>
-						</div>
-					</aside>
-				</div>
-			</div>
-		</div>
-	</div>
+                                <a href="{{ path('app_quote_request_index') }}" class="btn tm-quote-create-btn tm-quote-create-btn--ghost">
+                                    Annuler
+                                </a>
+                            </div>
+
+                            {{ form_end(form) }}
+                        </div>
+                    </section>
+                </div>
+
+                <div class="col-xl-4">
+                    <aside class="tm-quote-create-sidecard tm-quote-create-sidecard--tips mb-4">
+                        <div class="card-body">
+                            <div class="tm-quote-create-sidecard__badge">
+                                <i class="fa-solid fa-check"></i>
+                                Bonnes pratiques
+                            </div>
+                            <h2 class="tm-quote-create-sidecard__title">Pour obtenir de meilleurs devis</h2>
+                            <ul class="tm-quote-create-tips">
+                                {% if prestation is not defined or not prestation %}
+                                    <li>Choisissez le service le plus proche de votre besoin.</li>
+                                {% endif %}
+                                <li>Formulez un titre lisible et direct.</li>
+                                <li>Décrivez le contexte, la contrainte et le résultat attendu.</li>
+                                <li>Ajoutez une échéance si le timing compte.</li>
+                                <li>Indiquez un budget pour mieux cadrer les réponses.</li>
+                            </ul>
+                        </div>
+                    </aside>
+
+                    <aside class="tm-quote-create-sidecard tm-quote-create-sidecard--example">
+                        <div class="card-body">
+                            <div class="tm-quote-create-sidecard__badge tm-quote-create-sidecard__badge--accent">
+                                <i class="fa-solid fa-file-signature"></i>
+                                Exemple
+                            </div>
+                            <h2 class="tm-quote-create-sidecard__title">Exemple de demande</h2>
+                            <div class="tm-quote-create-example">
+                                <div class="tm-quote-create-example__item">
+                                    <span class="tm-quote-create-example__label">Titre</span>
+                                    <strong>Rénovation de salle de bain</strong>
+                                </div>
+                                <div class="tm-quote-create-example__item">
+                                    <span class="tm-quote-create-example__label">Description</span>
+                                    <p class="mb-0">
+                                        Remplacement du meuble vasque, reprise de faïence et installation d’une douche, avec contrainte de délai avant fin de mois.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
