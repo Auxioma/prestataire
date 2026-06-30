@@ -481,86 +481,497 @@
     color: #dc3545 !important;
 }
 
-/* --- 5. REASSURANCE & AVIS --- */
+/* --- SIDEBAR REASSURANCE COMPACTE --- */
 .reassurance-aside {
+    position: relative;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    padding: 1.1rem !important;
+    border: 1px solid rgba(244, 169, 17, 0.14) !important;
+    border-radius: 1rem !important;
+    background:
+        radial-gradient(circle at top right, rgba(244, 169, 17, 0.14), transparent 28%),
+        linear-gradient(180deg, #061b56 0%, #08236f 100%);
+    box-shadow: 0 14px 32px rgba(6, 27, 86, 0.14) !important;
 }
+
+.reassurance-aside::before {
+    content: "";
+    position: absolute;
+    top: -70px;
+    right: -60px;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(244, 169, 17, 0.12) 0%, rgba(244, 169, 17, 0) 72%);
+    pointer-events: none;
+}
+
 .reassurance-main-title {
-    font-size: 18px;
-    line-height: 1.3;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 0.9rem !important;
+    font-size: 1rem;
+    line-height: 1.2;
+    color: #ffffff;
+    letter-spacing: -0.02em;
 }
+
+.reassurance-aside .gap-3 {
+    gap: 0.65rem !important;
+}
+
+.reassurance-item {
+    position: relative;
+    z-index: 1;
+    padding: 0.65rem 0.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 0.85rem;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(6px);
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.reassurance-item:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(244, 169, 17, 0.18);
+}
+
+.reassurance-item i {
+    color: #f4a911;
+    min-width: 18px;
+    font-size: 0.95rem !important;
+    margin-top: 0.15rem !important;
+}
+
 .reassurance-aside h4 {
-    font-size: 12px !important;
-    margin-bottom: 2px !important;
+    font-size: 0.76rem !important;
+    margin-bottom: 0.12rem !important;
+    color: #ffffff !important;
+    line-height: 1.2;
 }
+
 .reassurance-desc {
-    font-size: 10px !important;
-    color: #6c757d;
+    font-size: 0.69rem !important;
+    color: rgba(255, 255, 255, 0.74) !important;
+    line-height: 1.4;
 }
-.feature-bottom-icon {
-    width: 44px;
-    height: 44px;
-    background-color: var(--tm-icon-bg);
-    color: var(--tm-service);
+
+.reassurance-more-btn--about-theme {
+    position: relative;
+    z-index: 1;
+    min-height: 42px;
+    padding: 0.72rem 0.9rem !important;
+    margin-top: auto;
+    border-radius: 0.85rem !important;
+    background: linear-gradient(135deg, #f4a911 0%, #ffbf3f 100%);
+    color: #2c1d00;
+    border: 1px solid rgba(244, 169, 17, 0.2);
+    box-shadow: 0 12px 24px rgba(244, 169, 17, 0.2);
+    font-size: 0.85rem;
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease,
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.reassurance-more-btn--about-theme:hover,
+.reassurance-more-btn--about-theme:focus {
+    background: linear-gradient(135deg, #ffc247 0%, #f4a911 100%);
+    color: #2c1d00;
+    border-color: rgba(255, 194, 71, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(244, 169, 17, 0.24);
+}
+
+.reassurance-more-btn--about-theme__icon {
+    transition: transform 0.25s ease, color 0.3s ease;
+    color: inherit;
+}
+
+.reassurance-more-btn--about-theme:hover .reassurance-more-btn--about-theme__icon,
+.reassurance-more-btn--about-theme:focus .reassurance-more-btn--about-theme__icon {
+    transform: translateX(4px);
+}
+
+
+
+/* Ajoute ceci dans ton fichier CSS global ou ton fichier dédié */
+.tm-counter-digit {
+    font-variant-numeric: tabular-nums;
+    display: inline-block;
+    min-width: 50px; 
+}
+
+/* CHIFFRES CLES */
+
+/* --- SECTION CHIFFRES CLÉS COMPACTE --- */
+.tm-stats-container {
+    margin-top: 3.25rem;
+    margin-bottom: 2.5rem;
+}
+
+.tm-stats-showcase--compact {
+    position: relative;
+    padding: 0.9rem;
+    border: 1px solid rgba(6, 27, 86, 0.08);
+    border-radius: 24px;
+    background:
+        radial-gradient(circle at top right, rgba(244, 169, 17, 0.1), transparent 18%),
+        linear-gradient(180deg, #ffffff 0%, #f7f9fe 100%);
+    box-shadow: 0 18px 40px rgba(6, 27, 86, 0.06);
+    overflow: hidden;
+}
+
+.tm-stats-intro--compact {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1.15rem;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #061B56 0%, #0a256e 100%);
+    color: #ffffff;
+    min-height: 100%;
+    overflow: hidden;
+}
+
+.tm-stats-intro--compact::after {
+    content: "";
+    position: absolute;
+    right: -60px;
+    bottom: -60px;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(244, 169, 17, 0.16) 0%, rgba(244, 169, 17, 0) 72%);
+    pointer-events: none;
+}
+
+.tm-stats-intro__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    align-self: flex-start;
+    margin-bottom: 0.8rem;
+    padding: 0.42rem 0.72rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.tm-stats-intro__badge i {
+    color: #f4a911;
+}
+
+.tm-stats-intro__title {
+    margin-bottom: 0.65rem;
+    font-size: clamp(1.25rem, 1.05rem + 0.45vw, 1.7rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    font-weight: 900;
+    max-width: 13ch;
+}
+
+.tm-stats-intro__text {
+    margin-bottom: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    max-width: 34ch;
+}
+
+.tm-stats-intro__highlights {
+    display: grid;
+    gap: 0.45rem;
+    margin-bottom: 0.9rem;
+}
+
+.tm-stats-intro__highlights span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.tm-stats-intro__highlights i {
+    color: #f4a911;
+    font-size: 0.78rem;
+}
+
+.tm-stats-intro__media {
+    margin-top: auto;
+}
+
+.tm-stats-intro__image {
+    width: 100%;
+    height: 112px;
+    object-fit: cover;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16);
+}
+
+.tm-stat-card--compact {
+    position: relative;
+    padding: 1rem 1rem 0.95rem;
+    text-align: left;
+    border: 1px solid rgba(6, 27, 86, 0.08) !important;
+    border-radius: 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8faff 100%);
+    box-shadow: 0 10px 24px rgba(6, 27, 86, 0.04);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+    min-height: 100%;
+    overflow: hidden;
+}
+
+.tm-stat-card--compact::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #061B56 0%, #f4a911 100%);
+}
+
+.tm-stat-card--compact:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 30px rgba(6, 27, 86, 0.08);
+    border-color: rgba(244, 169, 17, 0.18) !important;
+}
+
+.tm-stat-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-bottom: 0.8rem;
+}
+
+.tm-stat-icon-wrap {
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    background: linear-gradient(135deg, rgba(6, 27, 86, 0.08) 0%, rgba(6, 27, 86, 0.16) 100%);
     flex-shrink: 0;
 }
 
-.review-card {
-    transition: transform 0.2s ease;
-    border-radius: 12px;
-}
-.review-card:hover {
-    transform: translateY(-3px);
-}
-.reviewer-avatar {
-    width: 48px;
-    height: 48px;
-    object-fit: cover;
-}
-/* Ajoute ceci dans ton fichier CSS global ou ton fichier dédié */
-.tm-counter-digit {
-    font-variant-numeric: tabular-nums; /* Force les chiffres à avoir une largeur fixe */
-    display: inline-block;
-    min-width: 50px; /* Ajuste selon la taille du nombre */
-}
-
-/* --- SECTION CHIFFRES CLÉS --- */
-.tm-stats-container {
-    margin-top: 5rem;
-    margin-bottom: 3rem;
-}
-
-.tm-stat-card {
-    padding: 1.5rem;
-    text-align: center;
-    border: 1px solid #eef2f6 !important;
-    border-radius: 1rem;
-    background-color: #f8fbff;
-    transition: transform 0.2s ease;
-    height: 100%;
-}
-
-.tm-stat-card:hover {
-    transform: translateY(-5px);
-}
-
 .tm-stat-icon {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    display: block;
+    margin-bottom: 0;
+    font-size: 1rem;
+    color: #061B56;
+}
+
+.tm-stat-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 0.22rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(244, 169, 17, 0.12);
+    color: #8b5e00;
+    font-size: 0.62rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
 }
 
 .tm-stat-value {
-    font-weight: 800;
-    margin-bottom: 0;
-    color: #212529;
+    margin-bottom: 0.2rem;
+    font-size: clamp(1.5rem, 1.2rem + 0.45vw, 2rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: #061B56;
 }
 
 .tm-stat-label {
-    font-size: 0.85rem;
-    color: #6c757d;
+    margin-bottom: 0.18rem;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #16244a;
+}
+
+.tm-stat-note {
     margin-bottom: 0;
+    font-size: 0.78rem;
+    color: #78839c;
+    line-height: 1.45;
+}
+
+@media (max-width: 991.98px) {
+    .tm-stats-container {
+        margin-top: 2.75rem;
+        margin-bottom: 2.25rem;
+    }
+
+    .tm-stats-showcase--compact {
+        padding: 0.8rem;
+        border-radius: 20px;
+    }
+
+    .tm-stats-intro--compact,
+    .tm-stat-card--compact {
+        border-radius: 16px;
+    }
+
+    .tm-stats-intro__title {
+        max-width: 100%;
+    }
+
+    .tm-stats-intro__image {
+        height: 100px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .tm-stats-container {
+        margin-top: 2.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .tm-stats-showcase--compact {
+        padding: 0.7rem;
+        border-radius: 18px;
+    }
+
+    .tm-stats-intro--compact {
+        padding: 1rem;
+    }
+
+    .tm-stats-intro__title {
+        font-size: 1.2rem;
+    }
+
+    .tm-stats-intro__text {
+        font-size: 0.85rem;
+    }
+
+    .tm-stats-intro__image {
+        height: 92px;
+        border-radius: 12px;
+    }
+
+    .tm-stat-card--compact {
+        padding: 0.9rem;
+    }
+
+    .tm-stat-value {
+        font-size: 1.45rem;
+    }
+
+    .tm-stat-label {
+        font-size: 0.86rem;
+    }
+
+    .tm-stat-note {
+        font-size: 0.76rem;
+    }
+}
+
+.tm-stat-card--visual {
+    position: relative;
+    overflow: hidden;
+    min-height: 170px;
+}
+
+.tm-stat-card--visual .tm-stat-value,
+.tm-stat-card--visual .tm-stat-label,
+.tm-stat-card--visual .tm-stat-note,
+.tm-stat-card--visual .tm-stat-card__top {
+    position: relative;
+    z-index: 2;
+    max-width: 62%;
+}
+
+.tm-stat-card__visual {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 44%;
+    height: 72%;
+    z-index: 1;
+    pointer-events: none;
+    display: flex;
+    align-items: end;
+    justify-content: end;
+}
+
+
+
+.tm-stat-card__visual-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-top-left-radius: 22px;
+    opacity: 0.92;
+    transform: scale(1.02);
+    filter: saturate(0.92) contrast(1.02);
+}
+
+.tm-stat-card--compact:hover .tm-stat-card__visual-image {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
+
+.tm-stat-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 0.22rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.62rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    border: 1px solid transparent;
+}
+
+/* Réseau */
+.tm-stat-chip--network {
+    background: rgba(64, 93, 230, 0.12);
+    color: #2847b8;
+    border-color: rgba(64, 93, 230, 0.14);
+}
+
+/* Activité */
+.tm-stat-chip--activity {
+    background: rgba(244, 169, 17, 0.16);
+    color: #8a5b00;
+    border-color: rgba(244, 169, 17, 0.2);
+}
+
+/* Confiance */
+.tm-stat-chip--trust {
+    background: rgba(30, 166, 114, 0.14);
+    color: #16704e;
+    border-color: rgba(30, 166, 114, 0.18);
+}
+
+/* Rapidité */
+.tm-stat-chip--speed {
+    background: rgba(168, 85, 247, 0.14);
+    color: #7a35b8;
+    border-color: rgba(168, 85, 247, 0.18);
 }
 
 /* --- SECTION FAQ --- */

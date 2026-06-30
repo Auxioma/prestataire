@@ -50,34 +50,116 @@
 			</div>
 		</div>
 
-{# BARRE DE RECHERCHE #}
-<div class="container">
-    {% include 'search/_homepage_search_toolbar.html.twig' with {
+		{# BARRE DE RECHERCHE #}
+		<div class="container">
+			{% include 'search/_homepage_search_toolbar.html.twig' with {
         formView: homepageSearchForm,
         toolbarClass: 'tm-homepage-search-toolbar--home'
     } only %}
-</div>
+		</div>
 
 		{# CHIFFRES CLÉS #}
 		<div class="container tm-stats-container">
-			<div class="row g-3">
-				{% set stats = [
-            {icon: 'fa-users', val: '1,200+', label: 'Prestataires', color: '#4338ca'},
-            {icon: 'fa-briefcase', val: '8,500+', label: 'Projets', color: '#e11d48'},
-            {icon: 'fa-star', val: '98%', label: 'Satisfaction', color: '#16a34a'},
-            {icon: 'fa-bolt', val: '- 2h', label: 'Réponse', color: '#d97706'},
-        ] %}
+			<section class="tm-stats-showcase tm-stats-showcase--compact">
+				<div class="row g-3 align-items-stretch">
+					<div class="col-lg-4">
+						<div class="tm-stats-intro tm-stats-intro--compact h-100">
+							<div class="tm-stats-intro__badge">
+								<i class="fa-solid fa-chart-line"></i>
+								TrouveMoi en chiffres
+							</div>
 
-				{% for stat in stats %}
-					<div class="col-md-3 col-6">
-						<div class="tm-stat-card">
-							<i class="fa-solid {{ stat.icon }} tm-stat-icon" style="color: {{ stat.color }};"></i>
-							<h4 class="tm-stat-value">{{ stat.val }}</h4>
-							<p class="tm-stat-label">{{ stat.label }}</p>
+							<h2 class="tm-stats-intro__title">
+								Des résultats concrets pour vos projets
+							</h2>
+
+							<p class="tm-stats-intro__text">
+								Trouvez, comparez et contactez rapidement des professionnels fiables partout en France.
+							</p>
+
+							<div class="tm-stats-intro__highlights">
+								<span>
+									<i class="fa-solid fa-circle-check"></i>
+									Devis simples</span>
+								<span>
+									<i class="fa-solid fa-circle-check"></i>
+									Profils vérifiés</span>
+								<span>
+									<i class="fa-solid fa-circle-check"></i>
+									Réponse rapide</span>
+							</div>
+
+							<div class="tm-stats-intro__media">
+								<img src="{{ asset('images/worker-group.png') }}" alt="Professionnels TrouveMoi" class="tm-stats-intro__image">
+							</div>
 						</div>
 					</div>
-				{% endfor %}
-			</div>
+
+					<div class="col-lg-8">
+						{% set stats = [
+    {
+        icon: 'fa-users',
+        val: '1,200+',
+        label: 'Prestataires actifs',
+        note: 'Partout en France',
+        image: asset('images/worker-team.png'),
+        chip: 'Réseau',
+        chipClass: 'tm-stat-chip--network'
+    },
+    {
+        icon: 'fa-briefcase',
+        val: '8,500+',
+        label: 'Projets publiés',
+        note: 'Demandes variées',
+        image: asset('images/worker-petsitter.png'),
+        chip: 'Activité',
+        chipClass: 'tm-stat-chip--activity'
+    },
+    {
+        icon: 'fa-star',
+        val: '98%',
+        label: 'Satisfaction',
+        note: 'Avis très positifs',
+        image: asset('images/worker-satisfaction.png'),
+        chip: 'Confiance',
+        chipClass: 'tm-stat-chip--trust'
+    },
+    {
+        icon: 'fa-bolt',
+        val: '< 2h',
+        label: 'Temps de réponse',
+        note: 'Réactivité moyenne',
+        image: asset('images/worker-dev.png'),
+        chip: 'Rapidité',
+        chipClass: 'tm-stat-chip--speed'
+    }
+] %}
+
+						<div class="row g-3 h-100">
+							{% for stat in stats %}
+								<div class="col-sm-6">
+									<div class="tm-stat-card tm-stat-card--compact tm-stat-card--visual h-100">
+										<div class="tm-stat-card__top">
+											<div class="tm-stat-icon-wrap">
+												<i class="fa-solid {{ stat.icon }} tm-stat-icon"></i>
+											</div>
+											<span class="tm-stat-chip {{ stat.chipClass }}">{{ stat.chip }}</span>
+										</div>
+
+										<h3 class="tm-stat-value">{{ stat.val }}</h3>
+										<p class="tm-stat-label">{{ stat.label }}</p>
+										<p class="tm-stat-note">{{ stat.note }}</p>
+
+										<div class="tm-stat-card__visual">
+											<img src="{{ stat.image }}" alt="{{ stat.label }}" class="tm-stat-card__visual-image">
+										</div>
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			</section>
 		</div>
 
 		{# 3. SECTION CATÉGORIES POPULAIRES #}
@@ -219,83 +301,81 @@
 				{# SIDEBAR REASSURANCE #}
 				<div class="col-xl-3 col-lg-4 text-start">
 					<div class="card border-0 shadow-sm p-4 rounded-4 h-100 reassurance-aside d-flex flex-column">
-						<h3 class="fw-extrabold text-dark mb-4 reassurance-main-title">Pourquoi choisir<br>TrouveMoi ?</h3>
+						<h3 class="fw-extrabold mb-4 reassurance-main-title">Pourquoi choisir<br>TrouveMoi ?</h3>
 
 						<div class="d-flex flex-column gap-3 mb-4">
-							<div class="d-flex align-items-start gap-2">
-								<i class="fa-solid fa-circle-check text-tm-service fs-5 mt-1"></i>
+							<div class="d-flex align-items-start gap-2 reassurance-item">
+								<i class="fa-solid fa-circle-check fs-5 mt-1"></i>
 								<div>
-									<h4 class="fw-extrabold text-dark mb-0 fs-12">Des pros vérifiés</h4>
-									<p class="text-muted mb-0 reassurance-desc">Prestataires sélectionnés et contrôlés.</p>
+									<h4 class="fw-extrabold mb-0 fs-12">Des pros vérifiés</h4>
+									<p class="mb-0 reassurance-desc">Prestataires sélectionnés et contrôlés.</p>
 								</div>
 							</div>
 
-							<div class="d-flex align-items-start gap-2">
-								<i class="fa-solid fa-comments text-tm-service fs-5 mt-1"></i>
+							<div class="d-flex align-items-start gap-2 reassurance-item">
+								<i class="fa-solid fa-comments fs-5 mt-1"></i>
 								<div>
-									<h4 class="fw-extrabold text-dark mb-0 fs-12">Avis authentiques</h4>
-									<p class="text-muted mb-0 reassurance-desc">Des retours fiables pour bien choisir.</p>
+									<h4 class="fw-extrabold mb-0 fs-12">Avis authentiques</h4>
+									<p class="mb-0 reassurance-desc">Des retours fiables pour bien choisir.</p>
 								</div>
 							</div>
 
-							<div class="d-flex align-items-start gap-2">
-								<i class="fa-solid fa-file-signature text-tm-service fs-5 mt-1"></i>
+							<div class="d-flex align-items-start gap-2 reassurance-item">
+								<i class="fa-solid fa-file-signature fs-5 mt-1"></i>
 								<div>
-									<h4 class="fw-extrabold text-dark mb-0 fs-12">Devis gratuits</h4>
-									<p class="text-muted mb-0 reassurance-desc">Comparez et choisissez sans engagement.</p>
+									<h4 class="fw-extrabold mb-0 fs-12">Devis gratuits</h4>
+									<p class="mb-0 reassurance-desc">Comparez et choisissez sans engagement.</p>
 								</div>
 							</div>
 
-							<div class="d-flex align-items-start gap-2">
-								<i class="fa-solid fa-shield-halved text-tm-service fs-5 mt-1"></i>
+							<div class="d-flex align-items-start gap-2 reassurance-item">
+								<i class="fa-solid fa-shield-halved fs-5 mt-1"></i>
 								<div>
-									<h4 class="fw-extrabold text-dark mb-0 fs-12">Paiement sécurisé</h4>
-									<p class="text-muted mb-0 reassurance-desc">Transactions 100% sécurisées.</p>
+									<h4 class="fw-extrabold mb-0 fs-12">Paiement sécurisé</h4>
+									<p class="mb-0 reassurance-desc">Transactions 100% sécurisées.</p>
 								</div>
 							</div>
 						</div>
 
-						<a href="{{ path('app_static_page', { slug: 'about' }) }}" class="btn btn-white w-100 py-2 rounded-3 fw-bold border shadow-xs d-flex align-items-center justify-content-between px-3 mt-auto reassurance-more-btn reassurance-more-btn--about-theme">
+						<a href="{{ path('app_static_page', { slug: 'about' }) }}" class="btn w-100 py-2 rounded-3 fw-bold d-flex align-items-center justify-content-between px-3 mt-auto reassurance-more-btn reassurance-more-btn--about-theme">
 							En savoir plus
 							<i class="fa-solid fa-chevron-right arrow-indicator reassurance-more-btn--about-theme__icon"></i>
 						</a>
 					</div>
 				</div>
-			</div>
-		</div>
 
-		{# BON PLAN #}
-		<section class="tm-home-deals-section container my-5">
-			<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-				<h2 class="fw-extrabold h4 mb-0 text-dark tracking-tight">
-					Nos Bons Plans
-					<span class="text-tm-accent">
-						<i class="fa-solid fa-percent"></i>
-					</span>
-				</h2>
+				{# BON PLAN #}
+				<section class="tm-home-deals-section container my-5">
+					<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+						<h2 class="fw-extrabold h4 mb-0 text-dark tracking-tight">
+							Nos Bons Plans
+							<span class="text-tm-accent">
+								<i class="fa-solid fa-percent"></i>
+							</span>
+						</h2>
 
-				<a href="{{ path('app_bons_plans') }}" class="tm-home-deals-link">
-					Voir toutes les offres
-					<i class="fa-solid fa-chevron-right"></i>
-				</a>
-			</div>
+						<a href="{{ path('app_bons_plans') }}" class="tm-home-deals-link">
+							Voir toutes les offres
+							<i class="fa-solid fa-chevron-right"></i>
+						</a>
+					</div>
 
-			{% if bonsPlans is not empty %}
-				<div class="tm-home-deals-grid">
-					{% for bonPlan in bonsPlans %}
-						{% set service = bonPlan.service|default(null) %}
-						{% set prestataire = bonPlan.prestataire|default(null) %}
-						{% set account = prestataire and prestataire.account is defined ? prestataire.account : null %}
-						{% set category = service and service.category is defined ? service.category : null %}
+					{% if bonsPlans is not empty %}
+						<div class="tm-home-deals-grid">
+							{% for bonPlan in bonsPlans %}
+								{% set service = bonPlan.service|default(null) %}
+								{% set prestataire = bonPlan.prestataire|default(null) %}
+								{% set account = prestataire and prestataire.account is defined ? prestataire.account : null %}
+								{% set category = service and service.category is defined ? service.category : null %}
 
-						{% set reduction = bonPlan.tauxReduction|default(0) %}
-						{% set prixCatalogue = bonPlan.prixCatalogue|default(0) %}
-						{% set prixRemise = bonPlan.prixRemise is defined and bonPlan.prixRemise is not null
+								{% set reduction = bonPlan.tauxReduction|default(0) %}
+								{% set prixCatalogue = bonPlan.prixCatalogue|default(0) %}
+								{% set prixRemise = bonPlan.prixRemise is defined and bonPlan.prixRemise is not null
                     ? bonPlan.prixRemise
                     : (prixCatalogue - (prixCatalogue * reduction / 100))
                 %}
 
-						{% set companyName = prestataire and prestataire.companyName is defined and prestataire.companyName
+								{% set companyName = prestataire and prestataire.companyName is defined and prestataire.companyName
                     ? prestataire.companyName
                     : (
                         account
@@ -306,12 +386,12 @@
                     )
                 %}
 
-						{% set cityName = prestataire and prestataire.city is defined and prestataire.city
+								{% set cityName = prestataire and prestataire.city is defined and prestataire.city
                     ? prestataire.city
                     : 'Ville non renseignée'
                 %}
 
-						{% set prestationTitle = bonPlan.title is defined and bonPlan.title
+								{% set prestationTitle = bonPlan.title is defined and bonPlan.title
                     ? bonPlan.title
                     : (
                         service and service.name is defined and service.name
@@ -320,7 +400,7 @@
                     )
                 %}
 
-						{% set prestationDescription = bonPlan.shortDescription is defined and bonPlan.shortDescription
+								{% set prestationDescription = bonPlan.shortDescription is defined and bonPlan.shortDescription
                     ? bonPlan.shortDescription
                     : (
                         bonPlan.description is defined and bonPlan.description
@@ -333,123 +413,123 @@
                     )
                 %}
 
-						{% if reduction <= 15 %}
-							{% set promoLevel = 'low' %}
-						{% elseif reduction <= 25 %}
-							{% set promoLevel = 'medium' %}
-						{% elseif reduction <= 40 %}
-							{% set promoLevel = 'high' %}
-						{% else %}
-							{% set promoLevel = 'max' %}
-						{% endif %}
+								{% if reduction <= 15 %}
+									{% set promoLevel = 'low' %}
+								{% elseif reduction <= 25 %}
+									{% set promoLevel = 'medium' %}
+								{% elseif reduction <= 40 %}
+									{% set promoLevel = 'high' %}
+								{% else %}
+									{% set promoLevel = 'max' %}
+								{% endif %}
 
-						{% set coverImage = prestataire and prestataire.coverImage is defined and prestataire.coverImage
+								{% set coverImage = prestataire and prestataire.coverImage is defined and prestataire.coverImage
                     ? prestataire.coverImage
                     : null
                 %}
 
-						{% set ctaUrl = path('app_prestataire_service_prestation_show', { slug: bonPlan.slug }) %}
-						{% set ctaLabel = 'Voir la prestation' %}
+								{% set ctaUrl = path('app_prestataire_service_prestation_show', { slug: bonPlan.slug }) %}
+								{% set ctaLabel = 'Voir la prestation' %}
 
-						{% set isFavoriteBonPlan = bonPlan.id in (favoriteBonPlanIds|default([])) %}
-						<article class="tm-home-deal-card tm-home-deal-card--{{ promoLevel }}">
-							<div class="tm-home-deal-card__glow"></div>
+								{% set isFavoriteBonPlan = bonPlan.id in (favoriteBonPlanIds|default([])) %}
+								<article class="tm-home-deal-card tm-home-deal-card--{{ promoLevel }}">
+									<div class="tm-home-deal-card__glow"></div>
 
-							<button type="button" class="btn btn-light favorite-btn border-0 shadow-sm" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="bon_plan" data-favorite-toggle-target-id-value="{{ bonPlan.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="{{ isFavoriteBonPlan ? 'true' : 'false' }}" data-favorite-toggle-login-url-value="{{ path('app_login') }}" aria-pressed="{{ isFavoriteBonPlan ? 'true' : 'false' }}" aria-label="{{ isFavoriteBonPlan ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
-								<i data-favorite-toggle-target="icon" class="{{ isFavoriteBonPlan ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"></i>
-							</button>
+									<button type="button" class="btn btn-light favorite-btn border-0 shadow-sm" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="bon_plan" data-favorite-toggle-target-id-value="{{ bonPlan.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="{{ isFavoriteBonPlan ? 'true' : 'false' }}" data-favorite-toggle-login-url-value="{{ path('app_login') }}" aria-pressed="{{ isFavoriteBonPlan ? 'true' : 'false' }}" aria-label="{{ isFavoriteBonPlan ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
+										<i data-favorite-toggle-target="icon" class="{{ isFavoriteBonPlan ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"></i>
+									</button>
 
-							<div class="tm-home-deal-card__hero">
-								<img src="{{ coverImage ? asset('uploads/covers/' ~ coverImage) : asset('images/img_par_defaut.png') }}" alt="{{ companyName }}" class="tm-home-deal-card__cover">
-								<div class="tm-home-deal-card__hero-overlay"></div>
+									<div class="tm-home-deal-card__hero">
+										<img src="{{ coverImage ? asset('uploads/covers/' ~ coverImage) : asset('images/img_par_defaut.png') }}" alt="{{ companyName }}" class="tm-home-deal-card__cover">
+										<div class="tm-home-deal-card__hero-overlay"></div>
 
-								<div class="tm-home-deal-card__hero-top">
-									<span class="tm-home-deal-card__badge tm-home-deal-card__badge--{{ promoLevel }}">
-										-{{ reduction|number_format(0, ',', ' ') }}%
-									</span>
+										<div class="tm-home-deal-card__hero-top">
+											<span class="tm-home-deal-card__badge tm-home-deal-card__badge--{{ promoLevel }}">
+												-{{ reduction|number_format(0, ',', ' ') }}%
+											</span>
 
-									{% if category and category.name is defined and category.name %}
-										<span class="tm-home-deal-card__category-chip">
-											{{ category.name }}
-										</span>
-									{% endif %}
-								</div>
-							</div>
+											{% if category and category.name is defined and category.name %}
+												<span class="tm-home-deal-card__category-chip">
+													{{ category.name }}
+												</span>
+											{% endif %}
+										</div>
+									</div>
 
-							<div class="tm-home-deal-card__body">
-								<div class="tm-home-deal-card__provider-row">
-									<span class="tm-home-deal-card__provider-avatar">
-										{{ companyName|slice(0, 1)|upper }}
-									</span>
-									<span class="tm-home-deal-card__provider-text">
-										{{ companyName }}
-									</span>
-								</div>
+									<div class="tm-home-deal-card__body">
+										<div class="tm-home-deal-card__provider-row">
+											<span class="tm-home-deal-card__provider-avatar">
+												{{ companyName|slice(0, 1)|upper }}
+											</span>
+											<span class="tm-home-deal-card__provider-text">
+												{{ companyName }}
+											</span>
+										</div>
 
-								<h3 class="tm-home-deal-card__title">
-									{{ prestationTitle }}
-								</h3>
+										<h3 class="tm-home-deal-card__title">
+											{{ prestationTitle }}
+										</h3>
 
-								<p class="tm-home-deal-card__description">
-									{{ prestationDescription }}
-								</p>
-
-								<div class="tm-home-deal-card__meta-wrap">
-									<p class="tm-home-deal-card__meta">
-										<i class="fa-solid fa-location-dot"></i>
-										{{ cityName }}
-									</p>
-
-									{% if prestataire and prestataire.averageRating is defined and prestataire.averageRating %}
-										<p class="tm-home-deal-card__rating">
-											<i class="fa-solid fa-star"></i>
-											{{ prestataire.averageRating|number_format(1, ',', ' ') }}/5
+										<p class="tm-home-deal-card__description">
+											{{ prestationDescription }}
 										</p>
-									{% endif %}
-								</div>
-							</div>
 
-							<div class="tm-home-deal-card__footer">
-								<div class="tm-home-deal-card__prices">
-									<span class="tm-home-deal-card__old-price">
-										{{ prixCatalogue|number_format(2, ',', ' ') }}
-										€
-									</span>
-									<span class="tm-home-deal-card__new-price">
-										{{ prixRemise|number_format(2, ',', ' ') }}
-										€
-									</span>
-								</div>
+										<div class="tm-home-deal-card__meta-wrap">
+											<p class="tm-home-deal-card__meta">
+												<i class="fa-solid fa-location-dot"></i>
+												{{ cityName }}
+											</p>
 
-								<a href="{{ ctaUrl }}" class="tm-home-deal-card__cta">
-									<span>{{ ctaLabel }}</span>
-									<i class="fa-solid fa-arrow-right"></i>
-								</a>
-							</div>
-						</article>
-					{% endfor %}
-				</div>
-			{% else %}
-				<div class="tm-home-deals-empty">
-					<div class="tm-home-deals-empty__icon">🏷️</div>
-					<h3 class="tm-home-deals-empty__title">Aucun bon plan pour le moment</h3>
-					<p class="tm-home-deals-empty__text">
-						Les offres promotionnelles apparaîtront ici dès qu'elles seront publiées.
-					</p>
-				</div>
-			{% endif %}
-		</section>
+											{% if prestataire and prestataire.averageRating is defined and prestataire.averageRating %}
+												<p class="tm-home-deal-card__rating">
+													<i class="fa-solid fa-star"></i>
+													{{ prestataire.averageRating|number_format(1, ',', ' ') }}/5
+												</p>
+											{% endif %}
+										</div>
+									</div>
 
-		{# STEPS #}
-		<div class="container my-5 py-5 px-4 tm-step-section" data-controller="scroll-reveal">
-			<div class="text-center mb-5" data-scroll-reveal-target="element">
-				<h2 class="tm-step-title h3">Votre projet commence ici</h2>
-				<div class="tm-step-divider"></div>
-				<p class="text-muted">6 étapes simples pour une collaboration réussie</p>
-			</div>
+									<div class="tm-home-deal-card__footer">
+										<div class="tm-home-deal-card__prices">
+											<span class="tm-home-deal-card__old-price">
+												{{ prixCatalogue|number_format(2, ',', ' ') }}
+												€
+											</span>
+											<span class="tm-home-deal-card__new-price">
+												{{ prixRemise|number_format(2, ',', ' ') }}
+												€
+											</span>
+										</div>
 
-			<div class="row g-4">
-				{% set steps = [
+										<a href="{{ ctaUrl }}" class="tm-home-deal-card__cta">
+											<span>{{ ctaLabel }}</span>
+											<i class="fa-solid fa-arrow-right"></i>
+										</a>
+									</div>
+								</article>
+							{% endfor %}
+						</div>
+					{% else %}
+						<div class="tm-home-deals-empty">
+							<div class="tm-home-deals-empty__icon">🏷️</div>
+							<h3 class="tm-home-deals-empty__title">Aucun bon plan pour le moment</h3>
+							<p class="tm-home-deals-empty__text">
+								Les offres promotionnelles apparaîtront ici dès qu'elles seront publiées.
+							</p>
+						</div>
+					{% endif %}
+				</section>
+
+				{# STEPS #}
+				<div class="container my-5 py-5 px-4 tm-step-section" data-controller="scroll-reveal">
+					<div class="text-center mb-5" data-scroll-reveal-target="element">
+						<h2 class="tm-step-title h3">Votre projet commence ici</h2>
+						<div class="tm-step-divider"></div>
+						<p class="text-muted">6 étapes simples pour une collaboration réussie</p>
+					</div>
+
+					<div class="row g-4">
+						{% set steps = [
             {icon: 'fa-magnifying-glass', label: '1. Recherchez', desc: 'Trouvez le pro idéal parmi nos experts.', bg: '#f0f4ff', color: '#061b56'},
             {icon: 'fa-user-plus', label: '2. Inscrivez-vous', desc: 'Créez votre compte en quelques secondes.', bg: '#eef2ff', color: '#4338ca'},
             {icon: 'fa-address-card', label: '3. Complétez', desc: 'Remplissez vos besoins sur mesure.', bg: '#fdf2f8', color: '#db2777'},
@@ -458,127 +538,127 @@
             {icon: 'fa-circle-check', label: '6. Réalisez', desc: 'Validez votre projet sereinement.', bg: '#fffbeb', color: '#d97706'},
         ] %}
 
-				{% for step in steps %}
-					<div class="col-md-4 col-lg-2" data-scroll-reveal-target="element">
-						<div class="tm-step-card">
-							<div class="tm-step-icon-wrapper" style="background: {{ step.bg }}; color: {{ step.color }};">
-								<i class="fa-solid {{ step.icon }}"></i>
+						{% for step in steps %}
+							<div class="col-md-4 col-lg-2" data-scroll-reveal-target="element">
+								<div class="tm-step-card">
+									<div class="tm-step-icon-wrapper" style="background: {{ step.bg }}; color: {{ step.color }};">
+										<i class="fa-solid {{ step.icon }}"></i>
+									</div>
+									<h6 class="tm-step-label">{{ step.label }}</h6>
+									<p class="tm-step-desc">{{ step.desc }}</p>
+								</div>
 							</div>
-							<h6 class="tm-step-label">{{ step.label }}</h6>
-							<p class="tm-step-desc">{{ step.desc }}</p>
+						{% endfor %}
+					</div>
+
+					<div class="text-center mt-4" data-scroll-reveal-target="element">
+						<a href="/register" class="btn btn-primary tm-step-btn">
+							Créer mon compte maintenant
+						</a>
+					</div>
+				</div>
+
+				{# FAQ #}
+				<div class="container tm-faq-section" data-controller="scroll-reveal">
+					<div class="row align-items-center">
+						<div class="col-lg-1 d-none d-lg-block tm-faq-icon-wrapper" data-scroll-reveal-target="element">
+							<i class="fa-solid fa-circle-question tm-faq-icon"></i>
+						</div>
+						<div class="col-lg-7" data-scroll-reveal-target="element">
+							<h3 class="tm-faq-title">Besoin d'aide pour bien démarrer ?</h3>
+							<p class="tm-faq-description">Notre équipe est là pour vous accompagner à chaque étape de votre projet.</p>
+						</div>
+						<div class="col-lg-4 mt-4 mt-lg-0 tm-faq-actions" data-scroll-reveal-target="element">
+							<a href="{{ path('app_static_page', {slug: 'aide-faq'}) }}" class="btn btn-outline-light px-4 py-2 me-2">
+								<i class="fa-solid fa-book-open me-2"></i>
+								FAQ
+							</a>
+							<a href="{{ path('app_static_page', {slug: 'help'}) }}" class="btn btn-light px-4 py-2 fw-bold text-primary">
+								<i class="fa-solid fa-envelope me-2"></i>
+								Support
+							</a>
 						</div>
 					</div>
-				{% endfor %}
-			</div>
-
-			<div class="text-center mt-4" data-scroll-reveal-target="element">
-				<a href="/register" class="btn btn-primary tm-step-btn">
-					Créer mon compte maintenant
-				</a>
-			</div>
-		</div>
-
-		{# FAQ #}
-		<div class="container tm-faq-section" data-controller="scroll-reveal">
-			<div class="row align-items-center">
-				<div class="col-lg-1 d-none d-lg-block tm-faq-icon-wrapper" data-scroll-reveal-target="element">
-					<i class="fa-solid fa-circle-question tm-faq-icon"></i>
 				</div>
-				<div class="col-lg-7" data-scroll-reveal-target="element">
-					<h3 class="tm-faq-title">Besoin d'aide pour bien démarrer ?</h3>
-					<p class="tm-faq-description">Notre équipe est là pour vous accompagner à chaque étape de votre projet.</p>
-				</div>
-				<div class="col-lg-4 mt-4 mt-lg-0 tm-faq-actions" data-scroll-reveal-target="element">
-					<a href="{{ path('app_static_page', {slug: 'aide-faq'}) }}" class="btn btn-outline-light px-4 py-2 me-2">
-						<i class="fa-solid fa-book-open me-2"></i>
-						FAQ
-					</a>
-					<a href="{{ path('app_static_page', {slug: 'help'}) }}" class="btn btn-light px-4 py-2 fw-bold text-primary">
-						<i class="fa-solid fa-envelope me-2"></i>
-						Support
-					</a>
-				</div>
-			</div>
-		</div>
 
-		{# SECTION AVIS CLIENTS (Ajoutée) #}
-		<div class="container my-5" data-controller="scroll-reveal">
-			<div class="text-center mb-5" data-scroll-reveal-target="element">
-				<h2 class="fw-extrabold h4 text-dark">Ce que nos utilisateurs pensent de nous</h2>
-				<p class="text-muted">Plus de 10 000 avis certifiés pour vous aider à choisir en toute sérénité.</p>
-			</div>
+				{# SECTION AVIS CLIENTS (Ajoutée) #}
+				<div class="container my-5" data-controller="scroll-reveal">
+					<div class="text-center mb-5" data-scroll-reveal-target="element">
+						<h2 class="fw-extrabold h4 text-dark">Ce que nos utilisateurs pensent de nous</h2>
+						<p class="text-muted">Plus de 10 000 avis certifiés pour vous aider à choisir en toute sérénité.</p>
+					</div>
 
-			<div class="row g-4">
-				{% for i in 1..3 %}
-					<div class="col-md-4" data-scroll-reveal-target="element">
-						<div class="card h-100 border-0 shadow-sm p-4 review-card">
-							<div class="d-flex align-items-center mb-3">
-								<img src="https://ui-avatars.com/api/?name=User+{{ i }}&background=random" class="rounded-circle reviewer-avatar me-3" alt="Utilisateur">
-								<div>
-									<h5 class="fw-bold fs-6 mb-0">Jean D.</h5>
-									<div class="text-tm-accent small">
-										<i class="fa-solid fa-star"></i>
-										<i class="fa-solid fa-star"></i>
-										<i class="fa-solid fa-star"></i>
-										<i class="fa-solid fa-star"></i>
-										<i class="fa-solid fa-star"></i>
+					<div class="row g-4">
+						{% for i in 1..3 %}
+							<div class="col-md-4" data-scroll-reveal-target="element">
+								<div class="card h-100 border-0 shadow-sm p-4 review-card">
+									<div class="d-flex align-items-center mb-3">
+										<img src="https://ui-avatars.com/api/?name=User+{{ i }}&background=random" class="rounded-circle reviewer-avatar me-3" alt="Utilisateur">
+										<div>
+											<h5 class="fw-bold fs-6 mb-0">Jean D.</h5>
+											<div class="text-tm-accent small">
+												<i class="fa-solid fa-star"></i>
+												<i class="fa-solid fa-star"></i>
+												<i class="fa-solid fa-star"></i>
+												<i class="fa-solid fa-star"></i>
+												<i class="fa-solid fa-star"></i>
+											</div>
+										</div>
+									</div>
+									<p class="text-muted small italic">"Une expérience exceptionnelle ! J'ai trouvé un plombier en moins de 30 minutes. Service rapide, efficace et très professionnel. Je recommande vivement !"</p>
+									<div class="mt-auto pt-3 border-top">
+										<span class="badge bg-light text-dark small">Prestation : Plomberie</span>
 									</div>
 								</div>
 							</div>
-							<p class="text-muted small italic">"Une expérience exceptionnelle ! J'ai trouvé un plombier en moins de 30 minutes. Service rapide, efficace et très professionnel. Je recommande vivement !"</p>
-							<div class="mt-auto pt-3 border-top">
-								<span class="badge bg-light text-dark small">Prestation : Plomberie</span>
+						{% endfor %}
+					</div>
+				</div>
+
+				{# 5. BANDEAU DES CARACTÉRISTIQUES DU BAS #}
+				<div class="bg-white border-top py-4 mb-4">
+					<div class="container">
+						<div class="row g-4 justify-content-center text-center text-md-start">
+							<div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
+								<div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
+									<i class="fa-solid fa-calendar-check fs-5"></i>
+								</div>
+								<div>
+									<span class="d-block fw-extrabold text-dark small lh-1 fs-13">Demande de devis gratuite</span>
+									<small class="text-muted fw-medium fs-11">Réponse rapide sous 48h</small>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
+								<div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
+									<i class="fa-solid fa-thumbs-up fs-5"></i>
+								</div>
+								<div>
+									<span class="d-block fw-extrabold text-dark small lh-1 fs-13">Aucun engagement</span>
+									<small class="text-muted fw-medium fs-11">Comparez et choisissez librement</small>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
+								<div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
+									<i class="fa-solid fa-lock fs-5"></i>
+								</div>
+								<div>
+									<span class="d-block fw-extrabold text-dark small lh-1 fs-13">Paiement sécurisé</span>
+									<small class="text-muted fw-medium fs-11">Transactions cryptées</small>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
+								<div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
+									<i class="fa-solid fa-headset fs-5"></i>
+								</div>
+								<div>
+									<span class="d-block fw-extrabold text-dark small lh-1 fs-13">Support 7j/7</span>
+									<small class="text-muted fw-medium fs-11">Une équipe à votre écoute</small>
+								</div>
 							</div>
 						</div>
 					</div>
-				{% endfor %}
-			</div>
-		</div>
-
-		{# 5. BANDEAU DES CARACTÉRISTIQUES DU BAS #}
-		<div class="bg-white border-top py-4 mb-4">
-			<div class="container">
-				<div class="row g-4 justify-content-center text-center text-md-start">
-					<div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
-						<div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
-							<i class="fa-solid fa-calendar-check fs-5"></i>
-						</div>
-						<div>
-							<span class="d-block fw-extrabold text-dark small lh-1 fs-13">Demande de devis gratuite</span>
-							<small class="text-muted fw-medium fs-11">Réponse rapide sous 48h</small>
-						</div>
-					</div>
-					<div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
-						<div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
-							<i class="fa-solid fa-thumbs-up fs-5"></i>
-						</div>
-						<div>
-							<span class="d-block fw-extrabold text-dark small lh-1 fs-13">Aucun engagement</span>
-							<small class="text-muted fw-medium fs-11">Comparez et choisissez librement</small>
-						</div>
-					</div>
-					<div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
-						<div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
-							<i class="fa-solid fa-lock fs-5"></i>
-						</div>
-						<div>
-							<span class="d-block fw-extrabold text-dark small lh-1 fs-13">Paiement sécurisé</span>
-							<small class="text-muted fw-medium fs-11">Transactions cryptées</small>
-						</div>
-					</div>
-					<div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
-						<div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
-							<i class="fa-solid fa-headset fs-5"></i>
-						</div>
-						<div>
-							<span class="d-block fw-extrabold text-dark small lh-1 fs-13">Support 7j/7</span>
-							<small class="text-muted fw-medium fs-11">Une équipe à votre écoute</small>
-						</div>
-					</div>
 				</div>
+
 			</div>
-		</div>
 
-	</div>
-
-{% endblock %}
+		{% endblock %}
