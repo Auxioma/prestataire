@@ -2,133 +2,167 @@
 
 {% block title %}Mes demandes de devis{% endblock %}
 
-{% block body %}
-    <div class="tm-quote-index-page">
-        <div class="container py-4 py-lg-5">
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/client-quote-requests.css') }}">
+{% endblock %}
 
-            <a href="{{ path('app_client_settings') }}" class="tm-quote-index-backlink">
-                <i class="fa-solid fa-arrow-left"></i>
+{% block body %}
+    <section class="c-client-quotes-page">
+        <div class="c-client-quotes-page__container">
+            <a href="{{ path('app_client_settings') }}" class="c-client-quotes-backlink">
+                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
                 <span>Retour aux paramètres</span>
             </a>
 
-            <section class="tm-quote-index-hero">
-                <div class="tm-quote-index-hero__content">
-                    <span class="tm-quote-index-hero__eyebrow">Espace client</span>
-                    <h1 class="tm-quote-index-hero__title">Mes demandes de devis</h1>
-                    <p class="tm-quote-index-hero__subtitle">
-                        Suivez l’ensemble de vos demandes envoyées, consultez leur statut et retrouvez rapidement les informations importantes pour chaque projet.
+            <header class="c-client-quotes-hero">
+                <div class="c-client-quotes-hero__glow" aria-hidden="true"></div>
+
+                <div class="c-client-quotes-hero__content">
+                    <span class="c-client-quotes-hero__eyebrow">Espace client</span>
+                    <h1 class="c-client-quotes-hero__title">Mes demandes de devis</h1>
+                    <p class="c-client-quotes-hero__subtitle">
+                        Suivez vos demandes, repérez rapidement leur statut et retrouvez les informations clés de chaque projet en un coup d’œil.
                     </p>
                 </div>
-            </section>
+
+                {% if quoteRequests is not empty %}
+                    <div class="c-client-quotes-hero__stats">
+                        <div class="c-client-quotes-stat">
+                            <span class="c-client-quotes-stat__label">Demandes</span>
+                            <strong class="c-client-quotes-stat__value">
+                                {{ quoteRequests.getTotalItemCount }}
+                            </strong>
+                        </div>
+                    </div>
+                {% endif %}
+            </header>
 
             {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
                 {% for message in messages %}
-                    <div class="alert alert-{{ type }} alert-dismissible fade show tm-quote-index-alert" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    <div class="c-client-quotes-alert c-client-quotes-alert--{{ type }}">
+                        <div class="c-client-quotes-alert__body">{{ message }}</div>
+                        <button type="button" class="c-client-quotes-alert__close btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
                     </div>
                 {% endfor %}
             {% endfor %}
 
-            <section class="tm-quote-index-panel">
+            <section class="c-client-quotes-panel">
                 {% if quoteRequests is not empty %}
-                    <div class="tm-quote-index-panel__head">
-                        <div>
-                            <h2 class="tm-quote-index-panel__title">Demandes enregistrées</h2>
-                            <p class="tm-quote-index-panel__subtitle mb-0">
-                                Retrouvez ici toutes vos demandes et leur état d’avancement.
+                    <div class="c-client-quotes-panel__head">
+                        <div class="c-client-quotes-panel__intro">
+                            <span class="c-client-quotes-panel__eyebrow">Suivi de vos projets</span>
+                            <h2 class="c-client-quotes-panel__title">Demandes enregistrées</h2>
+                            <p class="c-client-quotes-panel__subtitle">
+                                Consultez l’avancement, la date souhaitée et le budget de chaque demande.
                             </p>
                         </div>
 
-                        <div class="tm-quote-index-panel__count">
+                        <div class="c-client-quotes-panel__count">
                             {{ quoteRequests.getTotalItemCount }}
                             demande{{ quoteRequests.getTotalItemCount > 1 ? 's' : '' }}
                         </div>
                     </div>
 
-                    <div class="tm-quote-index-list">
+                    <div class="c-client-quotes-list">
                         {% for quoteRequest in quoteRequests %}
-                            <article class="tm-quote-index-item">
-                                <div class="tm-quote-index-item__main">
-                                    <div class="tm-quote-index-item__top">
-                                        <h3 class="tm-quote-index-item__title">
-                                            {{ quoteRequest.title }}
-                                        </h3>
+                            <article class="c-client-quotes-card">
+                                <div class="c-client-quotes-card__accent" aria-hidden="true"></div>
 
-                                        <span class="tm-quote-index-status tm-quote-index-status--{{ quoteRequest.status.getBadgeClass() }}">
+                                <div class="c-client-quotes-card__main">
+                                    <div class="c-client-quotes-card__top">
+                                        <div class="c-client-quotes-card__heading">
+                                            <h3 class="c-client-quotes-card__title">
+                                                {{ quoteRequest.title }}
+                                            </h3>
+
+                                            <span class="c-client-quotes-card__date">
+                                                Créée le
+                                                {{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y à H:i') : '—' }}
+                                            </span>
+                                        </div>
+
+                                        <span class="c-client-quotes-status c-client-quotes-status--{{ quoteRequest.status.getBadgeClass() }}">
                                             {{ quoteRequest.status.getLabel() }}
                                         </span>
                                     </div>
 
-                                    <p class="tm-quote-index-item__desc mb-0">
+                                    <p class="c-client-quotes-card__desc">
                                         {{ quoteRequest.description ? quoteRequest.description|slice(0, 180) ~ (quoteRequest.description|length > 180 ? '…' : '') : 'Aucune description fournie.' }}
                                     </p>
 
-                                    <div class="tm-quote-index-item__meta">
-                                        <div class="tm-quote-index-meta">
-                                            <span class="tm-quote-index-meta__label">Date souhaitée</span>
-                                            <strong class="tm-quote-index-meta__value">
+                                    <div class="c-client-quotes-card__meta">
+                                        <div class="c-client-quotes-meta">
+                                            <span class="c-client-quotes-meta__label">Date souhaitée</span>
+                                            <strong class="c-client-quotes-meta__value">
                                                 {{ quoteRequest.desiredDate ? quoteRequest.desiredDate|date('d/m/Y') : 'Non renseignée' }}
                                             </strong>
                                         </div>
 
-                                        <div class="tm-quote-index-meta">
-                                            <span class="tm-quote-index-meta__label">Budget</span>
-                                            <strong class="tm-quote-index-meta__value">
+                                        <div class="c-client-quotes-meta">
+                                            <span class="c-client-quotes-meta__label">Budget</span>
+                                            <strong class="c-client-quotes-meta__value">
                                                 {{ quoteRequest.budgetAmount is not null ? quoteRequest.budgetAmount|number_format(2, ',', ' ') ~ ' €' : 'Non renseigné' }}
                                             </strong>
                                         </div>
 
-                                        <div class="tm-quote-index-meta">
-                                            <span class="tm-quote-index-meta__label">Créée le</span>
-                                            <strong class="tm-quote-index-meta__value">
-                                                {{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y à H:i') : '—' }}
+                                        <div class="c-client-quotes-meta">
+                                            <span class="c-client-quotes-meta__label">Statut</span>
+                                            <strong class="c-client-quotes-meta__value">
+                                                {{ quoteRequest.status.getLabel() }}
                                             </strong>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="tm-quote-index-item__aside">
-                                    <div class="d-grid gap-2 w-100">
-                                        <a href="{{ path('app_quote_request_show', { slug: quoteRequest.slug }) }}" class="btn tm-quote-index-btn tm-quote-index-btn--primary w-100">
-                                            Voir ma demande
-                                        </a>
+                                <aside class="c-client-quotes-card__aside">
+                                    <a
+                                        href="{{ path('app_quote_request_show', { slug: quoteRequest.slug }) }}"
+                                        class="c-client-quotes-btn c-client-quotes-btn--primary"
+                                    >
+                                        Voir ma demande
+                                    </a>
 
-                                        {% if quoteRequest.canBeDeleted %}
-                                            <form method="post" action="{{ path('app_quote_request_delete', { slug: quoteRequest.slug }) }}" onsubmit="return confirm('Supprimer cette demande de devis ?');" class="w-100">
-                                                <input type="hidden" name="_token" value="{{ csrf_token('delete-quote-request-' ~ quoteRequest.id) }}">
-                                                <button type="submit" class="btn btn-outline-danger w-100">
-                                                    Supprimer la demande
-                                                </button>
-                                            </form>
-                                        {% else %}
-                                            <span class="btn btn-outline-secondary disabled w-100">
-                                                À archiver plus tard
-                                            </span>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                                    {% if quoteRequest.canBeDeleted %}
+                                        <form
+                                            method="post"
+                                            action="{{ path('app_quote_request_delete', { slug: quoteRequest.slug }) }}"
+                                            onsubmit="return confirm('Supprimer cette demande de devis ?');"
+                                            class="c-client-quotes-card__form"
+                                        >
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete-quote-request-' ~ quoteRequest.id) }}">
+                                            <button type="submit" class="c-client-quotes-btn c-client-quotes-btn--danger">
+                                                Supprimer la demande
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <span class="c-client-quotes-btn c-client-quotes-btn--disabled">
+                                            À archiver plus tard
+                                        </span>
+                                    {% endif %}
+                                </aside>
                             </article>
                         {% endfor %}
                     </div>
                 {% else %}
-                    <div class="tm-quote-index-empty">
-                        <div class="tm-quote-index-empty__icon">
-                            <i class="fa-regular fa-file-lines"></i>
+                    <div class="c-client-quotes-empty">
+                        <div class="c-client-quotes-empty__icon">
+                            <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
                         </div>
-                        <h2 class="tm-quote-index-empty__title">Aucune demande enregistrée</h2>
-                        <p class="tm-quote-index-empty__text">
+                        <span class="c-client-quotes-empty__eyebrow">Prêt à démarrer</span>
+                        <h2 class="c-client-quotes-empty__title">Aucune demande enregistrée</h2>
+                        <p class="c-client-quotes-empty__text">
                             Vos futures demandes de devis apparaîtront ici avec leur statut, leur budget et leur suivi détaillé.
                         </p>
                     </div>
                 {% endif %}
 
                 {% if quoteRequests is not empty %}
-                    <div class="mt-4 d-flex justify-content-center">
+                    <div class="c-client-quotes-pagination">
                         {{ knp_pagination_render(quoteRequests) }}
                     </div>
                 {% endif %}
             </section>
         </div>
-    </div>
+    </section>
 {% endblock %}

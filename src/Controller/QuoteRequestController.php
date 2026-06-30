@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Conversation;
 use App\Entity\Message;
-use App\Entity\MessageAttachment;
 use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
 use App\Entity\QuoteRequest;
@@ -55,7 +54,7 @@ final class QuoteRequestController extends AbstractController
         $quoteRequests = $paginator->paginate(
             $queryBuilder,
             $request->query->getInt('page', 1),
-            3
+            8
         );
 
         return $this->render('quote_request/index.html.twig', [

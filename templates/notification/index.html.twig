@@ -1,98 +1,127 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Notifications - TrouveMoi
+{% block title %}Notifications - TrouveMoi{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/notifications-premium.css') }}">
 {% endblock %}
 
 {% block body %}
-	<div class="container py-4">
-		<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-			<div>
-				<h1 class="h3 mb-1">Notifications</h1>
-				<p class="text-muted mb-0">
-					{{ unreadCount }}
-					non lue{{ unreadCount > 1 ? 's' : '' }}
-				</p>
-			</div>
+    <section class="c-notifications-page">
+        <div class="c-notifications-page__container">
+            <header class="c-notifications-hero">
+                <div class="c-notifications-hero__glow" aria-hidden="true"></div>
 
-			<div class="d-flex flex-wrap gap-2">
-				{% if unreadCount > 0 %}
-					<form method="post" action="{{ path('app_notification_mark_all_read') }}">
-						<input type="hidden" name="_token" value="{{ csrf_token('mark-all-notifications-read') }}">
-						<button type="submit" class="btn btn-primary">
-							Tout marquer comme lu
-						</button>
-					</form>
-				{% endif %}
+                <div class="c-notifications-hero__content">
+                    <span class="c-notifications-hero__eyebrow">Centre de notifications</span>
+                    <h1 class="c-notifications-hero__title">Notifications</h1>
+                    <p class="c-notifications-hero__subtitle">
+                        {{ unreadCount }}
+                        non lue{{ unreadCount > 1 ? 's' : '' }}
+                    </p>
+                </div>
 
-				{% if notifications is not empty %}
-					<form method="post" action="{{ path('app_notification_delete_all') }}" onsubmit="return confirm('Supprimer toutes les notifications ?');">
-						<input type="hidden" name="_token" value="{{ csrf_token('delete-all-notifications') }}">
-						<button type="submit" class="btn btn-outline-danger">
-							Tout supprimer
-						</button>
-					</form>
-				{% endif %}
-			</div>
-		</div>
+                <div class="c-notifications-hero__actions">
+                    {% if unreadCount > 0 %}
+                        <form method="post" action="{{ path('app_notification_mark_all_read') }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('mark-all-notifications-read') }}">
+                            <button type="submit" class="c-notifications-btn c-notifications-btn--accent">
+                                Tout marquer comme lu
+                            </button>
+                        </form>
+                    {% endif %}
 
-		<div class="card shadow-sm border-0">
-			<div class="list-group list-group-flush">
-				{% for notification in notifications %}
-					<div class="list-group-item py-3 {{ not notification.isRead ? 'bg-primary bg-opacity-10' : '' }}">
-						<div class="d-flex justify-content-between align-items-start gap-3">
-							<div class="grow">
-								<div class="d-flex align-items-center gap-2 mb-1">
-									<strong>{{ notification.title }}</strong>
+                    {% if notifications is not empty %}
+                        <form
+                            method="post"
+                            action="{{ path('app_notification_delete_all') }}"
+                            onsubmit="return confirm('Supprimer toutes les notifications ?');"
+                        >
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete-all-notifications') }}">
+                            <button type="submit" class="c-notifications-btn c-notifications-btn--ghost-light">
+                                Tout supprimer
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </header>
 
-									{% if not notification.isRead %}
-										<span class="badge text-bg-primary">Nouveau</span>
-									{% endif %}
-								</div>
+            <div class="c-notifications-panel">
+                {% for notification in notifications %}
+                    <article class="c-notification-card {{ not notification.isRead ? 'is-unread' : 'is-read' }}">
+                        <div class="c-notification-card__accent" aria-hidden="true"></div>
 
-								<p class="mb-2 text-muted">{{ notification.body }}</p>
+                        <div class="c-notification-card__main">
+                            <div class="c-notification-card__meta">
+                                <span class="c-notification-card__dot" aria-hidden="true"></span>
 
-								<div class="small text-muted">
-									{{ notification.createdAt|date('d/m/Y H:i') }}
-								</div>
-							</div>
+                                <div class="c-notification-card__head">
+                                    <div class="c-notification-card__title-row">
+                                        <h2 class="c-notification-card__title">{{ notification.title }}</h2>
 
-							<div class="d-flex flex-column gap-2 align-items-end">
-								{% if notification.targetUrl %}
-									<a href="{{ notification.targetUrl }}" class="btn btn-sm btn-outline-secondary">
-										Ouvrir
-									</a>
-								{% endif %}
+                                        {% if not notification.isRead %}
+                                            <span class="c-notification-card__badge">Nouveau</span>
+                                        {% endif %}
+                                    </div>
 
-								{% if not notification.isRead %}
-									<form method="post" action="{{ path('app_notification_mark_read', {id: notification.id}) }}">
-										<input type="hidden" name="_token" value="{{ csrf_token('mark-notification-read-' ~ notification.id) }}">
-										<button type="submit" class="btn btn-sm btn-primary">
-											Marquer comme lu
-										</button>
-									</form>
-								{% endif %}
+                                    <time class="c-notification-card__date">
+                                        {{ notification.createdAt|date('d/m/Y H:i') }}
+                                    </time>
+                                </div>
+                            </div>
 
-								<form method="post" action="{{ path('app_notification_delete', {id: notification.id}) }}" onsubmit="return confirm('Supprimer cette notification ?');">
-									<input type="hidden" name="_token" value="{{ csrf_token('delete-notification-' ~ notification.id) }}">
-									<button type="submit" class="btn btn-sm btn-outline-danger">
-										Supprimer
-									</button>
-								</form>
-							</div>
-						</div>
-					</div>
-				{% else %}
-					<div class="list-group-item py-5 text-center text-muted">
-						Aucune notification pour le moment.
-					</div>
-				{% endfor %}
+                            <p class="c-notification-card__body">
+                                {{ notification.body }}
+                            </p>
+                        </div>
 
-			</div>
-		</div>
-		{% if notifications is not empty %}
-			<div class="mt-4 d-flex justify-content-center">
-				{{ knp_pagination_render(notifications) }}
-			</div>
-		{% endif %}
-	</div>
+                        <div class="c-notification-card__actions">
+                            {% if notification.targetUrl %}
+                                <a href="{{ notification.targetUrl }}" class="c-notifications-btn c-notifications-btn--secondary">
+                                    Ouvrir
+                                </a>
+                            {% endif %}
+
+                            {% if not notification.isRead %}
+                                <form method="post" action="{{ path('app_notification_mark_read', {id: notification.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('mark-notification-read-' ~ notification.id) }}">
+                                    <button type="submit" class="c-notifications-btn c-notifications-btn--primary">
+                                        Marquer comme lu
+                                    </button>
+                                </form>
+                            {% endif %}
+
+                            <form
+                                method="post"
+                                action="{{ path('app_notification_delete', {id: notification.id}) }}"
+                                onsubmit="return confirm('Supprimer cette notification ?');"
+                            >
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete-notification-' ~ notification.id) }}">
+                                <button type="submit" class="c-notifications-btn c-notifications-btn--danger-ghost">
+                                    Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </article>
+                {% else %}
+                    <div class="c-notifications-empty">
+                        <div class="c-notifications-empty__inner">
+                            <span class="c-notifications-empty__eyebrow">Boîte propre</span>
+                            <h2 class="c-notifications-empty__title">Aucune notification pour le moment</h2>
+                            <p class="c-notifications-empty__text">
+                                Les nouvelles activités, messages et mises à jour importantes apparaîtront ici.
+                            </p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if notifications|length > 0 %}
+                <div class="c-notifications-pagination">
+                    {{ knp_pagination_render(notifications) }}
+                </div>
+            {% endif %}
+        </div>
+    </section>
 {% endblock %}
