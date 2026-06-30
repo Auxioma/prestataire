@@ -1,577 +1,577 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-	{{ quoteRequest.title }}
+    {{ quoteRequest.title }}
 {% endblock %}
 
 {% block body %}
-	<div class="tm-client-quotes-page">
-		<div class="container py-4 py-lg-5">
-			{% set statusValue = quoteRequest.status.value %}
-
-			{% set timelineSteps = [
-            {
-                key: 'submitted',
-                label: 'Demande envoyée',
-                text: 'Votre demande a bien été enregistrée sur la plateforme.'
-            },
-            {
-                key: 'accepted',
-                label: 'Étude acceptée',
-                text: 'Le prestataire a accepté d’étudier votre besoin.'
-            },
-            {
-                key: 'answered',
-                label: 'Réponse reçue',
-                text: 'Une réponse ou un devis a été transmis.'
-            },
-            {
-                key: 'closed',
-                label: 'Demande clôturée',
-                text: 'Le suivi de cette demande est terminé.'
-            }
-        ] %}
-
-			{% set timelineIndexMap = {
-            submitted: 1,
-            accepted: 2,
-            answered: 3,
-            closed: 4,
-            denied: 2,
-            cancelled: 1
-        } %}
-
-			{% set currentTimelineIndex = attribute(timelineIndexMap, statusValue)|default(1) %}
-
-			<section class="tm-client-quotes-hero">
-				<div class="tm-client-quotes-hero__content">
-					<a href="{{ path('app_quote_request_index') }}" class="tm-client-quotes-backlink">
-						<i class="fa-solid fa-arrow-left"></i>
-						<span>Retour à mes demandes</span>
-					</a>
-
-					<span class="tm-client-quotes-eyebrow">Demande de devis</span>
-
-					<h1 class="tm-client-quotes-title tm-client-quotes-title--wide">{{ quoteRequest.title }}</h1>
-
-					<p class="tm-client-quotes-subtitle">
-						Suivez l’avancement de votre demande, consultez les informations transmises au prestataire et échangez directement depuis cette page lorsque la conversation est ouverte.
-					</p>
-
-					<div class="tm-client-quotes-hero__meta">
-						<article class="tm-client-quotes-hero-metric">
-							<span class="tm-client-quotes-hero-metric__label">Prestataire</span>
-							<strong class="tm-client-quotes-hero-metric__value">
-								{{ quoteRequest.prestataire.companyName ?? 'Non renseigné' }}
-							</strong>
-						</article>
-
-						<article class="tm-client-quotes-hero-metric">
-							<span class="tm-client-quotes-hero-metric__label">Service</span>
-							<strong class="tm-client-quotes-hero-metric__value">
-								{{ quoteRequest.prestation.service.name ?? quoteRequest.prestation.title ?? 'Non renseigné' }}
-							</strong>
-						</article>
-
-						<article class="tm-client-quotes-hero-metric">
-							<span class="tm-client-quotes-hero-metric__label">Dernière activité</span>
-							<strong class="tm-client-quotes-hero-metric__value">
-								{{ quoteRequest.updatedAt ? quoteRequest.updatedAt|date('d/m/Y à H:i') : (quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y à H:i') : '—') }}
-							</strong>
-						</article>
-					</div>
-				</div>
-			</section>
-
-			{% for type, messagesFlash in app.flashes(['success', 'danger', 'warning', 'info']) %}
-				{% for messageFlash in messagesFlash %}
-					<div class="alert alert-{{ type }} alert-dismissible fade show mb-4" role="alert">
-						{{ messageFlash }}
-						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-					</div>
-				{% endfor %}
-			{% endfor %}
-
-			<div class="row g-4">
-				<div class="col-xl-8">
-					<section class="tm-client-quotes-detailcard mb-4">
-						<div class="card-body">
-							<div class="tm-client-quotes-section-head">
-								<h2 class="tm-client-quotes-section-title">Description du besoin</h2>
-								<p class="tm-client-quotes-section-text mb-0">
-									Le besoin formulé lors de la création de votre demande.
-								</p>
-							</div>
-
-							<div class="tm-client-quotes-description">
-								{{ quoteRequest.description ?: 'Aucune description fournie.' }}
-							</div>
-						</div>
-					</section>
-
-					<section class="tm-client-quotes-detailcard mb-4">
-						<div class="card-body">
-							<div class="tm-client-quotes-section-head">
-								<h2 class="tm-client-quotes-section-title">Détails de la demande</h2>
-								<p class="tm-client-quotes-section-text mb-0">
-									Les informations principales liées à cette demande.
-								</p>
-							</div>
-
-							<div class="tm-client-quotes-infos-grid">
-								<article class="tm-client-quotes-info">
-									<span class="tm-client-quotes-info__label">Prestataire</span>
-									<strong class="tm-client-quotes-info__value">
-										{{ quoteRequest.prestataire.companyName ?? 'Non renseigné' }}
-									</strong>
-								</article>
-
-								<article class="tm-client-quotes-info">
-									<span class="tm-client-quotes-info__label">Service sélectionné</span>
-									<strong class="tm-client-quotes-info__value">
-										{{ quoteRequest.prestation.service.name ?? quoteRequest.prestation.title ?? 'Non renseigné' }}
-									</strong>
-								</article>
-
-								<article class="tm-client-quotes-info">
-									<span class="tm-client-quotes-info__label">Date souhaitée</span>
-									<strong class="tm-client-quotes-info__value">
-										{{ quoteRequest.desiredDate ? quoteRequest.desiredDate|date('d/m/Y') : 'Non renseignée' }}
-									</strong>
-								</article>
-
-								<article class="tm-client-quotes-info">
-									<span class="tm-client-quotes-info__label">Budget estimé</span>
-									<strong class="tm-client-quotes-info__value">
-										{{ quoteRequest.budgetAmount is not null ? quoteRequest.budgetAmount|number_format(2, ',', ' ') ~ ' €' : 'Non renseigné' }}
-									</strong>
-								</article>
-
-								<article class="tm-client-quotes-info">
-									<span class="tm-client-quotes-info__label">Date d’envoi</span>
-									<strong class="tm-client-quotes-info__value">
-										{{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y à H:i') : '—' }}
-									</strong>
-								</article>
-
-								<article class="tm-client-quotes-info">
-									<span class="tm-client-quotes-info__label">Dernière mise à jour</span>
-									<strong class="tm-client-quotes-info__value">
-										{{ quoteRequest.updatedAt ? quoteRequest.updatedAt|date('d/m/Y à H:i') : '—' }}
-									</strong>
-								</article>
-							</div>
-						</div>
-					</section>
-
-					<section class="tm-client-quotes-detailcard mb-4">
-						<div class="card-body">
-							<div class="tm-client-quotes-section-head">
-								<h2 class="tm-client-quotes-section-title">Réponse du prestataire</h2>
-								<p class="tm-client-quotes-section-text mb-0">
-									Cette zone accueille le retour, les précisions ou le devis transmis par le prestataire.
-								</p>
-							</div>
-
-							{% if quoteResponses is defined and quoteResponses is not empty %}
-								<div class="tm-client-quotes-responses-list">
-									{% for quoteResponse in quoteResponses %}
-										<article class="tm-client-quotes-response-card">
-											<div class="tm-client-quotes-response-card__top">
-												<div>
-													<h3 class="tm-client-quotes-response-card__title">
-														Réponse du
-														{{ quoteResponse.createdAt ? quoteResponse.createdAt|date('d/m/Y') : 'prestataire' }}
-													</h3>
-													<p class="tm-client-quotes-response-card__meta mb-0">
-														Reçue le
-														{{ quoteResponse.createdAt ? quoteResponse.createdAt|date('d/m/Y à H:i') : '—' }}
-													</p>
-												</div>
-											</div>
-
-											<div class="tm-client-quotes-response-card__body">
-												{% if quoteResponse.amount is defined and quoteResponse.amount is not null %}
-													<p class="tm-client-quotes-response-card__price">
-														{{ quoteResponse.amount|number_format(2, ',', ' ') }}
-														€
-													</p>
-												{% endif %}
-
-												<p class="tm-client-quotes-response-card__text mb-0">
-													{{ quoteResponse.message ?? 'Une réponse a été déposée par le prestataire.' }}
-												</p>
-											</div>
-										</article>
-									{% endfor %}
-								</div>
-							{% else %}
-								<div class="tm-client-quotes-empty-state">
-									<div class="tm-client-quotes-empty-state__icon">
-										<i class="fa-regular fa-file-lines"></i>
-									</div>
-									<div class="tm-client-quotes-empty-state__content">
-										<h3 class="tm-client-quotes-empty-state__title">Aucune réponse reçue pour le moment</h3>
-										<p class="tm-client-quotes-empty-state__text mb-0">
-											Dès qu’un devis ou une réponse sera transmis, il apparaîtra ici.
-										</p>
-									</div>
-								</div>
-							{% endif %}
-						</div>
-					</section>
-
-					{# Conversation Messagerie #}
-					<section id="quote-conversation" class="tm-client-quotes-detailcard tm-client-quotes-detailcard--conversation" {{ stimulus_controller('realtime-conversation', { url: 'http://localhost:3001', conversationId: conversation ? conversation.id : 0, eventName: 'message_created', joinEventName: 'join_conversation', streamSelector: '.tm-client-quotes-messages--scroll', bodySelector: '.tm-client-quotes-conversation-body', emptySelector: '.tm-client-quotes-empty-state', currentUserType: 'client', layout: 'client', scrollPageToSelf: true } ) }}>
-						<div class="card-body">
-							<div class="tm-client-quotes-conversation-body">
-								<div class="tm-client-quotes-section-head tm-client-quotes-section-head--conversation">
-									<div>
-										<h2 class="tm-client-quotes-section-title">Messagerie liée</h2>
-										<p class="tm-client-quotes-section-text mb-0">
-											La conversation associée à cette demande pour échanger avec le prestataire.
-										</p>
-									</div>
-
-									<div class="tm-client-quotes-conversation-head-actions">
-										{% if conversation is defined and conversation and hasConversationPhotos %}
-											<a href="{{ path('app_quote_request_photos', { slug: quoteRequest.slug }) }}" class="c-conversation-media-access-btn">
-												Accès photos conversation
-											</a>
-										{% endif %}
-
-										{% if messages is defined and messages is not empty %}
-											<span class="tm-client-quotes-conversation-count">
-												{{ messages|length }}
-												message{{ messages|length > 1 ? 's' : '' }}
-											</span>
-										{% endif %}
-									</div>
-								</div>
-
-								{% if conversation is defined and conversation %}
-									{% if messages is defined and messages is not empty %}
-										<div class="tm-client-quotes-messages tm-client-quotes-messages--scroll">
-											{% for message in messages %}
-												{% set isSystemMessage = message.type is defined and message.type and message.type.value == 'system' %}
-												{% set isClientMessage = not isSystemMessage and message.author is defined and message.author and app.user and message.author.id == app.user.id %}
-												{% set authorLabel = isSystemMessage
-                                ? 'Système'
-                                : (isClientMessage ? 'Vous' : (quoteRequest.prestataire.companyName ?? 'Prestataire'))
-                            %}
-
-												<article class="tm-client-quotes-message
-														                                {% if isSystemMessage %}
-														                                    tm-client-quotes-message--system
-														                                {% elseif isClientMessage %}
-														                                    tm-client-quotes-message--outgoing
-														                                {% else %}
-														                                    tm-client-quotes-message--incoming
-														                                {% endif %}
-														                            ">
-													<div class="tm-client-quotes-message__meta">
-														<strong>{{ authorLabel }}</strong>
-														<span>{{ message.createdAt ? message.createdAt|date('d/m/Y H:i') : '—' }}</span>
-													</div>
-
-													{% if (message.content ?? '') is not empty %}
-														<div class="tm-client-quotes-message__content">
-															{{ message.content|nl2br }}
-														</div>
-													{% endif %}
-
-													{% if message.attachments is defined and message.attachments is not empty %}
-														<div class="tm-client-quotes-message__attachments">
-															{% for attachment in message.attachments %}
-																{% if attachment.fileName %}
-																	<a href="{{ asset('uploads/messages/' ~ attachment.fileName) }}" target="_blank" rel="noopener noreferrer" class="tm-client-quotes-message__attachment">
-																		<img src="{{ asset('uploads/messages/' ~ attachment.fileName) }}" alt="{{ attachment.originalName ?: 'Photo jointe' }}" loading="lazy">
-																	</a>
-																{% endif %}
-															{% endfor %}
-														</div>
-													{% endif %}
-												</article>
-											{% endfor %}
-										</div>
-									{% else %}
-										<div class="tm-client-quotes-empty-state">
-											<div class="tm-client-quotes-empty-state__icon">
-												<i class="fa-regular fa-comments"></i>
-											</div>
-											<div class="tm-client-quotes-empty-state__content">
-												<h3 class="tm-client-quotes-empty-state__title">Conversation ouverte</h3>
-												<p class="tm-client-quotes-empty-state__text mb-0">
-													Le prestataire a accepté votre demande. Vous pouvez maintenant démarrer l’échange.
-												</p>
-											</div>
-										</div>
-									{% endif %}
-
-									{% if messageForm is defined and messageForm %}
-										<div id="quote-message-form" class="tm-client-quotes-message-composer">
-											<div class="tm-client-quotes-message-composer__header">
-												<div>
-													<h3 class="tm-client-quotes-message-composer__title">
-														{% if messages is defined and messages is not empty %}
-															Répondre à la conversation
-														{% else %}
-															Envoyer le premier message
-														{% endif %}
-													</h3>
-													<p class="tm-client-quotes-message-composer__text mb-0">
-														{% if messages is defined and messages is not empty %}
-															Ajoutez une précision, une question ou une information utile pour le prestataire.
-														{% else %}
-															Ouvrez la discussion pour apporter un complément ou poser votre première question.
-														{% endif %}
-													</p>
-												</div>
-											</div>
-
-											{{ form_start(messageForm, {
-                            attr: {
-                                class: 'tm-client-quotes-message-composer__form',
-                                'data-turbo': 'false'
-                            }
-                        }) }}
-
-											<div class="tm-client-quotes-message-composer__field">
-												{{ form_label(messageForm.content, 'Votre message', {
-                                label_attr: { class: 'tm-client-quotes-message-composer__label' }
-                            }) }}
-
-												{{ form_widget(messageForm.content, {
-                                attr: {
-                                    class: 'tm-client-quotes-message-composer__textarea' ~ (messageForm.content.vars.errors|length > 0 ? ' is-invalid' : ''),
-                                    placeholder: messages is defined and messages is not empty
-                                        ? 'Décrivez votre question ou ajoutez une précision utile…'
-                                        : 'Bonjour, je souhaite vous apporter une précision sur ma demande…',
-                                    rows: 6
-                                }
-                            }) }}
-
-												{% if messageForm.content.vars.errors|length > 0 %}
-													<div class="invalid-feedback d-block tm-client-quotes-message-composer__error">
-														{{ form_errors(messageForm.content) }}
-													</div>
-												{% endif %}
-											</div>
-
-											<div class="tm-client-quotes-message-composer__field">
-												<label class="tm-client-quotes-message-composer__label" for="{{ messageForm.attachments.vars.id }}">
-													Photos
-												</label>
-
-												{{ form_widget(messageForm.attachments, {
-                                attr: {
-                                    class: 'form-control' ~ (messageForm.attachments.vars.errors|length > 0 ? ' is-invalid' : ''),
-                                    accept: 'image/jpeg,image/png,image/webp',
-                                    multiple: 'multiple'
-                                }
-                            }) }}
-
-												<div class="form-text">
-													Vous pouvez sélectionner jusqu’à 5 photos.
-												</div>
-
-												{% if messageForm.attachments.vars.errors|length > 0 %}
-													<div class="invalid-feedback d-block tm-client-quotes-message-composer__error">
-														{{ form_errors(messageForm.attachments) }}
-													</div>
-												{% endif %}
-											</div>
-
-											<div class="tm-client-quotes-message-composer__footer">
-												<p class="tm-client-quotes-message-composer__hint mb-0">
-													Vous pouvez envoyer un texte, des photos, ou les deux.
-												</p>
-
-												<button type="submit" class="btn tm-client-quotes-btn tm-client-quotes-btn--primary">
-													<i class="fa-regular fa-paper-plane"></i>
-													<span>Envoyer le message</span>
-												</button>
-											</div>
-
-											{{ form_widget(messageForm._token) }}
-											{{ form_end(messageForm, { render_rest: false }) }}
-										</div>
-									{% endif %}
-								{% else %}
-									<div class="tm-client-quotes-empty-state">
-										<div class="tm-client-quotes-empty-state__icon">
-											<i class="fa-regular fa-comments"></i>
-										</div>
-										<div class="tm-client-quotes-empty-state__content">
-											<h3 class="tm-client-quotes-empty-state__title">Messagerie non encore disponible</h3>
-											<p class="tm-client-quotes-empty-state__text mb-0">
-												La conversation s’ouvrira lorsque le prestataire aura accepté l’étude de votre demande.
-											</p>
-										</div>
-									</div>
-								{% endif %}
-							</div>
-						</div>
-					</section>
-				</div>
-
-				<div class="col-xl-4">
-					<aside class="tm-client-quotes-sidecard tm-client-quotes-sidecard--status mb-4">
-						<div class="card-body">
-							<h2 class="tm-client-quotes-sidecard__title">Statut</h2>
-							<p class="tm-client-quotes-sidecard__text">
-								Voici l’état actuel de votre demande de devis.
-							</p>
-
-							<span class="tm-client-quotes-status tm-client-quotes-status--{{ quoteRequest.status.getBadgeClass() }}">
-								{{ quoteRequest.status.getLabel() }}
-							</span>
-						</div>
-					</aside>
-
-					<aside class="tm-client-quotes-sidecard tm-client-quotes-sidecard--timeline mb-4">
-						<div class="card-body">
-							<h2 class="tm-client-quotes-sidecard__title">Suivi de la demande</h2>
-							<p class="tm-client-quotes-sidecard__text">
-								Visualisez rapidement l’avancement de votre dossier.
-							</p>
-
-							<div class="tm-client-quotes-timeline">
-								{% for step in timelineSteps %}
-									{% set loopIndex = loop.index %}
-									{% set isCurrent = loopIndex == currentTimelineIndex %}
-									{% set isDone = loopIndex < currentTimelineIndex or (statusValue == 'closed' and loopIndex <= currentTimelineIndex) %}
-									{% set isInactive = loopIndex > currentTimelineIndex %}
-
-									<article class="tm-client-quotes-timeline__item
-																																																																																																																																																																																	                                    {% if isDone %} tm-client-quotes-timeline__item--done{% endif %}
-																																																																																																																																																																																	                                    {% if isCurrent %} tm-client-quotes-timeline__item--current{% endif %}
-																																																																																																																																																																																	                                    {% if isInactive %} tm-client-quotes-timeline__item--inactive{% endif %}
-																																																																																																																																																																																	                                ">
-										<div class="tm-client-quotes-timeline__marker">
-											{% if isDone %}
-												<i class="fa-solid fa-check"></i>
-											{% else %}
-												<span>{{ loopIndex }}</span>
-											{% endif %}
-										</div>
-
-										<div class="tm-client-quotes-timeline__content">
-											<h3 class="tm-client-quotes-timeline__title">{{ step.label }}</h3>
-											<p class="tm-client-quotes-timeline__text mb-0">{{ step.text }}</p>
-										</div>
-									</article>
-								{% endfor %}
-
-								{% if statusValue == 'denied' %}
-									<article class="tm-client-quotes-timeline__item tm-client-quotes-timeline__item--blocked">
-										<div class="tm-client-quotes-timeline__marker">
-											<i class="fa-solid fa-xmark"></i>
-										</div>
-
-										<div class="tm-client-quotes-timeline__content">
-											<h3 class="tm-client-quotes-timeline__title">Demande refusée</h3>
-											<p class="tm-client-quotes-timeline__text mb-0">
-												Le prestataire a refusé cette demande avant l’étape de réponse.
-											</p>
-										</div>
-									</article>
-								{% elseif statusValue == 'cancelled' %}
-									<article class="tm-client-quotes-timeline__item tm-client-quotes-timeline__item--blocked">
-										<div class="tm-client-quotes-timeline__marker">
-											<i class="fa-solid fa-ban"></i>
-										</div>
-
-										<div class="tm-client-quotes-timeline__content">
-											<h3 class="tm-client-quotes-timeline__title">Demande annulée</h3>
-											<p class="tm-client-quotes-timeline__text mb-0">
-												Le suivi a été interrompu avant la fin du processus.
-											</p>
-										</div>
-									</article>
-								{% endif %}
-							</div>
-						</div>
-					</aside>
-
-					<aside class="tm-client-quotes-sidecard tm-client-quotes-sidecard--provider mb-4">
-						<div class="card-body">
-							<h2 class="tm-client-quotes-sidecard__title">Prestataire concerné</h2>
-
-							<div class="tm-client-quotes-provider">
-								<div class="tm-client-quotes-provider__avatar">
-									<span>
-										{{ (quoteRequest.prestataire.companyName ?? 'P')|slice(0, 1)|upper }}
-									</span>
-								</div>
-
-								<div class="tm-client-quotes-provider__body">
-									<h3 class="tm-client-quotes-provider__name">
-										{{ quoteRequest.prestataire.companyName ?? 'Prestataire' }}
-									</h3>
-
-									<p class="tm-client-quotes-provider__meta mb-0">
-										{{ quoteRequest.prestation.service.name ?? quoteRequest.prestation.title ?? 'Service non renseigné' }}
-									</p>
-
-									{% if quoteRequest.prestataire.city is defined and quoteRequest.prestataire.city %}
-										<p class="tm-client-quotes-provider__meta mb-0">
-											{{ quoteRequest.prestataire.city }}
-										</p>
-									{% endif %}
-								</div>
-							</div>
-
-							<div class="tm-client-quotes-provider__facts">
-								<article class="tm-client-quotes-provider-fact">
-									<span class="tm-client-quotes-provider-fact__label">Statut actuel</span>
-									<strong class="tm-client-quotes-provider-fact__value">
-										{{ quoteRequest.status.getLabel() }}
-									</strong>
-								</article>
-
-								<article class="tm-client-quotes-provider-fact">
-									<span class="tm-client-quotes-provider-fact__label">Messagerie</span>
-									<strong class="tm-client-quotes-provider-fact__value">
-										{% if conversation %}
-											Disponible
-										{% else %}
-											En attente
-										{% endif %}
-									</strong>
-								</article>
-							</div>
-						</div>
-					</aside>
-
-					<aside class="tm-client-quotes-sidecard">
-						<div class="card-body">
-							<h2 class="tm-client-quotes-sidecard__title">Actions</h2>
-							<p class="tm-client-quotes-sidecard__text">
-								Revenir à votre liste ou relancer facilement une demande proche de celle-ci.
-							</p>
-
-							<div class="d-grid gap-2">
-								<a href="{{ path('app_quote_request_index') }}" class="btn tm-client-quotes-btn tm-client-quotes-btn--ghost">
-									Retour à mes demandes
-								</a>
-
-								{% if quoteRequest.prestation %}
-									<a href="{{ path('app_quote_request_new', { slug: quoteRequest.prestation.slug }) }}" class="btn tm-client-quotes-btn tm-client-quotes-btn--primary">
-										Faire une nouvelle demande similaire
-									</a>
-								{% elseif quoteRequest.prestataire %}
-									<a href="{{ path('app_quote_request_new_by_prestataire', { prestataireSlug: quoteRequest.prestataire.slug }) }}" class="btn tm-client-quotes-btn tm-client-quotes-btn--primary">
-										Faire une nouvelle demande similaire
-									</a>
-								{% endif %}
-							</div>
-						</div>
-					</aside>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
+    <div class="tm-client-quotes-page">
+        <div class="container py-4 py-lg-5">
+            {% set statusValue = quoteRequest.status.value %}
+
+            {% set timelineSteps = [
+                {
+                    key: 'submitted',
+                    label: 'Demande envoyée',
+                    text: 'Votre demande a bien été enregistrée sur la plateforme.'
+                },
+                {
+                    key: 'accepted',
+                    label: 'Étude acceptée',
+                    text: 'Le prestataire a accepté d’étudier votre besoin.'
+                },
+                {
+                    key: 'answered',
+                    label: 'Réponse reçue',
+                    text: 'Une réponse ou un devis a été transmis.'
+                },
+                {
+                    key: 'closed',
+                    label: 'Demande clôturée',
+                    text: 'Le suivi de cette demande est terminé.'
+                }
+            ] %}
+
+            {% set timelineIndexMap = {
+                submitted: 1,
+                accepted: 2,
+                answered: 3,
+                closed: 4,
+                denied: 2,
+                cancelled: 1
+            } %}
+
+            {% set currentTimelineIndex = attribute(timelineIndexMap, statusValue)|default(1) %}
+
+            <section class="tm-client-quotes-hero">
+                <div class="tm-client-quotes-hero__glow tm-client-quotes-hero__glow--one" aria-hidden="true"></div>
+                <div class="tm-client-quotes-hero__glow tm-client-quotes-hero__glow--two" aria-hidden="true"></div>
+                <div class="tm-client-quotes-hero__grid" aria-hidden="true"></div>
+
+                <div class="tm-client-quotes-hero__content">
+                    <a href="{{ path('app_quote_request_index') }}" class="tm-client-quotes-backlink">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Retour à mes demandes</span>
+                    </a>
+
+                    <span class="tm-client-quotes-eyebrow">Demande de devis</span>
+
+                    <h1 class="tm-client-quotes-title tm-client-quotes-title--wide">{{ quoteRequest.title }}</h1>
+
+                    <p class="tm-client-quotes-subtitle">
+                        Suivez l’avancement de votre demande, consultez les informations transmises au prestataire et échangez directement depuis cette page lorsque la conversation est ouverte.
+                    </p>
+
+                    <div class="tm-client-quotes-hero__meta">
+                        <article class="tm-client-quotes-hero-metric">
+                            <span class="tm-client-quotes-hero-metric__label">Prestataire</span>
+                            <strong class="tm-client-quotes-hero-metric__value">
+                                {{ quoteRequest.prestataire.companyName ?? 'Non renseigné' }}
+                            </strong>
+                        </article>
+
+                        <article class="tm-client-quotes-hero-metric">
+                            <span class="tm-client-quotes-hero-metric__label">Service</span>
+                            <strong class="tm-client-quotes-hero-metric__value">
+                                {{ quoteRequest.prestation.service.name ?? quoteRequest.prestation.title ?? 'Non renseigné' }}
+                            </strong>
+                        </article>
+
+                        <article class="tm-client-quotes-hero-metric">
+                            <span class="tm-client-quotes-hero-metric__label">Dernière activité</span>
+                            <strong class="tm-client-quotes-hero-metric__value">
+                                {{ quoteRequest.updatedAt ? quoteRequest.updatedAt|date('d/m/Y à H:i') : (quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y à H:i') : '—') }}
+                            </strong>
+                        </article>
+                    </div>
+                </div>
+
+
+            </section>
+
+            {% for type, messagesFlash in app.flashes(['success', 'danger', 'warning', 'info']) %}
+                {% for messageFlash in messagesFlash %}
+                    <div class="alert alert-{{ type }} alert-dismissible fade show tm-client-quotes-alert mb-4" role="alert">
+                        {{ messageFlash }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            <div class="row g-4">
+                <div class="col-xl-8">
+                    <section class="tm-client-quotes-detailcard tm-client-quotes-detailcard--description mb-4">
+                        <div class="card-body">
+                            <div class="tm-client-quotes-section-head">
+                                <h2 class="tm-client-quotes-section-title">Description du besoin</h2>
+                                <p class="tm-client-quotes-section-text mb-0">
+                                    Le besoin formulé lors de la création de votre demande.
+                                </p>
+                            </div>
+
+                            <div class="tm-client-quotes-description">
+                                {{ quoteRequest.description ?: 'Aucune description fournie.' }}
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="tm-client-quotes-detailcard mb-4">
+                        <div class="card-body">
+                            <div class="tm-client-quotes-section-head">
+                                <h2 class="tm-client-quotes-section-title">Détails de la demande</h2>
+                                <p class="tm-client-quotes-section-text mb-0">
+                                    Les informations principales liées à cette demande.
+                                </p>
+                            </div>
+
+                            <div class="tm-client-quotes-infos-grid">
+                                <article class="tm-client-quotes-info">
+                                    <span class="tm-client-quotes-info__label">Prestataire</span>
+                                    <strong class="tm-client-quotes-info__value">
+                                        {{ quoteRequest.prestataire.companyName ?? 'Non renseigné' }}
+                                    </strong>
+                                </article>
+
+                                <article class="tm-client-quotes-info">
+                                    <span class="tm-client-quotes-info__label">Service sélectionné</span>
+                                    <strong class="tm-client-quotes-info__value">
+                                        {{ quoteRequest.prestation.service.name ?? quoteRequest.prestation.title ?? 'Non renseigné' }}
+                                    </strong>
+                                </article>
+
+                                <article class="tm-client-quotes-info">
+                                    <span class="tm-client-quotes-info__label">Date souhaitée</span>
+                                    <strong class="tm-client-quotes-info__value">
+                                        {{ quoteRequest.desiredDate ? quoteRequest.desiredDate|date('d/m/Y') : 'Non renseignée' }}
+                                    </strong>
+                                </article>
+
+                                <article class="tm-client-quotes-info">
+                                    <span class="tm-client-quotes-info__label">Budget estimé</span>
+                                    <strong class="tm-client-quotes-info__value">
+                                        {{ quoteRequest.budgetAmount is not null ? quoteRequest.budgetAmount|number_format(2, ',', ' ') ~ ' €' : 'Non renseigné' }}
+                                    </strong>
+                                </article>
+
+                                <article class="tm-client-quotes-info">
+                                    <span class="tm-client-quotes-info__label">Date d’envoi</span>
+                                    <strong class="tm-client-quotes-info__value">
+                                        {{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y à H:i') : '—' }}
+                                    </strong>
+                                </article>
+
+                                <article class="tm-client-quotes-info">
+                                    <span class="tm-client-quotes-info__label">Dernière mise à jour</span>
+                                    <strong class="tm-client-quotes-info__value">
+                                        {{ quoteRequest.updatedAt ? quoteRequest.updatedAt|date('d/m/Y à H:i') : '—' }}
+                                    </strong>
+                                </article>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="tm-client-quotes-detailcard mb-4">
+                        <div class="card-body">
+                            <div class="tm-client-quotes-section-head">
+                                <h2 class="tm-client-quotes-section-title">Réponse du prestataire</h2>
+                                <p class="tm-client-quotes-section-text mb-0">
+                                    Cette zone accueille le retour, les précisions ou le devis transmis par le prestataire.
+                                </p>
+                            </div>
+
+                            {% if quoteResponses is defined and quoteResponses is not empty %}
+                                <div class="tm-client-quotes-responses-list">
+                                    {% for quoteResponse in quoteResponses %}
+                                        <article class="tm-client-quotes-response-card">
+                                            <div class="tm-client-quotes-response-card__top">
+                                                <div>
+                                                    <h3 class="tm-client-quotes-response-card__title">
+                                                        Réponse du
+                                                        {{ quoteResponse.createdAt ? quoteResponse.createdAt|date('d/m/Y') : 'prestataire' }}
+                                                    </h3>
+                                                    <p class="tm-client-quotes-response-card__meta mb-0">
+                                                        Reçue le
+                                                        {{ quoteResponse.createdAt ? quoteResponse.createdAt|date('d/m/Y à H:i') : '—' }}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div class="tm-client-quotes-response-card__body">
+                                                {% if quoteResponse.amount is defined and quoteResponse.amount is not null %}
+                                                    <p class="tm-client-quotes-response-card__price">
+                                                        {{ quoteResponse.amount|number_format(2, ',', ' ') }}
+                                                        €
+                                                    </p>
+                                                {% endif %}
+
+                                                <p class="tm-client-quotes-response-card__text mb-0">
+                                                    {{ quoteResponse.message ?? 'Une réponse a été déposée par le prestataire.' }}
+                                                </p>
+                                            </div>
+                                        </article>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="tm-client-quotes-empty-state">
+                                    <div class="tm-client-quotes-empty-state__icon">
+                                        <i class="fa-regular fa-file-lines"></i>
+                                    </div>
+                                    <div class="tm-client-quotes-empty-state__content">
+                                        <h3 class="tm-client-quotes-empty-state__title">Aucune réponse reçue pour le moment</h3>
+                                        <p class="tm-client-quotes-empty-state__text mb-0">
+                                            Dès qu’un devis ou une réponse sera transmis, il apparaîtra ici.
+                                        </p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </section>
+
+                    {# Conversation Messagerie #}
+                    <section id="quote-conversation" class="tm-client-quotes-detailcard tm-client-quotes-detailcard--conversation" {{ stimulus_controller('realtime-conversation', { url: 'http://localhost:3001', conversationId: conversation ? conversation.id : 0, eventName: 'message_created', joinEventName: 'join_conversation', streamSelector: '.tm-client-quotes-messages--scroll', bodySelector: '.tm-client-quotes-conversation-body', emptySelector: '.tm-client-quotes-empty-state', currentUserType: 'client', layout: 'client', scrollPageToSelf: true } ) }}>
+                        <div class="card-body">
+                            <div class="tm-client-quotes-conversation-body">
+                                <div class="tm-client-quotes-section-head tm-client-quotes-section-head--conversation">
+                                    <div>
+                                        <h2 class="tm-client-quotes-section-title">Messagerie liée</h2>
+                                        <p class="tm-client-quotes-section-text mb-0">
+                                            La conversation associée à cette demande pour échanger avec le prestataire.
+                                        </p>
+                                    </div>
+
+                                    <div class="tm-client-quotes-conversation-head-actions">
+                                        {% if conversation is defined and conversation and hasConversationPhotos %}
+                                            <a href="{{ path('app_quote_request_photos', { slug: quoteRequest.slug }) }}" class="c-conversation-media-access-btn">
+                                                Accès photos conversation
+                                            </a>
+                                        {% endif %}
+
+                                        {% if messages is defined and messages is not empty %}
+                                            <span class="tm-client-quotes-conversation-count">
+                                                {{ messages|length }}
+                                                message{{ messages|length > 1 ? 's' : '' }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                {% if conversation is defined and conversation %}
+                                    {% if messages is defined and messages is not empty %}
+                                        <div class="tm-client-quotes-messages tm-client-quotes-messages--scroll">
+                                            {% for message in messages %}
+                                                {% set isSystemMessage = message.type is defined and message.type and message.type.value == 'system' %}
+                                                {% set isClientMessage = not isSystemMessage and message.author is defined and message.author and app.user and message.author.id == app.user.id %}
+                                                {% set authorLabel = isSystemMessage
+                                                    ? 'Système'
+                                                    : (isClientMessage ? 'Vous' : (quoteRequest.prestataire.companyName ?? 'Prestataire'))
+                                                %}
+
+                                                <article class="tm-client-quotes-message
+                                                    {% if isSystemMessage %}
+                                                        tm-client-quotes-message--system
+                                                    {% elseif isClientMessage %}
+                                                        tm-client-quotes-message--outgoing
+                                                    {% else %}
+                                                        tm-client-quotes-message--incoming
+                                                    {% endif %}
+                                                ">
+                                                    <div class="tm-client-quotes-message__meta">
+                                                        <strong>{{ authorLabel }}</strong>
+                                                        <span>{{ message.createdAt ? message.createdAt|date('d/m/Y H:i') : '—' }}</span>
+                                                    </div>
+
+                                                    {% if (message.content ?? '') is not empty %}
+                                                        <div class="tm-client-quotes-message__content">
+                                                            {{ message.content|nl2br }}
+                                                        </div>
+                                                    {% endif %}
+
+                                                    {% if message.attachments is defined and message.attachments is not empty %}
+                                                        <div class="tm-client-quotes-message__attachments">
+                                                            {% for attachment in message.attachments %}
+                                                                {% if attachment.fileName %}
+                                                                    <a href="{{ asset('uploads/messages/' ~ attachment.fileName) }}" target="_blank" rel="noopener noreferrer" class="tm-client-quotes-message__attachment">
+                                                                        <img src="{{ asset('uploads/messages/' ~ attachment.fileName) }}" alt="{{ attachment.originalName ?: 'Photo jointe' }}" loading="lazy">
+                                                                    </a>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% endif %}
+                                                </article>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        <div class="tm-client-quotes-empty-state">
+                                            <div class="tm-client-quotes-empty-state__icon">
+                                                <i class="fa-regular fa-comments"></i>
+                                            </div>
+                                            <div class="tm-client-quotes-empty-state__content">
+                                                <h3 class="tm-client-quotes-empty-state__title">Conversation ouverte</h3>
+                                                <p class="tm-client-quotes-empty-state__text mb-0">
+                                                    Le prestataire a accepté votre demande. Vous pouvez maintenant démarrer l’échange.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                    {% if messageForm is defined and messageForm %}
+                                        <div id="quote-message-form" class="tm-client-quotes-message-composer">
+                                            <div class="tm-client-quotes-message-composer__header">
+                                                <div>
+                                                    <h3 class="tm-client-quotes-message-composer__title">
+                                                        {% if messages is defined and messages is not empty %}
+                                                            Répondre à la conversation
+                                                        {% else %}
+                                                            Envoyer le premier message
+                                                        {% endif %}
+                                                    </h3>
+                                                    <p class="tm-client-quotes-message-composer__text mb-0">
+                                                        {% if messages is defined and messages is not empty %}
+                                                            Ajoutez une précision, une question ou une information utile pour le prestataire.
+                                                        {% else %}
+                                                            Ouvrez la discussion pour apporter un complément ou poser votre première question.
+                                                        {% endif %}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {{ form_start(messageForm, {
+                                                attr: {
+                                                    class: 'tm-client-quotes-message-composer__form',
+                                                    'data-turbo': 'false'
+                                                }
+                                            }) }}
+
+                                            <div class="tm-client-quotes-message-composer__field">
+                                                {{ form_label(messageForm.content, 'Votre message', {
+                                                    label_attr: { class: 'tm-client-quotes-message-composer__label' }
+                                                }) }}
+
+                                                {{ form_widget(messageForm.content, {
+                                                    attr: {
+                                                        class: 'tm-client-quotes-message-composer__textarea' ~ (messageForm.content.vars.errors|length > 0 ? ' is-invalid' : ''),
+                                                        placeholder: messages is defined and messages is not empty
+                                                            ? 'Décrivez votre question ou ajoutez une précision utile…'
+                                                            : 'Bonjour, je souhaite vous apporter une précision sur ma demande…',
+                                                        rows: 6
+                                                    }
+                                                }) }}
+
+                                                {% if messageForm.content.vars.errors|length > 0 %}
+                                                    <div class="invalid-feedback d-block tm-client-quotes-message-composer__error">
+                                                        {{ form_errors(messageForm.content) }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="tm-client-quotes-message-composer__field">
+                                                <label class="tm-client-quotes-message-composer__label" for="{{ messageForm.attachments.vars.id }}">
+                                                    Photos
+                                                </label>
+
+                                                {{ form_widget(messageForm.attachments, {
+                                                    attr: {
+                                                        class: 'form-control' ~ (messageForm.attachments.vars.errors|length > 0 ? ' is-invalid' : ''),
+                                                        accept: 'image/jpeg,image/png,image/webp',
+                                                        multiple: 'multiple'
+                                                    }
+                                                }) }}
+
+                                                <div class="form-text">
+                                                    Vous pouvez sélectionner jusqu’à 5 photos.
+                                                </div>
+
+                                                {% if messageForm.attachments.vars.errors|length > 0 %}
+                                                    <div class="invalid-feedback d-block tm-client-quotes-message-composer__error">
+                                                        {{ form_errors(messageForm.attachments) }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="tm-client-quotes-message-composer__footer">
+                                                <p class="tm-client-quotes-message-composer__hint mb-0">
+                                                    Vous pouvez envoyer un texte, des photos, ou les deux.
+                                                </p>
+
+                                                <button type="submit" class="btn tm-client-quotes-btn tm-client-quotes-btn--primary">
+                                                    <i class="fa-regular fa-paper-plane"></i>
+                                                    <span>Envoyer le message</span>
+                                                </button>
+                                            </div>
+
+                                            {{ form_widget(messageForm._token) }}
+                                            {{ form_end(messageForm, { render_rest: false }) }}
+                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    <div class="tm-client-quotes-empty-state">
+                                        <div class="tm-client-quotes-empty-state__icon">
+                                            <i class="fa-regular fa-comments"></i>
+                                        </div>
+                                        <div class="tm-client-quotes-empty-state__content">
+                                            <h3 class="tm-client-quotes-empty-state__title">Messagerie non encore disponible</h3>
+                                            <p class="tm-client-quotes-empty-state__text mb-0">
+                                                La conversation s’ouvrira lorsque le prestataire aura accepté l’étude de votre demande.
+                                            </p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="col-xl-4">
+                    <aside class="tm-client-quotes-sidecard tm-client-quotes-sidecard--status mb-4">
+                        <div class="card-body">
+                            <h2 class="tm-client-quotes-sidecard__title">Statut</h2>
+                            <p class="tm-client-quotes-sidecard__text">
+                                Voici l’état actuel de votre demande de devis.
+                            </p>
+
+                            <span class="tm-client-quotes-status tm-client-quotes-status--{{ quoteRequest.status.getBadgeClass() }}">
+                                {{ quoteRequest.status.getLabel() }}
+                            </span>
+                        </div>
+                    </aside>
+
+                    <aside class="tm-client-quotes-sidecard tm-client-quotes-sidecard--timeline mb-4">
+                        <div class="card-body">
+                            <h2 class="tm-client-quotes-sidecard__title">Suivi de la demande</h2>
+                            <p class="tm-client-quotes-sidecard__text">
+                                Visualisez rapidement l’avancement de votre dossier.
+                            </p>
+
+                            <div class="tm-client-quotes-timeline">
+                                {% for step in timelineSteps %}
+                                    {% set loopIndex = loop.index %}
+                                    {% set isCurrent = loopIndex == currentTimelineIndex %}
+                                    {% set isDone = loopIndex < currentTimelineIndex or (statusValue == 'closed' and loopIndex <= currentTimelineIndex) %}
+                                    {% set isInactive = loopIndex > currentTimelineIndex %}
+
+                                    <article class="tm-client-quotes-timeline__item{% if isDone %} tm-client-quotes-timeline__item--done{% endif %}{% if isCurrent %} tm-client-quotes-timeline__item--current{% endif %}{% if isInactive %} tm-client-quotes-timeline__item--inactive{% endif %}">
+                                        <div class="tm-client-quotes-timeline__marker">
+                                            {% if isDone %}
+                                                <i class="fa-solid fa-check"></i>
+                                            {% else %}
+                                                <span>{{ loopIndex }}</span>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="tm-client-quotes-timeline__content">
+                                            <h3 class="tm-client-quotes-timeline__title">{{ step.label }}</h3>
+                                            <p class="tm-client-quotes-timeline__text mb-0">{{ step.text }}</p>
+                                        </div>
+                                    </article>
+                                {% endfor %}
+
+                                {% if statusValue == 'denied' %}
+                                    <article class="tm-client-quotes-timeline__item tm-client-quotes-timeline__item--blocked">
+                                        <div class="tm-client-quotes-timeline__marker">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </div>
+
+                                        <div class="tm-client-quotes-timeline__content">
+                                            <h3 class="tm-client-quotes-timeline__title">Demande refusée</h3>
+                                            <p class="tm-client-quotes-timeline__text mb-0">
+                                                Le prestataire a refusé cette demande avant l’étape de réponse.
+                                            </p>
+                                        </div>
+                                    </article>
+                                {% elseif statusValue == 'cancelled' %}
+                                    <article class="tm-client-quotes-timeline__item tm-client-quotes-timeline__item--blocked">
+                                        <div class="tm-client-quotes-timeline__marker">
+                                            <i class="fa-solid fa-ban"></i>
+                                        </div>
+
+                                        <div class="tm-client-quotes-timeline__content">
+                                            <h3 class="tm-client-quotes-timeline__title">Demande annulée</h3>
+                                            <p class="tm-client-quotes-timeline__text mb-0">
+                                                Le suivi a été interrompu avant la fin du processus.
+                                            </p>
+                                        </div>
+                                    </article>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </aside>
+
+                    <aside class="tm-client-quotes-sidecard tm-client-quotes-sidecard--provider mb-4">
+                        <div class="card-body">
+                            <h2 class="tm-client-quotes-sidecard__title">Prestataire concerné</h2>
+
+                            <div class="tm-client-quotes-provider">
+                                <div class="tm-client-quotes-provider__avatar">
+                                    <span>
+                                        {{ (quoteRequest.prestataire.companyName ?? 'P')|slice(0, 1)|upper }}
+                                    </span>
+                                </div>
+
+                                <div class="tm-client-quotes-provider__body">
+                                    <h3 class="tm-client-quotes-provider__name">
+                                        {{ quoteRequest.prestataire.companyName ?? 'Prestataire' }}
+                                    </h3>
+
+                                    <p class="tm-client-quotes-provider__meta mb-0">
+                                        {{ quoteRequest.prestation.service.name ?? quoteRequest.prestation.title ?? 'Service non renseigné' }}
+                                    </p>
+
+                                    {% if quoteRequest.prestataire.city is defined and quoteRequest.prestataire.city %}
+                                        <p class="tm-client-quotes-provider__meta mb-0">
+                                            {{ quoteRequest.prestataire.city }}
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="tm-client-quotes-provider__facts">
+                                <article class="tm-client-quotes-provider-fact">
+                                    <span class="tm-client-quotes-provider-fact__label">Statut actuel</span>
+                                    <strong class="tm-client-quotes-provider-fact__value">
+                                        {{ quoteRequest.status.getLabel() }}
+                                    </strong>
+                                </article>
+
+                                <article class="tm-client-quotes-provider-fact">
+                                    <span class="tm-client-quotes-provider-fact__label">Messagerie</span>
+                                    <strong class="tm-client-quotes-provider-fact__value">
+                                        {% if conversation %}
+                                            Disponible
+                                        {% else %}
+                                            En attente
+                                        {% endif %}
+                                    </strong>
+                                </article>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <aside class="tm-client-quotes-sidecard">
+                        <div class="card-body">
+                            <h2 class="tm-client-quotes-sidecard__title">Actions</h2>
+                            <p class="tm-client-quotes-sidecard__text">
+                                Revenir à votre liste ou relancer facilement une demande proche de celle-ci.
+                            </p>
+
+                            <div class="d-grid gap-2">
+                                <a href="{{ path('app_quote_request_index') }}" class="btn tm-client-quotes-btn tm-client-quotes-btn--ghost">
+                                    Retour à mes demandes
+                                </a>
+
+                                {% if quoteRequest.prestation %}
+                                    <a href="{{ path('app_quote_request_new', { slug: quoteRequest.prestation.slug }) }}" class="btn tm-client-quotes-btn tm-client-quotes-btn--primary">
+                                        Faire une nouvelle demande similaire
+                                    </a>
+                                {% elseif quoteRequest.prestataire %}
+                                    <a href="{{ path('app_quote_request_new_by_prestataire', { prestataireSlug: quoteRequest.prestataire.slug }) }}" class="btn tm-client-quotes-btn tm-client-quotes-btn--primary">
+                                        Faire une nouvelle demande similaire
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
