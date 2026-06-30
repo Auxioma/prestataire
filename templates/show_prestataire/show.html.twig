@@ -1,398 +1,428 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-	{{ prestataire.companyName }}
-	- TrouveMoi
+    {{ prestataire.companyName }}
+    - TrouveMoi
 {% endblock %}
 
 {% block body %}
-	<div class="container py-5 tm-profile-show">
+    <div class="container py-5 tm-profile-show">
+        <div class="tm-profile-show__page-shell">
+            <div class="mb-4">
+                <a href="javascript:history.back()" class="tm-profile-show__back-link">
+                    <i class="fa-solid fa-arrow-left me-1"></i>
+                    Retour aux résultats
+                </a>
+            </div>
 
-		<div class="mb-4">
-			<a href="javascript:history.back()" class="tm-profile-show__back-link">
-				<i class="fa-solid fa-arrow-left me-1"></i>
-				Retour aux résultats
-			</a>
-		</div>
+            <section class="tm-profile-show__hero mb-4">
+                <div class="tm-profile-show__hero-cover">
+                    {% if prestataire.coverImage %}
+                        <img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="{{ prestataire.companyName }}">
+                    {% else %}
+                        <img src="{{ asset('images/img_par_defaut.png') }}" alt="{{ prestataire.companyName }}">
+                    {% endif %}
 
-		<section class="tm-profile-show__hero mb-4">
-			<div class="tm-profile-show__hero-cover">
-				{% if prestataire.coverImage %}
-					<img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="{{ prestataire.companyName }}">
-				{% else %}
-					<img src="{{ asset('images/img_par_defaut.png') }}" alt="{{ prestataire.companyName }}">
-				{% endif %}
+                    <div class="tm-profile-show__hero-overlay"></div>
 
-				<div class="tm-profile-show__hero-overlay"></div>
+                    {% if prestataire.verificationStatus or prestataire.isFeatured %}
+                        <div class="tm-profile-show__hero-floating-badges">
+                            {% if prestataire.verificationStatus %}
+                                <span class="tm-profile-show__badge tm-profile-show__badge--verified">
+                                    <i class="fa-solid fa-circle-check me-1"></i>
+                                    Profil vérifié
+                                </span>
+                            {% endif %}
 
-				{% if prestataire.verificationStatus or prestataire.isFeatured %}
-					<div class="tm-profile-show__hero-floating-badges">
-						{% if prestataire.verificationStatus %}
-							<span class="tm-profile-show__badge tm-profile-show__badge--verified">
-								<i class="fa-solid fa-circle-check me-1"></i>
-								Profil vérifié
-							</span>
-						{% endif %}
+                            {% if prestataire.isFeatured %}
+                                <span class="tm-profile-show__badge tm-profile-show__badge--featured">
+                                    <i class="fa-solid fa-gem me-1"></i>
+                                    Prestataire à la une
+                                </span>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
 
-						{% if prestataire.isFeatured %}
-							<span class="tm-profile-show__badge tm-profile-show__badge--featured">
-								<i class="fa-solid fa-gem me-1"></i>
-								Prestataire à la une
-							</span>
-						{% endif %}
-					</div>
-				{% endif %}
-			</div>
+                <div class="tm-profile-show__hero-content">
+                    <div class="tm-profile-show__hero-top">
+                        <div class="tm-profile-show__logo-wrapper">
+                            {% if prestataire.logo %}
+                                <img src="{{ asset('uploads/logos/' ~ prestataire.logo) }}" alt="{{ prestataire.companyName }}" class="tm-profile-show__logo-img">
+                            {% else %}
+                                <i class="fa-solid fa-building tm-profile-show__logo-placeholder"></i>
+                            {% endif %}
+                        </div>
 
-			<div class="tm-profile-show__hero-content">
-				<div class="tm-profile-show__hero-top">
-					<div class="tm-profile-show__logo-wrapper">
-						{% if prestataire.logo %}
-							<img src="{{ asset('uploads/logos/' ~ prestataire.logo) }}" alt="{{ prestataire.companyName }}" class="tm-profile-show__logo-img">
-						{% else %}
-							<i class="fa-solid fa-building tm-profile-show__logo-placeholder"></i>
-						{% endif %}
-					</div>
+                        <div class="tm-profile-show__hero-meta">
+                            <div class="tm-profile-show__hero-heading-row">
+                                <div>
+                                    <h1 class="tm-profile-show__title mb-0">{{ prestataire.companyName }}</h1>
+                                </div>
 
-					<div class="tm-profile-show__hero-meta">
-						<div class="d-flex justify-content-between align-items-start gap-3 mb-2">
-							<h1 class="tm-profile-show__title mb-0">{{ prestataire.companyName }}</h1>
+                                <button type="button" class="btn tm-profile-show__favorite-btn favorite-btn" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="prestataire" data-favorite-toggle-target-id-value="{{ prestataire.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="{{ isFavoriteProvider ? 'true' : 'false' }}" data-favorite-toggle-login-url-value="{{ path('app_login') }}" aria-pressed="{{ isFavoriteProvider ? 'true' : 'false' }}" aria-label="{{ isFavoriteProvider ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
+                                    <i data-favorite-toggle-target="icon" class="{{ isFavoriteProvider ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"></i>
+                                </button>
+                            </div>
 
-							<button type="button" class="btn btn-light favorite-btn border-0 shadow-sm shrink-0" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="prestataire" data-favorite-toggle-target-id-value="{{ prestataire.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="{{ isFavoriteProvider ? 'true' : 'false' }}" data-favorite-toggle-login-url-value="{{ path('app_login') }}" aria-pressed="{{ isFavoriteProvider ? 'true' : 'false' }}" aria-label="{{ isFavoriteProvider ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
-								<i data-favorite-toggle-target="icon" class="{{ isFavoriteProvider ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"></i>
-							</button>
-						</div>
+                            <p class="tm-profile-show__subtitle">
+                                {{ prestataire.shortDescription|default('Un professionnel engagé, disponible et sélectionné pour la qualité de son savoir-faire.') }}
+                            </p>
 
-						<p class="tm-profile-show__subtitle">
-							{{ prestataire.shortDescription|default('Un professionnel engagé, disponible et sélectionné pour la qualité de son savoir-faire.') }}
-						</p>
+                            <div class="tm-profile-show__hero-infos">
+                                <span>
+                                    <i class="fa-solid fa-briefcase"></i>
+                                    {{ prestataire.metier|default('Professionnel') }}
+                                </span>
 
-						<div class="tm-profile-show__hero-infos">
-							<span>
-								<i class="fa-solid fa-briefcase"></i>
-								{{ prestataire.metier|default('Professionnel') }}
-							</span>
+                                <span>
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    {{ prestataire.city|default('Ville non renseignée') }}
+                                    {% if prestataire.postalCode %}({{ prestataire.postalCode }})
+                                    {% endif %}
+                                </span>
 
-							<span>
-								<i class="fa-solid fa-location-dot"></i>
-								{{ prestataire.city|default('Ville non renseignée') }}
-								{% if prestataire.postalCode %}({{ prestataire.postalCode }})
-								{% endif %}
-							</span>
+                                {% if prestataire.experience %}
+                                    <span>
+                                        <i class="fa-solid fa-award"></i>
+                                        {{ prestataire.experience }}
+                                    </span>
+                                {% endif %}
 
-							{% if prestataire.experience %}
-								<span>
-									<i class="fa-solid fa-award"></i>
-									{{ prestataire.experience }}
-								</span>
-							{% endif %}
+                                {% if prestataire.siret %}
+                                    <span>
+                                        <i class="fa-solid fa-building-circle-check"></i>
+                                        SIRET :
+                                        {{ prestataire.siret }}
+                                    </span>
+                                {% elseif prestataire.siren %}
+                                    <span>
+                                        <i class="fa-solid fa-building-circle-check"></i>
+                                        SIREN :
+                                        {{ prestataire.siren }}
+                                    </span>
+                                {% endif %}
+                            </div>
 
-							{% if prestataire.siret %}
-								<span>
-									<i class="fa-solid fa-building-circle-check"></i>
-									SIRET :
-									{{ prestataire.siret }}
-								</span>
-							{% elseif prestataire.siren %}
-								<span>
-									<i class="fa-solid fa-building-circle-check"></i>
-									SIREN :
-									{{ prestataire.siren }}
-								</span>
-							{% endif %}
-						</div>
+                            <div class="tm-profile-show__hero-stats">
+                                <div class="tm-profile-show__stat">
+                                    <i class="fa-solid fa-star"></i>
+                                    <strong>{{ prestataire.averageRating|default('0.0') }}/5</strong>
+                                    <span>{{ prestataire.reviewsCount|default(0) }} avis</span>
+                                </div>
 
-						<div class="tm-profile-show__hero-stats">
-							<div class="tm-profile-show__stat">
-								<i class="fa-solid fa-star"></i>
-								<strong>{{ prestataire.averageRating|default('0.0') }}/5</strong>
-								<span>{{ prestataire.reviewsCount|default(0) }}
-									avis</span>
-							</div>
+                                {% if prestataire.responseTimeMinutes %}
+                                    <div class="tm-profile-show__stat tm-profile-show__stat--soft">
+                                        <i class="fa-solid fa-bolt"></i>
+                                        <span>Réponse moyenne :
+                                            {{ prestataire.responseTimeMinutes }}
+                                            min</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-							{% if prestataire.responseTimeMinutes %}
-								<div class="tm-profile-show__stat tm-profile-show__stat--soft">
-									<i class="fa-solid fa-bolt"></i>
-									<span>Réponse moyenne :
-										{{ prestataire.responseTimeMinutes }}
-										min</span>
-								</div>
-							{% endif %}
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="tm-profile-show__card tm-profile-show__card--accent mb-4">
+                        <h2 class="tm-profile-show__section-title">À propos de l'entreprise</h2>
+                        <div class="tm-profile-show__description">
+                            {{ prestataire.description|default('Aucune description détaillée n’a encore été rédigée par ce professionnel.')|nl2br }}
+                        </div>
+                    </div>
 
-		<div class="row g-4">
-			<div class="col-lg-8">
+                    <div class="tm-profile-show__card tm-profile-show__card--services mb-4">
+                        <div class="tm-profile-show__section-head">
+                            <div>
+                                <h2 class="tm-profile-show__section-title mb-2">Prestations prises en charge</h2>
+                                <p class="tm-profile-show__section-lead">
+                                    Parcourez les prestations disponibles et cliquez sur une carte pour accéder au détail et demander un devis.
+                                </p>
+                            </div>
+                            <div class="tm-profile-show__section-pill">
+                                <i class="fa-solid fa-hand-pointer"></i>
+                                Cartes cliquables
+                            </div>
+                        </div>
 
-				<div class="tm-profile-show__card mb-4">
-					<h2 class="tm-profile-show__section-title">À propos de l'entreprise</h2>
-					<div class="tm-profile-show__description">
-						{{ prestataire.description|default('Aucune description détaillée n’a encore été rédigée par ce professionnel.')|nl2br }}
-					</div>
-				</div>
+                        <div class="row row-cols-1 row-cols-sm-2 g-3">
+                            {% for ps in prestataire.prestataireServices %}
+                                <div class="col">
+                                    {% set cardTag = ps.isActive ? 'a' : 'div' %}
+                                    <{{cardTag}} {% if ps.isActive %} href="{{ path('app_prestataire_service_prestation_show', { slug: ps.slug }) }}" {% endif %} class="tm-profile-show__service-item{% if ps.isActive %} tm-profile-show__service-item--link{% else %} tm-profile-show__service-item--disabled{% endif %}">
+                                        <div class="tm-profile-show__service-top">
+                                            <div class="tm-profile-show__service-icon">
+                                                <i class="fa-solid {{ ps.service.icon|default('fa-check') }}"></i>
+                                            </div>
 
-				<div class="tm-profile-show__card mb-4">
-					<h2 class="tm-profile-show__section-title">Prestations prises en charge</h2>
+                                            {% if ps.isActive %}
+                                                <span class="tm-profile-show__service-cta-badge">
+                                                    Voir
+                                                    <i class="fa-solid fa-arrow-right"></i>
+                                                </span>
+                                            {% endif %}
+                                        </div>
 
-					<div class="row row-cols-1 row-cols-sm-2 g-3">
-						{% for ps in prestataire.prestataireServices %}
-							<div class="col">
-								{% set cardTag = ps.isActive ? 'a' : 'div' %}
-								<{{cardTag}} {% if ps.isActive %} href="{{ path('app_prestataire_service_prestation_show', { slug: ps.slug }) }}" {% endif %} class="tm-profile-show__service-item{% if ps.isActive %} tm-profile-show__service-item--link{% else %} tm-profile-show__service-item--disabled{% endif %}">
-									<div class="tm-profile-show__service-icon">
-										<i class="fa-solid {{ ps.service.icon|default('fa-check') }}"></i>
-									</div>
+                                        <div class="tm-profile-show__service-content">
+                                            <div class="tm-profile-show__service-name">
+                                                {{ ps.title ?: ps.service.name }}
+                                            </div>
 
-									<div>
-										<div class="tm-profile-show__service-name">
-											{{ ps.title ?: ps.service.name }}
-										</div>
+                                            {% if ps.shortDescription %}
+                                                <div class="tm-profile-show__service-text">
+                                                    {{ ps.shortDescription|slice(0, 90) }}
+                                                    {% if ps.shortDescription|length > 90 %}...
+                                                    {% endif %}
+                                                </div>
+                                            {% elseif ps.service.description %}
+                                                <div class="tm-profile-show__service-text">
+                                                    {{ ps.service.description|slice(0, 90) }}
+                                                    {% if ps.service.description|length > 90 %}...
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
 
-										{% if ps.shortDescription %}
-											<div class="tm-profile-show__service-text">
-												{{ ps.shortDescription|slice(0, 90) }}
-												{% if ps.shortDescription|length > 90 %}...
-												{% endif %}
-											</div>
-										{% elseif ps.service.description %}
-											<div class="tm-profile-show__service-text">
-												{{ ps.service.description|slice(0, 90) }}
-												{% if ps.service.description|length > 90 %}...
-												{% endif %}
-											</div>
-										{% endif %}
-									</div>
-								</{{cardTag}}>
-							</div>
-						{% else %}
-							<div class="col-12">
-								<p class="text-muted small mb-0">
-									Aucune prestation spécifique liée à ce profil pour le moment.
-								</p>
-							</div>
-						{% endfor %}
-					</div>
-				</div>
+                                        {% if ps.isActive %}
+                                            <div class="tm-profile-show__service-footer">
+                                                <span class="tm-profile-show__service-link-text">
+                                                    Découvrir cette prestation
+                                                </span>
+                                                <span class="tm-profile-show__service-link-icon">
+                                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                                </span>
+                                            </div>
+                                        {% endif %}
+                                    </{{cardTag}}>
+                                </div>
+                            {% else %}
+                                <div class="col-12">
+                                    <p class="text-muted small mb-0">
+                                        Aucune prestation spécifique liée à ce profil pour le moment.
+                                    </p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-				<div class="tm-profile-show__card mb-4">
-					<h2 class="tm-profile-show__section-title">Coordonnées & présence en ligne</h2>
+                    <div class="tm-profile-show__card mb-4">
+                        <h2 class="tm-profile-show__section-title">Coordonnées & présence en ligne</h2>
 
-					<div class="tm-profile-show__info-grid">
-						{% if prestataire.phonePublic %}
-							<div class="tm-profile-show__info-item">
-								<i class="fa-solid fa-phone"></i>
-								<div>
-									<span>Téléphone</span>
-									<strong>{{ prestataire.phonePublic }}</strong>
-								</div>
-							</div>
-						{% endif %}
+                        <div class="tm-profile-show__info-grid">
+                            {% if prestataire.phonePublic %}
+                                <div class="tm-profile-show__info-item">
+                                    <i class="fa-solid fa-phone"></i>
+                                    <div>
+                                        <span>Téléphone</span>
+                                        <strong>{{ prestataire.phonePublic }}</strong>
+                                    </div>
+                                </div>
+                            {% endif %}
 
-						{# {% if prestataire.account.email %}
-																																				                            <div class="tm-profile-show__info-item">
-																																				                                <i class="fa-regular fa-envelope"></i>
-																																				                                <div>
-																																				                                    <span>Email</span>
-																																				                                    <strong>{{ prestataire.account.email }}</strong>
-																																				                                </div>
-																																				                            </div>
-																																				                        {% endif %} #}
+                            {# {% if prestataire.account.email %}
+                            <div class="tm-profile-show__info-item">
+                            <i class="fa-regular fa-envelope"></i>
+                            <div>
+                            <span>Email</span>
+                            <strong>{{ prestataire.account.email }}</strong>
+                            </div>
+                            </div>
+                            {% endif %} #}
 
-						{% if prestataire.website %}
-							<div class="tm-profile-show__info-item">
-								<i class="fa-solid fa-globe"></i>
-								<div>
-									<span>Site internet</span>
-									<strong>
-										<a href="{{ prestataire.website }}" target="_blank" rel="noopener noreferrer">
-											Visiter le site
-										</a>
-									</strong>
-								</div>
-							</div>
-						{% endif %}
+                            {% if prestataire.website %}
+                                <div class="tm-profile-show__info-item">
+                                    <i class="fa-solid fa-globe"></i>
+                                    <div>
+                                        <span>Site internet</span>
+                                        <strong>
+                                            <a href="{{ prestataire.website }}" target="_blank" rel="noopener noreferrer">
+                                                Visiter le site
+                                            </a>
+                                        </strong>
+                                    </div>
+                                </div>
+                            {% endif %}
 
-						{# {% if prestataire.address or prestataire.city %}
-																																				                            <div class="tm-profile-show__info-item">
-																																				                                <i class="fa-solid fa-map-pin"></i>
-																																				                                <div>
-																																				                                    <span>Adresse</span>
-																																				                                    <strong>
-																																				                                        {{ prestataire.address|default('Adresse non renseignée') }}
-																																				                                        {% if prestataire.city %}
-																																				                                            -
-																																				                                            {{ prestataire.city }}
-																																				                                        {% endif %}
-																																				                                    </strong>
-																																				                                </div>
-																																				                            </div>
-																																				                        {% endif %} #}
-					</div>
+                            {# {% if prestataire.address or prestataire.city %}
+                            <div class="tm-profile-show__info-item">
+                            <i class="fa-solid fa-map-pin"></i>
+                            <div>
+                            <span>Adresse</span>
+                            <strong>
+                            {{ prestataire.address|default('Adresse non renseignée') }}
+                            {% if prestataire.city %}
+                            -
+                            {{ prestataire.city }}
+                            {% endif %}
+                            </strong>
+                            </div>
+                            </div>
+                            {% endif %} #}
+                        </div>
 
-					{% if prestataire.facebookUrl or prestataire.instagramUrl or prestataire.linkedinUrl %}
-						<div class="tm-profile-show__socials justify-content-center mt-4">
-							{% if prestataire.facebookUrl %}
-								<a href="{{ prestataire.facebookUrl }}" target="_blank" rel="noopener noreferrer" class="tm-profile-show__social-link">
-									<i class="fa-brands fa-facebook-f"></i>
-									Facebook
-								</a>
-							{% endif %}
+                        {% if prestataire.facebookUrl or prestataire.instagramUrl or prestataire.linkedinUrl %}
+                            <div class="tm-profile-show__socials justify-content-center mt-4">
+                                {% if prestataire.facebookUrl %}
+                                    <a href="{{ prestataire.facebookUrl }}" target="_blank" rel="noopener noreferrer" class="tm-profile-show__social-link">
+                                        <i class="fa-brands fa-facebook-f"></i>
+                                        Facebook
+                                    </a>
+                                {% endif %}
 
-							{% if prestataire.instagramUrl %}
-								<a href="{{ prestataire.instagramUrl }}" target="_blank" rel="noopener noreferrer" class="tm-profile-show__social-link">
-									<i class="fa-brands fa-instagram"></i>
-									Instagram
-								</a>
-							{% endif %}
+                                {% if prestataire.instagramUrl %}
+                                    <a href="{{ prestataire.instagramUrl }}" target="_blank" rel="noopener noreferrer" class="tm-profile-show__social-link">
+                                        <i class="fa-brands fa-instagram"></i>
+                                        Instagram
+                                    </a>
+                                {% endif %}
 
-							{% if prestataire.linkedinUrl %}
-								<a href="{{ prestataire.linkedinUrl }}" target="_blank" rel="noopener noreferrer" class="tm-profile-show__social-link">
-									<i class="fa-brands fa-linkedin-in"></i>
-									LinkedIn
-								</a>
-							{% endif %}
-						</div>
-					{% endif %}
-				</div>
+                                {% if prestataire.linkedinUrl %}
+                                    <a href="{{ prestataire.linkedinUrl }}" target="_blank" rel="noopener noreferrer" class="tm-profile-show__social-link">
+                                        <i class="fa-brands fa-linkedin-in"></i>
+                                        LinkedIn
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
 
-				{% if prestataire.prestataireInterventionZones|length > 0 %}
-					<div class="tm-profile-show__card mb-4">
-						<h2 class="tm-profile-show__section-title">Zones d’intervention</h2>
+                    {% if prestataire.prestataireInterventionZones|length > 0 %}
+                        <div class="tm-profile-show__card mb-4">
+                            <h2 class="tm-profile-show__section-title">Zones d’intervention</h2>
 
-						<div class="tm-profile-show__map-layout">
-							<div class="tm-profile-show__map-wrapper" data-controller="zone-map" data-zone-map-zones-value="{{ zones|map(zone => { city: zone.city, latitude: zone.latitude, longitude: zone.longitude, radiusKm: zone.radiusKm })|json_encode|e('html_attr') }}">
-								{% if zoneMap is defined and zoneMap %}
-									{{ ux_map(zoneMap, { style: 'height: 360px; width: 100%; border-radius: 18px;' }) }}
-								{% else %}
-									<div class="tm-profile-show__map-empty">
-										La carte n’est pas disponible pour le moment.
-									</div>
-								{% endif %}
-							</div>
+                            <div class="tm-profile-show__map-layout">
+                                <div class="tm-profile-show__map-wrapper" data-controller="zone-map" data-zone-map-zones-value="{{ zones|map(zone => { city: zone.city, latitude: zone.latitude, longitude: zone.longitude, radiusKm: zone.radiusKm })|json_encode|e('html_attr') }}">
+                                    {% if zoneMap is defined and zoneMap %}
+                                        {{ ux_map(zoneMap, { style: 'height: 360px; width: 100%; border-radius: 18px;' }) }}
+                                    {% else %}
+                                        <div class="tm-profile-show__map-empty">
+                                            La carte n’est pas disponible pour le moment.
+                                        </div>
+                                    {% endif %}
+                                </div>
 
-							<div class="tm-profile-show__zones">
-								{% for zone in zones %}
-									<span class="tm-profile-show__zone-chip mt-4">
-										<i class="fa-solid fa-location-crosshairs"></i>
-										{{ zone.city|default('Zone renseignée') }}
-										{% if zone.postalCode %}({{ zone.postalCode }})
-										{% endif %}
-										{% if zone.radiusKm %}
-											·
-											{{ zone.radiusKm }}
-											km
-										{% endif %}
-									</span>
-								{% endfor %}
-							</div>
-						</div>
-					</div>
-				{% endif %}
-			</div>
+                                <div class="tm-profile-show__zones">
+                                    {% for zone in zones %}
+                                        <span class="tm-profile-show__zone-chip mt-4">
+                                            <i class="fa-solid fa-location-crosshairs"></i>
+                                            {{ zone.city|default('Zone renseignée') }}
+                                            {% if zone.postalCode %}({{ zone.postalCode }})
+                                            {% endif %}
+                                            {% if zone.radiusKm %}
+                                                ·
+                                                {{ zone.radiusKm }}
+                                                km
+                                            {% endif %}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
 
-			<div class="col-lg-4">
-				<div class="tm-profile-show__sidebar-card position-sticky" style="top: 110px;">
-					<div class="tm-profile-show__sidebar-highlight">
-						<span>Réponse rapide</span>
-						{% if prestataire.responseTimeMinutes %}
-							<strong>~
-								{{ prestataire.responseTimeMinutes }}
-								min</strong>
-						{% else %}
-							<strong>Disponible</strong>
-						{% endif %}
-					</div>
+                <div class="col-lg-4">
+                    <div class="tm-profile-show__sidebar-card position-sticky" style="top: 110px;">
+                        <div class="tm-profile-show__sidebar-highlight">
+                            <span>Réponse rapide</span>
+                            {% if prestataire.responseTimeMinutes %}
+                                <strong>~ {{ prestataire.responseTimeMinutes }} min</strong>
+                            {% else %}
+                                <strong>Disponible</strong>
+                            {% endif %}
+                        </div>
 
-					<h3 class="tm-profile-show__sidebar-title">Besoin d'un devis ?</h3>
-					<p class="tm-profile-show__sidebar-text">
-						Décrivez votre besoin en quelques instants. Ce professionnel pourra étudier votre demande et revenir vers vous rapidement.
-					</p>
+                        <h3 class="tm-profile-show__sidebar-title">Besoin d'un devis ?</h3>
+                        <p class="tm-profile-show__sidebar-text">
+                            Décrivez votre besoin en quelques instants. Ce professionnel pourra étudier votre demande et revenir vers vous rapidement.
+                        </p>
 
-					{% if app.user and is_granted('ROLE_CLIENT') %}
-						<a href="{{ path('app_quote_request_new_by_prestataire', { prestataireSlug: prestataire.slug }) }}" class="btn tm-profile-show__btn-action">
-							<i class="fa-regular fa-paper-plane me-2"></i>
-							Demander un devis
-						</a>
-					{% else %}
-						<a href="{{ path('app_login') }}" class="btn tm-profile-show__btn-action">
-							<i class="fa-regular fa-paper-plane me-2"></i>
-							Connectez-vous pour demander un devis
-						</a>
-					{% endif %}
+                        {% if app.user and is_granted('ROLE_CLIENT') %}
+                            <a href="{{ path('app_quote_request_new_by_prestataire', { prestataireSlug: prestataire.slug }) }}" class="btn tm-profile-show__btn-action">
+                                <i class="fa-regular fa-paper-plane me-2"></i>
+                                Demander un devis
+                            </a>
+                        {% else %}
+                            <a href="{{ path('app_login') }}" class="btn tm-profile-show__btn-action">
+                                <i class="fa-regular fa-paper-plane me-2"></i>
+                                Connectez-vous pour demander un devis
+                            </a>
+                        {% endif %}
 
-					<div class="tm-profile-show__quick-points">
-						<div class="tm-profile-show__quick-point">
-							<i class="fa-solid fa-circle-check"></i>
-							<span>Mise en relation 100% gratuite</span>
-						</div>
-						<div class="tm-profile-show__quick-point">
-							<i class="fa-solid fa-shield-halved"></i>
-							<span>Profil professionnel contrôlé</span>
-						</div>
-						<div class="tm-profile-show__quick-point">
-							<i class="fa-solid fa-user-group"></i>
-							<span>Échange simple et direct</span>
-						</div>
-					</div>
+                        <div class="tm-profile-show__quick-points">
+                            <div class="tm-profile-show__quick-point">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Mise en relation 100% gratuite</span>
+                            </div>
+                            <div class="tm-profile-show__quick-point">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <span>Profil professionnel contrôlé</span>
+                            </div>
+                            <div class="tm-profile-show__quick-point">
+                                <i class="fa-solid fa-user-group"></i>
+                                <span>Échange simple et direct</span>
+                            </div>
+                        </div>
 
-					{% if prestataire.availabilities is defined and prestataire.availabilities|length > 0 %}
-						<div class="tm-profile-show__sidebar-availability">
-							<div class="tm-profile-show__sidebar-availability-head">
-								<h4 class="tm-profile-show__sidebar-availability-title">Disponibilités</h4>
-								<span class="tm-profile-show__sidebar-availability-badge">Semaine</span>
-							</div>
+                        {% if prestataire.availabilities is defined and prestataire.availabilities|length > 0 %}
+                            <div class="tm-profile-show__sidebar-availability">
+                                <div class="tm-profile-show__sidebar-availability-head">
+                                    <h4 class="tm-profile-show__sidebar-availability-title">Disponibilités</h4>
+                                    <span class="tm-profile-show__sidebar-availability-badge">Semaine</span>
+                                </div>
 
-							<div class="tm-profile-show__sidebar-availability-list">
-								{% for availability in prestataire.availabilities %}
-									{% set hasMorning = availability.morningEnabled and availability.morningStart and availability.morningEnd %}
-									{% set hasAfternoon = availability.afternoonEnabled and availability.afternoonStart and availability.afternoonEnd %}
+                                <div class="tm-profile-show__sidebar-availability-list">
+                                    {% for availability in prestataire.availabilities %}
+                                        {% set hasMorning = availability.morningEnabled and availability.morningStart and availability.morningEnd %}
+                                        {% set hasAfternoon = availability.afternoonEnabled and availability.afternoonStart and availability.afternoonEnd %}
 
-									<div class="tm-profile-show__sidebar-availability-row tm-profile-show__sidebar-availability-row--{{ loop.index }}">
-										<div class="tm-profile-show__sidebar-availability-day">
-											{{ availability.dayLabel ?? availability.dayName ?? ('Jour ' ~ loop.index) }}
-										</div>
+                                        <div class="tm-profile-show__sidebar-availability-row tm-profile-show__sidebar-availability-row--{{ loop.index }}">
+                                            <div class="tm-profile-show__sidebar-availability-day">
+                                                {{ availability.dayLabel ?? availability.dayName ?? ('Jour ' ~ loop.index) }}
+                                            </div>
 
-										<div class="tm-profile-show__sidebar-availability-values">
-											{% if hasMorning %}
-												<span class="tm-profile-show__sidebar-availability-chip">
-													{{ availability.morningStart|date('H:i') }}-{{ availability.morningEnd|date('H:i') }}
-												</span>
-											{% endif %}
+                                            <div class="tm-profile-show__sidebar-availability-values">
+                                                {% if hasMorning %}
+                                                    <span class="tm-profile-show__sidebar-availability-chip">
+                                                        {{ availability.morningStart|date('H:i') }}-{{ availability.morningEnd|date('H:i') }}
+                                                    </span>
+                                                {% endif %}
 
-											{% if hasAfternoon %}
-												<span class="tm-profile-show__sidebar-availability-chip">
-													{{ availability.afternoonStart|date('H:i') }}-{{ availability.afternoonEnd|date('H:i') }}
-												</span>
-											{% endif %}
+                                                {% if hasAfternoon %}
+                                                    <span class="tm-profile-show__sidebar-availability-chip">
+                                                        {{ availability.afternoonStart|date('H:i') }}-{{ availability.afternoonEnd|date('H:i') }}
+                                                    </span>
+                                                {% endif %}
 
-											{% if not hasMorning and not hasAfternoon %}
-												<span class="tm-profile-show__sidebar-availability-chip tm-profile-show__sidebar-availability-chip--closed">
-													Fermé
-												</span>
-											{% endif %}
-										</div>
-									</div>
-								{% endfor %}
-							</div>
-						</div>
-					{% endif %}
+                                                {% if not hasMorning and not hasAfternoon %}
+                                                    <span class="tm-profile-show__sidebar-availability-chip tm-profile-show__sidebar-availability-chip--closed">
+                                                        Fermé
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
 
-					<div class="tm-profile-show__sidebar-footer">
-						<div class="tm-profile-show__guarantee">
-							<i class="fa-solid fa-shield-halved"></i>
-							<span>Garantie TrouveMoi</span>
-						</div>
-						<ul class="tm-profile-show__guarantee-list">
-							<li>Demande sans engagement</li>
-							<li>Prestataire visible publiquement sur la plateforme</li>
-							<li>Informations centralisées et faciles à comparer</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                        <div class="tm-profile-show__sidebar-footer">
+                            <div class="tm-profile-show__guarantee">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <span>Garantie TrouveMoi</span>
+                            </div>
+                            <ul class="tm-profile-show__guarantee-list">
+                                <li>Demande sans engagement</li>
+                                <li>Prestataire visible publiquement sur la plateforme</li>
+                                <li>Informations centralisées et faciles à comparer</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
