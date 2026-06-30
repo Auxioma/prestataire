@@ -2,175 +2,182 @@
 
 {% block title %}TrouveMoi - {{ category.name }}{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/subcategories-premium.css') }}">
+{% endblock %}
+
 {% block body %}
-    <div class="container py-4 tm-subcat-page">
+    <div class="tm-subcatx-page">
+        <div class="container py-4 tm-subcatx-container">
 
-        {# 1. BREADCRUMB #}
-        <nav aria-label="breadcrumb" class="tm-subcat-breadcrumb mb-4">
-            <ol class="breadcrumb small mb-0">
-                <li class="breadcrumb-item">
-                    <a href="{{ path('app_home') }}" class="text-decoration-none text-muted">
-                        <i class="fa-solid fa-house me-1"></i>
-                        Accueil
-                    </a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="{{ path('app_category_index') }}" class="text-decoration-none text-muted">
-                        Catégories
-                    </a>
-                </li>
-                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">
-                    {{ category.name }}
-                </li>
-            </ol>
-        </nav>
+            <nav aria-label="breadcrumb" class="tm-subcatx-breadcrumb">
+                <ol class="breadcrumb small mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_home') }}" class="tm-subcatx-breadcrumb__link">
+                            <i class="fa-solid fa-house"></i>
+                            <span>Accueil</span>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_category_index') }}" class="tm-subcatx-breadcrumb__link">
+                            Catégories
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {{ category.name }}
+                    </li>
+                </ol>
+            </nav>
 
-        {# 2. HERO #}
-        <section class="tm-subcat-hero mb-5">
-            <div class="tm-subcat-hero__content">
-                <span class="tm-subcat-hero__eyebrow">Explorer les métiers</span>
+            <section class="tm-subcatx-hero">
+                <div class="tm-subcatx-hero__content">
+                    <span class="tm-subcatx-hero__eyebrow">Explorer les métiers</span>
 
-                <h1 class="tm-subcat-hero__title">
-                    Métiers en {{ category.name }}
-                </h1>
+                    <h1 class="tm-subcatx-hero__title">
+                        Métiers en {{ category.name }}
+                    </h1>
 
-                <p class="tm-subcat-hero__subtitle">
-                    Affinez votre recherche en choisissant une sous-catégorie spécialisée et trouvez plus rapidement le bon professionnel.
-                </p>
-            </div>
-
-            <div class="tm-subcat-hero__stats">
-                <div class="tm-subcat-stat-card">
-                    <div class="tm-subcat-stat-card__icon tm-subcat-stat-card__icon--accent">
-                        <i class="fa-solid fa-circle-plus"></i>
-                    </div>
-                    <div class="tm-subcat-stat-card__content">
-                        <strong>+ 120 000</strong>
-                        <span>prestataires</span>
-                    </div>
-                </div>
-
-                <div class="tm-subcat-stat-card">
-                    <div class="tm-subcat-stat-card__icon tm-subcat-stat-card__icon--success">
-                        <i class="fa-solid fa-circle-check"></i>
-                    </div>
-                    <div class="tm-subcat-stat-card__content">
-                        <strong>Profils</strong>
-                        <span>vérifiés</span>
-                    </div>
-                </div>
-
-                <div class="tm-subcat-stat-card">
-                    <div class="tm-subcat-stat-card__icon tm-subcat-stat-card__icon--warning">
-                        <i class="fa-solid fa-star"></i>
-                    </div>
-                    <div class="tm-subcat-stat-card__content">
-                        <strong>Avis</strong>
-                        <span>contrôlés</span>
-                    </div>
-                </div>
-
-                <div class="tm-subcat-stat-card">
-                    <div class="tm-subcat-stat-card__icon tm-subcat-stat-card__icon--service">
-                        <i class="fa-solid fa-headset"></i>
-                    </div>
-                    <div class="tm-subcat-stat-card__content">
-                        <strong>Support</strong>
-                        <span>7j/7</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        {# 3. SECTION SOUS-CATÉGORIES #}
-        <section class="tm-subcat-section mb-5">
-            <div class="tm-subcat-section__head">
-                <div>
-                    <h2 class="tm-subcat-section__title">Choisissez un métier</h2>
-                    <p class="tm-subcat-section__subtitle">
-                        Sélectionnez la spécialité la plus adaptée à votre besoin.
+                    <p class="tm-subcatx-hero__subtitle">
+                        Affinez votre recherche en choisissant une sous-catégorie spécialisée et trouvez plus rapidement le bon professionnel.
                     </p>
                 </div>
-            </div>
 
-            {% set activeSubCategories = category.subCategories|filter(subCategory => subCategory.isActive) %}
-
-            {% if activeSubCategories is not empty %}
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
-                    {% for subCategory in activeSubCategories|sort((a, b) => a.position <=> b.position) %}
-                        <div class="col">
-                            <a href="{{ path('app_subcategory_services', {categorySlug: category.slug, subCategorySlug: subCategory.slug}) }}"
-                               class="tm-subcat-card text-decoration-none">
-                                <div class="tm-subcat-card__inner">
-                                    <div class="tm-subcat-card__top">
-                                        <div class="tm-subcat-card__icon-box">
-                                            <i class="fa-solid {{ subCategory.icon|default('fa-screwdriver-wrench') }}"></i>
-                                        </div>
-
-                                        <div class="tm-subcat-card__arrow">
-                                            <i class="fa-solid fa-arrow-right"></i>
-                                        </div>
-                                    </div>
-
-                                    <div class="tm-subcat-card__body">
-                                        <h3 class="tm-subcat-card__title">{{ subCategory.name }}</h3>
-                                        <p class="tm-subcat-card__meta">
-                                            {{ subCategory.services|length }}
-                                            {{ subCategory.services|length > 1 ? 'prestations disponibles' : 'prestation disponible' }}
-                                        </p>
-                                    </div>
-
-                                    <div class="tm-subcat-card__footer">
-                                        <span class="tm-subcat-card__link">
-                                            Voir les prestations
-                                            <i class="fa-solid fa-chevron-right"></i>
-                                        </span>
-                                    </div>
-                                </div>
-                            </a>
+                <div class="tm-subcatx-hero__stats">
+                    <div class="tm-subcatx-stat-card">
+                        <div class="tm-subcatx-stat-card__icon tm-subcatx-stat-card__icon--gold">
+                            <i class="fa-solid fa-circle-plus"></i>
                         </div>
-                    {% endfor %}
+                        <div class="tm-subcatx-stat-card__content">
+                            <strong>+ 120 000</strong>
+                            <span>prestataires</span>
+                        </div>
+                    </div>
+
+                    <div class="tm-subcatx-stat-card">
+                        <div class="tm-subcatx-stat-card__icon tm-subcatx-stat-card__icon--blue-soft">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div class="tm-subcatx-stat-card__content">
+                            <strong>Profils</strong>
+                            <span>vérifiés</span>
+                        </div>
+                    </div>
+
+                    <div class="tm-subcatx-stat-card">
+                        <div class="tm-subcatx-stat-card__icon tm-subcatx-stat-card__icon--gold-soft">
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <div class="tm-subcatx-stat-card__content">
+                            <strong>Avis</strong>
+                            <span>contrôlés</span>
+                        </div>
+                    </div>
+
+                    <div class="tm-subcatx-stat-card">
+                        <div class="tm-subcatx-stat-card__icon tm-subcatx-stat-card__icon--blue">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                        <div class="tm-subcatx-stat-card__content">
+                            <strong>Support</strong>
+                            <span>7j/7</span>
+                        </div>
+                    </div>
                 </div>
-            {% else %}
-                <div class="tm-subcat-empty">
-                    <div class="tm-subcat-empty__icon">🧰</div>
-                    <h3 class="tm-subcat-empty__title">Aucune spécialité disponible</h3>
-                    <p class="tm-subcat-empty__text">
-                        Cette catégorie ne propose pas encore de sous-catégories actives pour le moment.
-                    </p>
-                </div>
-            {% endif %}
-        </section>
+            </section>
 
-        {# 4. BANDEAU PRESTATAIRE #}
-        <section class="tm-subcat-banner">
-            <div class="tm-subcat-banner__glow"></div>
-
-            <div class="tm-subcat-banner__left">
-                <div class="tm-subcat-banner__icon">
-                    <i class="fa-solid fa-award"></i>
+            <section class="tm-subcatx-section">
+                <div class="tm-subcatx-section__head">
+                    <div>
+                        <h2 class="tm-subcatx-section__title">Choisissez un métier</h2>
+                        <p class="tm-subcatx-section__subtitle">
+                            Sélectionnez la spécialité la plus adaptée à votre besoin.
+                        </p>
+                    </div>
                 </div>
 
-                <div class="tm-subcat-banner__content">
-                    <span class="tm-subcat-banner__eyebrow">Espace professionnel</span>
-                    <h3 class="tm-subcat-banner__title">Vous êtes prestataire ?</h3>
-                    <p class="tm-subcat-banner__desc">
-                        Développez votre visibilité sur TrouveMoi et recevez des demandes qualifiées dans votre spécialité.
-                    </p>
+                {% set activeSubCategories = category.subCategories|filter(subCategory => subCategory.isActive) %}
 
-                    <ul class="tm-subcat-banner__features">
-                        <li><i class="fa-solid fa-circle-check"></i> Visibilité accrue</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Clients qualifiés</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Outils de gestion</li>
-                    </ul>
+                {% if activeSubCategories is not empty %}
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
+                        {% for subCategory in activeSubCategories|sort((a, b) => a.position <=> b.position) %}
+                            <div class="col">
+                                <a
+                                    href="{{ path('app_subcategory_services', {categorySlug: category.slug, subCategorySlug: subCategory.slug}) }}"
+                                    class="tm-subcatx-card"
+                                >
+                                    <div class="tm-subcatx-card__inner">
+                                        <div class="tm-subcatx-card__top">
+                                            <div class="tm-subcatx-card__icon-box">
+                                                <i class="fa-solid {{ subCategory.icon|default('fa-screwdriver-wrench') }}"></i>
+                                            </div>
+
+                                            <div class="tm-subcatx-card__arrow">
+                                                <i class="fa-solid fa-arrow-right"></i>
+                                            </div>
+                                        </div>
+
+                                        <div class="tm-subcatx-card__body">
+                                            <h3 class="tm-subcatx-card__title">{{ subCategory.name }}</h3>
+                                            <p class="tm-subcatx-card__meta">
+                                                {{ subCategory.services|length }}
+                                                {{ subCategory.services|length > 1 ? 'prestations disponibles' : 'prestation disponible' }}
+                                            </p>
+                                        </div>
+
+                                        <div class="tm-subcatx-card__footer">
+                                            <span class="tm-subcatx-card__link">
+                                                Voir les prestations
+                                                <i class="fa-solid fa-chevron-right"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="tm-subcatx-empty">
+                        <div class="tm-subcatx-empty__icon">
+                            <i class="fa-solid fa-toolbox"></i>
+                        </div>
+                        <h3 class="tm-subcatx-empty__title">Aucune spécialité disponible</h3>
+                        <p class="tm-subcatx-empty__text">
+                            Cette catégorie ne propose pas encore de sous-catégories actives pour le moment.
+                        </p>
+                    </div>
+                {% endif %}
+            </section>
+
+            <section class="tm-subcatx-banner">
+                <div class="tm-subcatx-banner__glow"></div>
+
+                <div class="tm-subcatx-banner__left">
+                    <div class="tm-subcatx-banner__icon">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+
+                    <div class="tm-subcatx-banner__content">
+                        <span class="tm-subcatx-banner__eyebrow">Espace professionnel</span>
+                        <h3 class="tm-subcatx-banner__title">Vous êtes prestataire ?</h3>
+                        <p class="tm-subcatx-banner__desc">
+                            Développez votre visibilité sur TrouveMoi et recevez des demandes qualifiées dans votre spécialité.
+                        </p>
+
+                        <ul class="tm-subcatx-banner__features">
+                            <li><i class="fa-solid fa-circle-check"></i> Visibilité accrue</li>
+                            <li><i class="fa-solid fa-circle-check"></i> Clients qualifiés</li>
+                            <li><i class="fa-solid fa-circle-check"></i> Outils de gestion</li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
 
-            <div class="tm-subcat-banner__actions">
-                <a href="#" class="btn tm-subcat-btn-outline">En savoir plus</a>
-                <a href="#" class="btn tm-subcat-btn-primary">Devenir prestataire</a>
-            </div>
-        </section>
+                <div class="tm-subcatx-banner__actions">
+                    <a href="#" class="tm-subcatx-btn tm-subcatx-btn--outline">En savoir plus</a>
+                    <a href="#" class="tm-subcatx-btn tm-subcatx-btn--primary">Devenir prestataire</a>
+                </div>
+            </section>
 
+        </div>
     </div>
 {% endblock %}

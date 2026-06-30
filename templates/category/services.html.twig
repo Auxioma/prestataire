@@ -1,200 +1,227 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}TrouveMoi - {{ subCategory.name }} - {{ category.name }}{% endblock %}
+{% block title %}TrouveMoi -
+	{{ subCategory.name }}
+	-
+	{{ category.name }}
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('styles/services-premium.css') }}">
+{% endblock %}
 
 {% block body %}
-    <div class="container py-4 tm-serv-page">
+	<div class="tm-servx-page">
+		<div class="container py-4 tm-servx-container">
 
-        {# 1. BREADCRUMB #}
-        <nav aria-label="breadcrumb" class="tm-serv-breadcrumb mb-4">
-            <ol class="breadcrumb small mb-0">
-                <li class="breadcrumb-item">
-                    <a href="{{ path('app_home') }}" class="text-decoration-none text-muted">
-                        <i class="fa-solid fa-house me-1"></i>
-                        Accueil
-                    </a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="{{ path('app_category_index') }}" class="text-decoration-none text-muted">
-                        Catégories
-                    </a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="{{ path('app_category_show', {slug: category.slug}) }}" class="text-decoration-none text-muted">
-                        {{ category.name }}
-                    </a>
-                </li>
-                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">
-                    {{ subCategory.name }}
-                </li>
-            </ol>
-        </nav>
+			<nav aria-label="breadcrumb" class="tm-servx-breadcrumb">
+				<ol class="breadcrumb small mb-0">
+					<li class="breadcrumb-item">
+						<a href="{{ path('app_home') }}" class="tm-servx-breadcrumb__link">
+							<i class="fa-solid fa-house"></i>
+							<span>Accueil</span>
+						</a>
+					</li>
+					<li class="breadcrumb-item">
+						<a href="{{ path('app_category_index') }}" class="tm-servx-breadcrumb__link">
+							Catégories
+						</a>
+					</li>
+					<li class="breadcrumb-item">
+						<a href="{{ path('app_category_show', { slug: category.slug }) }}" class="tm-servx-breadcrumb__link">
+							{{ category.name }}
+						</a>
+					</li>
+					<li class="breadcrumb-item">
+						<a href="{{ path('app_subcategory_services', { categorySlug: category.slug, subCategorySlug: subCategory.slug }) }}" class="tm-servx-breadcrumb__link">
+							{{ subCategory.name }}
+						</a>
+					</li>
+					<li class="breadcrumb-item active tm-servx-breadcrumb__current" aria-current="page">
+						Services
+					</li>
+				</ol>
+			</nav>
 
-        {# 2. HERO #}
-        <section class="tm-serv-hero mb-5">
-            <div class="tm-serv-hero__content">
-                <span class="tm-serv-hero__eyebrow">Prestations disponibles</span>
+			<section class="tm-servx-hero">
+				<div class="tm-servx-hero__content">
+					<span class="tm-servx-hero__eyebrow">Prestations disponibles</span>
 
-                <h1 class="tm-serv-hero__title">
-                    Services en {{ subCategory.name }}
-                </h1>
+					<h1 class="tm-servx-hero__title">
+						Services en
+						{{ subCategory.name }}
+					</h1>
 
-                <p class="tm-serv-hero__subtitle">
-                    Sélectionnez la prestation précise dont vous avez besoin pour trouver rapidement le bon professionnel dans la catégorie {{ category.name|lower }}.
-                </p>
-            </div>
+					<p class="tm-servx-hero__subtitle">
+						Sélectionnez la prestation précise dont vous avez besoin pour trouver rapidement le bon professionnel
+						                        dans la catégorie
+						{{ category.name|lower }}.
+					</p>
+				</div>
 
-            <div class="tm-serv-hero__stats">
-                <div class="tm-serv-stat-card">
-                    <div class="tm-serv-stat-card__icon tm-serv-stat-card__icon--accent">
-                        <i class="fa-solid fa-circle-plus"></i>
-                    </div>
-                    <div class="tm-serv-stat-card__content">
-                        <strong>+ 120 000</strong>
-                        <span>prestataires</span>
-                    </div>
-                </div>
+				<div class="tm-servx-hero__stats">
+					<div class="tm-servx-stat-card">
+						<div class="tm-servx-stat-card__icon tm-servx-stat-card__icon--gold">
+							<i class="fa-solid fa-circle-plus"></i>
+						</div>
+						<div class="tm-servx-stat-card__content">
+							<strong>+ 120 000</strong>
+							<span>prestataires</span>
+						</div>
+					</div>
 
-                <div class="tm-serv-stat-card">
-                    <div class="tm-serv-stat-card__icon tm-serv-stat-card__icon--success">
-                        <i class="fa-solid fa-circle-check"></i>
-                    </div>
-                    <div class="tm-serv-stat-card__content">
-                        <strong>Profils</strong>
-                        <span>vérifiés</span>
-                    </div>
-                </div>
+					<div class="tm-servx-stat-card">
+						<div class="tm-servx-stat-card__icon tm-servx-stat-card__icon--blue-soft">
+							<i class="fa-solid fa-circle-check"></i>
+						</div>
+						<div class="tm-servx-stat-card__content">
+							<strong>Profils</strong>
+							<span>vérifiés</span>
+						</div>
+					</div>
 
-                <div class="tm-serv-stat-card">
-                    <div class="tm-serv-stat-card__icon tm-serv-stat-card__icon--warning">
-                        <i class="fa-solid fa-star"></i>
-                    </div>
-                    <div class="tm-serv-stat-card__content">
-                        <strong>Avis</strong>
-                        <span>contrôlés</span>
-                    </div>
-                </div>
+					<div class="tm-servx-stat-card">
+						<div class="tm-servx-stat-card__icon tm-servx-stat-card__icon--gold-soft">
+							<i class="fa-solid fa-star"></i>
+						</div>
+						<div class="tm-servx-stat-card__content">
+							<strong>Avis</strong>
+							<span>contrôlés</span>
+						</div>
+					</div>
 
-                <div class="tm-serv-stat-card">
-                    <div class="tm-serv-stat-card__icon tm-serv-stat-card__icon--service">
-                        <i class="fa-solid fa-headset"></i>
-                    </div>
-                    <div class="tm-serv-stat-card__content">
-                        <strong>Support</strong>
-                        <span>7j/7</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+					<div class="tm-servx-stat-card">
+						<div class="tm-servx-stat-card__icon tm-servx-stat-card__icon--blue">
+							<i class="fa-solid fa-headset"></i>
+						</div>
+						<div class="tm-servx-stat-card__content">
+							<strong>Support</strong>
+							<span>7j/7</span>
+						</div>
+					</div>
+				</div>
+			</section>
 
-        {# 3. SECTION SERVICES #}
-        <section class="tm-serv-section mb-5">
-            <div class="tm-serv-section__head">
-                <div>
-                    <h2 class="tm-serv-section__title">Choisissez une prestation</h2>
-                    <p class="tm-serv-section__subtitle">
-                        Comparez les besoins les plus fréquents et lancez votre recherche en un clic.
-                    </p>
-                </div>
-            </div>
+			<section class="tm-servx-section">
+				<div class="tm-servx-section__head">
+					<div class="tm-servx-section__intro">
+						<span class="tm-servx-section__eyebrow">Choix précis</span>
+						<h2 class="tm-servx-section__title">Choisissez une prestation</h2>
+						<p class="tm-servx-section__subtitle">
+							Ici, vous n’êtes plus au niveau de la spécialité générale :
+							                            vous choisissez maintenant le service exact à rechercher.
+						</p>
+					</div>
+				</div>
 
-            {% set activeServices = subCategory.services|filter(service => service.isActive) %}
+				{% set activeServices = subCategory.services|filter(service => service.isActive) %}
 
-            {% if activeServices is not empty %}
-                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-                    {% for service in activeServices|sort((a, b) => a.position <=> b.position) %}
-                        <div class="col">
-                            <article class="tm-serv-card">
-                                <div class="tm-serv-card__inner">
+				{% if activeServices is not empty %}
+					<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+						{% for service in activeServices|sort((a, b) => a.position <=> b.position) %}
+							<div class="col">
+								<article class="tm-servx-service-card">
+									<div class="tm-servx-service-card__top">
+										<span class="tm-servx-service-card__kicker">Prestation</span>
 
-                                    <div class="tm-serv-card__icon-row">
-                                        <div class="tm-serv-card__icon-box">
-                                            <i class="fa-solid {{ service.icon|default('fa-gears') }}"></i>
-                                        </div>
-                                    </div>
+										<div class="tm-servx-service-card__icon-box">
+											<i class="fa-solid {{ service.icon|default('fa-gears') }}"></i>
+										</div>
+									</div>
 
-                                    <div class="tm-serv-card__body">
-                                        <h3 class="tm-serv-card__title">{{ service.name }}</h3>
+									<div class="tm-servx-service-card__body">
+										<h3 class="tm-servx-service-card__title">{{ service.name }}</h3>
 
-                                        {% if service.description %}
-                                            <p class="tm-serv-card__desc">
-                                                {{ service.description|length > 135
-                                                    ? service.description|slice(0, 135) ~ '...'
+										{% if service.description %}
+											<p class="tm-servx-service-card__desc">
+												{{ service.description|length > 140
+                                                    ? service.description|slice(0, 140) ~ '...'
                                                     : service.description }}
-                                            </p>
-                                        {% else %}
-                                            <p class="tm-serv-card__desc tm-serv-card__desc--muted">
-                                                Trouvez rapidement un professionnel qualifié pour cette prestation.
-                                            </p>
-                                        {% endif %}
+											</p>
+										{% else %}
+											<p class="tm-servx-service-card__desc tm-servx-service-card__desc--muted">
+												Trouvez rapidement un professionnel qualifié pour cette prestation précise.
+											</p>
+										{% endif %}
+									</div>
 
-                                        {% if service.averagePriceMin and service.averagePriceMax %}
-                                            <div class="tm-serv-card__price-box">
-                                                <span class="tm-serv-card__price-label">Tarif moyen constaté</span>
-                                                <strong class="tm-serv-card__price-value">
-                                                    {{ service.averagePriceMin|number_format(0, ',', ' ') }}€ - {{ service.averagePriceMax|number_format(0, ',', ' ') }}€
-                                                </strong>
-                                            </div>
-                                        {% else %}
-                                            <div class="tm-serv-card__price-box tm-serv-card__price-box--empty">
-                                                <span class="tm-serv-card__price-label">Tarification</span>
-                                                <strong class="tm-serv-card__price-value">Sur devis</strong>
-                                            </div>
-                                        {% endif %}
-                                    </div>
+									<div class="tm-servx-service-card__price-box">
+										{% if service.averagePriceMin and service.averagePriceMax %}
+											<span class="tm-servx-service-card__price-label">Tarif indicatif constaté</span>
+											<strong class="tm-servx-service-card__price-value">
+												{{ service.averagePriceMin|number_format(0, ',', ' ') }}€ —
+												{{ service.averagePriceMax|number_format(0, ',', ' ') }}€
+											</strong>
+										{% else %}
+											<span class="tm-servx-service-card__price-label">Tarification</span>
+											<strong class="tm-servx-service-card__price-value">Sur devis</strong>
+										{% endif %}
+									</div>
 
-                                    <div class="tm-serv-card__footer">
-                                        <a href="{{ path('app_search_flow', {type: 'service', slug: service.slug}) }}"
-                                           class="tm-serv-card__cta">
-                                            Trouver un pro
-                                            <i class="fa-solid fa-arrow-right"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </article>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="tm-serv-empty">
-                    <div class="tm-serv-empty__icon">🛠️</div>
-                    <h3 class="tm-serv-empty__title">Aucune prestation disponible</h3>
-                    <p class="tm-serv-empty__text">
-                        Cette spécialité ne propose pas encore de services actifs pour le moment.
-                    </p>
-                </div>
-            {% endif %}
-        </section>
+									<div class="tm-servx-service-card__meta">
+										<span class="tm-servx-service-card__meta-pill">Besoin ciblé</span>
+										<span class="tm-servx-service-card__meta-pill">Recherche rapide</span>
+									</div>
 
-        {# 4. BANDEAU PRESTATAIRE #}
-        <section class="tm-serv-banner">
-            <div class="tm-serv-banner__glow"></div>
+									<div class="tm-servx-service-card__footer">
+										<a href="{{ path('app_search_flow', {type: 'service', slug: service.slug}) }}" class="tm-servx-service-card__cta">
+											<span>Trouver un pro</span>
+											<i class="fa-solid fa-arrow-right"></i>
+										</a>
+									</div>
+								</article>
+							</div>
+						{% endfor %}
+					</div>
+				{% else %}
+					<div class="tm-servx-empty">
+						<div class="tm-servx-empty__badge">Services</div>
+						<div class="tm-servx-empty__icon">
+							<i class="fa-solid fa-screwdriver-wrench"></i>
+						</div>
+						<h3 class="tm-servx-empty__title">Aucune prestation disponible</h3>
+						<p class="tm-servx-empty__text">
+							Cette spécialité ne propose pas encore de services actifs pour le moment.
+						</p>
+					</div>
+				{% endif %}
+			</section>
 
-            <div class="tm-serv-banner__left">
-                <div class="tm-serv-banner__icon">
-                    <i class="fa-solid fa-award"></i>
-                </div>
+			<section class="tm-servx-banner">
+				<div class="tm-servx-banner__glow"></div>
 
-                <div class="tm-serv-banner__content">
-                    <span class="tm-serv-banner__eyebrow">Espace professionnel</span>
-                    <h3 class="tm-serv-banner__title">Vous êtes prestataire ?</h3>
-                    <p class="tm-serv-banner__desc">
-                        Rejoignez TrouveMoi, gagnez en visibilité et recevez des demandes ciblées dans votre spécialité.
-                    </p>
+				<div class="tm-servx-banner__left">
+					<div class="tm-servx-banner__icon">
+						<i class="fa-solid fa-award"></i>
+					</div>
 
-                    <ul class="tm-serv-banner__features">
-                        <li><i class="fa-solid fa-circle-check"></i> Visibilité accrue</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Clients qualifiés</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Outils de gestion</li>
-                    </ul>
-                </div>
-            </div>
+					<div class="tm-servx-banner__content">
+						<span class="tm-servx-banner__eyebrow">Espace professionnel</span>
+						<h3 class="tm-servx-banner__title">Vous êtes prestataire ?</h3>
+						<p class="tm-servx-banner__desc">
+							Rejoignez TrouveMoi, gagnez en visibilité et recevez des demandes ciblées dans votre spécialité.
+						</p>
 
-            <div class="tm-serv-banner__actions">
-                <a href="#" class="btn tm-serv-btn-outline">En savoir plus</a>
-                <a href="#" class="btn tm-serv-btn-primary">Devenir prestataire</a>
-            </div>
-        </section>
+						<ul class="tm-servx-banner__features">
+							<li>
+								<i class="fa-solid fa-circle-check"></i>
+								Visibilité accrue</li>
+							<li>
+								<i class="fa-solid fa-circle-check"></i>
+								Clients qualifiés</li>
+							<li>
+								<i class="fa-solid fa-circle-check"></i>
+								Outils de gestion</li>
+						</ul>
+					</div>
+				</div>
 
-    </div>
+				<div class="tm-servx-banner__actions">
+					<a href="#" class="tm-servx-btn tm-servx-btn--ghost-light">En savoir plus</a>
+					<a href="#" class="tm-servx-btn tm-servx-btn--primary-light">Devenir prestataire</a>
+				</div>
+			</section>
+		</div>
+	</div>
 {% endblock %}
