@@ -16,105 +16,116 @@
     {% set endPage = currentPage + 2 < totalPages ? currentPage + 2 : totalPages %}
 
     {% macro prestataire_card(profile, matchLabel) %}
-        <article class="tm-search-results-card">
-            <div class="tm-search-results-card__inner">
-                <div class="tm-search-results-card__top">
-                    <div class="tm-search-results-card__identity">
-                        <div class="tm-search-results-card__avatar" aria-hidden="true">
-                            <i class="fa-solid fa-briefcase"></i>
-                        </div>
+    <article class="tm-search-results-card">
+        <div class="tm-search-results-card__inner">
+            <div class="tm-search-results-card__cover-wrap">
+                <img
+                    src="{{ profile.coverImage ? asset('uploads/covers/' ~ profile.coverImage) : asset('images/img_par_defaut.png') }}"
+                    alt="{{ profile.companyName|default(profile.account.userIdentifier) }}"
+                    class="tm-search-results-card__cover"
+                    loading="lazy"
+                >
+            </div>
 
-                        <div class="tm-search-results-card__identity-text">
-                            <div class="tm-search-results-card__title-row">
-                                <h2 class="tm-search-results-card__title">
-                                    {{ profile.companyName|default(profile.account.userIdentifier) }}
-                                </h2>
+            <div class="tm-search-results-card__top">
+                <div class="tm-search-results-card__identity">
+                    <div class="tm-search-results-card__avatar" aria-hidden="true">
+                        <i class="fa-solid fa-briefcase"></i>
+                    </div>
 
-                                {% if matchLabel is not empty %}
-                                    <span class="tm-search-results-meta-pill tm-search-results-meta-pill--match-type">
-                                        {{ matchLabel }}
-                                    </span>
-                                {% endif %}
-                            </div>
+                    <div class="tm-search-results-card__identity-text">
+                        <div class="tm-search-results-card__title-row">
+                            <h2 class="tm-search-results-card__title">
+                                {{ profile.companyName|default(profile.account.userIdentifier) }}
+                            </h2>
 
-                            {% if profile.metier %}
-                                <p class="tm-search-results-card__job">
-                                    {{ profile.metier }}
-                                </p>
+                            {% if matchLabel is not empty %}
+                                <span class="tm-search-results-meta-pill tm-search-results-meta-pill--match-type">
+                                    {{ matchLabel }}
+                                </span>
                             {% endif %}
                         </div>
-                    </div>
 
-                    <div class="tm-search-results-card__rating" aria-label="Note moyenne">
-                        <i class="fa-solid fa-star"></i>
-                        <span>{{ profile.averageRating|default('0.0') }}</span>
+                        {% if profile.metier %}
+                            <p class="tm-search-results-card__job">
+                                {{ profile.metier }}
+                            </p>
+                        {% endif %}
                     </div>
                 </div>
 
-                <div class="tm-search-results-card__body">
-                    {% if profile.shortDescription %}
-                        <p class="tm-search-results-card__description">
-                            {{ profile.shortDescription|length > 140
-                                ? profile.shortDescription|slice(0, 140) ~ '…'
-                                : profile.shortDescription }}
-                        </p>
-                    {% else %}
-                        <p class="tm-search-results-card__description tm-search-results-card__description--empty">
-                            Ce prestataire n’a pas encore rédigé de description courte.
-                        </p>
-                    {% endif %}
-                </div>
-
-                <div class="tm-search-results-card__meta">
-                    {% if profile.city %}
-                        <span class="tm-search-results-meta-pill">
-                            <i class="fa-solid fa-location-dot"></i>
-                            <span>{{ profile.city }}</span>
-                        </span>
-                    {% endif %}
-
-                    {% if profile.postalCode %}
-                        <span class="tm-search-results-meta-pill">
-                            <span>{{ profile.postalCode }}</span>
-                        </span>
-                    {% endif %}
-
-                    {% if profile.matchedDistanceKm is defined and profile.matchedDistanceKm is not null %}
-                        <span class="tm-search-results-meta-pill tm-search-results-meta-pill--distance">
-                            <i class="fa-solid fa-route"></i>
-                            <span>À {{ profile.matchedDistanceKm|round(1) }} km</span>
-                        </span>
-                    {% endif %}
-
-                    {% if profile.verificationStatus is defined and profile.verificationStatus %}
-                        <span class="tm-search-results-meta-pill tm-search-results-meta-pill--verified">
-                            <i class="fa-solid fa-circle-check"></i>
-                            <span>Vérifié</span>
-                        </span>
-                    {% endif %}
-                </div>
-
-                <div class="tm-search-results-card__footer">
-                    <div class="tm-search-results-card__reviews">
-                        {{ profile.reviewsCount|default(0) }} avis
-                    </div>
-
-                    {% if profile.slug %}
-                        <a href="{{ path('app_prestataire_show', { slug: profile.slug }) }}" class="tm-search-results-card__cta">
-                            <span>Voir le profil</span>
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-                    {% endif %}
+                <div class="tm-search-results-card__rating" aria-label="Note moyenne">
+                    <i class="fa-solid fa-star"></i>
+                    <span>{{ profile.averageRating|default('0.0') }}</span>
                 </div>
             </div>
-        </article>
-    {% endmacro %}
+
+            <div class="tm-search-results-card__body">
+                {% if profile.shortDescription %}
+                    <p class="tm-search-results-card__description">
+                        {{ profile.shortDescription|length > 140
+                            ? profile.shortDescription|slice(0, 140) ~ '…'
+                            : profile.shortDescription }}
+                    </p>
+                {% else %}
+                    <p class="tm-search-results-card__description tm-search-results-card__description--empty">
+                        Ce prestataire n’a pas encore rédigé de description courte.
+                    </p>
+                {% endif %}
+            </div>
+
+            <div class="tm-search-results-card__meta">
+                {% if profile.city %}
+                    <span class="tm-search-results-meta-pill">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>{{ profile.city }}</span>
+                    </span>
+                {% endif %}
+
+                {% if profile.postalCode %}
+                    <span class="tm-search-results-meta-pill">
+                        <span>{{ profile.postalCode }}</span>
+                    </span>
+                {% endif %}
+
+                {% if profile.matchedDistanceKm is defined and profile.matchedDistanceKm is not null %}
+                    <span class="tm-search-results-meta-pill tm-search-results-meta-pill--distance">
+                        <i class="fa-solid fa-route"></i>
+                        <span>À {{ profile.matchedDistanceKm|round(1) }} km</span>
+                    </span>
+                {% endif %}
+
+                {% if profile.verificationStatus is defined and profile.verificationStatus %}
+                    <span class="tm-search-results-meta-pill tm-search-results-meta-pill--verified">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Vérifié</span>
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="tm-search-results-card__footer">
+                <div class="tm-search-results-card__reviews">
+                    {{ profile.reviewsCount|default(0) }} avis
+                </div>
+
+                {% if profile.slug %}
+                    <a href="{{ path('app_prestataire_show', { slug: profile.slug }) }}" class="tm-search-results-card__cta">
+                        <span>Voir le profil</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </article>
+{% endmacro %}
 
     {% import _self as cards %}
 
     <section class="tm-search-results-page">
         <div class="container tm-search-results-shell">
             <header class="tm-search-results-hero">
+                <div class="tm-search-results-hero__backdrop"></div>
+
                 <div class="tm-search-results-hero__content">
                     <nav aria-label="Fil d’Ariane" class="tm-search-results-breadcrumb">
                         <ol class="tm-search-results-breadcrumb__list">
