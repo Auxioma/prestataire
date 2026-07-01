@@ -1,0 +1,146 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Devis{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <h1 class="h3 mb-2">Devis</h1>
+            <p class="text-muted mb-0">
+                {{ proposal.proposalNumber ?: 'Brouillon de devis' }}
+            </p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ path('app_prestataire_quote_proposal_pdf', {id: proposal.id}) }}" class="btn btn-outline-primary" target="_blank" rel="noopener noreferrer">
+                PDF
+            </a>
+
+            {% if proposal.status.isDraft %}
+                <a href="{{ path('app_prestataire_quote_proposal_edit', {id: proposal.id}) }}" class="btn btn-primary">
+                    Modifier
+                </a>
+            {% endif %}
+
+            <a href="{{ path('app_prestataire_quote_request_show', {id: proposal.quoteRequest.id}) }}" class="btn btn-outline-secondary">
+                Retour à la demande
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12 col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap justify-content-between gap-3 mb-4">
+                        <div>
+                            <h2 class="h5 mb-1">{{ proposal.title }}</h2>
+                            <p class="text-muted mb-0">
+                                Statut : {{ proposal.status.label }}
+                            </p>
+                        </div>
+                        <div class="text-lg-end">
+                            <div><strong>Référence :</strong> {{ proposal.proposalNumber ?: '—' }}</div>
+                            <div><strong>Valable jusqu’au :</strong> {{ proposal.validUntil ? proposal.validUntil|date('d/m/Y') : '—' }}</div>
+                        </div>
+                    </div>
+
+                    {% if proposal.introMessage %}
+                        <p class="mb-4">{{ proposal.introMessage }}</p>
+                    {% endif %}
+
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Prestations</th>
+                                    <th class="text-end">Qté</th>
+                                    <th class="text-end">PU HT</th>
+                                    <th class="text-end">TVA</th>
+                                    <th class="text-end">Total HT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in proposal.items %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ item.label }}</strong>
+                                            {% if item.description %}
+                                                <div class="text-muted small">{{ item.description }}</div>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-end">{{ item.quantity }}</td>
+                                        <td class="text-end">{{ item.unitPriceHt|number_format(2, ',', ' ') }} €</td>
+                                        <td class="text-end">{{ item.vatRate|number_format(2, ',', ' ') }} %</td>
+                                        <td class="text-end">{{ item.totalHt|number_format(2, ',', ' ') }} €</td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-muted">Aucune ligne n’a été ajoutée.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% if proposal.terms %}
+                        <hr>
+                        <h3 class="h6">Conditions</h3>
+                        <p class="mb-0">{{ proposal.terms|nl2br }}</p>
+                    {% endif %}
+
+                    {% if proposal.notes %}
+                        <hr>
+                        <h3 class="h6">Notes</h3>
+                        <p class="mb-0">{{ proposal.notes|nl2br }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5">Totaux</h2>
+                    <dl class="row mb-0">
+                        <dt class="col-6">HT</dt>
+                        <dd class="col-6 text-end">{{ proposal.subtotalHt|number_format(2, ',', ' ') }} €</dd>
+
+                        <dt class="col-6">TVA</dt>
+                        <dd class="col-6 text-end">{{ proposal.taxAmount|number_format(2, ',', ' ') }} €</dd>
+
+                        <dt class="col-6 fw-bold">TTC</dt>
+                        <dd class="col-6 text-end fw-bold">{{ proposal.totalTtc|number_format(2, ',', ' ') }} €</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5">Prestataire</h2>
+                    <p class="mb-1"><strong>{{ proposal.prestataireCompanyName ?: '—' }}</strong></p>
+                    <p class="mb-1">{{ proposal.prestataireLegalName ?: '—' }}</p>
+                    <p class="mb-1">{{ proposal.prestataireAddress ?: '—' }}</p>
+                    <p class="mb-1">{{ proposal.prestatairePostalCode ?: '—' }} {{ proposal.prestataireCity ?: '' }}</p>
+                    <p class="mb-0">{{ proposal.prestataireEmail ?: '—' }}</p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h5">Client</h2>
+                    <p class="mb-1"><strong>{{ proposal.clientFullName ?: '—' }}</strong></p>
+                    <p class="mb-1">{{ proposal.clientCompanyName ?: '—' }}</p>
+                    <p class="mb-1">{{ proposal.clientBillingAddress ?: proposal.clientInterventionAddress ?: '—' }}</p>
+                    <p class="mb-1">
+                        {{ proposal.clientBillingPostalCode ?: proposal.clientInterventionPostalCode ?: '—' }}
+                        {{ proposal.clientBillingCity ?: proposal.clientInterventionCity ?: '' }}
+                    </p>
+                    <p class="mb-0">{{ proposal.clientEmail ?: '—' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

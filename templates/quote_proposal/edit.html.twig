@@ -1,0 +1,169 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Édition du devis{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <h1 class="h3 mb-2">Éditer le devis</h1>
+            <p class="text-muted mb-0">
+                {{ proposal.proposalNumber ?: 'Brouillon de devis' }}
+            </p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ path('app_prestataire_quote_proposal_show', {id: proposal.id}) }}" class="btn btn-outline-secondary">
+                Voir le devis
+            </a>
+
+            <form method="post" action="{{ path('app_prestataire_quote_proposal_finalize', {id: proposal.id}) }}" class="d-inline">
+                <input type="hidden" name="_token" value="{{ csrf_token('finalize_quote_proposal_' ~ proposal.id) }}">
+                <button type="submit" class="btn btn-primary">
+                    Finaliser
+                </button>
+            </form>
+
+            <form method="post" action="{{ path('app_prestataire_quote_proposal_delete', {id: proposal.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ce devis ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete_quote_proposal_' ~ proposal.id) }}">
+                <button type="submit" class="btn btn-outline-danger">
+                    Supprimer
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12 col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_row(form.title) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(form.introMessage) }}
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-md-6">
+                                {{ form_row(form.validUntil) }}
+                            </div>
+                            <div class="col-12 col-md-6">
+                                {{ form_row(form.notes) }}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form_row(form.terms) }}
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 mb-0">Lignes du devis</h2>
+    <small class="text-muted">Ajoute une ou plusieurs prestations.</small>
+</div>
+
+<div
+    data-controller="collection"
+    data-collection-index-value="{{ form.items|length }}"
+>
+    <div data-collection-target="items">
+        {% for itemForm in form.items %}
+            <div class="border rounded p-3 mb-3">
+                <div class="row g-3">
+                    <div class="col-12">
+                        {{ form_row(itemForm.label) }}
+                    </div>
+                    <div class="col-12">
+                        {{ form_row(itemForm.description) }}
+                    </div>
+                    <div class="col-12 col-md-3">
+                        {{ form_row(itemForm.quantity) }}
+                    </div>
+                    <div class="col-12 col-md-3">
+                        {{ form_row(itemForm.unitPriceHt) }}
+                    </div>
+                    <div class="col-12 col-md-3">
+                        {{ form_row(itemForm.vatRate) }}
+                    </div>
+                    <div class="col-12 col-md-3">
+                        {{ form_row(itemForm.position) }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <template data-collection-target="prototype">
+        <div class="border rounded p-3 mb-3">
+            <div class="row g-3">
+                <div class="col-12">
+                    {{ form_row(form.items.vars.prototype.label) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.items.vars.prototype.description) }}
+                </div>
+                <div class="col-12 col-md-3">
+                    {{ form_row(form.items.vars.prototype.quantity) }}
+                </div>
+                <div class="col-12 col-md-3">
+                    {{ form_row(form.items.vars.prototype.unitPriceHt) }}
+                </div>
+                <div class="col-12 col-md-3">
+                    {{ form_row(form.items.vars.prototype.vatRate) }}
+                </div>
+                <div class="col-12 col-md-3">
+                    {{ form_row(form.items.vars.prototype.position) }}
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <button type="button" class="btn btn-outline-primary" data-action="collection#add">
+        Ajouter une ligne
+    </button>
+</div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success">
+                                Enregistrer
+                            </button>
+                        </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5">Résumé</h2>
+                    <dl class="row mb-0">
+                        <dt class="col-6">HT</dt>
+                        <dd class="col-6 text-end">{{ proposal.subtotalHt|number_format(2, ',', ' ') }} €</dd>
+
+                        <dt class="col-6">TVA</dt>
+                        <dd class="col-6 text-end">{{ proposal.taxAmount|number_format(2, ',', ' ') }} €</dd>
+
+                        <dt class="col-6 fw-bold">TTC</dt>
+                        <dd class="col-6 text-end fw-bold">{{ proposal.totalTtc|number_format(2, ',', ' ') }} €</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h5">Snapshots figés</h2>
+
+                    <p class="mb-2"><strong>Prestataire :</strong> {{ proposal.prestataireCompanyName ?: '—' }}</p>
+                    <p class="mb-2"><strong>Client :</strong> {{ proposal.clientFullName ?: '—' }}</p>
+                    <p class="mb-2"><strong>Adresse client :</strong> {{ proposal.clientInterventionAddress ?: '—' }}</p>
+                    <p class="mb-0"><strong>Statut :</strong> {{ proposal.status.label }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
