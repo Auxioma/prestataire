@@ -10,6 +10,7 @@ use App\Entity\PrestataireProfile;
 use App\Entity\QuoteProposal;
 use App\Entity\QuoteProposalItem;
 use App\Entity\QuoteRequest;
+use App\Entity\User;
 use App\Enum\QuoteProposalStatusEnum;
 use App\Repository\QuoteProposalRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -137,32 +138,6 @@ class QuoteProposalManager
         }
     }
 
-    public function freezeSnapshot(
-        QuoteProposal $proposal,
-        QuoteRequest $quoteRequest,
-        PrestataireProfile $prestataire,
-        ?ClientProfile $client = null,
-        ?Conversation $conversation = null
-    ): QuoteProposal {
-        $client ??= $quoteRequest->getClient();
-
-        $proposal->setQuoteRequest($quoteRequest);
-        $proposal->setPrestataire($prestataire);
-        $proposal->setClient($client);
-
-        if ($conversation instanceof Conversation) {
-            $proposal->setConversation($conversation);
-        }
-
-        $this->freezePrestataireSnapshot($proposal, $prestataire);
-        $this->freezeClientSnapshot($proposal, $client);
-        $this->freezeInterventionSnapshot($proposal, $quoteRequest, $client);
-
-        $proposal->touch();
-
-        return $proposal;
-    }
-
     public function recalculateTotals(QuoteProposal $proposal): QuoteProposal
     {
         $subtotal = '0.00';
@@ -192,27 +167,51 @@ class QuoteProposalManager
         return $proposal;
     }
 
+    public function freezeSnapshot(
+        QuoteProposal $proposal,
+        QuoteRequest $quoteRequest,
+        PrestataireProfile $prestataire,
+        ?ClientProfile $client = null,
+        ?Conversation $conversation = null
+    ): QuoteProposal {
+        $client ??= $quoteRequest->getClient();
+
+        $proposal->setQuoteRequest($quoteRequest);
+        $proposal->setPrestataire($prestataire);
+        $proposal->setClient($client);
+
+        if ($conversation instanceof Conversation) {
+            $proposal->setConversation($conversation);
+        }
+
+        $this->freezePrestataireSnapshot($proposal, $prestataire);
+        $this->freezeClientSnapshot($proposal, $client);
+        $this->freezeInterventionSnapshot($proposal, $client);
+
+        $proposal->touch();
+
+        return $proposal;
+    }
+
     private function freezePrestataireSnapshot(
         QuoteProposal $proposal,
         PrestataireProfile $prestataire
     ): void {
-        $proposal->setPrestataireCompanyName($this->readObjectGetter($prestataire, ['getCompanyName']));
-        $proposal->setPrestataireLegalName($this->readObjectGetter($prestataire, ['getLegalName']));
-        $proposal->setPrestataireStructureType($this->readObjectGetter($prestataire, ['getStructureType']));
-        $proposal->setPrestataireSiret($this->readObjectGetter($prestataire, ['getSiret']));
-        $proposal->setPrestataireVatNumber($this->readObjectGetter($prestataire, ['getVatNumber']));
-        $proposal->setPrestataireAddress($this->readObjectGetter($prestataire, ['getAddress']));
-        $proposal->setPrestataireAddressComplement($this->readObjectGetter($prestataire, ['getAddressComplement']));
-        $proposal->setPrestatairePostalCode($this->readObjectGetter($prestataire, ['getPostalCode']));
-        $proposal->setPrestataireCity($this->readObjectGetter($prestataire, ['getCity']));
-        $proposal->setPrestataireCountry($this->readObjectGetter($prestataire, ['getCountry']));
-
-        $proposal->setPrestatairePhone($this->firstNonEmpty([
-            $this->readObjectGetter($prestataire, ['getPhonePublic']),
-            $this->readObjectGetter($prestataire, ['getPhonePrivate']),
-        ]));
-
-        $proposal->setPrestataireEmail($this->resolvePrestataireEmail($prestataire));
+        $proposal->setPrestataireCompanyName($this->clean($prestataire->getCompanyName()));
+        $proposal->setPrestataireLegalName($this->clean($prestataire->getLegalName()));
+        $proposal->setPrestataireStructureType($this->clean($prestataire->getStructureType()));
+        $proposal->setPrestataireSiret($this->clean($prestataire->getSiret()));
+        $proposal->setPrestataireVatNumber($this->clean($prestataire->getVatNumber()));
+        $proposal->setPrestataireAddress($this->clean($prestataire->getAddress()));
+        $proposal->setPrestataireAddressComplement($this->clean($prestataire->getAddressComplement()));
+        $proposal->setPrestatairePostalCode($this->clean($prestataire->getPostalCode()));
+        $proposal->setPrestataireCity($this->clean($prestataire->getCity()));
+        $proposal->setPrestataireCountry($this->clean($prestataire->getCountry()));
+        $proposal->setPrestatairePhone($this->firstFilled(
+            $prestataire->getPhonePublic(),
+            $prestataire->getPhonePrivate()
+        ));
+        $proposal->setPrestataireEmail($this->clean($prestataire->getAccount()?->getEmail()));
     }
 
     private function freezeClientSnapshot(
@@ -234,49 +233,84 @@ class QuoteProposalManager
             return;
         }
 
+        $account = $client->getAccount();
+
+        $fullName = null;
+        $email = null;
+
+        if ($account instanceof User) {
+            $firstName = trim((string) $account->getFirstName());
+            $lastName = trim((string) $account->getLastName());
+            $email = trim((string) $account->getEmail());
+
+            $candidate = trim($firstName . ' ' . $lastName);
+            $fullName = $candidate !== '' ? $candidate : null;
+        }
+
         $proposal->setClientTypeLabel($this->resolveClientTypeLabel($client));
-        $proposal->setClientFullName($this->resolveClientFullName($client));
-        $proposal->setClientCompanyName($this->readObjectGetter($client, ['getCompanyName']));
-        $proposal->setClientSiret($this->readObjectGetter($client, ['getSiret']));
+        $proposal->setClientFullName(
+            $fullName
+                ?? $this->clean($client->getCompanyName())
+                ?? $email
+        );
+        $proposal->setClientCompanyName($this->clean($client->getCompanyName()));
+        $proposal->setClientSiret($this->clean($client->getSiret()));
         $proposal->setClientPhone($this->resolveClientPhone($client));
-        $proposal->setClientEmail($this->resolveClientEmail($client));
-        $proposal->setClientBillingAddress($this->readObjectGetter($client, ['getBillingAddress']));
-        $proposal->setClientBillingPostalCode($this->readObjectGetter($client, ['getBillingPostalCode']));
-        $proposal->setClientBillingCity($this->readObjectGetter($client, ['getBillingCity']));
-        $proposal->setClientBillingCountry($this->readObjectGetter($client, ['getBillingCountry']));
+        $proposal->setClientEmail($this->resolveClientEmail($client) ?? $email);
+        $proposal->setClientBillingAddress($this->clean($client->getBillingAddress()));
+        $proposal->setClientBillingPostalCode($this->clean($client->getBillingPostalCode()));
+        $proposal->setClientBillingCity($this->clean($client->getBillingCity()));
+        $proposal->setClientBillingCountry($this->clean($client->getBillingCountry()));
     }
 
     private function freezeInterventionSnapshot(
         QuoteProposal $proposal,
-        QuoteRequest $quoteRequest,
         ?ClientProfile $client
     ): void {
-        $proposal->setClientInterventionAddress($this->firstNonEmpty([
-            $this->readObjectGetter($quoteRequest, ['getAddress']),
-            $this->readObjectGetter($client, ['getDefaultAddress']),
-        ]));
+        if (!$client instanceof ClientProfile) {
+            $proposal->setClientInterventionAddress(null);
+            $proposal->setClientInterventionAddressComplement(null);
+            $proposal->setClientInterventionPostalCode(null);
+            $proposal->setClientInterventionCity(null);
+            $proposal->setClientInterventionCountry('France');
 
-        $proposal->setClientInterventionAddressComplement(
-            $this->readObjectGetter($quoteRequest, ['getAddressComplement'])
-        );
+            return;
+        }
 
-        $proposal->setClientInterventionPostalCode($this->firstNonEmpty([
-            $this->readObjectGetter($quoteRequest, ['getPostalCode']),
-            $this->readObjectGetter($client, ['getDefaultPostalCode']),
-        ]));
-
-        $proposal->setClientInterventionCity($this->firstNonEmpty([
-            $this->readObjectGetter($quoteRequest, ['getCity']),
-            $this->readObjectGetter($client, ['getDefaultCity']),
-        ]));
-
+        $proposal->setClientInterventionAddress($this->clean($client->getDefaultAddress()));
+        $proposal->setClientInterventionAddressComplement(null);
+        $proposal->setClientInterventionPostalCode($this->clean($client->getDefaultPostalCode()));
+        $proposal->setClientInterventionCity($this->clean($client->getDefaultCity()));
         $proposal->setClientInterventionCountry(
-            $this->firstNonEmpty([
-                $this->readObjectGetter($quoteRequest, ['getCountry']),
-                $this->readObjectGetter($client, ['getBillingCountry']),
-                'France',
-            ])
+            $this->firstFilled(
+                $client->getBillingCountry(),
+                'France'
+            )
         );
+    }
+
+    private function clean(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $value = trim($value);
+
+        return $value !== '' ? $value : null;
+    }
+
+    private function firstFilled(?string ...$values): ?string
+    {
+        foreach ($values as $value) {
+            $value = $this->clean($value);
+
+            if ($value !== null) {
+                return $value;
+            }
+        }
+
+        return null;
     }
 
     private function calculateItemTotalHt(QuoteProposalItem $item): string
@@ -338,16 +372,38 @@ class QuoteProposalManager
             return null;
         }
 
-        $account = $this->readRawObjectGetter($client, ['getAccount']);
+        $account = $client->getAccount();
+
+        $companyName = $this->clean($client->getCompanyName());
 
         if (!$account instanceof object) {
-            return null;
+            return $companyName;
         }
 
-        $firstName = $this->readObjectGetter($account, ['getFirstname', 'getFirstName']);
-        $lastName = $this->readObjectGetter($account, ['getLastname', 'getLastName']);
+        $firstName = null;
+        foreach (['getFirstname', 'getFirstName'] as $method) {
+            if (method_exists($account, $method)) {
+                $firstName = $this->clean($account->{$method}());
+                if ($firstName !== null) {
+                    break;
+                }
+            }
+        }
 
-        return $this->trimJoin([$firstName, $lastName]);
+        $lastName = null;
+        foreach (['getLastname', 'getLastName'] as $method) {
+            if (method_exists($account, $method)) {
+                $lastName = $this->clean($account->{$method}());
+                if ($lastName !== null) {
+                    break;
+                }
+            }
+        }
+
+        $fullName = trim(($firstName ?? '') . ' ' . ($lastName ?? ''));
+        $fullName = $this->clean($fullName);
+
+        return $fullName ?? $companyName;
     }
 
     private function resolveClientPhone(?ClientProfile $client): ?string

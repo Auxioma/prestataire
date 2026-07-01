@@ -183,74 +183,71 @@
 							</section>
 
 							<section class="tm-quote-form-section tm-quote-form-section--items">
-    <div
-        data-controller="collection"
-        data-collection-index-value="{{ form.items|length }}"
-        data-collection-prototype-value="{{ itemPrototype|e('html_attr') }}"
-    >
-        <div class="tm-quote-form-section__head tm-quote-form-section__head--items">
-            <div>
-                <h3 class="tm-quote-form-section__title">Lignes du devis</h3>
-                <p class="tm-quote-form-section__text">Ajoutez chaque prestation avec un intitulé clair, une quantité, un prix et une TVA cohérente.</p>
-            </div>
-        </div>
+								<div data-controller="collection" data-collection-index-value="{{ form.items|length }}" data-collection-prototype-value="{{ itemPrototype|e('html_attr') }}">
+									<div class="tm-quote-form-section__head tm-quote-form-section__head--items">
+										<div>
+											<h3 class="tm-quote-form-section__title">Lignes du devis</h3>
+											<p class="tm-quote-form-section__text">Ajoutez chaque prestation avec un intitulé clair, une quantité, un prix et une TVA cohérente.</p>
+										</div>
+									</div>
 
-        <div class="tm-quote-items" data-collection-target="items">
-            {% for itemForm in form.items %}
-                <article class="tm-quote-item-card tm-quote-item-card--line" data-collection-item>
-                    <div class="tm-quote-item-card__top">
-                        <div class="tm-quote-item-card__title-wrap">
-                            <span class="tm-quote-item-card__eyebrow">Prestation</span>
-                            <h4 class="tm-quote-item-card__title">Ligne {{ loop.index }}</h4>
-                        </div>
+									<div class="tm-quote-items" data-collection-target="items">
+										{% for itemForm in form.items %}
+											<article class="tm-quote-item-card tm-quote-item-card--line" data-collection-item>
+												<div class="tm-quote-item-card__top">
+													<div class="tm-quote-item-card__title-wrap">
+														<span class="tm-quote-item-card__eyebrow">Prestation</span>
+														<h4 class="tm-quote-item-card__title">Ligne
+															{{ loop.index }}</h4>
+													</div>
 
-                        <button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="collection#remove">
-                            Supprimer la ligne
-                        </button>
-                    </div>
+													<button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="collection#remove">
+														Supprimer la ligne
+													</button>
+												</div>
 
-                    <div class="tm-quote-item-card__body tm-quote-item-card__body--compact">
-                        <div class="tm-quote-grid tm-quote-grid--1">
-                            <div class="tm-quote-field">
-                                {{ form_row(itemForm.label) }}
-                            </div>
+												<div class="tm-quote-item-card__body tm-quote-item-card__body--compact">
+													<div class="tm-quote-grid tm-quote-grid--1">
+														<div class="tm-quote-field">
+															{{ form_row(itemForm.label) }}
+														</div>
 
-                            <div class="tm-quote-field">
-                                {{ form_row(itemForm.description) }}
-                            </div>
-                        </div>
+														<div class="tm-quote-field">
+															{{ form_row(itemForm.description) }}
+														</div>
+													</div>
 
-                        <div class="tm-quote-grid tm-quote-grid--3">
-                            <div class="tm-quote-field">
-                                {{ form_row(itemForm.quantity) }}
-                            </div>
+													<div class="tm-quote-grid tm-quote-grid--3">
+														<div class="tm-quote-field">
+															{{ form_row(itemForm.quantity) }}
+														</div>
 
-                            <div class="tm-quote-field">
-                                {{ form_row(itemForm.unitPriceHt) }}
-                            </div>
+														<div class="tm-quote-field">
+															{{ form_row(itemForm.unitPriceHt) }}
+														</div>
 
-                            <div class="tm-quote-field">
-                                {{ form_row(itemForm.vatRate) }}
-                            </div>
-                        </div>
-                    </div>
-                </article>
-            {% else %}
-                <div class="tm-quote-empty">
-                    <div class="tm-quote-empty__icon">+</div>
-                    <h4 class="tm-quote-empty__title">Aucune prestation ajoutée</h4>
-                    <p class="tm-quote-empty__text">Ajoutez une première ligne pour commencer votre devis.</p>
-                </div>
-            {% endfor %}
-        </div>
+														<div class="tm-quote-field">
+															{{ form_row(itemForm.vatRate) }}
+														</div>
+													</div>
+												</div>
+											</article>
+										{% else %}
+											<div class="tm-quote-empty">
+												<div class="tm-quote-empty__icon">+</div>
+												<h4 class="tm-quote-empty__title">Aucune prestation ajoutée</h4>
+												<p class="tm-quote-empty__text">Ajoutez une première ligne pour commencer votre devis.</p>
+											</div>
+										{% endfor %}
+									</div>
 
-        <div class="tm-quote-add-line-wrap">
-            <button type="button" class="tm-quote-btn tm-quote-btn--mini-primary" data-action="collection#add">
-                Ajouter une ligne
-            </button>
-        </div>
-    </div>
-</section>
+									<div class="tm-quote-add-line-wrap">
+										<button type="button" class="tm-quote-btn tm-quote-btn--mini-primary" data-action="collection#add">
+											Ajouter une ligne
+										</button>
+									</div>
+								</div>
+							</section>
 
 							<div class="tm-quote-form__actions">
 								<button type="submit" class="tm-quote-btn tm-quote-btn--success">
@@ -310,15 +307,22 @@
 									<strong class="tm-quote-info-card__value">{{ proposal.prestataireCompanyName ?: '—' }}</strong>
 								</article>
 
-								<article class="tm-quote-info-card">
-									<span class="tm-quote-info-card__label">Client</span>
-									<strong class="tm-quote-info-card__value">{{ proposal.clientFullName ?: proposal.clientCompanyName ?: '—' }}</strong>
-								</article>
+<article class="tm-quote-info-card">
+    <span class="tm-quote-info-card__label">Client</span>
+    <strong class="tm-quote-info-card__value">
+        {{ proposal.clientFullName ?: proposal.clientCompanyName ?: '—' }}
+    </strong>
+</article>
 
-								<article class="tm-quote-info-card">
-									<span class="tm-quote-info-card__label">Adresse client</span>
-									<strong class="tm-quote-info-card__value">{{ proposal.clientInterventionAddress ?: '—' }}</strong>
-								</article>
+<article class="tm-quote-info-card">
+    <span class="tm-quote-info-card__label">Adresse client</span>
+    <strong class="tm-quote-info-card__value">
+        {{ proposal.clientBillingAddress ?: proposal.clientInterventionAddress ?: '—' }}
+        <br>
+        {{ proposal.clientBillingPostalCode ?: proposal.clientInterventionPostalCode ?: '—' }}
+        {{ proposal.clientBillingCity ?: proposal.clientInterventionCity ?: '' }}
+    </strong>
+</article>
 
 								<article class="tm-quote-info-card">
 									<span class="tm-quote-info-card__label">Statut</span>
