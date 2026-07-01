@@ -20,8 +20,7 @@ class QuoteProposalManager
         private readonly EntityManagerInterface $entityManager,
         private readonly QuoteProposalRepository $quoteProposalRepository,
         private readonly QuoteProposalNumberGenerator $numberGenerator,
-    ) {
-    }
+    ) {}
 
     public function findActiveProposal(
         QuoteRequest $quoteRequest,
@@ -29,6 +28,7 @@ class QuoteProposalManager
     ): ?QuoteProposal {
         return $this->quoteProposalRepository->findOneActiveByQuoteRequestAndPrestataire($quoteRequest, $prestataire);
     }
+
 
     public function getOrCreateDraft(
         QuoteRequest $quoteRequest,
@@ -58,6 +58,14 @@ class QuoteProposalManager
             ->setStatus(QuoteProposalStatusEnum::DRAFT)
             ->setTitle($this->buildDefaultTitle($quoteRequest))
             ->setCurrency($this->resolveQuoteRequestCurrency($quoteRequest) ?? 'EUR');
+
+        if ($proposal->getPublicReference() === null) {
+            do {
+                $reference = $this->generatePublicReference();
+            } while ($this->quoteProposalRepository->findOneBy(['publicReference' => $reference]) !== null);
+
+            $proposal->setPublicReference($reference);
+        }
 
         $this->freezeSnapshot($proposal, $quoteRequest, $prestataire, $client, $conversation);
         $this->recalculateTotals($proposal);
@@ -102,7 +110,7 @@ class QuoteProposalManager
         }
 
         $proposal->setStatus(QuoteProposalStatusEnum::FINALIZED);
-        $proposal->setFinalizedAt(new \DateTimeImmutable());
+        $proposal->setFinalizedAt(new \DateTime());
         $proposal->touch();
 
         return $proposal;
@@ -111,7 +119,7 @@ class QuoteProposalManager
     public function softDelete(QuoteProposal $proposal): QuoteProposal
     {
         $proposal->setStatus(QuoteProposalStatusEnum::DELETED);
-        $proposal->setDeletedAt(new \DateTimeImmutable());
+        $proposal->setDeletedAt(new \DateTime());
         $proposal->touch();
 
         return $proposal;
@@ -119,8 +127,9 @@ class QuoteProposalManager
 
     public function save(QuoteProposal $proposal, bool $flush = true): void
     {
+        $this->removeEmptyItems($proposal);
+        $this->normalizeItemPositions($proposal);
         $this->recalculateTotals($proposal);
-
         $this->entityManager->persist($proposal);
 
         if ($flush) {
@@ -441,8 +450,8 @@ class QuoteProposalManager
     private function trimJoin(array $parts): ?string
     {
         $parts = array_filter(
-            array_map(fn (mixed $value) => $this->getStringValue($value), $parts),
-            fn (?string $value) => !$this->isBlank($value)
+            array_map(fn(mixed $value) => $this->getStringValue($value), $parts),
+            fn(?string $value) => !$this->isBlank($value)
         );
 
         if ($parts === []) {
@@ -463,6 +472,38 @@ class QuoteProposalManager
         }
 
         return null;
+    }
+
+    private function generatePublicReference(): string
+    {
+        return sprintf('DEV-%s-%s', date('Y'), strtoupper(substr(bin2hex(random_bytes(6)), 0, 12)));
+    }
+
+    private function normalizeItemPositions(QuoteProposal $proposal): void
+    {
+        $position = 1;
+
+        foreach ($proposal->getItems() as $item) {
+            $item->setPosition($position++);
+        }
+    }
+
+    private function removeEmptyItems(QuoteProposal $proposal): void
+    {
+        foreach ($proposal->getItems()->toArray() as $item) {
+            $description = $item->getDescription();
+            $label = $item->getLabel();
+
+            $isLabelBlank = $label === null || trim($label) === '';
+            $isDescriptionBlank = $description === null || trim($description) === '';
+            $isQuantityEmpty = $item->getQuantity() === null;
+            $isUnitPriceEmpty = $item->getUnitPriceHt() === null;
+            $isVatRateEmpty = $item->getVatRate() === null;
+
+            if ($isLabelBlank && $isDescriptionBlank && $isQuantityEmpty && $isUnitPriceEmpty && $isVatRateEmpty) {
+                $proposal->removeItem($item);
+            }
+        }
     }
 
     private function isBlank(?string $value): bool

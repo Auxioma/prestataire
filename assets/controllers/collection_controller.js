@@ -1,9 +1,10 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['items', 'prototype'];
+    static targets = ['items'];
     static values = {
         index: Number,
+        prototype: String,
     };
 
     connect() {
@@ -15,10 +16,36 @@ export default class extends Controller {
     add(event) {
         event.preventDefault();
 
-        const template = this.prototypeTarget.innerHTML.trim();
-        const html = template.replace(/__name__/g, this.indexValue);
+        if (!this.hasPrototypeValue) {
+            return;
+        }
+
+        const html = this.prototypeValue.replace(/__name__/g, this.indexValue);
 
         this.itemsTarget.insertAdjacentHTML('beforeend', html);
         this.indexValue++;
+
+        this.refreshTitles();
+    }
+
+    remove(event) {
+        event.preventDefault();
+
+        const item = event.currentTarget.closest('[data-collection-item]');
+        if (item) {
+            item.remove();
+            this.refreshTitles();
+        }
+    }
+
+    refreshTitles() {
+        const items = this.itemsTarget.querySelectorAll('[data-collection-item]');
+
+        items.forEach((item, index) => {
+            const title = item.querySelector('.tm-quote-item-card__title');
+            if (title) {
+                title.textContent = `Ligne ${index + 1}`;
+            }
+        });
     }
 }

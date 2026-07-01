@@ -18,7 +18,7 @@ class QuoteProposalItemType extends AbstractType
         $builder
             ->add('label', TextType::class, [
                 'label' => 'Intitulé',
-                'required' => true,
+                'required' => false,
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
@@ -29,7 +29,7 @@ class QuoteProposalItemType extends AbstractType
             ])
             ->add('quantity', NumberType::class, [
                 'label' => 'Quantité',
-                'required' => true,
+                'required' => false,
                 'scale' => 2,
                 'html5' => true,
                 'attr' => [
@@ -39,7 +39,7 @@ class QuoteProposalItemType extends AbstractType
             ])
             ->add('unitPriceHt', NumberType::class, [
                 'label' => 'Prix unitaire HT',
-                'required' => true,
+                'required' => false,
                 'scale' => 2,
                 'html5' => true,
                 'attr' => [
@@ -49,19 +49,12 @@ class QuoteProposalItemType extends AbstractType
             ])
             ->add('vatRate', NumberType::class, [
                 'label' => 'TVA (%)',
-                'required' => true,
+                'required' => false,
                 'scale' => 2,
                 'html5' => true,
                 'attr' => [
                     'step' => '0.01',
                     'min' => '0',
-                ],
-            ])
-            ->add('position', IntegerType::class, [
-                'label' => 'Position',
-                'required' => false,
-                'attr' => [
-                    'min' => 0,
                 ],
             ])
         ;

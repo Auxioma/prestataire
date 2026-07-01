@@ -51,6 +51,18 @@ class QuoteProposalRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function findOneForPrestataireByPublicReference(string $publicReference, PrestataireProfile $prestataire): ?QuoteProposal
+    {
+        return $this->createQueryBuilder('qp')
+            ->andWhere('qp.publicReference = :publicReference')
+            ->andWhere('qp.prestataire = :prestataire')
+            ->andWhere('qp.deletedAt IS NULL')
+            ->setParameter('publicReference', $publicReference)
+            ->setParameter('prestataire', $prestataire)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function findOneForClientById(
         string|int $id,
         ClientProfile $client

@@ -1,0 +1,492 @@
+.quote-show-page {
+    --quote-bg: #f5f6fa;
+    --quote-surface: #ffffff;
+    --quote-surface-alt: #f8f9fc;
+    --quote-border: #dfe3ee;
+    --quote-border-strong: #cfd6e4;
+    --quote-text: #18213f;
+    --quote-text-soft: #66708a;
+    --quote-primary: #1f2b6c;
+    --quote-primary-2: #2c3d8f;
+    --quote-accent: #e5b13c;
+    --quote-success: #3c7a3f;
+    --quote-danger: #b3423a;
+    --quote-info: #4d63c9;
+    --quote-shadow: 0 18px 45px rgba(20, 31, 76, 0.08);
+    --quote-shadow-soft: 0 8px 20px rgba(20, 31, 76, 0.05);
+    --quote-radius-xl: 24px;
+    --quote-radius-lg: 18px;
+    --quote-radius-md: 14px;
+    background: linear-gradient(180deg, #f6f7fb 0%, #f1f3f8 100%);
+    min-height: 100vh;
+    color: var(--quote-text);
+    padding: 32px 0 48px;
+}
+
+.quote-show-container {
+    max-width: 1380px;
+}
+
+.quote-show-topbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) 320px;
+    gap: 24px;
+    padding: 28px;
+    margin-bottom: 20px;
+    background: var(--quote-surface);
+    border: 1px solid var(--quote-border);
+    border-radius: var(--quote-radius-xl);
+    box-shadow: var(--quote-shadow);
+}
+
+.quote-show-topbar__eyebrow,
+.quote-panel__eyebrow {
+    display: inline-block;
+    margin-bottom: 10px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #4c8b74;
+}
+
+.quote-show-topbar__title {
+    margin: 0;
+    font-size: clamp(2rem, 1.8rem + 1.4vw, 3.1rem);
+    line-height: 1.02;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--quote-text);
+}
+
+.quote-show-topbar__text,
+.quote-show-meta-card__label,
+.quote-show-alert,
+.quote-document-header__status,
+.quote-document-badge__label,
+.quote-line-description,
+.quote-contact-card__line,
+.quote-total-row span {
+    color: var(--quote-text-soft);
+}
+
+.quote-show-topbar__text {
+    margin: 10px 0 0;
+    max-width: 56ch;
+    font-size: 15px;
+}
+
+.quote-show-topbar__meta {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 20px;
+}
+
+.quote-show-meta-card {
+    padding: 14px 16px;
+    background: var(--quote-surface-alt);
+    border: 1px solid var(--quote-border);
+    border-radius: var(--quote-radius-md);
+}
+
+.quote-show-meta-card__label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.quote-show-meta-card__value {
+    display: block;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--quote-text);
+}
+
+.quote-show-topbar__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
+}
+
+.quote-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    width: 100%;
+    padding: 12px 18px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    transition: all 0.18s ease;
+    cursor: pointer;
+}
+
+.quote-btn:hover {
+    transform: translateY(-1px);
+}
+
+.quote-btn--primary {
+    background: linear-gradient(135deg, var(--quote-primary), var(--quote-primary-2));
+    color: #fff;
+    box-shadow: 0 12px 24px rgba(31, 43, 108, 0.18);
+}
+
+.quote-btn--secondary {
+    background: #fff;
+    border-color: var(--quote-border-strong);
+    color: var(--quote-text);
+}
+
+.quote-btn--danger {
+    background: #fff5f4;
+    border-color: #f0d1cd;
+    color: var(--quote-danger);
+}
+
+.quote-btn--success {
+    background: linear-gradient(135deg, #4d8d4f, #3c7a3f);
+    color: #fff;
+    box-shadow: 0 12px 24px rgba(60, 122, 63, 0.18);
+}
+
+.quote-show-alert {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    border-radius: 16px;
+    border: 1px solid var(--quote-border);
+    font-size: 14px;
+    background: #eef2ff;
+}
+
+.quote-show-alert--success {
+    background: #edf7ee;
+    border-color: #cfe4d1;
+}
+
+.quote-show-alert__dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--quote-info);
+    flex: 0 0 auto;
+}
+
+.quote-show-alert--success .quote-show-alert__dot {
+    background: var(--quote-success);
+}
+
+.quote-show-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) 320px;
+    gap: 20px;
+    align-items: start;
+}
+
+.quote-panel {
+    background: var(--quote-surface);
+    border: 1px solid var(--quote-border);
+    border-radius: var(--quote-radius-xl);
+    box-shadow: var(--quote-shadow-soft);
+    overflow: hidden;
+}
+
+.quote-panel__header {
+    padding: 24px 24px 0;
+}
+
+.quote-panel__title {
+    margin: 0;
+    font-size: 28px;
+    line-height: 1.03;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}
+
+.quote-document-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 24px;
+    border-bottom: 1px solid var(--quote-border);
+}
+
+.quote-document-header__title {
+    margin: 0;
+    font-size: 30px;
+    line-height: 1.02;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--quote-text);
+}
+
+.quote-document-header__status {
+    margin: 8px 0 0;
+    font-size: 14px;
+}
+
+.quote-document-badge {
+    min-width: 220px;
+    padding: 14px 16px;
+    border: 1px solid var(--quote-border);
+    border-radius: var(--quote-radius-md);
+    background: var(--quote-surface-alt);
+}
+
+.quote-document-badge__label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.quote-document-badge__value {
+    display: block;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--quote-text);
+}
+
+.quote-rich-block {
+    padding: 16px 18px;
+    margin: 0 24px 24px;
+    border-radius: 16px;
+    border: 1px solid var(--quote-border);
+    background: var(--quote-surface-alt);
+    line-height: 1.7;
+    color: var(--quote-text);
+}
+
+.quote-rich-block--intro {
+    margin-top: 24px;
+}
+
+.quote-lines-table-wrap {
+    padding: 0 24px 24px;
+    overflow-x: auto;
+}
+
+.quote-lines-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.quote-lines-table thead th {
+    padding: 14px 16px;
+    background: #f6f8fd;
+    border-top: 1px solid var(--quote-border);
+    border-bottom: 1px solid var(--quote-border);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--quote-text-soft);
+}
+
+.quote-lines-table thead th:first-child {
+    border-left: 1px solid var(--quote-border);
+    border-top-left-radius: 14px;
+}
+
+.quote-lines-table thead th:last-child {
+    border-right: 1px solid var(--quote-border);
+    border-top-right-radius: 14px;
+}
+
+.quote-lines-table tbody td {
+    padding: 16px;
+    border-bottom: 1px solid var(--quote-border);
+    color: var(--quote-text);
+    vertical-align: top;
+    background: #fff;
+}
+
+.quote-lines-table tbody tr td:first-child {
+    border-left: 1px solid var(--quote-border);
+}
+
+.quote-lines-table tbody tr td:last-child {
+    border-right: 1px solid var(--quote-border);
+}
+
+.quote-lines-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 14px;
+}
+
+.quote-lines-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 14px;
+}
+
+.quote-line-title,
+.quote-line-total {
+    font-weight: 800;
+    color: var(--quote-text);
+}
+
+.quote-line-description {
+    margin-top: 4px;
+    font-size: 14px;
+}
+
+.quote-rich-section {
+    padding: 0 24px 24px;
+}
+
+.quote-rich-section__title {
+    margin: 0 0 10px;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--quote-text);
+}
+
+.quote-show-sidebar {
+    display: grid;
+    gap: 20px;
+    position: sticky;
+    top: 24px;
+}
+
+.quote-totals {
+    padding: 0 24px 24px;
+    display: grid;
+    gap: 12px;
+}
+
+.quote-total-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--quote-border);
+    border-radius: 14px;
+    background: var(--quote-surface-alt);
+}
+
+.quote-total-row strong {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--quote-text);
+}
+
+.quote-total-row--highlight {
+    background: linear-gradient(135deg, rgba(229, 177, 60, 0.12), rgba(31, 43, 108, 0.05));
+    border-color: #ead8a4;
+}
+
+.quote-contact-card {
+    padding: 0 24px 24px;
+    display: grid;
+    gap: 8px;
+}
+
+.quote-contact-card__name {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--quote-text);
+}
+
+.quote-empty-state {
+    padding: 32px 20px;
+    text-align: center;
+    border: 1px dashed #cdd6ea;
+    border-radius: 18px;
+    background: #fafbff;
+}
+
+.quote-empty-state--compact {
+    margin: 12px;
+}
+
+.quote-empty-state__icon {
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 12px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(31, 43, 108, 0.08);
+    color: var(--quote-primary);
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.quote-empty-state__title {
+    margin: 0 0 6px;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--quote-text);
+}
+
+.quote-empty-state__text {
+    margin: 0;
+    font-size: 14px;
+}
+
+@media (max-width: 1199.98px) {
+    .quote-show-topbar,
+    .quote-show-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .quote-show-topbar__actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .quote-show-topbar__actions form {
+        flex: 1 1 100%;
+    }
+
+    .quote-show-sidebar {
+        position: static;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .quote-show-topbar__meta {
+        grid-template-columns: 1fr;
+    }
+
+    .quote-document-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .quote-show-page {
+        padding: 18px 0 32px;
+    }
+
+    .quote-show-topbar,
+    .quote-document-header,
+    .quote-panel__header,
+    .quote-lines-table-wrap,
+    .quote-rich-section,
+    .quote-contact-card {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .quote-show-topbar__actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .quote-show-topbar__actions .quote-btn,
+    .quote-show-topbar__actions form .quote-btn {
+        width: 100%;
+    }
+}

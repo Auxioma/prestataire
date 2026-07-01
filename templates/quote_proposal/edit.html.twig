@@ -1,169 +1,334 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Édition du devis{% endblock %}
+{% block title %}Édition du devis
+{% endblock %}
 
 {% block body %}
-<div class="container py-4">
-    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
-        <div>
-            <h1 class="h3 mb-2">Éditer le devis</h1>
-            <p class="text-muted mb-0">
-                {{ proposal.proposalNumber ?: 'Brouillon de devis' }}
-            </p>
+	{% set itemPrototype %}
+	<article class="tm-quote-item-card tm-quote-item-card--line" data-collection-item>
+		<div class="tm-quote-item-card__top">
+			<div class="tm-quote-item-card__title-wrap">
+				<span class="tm-quote-item-card__eyebrow">Prestation</span>
+				<h4 class="tm-quote-item-card__title">Nouvelle ligne</h4>
+			</div>
+
+			<button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="collection#remove">
+				Supprimer la ligne
+			</button>
+		</div>
+
+		<div class="tm-quote-item-card__body tm-quote-item-card__body--compact">
+			<div class="tm-quote-grid tm-quote-grid--1">
+				<div class="tm-quote-field">
+					{{ form_row(form.items.vars.prototype.label) }}
+				</div>
+
+				<div class="tm-quote-field">
+					{{ form_row(form.items.vars.prototype.description) }}
+				</div>
+			</div>
+
+			<div class="tm-quote-grid tm-quote-grid--3">
+				<div class="tm-quote-field">
+					{{ form_row(form.items.vars.prototype.quantity) }}
+				</div>
+
+				<div class="tm-quote-field">
+					{{ form_row(form.items.vars.prototype.unitPriceHt) }}
+				</div>
+
+				<div class="tm-quote-field">
+					{{ form_row(form.items.vars.prototype.vatRate) }}
+				</div>
+			</div>
+		</div>
+	</article>
+	{% endset %}
+
+	<div class="tm-quote-edit">
+		<div class="container tm-quote-edit__container">
+			<section class="tm-quote-edit__hero">
+				<div class="tm-quote-edit__hero-main">
+					<span class="tm-quote-edit__eyebrow">Espace devis</span>
+					<h1 class="tm-quote-edit__title">Éditer le devis</h1>
+					<p class="tm-quote-edit__subtitle">
+						Préparez une proposition sérieuse, claire et rassurante pour votre client.
+					</p>
+
+					<div class="tm-quote-edit__meta-grid">
+						<article class="tm-quote-edit__meta-card">
+							<span class="tm-quote-edit__meta-label">Numéro</span>
+							<strong class="tm-quote-edit__meta-value">{{ proposal.proposalNumber ?: 'Brouillon de devis' }}</strong>
+						</article>
+
+						<article class="tm-quote-edit__meta-card">
+							<span class="tm-quote-edit__meta-label">Référence interne</span>
+							<strong class="tm-quote-edit__meta-value">{{ proposal.publicReference ?: '—' }}</strong>
+						</article>
+
+						<article class="tm-quote-edit__meta-card">
+							<span class="tm-quote-edit__meta-label">Créé le</span>
+							<strong class="tm-quote-edit__meta-value">{{ proposal.createdAt ? proposal.createdAt|date('d/m/Y à H:i') : '—' }}</strong>
+						</article>
+
+						<article class="tm-quote-edit__meta-card">
+							<span class="tm-quote-edit__meta-label">Statut</span>
+							<strong class="tm-quote-edit__meta-value">{{ proposal.status.label }}</strong>
+						</article>
+					</div>
+
+					{% if proposal.updatedAt and proposal.createdAt and proposal.updatedAt|date('U') != proposal.createdAt|date('U') %}
+						<p class="tm-quote-edit__updated-at">
+							Dernière modification :
+							{{ proposal.updatedAt|date('d/m/Y à H:i') }}
+						</p>
+					{% endif %}
+				</div>
+
+				<div class="tm-quote-edit__hero-actions">
+					<a href="{{ path('app_prestataire_quote_request_show', { slug: proposal.quoteRequest.slug }) }}" class="tm-quote-btn tm-quote-btn--secondary">
+						Retour à la demande
+					</a>
+
+					<a href="{{ path('app_prestataire_quote_proposal_show', { publicReference: proposal.publicReference }) }}" class="tm-quote-btn tm-quote-btn--primary">
+						Aperçu
+					</a>
+
+					<form method="post" action="{{ path('app_prestataire_quote_proposal_delete', { publicReference: proposal.publicReference }) }}" onsubmit="return confirm('Supprimer définitivement ce devis ? Il ne sera plus visible par le client, mais vous pourrez créer un nouveau devis pour cette demande.');">
+						<input type="hidden" name="_token" value="{{ csrf_token('delete_quote_proposal_' ~ proposal.id) }}">
+						<button type="submit" class="tm-quote-btn tm-quote-btn--danger">
+							Supprimer
+						</button>
+					</form>
+				</div>
+			</section>
+
+			{% if proposal.isFinalized %}
+				<div class="tm-quote-edit__alert tm-quote-edit__alert--warning">
+					<span class="tm-quote-edit__alert-dot"></span>
+					<div>
+						<strong>Devis déjà publié.</strong>
+						Toute modification enregistrée mettra à jour la version visible par le client.
+					</div>
+				</div>
+			{% else %}
+				<div class="tm-quote-edit__alert tm-quote-edit__alert--info">
+					<span class="tm-quote-edit__alert-dot"></span>
+					<div>
+						<strong>Brouillon en cours.</strong>
+						Renseignez les lignes, les conditions et les notes, puis finalisez le devis depuis l’aperçu.
+					</div>
+				</div>
+			{% endif %}
+
+			<div class="tm-quote-edit__layout">
+				<main class="tm-quote-edit__main">
+					<section class="tm-quote-panel tm-quote-panel--main">
+						<div class="tm-quote-panel__head tm-quote-panel__head--split">
+							<div>
+								<span class="tm-quote-panel__eyebrow">Contenu du devis</span>
+								<h2 class="tm-quote-panel__title">Composition du document</h2>
+							</div>
+
+							<p class="tm-quote-panel__desc">
+								Chaque champ doit renforcer la lisibilité, la confiance et la compréhension de l’offre.
+							</p>
+						</div>
+
+						<div class="tm-quote-panel__body">
+							{{ form_start(form, { attr: { class: 'tm-quote-form' } }) }}
+
+							{% if form.vars.errors|length > 0 %}
+								<div class="tm-quote-form__global-errors">
+									{{ form_errors(form) }}
+								</div>
+							{% endif %}
+
+							<section class="tm-quote-form-section">
+								<div class="tm-quote-form-section__head">
+									<h3 class="tm-quote-form-section__title">Informations générales</h3>
+									<p class="tm-quote-form-section__text">Présentez clairement l’objet du devis et le message d’introduction.</p>
+								</div>
+
+								<div class="tm-quote-grid tm-quote-grid--1">
+									<div class="tm-quote-field">
+										{{ form_row(form.title) }}
+									</div>
+									<div class="tm-quote-field">
+										{{ form_row(form.introMessage) }}
+									</div>
+								</div>
+							</section>
+
+							<section class="tm-quote-form-section">
+								<div class="tm-quote-form-section__head">
+									<h3 class="tm-quote-form-section__title">Cadre commercial</h3>
+									<p class="tm-quote-form-section__text">Définissez la validité du devis, les notes complémentaires et les conditions.</p>
+								</div>
+
+								<div class="tm-quote-grid tm-quote-grid--2">
+									<div class="tm-quote-field">
+										{{ form_row(form.validUntil) }}
+									</div>
+									<div class="tm-quote-field">
+										{{ form_row(form.notes) }}
+									</div>
+								</div>
+
+								<div class="tm-quote-grid tm-quote-grid--1">
+									<div class="tm-quote-field">
+										{{ form_row(form.terms) }}
+									</div>
+								</div>
+							</section>
+
+							<section class="tm-quote-form-section tm-quote-form-section--items">
+    <div
+        data-controller="collection"
+        data-collection-index-value="{{ form.items|length }}"
+        data-collection-prototype-value="{{ itemPrototype|e('html_attr') }}"
+    >
+        <div class="tm-quote-form-section__head tm-quote-form-section__head--items">
+            <div>
+                <h3 class="tm-quote-form-section__title">Lignes du devis</h3>
+                <p class="tm-quote-form-section__text">Ajoutez chaque prestation avec un intitulé clair, une quantité, un prix et une TVA cohérente.</p>
+            </div>
         </div>
 
-        <div class="d-flex flex-wrap gap-2">
-            <a href="{{ path('app_prestataire_quote_proposal_show', {id: proposal.id}) }}" class="btn btn-outline-secondary">
-                Voir le devis
-            </a>
-
-            <form method="post" action="{{ path('app_prestataire_quote_proposal_finalize', {id: proposal.id}) }}" class="d-inline">
-                <input type="hidden" name="_token" value="{{ csrf_token('finalize_quote_proposal_' ~ proposal.id) }}">
-                <button type="submit" class="btn btn-primary">
-                    Finaliser
-                </button>
-            </form>
-
-            <form method="post" action="{{ path('app_prestataire_quote_proposal_delete', {id: proposal.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ce devis ?');">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete_quote_proposal_' ~ proposal.id) }}">
-                <button type="submit" class="btn btn-outline-danger">
-                    Supprimer
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <div class="row g-4">
-        <div class="col-12 col-lg-8">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    {{ form_start(form) }}
-                        <div class="mb-3">
-                            {{ form_row(form.title) }}
+        <div class="tm-quote-items" data-collection-target="items">
+            {% for itemForm in form.items %}
+                <article class="tm-quote-item-card tm-quote-item-card--line" data-collection-item>
+                    <div class="tm-quote-item-card__top">
+                        <div class="tm-quote-item-card__title-wrap">
+                            <span class="tm-quote-item-card__eyebrow">Prestation</span>
+                            <h4 class="tm-quote-item-card__title">Ligne {{ loop.index }}</h4>
                         </div>
 
-                        <div class="mb-3">
-                            {{ form_row(form.introMessage) }}
-                        </div>
+                        <button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="collection#remove">
+                            Supprimer la ligne
+                        </button>
+                    </div>
 
-                        <div class="row g-3 mb-3">
-                            <div class="col-12 col-md-6">
-                                {{ form_row(form.validUntil) }}
+                    <div class="tm-quote-item-card__body tm-quote-item-card__body--compact">
+                        <div class="tm-quote-grid tm-quote-grid--1">
+                            <div class="tm-quote-field">
+                                {{ form_row(itemForm.label) }}
                             </div>
-                            <div class="col-12 col-md-6">
-                                {{ form_row(form.notes) }}
+
+                            <div class="tm-quote-field">
+                                {{ form_row(itemForm.description) }}
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            {{ form_row(form.terms) }}
+                        <div class="tm-quote-grid tm-quote-grid--3">
+                            <div class="tm-quote-field">
+                                {{ form_row(itemForm.quantity) }}
+                            </div>
+
+                            <div class="tm-quote-field">
+                                {{ form_row(itemForm.unitPriceHt) }}
+                            </div>
+
+                            <div class="tm-quote-field">
+                                {{ form_row(itemForm.vatRate) }}
+                            </div>
                         </div>
-
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="h5 mb-0">Lignes du devis</h2>
-    <small class="text-muted">Ajoute une ou plusieurs prestations.</small>
-</div>
-
-<div
-    data-controller="collection"
-    data-collection-index-value="{{ form.items|length }}"
->
-    <div data-collection-target="items">
-        {% for itemForm in form.items %}
-            <div class="border rounded p-3 mb-3">
-                <div class="row g-3">
-                    <div class="col-12">
-                        {{ form_row(itemForm.label) }}
                     </div>
-                    <div class="col-12">
-                        {{ form_row(itemForm.description) }}
-                    </div>
-                    <div class="col-12 col-md-3">
-                        {{ form_row(itemForm.quantity) }}
-                    </div>
-                    <div class="col-12 col-md-3">
-                        {{ form_row(itemForm.unitPriceHt) }}
-                    </div>
-                    <div class="col-12 col-md-3">
-                        {{ form_row(itemForm.vatRate) }}
-                    </div>
-                    <div class="col-12 col-md-3">
-                        {{ form_row(itemForm.position) }}
-                    </div>
+                </article>
+            {% else %}
+                <div class="tm-quote-empty">
+                    <div class="tm-quote-empty__icon">+</div>
+                    <h4 class="tm-quote-empty__title">Aucune prestation ajoutée</h4>
+                    <p class="tm-quote-empty__text">Ajoutez une première ligne pour commencer votre devis.</p>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
-
-    <template data-collection-target="prototype">
-        <div class="border rounded p-3 mb-3">
-            <div class="row g-3">
-                <div class="col-12">
-                    {{ form_row(form.items.vars.prototype.label) }}
-                </div>
-                <div class="col-12">
-                    {{ form_row(form.items.vars.prototype.description) }}
-                </div>
-                <div class="col-12 col-md-3">
-                    {{ form_row(form.items.vars.prototype.quantity) }}
-                </div>
-                <div class="col-12 col-md-3">
-                    {{ form_row(form.items.vars.prototype.unitPriceHt) }}
-                </div>
-                <div class="col-12 col-md-3">
-                    {{ form_row(form.items.vars.prototype.vatRate) }}
-                </div>
-                <div class="col-12 col-md-3">
-                    {{ form_row(form.items.vars.prototype.position) }}
-                </div>
-            </div>
-        </div>
-    </template>
-
-    <button type="button" class="btn btn-outline-primary" data-action="collection#add">
-        Ajouter une ligne
-    </button>
-</div>
-
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-success">
-                                Enregistrer
-                            </button>
-                        </div>
-
-                    {{ form_end(form) }}
-                </div>
-            </div>
+            {% endfor %}
         </div>
 
-        <div class="col-12 col-lg-4">
-            <div class="card shadow-sm mb-3">
-                <div class="card-body">
-                    <h2 class="h5">Résumé</h2>
-                    <dl class="row mb-0">
-                        <dt class="col-6">HT</dt>
-                        <dd class="col-6 text-end">{{ proposal.subtotalHt|number_format(2, ',', ' ') }} €</dd>
-
-                        <dt class="col-6">TVA</dt>
-                        <dd class="col-6 text-end">{{ proposal.taxAmount|number_format(2, ',', ' ') }} €</dd>
-
-                        <dt class="col-6 fw-bold">TTC</dt>
-                        <dd class="col-6 text-end fw-bold">{{ proposal.totalTtc|number_format(2, ',', ' ') }} €</dd>
-                    </dl>
-                </div>
-            </div>
-
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="h5">Snapshots figés</h2>
-
-                    <p class="mb-2"><strong>Prestataire :</strong> {{ proposal.prestataireCompanyName ?: '—' }}</p>
-                    <p class="mb-2"><strong>Client :</strong> {{ proposal.clientFullName ?: '—' }}</p>
-                    <p class="mb-2"><strong>Adresse client :</strong> {{ proposal.clientInterventionAddress ?: '—' }}</p>
-                    <p class="mb-0"><strong>Statut :</strong> {{ proposal.status.label }}</p>
-                </div>
-            </div>
+        <div class="tm-quote-add-line-wrap">
+            <button type="button" class="tm-quote-btn tm-quote-btn--mini-primary" data-action="collection#add">
+                Ajouter une ligne
+            </button>
         </div>
     </div>
-</div>
+</section>
+
+							<div class="tm-quote-form__actions">
+								<button type="submit" class="tm-quote-btn tm-quote-btn--success">
+									Enregistrer le devis
+								</button>
+
+								<a href="{{ path('app_prestataire_quote_proposal_show', { publicReference: proposal.publicReference }) }}" class="tm-quote-btn tm-quote-btn--secondary">
+									Annuler
+								</a>
+							</div>
+
+							{{ form_end(form) }}
+						</div>
+					</section>
+				</main>
+
+				<aside class="tm-quote-edit__aside">
+					<section class="tm-quote-panel tm-quote-panel--aside">
+						<div class="tm-quote-panel__head tm-quote-panel__head--aside">
+							<span class="tm-quote-panel__eyebrow">Résumé financier</span>
+							<h2 class="tm-quote-panel__title tm-quote-panel__title--aside">Montants</h2>
+						</div>
+
+						<div class="tm-quote-panel__content">
+							<div class="tm-quote-totals">
+								<div class="tm-quote-totals__row">
+									<span>HT</span>
+									<strong>{{ proposal.subtotalHt|number_format(2, ',', ' ') }}
+										€</strong>
+								</div>
+
+								<div class="tm-quote-totals__row">
+									<span>TVA</span>
+									<strong>{{ proposal.taxAmount|number_format(2, ',', ' ') }}
+										€</strong>
+								</div>
+
+								<div class="tm-quote-totals__row tm-quote-totals__row--accent">
+									<span>Total TTC</span>
+									<strong>{{ proposal.totalTtc|number_format(2, ',', ' ') }}
+										€</strong>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<section class="tm-quote-panel tm-quote-panel--aside">
+						<div class="tm-quote-panel__head tm-quote-panel__head--aside">
+							<span class="tm-quote-panel__eyebrow">Contexte figé</span>
+							<h2 class="tm-quote-panel__title tm-quote-panel__title--aside">Informations enregistrées</h2>
+						</div>
+
+						<div class="tm-quote-panel__content">
+							<div class="tm-quote-info-stack">
+								<article class="tm-quote-info-card">
+									<span class="tm-quote-info-card__label">Prestataire</span>
+									<strong class="tm-quote-info-card__value">{{ proposal.prestataireCompanyName ?: '—' }}</strong>
+								</article>
+
+								<article class="tm-quote-info-card">
+									<span class="tm-quote-info-card__label">Client</span>
+									<strong class="tm-quote-info-card__value">{{ proposal.clientFullName ?: proposal.clientCompanyName ?: '—' }}</strong>
+								</article>
+
+								<article class="tm-quote-info-card">
+									<span class="tm-quote-info-card__label">Adresse client</span>
+									<strong class="tm-quote-info-card__value">{{ proposal.clientInterventionAddress ?: '—' }}</strong>
+								</article>
+
+								<article class="tm-quote-info-card">
+									<span class="tm-quote-info-card__label">Statut</span>
+									<strong class="tm-quote-info-card__value">{{ proposal.status.label }}</strong>
+								</article>
+							</div>
+						</div>
+					</section>
+				</aside>
+			</div>
+		</div>
+	</div>
 {% endblock %}

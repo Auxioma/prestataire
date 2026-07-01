@@ -8,10 +8,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: QuoteProposalRepository::class)]
 #[ORM\Table(name: 'quote_proposal')]
-#[ORM\UniqueConstraint(name: 'uniq_quote_proposal_request_prestataire', columns: ['quote_request_id', 'prestataire_id'])]
 #[ORM\Index(name: 'idx_quote_proposal_status', columns: ['status'])]
 #[ORM\Index(name: 'idx_quote_proposal_created_at', columns: ['created_at'])]
 #[ORM\Index(name: 'idx_quote_proposal_deleted_at', columns: ['deleted_at'])]
@@ -164,11 +164,15 @@ class QuoteProposal
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $deletedAt = null;
 
+    #[ORM\Column(length: 64, unique: true)]
+    private ?string $publicReference = null;
+
     /**
      * @var Collection<int, QuoteProposalItem>
      */
     #[ORM\OneToMany(mappedBy: 'quoteProposal', targetEntity: QuoteProposalItem::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
+    #[Assert\Valid]
     private Collection $items;
 
     public function __construct()
@@ -807,6 +811,18 @@ class QuoteProposal
         return $this;
     }
 
+    public function getPublicReference(): ?string
+    {
+        return $this->publicReference;
+    }
+
+    public function setPublicReference(string $publicReference): self
+    {
+        $this->publicReference = $publicReference;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, QuoteProposalItem>
      */
@@ -818,6 +834,16 @@ class QuoteProposal
     public function addItem(QuoteProposalItem $item): self
     {
         if (!$this->items->contains($item)) {
+            $maxPosition = 0;
+
+            foreach ($this->items as $existingItem) {
+                $maxPosition = max($maxPosition, $existingItem->getPosition() ?? 0);
+            }
+
+            if (null === $item->getPosition()) {
+                $item->setPosition($maxPosition + 1);
+            }
+
             $this->items->add($item);
             $item->setQuoteProposal($this);
             $this->touch();

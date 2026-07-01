@@ -3,144 +3,216 @@
 {% block title %}Devis{% endblock %}
 
 {% block body %}
-<div class="container py-4">
-    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
-        <div>
-            <h1 class="h3 mb-2">Devis</h1>
-            <p class="text-muted mb-0">
-                {{ proposal.proposalNumber ?: 'Brouillon de devis' }}
-            </p>
-        </div>
+    <div class="quote-show-page">
+        <div class="container quote-show-container">
+            <section class="quote-show-topbar">
+                <div class="quote-show-topbar__main">
+                    <span class="quote-show-topbar__eyebrow">Aperçu client</span>
+                    <h1 class="quote-show-topbar__title">Devis</h1>
+                    <p class="quote-show-topbar__text">
+                        Vérifiez la clarté du document avant son envoi au client.
+                    </p>
 
-        <div class="d-flex flex-wrap gap-2">
-            <a href="{{ path('app_prestataire_quote_proposal_pdf', {id: proposal.id}) }}" class="btn btn-outline-primary" target="_blank" rel="noopener noreferrer">
-                PDF
-            </a>
+                    <div class="quote-show-topbar__meta">
+                        <div class="quote-show-meta-card">
+                            <span class="quote-show-meta-card__label">Numéro</span>
+                            <strong class="quote-show-meta-card__value">{{ proposal.proposalNumber ?: 'Brouillon de devis' }}</strong>
+                        </div>
 
-            {% if proposal.status.isDraft %}
-                <a href="{{ path('app_prestataire_quote_proposal_edit', {id: proposal.id}) }}" class="btn btn-primary">
-                    Modifier
-                </a>
+                        <div class="quote-show-meta-card">
+                            <span class="quote-show-meta-card__label">Référence interne</span>
+                            <strong class="quote-show-meta-card__value">{{ proposal.publicReference ?: '—' }}</strong>
+                        </div>
+
+                        <div class="quote-show-meta-card">
+                            <span class="quote-show-meta-card__label">Créé le</span>
+                            <strong class="quote-show-meta-card__value">{{ proposal.createdAt ? proposal.createdAt|date('d/m/Y à H:i') : '—' }}</strong>
+                        </div>
+
+                        <div class="quote-show-meta-card">
+                            <span class="quote-show-meta-card__label">Valable jusqu’au</span>
+                            <strong class="quote-show-meta-card__value">{{ proposal.validUntil ? proposal.validUntil|date('d/m/Y') : '—' }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quote-show-topbar__actions">
+                    <a href="{{ path('app_prestataire_quote_proposal_edit', { publicReference: proposal.publicReference }) }}" class="quote-btn quote-btn--primary">
+                        Modifier le Devis
+                    </a>
+
+                    <a href="{{ path('app_prestataire_quote_request_show', { slug: proposal.quoteRequest.slug }) }}" class="quote-btn quote-btn--secondary">
+                        Retour à la demande
+                    </a>
+
+                    {% if not proposal.isFinalized %}
+                        <form method="post" action="{{ path('app_prestataire_quote_proposal_finalize', { publicReference: proposal.publicReference }) }}" onsubmit="return confirm('Finaliser ce devis et le rendre visible au client ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('finalize-quote-proposal-' ~ proposal.id) }}">
+                            <button type="submit" class="quote-btn quote-btn--success">
+                                Finaliser
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    <form method="post" action="{{ path('app_prestataire_quote_proposal_delete', { publicReference: proposal.publicReference }) }}" onsubmit="return confirm('Supprimer définitivement ce devis ? Il ne sera plus visible par le client, mais vous pourrez créer un nouveau devis pour cette demande.');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_quote_proposal_' ~ proposal.id) }}">
+                        <button type="submit" class="quote-btn quote-btn--danger">
+                            Supprimer définitivement
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            {% if proposal.isFinalized %}
+                <div class="quote-show-alert quote-show-alert--success">
+                    <span class="quote-show-alert__dot"></span>
+                    <div>
+                        <strong>Devis publié.</strong>
+                        Le client peut désormais le consulter.
+                    </div>
+                </div>
+            {% else %}
+                <div class="quote-show-alert quote-show-alert--info">
+                    <span class="quote-show-alert__dot"></span>
+                    <div>
+                        <strong>Brouillon prêt à relire.</strong>
+                        Vérifiez la clarté de la proposition avant de la finaliser.
+                    </div>
+                </div>
             {% endif %}
 
-            <a href="{{ path('app_prestataire_quote_request_show', {id: proposal.quoteRequest.id}) }}" class="btn btn-outline-secondary">
-                Retour à la demande
-            </a>
-        </div>
-    </div>
+            <div class="quote-show-layout">
+                <div class="quote-show-main">
+                    <div class="quote-panel quote-panel--document">
+                        <div class="quote-document-header">
+                            <div>
+                                <span class="quote-panel__eyebrow">Document commercial</span>
+                                <h2 class="quote-document-header__title">{{ proposal.title ?: 'Sans titre' }}</h2>
+                                <p class="quote-document-header__status">Statut : {{ proposal.status.label }}</p>
+                            </div>
 
-    <div class="row g-4">
-        <div class="col-12 col-lg-8">
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <div class="d-flex flex-wrap justify-content-between gap-3 mb-4">
-                        <div>
-                            <h2 class="h5 mb-1">{{ proposal.title }}</h2>
-                            <p class="text-muted mb-0">
-                                Statut : {{ proposal.status.label }}
-                            </p>
+                            <div class="quote-document-badge">
+                                <span class="quote-document-badge__label">Référence devis</span>
+                                <strong class="quote-document-badge__value">{{ proposal.proposalNumber ?: '—' }}</strong>
+                            </div>
                         </div>
-                        <div class="text-lg-end">
-                            <div><strong>Référence :</strong> {{ proposal.proposalNumber ?: '—' }}</div>
-                            <div><strong>Valable jusqu’au :</strong> {{ proposal.validUntil ? proposal.validUntil|date('d/m/Y') : '—' }}</div>
+
+                        {% if proposal.introMessage %}
+                            <div class="quote-rich-block quote-rich-block--intro">{{ proposal.introMessage|nl2br }}</div>
+                        {% endif %}
+
+                        <div class="quote-lines-table-wrap">
+                            <table class="quote-lines-table">
+                                <thead>
+                                    <tr>
+                                        <th>Prestations</th>
+                                        <th class="text-end">Qté</th>
+                                        <th class="text-end">PU HT</th>
+                                        <th class="text-end">TVA</th>
+                                        <th class="text-end">Total HT</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in proposal.items %}
+                                        <tr>
+                                            <td>
+                                                <div class="quote-line-title">{{ item.label }}</div>
+                                                {% if item.description %}
+                                                    <div class="quote-line-description">{{ item.description }}</div>
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-end">{{ item.quantity }}</td>
+                                            <td class="text-end">{{ item.unitPriceHt|number_format(2, ',', ' ') }} €</td>
+                                            <td class="text-end">{{ item.vatRate|number_format(2, ',', ' ') }} %</td>
+                                            <td class="text-end quote-line-total">{{ item.totalHt|number_format(2, ',', ' ') }} €</td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="5">
+                                                <div class="quote-empty-state quote-empty-state--compact">
+                                                    <div class="quote-empty-state__icon">+</div>
+                                                    <h4 class="quote-empty-state__title">Aucune ligne ajoutée</h4>
+                                                    <p class="quote-empty-state__text">Ajoutez des prestations depuis la page d’édition pour visualiser ici le rendu final.</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {% if proposal.terms %}
+                            <section class="quote-rich-section">
+                                <h3 class="quote-rich-section__title">Conditions</h3>
+                                <div class="quote-rich-block">{{ proposal.terms|nl2br }}</div>
+                            </section>
+                        {% endif %}
+
+                        {% if proposal.notes %}
+                            <section class="quote-rich-section">
+                                <h3 class="quote-rich-section__title">Notes</h3>
+                                <div class="quote-rich-block">{{ proposal.notes|nl2br }}</div>
+                            </section>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <aside class="quote-show-sidebar">
+                    <div class="quote-panel quote-panel--side">
+                        <div class="quote-panel__header">
+                            <span class="quote-panel__eyebrow">Synthèse</span>
+                            <h2 class="quote-panel__title">Totaux</h2>
+                        </div>
+
+                        <div class="quote-totals">
+                            <div class="quote-total-row">
+                                <span>HT</span>
+                                <strong>{{ proposal.subtotalHt|number_format(2, ',', ' ') }} €</strong>
+                            </div>
+
+                            <div class="quote-total-row">
+                                <span>TVA</span>
+                                <strong>{{ proposal.taxAmount|number_format(2, ',', ' ') }} €</strong>
+                            </div>
+
+                            <div class="quote-total-row quote-total-row--highlight">
+                                <span>Total TTC</span>
+                                <strong>{{ proposal.totalTtc|number_format(2, ',', ' ') }} €</strong>
+                            </div>
                         </div>
                     </div>
 
-                    {% if proposal.introMessage %}
-                        <p class="mb-4">{{ proposal.introMessage }}</p>
-                    {% endif %}
+                    <div class="quote-panel quote-panel--side">
+                        <div class="quote-panel__header">
+                            <span class="quote-panel__eyebrow">Prestataire</span>
+                            <h2 class="quote-panel__title">Émetteur du devis</h2>
+                        </div>
 
-                    <div class="table-responsive">
-                        <table class="table align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Prestations</th>
-                                    <th class="text-end">Qté</th>
-                                    <th class="text-end">PU HT</th>
-                                    <th class="text-end">TVA</th>
-                                    <th class="text-end">Total HT</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for item in proposal.items %}
-                                    <tr>
-                                        <td>
-                                            <strong>{{ item.label }}</strong>
-                                            {% if item.description %}
-                                                <div class="text-muted small">{{ item.description }}</div>
-                                            {% endif %}
-                                        </td>
-                                        <td class="text-end">{{ item.quantity }}</td>
-                                        <td class="text-end">{{ item.unitPriceHt|number_format(2, ',', ' ') }} €</td>
-                                        <td class="text-end">{{ item.vatRate|number_format(2, ',', ' ') }} %</td>
-                                        <td class="text-end">{{ item.totalHt|number_format(2, ',', ' ') }} €</td>
-                                    </tr>
-                                {% else %}
-                                    <tr>
-                                        <td colspan="5" class="text-muted">Aucune ligne n’a été ajoutée.</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                        <div class="quote-contact-card">
+                            <strong class="quote-contact-card__name">{{ proposal.prestataireCompanyName ?: '—' }}</strong>
+                            <div class="quote-contact-card__line">{{ proposal.prestataireLegalName ?: '—' }}</div>
+                            <div class="quote-contact-card__line">{{ proposal.prestataireAddress ?: '—' }}</div>
+                            <div class="quote-contact-card__line">{{ proposal.prestatairePostalCode ?: '—' }} {{ proposal.prestataireCity ?: '' }}</div>
+                            <div class="quote-contact-card__line">{{ proposal.prestataireEmail ?: '—' }}</div>
+                        </div>
                     </div>
 
-                    {% if proposal.terms %}
-                        <hr>
-                        <h3 class="h6">Conditions</h3>
-                        <p class="mb-0">{{ proposal.terms|nl2br }}</p>
-                    {% endif %}
+                    <div class="quote-panel quote-panel--side">
+                        <div class="quote-panel__header">
+                            <span class="quote-panel__eyebrow">Client</span>
+                            <h2 class="quote-panel__title">Destinataire</h2>
+                        </div>
 
-                    {% if proposal.notes %}
-                        <hr>
-                        <h3 class="h6">Notes</h3>
-                        <p class="mb-0">{{ proposal.notes|nl2br }}</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-lg-4">
-            <div class="card shadow-sm mb-3">
-                <div class="card-body">
-                    <h2 class="h5">Totaux</h2>
-                    <dl class="row mb-0">
-                        <dt class="col-6">HT</dt>
-                        <dd class="col-6 text-end">{{ proposal.subtotalHt|number_format(2, ',', ' ') }} €</dd>
-
-                        <dt class="col-6">TVA</dt>
-                        <dd class="col-6 text-end">{{ proposal.taxAmount|number_format(2, ',', ' ') }} €</dd>
-
-                        <dt class="col-6 fw-bold">TTC</dt>
-                        <dd class="col-6 text-end fw-bold">{{ proposal.totalTtc|number_format(2, ',', ' ') }} €</dd>
-                    </dl>
-                </div>
-            </div>
-
-            <div class="card shadow-sm mb-3">
-                <div class="card-body">
-                    <h2 class="h5">Prestataire</h2>
-                    <p class="mb-1"><strong>{{ proposal.prestataireCompanyName ?: '—' }}</strong></p>
-                    <p class="mb-1">{{ proposal.prestataireLegalName ?: '—' }}</p>
-                    <p class="mb-1">{{ proposal.prestataireAddress ?: '—' }}</p>
-                    <p class="mb-1">{{ proposal.prestatairePostalCode ?: '—' }} {{ proposal.prestataireCity ?: '' }}</p>
-                    <p class="mb-0">{{ proposal.prestataireEmail ?: '—' }}</p>
-                </div>
-            </div>
-
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="h5">Client</h2>
-                    <p class="mb-1"><strong>{{ proposal.clientFullName ?: '—' }}</strong></p>
-                    <p class="mb-1">{{ proposal.clientCompanyName ?: '—' }}</p>
-                    <p class="mb-1">{{ proposal.clientBillingAddress ?: proposal.clientInterventionAddress ?: '—' }}</p>
-                    <p class="mb-1">
-                        {{ proposal.clientBillingPostalCode ?: proposal.clientInterventionPostalCode ?: '—' }}
-                        {{ proposal.clientBillingCity ?: proposal.clientInterventionCity ?: '' }}
-                    </p>
-                    <p class="mb-0">{{ proposal.clientEmail ?: '—' }}</p>
-                </div>
+                        <div class="quote-contact-card">
+                            <strong class="quote-contact-card__name">{{ proposal.clientFullName ?: proposal.clientCompanyName ?: '—' }}</strong>
+                            <div class="quote-contact-card__line">{{ proposal.clientCompanyName ?: '—' }}</div>
+                            <div class="quote-contact-card__line">{{ proposal.clientBillingAddress ?: proposal.clientInterventionAddress ?: '—' }}</div>
+                            <div class="quote-contact-card__line">{{ proposal.clientBillingPostalCode ?: proposal.clientInterventionPostalCode ?: '—' }} {{ proposal.clientBillingCity ?: proposal.clientInterventionCity ?: '' }}</div>
+                            <div class="quote-contact-card__line">{{ proposal.clientEmail ?: '—' }}</div>
+                        </div>
+                    </div>
+                </aside>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\QuoteProposalItemRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: QuoteProposalItemRepository::class)]
 #[ORM\Table(name: 'quote_proposal_item')]
@@ -46,6 +48,49 @@ class QuoteProposalItem
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
+
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context): void
+    {
+        $label = $this->getLabel();
+        $description = $this->getDescription();
+
+        $isLabelBlank = $label === null || trim($label) === '';
+        $isDescriptionBlank = $description === null || trim($description) === '';
+        $isQuantityEmpty = $this->getQuantity() === null;
+        $isUnitPriceEmpty = $this->getUnitPriceHt() === null;
+        $isVatRateEmpty = $this->getVatRate() === null;
+
+        $isCompletelyEmpty = $isLabelBlank && $isDescriptionBlank && $isQuantityEmpty && $isUnitPriceEmpty && $isVatRateEmpty;
+
+        if ($isCompletelyEmpty) {
+            return;
+        }
+
+        if ($isLabelBlank) {
+            $context->buildViolation('Veuillez renseigner un intitulé de ligne.')
+                ->atPath('label')
+                ->addViolation();
+        }
+
+        if ($isQuantityEmpty) {
+            $context->buildViolation('Veuillez renseigner une quantité.')
+                ->atPath('quantity')
+                ->addViolation();
+        }
+
+        if ($isUnitPriceEmpty) {
+            $context->buildViolation('Veuillez renseigner un prix unitaire HT.')
+                ->atPath('unitPriceHt')
+                ->addViolation();
+        }
+
+        if ($isVatRateEmpty) {
+            $context->buildViolation('Veuillez renseigner une TVA.')
+                ->atPath('vatRate')
+                ->addViolation();
+        }
+    }
 
     public function __construct()
     {
@@ -148,12 +193,12 @@ class QuoteProposalItem
         return $this;
     }
 
-    public function getPosition(): int
+    public function getPosition(): ?int
     {
         return $this->position;
     }
 
-    public function setPosition(int $position): self
+    public function setPosition(?int $position): self
     {
         $this->position = $position;
         $this->touch();
