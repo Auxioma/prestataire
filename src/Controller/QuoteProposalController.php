@@ -123,6 +123,8 @@ class QuoteProposalController extends AbstractController
 
         return $this->render('quote_proposal/show.html.twig', [
             'proposal' => $proposal,
+            'isReadOnlyView' => false,
+            'viewerContext' => 'prestataire',
         ]);
     }
 
@@ -238,6 +240,49 @@ class QuoteProposalController extends AbstractController
         ]);
     }
 
+    #[Route('/{publicReference}/archive', name: 'archive', methods: ['POST'])]
+    public function archive(
+        string $publicReference,
+        Request $request,
+        PrestataireProfileRepository $prestataireProfileRepository,
+        QuoteProposalRepository $quoteProposalRepository,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_PRESTATAIRE');
+
+        $prestataire = $this->getCurrentPrestataire($prestataireProfileRepository);
+
+        $proposal = $quoteProposalRepository->findOneForPrestataireByPublicReference($publicReference, $prestataire);
+
+        if (!$proposal instanceof QuoteProposal) {
+            throw $this->createNotFoundException('Devis introuvable.');
+        }
+
+        if (!$this->isCsrfTokenValid('archive_quote_proposal_' . $proposal->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Jeton CSRF invalide.');
+        }
+
+        if (null !== $proposal->getArchivedByPrestataireAt()) {
+            $this->addFlash('warning', 'Ce devis est déjà archivé.');
+
+            return $this->redirectToRoute('app_prestataire_quote_request_show', [
+                'slug' => $proposal->getQuoteRequest()->getSlug(),
+            ]);
+        }
+
+        $proposal
+            ->setArchivedByPrestataireAt(new \DateTimeImmutable())
+            ->setUpdatedAt(new \DateTimeImmutable());
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le devis a bien été archivé.');
+
+        return $this->redirectToRoute('app_prestataire_quote_request_show', [
+            'slug' => $proposal->getQuoteRequest()->getSlug(),
+        ], 303);
+    }
+
     #[Route('/devis/{publicReference}/pdf', name: 'pdf', methods: ['GET'])]
     public function showPdf(
         string $publicReference,
@@ -308,6 +353,37 @@ class QuoteProposalController extends AbstractController
                 ),
             ]
         );
+    }
+
+    #[Route('/{publicReference}/archived-show', name: 'archived_show', methods: ['GET'])]
+    public function archivedShow(
+        string $publicReference,
+        PrestataireProfileRepository $prestataireProfileRepository,
+        QuoteProposalRepository $quoteProposalRepository,
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_PRESTATAIRE');
+
+        $prestataire = $this->getCurrentPrestataire($prestataireProfileRepository);
+
+        $proposal = $quoteProposalRepository->findOneForPrestataireByPublicReference($publicReference, $prestataire);
+
+        if (!$proposal instanceof QuoteProposal) {
+            throw $this->createNotFoundException('Devis introuvable.');
+        }
+
+        if (null === $proposal->getArchivedByPrestataireAt()) {
+            $this->addFlash('warning', 'Ce devis n’est pas archivé.');
+
+            return $this->redirectToRoute('app_prestataire_quote_proposal_show', [
+                'publicReference' => $proposal->getPublicReference(),
+            ], 303);
+        }
+
+        return $this->render('quote_proposal/show.html.twig', [
+            'proposal' => $proposal,
+            'isReadOnlyView' => true,
+            'viewerContext' => 'prestataire',
+        ]);
     }
 
 

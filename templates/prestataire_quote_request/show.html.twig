@@ -7,7 +7,6 @@
 	<div class="container py-4 tm-quote-detail">
 		<div class="tm-quote-page__hero tm-quote-page__hero--detail">
 			<div>
-
 				<h1 class="tm-quote-page__title mb-2">{{ quoteRequest.title }}</h1>
 				<p class="tm-quote-page__subtitle mb-0">
 					Demande reçue le
@@ -15,12 +14,22 @@
 				</p>
 			</div>
 
-			<div>
+			<div class="d-flex flex-column align-items-end gap-2">
 				<span class="tm-quote-badge tm-quote-badge--{{ quoteRequest.status.value|lower }}">
 					{{ quoteRequest.status.value }}
 				</span>
+
+				{% if isArchivedView %}
+					<span class="badge bg-secondary">Archivée</span>
+				{% endif %}
 			</div>
 		</div>
+
+		{% if isArchivedView %}
+			<div class="alert alert-secondary mb-4">
+				Cette demande est archivée. Elle reste consultable, mais elle n’est plus modifiable depuis cet espace.
+			</div>
+		{% endif %}
 
 		<div class="row g-4">
 			<div class="col-lg-8">
@@ -94,54 +103,65 @@
 						Cette demande est disponible en lecture dans votre espace professionnel.
 					</p>
 
-					{% if quoteRequest.status == constant('App\\Enum\\QuoteRequestStatusEnum::SUBMITTED') %}
-						<div class="card tm-card p-4 mb-4">
-							<h2 class="h5 mb-3">Traitement de la demande</h2>
+					{% if not isArchivedView %}
+						{% if quoteRequest.status == constant('App\\Enum\\QuoteRequestStatusEnum::SUBMITTED') %}
+							<div class="card tm-card p-4 mb-4">
+								<h2 class="h5 mb-3">Traitement de la demande</h2>
 
-							<div class="alert alert-info mb-3">
-								En acceptant d’étudier cette demande, vous vous engagez uniquement à apporter une réponse au client
-																																																																            dans les meilleurs délais. Cela ne vaut pas acceptation ferme et définitive de la prestation telle quelle.
+								<div class="alert alert-info mb-3">
+									En acceptant d’étudier cette demande, vous vous engagez uniquement à apporter une réponse au client
+									                    dans les meilleurs délais. Cela ne vaut pas acceptation ferme et définitive de la prestation telle quelle.
+								</div>
+
+								<div class="d-flex flex-column flex-md-row gap-2">
+									<form method="post" action="{{ path('app_prestataire_quote_request_accept_study', { slug: quoteRequest.slug }) }}">
+										<input type="hidden" name="_token" value="{{ csrf_token('accept-study-' ~ quoteRequest.id) }}">
+										<button type="submit" class="btn btn-primary">
+											Accepter d’étudier la demande
+										</button>
+									</form>
+
+									<form method="post" action="{{ path('app_prestataire_quote_request_deny', { slug: quoteRequest.slug }) }}">
+										<input type="hidden" name="_token" value="{{ csrf_token('deny-quote-request-' ~ quoteRequest.id) }}">
+										<button type="submit" class="btn btn-outline-danger" onclick="return confirm('Confirmez-vous le refus de cette demande ?');">
+											Refuser la demande
+										</button>
+									</form>
+								</div>
 							</div>
+						{% endif %}
 
-							<div class="d-flex flex-column flex-md-row gap-2">
-								<form method="post" action="{{ path('app_prestataire_quote_request_accept_study', { slug: quoteRequest.slug }) }}">
-									<input type="hidden" name="_token" value="{{ csrf_token('accept-study-' ~ quoteRequest.id) }}">
-									<button type="submit" class="btn btn-primary">
-										Accepter d’étudier la demande
-									</button>
-								</form>
+						{% if quoteRequest.status == constant('App\\Enum\\QuoteRequestStatusEnum::ACCEPTED') and quoteRequest.conversation %}
+							<a href="{{ path('app_prestataire_dashboard', { tab: 'messages', conversation: quoteRequest.conversation.id }) ~ '#messages-main-panel' }}" class="btn btn-primary w-100 mt-3">
+								Vous avez accepté cette demande d'etude de projet. Ouvrir la conversation
+							</a>
+						{% endif %}
 
-								<form method="post" action="{{ path('app_prestataire_quote_request_deny', { slug: quoteRequest.slug }) }}">
-									<input type="hidden" name="_token" value="{{ csrf_token('deny-quote-request-' ~ quoteRequest.id) }}">
-									<button type="submit" class="btn btn-outline-danger" onclick="return confirm('Confirmez-vous le refus de cette demande ?');">
-										Refuser la demande
-									</button>
-								</form>
+						{% if quoteRequest.status == constant('App\\Enum\\QuoteRequestStatusEnum::DENIED') %}
+							<div class="alert alert-danger mt-3 mb-0">
+								Vous avez refusé cette demande. Elle ne peut plus être traitée depuis cet espace.
 							</div>
-						</div>
+						{% endif %}
+
+						{% if (quoteRequest.status == constant('App\\Enum\\QuoteRequestStatusEnum::ACCEPTED')
+            or quoteRequest.status == constant('App\\Enum\\QuoteRequestStatusEnum::ANSWERED'))
+            and quoteRequest.conversation %}
+							<a href="{{ path('app_prestataire_quote_proposal_new', { id: quoteRequest.id, conversation: quoteRequest.conversation.id, origin: 'quote_request' }) }}" class="btn btn-success w-100 mt-3">
+								Créer / ouvrir le devis
+							</a>
+						{% endif %}
 					{% endif %}
 
-					<a href="{{ path('app_prestataire_dashboard') ~ '#demandes-main-panel' }}" class="btn btn-outline-primary w-100">
-						Retour aux demandes
+					<a href="{{ path('app_prestataire_dashboard', { tab: isArchivedView ? 'archives' : 'demandes' }) ~ (isArchivedView ? '#archives-main-panel' : '#demandes-main-panel') }}" class="btn btn-outline-primary w-100 mt-3">
+						{{ isArchivedView ? 'Retour aux archives' : 'Retour aux demandes' }}
 					</a>
-					{% if quoteRequest.status == constant('App\\Enum\\QuoteRequestStatusEnum::ACCEPTED') and quoteRequest.conversation %}
-						<a href="{{ path('app_prestataire_dashboard', {conversation: quoteRequest.conversation.id}) ~ '#messages-main-panel' }}" class="btn btn-primary w-100 mt-3">
-							Vous avez accepté cette demande d'etude de projet. Ouvrir la conversation
-						</a>
-					{% endif %}
-					{% if quoteRequest.status == constant('App\\Enum\\QuoteRequestStatusEnum::DENIED') %}
-						<div class="alert alert-danger mt-3 mb-0">
-							Vous avez refusé cette demande. Elle ne peut plus être traitée depuis cet espace.
-						</div>
-					{% endif %}
 
-					{% if quoteRequest.status == constant('App\\Enum\\QuoteRequestStatusEnum::ACCEPTED') and quoteRequest.conversation %}
-						<a href="{{ path('app_prestataire_quote_proposal_new', { id: quoteRequest.id, conversation: quoteRequest.conversation.id, origin: 'quote_request' }) }}" class="btn btn-success w-100 mt-3">
-							Créer / ouvrir le devis
+					{% if isArchivedView and linkedProposal %}
+						<a href="{{ path('app_prestataire_quote_proposal_archived_show', { publicReference: linkedProposal.publicReference }) }}" class="btn btn-outline-secondary w-100 mt-3">
+							Consulter le devis lié
 						</a>
 					{% endif %}
 				</div>
-
 			</div>
 		</div>
 	</div>

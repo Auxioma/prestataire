@@ -29,6 +29,7 @@ class QuoteProposalRepository extends ServiceEntityRepository
             ->andWhere('qp.quoteRequest = :quoteRequest')
             ->andWhere('qp.prestataire = :prestataire')
             ->andWhere('qp.deletedAt IS NULL')
+            ->andWhere('qp.archivedByPrestataireAt IS NULL')
             ->setParameter('quoteRequest', $quoteRequest)
             ->setParameter('prestataire', $prestataire)
             ->setMaxResults(1)
@@ -44,6 +45,7 @@ class QuoteProposalRepository extends ServiceEntityRepository
             ->andWhere('qp.id = :id')
             ->andWhere('qp.prestataire = :prestataire')
             ->andWhere('qp.deletedAt IS NULL')
+            ->andWhere('qp.archivedByPrestataireAt IS NULL')
             ->setParameter('id', (string) $id)
             ->setParameter('prestataire', $prestataire)
             ->setMaxResults(1)
@@ -51,12 +53,15 @@ class QuoteProposalRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function findOneForPrestataireByPublicReference(string $publicReference, PrestataireProfile $prestataire): ?QuoteProposal
-    {
+    public function findOneForPrestataireByPublicReference(
+        string $publicReference,
+        PrestataireProfile $prestataire
+    ): ?QuoteProposal {
         return $this->createQueryBuilder('qp')
             ->andWhere('qp.publicReference = :publicReference')
             ->andWhere('qp.prestataire = :prestataire')
             ->andWhere('qp.deletedAt IS NULL')
+            ->andWhere('qp.archivedByPrestataireAt IS NULL')
             ->setParameter('publicReference', $publicReference)
             ->setParameter('prestataire', $prestataire)
             ->getQuery()
@@ -71,6 +76,7 @@ class QuoteProposalRepository extends ServiceEntityRepository
             ->andWhere('qp.id = :id')
             ->andWhere('qp.client = :client')
             ->andWhere('qp.deletedAt IS NULL')
+            ->andWhere('qp.archivedByPrestataireAt IS NULL')
             ->andWhere('qp.status = :status')
             ->setParameter('id', (string) $id)
             ->setParameter('client', $client)
@@ -88,6 +94,7 @@ class QuoteProposalRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('qp')
             ->andWhere('qp.conversation = :conversation')
             ->andWhere('qp.deletedAt IS NULL')
+            ->andWhere('qp.archivedByPrestataireAt IS NULL')
             ->orderBy('qp.createdAt', 'DESC')
             ->setParameter('conversation', $conversation)
             ->getQuery()
@@ -102,6 +109,7 @@ class QuoteProposalRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('qp')
             ->andWhere('qp.quoteRequest = :quoteRequest')
             ->andWhere('qp.deletedAt IS NULL')
+            ->andWhere('qp.archivedByPrestataireAt IS NULL')
             ->orderBy('qp.createdAt', 'DESC')
             ->setParameter('quoteRequest', $quoteRequest)
             ->getQuery()
@@ -124,5 +132,56 @@ class QuoteProposalRepository extends ServiceEntityRepository
         }
 
         return null;
+    }
+
+    public function findOneVisibleForClientByPublicReference(
+        string $publicReference,
+        ClientProfile $client
+    ): ?QuoteProposal {
+        return $this->createQueryBuilder('qp')
+            ->andWhere('qp.publicReference = :publicReference')
+            ->andWhere('qp.client = :client')
+            ->andWhere('qp.deletedAt IS NULL')
+            ->andWhere('qp.archivedByPrestataireAt IS NULL')
+            ->andWhere('qp.status = :status')
+            ->setParameter('publicReference', $publicReference)
+            ->setParameter('client', $client)
+            ->setParameter('status', QuoteProposalStatusEnum::FINALIZED)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findOneArchivedByQuoteRequestAndPrestataire(
+        QuoteRequest $quoteRequest,
+        PrestataireProfile $prestataire
+    ): ?QuoteProposal {
+        return $this->createQueryBuilder('qp')
+            ->andWhere('qp.quoteRequest = :quoteRequest')
+            ->andWhere('qp.prestataire = :prestataire')
+            ->andWhere('qp.deletedAt IS NULL')
+            ->andWhere('qp.archivedByPrestataireAt IS NOT NULL')
+            ->setParameter('quoteRequest', $quoteRequest)
+            ->setParameter('prestataire', $prestataire)
+            ->orderBy('qp.archivedByPrestataireAt', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findOneVisibleByQuoteRequestAndPrestataire(
+        QuoteRequest $quoteRequest,
+        PrestataireProfile $prestataire
+    ): ?QuoteProposal {
+        return $this->createQueryBuilder('qp')
+            ->andWhere('qp.quoteRequest = :quoteRequest')
+            ->andWhere('qp.prestataire = :prestataire')
+            ->andWhere('qp.deletedAt IS NULL')
+            ->setParameter('quoteRequest', $quoteRequest)
+            ->setParameter('prestataire', $prestataire)
+            ->orderBy('qp.createdAt', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

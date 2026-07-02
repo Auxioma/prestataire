@@ -2,24 +2,25 @@
 
 namespace App\Controller;
 
-use App\Entity\QuoteRequest;
-use App\Entity\User;
-use App\Repository\QuoteRequestRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Enum\QuoteRequestStatusEnum;
-use App\Enum\MessageTypeEnum;
 use App\Entity\Conversation;
 use App\Entity\Message;
-use App\Repository\ConversationRepository;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use App\Entity\QuoteRequest;
+use App\Entity\User;
+use App\Enum\MessageTypeEnum;
 use App\Enum\NotificationTypeEnum;
+use App\Enum\QuoteRequestStatusEnum;
+use App\Repository\ConversationRepository;
+use App\Repository\QuoteProposalRepository;
+use App\Repository\QuoteRequestRepository;
 use App\Service\NotificationManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/prestataire/demandes', name: 'app_prestataire_quote_request_')]
 final class PrestataireQuoteRequestController extends AbstractController
@@ -57,7 +58,8 @@ final class PrestataireQuoteRequestController extends AbstractController
 
     #[Route('/{slug}', name: 'show', methods: ['GET'])]
     public function show(
-        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest
+        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
+        QuoteProposalRepository $quoteProposalRepository
     ): Response {
         $user = $this->getUser();
 
@@ -75,8 +77,15 @@ final class PrestataireQuoteRequestController extends AbstractController
             throw $this->createNotFoundException('Cette demande n’est plus disponible.');
         }
 
+        $linkedProposal = $quoteProposalRepository->findOneVisibleByQuoteRequestAndPrestataire(
+            $quoteRequest,
+            $prestataire
+        );
+
         return $this->render('prestataire_quote_request/show.html.twig', [
             'quoteRequest' => $quoteRequest,
+            'isArchivedView' => $quoteRequest->isArchivedByPrestataire(),
+            'linkedProposal' => $linkedProposal,
         ]);
     }
 
@@ -313,5 +322,68 @@ final class PrestataireQuoteRequestController extends AbstractController
         $this->addFlash('success', 'La demande de devis a bien été supprimée.');
 
         return $this->redirectToRoute('app_prestataire_quote_request_index');
+    }
+
+    #[Route('/{slug}/archive', name: 'archive', methods: ['POST'])]
+    public function archive(
+        Request $request,
+        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
+        EntityManagerInterface $entityManager
+    ): RedirectResponse {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+            throw $this->createAccessDeniedException('Accès refusé.');
+        }
+
+        $prestataire = $user->getPrestataireProfile();
+
+        if ($quoteRequest->getPrestataire()?->getId() !== $prestataire->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas archiver cette demande.');
+        }
+
+        if ($quoteRequest->isDeleted()) {
+            $this->addFlash('warning', 'Cette demande n’est plus disponible.');
+            return $this->redirectToRoute('app_prestataire_dashboard', [
+                'tab' => 'demandes',
+                '_fragment' => 'demandes-main-panel',
+            ]);
+        }
+
+        if (
+            !$this->isCsrfTokenValid(
+                'archive-quote-request-' . $quoteRequest->getId(),
+                (string) $request->request->get('_token')
+            )
+        ) {
+            $this->addFlash('danger', 'Jeton CSRF invalide.');
+
+            return $this->redirectToRoute('app_prestataire_dashboard', [
+                'tab' => 'demandes',
+                '_fragment' => 'demandes-main-panel',
+            ]);
+        }
+
+        if ($quoteRequest->getArchivedByPrestataireAt() !== null) {
+            $this->addFlash('info', 'Cette demande est déjà archivée.');
+
+            return $this->redirectToRoute('app_prestataire_dashboard', [
+                'tab' => 'archives',
+                '_fragment' => 'archives-main-panel',
+            ]);
+        }
+
+        $quoteRequest
+            ->setArchivedByPrestataireAt(new \DateTimeImmutable())
+            ->setUpdatedAt(new \DateTimeImmutable());
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La demande a bien été archivée.');
+
+        return $this->redirectToRoute('app_prestataire_dashboard', [
+            'tab' => 'archives',
+            '_fragment' => 'archives-main-panel',
+        ]);
     }
 }

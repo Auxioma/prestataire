@@ -76,6 +76,11 @@
 							<span>Demandes Reçues</span>
 						</button>
 
+						<button class="tm-sidebar-link nav-link {{ activeTab == 'archives' ? 'active' : '' }}" id="archives-main-tab" data-bs-toggle="tab" data-bs-target="#archives-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="archives-main-panel" aria-selected="{{ activeTab == 'archives' ? 'true' : 'false' }}">
+							<span class="tm-sidebar-link-icon">🗃</span>
+							<span>Archives</span>
+						</button>
+
 						<button class="tm-sidebar-link nav-link {{ activeTab == 'messages' ? 'active' : '' }}" id="messages-main-tab" data-bs-toggle="tab" data-bs-target="#messages-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="messages-main-panel" aria-selected="{{ activeTab == 'messages' ? 'true' : 'false' }}">
 							<span class="tm-sidebar-link-icon">✉</span>
 							<span>Messages</span>
@@ -101,7 +106,9 @@
 				</button>
 
 				<h1 class="fw-bold mb-1">Espace Pro</h1>
-				<p> _______________ </p>
+				<p>
+					_______________
+				</p>
 
 				{% for label in ['success', 'warning', 'danger', 'error'] %}
 					{% for message in app.flashes(label) %}
@@ -137,6 +144,10 @@
 						{{ include('prestataire_dashboard/_demandes_panel.html.twig') }}
 					</div>
 
+					<div class="tab-pane fade {{ activeTab == 'archives' ? 'show active' : '' }}" id="archives-main-panel" role="tabpanel" aria-labelledby="archives-main-tab">
+						{{ include('prestataire_dashboard/_archives_panel.html.twig') }}
+					</div>
+
 					<div class="tab-pane fade {{ activeTab == 'messages' ? 'show active' : '' }}" id="messages-main-panel" role="tabpanel" aria-labelledby="messages-main-tab" {{ stimulus_controller('realtime-conversation', { url: 'http://localhost:3001', conversationId: activeConversation ? activeConversation.id : 0, eventName: 'message_created', joinEventName: 'join_conversation', streamSelector: '.tm-msg-stream', bodySelector: '.tm-msg-body', emptySelector: '.tm-msg-empty--body', currentUserType: 'prestataire', layout: 'dashboard' } ) }}>
 						{{ include('prestataire_dashboard/_messages_panel.html.twig') }}
 					</div>
@@ -145,5 +156,3 @@
 		</div>
 	</div>
 {% endblock %}
-
-

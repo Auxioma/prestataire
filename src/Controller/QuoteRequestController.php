@@ -51,11 +51,7 @@ final class QuoteRequestController extends AbstractController
             throw $this->createAccessDeniedException('Accès réservé aux clients.');
         }
 
-        $queryBuilder = $quoteRequestRepository->createQueryBuilder('qr')
-            ->where('qr.client = :client')
-            ->andWhere('qr.deletedAt IS NULL')
-            ->setParameter('client', $user->getClientProfile())
-            ->orderBy('qr.createdAt', 'DESC');
+        $queryBuilder = $quoteRequestRepository->createActiveForClientQueryBuilder($user->getClientProfile());
 
         $quoteRequests = $paginator->paginate(
             $queryBuilder,
@@ -205,7 +201,8 @@ final class QuoteRequestController extends AbstractController
     #[Route('/{slug}', name: '_show', methods: ['GET', 'POST'])]
     public function show(
         Request $request,
-        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
+        string $slug,
+        QuoteRequestRepository $quoteRequestRepository,
         ConversationRepository $conversationRepository,
         MessageRepository $messageRepository,
         QuoteProposalRepository $quoteProposalRepository,
@@ -223,12 +220,13 @@ final class QuoteRequestController extends AbstractController
             throw $this->createAccessDeniedException('Accès réservé aux clients.');
         }
 
-        if ($quoteRequest->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas consulter cette demande.');
-        }
+        $quoteRequest = $quoteRequestRepository->findOneActiveForClientBySlug(
+            $slug,
+            $user->getClientProfile()
+        );
 
-        if ($quoteRequest->isDeleted()) {
-            throw $this->createNotFoundException('Cette demande n’est plus disponible.');
+        if (!$quoteRequest instanceof QuoteRequest) {
+            throw $this->createNotFoundException('Cette demande n’est pas disponible.');
         }
 
         // =========================
@@ -244,6 +242,7 @@ final class QuoteRequestController extends AbstractController
             [
                 'quoteRequest' => $quoteRequest,
                 'deletedAt' => null,
+                'archivedByPrestataireAt' => null,
             ],
             [
                 'finalizedAt' => 'DESC',
@@ -367,7 +366,8 @@ final class QuoteRequestController extends AbstractController
     #[Route('/{slug}/delete', name: '_delete', methods: ['POST'])]
     public function delete(
         Request $request,
-        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
+        string $slug,
+        QuoteRequestRepository $quoteRequestRepository,
         EntityManagerInterface $entityManager
     ): Response {
         $user = $this->getUser();
@@ -376,8 +376,13 @@ final class QuoteRequestController extends AbstractController
             throw $this->createAccessDeniedException('Accès réservé aux clients.');
         }
 
-        if ($quoteRequest->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer cette demande.');
+        $quoteRequest = $quoteRequestRepository->findOneActiveForClientBySlug(
+            $slug,
+            $user->getClientProfile()
+        );
+
+        if (!$quoteRequest instanceof QuoteRequest) {
+            throw $this->createNotFoundException('Cette demande n’est pas disponible.');
         }
 
         if ($quoteRequest->isDeleted()) {
@@ -407,10 +412,6 @@ final class QuoteRequestController extends AbstractController
             ]);
         }
 
-        $quoteRequest
-            ->setDeletedAt(new \DateTimeImmutable())
-            ->setUpdatedAt(new \DateTimeImmutable());
-
         if (!in_array(
             $quoteRequest->getStatus(),
             [QuoteRequestStatusEnum::SUBMITTED, QuoteRequestStatusEnum::DENIED],
@@ -423,6 +424,10 @@ final class QuoteRequestController extends AbstractController
             ]);
         }
 
+        $quoteRequest
+            ->setDeletedAt(new \DateTimeImmutable())
+            ->setUpdatedAt(new \DateTimeImmutable());
+
         $entityManager->flush();
 
         $this->addFlash('success', 'La demande de devis a bien été supprimée.');
@@ -430,9 +435,12 @@ final class QuoteRequestController extends AbstractController
         return $this->redirectToRoute('app_quote_request_index');
     }
 
-    #[Route('/{slug}/photos', name: '_photos', methods: ['GET'])]
-    public function photos(
-        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
+    #[Route('/{slug}/archive', name: '_archive', methods: ['POST'])]
+    public function archive(
+        Request $request,
+        string $slug,
+        QuoteRequestRepository $quoteRequestRepository,
+        EntityManagerInterface $entityManager
     ): Response {
         $user = $this->getUser();
 
@@ -440,12 +448,63 @@ final class QuoteRequestController extends AbstractController
             throw $this->createAccessDeniedException('Accès réservé aux clients.');
         }
 
-        if ($quoteRequest->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas consulter les photos de cette demande.');
+        $quoteRequest = $quoteRequestRepository->findOneActiveForClientBySlug(
+            $slug,
+            $user->getClientProfile()
+        );
+
+        if (!$quoteRequest instanceof QuoteRequest) {
+            throw $this->createNotFoundException('Cette demande n’est pas disponible.');
         }
 
-        if ($quoteRequest->isDeleted()) {
-            throw $this->createNotFoundException('Cette demande n’est plus disponible.');
+        if (
+            !$this->isCsrfTokenValid(
+                'archive-quote-request-' . $quoteRequest->getId(),
+                (string) $request->request->get('_token')
+            )
+        ) {
+            $this->addFlash('danger', 'Jeton CSRF invalide.');
+
+            return $this->redirectToRoute('app_quote_request_show', [
+                'slug' => $quoteRequest->getSlug(),
+            ]);
+        }
+
+        if (null !== $quoteRequest->getArchivedByClientAt()) {
+            $this->addFlash('warning', 'Cette demande est déjà archivée.');
+
+            return $this->redirectToRoute('app_quote_request_index');
+        }
+
+        $quoteRequest
+            ->setArchivedByClientAt(new \DateTimeImmutable())
+            ->setUpdatedAt(new \DateTimeImmutable());
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La demande de devis a bien été archivée.');
+
+        return $this->redirectToRoute('app_quote_request_index');
+    }
+
+    #[Route('/{slug}/photos', name: '_photos', methods: ['GET'])]
+    public function photos(
+        string $slug,
+        QuoteRequestRepository $quoteRequestRepository,
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
+            throw $this->createAccessDeniedException('Accès réservé aux clients.');
+        }
+
+        $quoteRequest = $quoteRequestRepository->findOneActiveForClientBySlug(
+            $slug,
+            $user->getClientProfile()
+        );
+
+        if (!$quoteRequest instanceof QuoteRequest) {
+            throw $this->createNotFoundException('Cette demande n’est pas disponible.');
         }
 
         $conversation = $quoteRequest->getConversation();
@@ -504,26 +563,19 @@ final class QuoteRequestController extends AbstractController
             throw $this->createAccessDeniedException('Accès réservé aux clients.');
         }
 
-        $proposal = $quoteProposalRepository->findOneBy([
-            'publicReference' => $publicReference,
-            'deletedAt' => null,
-        ]);
+        $proposal = $quoteProposalRepository->findOneVisibleForClientByPublicReference(
+            $publicReference,
+            $user->getClientProfile()
+        );
 
         if (!$proposal instanceof QuoteProposal) {
             throw $this->createNotFoundException('Devis introuvable.');
         }
 
-        if (!$proposal->isFinalized()) {
-            throw $this->createNotFoundException('Ce devis n’est pas disponible.');
-        }
-
-        if ($proposal->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas consulter ce devis.');
-        }
-
         return $this->render('quote_request/proposal_show.html.twig', [
             'proposal' => $proposal,
             'quoteRequest' => $proposal->getQuoteRequest(),
+            'viewerContext' => 'client',
         ]);
     }
 
@@ -540,21 +592,13 @@ final class QuoteRequestController extends AbstractController
             throw $this->createAccessDeniedException('Accès réservé aux clients.');
         }
 
-        $proposal = $quoteProposalRepository->findOneBy([
-            'publicReference' => $publicReference,
-            'deletedAt' => null,
-        ]);
+        $proposal = $quoteProposalRepository->findOneVisibleForClientByPublicReference(
+            $publicReference,
+            $user->getClientProfile()
+        );
 
         if (!$proposal instanceof QuoteProposal) {
             throw $this->createNotFoundException('Devis introuvable.');
-        }
-
-        if (!$proposal->isFinalized()) {
-            throw $this->createNotFoundException('Ce devis n’est pas disponible.');
-        }
-
-        if ($proposal->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas télécharger ce devis.');
         }
 
         $prestataire = $proposal->getQuoteRequest()?->getPrestataire();

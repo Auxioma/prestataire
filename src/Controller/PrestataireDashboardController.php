@@ -106,6 +106,30 @@ final class PrestataireDashboardController extends AbstractController
 
         /*
          * ------------------------------------------------------------
+         * 4.bis Préparation du tri et pagination des demandes de devis archivées
+         * ------------------------------------------------------------
+         */
+        $archivedQuoteQueryBuilder = $quoteRequestRepository->createQueryBuilder('qr')
+            ->where('qr.prestataire = :prestataire')
+            ->andWhere('qr.archivedByPrestataireAt IS NOT NULL')
+            ->andWhere('qr.deletedAt IS NULL')
+            ->setParameter('prestataire', $prestataireProfile);
+
+        foreach ($quoteOrderBy as $field => $direction) {
+            $archivedQuoteQueryBuilder->addOrderBy('qr.' . $field, $direction);
+        }
+
+        $archivedQuoteRequests = $paginator->paginate(
+            $archivedQuoteQueryBuilder,
+            $request->query->getInt('archivedQuotePage', 1),
+            5,
+            [
+                'pageParameterName' => 'archivedQuotePage',
+            ]
+        );
+
+        /*
+         * ------------------------------------------------------------
          * 5. Chargement des conversations et détermination de l’active
          * ------------------------------------------------------------
          */
@@ -183,6 +207,7 @@ final class PrestataireDashboardController extends AbstractController
             'messageForm' => $messageForm,
             'activeTab' => $activeTab,
             'hasConversationPhotos' => $hasConversationPhotos,
+            'archivedQuoteRequests' => $archivedQuoteRequests,
         ]);
     }
 
