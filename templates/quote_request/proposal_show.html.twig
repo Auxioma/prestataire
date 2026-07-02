@@ -3,6 +3,8 @@
 {% block title %}{{ proposal.proposalNumber ?: 'Devis' }}{% endblock %}
 
 {% block body %}
+    {% set isArchivedView = quoteRequest is defined and quoteRequest.deletedAt is not null %}
+
     <div class="qp-page">
         <div class="qp-shell">
             <header class="qp-hero">
@@ -32,7 +34,7 @@
 
                 <div class="qp-hero__actions">
                     <a href="{{ path('app_quote_request_show', { slug: proposal.quoteRequest.slug }) }}" class="qp-btn qp-btn--ghost">
-                        Retour à la demande
+                        {{ isArchivedView ? 'Retour à l’archive' : 'Retour à la demande' }}
                     </a>
 
                     <a href="{{ path('app_quote_request_quote_proposal_pdf', { publicReference: proposal.publicReference }) }}"
@@ -44,10 +46,17 @@
                 </div>
             </header>
 
-            <section class="qp-banner qp-banner--success">
-                <div class="qp-banner__title">Devis disponible</div>
-                <div class="qp-banner__text">Ce devis a été publié par le prestataire et peut être consulté ou téléchargé.</div>
-            </section>
+            {% if isArchivedView %}
+                <section class="qp-banner qp-banner--soft">
+                    <div class="qp-banner__title">Devis archivé</div>
+                    <div class="qp-banner__text">Ce devis reste consultable en lecture seule dans l’archive de la demande.</div>
+                </section>
+            {% else %}
+                <section class="qp-banner qp-banner--success">
+                    <div class="qp-banner__title">Devis disponible</div>
+                    <div class="qp-banner__text">Ce devis a été publié par le prestataire et peut être consulté ou téléchargé.</div>
+                </section>
+            {% endif %}
 
             <div class="qp-layout">
                 <main class="qp-main">
@@ -104,10 +113,27 @@
                                                         <div class="qp-item-description">{{ item.description }}</div>
                                                     {% endif %}
                                                 </td>
-                                                <td class="is-right">{{ item.quantity }}</td>
-                                                <td class="is-right">{{ item.unitPriceHt|number_format(2, ',', ' ') }} €</td>
-                                                <td class="is-right">{{ item.vatRate|number_format(2, ',', ' ') }} %</td>
-                                                <td class="is-right qp-table__amount">{{ item.totalHt|number_format(2, ',', ' ') }} €</td>
+                                                <td class="is-right">
+                                                    <span class="qp-nowrap">{{ item.quantity|number_format(2, ',', ' ') }}</span>
+                                                </td>
+                                                <td class="is-right">
+                                                    <span class="qp-money">
+                                                        <span class="qp-money__value">{{ item.unitPriceHt|number_format(2, ',', ' ') }}</span>
+                                                        <span class="qp-money__currency">€</span>
+                                                    </span>
+                                                </td>
+                                                <td class="is-right">
+                                                    <span class="qp-percent">
+                                                        <span class="qp-percent__value">{{ item.vatRate|number_format(2, ',', ' ') }}</span>
+                                                        <span class="qp-percent__symbol">%</span>
+                                                    </span>
+                                                </td>
+                                                <td class="is-right qp-table__amount">
+                                                    <span class="qp-money qp-money--strong">
+                                                        <span class="qp-money__value">{{ item.totalHt|number_format(2, ',', ' ') }}</span>
+                                                        <span class="qp-money__currency">€</span>
+                                                    </span>
+                                                </td>
                                             </tr>
                                         {% else %}
                                             <tr>

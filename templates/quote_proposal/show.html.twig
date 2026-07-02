@@ -7,13 +7,29 @@
 {% block body %}
 	{% set isReadOnlyView = isReadOnlyView|default(false) %}
 	{% set viewerContext = viewerContext|default('client') %}
+	{% set isPrestataireView = viewerContext == 'prestataire' %}
+	{% set canManageProposal = isPrestataireView and not isReadOnlyView and not proposal.isFinalized %}
 
 	{% if isReadOnlyView %}
 		{% set backToRequestUrl = path('app_prestataire_dashboard', { tab: 'archives' }) ~ '#archives-main-panel' %}
-	{% elseif viewerContext == 'prestataire' %}
+	{% elseif isPrestataireView %}
 		{% set backToRequestUrl = path('app_prestataire_quote_request_show', { slug: proposal.quoteRequest.slug }) %}
 	{% else %}
 		{% set backToRequestUrl = path('app_quote_request_show', { slug: proposal.quoteRequest.slug }) %}
+	{% endif %}
+
+	{% if isReadOnlyView %}
+		{% set bannerClass = 'qp-banner--soft' %}
+		{% set bannerTitle = 'Devis archivé' %}
+		{% set bannerText = 'Ce devis est consultable en lecture seule depuis les archives du prestataire.' %}
+	{% elseif not proposal.isFinalized %}
+		{% set bannerClass = 'qp-banner--warning' %}
+		{% set bannerTitle = 'Devis en brouillon' %}
+		{% set bannerText = 'Ce devis n’est pas encore finalisé. Il reste visible uniquement par le prestataire tant qu’il n’a pas été publié au client.' %}
+	{% else %}
+		{% set bannerClass = 'qp-banner--success' %}
+		{% set bannerTitle = 'Devis finalisé' %}
+		{% set bannerText = 'Ce devis a été finalisé par le prestataire. Il peut maintenant être consulté et téléchargé par le client.' %}
 	{% endif %}
 
 	<div class="qp-page">
@@ -21,22 +37,35 @@
 			<header class="qp-hero">
 				<div class="qp-hero__main">
 					<div class="qp-eyebrow">
-						{{ isReadOnlyView ? 'Devis archivé' : 'Devis publié' }}
+						{% if isReadOnlyView %}
+							Devis archivé
+						{% elseif proposal.isFinalized %}
+							Devis publié
+						{% else %}
+							Brouillon du devis
+						{% endif %}
 					</div>
-					<h1 class="qp-title">Devis
-						{{ proposal.proposalNumber ?: '—' }}</h1>
+
+					<h1 class="qp-title">
+						Devis
+						{{ proposal.proposalNumber ?: '—' }}
+					</h1>
 
 					<div class="qp-meta-list">
 						<div class="qp-meta-pill">
 							<span class="qp-meta-pill__label">Référence</span>
 							<span class="qp-meta-pill__value">{{ proposal.publicReference ?: '—' }}</span>
 						</div>
+
 						<div class="qp-meta-pill">
-							<span class="qp-meta-pill__label">Publié le</span>
+							<span class="qp-meta-pill__label">
+								{{ proposal.isFinalized ? 'Publié le' : 'Dernière version' }}
+							</span>
 							<span class="qp-meta-pill__value">
 								{{ proposal.finalizedAt ? proposal.finalizedAt|date('d/m/Y à H:i') : '—' }}
 							</span>
 						</div>
+
 						<div class="qp-meta-pill">
 							<span class="qp-meta-pill__label">Valable jusqu’au</span>
 							<span class="qp-meta-pill__value">
@@ -51,21 +80,38 @@
 						{{ isReadOnlyView ? 'Retour aux archives' : 'Retour à la demande' }}
 					</a>
 
-					<a href="{{ path('app_prestataire_quote_proposal_pdf', { publicReference: proposal.publicReference }) }}" class="qp-btn qp-btn--primary" target="_blank" rel="noopener">
-						Voir le PDF
-					</a>
+					{% if isPrestataireView %}
+						<a href="{{ path('app_prestataire_quote_proposal_pdf', { publicReference: proposal.publicReference }) }}" class="qp-btn qp-btn--primary" target="_blank" rel="noopener">
+							Voir le PDF
+						</a>
+					{% else %}
+						<a href="{{ path('app_quote_request_quote_proposal_pdf', { publicReference: proposal.publicReference }) }}" class="qp-btn qp-btn--primary" target="_blank" rel="noopener">
+							Voir le PDF
+						</a>
+					{% endif %}
+
+					{% if not isReadOnlyView|default(false)
+    and not (proposal.quoteRequest is defined and proposal.quoteRequest.deletedAt is not null) %}
+						<a href="{{ path('app_prestataire_quote_proposal_edit', { publicReference: proposal.publicReference }) }}" class="qp-btn qp-btn--secondary">
+							Modifier le devis
+						</a>
+					{% endif %}
+
+					{% if isPrestataireView and not isReadOnlyView and not proposal.isFinalized %}
+						<form method="post" action="{{ path('app_prestataire_quote_proposal_finalize', { publicReference: proposal.publicReference }) }}" onsubmit="return confirm('Finaliser ce devis et le rendre visible au client ?');" class="qp-inline-form">
+							<input type="hidden" name="_token" value="{{ csrf_token('finalize-quote-proposal-' ~ proposal.id) }}">
+							<button type="submit" class="qp-btn qp-btn--success">
+								Finaliser
+							</button>
+						</form>
+					{% endif %}
 				</div>
+
 			</header>
 
-			<section class="qp-banner {{ isReadOnlyView ? 'qp-banner--soft' : 'qp-banner--success' }}">
-				<div class="qp-banner__title">
-					{{ isReadOnlyView ? 'Devis archivé' : 'Devis disponible' }}
-				</div>
-				<div class="qp-banner__text">
-					{{ isReadOnlyView
-                        ? 'Ce devis est consultable en lecture seule depuis les archives du prestataire.'
-                        : 'Ce devis a été publié par le prestataire et peut être consulté ou téléchargé.' }}
-				</div>
+			<section class="qp-banner {{ bannerClass }}">
+				<div class="qp-banner__title">{{ bannerTitle }}</div>
+				<div class="qp-banner__text">{{ bannerText }}</div>
 			</section>
 
 			<div class="qp-layout">
@@ -85,10 +131,12 @@
 								<div class="qp-doc-resume">
 									<div>
 										<strong>N° devis :</strong>
-										{{ proposal.proposalNumber ?: '—' }}</div>
+										{{ proposal.proposalNumber ?: '—' }}
+									</div>
 									<div>
 										<strong>Référence :</strong>
-										{{ proposal.publicReference ?: '—' }}</div>
+										{{ proposal.publicReference ?: '—' }}
+									</div>
 								</div>
 							</div>
 
@@ -127,13 +175,31 @@
 														<div class="qp-item-description">{{ item.description }}</div>
 													{% endif %}
 												</td>
-												<td class="is-right">{{ item.quantity }}</td>
-												<td class="is-right">{{ item.unitPriceHt|number_format(2, ',', ' ') }}
-													€</td>
-												<td class="is-right">{{ item.vatRate|number_format(2, ',', ' ') }}
-													%</td>
-												<td class="is-right qp-table__amount">{{ item.totalHt|number_format(2, ',', ' ') }}
-													€</td>
+
+												<td class="is-right">
+													<span class="qp-nowrap">{{ item.quantity|number_format(2, ',', ' ') }}</span>
+												</td>
+
+												<td class="is-right">
+													<span class="qp-money">
+														<span class="qp-money__value">{{ item.unitPriceHt|number_format(2, ',', ' ') }}</span>
+														<span class="qp-money__currency">€</span>
+													</span>
+												</td>
+
+												<td class="is-right">
+													<span class="qp-percent">
+														<span class="qp-percent__value">{{ item.vatRate|number_format(2, ',', ' ') }}</span>
+														<span class="qp-percent__symbol">%</span>
+													</span>
+												</td>
+
+												<td class="is-right qp-table__amount">
+													<span class="qp-money qp-money--strong">
+														<span class="qp-money__value">{{ item.totalHt|number_format(2, ',', ' ') }}</span>
+														<span class="qp-money__currency">€</span>
+													</span>
+												</td>
 											</tr>
 										{% else %}
 											<tr>
@@ -186,18 +252,30 @@
 							<dl class="qp-totals">
 								<div class="qp-totals__row">
 									<dt>Total HT</dt>
-									<dd>{{ proposal.subtotalHt|number_format(2, ',', ' ') }}
-										€</dd>
+									<dd>
+										<span class="qp-money">
+											<span class="qp-money__value">{{ proposal.subtotalHt|number_format(2, ',', ' ') }}</span>
+											<span class="qp-money__currency">€</span>
+										</span>
+									</dd>
 								</div>
 								<div class="qp-totals__row">
 									<dt>TVA</dt>
-									<dd>{{ proposal.taxAmount|number_format(2, ',', ' ') }}
-										€</dd>
+									<dd>
+										<span class="qp-money">
+											<span class="qp-money__value">{{ proposal.taxAmount|number_format(2, ',', ' ') }}</span>
+											<span class="qp-money__currency">€</span>
+										</span>
+									</dd>
 								</div>
 								<div class="qp-totals__row qp-totals__row--grand">
 									<dt>Total TTC</dt>
-									<dd>{{ proposal.totalTtc|number_format(2, ',', ' ') }}
-										€</dd>
+									<dd>
+										<span class="qp-money qp-money--strong">
+											<span class="qp-money__value">{{ proposal.totalTtc|number_format(2, ',', ' ') }}</span>
+											<span class="qp-money__currency">€</span>
+										</span>
+									</dd>
 								</div>
 							</dl>
 						</div>
@@ -326,10 +404,8 @@
 										<div>{{ proposal.clientInterventionAddressComplement }}</div>
 									{% endif %}
 									{% if proposal.clientInterventionPostalCode or proposal.clientInterventionCity %}
-										<div>
-											{{ proposal.clientInterventionPostalCode ?: '' }}
-											{{ proposal.clientInterventionCity ?: '' }}
-										</div>
+										<div>{{ proposal.clientInterventionPostalCode ?: '' }}
+											{{ proposal.clientInterventionCity ?: '' }}</div>
 									{% endif %}
 									{% if proposal.clientInterventionCountry %}
 										<div>{{ proposal.clientInterventionCountry }}</div>
