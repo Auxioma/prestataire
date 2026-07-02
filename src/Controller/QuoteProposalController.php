@@ -8,6 +8,7 @@ use App\Entity\QuoteProposal;
 use App\Entity\QuoteRequest;
 use App\Entity\User;
 use App\Enum\NotificationTypeEnum;
+use App\Enum\QuoteProposalStatusEnum;
 use App\Enum\QuoteRequestStatusEnum;
 use App\Form\QuoteProposalType;
 use App\Repository\ConversationRepository;
@@ -258,7 +259,16 @@ class QuoteProposalController extends AbstractController
             throw $this->createNotFoundException('Devis introuvable.');
         }
 
-        if (!$this->isCsrfTokenValid('archive_quote_proposal_' . $proposal->getId(), (string) $request->request->get('_token'))) {
+        $quoteRequest = $proposal->getQuoteRequest();
+        $linkedProposals = $quoteProposalRepository->findBy([
+            'quoteRequest' => $quoteRequest,
+            'deletedAt' => null,
+        ]);
+
+        if (!$this->isCsrfTokenValid(
+            'archive_quote_proposal_' . $proposal->getId(),
+            (string) $request->request->get('_token')
+        )) {
             throw $this->createAccessDeniedException('Jeton CSRF invalide.');
         }
 
@@ -266,7 +276,7 @@ class QuoteProposalController extends AbstractController
             $this->addFlash('warning', 'Ce devis est déjà archivé.');
 
             return $this->redirectToRoute('app_prestataire_quote_request_show', [
-                'slug' => $proposal->getQuoteRequest()->getSlug(),
+                'slug' => $quoteRequest->getSlug(),
             ]);
         }
 
@@ -274,12 +284,25 @@ class QuoteProposalController extends AbstractController
             ->setArchivedByPrestataireAt(new \DateTimeImmutable())
             ->setUpdatedAt(new \DateTimeImmutable());
 
+        if ($quoteRequest instanceof QuoteRequest) {
+            $quoteRequest
+                ->setArchivedByPrestataireAt(new \DateTimeImmutable())
+                ->setUpdatedAt(new \DateTimeImmutable());
+
+            foreach ($linkedProposals as $linkedProposal) {
+                if ($linkedProposal->getStatus() === QuoteProposalStatusEnum::FINALIZED) {
+                    $linkedProposal->setStatus(QuoteProposalStatusEnum::ARCHIVED);
+                    $linkedProposal->setUpdatedAt(new \DateTimeImmutable());
+                }
+            }
+        }
+
         $entityManager->flush();
 
         $this->addFlash('success', 'Le devis a bien été archivé.');
 
         return $this->redirectToRoute('app_prestataire_quote_request_show', [
-            'slug' => $proposal->getQuoteRequest()->getSlug(),
+            'slug' => $quoteRequest->getSlug(),
         ], 303);
     }
 

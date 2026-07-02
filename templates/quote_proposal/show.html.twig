@@ -8,7 +8,7 @@
 	{% set isReadOnlyView = isReadOnlyView|default(false) %}
 	{% set viewerContext = viewerContext|default('client') %}
 	{% set isPrestataireView = viewerContext == 'prestataire' %}
-	{% set canManageProposal = isPrestataireView and not isReadOnlyView and not proposal.isFinalized %}
+	{# {% set canManageProposal = isPrestataireView and not isReadOnlyView and not proposal.isFinalized %} #}
 
 	{% if isReadOnlyView %}
 		{% set backToRequestUrl = path('app_prestataire_dashboard', { tab: 'archives' }) ~ '#archives-main-panel' %}
@@ -25,11 +25,11 @@
 	{% elseif not proposal.isFinalized %}
 		{% set bannerClass = 'qp-banner--warning' %}
 		{% set bannerTitle = 'Devis en brouillon' %}
-		{% set bannerText = 'Ce devis n’est pas encore finalisé. Il reste visible uniquement par le prestataire tant qu’il n’a pas été publié au client.' %}
+		{% set bannerText = 'Vous pouvez désormais rendre ce devis visible au client en cliquant sur le bouton Finaliser.' %}
 	{% else %}
 		{% set bannerClass = 'qp-banner--success' %}
 		{% set bannerTitle = 'Devis finalisé' %}
-		{% set bannerText = 'Ce devis a été finalisé par le prestataire. Il peut maintenant être consulté et téléchargé par le client.' %}
+		{% set bannerText = 'Ce devis a été finalisé. Il peut maintenant être consulté et téléchargé par le client.' %}
 	{% endif %}
 
 	<div class="qp-page">
@@ -90,14 +90,13 @@
 						</a>
 					{% endif %}
 
-					{% if not isReadOnlyView|default(false)
-    and not (proposal.quoteRequest is defined and proposal.quoteRequest.deletedAt is not null) %}
+					{% if proposal.status.value != 'archived' and proposal.status.value != 'deleted' %}
 						<a href="{{ path('app_prestataire_quote_proposal_edit', { publicReference: proposal.publicReference }) }}" class="qp-btn qp-btn--secondary">
 							Modifier le devis
 						</a>
 					{% endif %}
 
-					{% if isPrestataireView and not isReadOnlyView and not proposal.isFinalized %}
+					{% if not isReadOnlyView and proposal.status.value == 'draft' %}
 						<form method="post" action="{{ path('app_prestataire_quote_proposal_finalize', { publicReference: proposal.publicReference }) }}" onsubmit="return confirm('Finaliser ce devis et le rendre visible au client ?');" class="qp-inline-form">
 							<input type="hidden" name="_token" value="{{ csrf_token('finalize-quote-proposal-' ~ proposal.id) }}">
 							<button type="submit" class="qp-btn qp-btn--success">
