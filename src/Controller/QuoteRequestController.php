@@ -6,6 +6,7 @@ use App\Entity\Conversation;
 use App\Entity\Message;
 use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
+use App\Entity\QuoteProposal;
 use App\Entity\QuoteRequest;
 use App\Entity\User;
 use App\Enum\MessageTypeEnum;
@@ -15,6 +16,7 @@ use App\Form\MessageType;
 use App\Form\QuoteRequestType;
 use App\Repository\ConversationRepository;
 use App\Repository\MessageRepository;
+use App\Repository\QuoteProposalRepository;
 use App\Repository\QuoteRequestRepository;
 use App\Service\ConversationMessageManager;
 use App\Service\NotificationManager;
@@ -202,6 +204,7 @@ final class QuoteRequestController extends AbstractController
         #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
         ConversationRepository $conversationRepository,
         MessageRepository $messageRepository,
+        QuoteProposalRepository $quoteProposalRepository,
         EntityManagerInterface $entityManager,
         RealtimeNotifier $realtimeNotifier,
         NotificationManager $notificationManager,
@@ -229,6 +232,25 @@ final class QuoteRequestController extends AbstractController
         // =========================
         $conversation = $conversationRepository->findOneByQuoteRequest($quoteRequest);
         $messages = $conversation ? $messageRepository->findByConversationOrderedByCreatedAt($conversation) : [];
+
+        // =========================
+        // Chargement des devis finalisés
+        // =========================
+        $quoteResponses = $quoteProposalRepository->findBy(
+            [
+                'quoteRequest' => $quoteRequest,
+                'deletedAt' => null,
+            ],
+            [
+                'finalizedAt' => 'DESC',
+                'createdAt' => 'DESC',
+            ]
+        );
+
+        $quoteResponses = array_values(array_filter(
+            $quoteResponses,
+            static fn(QuoteProposal $proposal): bool => $proposal->isFinalized()
+        ));
 
         // =========================
         // Présence de photos
@@ -334,6 +356,7 @@ final class QuoteRequestController extends AbstractController
             'messages' => $messages,
             'messageForm' => $messageForm?->createView(),
             'hasConversationPhotos' => $hasConversationPhotos,
+            'quoteResponses' => $quoteResponses,
         ]);
     }
 
@@ -465,4 +488,40 @@ final class QuoteRequestController extends AbstractController
             'galleryContext' => 'client',
         ]);
     }
+
+    #[Route('/devis/{publicReference}', name: '_quote_proposal_show', methods: ['GET'])]
+    public function showProposal(
+        string $publicReference,
+        QuoteProposalRepository $quoteProposalRepository,
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
+            throw $this->createAccessDeniedException('Accès réservé aux clients.');
+        }
+
+        $proposal = $quoteProposalRepository->findOneBy([
+            'publicReference' => $publicReference,
+            'deletedAt' => null,
+        ]);
+
+        if (!$proposal instanceof QuoteProposal) {
+            throw $this->createNotFoundException('Devis introuvable.');
+        }
+
+        if (!$proposal->isFinalized()) {
+            throw $this->createNotFoundException('Ce devis n’est pas disponible.');
+        }
+
+        if ($proposal->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas consulter ce devis.');
+        }
+
+        return $this->render('quote_request/proposal_show.html.twig', [
+            'proposal' => $proposal,
+            'quoteRequest' => $proposal->getQuoteRequest(),
+        ]);
+    }
+
+    
 }

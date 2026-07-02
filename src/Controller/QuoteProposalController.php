@@ -6,11 +6,14 @@ use App\Entity\Conversation;
 use App\Entity\PrestataireProfile;
 use App\Entity\QuoteProposal;
 use App\Entity\QuoteRequest;
+use App\Entity\User;
+use App\Enum\NotificationTypeEnum;
 use App\Form\QuoteProposalType;
 use App\Repository\ConversationRepository;
 use App\Repository\PrestataireProfileRepository;
 use App\Repository\QuoteProposalRepository;
 use App\Repository\QuoteRequestRepository;
+use App\Service\NotificationManager;
 use App\Service\QuoteProposalManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -125,6 +128,7 @@ class QuoteProposalController extends AbstractController
         PrestataireProfileRepository $prestataireProfileRepository,
         QuoteProposalRepository $quoteProposalRepository,
         QuoteProposalManager $quoteProposalManager,
+        NotificationManager $notificationManager,
         EntityManagerInterface $entityManager,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_PRESTATAIRE');
@@ -157,6 +161,29 @@ class QuoteProposalController extends AbstractController
         }
 
         $quoteProposalManager->finalize($securedProposal);
+
+        $clientUser = $securedProposal->getQuoteRequest()?->getClient()?->getAccount();
+
+        if ($clientUser instanceof User) {
+            $notificationManager->notify(
+                $clientUser,
+                NotificationTypeEnum::QUOTE_PROPOSAL_RECEIVED,
+                'Nouveau devis reçu',
+                'Vous avez reçu un nouveau devis pour votre demande.',
+                $this->generateUrl('app_quote_request_show', [
+                    'slug' => $securedProposal->getQuoteRequest()?->getSlug(),
+                ]),
+                [
+                    'quoteProposalId' => $securedProposal->getId(),
+                    'quoteProposalReference' => $securedProposal->getPublicReference(),
+                    'quoteProposalNumber' => $securedProposal->getProposalNumber(),
+                    'quoteRequestId' => $securedProposal->getQuoteRequest()?->getId(),
+                    'quoteRequestSlug' => $securedProposal->getQuoteRequest()?->getSlug(),
+                    'prestataireId' => $prestataire->getId(),
+                ]
+            );
+        }
+
         $entityManager->flush();
 
         $this->addFlash('success', 'Le devis a bien été finalisé.');
