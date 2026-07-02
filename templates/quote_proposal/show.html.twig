@@ -55,6 +55,10 @@
 						</form>
 					{% endif %}
 
+					<a href="{{ path('app_prestataire_quote_proposal_pdf', { publicReference: proposal.publicReference }) }}" class="quote-btn quote-btn--tertiary" target="_blank" rel="noopener">
+						Voir la version PDF
+					</a>
+
 					<form method="post" action="{{ path('app_prestataire_quote_proposal_delete', { publicReference: proposal.publicReference }) }}" onsubmit="return confirm('Supprimer définitivement ce devis ? Il ne sera plus visible par le client, mais vous pourrez créer un nouveau devis pour cette demande.');">
 						<input type="hidden" name="_token" value="{{ csrf_token('delete_quote_proposal_' ~ proposal.id) }}">
 						<button type="submit" class="quote-btn quote-btn--danger">

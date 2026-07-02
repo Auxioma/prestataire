@@ -30,6 +30,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 
 #[Route('/demandes-de-devis', name: 'app_quote_request')]
@@ -523,5 +527,77 @@ final class QuoteRequestController extends AbstractController
         ]);
     }
 
-    
+    #[Route('/devis/{publicReference}/pdf', name: '_quote_proposal_pdf', methods: ['GET'])]
+    public function showProposalPdf(
+        string $publicReference,
+        QuoteProposalRepository $quoteProposalRepository,
+        UploaderHelper $uploaderHelper,
+        RequestStack $requestStack,
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
+            throw $this->createAccessDeniedException('Accès réservé aux clients.');
+        }
+
+        $proposal = $quoteProposalRepository->findOneBy([
+            'publicReference' => $publicReference,
+            'deletedAt' => null,
+        ]);
+
+        if (!$proposal instanceof QuoteProposal) {
+            throw $this->createNotFoundException('Devis introuvable.');
+        }
+
+        if (!$proposal->isFinalized()) {
+            throw $this->createNotFoundException('Ce devis n’est pas disponible.');
+        }
+
+        if ($proposal->getClient()?->getId() !== $user->getClientProfile()?->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas télécharger ce devis.');
+        }
+
+        $prestataire = $proposal->getQuoteRequest()?->getPrestataire();
+
+        $prestataireLogoUrl = null;
+
+        if ($prestataire instanceof PrestataireProfile && $prestataire->getLogo()) {
+            $relativePath = $uploaderHelper->asset($prestataire, 'logoFile');
+
+            if ($relativePath) {
+                $request = $requestStack->getCurrentRequest();
+
+                if ($request instanceof Request) {
+                    $prestataireLogoUrl = $request->getSchemeAndHttpHost() . $relativePath;
+                }
+            }
+        }
+
+        $html = $this->renderView('quote_request/proposal_pdf.html.twig', [
+            'proposal' => $proposal,
+            'quoteRequest' => $proposal->getQuoteRequest(),
+            'prestataireLogoUrl' => $prestataireLogoUrl,
+        ]);
+
+        $options = new Options();
+        $options->set('defaultFont', 'DejaVu Sans');
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        return new Response(
+            $dompdf->output(),
+            Response::HTTP_OK,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => sprintf(
+                    'inline; filename="%s.pdf"',
+                    $proposal->getProposalNumber() ?: 'devis'
+                ),
+            ]
+        );
+    }
 }

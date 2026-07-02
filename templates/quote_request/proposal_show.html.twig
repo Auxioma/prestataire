@@ -28,9 +28,9 @@
                     Retour à la demande
                 </a>
 
-                {# <a href="{{ path('app_quote_request_quote_proposal_pdf', { publicReference: proposal.publicReference }) }}" class="btn btn-primary" target="_blank" rel="noopener">
+                <a href="{{ path('app_quote_request_quote_proposal_pdf', { publicReference: proposal.publicReference }) }}" class="btn btn-primary" target="_blank" rel="noopener">
                     Voir le PDF
-                </a> #}
+                </a>
             </div>
         </div>
 
@@ -136,30 +136,144 @@
                 <div class="card shadow-sm mb-3">
                     <div class="card-body">
                         <h2 class="h5">Prestataire</h2>
-                        <p class="mb-1"><strong>{{ proposal.prestataireCompanyName ?: '—' }}</strong></p>
-                        <p class="mb-1">{{ proposal.prestataireLegalName ?: '—' }}</p>
-                        <p class="mb-1">{{ proposal.prestataireAddress ?: '—' }}</p>
+
                         <p class="mb-1">
-                            {{ proposal.prestatairePostalCode ?: '—' }}
-                            {{ proposal.prestataireCity ?: '' }}
+                            <strong>{{ proposal.prestataireCompanyName ?: proposal.prestataireLegalName ?: '—' }}</strong>
                         </p>
-                        <p class="mb-0">{{ proposal.prestataireEmail ?: '—' }}</p>
+
+                        {% if proposal.prestataireLegalName and proposal.prestataireLegalName != proposal.prestataireCompanyName %}
+                            <p class="mb-1">{{ proposal.prestataireLegalName }}</p>
+                        {% endif %}
+
+                        {% if proposal.prestataireAddress %}
+                            <p class="mb-1">{{ proposal.prestataireAddress }}</p>
+                        {% endif %}
+
+                        {% if proposal.prestataireAddressComplement %}
+                            <p class="mb-1">{{ proposal.prestataireAddressComplement }}</p>
+                        {% endif %}
+
+                        {% if proposal.prestatairePostalCode or proposal.prestataireCity %}
+                            <p class="mb-1">
+                                {{ proposal.prestatairePostalCode ?: '' }}
+                                {{ proposal.prestataireCity ?: '' }}
+                            </p>
+                        {% endif %}
+
+                        {% if proposal.prestataireCountry %}
+                            <p class="mb-1">{{ proposal.prestataireCountry }}</p>
+                        {% endif %}
+
+                        {% if proposal.prestatairePhone %}
+                            <p class="mb-1">
+                                <strong>Téléphone :</strong>
+                                {{ proposal.prestatairePhone }}
+                            </p>
+                        {% endif %}
+
+                        {% if proposal.prestataireEmail %}
+                            <p class="mb-1">
+                                <strong>Email :</strong>
+                                {{ proposal.prestataireEmail }}
+                            </p>
+                        {% endif %}
+
+                        {% if proposal.prestataireSiret %}
+                            <p class="mb-1">
+                                <strong>SIRET :</strong>
+                                {{ proposal.prestataireSiret }}
+                            </p>
+                        {% endif %}
+
+                        {% if proposal.prestataireVatNumber %}
+                            <p class="mb-0">
+                                <strong>TVA intracom :</strong>
+                                {{ proposal.prestataireVatNumber }}
+                            </p>
+                        {% endif %}
                     </div>
                 </div>
 
-                <div class="card shadow-sm">
+                <div class="card shadow-sm mb-3">
                     <div class="card-body">
                         <h2 class="h5">Client</h2>
-                        <p class="mb-1"><strong>{{ proposal.clientFullName ?: proposal.clientCompanyName ?: '—' }}</strong></p>
-                        <p class="mb-1">{{ proposal.clientCompanyName ?: '—' }}</p>
-                        <p class="mb-1">{{ proposal.clientBillingAddress ?: proposal.clientInterventionAddress ?: '—' }}</p>
+
                         <p class="mb-1">
-                            {{ proposal.clientBillingPostalCode ?: proposal.clientInterventionPostalCode ?: '—' }}
-                            {{ proposal.clientBillingCity ?: proposal.clientInterventionCity ?: '' }}
+                            <strong>{{ proposal.clientFullName ?: proposal.clientCompanyName ?: '—' }}</strong>
                         </p>
-                        <p class="mb-0">{{ proposal.clientEmail ?: '—' }}</p>
+
+                        {% if proposal.clientCompanyName and proposal.clientCompanyName != proposal.clientFullName %}
+                            <p class="mb-1">{{ proposal.clientCompanyName }}</p>
+                        {% endif %}
+
+                        {% if proposal.clientBillingAddress %}
+                            <p class="mb-1">{{ proposal.clientBillingAddress }}</p>
+                        {% endif %}
+
+                        {% if proposal.clientBillingPostalCode or proposal.clientBillingCity %}
+                            <p class="mb-1">
+                                {{ proposal.clientBillingPostalCode ?: '' }}
+                                {{ proposal.clientBillingCity ?: '' }}
+                            </p>
+                        {% endif %}
+
+                        {% if proposal.clientBillingCountry %}
+                            <p class="mb-1">{{ proposal.clientBillingCountry }}</p>
+                        {% endif %}
+
+                        {% if proposal.clientPhone %}
+                            <p class="mb-1">
+                                <strong>Téléphone :</strong>
+                                {{ proposal.clientPhone }}
+                            </p>
+                        {% endif %}
+
+                        {% if proposal.clientEmail %}
+                            <p class="mb-1">
+                                <strong>Email :</strong>
+                                {{ proposal.clientEmail }}
+                            </p>
+                        {% endif %}
+
+                        {% if proposal.clientSiret %}
+                            <p class="mb-0">
+                                <strong>SIRET :</strong>
+                                {{ proposal.clientSiret }}
+                            </p>
+                        {% endif %}
                     </div>
                 </div>
+
+                {% if proposal.clientInterventionAddress
+                    or proposal.clientInterventionAddressComplement
+                    or proposal.clientInterventionPostalCode
+                    or proposal.clientInterventionCity
+                    or proposal.clientInterventionCountry %}
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h2 class="h5">Adresse d’intervention</h2>
+
+                            {% if proposal.clientInterventionAddress %}
+                                <p class="mb-1">{{ proposal.clientInterventionAddress }}</p>
+                            {% endif %}
+
+                            {% if proposal.clientInterventionAddressComplement %}
+                                <p class="mb-1">{{ proposal.clientInterventionAddressComplement }}</p>
+                            {% endif %}
+
+                            {% if proposal.clientInterventionPostalCode or proposal.clientInterventionCity %}
+                                <p class="mb-1">
+                                    {{ proposal.clientInterventionPostalCode ?: '' }}
+                                    {{ proposal.clientInterventionCity ?: '' }}
+                                </p>
+                            {% endif %}
+
+                            {% if proposal.clientInterventionCountry %}
+                                <p class="mb-0">{{ proposal.clientInterventionCountry }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

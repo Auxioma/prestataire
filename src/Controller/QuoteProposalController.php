@@ -16,10 +16,14 @@ use App\Repository\QuoteRequestRepository;
 use App\Service\NotificationManager;
 use App\Service\QuoteProposalManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 #[Route('/prestataire/devis', name: 'app_prestataire_quote_proposal_')]
 class QuoteProposalController extends AbstractController
@@ -225,6 +229,79 @@ class QuoteProposalController extends AbstractController
             'slug' => $proposal->getQuoteRequest()->getSlug(),
         ]);
     }
+
+    #[Route('/devis/{publicReference}/pdf', name: 'pdf', methods: ['GET'])]
+    public function showPdf(
+        string $publicReference,
+        QuoteProposalRepository $quoteProposalRepository,
+        PrestataireProfileRepository $prestataireProfileRepository,
+        UploaderHelper $uploaderHelper,
+        RequestStack $requestStack,
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$this->isGranted('ROLE_PRESTATAIRE')) {
+            throw $this->createAccessDeniedException('Accès réservé aux prestataires.');
+        }
+
+        $prestataire = $this->getCurrentPrestataire($prestataireProfileRepository);
+
+        $proposal = $quoteProposalRepository->findOneBy([
+            'publicReference' => $publicReference,
+            'prestataire' => $prestataire,
+            'deletedAt' => null,
+        ]);
+
+        if (!$proposal instanceof QuoteProposal) {
+            throw $this->createNotFoundException('Devis introuvable.');
+        }
+
+        if (!$proposal->isFinalized()) {
+            throw $this->createNotFoundException('Ce devis n’est pas disponible.');
+        }
+
+        $prestataireLogoUrl = null;
+
+        if ($prestataire->getLogo()) {
+            $relativePath = $uploaderHelper->asset($prestataire, 'logoFile');
+
+            if ($relativePath) {
+                $request = $requestStack->getCurrentRequest();
+
+                if ($request instanceof Request) {
+                    $prestataireLogoUrl = $request->getSchemeAndHttpHost() . $relativePath;
+                }
+            }
+        }
+
+        $html = $this->renderView('quote_proposal/proposal_pdf.html.twig', [
+            'proposal' => $proposal,
+            'quoteRequest' => $proposal->getQuoteRequest(),
+            'prestataireLogoUrl' => $prestataireLogoUrl,
+        ]);
+
+        $options = new Options();
+        $options->set('defaultFont', 'DejaVu Sans');
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        return new Response(
+            $dompdf->output(),
+            Response::HTTP_OK,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => sprintf(
+                    'inline; filename="%s.pdf"',
+                    $proposal->getProposalNumber() ?: 'devis'
+                ),
+            ]
+        );
+    }
+
 
     private function getCurrentPrestataire(PrestataireProfileRepository $prestataireProfileRepository): PrestataireProfile
     {
