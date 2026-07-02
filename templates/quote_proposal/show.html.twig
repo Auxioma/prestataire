@@ -1,271 +1,288 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Devis
-{% endblock %}
+{% block title %}{{ proposal.proposalNumber ?: 'Devis' }}{% endblock %}
 
 {% block body %}
-	<div class="quote-show-page">
-		<div class="container quote-show-container">
-			<section class="quote-show-topbar">
-				<div class="quote-show-topbar__main">
-					<span class="quote-show-topbar__eyebrow">Aperçu client</span>
-					<h1 class="quote-show-topbar__title">Devis</h1>
-					<p class="quote-show-topbar__text">
-						Vérifiez la clarté du document avant son envoi au client.
-					</p>
+    <div class="qp-page">
+        <div class="qp-shell">
+            <header class="qp-hero">
+                <div class="qp-hero__main">
+                    <div class="qp-eyebrow">Devis publié</div>
+                    <h1 class="qp-title">Devis {{ proposal.proposalNumber ?: '—' }}</h1>
 
-					<div class="quote-show-topbar__meta">
-						<div class="quote-show-meta-card">
-							<span class="quote-show-meta-card__label">Numéro</span>
-							<strong class="quote-show-meta-card__value">{{ proposal.proposalNumber ?: 'Brouillon de devis' }}</strong>
-						</div>
+                    <div class="qp-meta-list">
+                        <div class="qp-meta-pill">
+                            <span class="qp-meta-pill__label">Référence</span>
+                            <span class="qp-meta-pill__value">{{ proposal.publicReference ?: '—' }}</span>
+                        </div>
+                        <div class="qp-meta-pill">
+                            <span class="qp-meta-pill__label">Publié le</span>
+                            <span class="qp-meta-pill__value">
+                                {{ proposal.finalizedAt ? proposal.finalizedAt|date('d/m/Y à H:i') : '—' }}
+                            </span>
+                        </div>
+                        <div class="qp-meta-pill">
+                            <span class="qp-meta-pill__label">Valable jusqu’au</span>
+                            <span class="qp-meta-pill__value">
+                                {{ proposal.validUntil ? proposal.validUntil|date('d/m/Y') : '—' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
 
-						<div class="quote-show-meta-card">
-							<span class="quote-show-meta-card__label">Référence interne</span>
-							<strong class="quote-show-meta-card__value">{{ proposal.publicReference ?: '—' }}</strong>
-						</div>
+                <div class="qp-hero__actions">
+                    <a href="{{ path('app_quote_request_show', { slug: proposal.quoteRequest.slug }) }}" class="qp-btn qp-btn--ghost">
+                        Retour à la demande
+                    </a>
 
-						<div class="quote-show-meta-card">
-							<span class="quote-show-meta-card__label">Créé le</span>
-							<strong class="quote-show-meta-card__value">{{ proposal.createdAt ? proposal.createdAt|date('d/m/Y à H:i') : '—' }}</strong>
-						</div>
+                    <a href="{{ path('app_quote_request_quote_proposal_pdf', { publicReference: proposal.publicReference }) }}"
+                       class="qp-btn qp-btn--primary"
+                       target="_blank"
+                       rel="noopener">
+                        Voir le PDF
+                    </a>
+                </div>
+            </header>
 
-						<div class="quote-show-meta-card">
-							<span class="quote-show-meta-card__label">Valable jusqu’au</span>
-							<strong class="quote-show-meta-card__value">{{ proposal.validUntil ? proposal.validUntil|date('d/m/Y') : '—' }}</strong>
-						</div>
-					</div>
-				</div>
+            <section class="qp-banner qp-banner--success">
+                <div class="qp-banner__title">Devis disponible</div>
+                <div class="qp-banner__text">Ce devis a été publié par le prestataire et peut être consulté ou téléchargé.</div>
+            </section>
 
-				<div class="quote-show-topbar__actions">
-					<a href="{{ path('app_prestataire_quote_proposal_edit', { publicReference: proposal.publicReference }) }}" class="quote-btn quote-btn--primary">
-						Modifier le Devis
-					</a>
+            <div class="qp-layout">
+                <main class="qp-main">
+                    <section class="qp-card qp-card--hero">
+                        <div class="qp-card__body">
+                            <div class="qp-section-head qp-section-head--spread">
+                                <div>
+                                    <div class="qp-kicker">Objet du devis</div>
+                                    <h2 class="qp-section-title">{{ proposal.title ?: 'Sans titre' }}</h2>
+                                    <p class="qp-section-subtitle">
+                                        Prestataire :
+                                        {{ proposal.prestataireCompanyName ?: proposal.prestataireLegalName ?: '—' }}
+                                    </p>
+                                </div>
 
-					<a href="{{ path('app_prestataire_quote_request_show', { slug: proposal.quoteRequest.slug }) }}" class="quote-btn quote-btn--secondary">
-						Retour à la demande
-					</a>
+                                <div class="qp-doc-resume">
+                                    <div><strong>N° devis :</strong> {{ proposal.proposalNumber ?: '—' }}</div>
+                                    <div><strong>Référence :</strong> {{ proposal.publicReference ?: '—' }}</div>
+                                </div>
+                            </div>
 
-					{% if not proposal.isFinalized %}
-						<form method="post" action="{{ path('app_prestataire_quote_proposal_finalize', { publicReference: proposal.publicReference }) }}" onsubmit="return confirm('Finaliser ce devis et le rendre visible au client ?');">
-							<input type="hidden" name="_token" value="{{ csrf_token('finalize-quote-proposal-' ~ proposal.id) }}">
-							<button type="submit" class="quote-btn quote-btn--success">
-								Finaliser
-							</button>
-						</form>
-					{% endif %}
+                            {% if proposal.introMessage %}
+                                <div class="qp-highlight-box">
+                                    {{ proposal.introMessage|nl2br }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </section>
 
-					<a href="{{ path('app_prestataire_quote_proposal_pdf', { publicReference: proposal.publicReference }) }}" class="quote-btn quote-btn--tertiary" target="_blank" rel="noopener">
-						Voir la version PDF
-					</a>
+                    <section class="qp-card">
+                        <div class="qp-card__body">
+                            <div class="qp-section-head">
+                                <div class="qp-kicker">Prestations</div>
+                                <h2 class="qp-section-title">Détail du devis</h2>
+                            </div>
 
-					<form method="post" action="{{ path('app_prestataire_quote_proposal_delete', { publicReference: proposal.publicReference }) }}" onsubmit="return confirm('Supprimer définitivement ce devis ? Il ne sera plus visible par le client, mais vous pourrez créer un nouveau devis pour cette demande.');">
-						<input type="hidden" name="_token" value="{{ csrf_token('delete_quote_proposal_' ~ proposal.id) }}">
-						<button type="submit" class="quote-btn quote-btn--danger">
-							Supprimer définitivement
-						</button>
-					</form>
-				</div>
-			</section>
+                            <div class="qp-table-wrap">
+                                <table class="qp-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Prestation</th>
+                                            <th class="is-right">Qté</th>
+                                            <th class="is-right">PU HT</th>
+                                            <th class="is-right">TVA</th>
+                                            <th class="is-right">Total HT</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in proposal.items %}
+                                            <tr>
+                                                <td>
+                                                    <div class="qp-item-title">{{ item.label }}</div>
+                                                    {% if item.description %}
+                                                        <div class="qp-item-description">{{ item.description }}</div>
+                                                    {% endif %}
+                                                </td>
+                                                <td class="is-right">{{ item.quantity }}</td>
+                                                <td class="is-right">{{ item.unitPriceHt|number_format(2, ',', ' ') }} €</td>
+                                                <td class="is-right">{{ item.vatRate|number_format(2, ',', ' ') }} %</td>
+                                                <td class="is-right qp-table__amount">{{ item.totalHt|number_format(2, ',', ' ') }} €</td>
+                                            </tr>
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="5" class="qp-empty">Aucune ligne n’a été ajoutée.</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
 
-			{% if proposal.isFinalized %}
-				<div class="quote-show-alert quote-show-alert--success">
-					<span class="quote-show-alert__dot"></span>
-					<div>
-						<strong>Devis publié.</strong>
-						Le client peut désormais le consulter.
-					</div>
-				</div>
-			{% else %}
-				<div class="quote-show-alert quote-show-alert--info">
-					<span class="quote-show-alert__dot"></span>
-					<div>
-						<strong>Brouillon prêt à relire.</strong>
-						Vérifiez la clarté de la proposition avant de la finaliser.
-					</div>
-				</div>
-			{% endif %}
+                    {% if proposal.terms %}
+                        <section class="qp-card">
+                            <div class="qp-card__body">
+                                <div class="qp-section-head">
+                                    <div class="qp-kicker">Cadre contractuel</div>
+                                    <h2 class="qp-section-title">Conditions</h2>
+                                </div>
 
-			<div class="quote-show-layout">
-				<div class="quote-show-main">
-					<div class="quote-panel quote-panel--document">
-						<div class="quote-document-header">
-							<div>
-								<span class="quote-panel__eyebrow">Document commercial</span>
-								<h2 class="quote-document-header__title">{{ proposal.title ?: 'Sans titre' }}</h2>
-								<p class="quote-document-header__status">Statut :
-									{{ proposal.status.label }}</p>
-							</div>
+                                <div class="qp-richtext">
+                                    {{ proposal.terms|nl2br }}
+                                </div>
+                            </div>
+                        </section>
+                    {% endif %}
 
-							<div class="quote-document-badge">
-								<span class="quote-document-badge__label">Référence devis</span>
-								<strong class="quote-document-badge__value">{{ proposal.proposalNumber ?: '—' }}</strong>
-							</div>
-						</div>
+                    {% if proposal.notes %}
+                        <section class="qp-card">
+                            <div class="qp-card__body">
+                                <div class="qp-section-head">
+                                    <div class="qp-kicker">Informations complémentaires</div>
+                                    <h2 class="qp-section-title">Notes</h2>
+                                </div>
 
-						{% if proposal.introMessage %}
-							<div class="quote-rich-block quote-rich-block--intro">{{ proposal.introMessage|nl2br }}</div>
-						{% endif %}
+                                <div class="qp-richtext">
+                                    {{ proposal.notes|nl2br }}
+                                </div>
+                            </div>
+                        </section>
+                    {% endif %}
+                </main>
 
-						<div class="quote-lines-table-wrap">
-							<table class="quote-lines-table">
-								<thead>
-									<tr>
-										<th>Prestations</th>
-										<th class="text-end">Qté</th>
-										<th class="text-end">PU HT</th>
-										<th class="text-end">TVA</th>
-										<th class="text-end">Total HT</th>
-									</tr>
-								</thead>
-								<tbody>
-									{% for item in proposal.items %}
-										<tr>
-											<td>
-												<div class="quote-line-title">{{ item.label }}</div>
-												{% if item.description %}
-													<div class="quote-line-description">{{ item.description }}</div>
-												{% endif %}
-											</td>
-											<td class="text-end">{{ item.quantity }}</td>
-											<td class="text-end">{{ item.unitPriceHt|number_format(2, ',', ' ') }}
-												€</td>
-											<td class="text-end">{{ item.vatRate|number_format(2, ',', ' ') }}
-												%</td>
-											<td class="text-end quote-line-total">{{ item.totalHt|number_format(2, ',', ' ') }}
-												€</td>
-										</tr>
-									{% else %}
-										<tr>
-											<td colspan="5">
-												<div class="quote-empty-state quote-empty-state--compact">
-													<div class="quote-empty-state__icon">+</div>
-													<h4 class="quote-empty-state__title">Aucune ligne ajoutée</h4>
-													<p class="quote-empty-state__text">Ajoutez des prestations depuis la page d’édition pour visualiser ici le rendu final.</p>
-												</div>
-											</td>
-										</tr>
-									{% endfor %}
-								</tbody>
-							</table>
-						</div>
+                <aside class="qp-sidebar">
+                    <section class="qp-card qp-card--accent">
+                        <div class="qp-card__body">
+                            <div class="qp-kicker qp-kicker--light">Montants</div>
+                            <h2 class="qp-section-title qp-section-title--light">Synthèse financière</h2>
 
-						{% if proposal.terms %}
-							<section class="quote-rich-section">
-								<h3 class="quote-rich-section__title">Conditions</h3>
-								<div class="quote-rich-block">{{ proposal.terms|nl2br }}</div>
-							</section>
-						{% endif %}
+                            <dl class="qp-totals">
+                                <div class="qp-totals__row">
+                                    <dt>Total HT</dt>
+                                    <dd>{{ proposal.subtotalHt|number_format(2, ',', ' ') }} €</dd>
+                                </div>
+                                <div class="qp-totals__row">
+                                    <dt>TVA</dt>
+                                    <dd>{{ proposal.taxAmount|number_format(2, ',', ' ') }} €</dd>
+                                </div>
+                                <div class="qp-totals__row qp-totals__row--grand">
+                                    <dt>Total TTC</dt>
+                                    <dd>{{ proposal.totalTtc|number_format(2, ',', ' ') }} €</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </section>
 
-						{% if proposal.notes %}
-							<section class="quote-rich-section">
-								<h3 class="quote-rich-section__title">Notes</h3>
-								<div class="quote-rich-block">{{ proposal.notes|nl2br }}</div>
-							</section>
-						{% endif %}
-					</div>
-				</div>
+                    <section class="qp-card">
+                        <div class="qp-card__body">
+                            <div class="qp-kicker">Prestataire</div>
+                            <h2 class="qp-section-title qp-section-title--sm">
+                                {{ proposal.prestataireCompanyName ?: proposal.prestataireLegalName ?: '—' }}
+                            </h2>
 
-				<aside class="quote-show-sidebar">
-					<div class="quote-panel quote-panel--side">
-						<div class="quote-panel__header">
-							<span class="quote-panel__eyebrow">Synthèse</span>
-							<h2 class="quote-panel__title">Totaux</h2>
-						</div>
+                            <div class="qp-identity">
+                                {% if proposal.prestataireLegalName and proposal.prestataireLegalName != proposal.prestataireCompanyName %}
+                                    <div>{{ proposal.prestataireLegalName }}</div>
+                                {% endif %}
+                                {% if proposal.prestataireAddress %}<div>{{ proposal.prestataireAddress }}</div>{% endif %}
+                                {% if proposal.prestataireAddressComplement %}<div>{{ proposal.prestataireAddressComplement }}</div>{% endif %}
+                                {% if proposal.prestatairePostalCode or proposal.prestataireCity %}
+                                    <div>{{ proposal.prestatairePostalCode ?: '' }} {{ proposal.prestataireCity ?: '' }}</div>
+                                {% endif %}
+                                {% if proposal.prestataireCountry %}<div>{{ proposal.prestataireCountry }}</div>{% endif %}
+                            </div>
 
-						<div class="quote-totals">
-							<div class="quote-total-row">
-								<span>HT</span>
-								<strong>{{ proposal.subtotalHt|number_format(2, ',', ' ') }}
-									€</strong>
-							</div>
+                            <div class="qp-data-list">
+                                {% if proposal.prestatairePhone %}
+                                    <div><span>Téléphone</span><strong>{{ proposal.prestatairePhone }}</strong></div>
+                                {% endif %}
+                                {% if proposal.prestataireEmail %}
+                                    <div><span>Email</span><strong>{{ proposal.prestataireEmail }}</strong></div>
+                                {% endif %}
+                                {% if proposal.prestataireSiret %}
+                                    <div><span>SIRET</span><strong>{{ proposal.prestataireSiret }}</strong></div>
+                                {% endif %}
+                                {% if proposal.prestataireVatNumber %}
+                                    <div><span>TVA intracom</span><strong>{{ proposal.prestataireVatNumber }}</strong></div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </section>
 
-							<div class="quote-total-row">
-								<span>TVA</span>
-								<strong>{{ proposal.taxAmount|number_format(2, ',', ' ') }}
-									€</strong>
-							</div>
+                    <section class="qp-card">
+                        <div class="qp-card__body">
+                            <div class="qp-kicker">Client</div>
+                            <h2 class="qp-section-title qp-section-title--sm">
+                                {{ proposal.clientFullName ?: proposal.clientCompanyName ?: '—' }}
+                            </h2>
 
-							<div class="quote-total-row quote-total-row--highlight">
-								<span>Total TTC</span>
-								<strong>{{ proposal.totalTtc|number_format(2, ',', ' ') }}
-									€</strong>
-							</div>
-						</div>
-					</div>
+                            <div class="qp-identity">
+                                {% if proposal.clientCompanyName and proposal.clientCompanyName != proposal.clientFullName %}
+                                    <div>{{ proposal.clientCompanyName }}</div>
+                                {% endif %}
+                                {% if proposal.clientBillingAddress %}
+                                    <div>{{ proposal.clientBillingAddress }}</div>
+                                {% elseif proposal.clientInterventionAddress %}
+                                    <div>{{ proposal.clientInterventionAddress }}</div>
+                                {% endif %}
+                                {% if proposal.clientBillingPostalCode or proposal.clientBillingCity or proposal.clientInterventionPostalCode or proposal.clientInterventionCity %}
+                                    <div>
+                                        {{ proposal.clientBillingPostalCode ?: proposal.clientInterventionPostalCode ?: '' }}
+                                        {{ proposal.clientBillingCity ?: proposal.clientInterventionCity ?: '' }}
+                                    </div>
+                                {% endif %}
+                                {% if proposal.clientBillingCountry %}
+                                    <div>{{ proposal.clientBillingCountry }}</div>
+                                {% endif %}
+                            </div>
 
-					<div class="quote-panel quote-panel--side">
-						<div class="quote-panel__header">
-							<span class="quote-panel__eyebrow">Prestataire</span>
-							<h2 class="quote-panel__title">Émetteur du devis</h2>
-						</div>
+                            <div class="qp-data-list">
+                                {% if proposal.clientPhone %}
+                                    <div><span>Téléphone</span><strong>{{ proposal.clientPhone }}</strong></div>
+                                {% endif %}
+                                {% if proposal.clientEmail %}
+                                    <div><span>Email</span><strong>{{ proposal.clientEmail }}</strong></div>
+                                {% endif %}
+                                {% if proposal.clientSiret %}
+                                    <div><span>SIRET</span><strong>{{ proposal.clientSiret }}</strong></div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </section>
 
-						<div class="quote-contact-card">
-							<strong class="quote-contact-card__name">
-								{{ proposal.prestataireCompanyName ?: proposal.prestataireLegalName ?: '—' }}
-							</strong>
+                    {% if proposal.clientInterventionAddress
+                        or proposal.clientInterventionAddressComplement
+                        or proposal.clientInterventionPostalCode
+                        or proposal.clientInterventionCity
+                        or proposal.clientInterventionCountry %}
+                        <section class="qp-card qp-card--soft">
+                            <div class="qp-card__body">
+                                <div class="qp-kicker">Intervention</div>
+                                <h2 class="qp-section-title qp-section-title--sm">Adresse d’intervention</h2>
 
-							{% if proposal.prestataireLegalName and proposal.prestataireLegalName != proposal.prestataireCompanyName %}
-								<div class="quote-contact-card__line">{{ proposal.prestataireLegalName }}</div>
-							{% endif %}
-
-							{% if proposal.prestataireAddress %}
-								<div class="quote-contact-card__line">{{ proposal.prestataireAddress }}</div>
-							{% endif %}
-
-							{% if proposal.prestataireAddressComplement %}
-								<div class="quote-contact-card__line">{{ proposal.prestataireAddressComplement }}</div>
-							{% endif %}
-
-							{% if proposal.prestatairePostalCode or proposal.prestataireCity %}
-								<div class="quote-contact-card__line">
-									{{ proposal.prestatairePostalCode ?: '—' }}
-									{{ proposal.prestataireCity ?: '' }}
-								</div>
-							{% endif %}
-
-							{% if proposal.prestataireCountry %}
-								<div class="quote-contact-card__line">{{ proposal.prestataireCountry }}</div>
-							{% endif %}
-
-							{% if proposal.prestatairePhone %}
-								<div class="quote-contact-card__line">{{ proposal.prestatairePhone }}</div>
-							{% endif %}
-
-							{% if proposal.prestataireEmail %}
-								<div class="quote-contact-card__line">{{ proposal.prestataireEmail }}</div>
-							{% endif %}
-
-							{% if not proposal.prestataireLegalName
-        and not proposal.prestataireAddress
-        and not proposal.prestataireAddressComplement
-        and not proposal.prestatairePostalCode
-        and not proposal.prestataireCity
-        and not proposal.prestataireCountry
-        and not proposal.prestatairePhone
-        and not proposal.prestataireEmail %}
-								<div class="quote-contact-card__line">—</div>
-							{% endif %}
-						</div>
-					</div>
-
-					<div class="quote-panel quote-panel--side">
-						<div class="quote-panel__header">
-							<span class="quote-panel__eyebrow">Client</span>
-							<h2 class="quote-panel__title">Destinataire</h2>
-						</div>
-
-						<div class="quote-contact-card">
-							<strong class="quote-contact-card__name">{{ proposal.clientFullName ?: proposal.clientCompanyName ?: '—' }}</strong>
-							<div class="quote-contact-card__line">{{ proposal.clientCompanyName ?: '—' }}</div>
-							<div class="quote-contact-card__line">{{ proposal.clientBillingAddress ?: proposal.clientInterventionAddress ?: '—' }}</div>
-							<div class="quote-contact-card__line">{{ proposal.clientBillingPostalCode ?: proposal.clientInterventionPostalCode ?: '—' }}
-								{{ proposal.clientBillingCity ?: proposal.clientInterventionCity ?: '' }}</div>
-							<div class="quote-contact-card__line">{{ proposal.clientEmail ?: '—' }}</div>
-						</div>
-					</div>
-				</aside>
-			</div>
-		</div>
-	</div>
+                                <div class="qp-identity">
+                                    {% if proposal.clientInterventionAddress %}
+                                        <div>{{ proposal.clientInterventionAddress }}</div>
+                                    {% endif %}
+                                    {% if proposal.clientInterventionAddressComplement %}
+                                        <div>{{ proposal.clientInterventionAddressComplement }}</div>
+                                    {% endif %}
+                                    {% if proposal.clientInterventionPostalCode or proposal.clientInterventionCity %}
+                                        <div>
+                                            {{ proposal.clientInterventionPostalCode ?: '' }}
+                                            {{ proposal.clientInterventionCity ?: '' }}
+                                        </div>
+                                    {% endif %}
+                                    {% if proposal.clientInterventionCountry %}
+                                        <div>{{ proposal.clientInterventionCountry }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </section>
+                    {% endif %}
+                </aside>
+            </div>
+        </div>
+    </div>
 {% endblock %}

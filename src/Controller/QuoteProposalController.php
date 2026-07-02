@@ -8,6 +8,7 @@ use App\Entity\QuoteProposal;
 use App\Entity\QuoteRequest;
 use App\Entity\User;
 use App\Enum\NotificationTypeEnum;
+use App\Enum\QuoteRequestStatusEnum;
 use App\Form\QuoteProposalType;
 use App\Repository\ConversationRepository;
 use App\Repository\PrestataireProfileRepository;
@@ -166,7 +167,14 @@ class QuoteProposalController extends AbstractController
 
         $quoteProposalManager->finalize($securedProposal);
 
-        $clientUser = $securedProposal->getQuoteRequest()?->getClient()?->getAccount();
+        $quoteRequest = $securedProposal->getQuoteRequest();
+
+        if ($quoteRequest instanceof QuoteRequest && $quoteRequest->getStatus() !== QuoteRequestStatusEnum::CLOSED) {
+            $quoteRequest->setStatus(QuoteRequestStatusEnum::ANSWERED);
+            $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
+        }
+
+        $clientUser = $quoteRequest?->getClient()?->getAccount();
 
         if ($clientUser instanceof User) {
             $notificationManager->notify(
@@ -175,14 +183,14 @@ class QuoteProposalController extends AbstractController
                 'Nouveau devis reçu',
                 'Vous avez reçu un nouveau devis pour votre demande.',
                 $this->generateUrl('app_quote_request_show', [
-                    'slug' => $securedProposal->getQuoteRequest()?->getSlug(),
+                    'slug' => $quoteRequest?->getSlug(),
                 ]),
                 [
                     'quoteProposalId' => $securedProposal->getId(),
                     'quoteProposalReference' => $securedProposal->getPublicReference(),
                     'quoteProposalNumber' => $securedProposal->getProposalNumber(),
-                    'quoteRequestId' => $securedProposal->getQuoteRequest()?->getId(),
-                    'quoteRequestSlug' => $securedProposal->getQuoteRequest()?->getSlug(),
+                    'quoteRequestId' => $quoteRequest?->getId(),
+                    'quoteRequestSlug' => $quoteRequest?->getSlug(),
                     'prestataireId' => $prestataire->getId(),
                 ]
             );

@@ -170,10 +170,15 @@
 						</div>
 					</section>
 
-					<section class="tm-client-quotes-detailcard mb-4">
+					<section class="tm-client-quotes-detailcard tm-client-quotes-detailcard--celebration mb-4">
 						<div class="card-body">
 							<div class="tm-client-quotes-section-head">
-								<h2 class="tm-client-quotes-section-title">Devis reçus</h2>
+								<div class="tm-client-quotes-badge">
+									<i class="fas fa-sparkles" aria-hidden="true"></i>
+									Devis reçus
+								</div>
+
+								<h2 class="tm-client-quotes-section-title mb-2">Un devis est arrivé !</h2>
 								<p class="tm-client-quotes-section-text mb-0">
 									Consultez les devis transmis par le prestataire.
 								</p>
@@ -182,25 +187,30 @@
 							{% if quoteResponses is defined and quoteResponses is not empty %}
 								<div class="d-grid gap-3">
 									{% for quoteResponse in quoteResponses %}
-										<article class="border rounded p-3">
-											<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+										<article class="tm-client-quote-response-card">
+											<div class="tm-client-quote-response-card__glow"></div>
+
+											<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 position-relative">
 												<div>
-													<h3 class="h6 mb-1">
+													<h3 class="h5 mb-1">
 														{{ quoteResponse.proposalNumber ?: 'Devis' }}
 													</h3>
-													<p class="text-muted mb-0">
+
+													<p class="tm-client-quote-response-meta mb-0">
 														Reçu le
 														{{ quoteResponse.finalizedAt ? quoteResponse.finalizedAt|date('d/m/Y à H:i') : '—' }}
 													</p>
 												</div>
 
-												<div class="d-flex flex-wrap gap-2">
-													<a href="{{ path('app_quote_request_quote_proposal_show', { publicReference: quoteResponse.publicReference }) }}" class="btn btn-outline-primary">
-														Consulter le devis
+												<div class="tm-client-quote-response-actions">
+													<a href="{{ path('app_quote_request_quote_proposal_show', { publicReference: quoteResponse.publicReference }) }}" class="tm-client-quote-icon-btn tm-client-quote-icon-btn--view" aria-label="Consulter le devis" title="Consulter le devis">
+														<i class="fas fa-eye" aria-hidden="true"></i>
+														<span>Voir</span>
 													</a>
 
-													<a href="{{ path('app_quote_request_quote_proposal_pdf', { publicReference: quoteResponse.publicReference }) }}" class="btn btn-primary" target="_blank" rel="noopener">
-														Voir le PDF
+													<a href="{{ path('app_quote_request_quote_proposal_pdf', { publicReference: quoteResponse.publicReference }) }}" class="tm-client-quote-icon-btn tm-client-quote-icon-btn--pdf" target="_blank" rel="noopener" aria-label="Ouvrir le PDF du devis" title="Voir le PDF">
+														<i class="fas fa-file-pdf" aria-hidden="true"></i>
+														<span>PDF</span>
 													</a>
 												</div>
 											</div>
@@ -255,14 +265,14 @@
                                                 %}
 
 												<article class="tm-client-quotes-message
-																												                                                    {% if isSystemMessage %}
-																												                                                        tm-client-quotes-message--system
-																												                                                    {% elseif isClientMessage %}
-																												                                                        tm-client-quotes-message--outgoing
-																												                                                    {% else %}
-																												                                                        tm-client-quotes-message--incoming
-																												                                                    {% endif %}
-																												                                                ">
+																																										                                                    {% if isSystemMessage %}
+																																										                                                        tm-client-quotes-message--system
+																																										                                                    {% elseif isClientMessage %}
+																																										                                                        tm-client-quotes-message--outgoing
+																																										                                                    {% else %}
+																																										                                                        tm-client-quotes-message--incoming
+																																										                                                    {% endif %}
+																																										                                                ">
 													<div class="tm-client-quotes-message__meta">
 														<strong>{{ authorLabel }}</strong>
 														<span>{{ message.createdAt ? message.createdAt|date('d/m/Y H:i') : '—' }}</span>
