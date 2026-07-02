@@ -167,6 +167,9 @@ class QuoteProposal
     #[ORM\Column(length: 64, unique: true)]
     private ?string $publicReference = null;
 
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $archivedByPrestataireAt = null;
+
     /**
      * @var Collection<int, QuoteProposalItem>
      */
@@ -863,6 +866,23 @@ class QuoteProposal
         }
 
         return $this;
+    }
+
+    public function getArchivedByPrestataireAt(): ?\DateTimeImmutable
+    {
+        return $this->archivedByPrestataireAt;
+    }
+
+    public function setArchivedByPrestataireAt(?\DateTimeImmutable $archivedByPrestataireAt): self
+    {
+        $this->archivedByPrestataireAt = $archivedByPrestataireAt;
+
+        return $this;
+    }
+
+    public function isArchivedByPrestataire(): bool
+    {
+        return null !== $this->archivedByPrestataireAt;
     }
 
     public function touch(): self

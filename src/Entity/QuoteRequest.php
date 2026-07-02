@@ -58,6 +58,9 @@ class QuoteRequest
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $deletedAt = null;
 
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $archivedByClientAt = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -219,6 +222,23 @@ class QuoteRequest
         $this->conversation = $conversation;
 
         return $this;
+    }
+
+    public function getArchivedByClientAt(): ?\DateTimeImmutable
+    {
+        return $this->archivedByClientAt;
+    }
+
+    public function setArchivedByClientAt(?\DateTimeImmutable $archivedByClientAt): self
+    {
+        $this->archivedByClientAt = $archivedByClientAt;
+
+        return $this;
+    }
+
+    public function isArchivedByClient(): bool
+    {
+        return null !== $this->archivedByClientAt;
     }
 
     public function getDeletedAt(): ?\DateTimeImmutable
