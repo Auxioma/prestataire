@@ -1,3 +1,113 @@
+.tm-quote-panel {
+    min-width: 0;
+}
+
+.tm-quote-panel__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.tm-quote-panel__intro {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.tm-quote-panel__title {
+    margin: 0;
+    color: #1e2342;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.tm-quote-panel__subtitle {
+    color: #7a8198;
+    line-height: 1.6;
+    max-width: 62ch;
+}
+
+.tm-quote-panel__meta {
+    margin-top: 0.45rem;
+}
+
+.tm-quote-panel__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.48rem 0.82rem;
+    border-radius: 999px;
+    background: #e9eefc;
+    color: #3b4c8f;
+    border: 1px solid #d8e0f7;
+    font-size: 0.86rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.tm-quote-panel__filter {
+    width: 100%;
+    max-width: 220px;
+    flex: 0 0 220px;
+}
+
+.tm-quote-panel__filter .form-select {
+    min-height: 46px;
+    border-radius: 14px;
+    border: 1px solid rgba(30, 35, 66, 0.12);
+    background-color: #fff;
+    color: #1e2342;
+    font-weight: 600;
+    box-shadow: none;
+}
+
+.tm-quote-panel__filter .form-select:focus {
+    border-color: rgba(59, 76, 143, 0.4);
+    box-shadow: 0 0 0 0.2rem rgba(59, 76, 143, 0.12);
+}
+
+.tm-quote-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 1.25rem;
+    border-radius: 24px;
+    border: 1px dashed rgba(30, 35, 66, 0.12);
+    background:
+        radial-gradient(circle at top, rgba(59, 76, 143, 0.05), transparent 45%),
+        #fff;
+}
+
+.tm-quote-empty__icon {
+    width: 68px;
+    height: 68px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    background: #eef2ff;
+    color: #3b4c8f;
+    font-size: 1.5rem;
+}
+
+.tm-quote-empty__title {
+    margin-bottom: 0.4rem;
+    color: #1e2342;
+    font-weight: 800;
+}
+
+.tm-quote-empty__text {
+    max-width: 48ch;
+    color: #7a8198;
+    line-height: 1.65;
+}
+
 .tm-quote-list {
     display: flex;
     flex-direction: column;
@@ -6,181 +116,322 @@
 
 .tm-quote-item {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 180px 220px;
+    grid-template-columns: minmax(0, 1fr) 220px;
     gap: 1.25rem;
     align-items: stretch;
-    padding: 1.15rem 1.2rem;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 18px;
-    background: #fff;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+    padding: 1.2rem 1.2rem;
+    border-radius: 22px;
+    border: 1px solid rgba(20, 28, 54, 0.08);
+    background: linear-gradient(180deg, #ffffff 0%, #fcfcfe 100%);
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.05),
+        0 2px 8px rgba(15, 23, 42, 0.03);
+}
+
+.tm-quote-item__main {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 780px;
+    gap: 1.1rem;
+    align-items: center;
 }
 
 .tm-quote-item__infos {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
+    gap: 0.75rem;
 }
 
 .tm-quote-item__title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #172033;
-    line-height: 1.35;
+    color: #1e2342;
+    font-size: 1.02rem;
+    font-weight: 800;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .tm-quote-item__client {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    color: #64748b;
+    color: #667089;
     font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.tm-quote-item__client i,
+.tm-quote-item__meta-item i {
+    flex: 0 0 auto;
+    color: #7b83a0;
 }
 
 .tm-quote-item__meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem 1rem;
+    gap: 0.6rem 1rem;
 }
 
 .tm-quote-item__meta-item {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    color: #475569;
-    font-size: 0.9rem;
+    color: #757d93;
+    font-size: 0.89rem;
+    line-height: 1.45;
 }
 
 .tm-quote-item__excerpt {
-    color: #5b6475;
-    font-size: 0.95rem;
-    line-height: 1.55;
+    color: #5b6478;
+    font-size: 0.94rem;
+    line-height: 1.62;
     max-width: 72ch;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .tm-quote-item__status-col {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-inline: 0.5rem;
 }
 
 .tm-quote-status-chip {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    min-height: 42px;
-    padding: 0.65rem 1rem;
+    width: 100%;
+    max-width: 250px;
+    min-height: 44px;
+    padding: 0.78rem 1rem;
     border-radius: 999px;
+    text-align: center;
     font-size: 0.82rem;
-    font-weight: 700;
-    line-height: 1.25;
-    max-width: 100%;
+    font-weight: 800;
+    line-height: 1.2;
+    word-break: break-word;
+    border: 1px solid transparent;
 }
 
 .tm-quote-status-chip--warning {
-    background: #fff7db;
-    color: #a16207;
-    border: 1px solid #f7d778;
+    background: #f5edcf;
+    color: #9a7408;
+    border-color: #e6d38a;
 }
 
 .tm-quote-status-chip--primary {
-    background: #e8f1ff;
-    color: #1d4ed8;
-    border: 1px solid #bfd3ff;
+    background: #dfe6fb;
+    color: #3553c7;
+    border-color: #c7d3f7;
 }
 
 .tm-quote-status-chip--info {
-    background: #e6f7fb;
-    color: #0f7490;
-    border: 1px solid #b8e7f2;
+    background: #e3f3f7;
+    color: #26758c;
+    border-color: #c5e3ea;
 }
 
 .tm-quote-status-chip--secondary {
-    background: #f1f5f9;
-    color: #475569;
-    border: 1px solid #d7dee7;
+    background: #f1f3f7;
+    color: #667089;
+    border-color: #dde2ea;
 }
 
 .tm-quote-status-chip--success {
-    background: #eaf8ef;
-    color: #15803d;
-    border: 1px solid #bae6c6;
+    background: #e7f5eb;
+    color: #1c7a43;
+    border-color: #c5e4cf;
 }
 
 .tm-quote-status-chip--danger {
     background: #fdecec;
     color: #b42318;
-    border: 1px solid #f5b8b5;
+    border-color: #f2c5c1;
 }
 
 .tm-quote-item__actions {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.75rem;
+    align-items: center;
+    justify-content: stretch;
+    min-width: 0;
+}
+
+.tm-quote-item__actions-stack {
+    width: 100%;
+    display: grid;
+    gap: 0.65rem;
 }
 
 .tm-quote-item__actions form {
     margin: 0;
 }
 
-.tm-quote-item__actions .btn {
-    width: 100%;
+.tm-quote-index-btn {
+    min-height: 44px;
+    border-radius: 14px;
+    font-weight: 700;
+    padding: 0.72rem 1rem;
+    box-shadow: none;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.tm-quote-index-btn:hover,
+.tm-quote-index-btn:focus {
+    transform: translateY(-1px);
+}
+
+.tm-quote-index-btn--primary {
+    background: #3748a3;
+    border: 1px solid #3748a3;
+    color: #fff;
+}
+
+.tm-quote-index-btn--primary:hover,
+.tm-quote-index-btn--primary:focus {
+    background: #2e3f93;
+    border-color: #2e3f93;
+    color: #fff;
+}
+
+.tm-quote-index-btn--ghost {
+    background: #fff;
+    border: 1px solid #d9dde7;
+    color: #2d3553;
+}
+
+.tm-quote-index-btn--ghost:hover,
+.tm-quote-index-btn--ghost:focus {
+    background: #f7f8fc;
+    border-color: #cbd3e2;
+    color: #1e2342;
+}
+
+.tm-quote-index-btn--danger {
+    background: #fff;
+    border: 1px solid #efc8c4;
+    color: #b42318;
+}
+
+.tm-quote-index-btn--danger:hover,
+.tm-quote-index-btn--danger:focus {
+    background: #fff5f4;
+    border-color: #e6b0aa;
+    color: #9f1f16;
 }
 
 .tm-quote-item__helper {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    padding: 0.7rem 0.85rem;
-    border-radius: 12px;
+    padding: 0.7rem 0.9rem;
+    border-radius: 14px;
     background: #f8fafc;
-    color: #64748b;
+    color: #67748b;
     font-size: 0.86rem;
-    font-weight: 500;
-    border: 1px dashed rgba(100, 116, 139, 0.35);
+    font-weight: 600;
+    border: 1px dashed rgba(103, 116, 139, 0.35);
+}
+
+.tm-quote-pagination .pagination {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.tm-quote-pagination .page-link {
+    min-width: 42px;
+    text-align: center;
+    border-radius: 12px;
+    border: 1px solid rgba(30, 35, 66, 0.1);
+    color: #1e2342;
+    font-weight: 700;
+    padding: 0.58rem 0.85rem;
+    box-shadow: none;
+}
+
+.tm-quote-pagination .page-item.active .page-link {
+    background: #3748a3;
+    border-color: #3748a3;
+    color: #fff;
+}
+
+.tm-quote-pagination .page-item.disabled .page-link {
+    background: #f3f5f8;
+    color: #9ca6b6;
+    border-color: #edf1f5;
 }
 
 @media (max-width: 1199.98px) {
     .tm-quote-item {
-        grid-template-columns: minmax(0, 1fr) 160px 200px;
+        grid-template-columns: minmax(0, 1fr) 205px;
+    }
+
+    .tm-quote-item__main {
+        grid-template-columns: minmax(0, 1fr) 160px;
+    }
+
+    .tm-quote-status-chip {
+        max-width: 150px;
     }
 }
 
 @media (max-width: 991.98px) {
+    .tm-quote-panel__head {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .tm-quote-panel__filter {
+        max-width: 100%;
+        flex-basis: auto;
+    }
+
     .tm-quote-item {
         grid-template-columns: 1fr;
     }
 
+    .tm-quote-item__main {
+        grid-template-columns: 1fr;
+        align-items: flex-start;
+    }
+
     .tm-quote-item__status-col {
         justify-content: flex-start;
-        padding-inline: 0;
     }
 
-    .tm-quote-item__actions {
-        width: 100%;
+    .tm-quote-status-chip {
+        width: auto;
+        max-width: 100%;
     }
 }
 
-.tm-quote-panel__intro {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-}
+@media (max-width: 767.98px) {
+    .tm-quote-panel__head {
+        gap: 1rem;
+        margin-bottom: 1.2rem;
+    }
 
-.tm-quote-panel__meta {
-    margin-top: 0.35rem;
-}
+    .tm-quote-item {
+        padding: 1rem;
+        border-radius: 18px;
+    }
 
-.tm-quote-panel__count {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.4rem 0.75rem;
-    border-radius: 999px;
-    background: rgba(13, 110, 253, 0.08);
-    color: #0d6efd;
-    font-size: 0.875rem;
-    font-weight: 600;
-    line-height: 1;
+    .tm-quote-item__meta {
+        gap: 0.55rem 0.8rem;
+    }
+
+    .tm-quote-item__meta-item {
+        font-size: 0.85rem;
+    }
+
+    .tm-quote-empty {
+        padding: 2.2rem 1rem;
+        border-radius: 20px;
+    }
 }
