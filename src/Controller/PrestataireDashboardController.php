@@ -391,6 +391,11 @@ final class PrestataireDashboardController extends AbstractController
             ['lastMessageAt' => 'DESC', 'createdAt' => 'DESC']
         );
 
+        $archivedQuoteRequests = $quoteRequestRepository->findBy(
+            ['prestataire' => $prestataireProfile,],
+            ['updatedAt' => 'DESC','createdAt' => 'DESC',]
+        );
+
         /*
      * ------------------------------------------------------------
      * 10. Réaffichage du dashboard avec le formulaire et ses erreurs
@@ -401,6 +406,7 @@ final class PrestataireDashboardController extends AbstractController
             'prestataireProfile' => $prestataireProfile,
             'prestations' => $prestations,
             'quoteRequests' => $quoteRequests,
+            'archivedQuoteRequests' => $archivedQuoteRequests,
             'quoteSort' => $quoteSort,
             'conversations' => $conversations,
             'activeConversation' => $conversation,
