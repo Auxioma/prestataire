@@ -96,22 +96,31 @@
 						</a>
 					{% endif %}
 
-					{% if not isReadOnlyView and proposal.status.value == 'draft' %}
-						<form method="post" action="{{ path('app_prestataire_quote_proposal_finalize', { publicReference: proposal.publicReference }) }}" onsubmit="return confirm('Finaliser ce devis et le rendre visible au client ?');" class="qp-inline-form">
-							<input type="hidden" name="_token" value="{{ csrf_token('finalize-quote-proposal-' ~ proposal.id) }}">
-							<button type="submit" class="qp-btn qp-btn--success">
-								Finaliser
-							</button>
-						</form>
-					{% endif %}
+
 				</div>
 
 			</header>
 
-			<section class="qp-banner {{ bannerClass }}">
-				<div class="qp-banner__title">{{ bannerTitle }}</div>
-				<div class="qp-banner__text">{{ bannerText }}</div>
-			</section>
+<section class="qp-banner {{ bannerClass }}">
+    <div class="qp-banner__content">
+        <div class="qp-banner__text-group">
+            <div class="qp-banner__title">{{ bannerTitle }}</div>
+            <div class="qp-banner__text">{{ bannerText }}</div>
+        </div>
+
+        {% if not isReadOnlyView and proposal.status.value == 'draft' %}
+            <form method="post"
+                  action="{{ path('app_prestataire_quote_proposal_finalize', { publicReference: proposal.publicReference }) }}"
+                  onsubmit="return confirm('Finaliser ce devis et le rendre visible au client ?');"
+                  class="qp-inline-form qp-banner__action">
+                <input type="hidden" name="_token" value="{{ csrf_token('finalize-quote-proposal-' ~ proposal.id) }}">
+                <button type="submit" class="qp-btn qp-btn--success">
+                    Finaliser
+                </button>
+            </form>
+        {% endif %}
+    </div>
+</section>
 
 			<div class="qp-layout">
 				<main class="qp-main">
