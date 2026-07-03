@@ -4,154 +4,160 @@
 {% endblock %}
 
 {% block body %}
-	<div class="tm-settings-container" {{ stimulus_controller('prestataire-dashboard-tabs') }}>
-		<div class="tm-main-layout">
-			<aside class="tm-settings-sidebar" {{ stimulus_target('prestataire-dashboard-tabs', 'sidebar') }}>
-				<div class="tm-app-sidebar">
-					<div class="tm-app-sidebar-top">
-						<div class="tm-sidebar-profile-card">
-							<div class="tm-sidebar-profile-avatar-wrap">
-								<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" alt="Avatar" class="tm-sidebar-profile-avatar">
-							</div>
-
-							<div class="tm-sidebar-profile-content">
-								<div class="tm-sidebar-profile-name">
-									{{ user.firstName }}
-									{{ user.lastName }}
+	<div class="tm-dashboard-page" {{ stimulus_controller('prestataire-dashboard-tabs') }}>
+		<div class="tm-settings-container tm-dashboard-page__shell">
+			<div class="tm-main-layout tm-dashboard-page__layout">
+				<aside class="tm-settings-sidebar tm-dashboard-page__sidebar" {{ stimulus_target('prestataire-dashboard-tabs', 'sidebar') }}>
+					<div class="tm-app-sidebar tm-dashboard-page__sidebar-inner">
+						<div class="tm-app-sidebar-top tm-dashboard-page__sidebar-top">
+							<div class="tm-sidebar-profile-card tm-dashboard-page__profile-card">
+								<div class="tm-sidebar-profile-avatar-wrap">
+									<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" alt="Avatar de {{ user.firstName }} {{ user.lastName }}" class="tm-sidebar-profile-avatar">
 								</div>
 
-								<div class="tm-sidebar-profile-job">
-									{{ user.prestataireProfile.metier|default('Prestataire') }}
-								</div>
+								<div class="tm-sidebar-profile-content">
+									<div class="tm-sidebar-profile-name">
+										{{ user.firstName }}
+										{{ user.lastName }}
+									</div>
 
-								<div class="tm-sidebar-profile-rating">
-									<span class="tm-sidebar-profile-star">★</span>
-									{{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0,0' }}
-									<span class="tm-sidebar-profile-rating-count">
-										({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }}
-										avis)
-									</span>
-								</div>
+									<div class="tm-sidebar-profile-job">
+										{{ user.prestataireProfile.metier|default('Prestataire') }}
+									</div>
 
-								<div class="tm-sidebar-profile-status">
-									<span class="tm-sidebar-profile-status-dot">●</span>
-									{% if user.isVerified %}
-										Compte vérifié
-									{% else %}
-										Compte à compléter
-									{% endif %}
+									<div class="tm-sidebar-profile-rating">
+										<span class="tm-sidebar-profile-star">★</span>
+										{{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0,0' }}
+										<span class="tm-sidebar-profile-rating-count">
+											({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }}
+											avis)
+										</span>
+									</div>
+
+									<div class="tm-sidebar-profile-status">
+										<span class="tm-sidebar-profile-status-dot">●</span>
+										{% if user.isVerified %}
+											Compte vérifié
+										{% else %}
+											Compte à compléter
+										{% endif %}
+									</div>
 								</div>
 							</div>
 						</div>
+
+						<nav class="tm-sidebar-nav nav nav-pills flex-column tm-dashboard-page__nav" id="dashboardMainTabs" role="tablist" aria-label="Navigation principale du dashboard">
+							<button class="tm-sidebar-link nav-link {{ activeTab == 'dashboard' ? 'active' : '' }}" id="dashboard-main-tab" data-bs-toggle="tab" data-bs-target="#dashboard-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="dashboard-main-panel" aria-selected="{{ activeTab == 'dashboard' ? 'true' : 'false' }}">
+								<span class="tm-sidebar-link-icon">⌂</span>
+								<span>Tableau de bord</span>
+							</button>
+
+							<button class="tm-sidebar-link nav-link {{ activeTab == 'prestations' ? 'active' : '' }}" id="prestations-main-tab" data-bs-toggle="tab" data-bs-target="#prestations-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="prestations-main-panel" aria-selected="{{ activeTab == 'prestations' ? 'true' : 'false' }}">
+								<span class="tm-sidebar-link-icon">🧰</span>
+								<span>Mes prestations</span>
+							</button>
+
+							<button class="tm-sidebar-link nav-link {{ activeTab == 'avis' ? 'active' : '' }}" id="avis-main-tab" data-bs-toggle="tab" data-bs-target="#avis-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="avis-main-panel" aria-selected="{{ activeTab == 'avis' ? 'true' : 'false' }}">
+								<span class="tm-sidebar-link-icon">☆</span>
+								<span>Mes avis</span>
+							</button>
+
+							<button class="tm-sidebar-link nav-link {{ activeTab == 'revenus' ? 'active' : '' }}" id="revenus-main-tab" data-bs-toggle="tab" data-bs-target="#revenus-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="revenus-main-panel" aria-selected="{{ activeTab == 'revenus' ? 'true' : 'false' }}">
+								<span class="tm-sidebar-link-icon">💳</span>
+								<span>Mes revenus</span>
+							</button>
+
+							<button class="tm-sidebar-link nav-link {{ activeTab == 'calendrier' ? 'active' : '' }}" id="calendrier-main-tab" data-bs-toggle="tab" data-bs-target="#calendrier-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="calendrier-main-panel" aria-selected="{{ activeTab == 'calendrier' ? 'true' : 'false' }}">
+								<span class="tm-sidebar-link-icon">🗓</span>
+								<span>Calendrier</span>
+							</button>
+
+							<button class="tm-sidebar-link nav-link {{ activeTab == 'demandes' ? 'active' : '' }}" id="demandes-main-tab" data-bs-toggle="tab" data-bs-target="#demandes-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="demandes-main-panel" aria-selected="{{ activeTab == 'demandes' ? 'true' : 'false' }}">
+								<span class="tm-sidebar-link-icon">📄</span>
+								<span>Demandes reçues</span>
+							</button>
+
+							<button class="tm-sidebar-link nav-link {{ activeTab == 'archives' ? 'active' : '' }}" id="archives-main-tab" data-bs-toggle="tab" data-bs-target="#archives-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="archives-main-panel" aria-selected="{{ activeTab == 'archives' ? 'true' : 'false' }}">
+								<span class="tm-sidebar-link-icon">🗃</span>
+								<span>Archives</span>
+							</button>
+
+							<button class="tm-sidebar-link nav-link {{ activeTab == 'messages' ? 'active' : '' }}" id="messages-main-tab" data-bs-toggle="tab" data-bs-target="#messages-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="messages-main-panel" aria-selected="{{ activeTab == 'messages' ? 'true' : 'false' }}">
+								<span class="tm-sidebar-link-icon">✉</span>
+								<span>Messages</span>
+							</button>
+
+							<div class="tm-sidebar-divider tm-dashboard-page__divider" role="separator" aria-hidden="true"></div>
+
+							<a href="{{ path('app_prestataire_settings') }}" class="tm-sidebar-link tm-dashboard-page__settings-link">
+								<span class="tm-sidebar-link-icon">
+									<i class="fa-solid fa-gear"></i>
+								</span>
+								<span>Paramètres</span>
+							</a>
+						</nav>
 					</div>
+				</aside>
 
-					<nav class="tm-sidebar-nav nav nav-pills flex-column" id="dashboardMainTabs" role="tablist" aria-label="Navigation principale du dashboard">
-						<button class="tm-sidebar-link nav-link {{ activeTab == 'dashboard' ? 'active' : '' }}" id="dashboard-main-tab" data-bs-toggle="tab" data-bs-target="#dashboard-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="dashboard-main-panel" aria-selected="{{ activeTab == 'dashboard' ? 'true' : 'false' }}">
-							<span class="tm-sidebar-link-icon">⌂</span>
-							<span>Tableau de bord</span>
-						</button>
+				<div class="tm-settings-sidebar-backdrop tm-dashboard-page__backdrop" {{ stimulus_target('prestataire-dashboard-tabs', 'backdrop') }} {{ stimulus_action('prestataire-dashboard-tabs', 'closeSidebar', 'click') }}></div>
 
-						<button class="tm-sidebar-link nav-link" id="prestations-main-tab" data-bs-toggle="tab" data-bs-target="#prestations-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="prestations-main-panel" aria-selected="false">
-							<span class="tm-sidebar-link-icon">🧰</span>
-							<span>Mes prestations</span>
-						</button>
+				<main class="tm-settings-content tm-dashboard-page__content">
+					<button type="button" class="tm-sidebar-toggle d-lg-none tm-dashboard-page__toggle" aria-label="Ouvrir la navigation du dashboard" {{ stimulus_target('prestataire-dashboard-tabs', 'toggle') }} {{ stimulus_action('prestataire-dashboard-tabs', 'toggleSidebar', 'click') }}>
+						☰
+					</button>
 
-						<button class="tm-sidebar-link nav-link" id="avis-main-tab" data-bs-toggle="tab" data-bs-target="#avis-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="avis-main-panel" aria-selected="false">
-							<span class="tm-sidebar-link-icon">☆</span>
-							<span>Mes avis</span>
-						</button>
-
-						<button class="tm-sidebar-link nav-link" id="revenus-main-tab" data-bs-toggle="tab" data-bs-target="#revenus-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="revenus-main-panel" aria-selected="false">
-							<span class="tm-sidebar-link-icon">💳</span>
-							<span>Mes revenus</span>
-						</button>
-
-						<button class="tm-sidebar-link nav-link" id="calendrier-main-tab" data-bs-toggle="tab" data-bs-target="#calendrier-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="calendrier-main-panel" aria-selected="false">
-							<span class="tm-sidebar-link-icon">🗓</span>
-							<span>Calendrier</span>
-						</button>
-
-						<button class="tm-sidebar-link nav-link" id="demandes-main-tab" data-bs-toggle="tab" data-bs-target="#demandes-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="demandes-main-panel" aria-selected="false">
-							<span class="tm-sidebar-link-icon">📄</span>
-							<span>Demandes Reçues</span>
-						</button>
-
-						<button class="tm-sidebar-link nav-link {{ activeTab == 'archives' ? 'active' : '' }}" id="archives-main-tab" data-bs-toggle="tab" data-bs-target="#archives-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="archives-main-panel" aria-selected="{{ activeTab == 'archives' ? 'true' : 'false' }}">
-							<span class="tm-sidebar-link-icon">🗃</span>
-							<span>Archives</span>
-						</button>
-
-						<button class="tm-sidebar-link nav-link {{ activeTab == 'messages' ? 'active' : '' }}" id="messages-main-tab" data-bs-toggle="tab" data-bs-target="#messages-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="messages-main-panel" aria-selected="{{ activeTab == 'messages' ? 'true' : 'false' }}">
-							<span class="tm-sidebar-link-icon">✉</span>
-							<span>Messages</span>
-						</button>
-
-						<div class="tm-sidebar-divider" role="separator" aria-hidden="true"></div>
-
-						<a href="{{ path('app_prestataire_settings') }}" class="tm-sidebar-link">
-							<span class="tm-sidebar-link-icon">
-								<i class="fa-solid fa-gear"></i>
-							</span>
-							<span>Paramètres</span>
-						</a>
-					</nav>
-				</div>
-			</aside>
-
-			<div class="tm-settings-sidebar-backdrop" {{ stimulus_target('prestataire-dashboard-tabs', 'backdrop') }} {{ stimulus_action('prestataire-dashboard-tabs', 'closeSidebar', 'click') }}></div>
-
-			<div class="tm-settings-content">
-				<button type="button" class="tm-sidebar-toggle d-lg-none" aria-label="Ouvrir la navigation du dashboard" {{ stimulus_target('prestataire-dashboard-tabs', 'toggle') }} {{ stimulus_action('prestataire-dashboard-tabs', 'toggleSidebar', 'click') }}>
-					☰
-				</button>
-
-				<h1 class="fw-bold mb-1">Espace Pro</h1>
-				<p>
-					_______________
-				</p>
-
-				{% for label in ['success', 'warning', 'danger', 'error'] %}
-					{% for message in app.flashes(label) %}
-						<div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show mb-4" role="alert">
-							{{ message }}
-							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					<header class="tm-dashboard-page__header">
+						<div class="tm-dashboard-page__header-copy">
+							<h1 class="tm-dashboard-page__title">Espace Pro</h1>
+							<p class="tm-dashboard-page__subtitle">
+								Pilotez votre activité, vos demandes et vos échanges depuis une seule interface.
+							</p>
 						</div>
+					</header>
+
+					{% for label in ['success', 'warning', 'danger', 'error'] %}
+						{% for message in app.flashes(label) %}
+							<div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show mb-4 tm-dashboard-page__alert" role="alert">
+								{{ message }}
+								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+							</div>
+						{% endfor %}
 					{% endfor %}
-				{% endfor %}
 
-				<div class="tab-content" id="dashboardMainTabsContent">
-					<div class="tab-pane fade {{ activeTab == 'dashboard' ? 'show active' : '' }}" id="dashboard-main-panel" role="tabpanel" aria-labelledby="dashboard-main-tab">
-						{{ include('prestataire_dashboard/_dashboard_panel.html.twig') }}
-					</div>
+					<div class="tab-content tm-dashboard-page__tabs" id="dashboardMainTabsContent">
+						<section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'dashboard' ? 'show active' : '' }}" id="dashboard-main-panel" role="tabpanel" aria-labelledby="dashboard-main-tab" tabindex="0">
+							{{ include('prestataire_dashboard/_dashboard_panel.html.twig') }}
+						</section>
 
-					<div class="tab-pane fade" id="prestations-main-panel" role="tabpanel" aria-labelledby="prestations-main-tab">
-						{{ include('prestataire_dashboard/_prestations_panel.html.twig') }}
-					</div>
+						<section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'prestations' ? 'show active' : '' }}" id="prestations-main-panel" role="tabpanel" aria-labelledby="prestations-main-tab" tabindex="0">
+							{{ include('prestataire_dashboard/_prestations_panel.html.twig') }}
+						</section>
 
-					<div class="tab-pane fade" id="avis-main-panel" role="tabpanel" aria-labelledby="avis-main-tab">
-						{{ include('prestataire_dashboard/_avis_panel.html.twig') }}
-					</div>
+						<section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'avis' ? 'show active' : '' }}" id="avis-main-panel" role="tabpanel" aria-labelledby="avis-main-tab" tabindex="0">
+							{{ include('prestataire_dashboard/_avis_panel.html.twig') }}
+						</section>
 
-					<div class="tab-pane fade" id="revenus-main-panel" role="tabpanel" aria-labelledby="revenus-main-tab">
-						{{ include('prestataire_dashboard/_revenus_panel.html.twig') }}
-					</div>
+						<section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'revenus' ? 'show active' : '' }}" id="revenus-main-panel" role="tabpanel" aria-labelledby="revenus-main-tab" tabindex="0">
+							{{ include('prestataire_dashboard/_revenus_panel.html.twig') }}
+						</section>
 
-					<div class="tab-pane fade" id="calendrier-main-panel" role="tabpanel" aria-labelledby="calendrier-main-tab">
-						{{ include('prestataire_dashboard/_calendrier_panel.html.twig') }}
-					</div>
+						<section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'calendrier' ? 'show active' : '' }}" id="calendrier-main-panel" role="tabpanel" aria-labelledby="calendrier-main-tab" tabindex="0">
+							{{ include('prestataire_dashboard/_calendrier_panel.html.twig') }}
+						</section>
 
-					<div class="tab-pane fade" id="demandes-main-panel" role="tabpanel" aria-labelledby="demandes-main-tab">
-						{{ include('prestataire_dashboard/_demandes_panel.html.twig') }}
-					</div>
+						<section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'demandes' ? 'show active' : '' }}" id="demandes-main-panel" role="tabpanel" aria-labelledby="demandes-main-tab" tabindex="0">
+							{{ include('prestataire_dashboard/_demandes_panel.html.twig') }}
+						</section>
 
-					<div class="tab-pane fade {{ activeTab == 'archives' ? 'show active' : '' }}" id="archives-main-panel" role="tabpanel" aria-labelledby="archives-main-tab">
-						{{ include('prestataire_dashboard/_archives_panel.html.twig') }}
-					</div>
+						<section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'archives' ? 'show active' : '' }}" id="archives-main-panel" role="tabpanel" aria-labelledby="archives-main-tab" tabindex="0">
+							{{ include('prestataire_dashboard/_archives_panel.html.twig') }}
+						</section>
 
-					<div class="tab-pane fade {{ activeTab == 'messages' ? 'show active' : '' }}" id="messages-main-panel" role="tabpanel" aria-labelledby="messages-main-tab" {{ stimulus_controller('realtime-conversation', { url: 'http://localhost:3001', conversationId: activeConversation ? activeConversation.id : 0, eventName: 'message_created', joinEventName: 'join_conversation', streamSelector: '.tm-msg-stream', bodySelector: '.tm-msg-body', emptySelector: '.tm-msg-empty--body', currentUserType: 'prestataire', layout: 'dashboard' } ) }}>
-						{{ include('prestataire_dashboard/_messages_panel.html.twig') }}
+						<section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'messages' ? 'show active' : '' }}" id="messages-main-panel" role="tabpanel" aria-labelledby="messages-main-tab" tabindex="0" {{ stimulus_controller('realtime-conversation', { url: 'http://localhost:3001', conversationId: activeConversation ? activeConversation.id : 0, eventName: 'message_created', joinEventName: 'join_conversation', streamSelector: '.tm-msg-stream', bodySelector: '.tm-msg-body', emptySelector: '.tm-msg-empty--body', currentUserType: 'prestataire', layout: 'dashboard' } ) }}>
+							{{ include('prestataire_dashboard/_messages_panel.html.twig') }}
+						</section>
 					</div>
-				</div>
+				</main>
 			</div>
 		</div>
 	</div>

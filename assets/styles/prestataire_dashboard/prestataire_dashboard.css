@@ -1,0 +1,348 @@
+/* =========================================================
+   PRESTATAIRE DASHBOARD
+   Correctifs dédiés à la page dashboard prestataire
+   Sans casser le layout settings déjà existant
+   ========================================================= */
+
+.tm-dashboard-page {
+    min-width: 0;
+}
+
+.tm-dashboard-page,
+.tm-dashboard-page * {
+    box-sizing: border-box;
+}
+
+.tm-dashboard-page .tm-settings-container,
+.tm-dashboard-page .tm-main-layout,
+.tm-dashboard-page .tm-settings-content,
+.tm-dashboard-page .tm-dashboard-page__content,
+.tm-dashboard-page .tm-dashboard-page__tabs,
+.tm-dashboard-page .tm-dashboard-page__panel {
+    min-width: 0;
+}
+
+.tm-dashboard-page .tm-dashboard-page__header {
+    margin-bottom: 1.5rem;
+}
+
+.tm-dashboard-page .tm-dashboard-page__title {
+    margin: 0;
+    font-size: clamp(1.75rem, 1.2rem + 1.5vw, 2.35rem);
+    line-height: 1.08;
+    font-weight: 800;
+}
+
+.tm-dashboard-page .tm-dashboard-page__subtitle {
+    margin: 0.5rem 0 0;
+    color: #6b7280;
+    line-height: 1.6;
+    max-width: 62rem;
+}
+
+.tm-dashboard-page .tm-dashboard-page__alert {
+    border-radius: 1rem;
+}
+
+/* ---------------------------------------------------------
+   PANELS PRINCIPAUX
+   Remplace le <style> inline d'origine
+   --------------------------------------------------------- */
+
+.tm-dashboard-page .tm-dashboard-page__tabs > .tm-dashboard-page__panel {
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.tm-dashboard-page .tm-dashboard-page__tabs > .tm-dashboard-page__panel.active,
+.tm-dashboard-page .tm-dashboard-page__tabs > .tm-dashboard-page__panel.show.active {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    height: auto;
+    overflow: visible;
+}
+
+/* ---------------------------------------------------------
+   SIDEBAR
+   On ne réinvente pas le style, on fiabilise juste
+   --------------------------------------------------------- */
+
+.tm-dashboard-page .tm-settings-sidebar {
+    min-width: 0;
+}
+
+.tm-dashboard-page .tm-app-sidebar {
+    min-width: 0;
+}
+
+.tm-dashboard-page .tm-sidebar-nav {
+    min-width: 0;
+}
+
+.tm-dashboard-page .tm-sidebar-link {
+    width: 100%;
+    min-width: 0;
+}
+
+.tm-dashboard-page .tm-sidebar-link span:last-child {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.tm-dashboard-page .tm-sidebar-profile-card,
+.tm-dashboard-page .tm-sidebar-profile-content {
+    min-width: 0;
+}
+
+.tm-dashboard-page .tm-sidebar-profile-name,
+.tm-dashboard-page .tm-sidebar-profile-job,
+.tm-dashboard-page .tm-sidebar-profile-rating,
+.tm-dashboard-page .tm-sidebar-profile-status {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* ---------------------------------------------------------
+   CONTENU PRINCIPAL
+   --------------------------------------------------------- */
+
+.tm-dashboard-page .tm-settings-content,
+.tm-dashboard-page .tm-dashboard-page__content {
+    min-width: 0;
+    width: 100%;
+}
+
+.tm-dashboard-page .tab-content,
+.tm-dashboard-page .tab-pane {
+    min-width: 0;
+}
+
+.tm-dashboard-page .card,
+.tm-dashboard-page .tm-card {
+    min-width: 0;
+}
+
+.tm-dashboard-page .row,
+.tm-dashboard-page [class*="col-"] {
+    min-width: 0;
+}
+
+/* ---------------------------------------------------------
+   NAV TABS internes (dashboard, avis, revenus, prestations)
+   --------------------------------------------------------- */
+
+.tm-dashboard-page .nav-tabs {
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+}
+
+.tm-dashboard-page .nav-tabs .nav-link {
+    white-space: normal;
+}
+
+/* ---------------------------------------------------------
+   TABLEAUX / BLOCS RESPONSIVE
+   --------------------------------------------------------- */
+
+.tm-dashboard-page .table-responsive,
+.tm-dashboard-page .tm-prestations-table-wrap,
+.tm-dashboard-page .tm-quote-list,
+.tm-dashboard-page .tm-msg,
+.tm-dashboard-page .tm-msg .row,
+.tm-dashboard-page .tm-msg-sidebar,
+.tm-dashboard-page .tm-msg-main,
+.tm-dashboard-page .tm-msg-body,
+.tm-dashboard-page .tm-msg-stream {
+    min-width: 0;
+}
+
+.tm-dashboard-page .table {
+    width: 100%;
+}
+
+/* ---------------------------------------------------------
+   MESSAGERIE
+   C'est souvent elle qui force le layout à déborder
+   --------------------------------------------------------- */
+
+.tm-dashboard-page .tm-dashboard-page__panel--messages,
+.tm-dashboard-page #messages-main-panel,
+.tm-dashboard-page .tm-msg,
+.tm-dashboard-page .tm-msg .row,
+.tm-dashboard-page .tm-msg-main,
+.tm-dashboard-page .tm-msg-sidebar,
+.tm-dashboard-page .tm-msg-head,
+.tm-dashboard-page .tm-msg-head-copy,
+.tm-dashboard-page .tm-msg-thread,
+.tm-dashboard-page .tm-msg-thread-main,
+.tm-dashboard-page .tm-msg-thread-preview,
+.tm-dashboard-page .tm-msg-row,
+.tm-dashboard-page .tm-msg-bubble,
+.tm-dashboard-page .tm-msg-content,
+.tm-dashboard-page .tm-msg-compose,
+.tm-dashboard-page .tm-msg-form {
+    min-width: 0;
+}
+
+.tm-dashboard-page .tm-msg-thread-title,
+.tm-dashboard-page .tm-msg-thread-client,
+.tm-dashboard-page .tm-msg-thread-preview,
+.tm-dashboard-page .tm-msg-content,
+.tm-dashboard-page .tm-msg-empty-box,
+.tm-dashboard-page .tm-msg-head p,
+.tm-dashboard-page .tm-msg-head h4 {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.tm-dashboard-page .tm-msg-stream {
+    overflow-x: hidden;
+}
+
+.tm-dashboard-page .tm-msg-body {
+    overflow-x: hidden;
+}
+
+.tm-dashboard-page .tm-msg-attachments {
+    max-width: 100%;
+}
+
+.tm-dashboard-page .tm-msg-attachment img,
+.tm-dashboard-page .tm-msg-lightbox-image {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ---------------------------------------------------------
+   DEMANDES / CARTES / ITEMS
+   --------------------------------------------------------- */
+
+.tm-dashboard-page .tm-quote-item,
+.tm-dashboard-page .tm-quote-iteminfos,
+.tm-dashboard-page .tm-quote-itemmeta,
+.tm-dashboard-page .tm-quote-itemexcerpt,
+.tm-dashboard-page .tm-quote-itemactions {
+    min-width: 0;
+}
+
+.tm-dashboard-page .tm-quote-itemtitle,
+.tm-dashboard-page .tm-quote-itemclient,
+.tm-dashboard-page .tm-quote-itemexcerpt,
+.tm-dashboard-page .tm-quote-itemmeta-item {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* ---------------------------------------------------------
+   PRESTATIONS
+   --------------------------------------------------------- */
+
+.tm-dashboard-page .tm-prestations-panel-head,
+.tm-dashboard-page .tm-prestations-panel-head-copy,
+.tm-dashboard-page .tm-prestations-panel-actions,
+.tm-dashboard-page .tm-prestations-prestation-title,
+.tm-dashboard-page .tm-prestations-prestation-meta,
+.tm-dashboard-page .tm-prestations-prestation-desc,
+.tm-dashboard-page .tm-prestations-pricing {
+    min-width: 0;
+}
+
+.tm-dashboard-page .tm-prestations-prestation-title,
+.tm-dashboard-page .tm-prestations-prestation-meta,
+.tm-dashboard-page .tm-prestations-prestation-desc,
+.tm-dashboard-page .tm-prestations-pricing,
+.tm-dashboard-page .tm-prestations-service-name {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* ---------------------------------------------------------
+   CALENDRIER / FC
+   --------------------------------------------------------- */
+
+.tm-dashboard-page #prestataire-calendar,
+.tm-dashboard-page .fc,
+.tm-dashboard-page .fc-view-harness {
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* ---------------------------------------------------------
+   TOGGLE MOBILE
+   --------------------------------------------------------- */
+
+.tm-dashboard-page .tm-dashboard-page__toggle,
+.tm-dashboard-page .tm-sidebar-toggle {
+    flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------
+   MOBILE / TABLET
+   On laisse le layout settings faire le gros du boulot
+   --------------------------------------------------------- */
+
+@media (max-width: 991.98px) {
+    .tm-dashboard-page .tm-dashboard-page__header {
+        margin-top: 0.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .tm-dashboard-page .tm-dashboard-page__title {
+        font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2rem);
+    }
+
+    .tm-dashboard-page .tm-dashboard-page__subtitle {
+        font-size: 0.95rem;
+    }
+
+    .tm-dashboard-page .tm-msg-head-actions,
+    .tm-dashboard-page .tm-prestations-panel-actions,
+    .tm-dashboard-page .tm-quote-panelhead {
+        min-width: 0;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .tm-dashboard-page .tm-dashboard-page__title {
+        font-size: 1.6rem;
+    }
+
+    .tm-dashboard-page .tm-dashboard-page__subtitle {
+        font-size: 0.9375rem;
+    }
+
+    .tm-dashboard-page .nav-tabs {
+        gap: 0.5rem;
+    }
+
+    .tm-dashboard-page .nav-tabs .nav-link {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* ---------------------------------------------------------
+   SECURITE ANTI-DEBORDEMENT GLOBALE PAGE
+   --------------------------------------------------------- */
+
+.tm-dashboard-page img,
+.tm-dashboard-page video,
+.tm-dashboard-page canvas,
+.tm-dashboard-page svg,
+.tm-dashboard-page iframe {
+    max-width: 100%;
+}
+
+.tm-dashboard-page .btn,
+.tm-dashboard-page .form-control,
+.tm-dashboard-page .form-select,
+.tm-dashboard-page .input-group {
+    max-width: 100%;
+}
+
+

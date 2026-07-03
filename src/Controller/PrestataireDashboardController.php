@@ -8,6 +8,7 @@ use App\Entity\MessageAttachment;
 use App\Entity\User;
 use App\Enum\MessageTypeEnum;
 use App\Enum\NotificationTypeEnum;
+use App\Enum\QuoteRequestStatusEnum;
 use App\Form\MessageType;
 use App\Repository\ConversationRepository;
 use App\Repository\PrestataireProfileRepository;
@@ -89,7 +90,15 @@ final class PrestataireDashboardController extends AbstractController
 
         $quoteQueryBuilder = $quoteRequestRepository->createQueryBuilder('qr')
             ->where('qr.prestataire = :prestataire')
-            ->setParameter('prestataire', $prestataireProfile);
+            ->andWhere('qr.deletedAt IS NULL')
+            ->andWhere('qr.archivedByPrestataireAt IS NULL')
+            ->andWhere('qr.status IN (:activeStatuses)')
+            ->setParameter('prestataire', $prestataireProfile)
+            ->setParameter('activeStatuses', [
+                QuoteRequestStatusEnum::SUBMITTED,
+                QuoteRequestStatusEnum::ACCEPTED,
+                QuoteRequestStatusEnum::ANSWERED,
+            ]);
 
         foreach ($quoteOrderBy as $field => $direction) {
             $quoteQueryBuilder->addOrderBy('qr.' . $field, $direction);
@@ -98,7 +107,7 @@ final class PrestataireDashboardController extends AbstractController
         $quoteRequests = $paginator->paginate(
             $quoteQueryBuilder,
             $request->query->getInt('quotePage', 1),
-            5,
+            10,
             [
                 'pageParameterName' => 'quotePage',
             ]
@@ -122,7 +131,7 @@ final class PrestataireDashboardController extends AbstractController
         $archivedQuoteRequests = $paginator->paginate(
             $archivedQuoteQueryBuilder,
             $request->query->getInt('archivedQuotePage', 1),
-            5,
+            10,
             [
                 'pageParameterName' => 'archivedQuotePage',
             ]

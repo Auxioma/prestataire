@@ -1,33 +1,33 @@
-<div class="tm-dashboard-section">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <h2 class="h4 mb-1">Archives</h2>
-            <p class="text-muted mb-0">Retrouvez ici les demandes archivées.</p>
+<div class="tm-dashboard-section tm-archives-panel">
+    <div class="d-flex justify-content-between align-items-center mb-3 tm-archives-panel__head">
+        <div class="tm-archives-panel__head-copy">
+            <h2 class="h4 mb-1 tm-archives-panel__title">Archives</h2>
+            <p class="text-muted mb-0 tm-archives-panel__subtitle">Retrouvez ici les demandes archivées.</p>
         </div>
     </div>
 
     {% if archivedQuoteRequests|length > 0 %}
-        <div class="card shadow-sm border-0">
-            <div class="card-body">
+        <div class="card shadow-sm border-0 tm-archives-panel__card">
+            <div class="card-body tm-archives-panel__card-body">
                 {% for quoteRequest in archivedQuoteRequests %}
-                    <div class="border-bottom py-3 d-flex justify-content-between align-items-start gap-3">
-                        <div>
-                            <div class="fw-semibold">{{ quoteRequest.title }}</div>
+                    <div class="border-bottom py-3 d-flex justify-content-between align-items-start gap-3 tm-archives-panel__item">
+                        <div class="tm-archives-panel__item-main">
+                            <div class="fw-semibold tm-archives-panel__item-title">{{ quoteRequest.title }}</div>
 
-                            <div class="text-muted small mb-1">
+                            <div class="text-muted small mb-1 tm-archives-panel__item-budget">
                                 Budget : {{ quoteRequest.budgetAmount ?: 'Non renseigné' }}
                             </div>
 
                             {% if quoteRequest.createdAt %}
-                                <div class="text-muted small">
+                                <div class="text-muted small tm-archives-panel__item-date">
                                     Reçue le {{ quoteRequest.createdAt|date('d/m/Y à H:i') }}
                                 </div>
                             {% endif %}
                         </div>
 
-                        <div class="flex-shrink-0">
+                        <div class="flex-shrink-0 tm-archives-panel__item-action">
                             <a href="{{ path('app_prestataire_quote_request_show', { slug: quoteRequest.slug }) }}"
-                               class="btn btn-outline-secondary btn-sm">
+                               class="btn btn-outline-secondary btn-sm tm-archives-panel__btn">
                                 Lire la demande
                             </a>
                         </div>
@@ -36,13 +36,13 @@
             </div>
         </div>
 
-        <div class="mt-3">
+        <div class="mt-3 tm-archives-panel__pagination">
             {{ knp_pagination_render(archivedQuoteRequests) }}
         </div>
     {% else %}
-        <div class="card shadow-sm border-0">
-            <div class="card-body">
-                <p class="mb-0 text-muted">Aucune demande archivée pour le moment.</p>
+        <div class="card shadow-sm border-0 tm-archives-panel__card tm-archives-panel__card--empty">
+            <div class="card-body tm-archives-panel__card-body tm-archives-panel__card-body--empty">
+                <p class="mb-0 text-muted tm-archives-panel__empty-text">Aucune demande archivée pour le moment.</p>
             </div>
         </div>
     {% endif %}

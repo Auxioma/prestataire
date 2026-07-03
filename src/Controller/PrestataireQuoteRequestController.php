@@ -48,7 +48,7 @@ final class PrestataireQuoteRequestController extends AbstractController
         $quoteRequests = $paginator->paginate(
             $queryBuilder,
             $request->query->getInt('page', 1),
-            3
+            10
         );
 
         return $this->render('prestataire_quote_request/show.html.twig', [
