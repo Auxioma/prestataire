@@ -77,6 +77,14 @@ class QuoteProposalController extends AbstractController
             throw $this->createNotFoundException('Devis introuvable.');
         }
 
+        if ($proposal->isAccepted()) {
+            $this->addFlash('warning', 'Ce devis a été accepté par le client et ne peut plus être modifié.');
+
+            return $this->redirectToRoute('app_prestataire_quote_proposal_show', [
+                'publicReference' => $proposal->getPublicReference(),
+            ], 303);
+        }
+
         if ($proposal->getStatus()->isDraft()) {
             $quoteProposalManager->refreshDraftSnapshot($proposal);
         }
@@ -147,6 +155,14 @@ class QuoteProposalController extends AbstractController
 
         if (!$securedProposal instanceof QuoteProposal) {
             throw $this->createNotFoundException('Devis introuvable.');
+        }
+
+        if ($securedProposal->isAccepted()) {
+            $this->addFlash('warning', 'Ce devis a déjà été accepté par le client.');
+
+            return $this->redirectToRoute('app_prestataire_quote_proposal_show', [
+                'publicReference' => $securedProposal->getPublicReference(),
+            ], 303);
         }
 
         if (!$this->isCsrfTokenValid(
@@ -227,6 +243,14 @@ class QuoteProposalController extends AbstractController
             throw $this->createNotFoundException('Devis introuvable.');
         }
 
+        if ($proposal->isAccepted()) {
+            $this->addFlash('warning', 'Un devis accepté ne peut plus être supprimé.');
+
+            return $this->redirectToRoute('app_prestataire_quote_proposal_show', [
+                'publicReference' => $proposal->getPublicReference(),
+            ], 303);
+        }
+
         if (!$this->isCsrfTokenValid('delete_quote_proposal_' . $proposal->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Jeton CSRF invalide.');
         }
@@ -290,7 +314,10 @@ class QuoteProposalController extends AbstractController
                 ->setUpdatedAt(new \DateTimeImmutable());
 
             foreach ($linkedProposals as $linkedProposal) {
-                if ($linkedProposal->getStatus() === QuoteProposalStatusEnum::FINALIZED) {
+                if (\in_array($linkedProposal->getStatus(), [
+                    QuoteProposalStatusEnum::FINALIZED,
+                    QuoteProposalStatusEnum::ACCEPTED,
+                ], true)) {
                     $linkedProposal->setStatus(QuoteProposalStatusEnum::ARCHIVED);
                     $linkedProposal->setUpdatedAt(new \DateTimeImmutable());
                 }
@@ -332,7 +359,7 @@ class QuoteProposalController extends AbstractController
             throw $this->createNotFoundException('Devis introuvable.');
         }
 
-        if (!$proposal->isFinalized()) {
+        if (!$proposal->isFinalized() && !$proposal->isAccepted()) {
             throw $this->createNotFoundException('Ce devis n’est pas disponible.');
         }
 
@@ -408,7 +435,6 @@ class QuoteProposalController extends AbstractController
             'viewerContext' => 'prestataire',
         ]);
     }
-
 
     private function getCurrentPrestataire(PrestataireProfileRepository $prestataireProfileRepository): PrestataireProfile
     {

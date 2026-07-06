@@ -8,7 +8,9 @@
 	{% set isReadOnlyView = isReadOnlyView|default(false) %}
 	{% set viewerContext = viewerContext|default('client') %}
 	{% set isPrestataireView = viewerContext == 'prestataire' %}
-	{# {% set canManageProposal = isPrestataireView and not isReadOnlyView and not proposal.isFinalized %} #}
+	{% set isAcceptedProposal = proposal.status.value == 'accepted' %}
+	{% set canManageProposal = isPrestataireView and not isReadOnlyView and proposal.status.value != 'archived' and proposal.status.value != 'deleted' %}
+	{% set canEditProposal = canManageProposal and not isAcceptedProposal %}
 
 	{% if isReadOnlyView %}
 		{% set backToRequestUrl = path('app_prestataire_dashboard', { tab: 'archives' }) ~ '#archives-main-panel' %}
@@ -22,6 +24,10 @@
 		{% set bannerClass = 'qp-banner--soft' %}
 		{% set bannerTitle = 'Devis archivé' %}
 		{% set bannerText = 'Ce devis est consultable en lecture seule depuis les archives du prestataire.' %}
+	{% elseif isAcceptedProposal %}
+		{% set bannerClass = 'qp-banner--success' %}
+		{% set bannerTitle = 'Devis accepté' %}
+		{% set bannerText = 'Ce devis a été accepté par le client le ' ~ (proposal.acceptedAt ? proposal.acceptedAt|date('d/m/Y à H:i') : '—') ~ '. Il n’est plus modifiable, mais reste consultable et archivable.' %}
 	{% elseif not proposal.isFinalized %}
 		{% set bannerClass = 'qp-banner--warning' %}
 		{% set bannerTitle = 'Devis en brouillon' %}
@@ -39,6 +45,8 @@
 					<div class="qp-eyebrow">
 						{% if isReadOnlyView %}
 							Devis archivé
+						{% elseif isAcceptedProposal %}
+							Devis accepté
 						{% elseif proposal.isFinalized %}
 							Devis publié
 						{% else %}
@@ -66,6 +74,15 @@
 							</span>
 						</div>
 
+						{% if isAcceptedProposal %}
+							<div class="qp-meta-pill">
+								<span class="qp-meta-pill__label">Accepté le</span>
+								<span class="qp-meta-pill__value">
+									{{ proposal.acceptedAt ? proposal.acceptedAt|date('d/m/Y à H:i') : '—' }}
+								</span>
+							</div>
+						{% endif %}
+
 						<div class="qp-meta-pill">
 							<span class="qp-meta-pill__label">Valable jusqu’au</span>
 							<span class="qp-meta-pill__value">
@@ -90,37 +107,31 @@
 						</a>
 					{% endif %}
 
-					{% if proposal.status.value != 'archived' and proposal.status.value != 'deleted' %}
+					{% if canEditProposal %}
 						<a href="{{ path('app_prestataire_quote_proposal_edit', { publicReference: proposal.publicReference }) }}" class="qp-btn qp-btn--secondary">
 							Modifier le devis
 						</a>
 					{% endif %}
-
-
 				</div>
-
 			</header>
 
-<section class="qp-banner {{ bannerClass }}">
-    <div class="qp-banner__content">
-        <div class="qp-banner__text-group">
-            <div class="qp-banner__title">{{ bannerTitle }}</div>
-            <div class="qp-banner__text">{{ bannerText }}</div>
-        </div>
+			<section class="qp-banner {{ bannerClass }}">
+				<div class="qp-banner__content">
+					<div class="qp-banner__text-group">
+						<div class="qp-banner__title">{{ bannerTitle }}</div>
+						<div class="qp-banner__text">{{ bannerText }}</div>
+					</div>
 
-        {% if not isReadOnlyView and proposal.status.value == 'draft' %}
-            <form method="post"
-                  action="{{ path('app_prestataire_quote_proposal_finalize', { publicReference: proposal.publicReference }) }}"
-                  onsubmit="return confirm('Finaliser ce devis et le rendre visible au client ?');"
-                  class="qp-inline-form qp-banner__action">
-                <input type="hidden" name="_token" value="{{ csrf_token('finalize-quote-proposal-' ~ proposal.id) }}">
-                <button type="submit" class="qp-btn qp-btn--success">
-                    Finaliser
-                </button>
-            </form>
-        {% endif %}
-    </div>
-</section>
+					{% if not isReadOnlyView and proposal.status.value == 'draft' %}
+						<form method="post" action="{{ path('app_prestataire_quote_proposal_finalize', { publicReference: proposal.publicReference }) }}" onsubmit="return confirm('Finaliser ce devis et le rendre visible au client ?');" class="qp-inline-form qp-banner__action">
+							<input type="hidden" name="_token" value="{{ csrf_token('finalize-quote-proposal-' ~ proposal.id) }}">
+							<button type="submit" class="qp-btn qp-btn--success">
+								Finaliser
+							</button>
+						</form>
+					{% endif %}
+				</div>
+			</section>
 
 			<div class="qp-layout">
 				<main class="qp-main">
@@ -145,6 +156,12 @@
 										<strong>Référence :</strong>
 										{{ proposal.publicReference ?: '—' }}
 									</div>
+									{% if isAcceptedProposal %}
+										<div>
+											<strong>Accepté le :</strong>
+											{{ proposal.acceptedAt ? proposal.acceptedAt|date('d/m/Y à H:i') : '—' }}
+										</div>
+									{% endif %}
 								</div>
 							</div>
 

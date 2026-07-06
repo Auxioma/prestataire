@@ -1,505 +1,534 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <title>{{ proposal.proposalNumber ?: 'Devis' }}</title>
-        <style>
-            @page {
-                margin: 26px 22px 30px;
-            }
+	<head>
+		<meta charset="UTF-8">
+		<title>{{ proposal.proposalNumber ?: 'Devis' }}</title>
+		<style>
+			@page {
+				margin: 26px 22px 30px;
+			}
 
-            body {
-                font-family: DejaVu Sans, sans-serif;
-                font-size: 11px;
-                line-height: 1.45;
-                color: #222222;
-                margin: 0;
-                background: #ffffff;
-            }
+			body {
+				font-family: DejaVu Sans, sans-serif;
+				font-size: 11px;
+				line-height: 1.45;
+				color: #222222;
+				margin: 0;
+				background: #ffffff;
+			}
 
-            .page {
-                width: 100%;
-            }
+			.page {
+				width: 100%;
+			}
 
-            .header {
-                border-bottom: 1px solid #cfcfcf;
-                padding-bottom: 14px;
-                margin-bottom: 20px;
-            }
+			.header {
+				border-bottom: 1px solid #cfcfcf;
+				padding-bottom: 14px;
+				margin-bottom: 20px;
+			}
 
-            .header-table,
-            .info-table,
-            .items,
-            .totals-table {
-                width: 100%;
-                border-collapse: collapse;
-            }
+			.header-table,
+			.info-table,
+			.items,
+			.totals-table {
+				width: 100%;
+				border-collapse: collapse;
+			}
 
-            .header-table td,
-            .info-table td {
-                vertical-align: top;
-                padding: 0;
-                border: none;
-            }
+			.header-table td,
+			.info-table td {
+				vertical-align: top;
+				padding: 0;
+				border: none;
+			}
 
-            .brand-cell {
-                width: 55%;
-                padding-right: 16px;
-            }
+			.brand-cell {
+				width: 55%;
+				padding-right: 16px;
+			}
 
-            .meta-cell {
-                width: 45%;
-                text-align: right;
-            }
+			.meta-cell {
+				width: 45%;
+				text-align: right;
+			}
 
-            .logo {
-                max-width: 130px;
-                max-height: 54px;
-                margin-bottom: 8px;
-            }
+			.logo {
+				max-width: 130px;
+				max-height: 54px;
+				margin-bottom: 8px;
+			}
 
-            .brand-name {
-                font-size: 20px;
-                font-weight: bold;
-                color: #2f4858;
-                margin: 0 0 3px;
-            }
+			.brand-name {
+				font-size: 20px;
+				font-weight: bold;
+				color: #2f4858;
+				margin: 0 0 3px;
+			}
 
-            .brand-subtitle {
-                margin: 0;
-                font-size: 10px;
-                color: #666666;
-            }
+			.brand-subtitle {
+				margin: 0;
+				font-size: 10px;
+				color: #666666;
+			}
 
-            .doc-badge {
-                display: inline-block;
-                border: 1px solid #2f4858;
-                color: #2f4858;
-                font-size: 9px;
-                font-weight: bold;
-                letter-spacing: 0.8px;
-                padding: 3px 8px;
-                margin-bottom: 8px;
-            }
+			.doc-badge {
+				display: inline-block;
+				border: 1px solid #2f4858;
+				color: #2f4858;
+				font-size: 9px;
+				font-weight: bold;
+				letter-spacing: 0.8px;
+				padding: 3px 8px;
+				margin-bottom: 8px;
+			}
 
-            .doc-title {
-                font-size: 22px;
-                font-weight: bold;
-                color: #111111;
-                margin: 0 0 8px;
-            }
+			.doc-title {
+				font-size: 22px;
+				font-weight: bold;
+				color: #111111;
+				margin: 0 0 8px;
+			}
 
-            .meta-lines {
-                font-size: 10px;
-                color: #444444;
-            }
+			.meta-lines {
+				font-size: 10px;
+				color: #444444;
+			}
 
-            .meta-lines div {
-                margin-bottom: 3px;
-            }
+			.meta-lines div {
+				margin-bottom: 3px;
+			}
 
-            .section {
-                margin-bottom: 18px;
-            }
+			.section {
+				margin-bottom: 18px;
+			}
 
-            .section-title {
-                font-size: 11px;
-                font-weight: bold;
-                text-transform: uppercase;
-                letter-spacing: 0.6px;
-                color: #2f4858;
-                margin: 0 0 8px;
-                padding-bottom: 4px;
-                border-bottom: 1px solid #dddddd;
-            }
+			.section-title {
+				font-size: 11px;
+				font-weight: bold;
+				text-transform: uppercase;
+				letter-spacing: 0.6px;
+				color: #2f4858;
+				margin: 0 0 8px;
+				padding-bottom: 4px;
+				border-bottom: 1px solid #dddddd;
+			}
 
-            .box {
-                border: 1px solid #dddddd;
-                padding: 10px 12px;
-                background: #ffffff;
-            }
+			.box {
+				border: 1px solid #dddddd;
+				padding: 10px 12px;
+				background: #ffffff;
+			}
 
-            .info-table {
-                margin-bottom: 2px;
-            }
+			.info-table {
+				margin-bottom: 2px;
+			}
 
-            .info-table td {
-                width: 50%;
-            }
+			.info-table td {
+				width: 50%;
+			}
 
-            .info-table td:first-child {
-                padding-right: 8px;
-            }
+			.info-table td:first-child {
+				padding-right: 8px;
+			}
 
-            .info-table td:last-child {
-                padding-left: 8px;
-            }
+			.info-table td:last-child {
+				padding-left: 8px;
+			}
 
-            .party-title {
-                font-size: 11px;
-                font-weight: bold;
-                color: #111111;
-                margin-bottom: 6px;
-            }
+			.party-title {
+				font-size: 11px;
+				font-weight: bold;
+				color: #111111;
+				margin-bottom: 6px;
+			}
 
-            .party-lines div {
-                margin-bottom: 3px;
-            }
+			.party-lines div {
+				margin-bottom: 3px;
+			}
 
-            .sub-block {
-                margin-top: 12px;
-                padding-top: 10px;
-                border-top: 1px solid #dddddd;
-            }
+			.sub-block {
+				margin-top: 12px;
+				padding-top: 10px;
+				border-top: 1px solid #dddddd;
+			}
 
-            .intro {
-                color: #333333;
-            }
+			.intro {
+				color: #333333;
+			}
 
-            .items {
-                margin-top: 6px;
-            }
+			.items {
+				margin-top: 6px;
+			}
 
-            .items thead th {
-                border-top: 1px solid #bbbbbb;
-                border-bottom: 1px solid #bbbbbb;
-                border-left: none;
-                border-right: none;
-                background: #f6f6f6;
-                color: #222222;
-                font-size: 10px;
-                text-transform: uppercase;
-                padding: 8px 6px;
-            }
+			.items thead th {
+				border-top: 1px solid #bbbbbb;
+				border-bottom: 1px solid #bbbbbb;
+				border-left: none;
+				border-right: none;
+				background: #f6f6f6;
+				color: #222222;
+				font-size: 10px;
+				text-transform: uppercase;
+				padding: 8px 6px;
+			}
 
-            .items tbody td {
-                border-bottom: 1px solid #e2e2e2;
-                padding: 8px 6px;
-                vertical-align: top;
-            }
+			.items tbody td {
+				border-bottom: 1px solid #e2e2e2;
+				padding: 8px 6px;
+				vertical-align: top;
+			}
 
-            .item-label {
-                font-weight: bold;
-                color: #111111;
-                margin-bottom: 2px;
-            }
+			.item-label {
+				font-weight: bold;
+				color: #111111;
+				margin-bottom: 2px;
+			}
 
-            .item-description {
-                font-size: 10px;
-                color: #666666;
-            }
+			.item-description {
+				font-size: 10px;
+				color: #666666;
+			}
 
-            .text-end {
-                text-align: right;
-            }
+			.text-end {
+				text-align: right;
+			}
 
-            .totals-wrap {
-                margin-top: 12px;
-            }
+			.totals-wrap {
+				margin-top: 12px;
+			}
 
-            .totals-table {
-                width: 280px;
-                margin-left: auto;
-            }
+			.totals-table {
+				width: 280px;
+				margin-left: auto;
+			}
 
-            .totals-table th,
-            .totals-table td {
-                padding: 7px 8px;
-                border: none;
-                border-bottom: 1px solid #dcdcdc;
-            }
+			.totals-table th,
+			.totals-table td {
+				padding: 7px 8px;
+				border: none;
+				border-bottom: 1px solid #dcdcdc;
+			}
 
-            .totals-table th {
-                text-align: left;
-                color: #444444;
-                font-weight: normal;
-            }
+			.totals-table th {
+				text-align: left;
+				color: #444444;
+				font-weight: normal;
+			}
 
-            .totals-table td {
-                text-align: right;
-                color: #111111;
-            }
+			.totals-table td {
+				text-align: right;
+				color: #111111;
+			}
 
-            .grand-total th,
-            .grand-total td {
-                border-top: 2px solid #2f4858;
-                border-bottom: 2px solid #2f4858;
-                font-weight: bold;
-                font-size: 12px;
-                color: #2f4858;
-                padding-top: 9px;
-                padding-bottom: 9px;
-            }
+			.grand-total th,
+			.grand-total td {
+				border-top: 2px solid #2f4858;
+				border-bottom: 2px solid #2f4858;
+				font-weight: bold;
+				font-size: 12px;
+				color: #2f4858;
+				padding-top: 9px;
+				padding-bottom: 9px;
+			}
 
-            .footer-note {
-                margin-top: 22px;
-                padding-top: 8px;
-                border-top: 1px solid #dddddd;
-                text-align: center;
-                font-size: 9px;
-                color: #777777;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="page">
-            <div class="header">
-                <table class="header-table">
-                    <tr>
-                        <td class="brand-cell">
-                            {% if prestataireLogoUrl %}
-                                <img src="{{ prestataireLogoUrl }}" alt="Logo de {{ proposal.prestataireCompanyName ?: 'l’entreprise' }}" class="logo">
-                            {% endif %}
+			.footer-note {
+				margin-top: 22px;
+				padding-top: 8px;
+				border-top: 1px solid #dddddd;
+				text-align: center;
+				font-size: 9px;
+				color: #777777;
+			}
 
-                            <div class="brand-name">
-                                {{ proposal.prestataireCompanyName ?: proposal.prestataireLegalName ?: 'Entreprise' }}
-                            </div>
+			.accepted-banner {
+				margin: 0 0 18px;
+				padding: 10px 14px;
+				border: 1px solid #198754;
+				background: #f3fbf6;
+				color: #198754;
+				font-weight: bold;
+			}
+		</style>
+	</head>
 
-                            <p class="brand-subtitle">
-                                {% if proposal.prestataireAddress %}
-                                    {{ proposal.prestataireAddress }}
-                                {% endif %}
-                                {% if proposal.prestatairePostalCode or proposal.prestataireCity %}
-                                    {% if proposal.prestataireAddress %}
-                                        —
-                                    {% endif %}
-                                    {{ proposal.prestatairePostalCode ?: '' }}
-                                    {{ proposal.prestataireCity ?: '' }}
-                                {% endif %}
-                            </p>
-                        </td>
+	<body>
+		<div class="page">
+			<div class="header">
+				<table class="header-table">
+					<tr>
+						<td class="brand-cell">
+							{% if prestataireLogoUrl %}
+								<img src="{{ prestataireLogoUrl }}" alt="Logo de {{ proposal.prestataireCompanyName ?: 'l’entreprise' }}" class="logo">
+							{% endif %}
 
-                        <td class="meta-cell">
-                            <div class="doc-badge">DEVIS</div>
-                            <div class="doc-title">{{ proposal.proposalNumber ?: '—' }}</div>
+							<div class="brand-name">
+								{{ proposal.prestataireCompanyName ?: proposal.prestataireLegalName ?: 'Entreprise' }}
+							</div>
 
-                            <div class="meta-lines">
-                                <div>
-                                    <strong>Référence :</strong>
-                                    {{ proposal.publicReference ?: '—' }}
-                                </div>
-                                <div>
-                                    <strong>Date d’émission :</strong>
-                                    {{ proposal.finalizedAt ? proposal.finalizedAt|date('d/m/Y') : '—' }}
-                                </div>
-                                <div>
-                                    <strong>Valable jusqu’au :</strong>
-                                    {{ proposal.validUntil ? proposal.validUntil|date('d/m/Y') : '—' }}
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+							<p class="brand-subtitle">
+								{% if proposal.prestataireAddress %}
+									{{ proposal.prestataireAddress }}
+								{% endif %}
+								{% if proposal.prestatairePostalCode or proposal.prestataireCity %}
+									{% if proposal.prestataireAddress %}
+										—
+									{% endif %}
+									{{ proposal.prestatairePostalCode ?: '' }}
+									{{ proposal.prestataireCity ?: '' }}
+								{% endif %}
+							</p>
+						</td>
 
-            <div class="section">
-                <table class="info-table">
-                    <tr>
-                        <td>
-                            <div class="box">
-                                <div class="party-title">Prestataire</div>
-                                <div class="party-lines">
-                                    <div>
-                                        <strong>{{ proposal.prestataireCompanyName ?: proposal.prestataireLegalName ?: '—' }}</strong>
-                                    </div>
+						<td class="meta-cell">
+							<div class="doc-badge">DEVIS</div>
+							<div class="doc-title">{{ proposal.proposalNumber ?: '—' }}</div>
 
-                                    {% if proposal.prestataireLegalName and proposal.prestataireLegalName != proposal.prestataireCompanyName %}
-                                        <div>{{ proposal.prestataireLegalName }}</div>
-                                    {% endif %}
+							<div class="meta-lines">
+								<div>
+									<strong>Référence :</strong>
+									{{ proposal.publicReference ?: '—' }}
+								</div>
+								<div>
+									<strong>Date d’émission :</strong>
+									{{ proposal.finalizedAt ? proposal.finalizedAt|date('d/m/Y') : '—' }}
+								</div>
+								<div>
+									<strong>Valable jusqu’au :</strong>
+									{{ proposal.validUntil ? proposal.validUntil|date('d/m/Y') : '—' }}
+								</div>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
 
-                                    {% if proposal.prestataireAddress %}
-                                        <div>{{ proposal.prestataireAddress }}</div>
-                                    {% endif %}
+			{% if proposal.acceptedAt %}
+				<div style="margin: 16px 0; padding: 10px 14px; border: 1px solid #198754; color: #198754; border-radius: 6px; font-weight: 700;">
+					Accepté par le client le
+					{{ proposal.acceptedAt|date('d/m/Y à H:i') }}
+				</div>
+			{% endif %}
 
-                                    {% if proposal.prestataireAddressComplement %}
-                                        <div>{{ proposal.prestataireAddressComplement }}</div>
-                                    {% endif %}
+			<div class="section">
+				<table class="info-table">
+					<tr>
+						<td>
+							<div class="box">
+								<div class="party-title">Prestataire</div>
+								<div class="party-lines">
+									<div>
+										<strong>{{ proposal.prestataireCompanyName ?: proposal.prestataireLegalName ?: '—' }}</strong>
+									</div>
 
-                                    {% if proposal.prestatairePostalCode or proposal.prestataireCity %}
-                                        <div>
-                                            {{ proposal.prestatairePostalCode ?: '' }}
-                                            {{ proposal.prestataireCity ?: '' }}
-                                        </div>
-                                    {% endif %}
+									{% if proposal.prestataireLegalName and proposal.prestataireLegalName != proposal.prestataireCompanyName %}
+										<div>{{ proposal.prestataireLegalName }}</div>
+									{% endif %}
 
-                                    {% if proposal.prestataireCountry %}
-                                        <div>{{ proposal.prestataireCountry }}</div>
-                                    {% endif %}
+									{% if proposal.prestataireAddress %}
+										<div>{{ proposal.prestataireAddress }}</div>
+									{% endif %}
 
-                                    {% if proposal.prestatairePhone %}
-                                        <div>Tél. : {{ proposal.prestatairePhone }}</div>
-                                    {% endif %}
+									{% if proposal.prestataireAddressComplement %}
+										<div>{{ proposal.prestataireAddressComplement }}</div>
+									{% endif %}
 
-                                    {% if proposal.prestataireEmail %}
-                                        <div>{{ proposal.prestataireEmail }}</div>
-                                    {% endif %}
+									{% if proposal.prestatairePostalCode or proposal.prestataireCity %}
+										<div>
+											{{ proposal.prestatairePostalCode ?: '' }}
+											{{ proposal.prestataireCity ?: '' }}
+										</div>
+									{% endif %}
 
-                                    {% if proposal.prestataireSiret %}
-                                        <div>SIRET : {{ proposal.prestataireSiret }}</div>
-                                    {% endif %}
+									{% if proposal.prestataireCountry %}
+										<div>{{ proposal.prestataireCountry }}</div>
+									{% endif %}
 
-                                    {% if proposal.prestataireVatNumber %}
-                                        <div>TVA intracom. : {{ proposal.prestataireVatNumber }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </td>
+									{% if proposal.prestatairePhone %}
+										<div>Tél. :
+											{{ proposal.prestatairePhone }}</div>
+									{% endif %}
 
-                        <td>
-                            <div class="box">
-                                <div class="party-title">Client</div>
-                                <div class="party-lines">
-                                    <div>
-                                        <strong>{{ proposal.clientFullName ?: proposal.clientCompanyName ?: '—' }}</strong>
-                                    </div>
+									{% if proposal.prestataireEmail %}
+										<div>{{ proposal.prestataireEmail }}</div>
+									{% endif %}
 
-                                    {% if proposal.clientCompanyName and proposal.clientCompanyName != proposal.clientFullName %}
-                                        <div>{{ proposal.clientCompanyName }}</div>
-                                    {% endif %}
+									{% if proposal.prestataireSiret %}
+										<div>SIRET :
+											{{ proposal.prestataireSiret }}</div>
+									{% endif %}
 
-                                    {% if proposal.clientBillingAddress %}
-                                        <div>{{ proposal.clientBillingAddress }}</div>
-                                    {% endif %}
+									{% if proposal.prestataireVatNumber %}
+										<div>TVA intracom. :
+											{{ proposal.prestataireVatNumber }}</div>
+									{% endif %}
+								</div>
+							</div>
+						</td>
 
-                                    {% if proposal.clientBillingPostalCode or proposal.clientBillingCity %}
-                                        <div>
-                                            {{ proposal.clientBillingPostalCode ?: '' }}
-                                            {{ proposal.clientBillingCity ?: '' }}
-                                        </div>
-                                    {% endif %}
+						<td>
+							<div class="box">
+								<div class="party-title">Client</div>
+								<div class="party-lines">
+									<div>
+										<strong>{{ proposal.clientFullName ?: proposal.clientCompanyName ?: '—' }}</strong>
+									</div>
 
-                                    {% if proposal.clientBillingCountry %}
-                                        <div>{{ proposal.clientBillingCountry }}</div>
-                                    {% endif %}
+									{% if proposal.clientCompanyName and proposal.clientCompanyName != proposal.clientFullName %}
+										<div>{{ proposal.clientCompanyName }}</div>
+									{% endif %}
 
-                                    {% if proposal.clientPhone %}
-                                        <div>Tél. : {{ proposal.clientPhone }}</div>
-                                    {% endif %}
+									{% if proposal.clientBillingAddress %}
+										<div>{{ proposal.clientBillingAddress }}</div>
+									{% endif %}
 
-                                    {% if proposal.clientEmail %}
-                                        <div>{{ proposal.clientEmail }}</div>
-                                    {% endif %}
+									{% if proposal.clientBillingPostalCode or proposal.clientBillingCity %}
+										<div>
+											{{ proposal.clientBillingPostalCode ?: '' }}
+											{{ proposal.clientBillingCity ?: '' }}
+										</div>
+									{% endif %}
 
-                                    {% if proposal.clientSiret %}
-                                        <div>SIRET : {{ proposal.clientSiret }}</div>
-                                    {% endif %}
-                                </div>
+									{% if proposal.clientBillingCountry %}
+										<div>{{ proposal.clientBillingCountry }}</div>
+									{% endif %}
 
-                                {% if proposal.clientInterventionAddress
+									{% if proposal.clientPhone %}
+										<div>Tél. :
+											{{ proposal.clientPhone }}</div>
+									{% endif %}
+
+									{% if proposal.clientEmail %}
+										<div>{{ proposal.clientEmail }}</div>
+									{% endif %}
+
+									{% if proposal.clientSiret %}
+										<div>SIRET :
+											{{ proposal.clientSiret }}</div>
+									{% endif %}
+								</div>
+
+								{% if proposal.clientInterventionAddress
                                     or proposal.clientInterventionAddressComplement
                                     or proposal.clientInterventionPostalCode
                                     or proposal.clientInterventionCity
                                     or proposal.clientInterventionCountry %}
-                                    <div class="sub-block">
-                                        <div class="party-title">Adresse d’intervention</div>
-                                        <div class="party-lines">
-                                            {% if proposal.clientInterventionAddress %}
-                                                <div>{{ proposal.clientInterventionAddress }}</div>
-                                            {% endif %}
+									<div class="sub-block">
+										<div class="party-title">Adresse d’intervention</div>
+										<div class="party-lines">
+											{% if proposal.clientInterventionAddress %}
+												<div>{{ proposal.clientInterventionAddress }}</div>
+											{% endif %}
 
-                                            {% if proposal.clientInterventionAddressComplement %}
-                                                <div>{{ proposal.clientInterventionAddressComplement }}</div>
-                                            {% endif %}
+											{% if proposal.clientInterventionAddressComplement %}
+												<div>{{ proposal.clientInterventionAddressComplement }}</div>
+											{% endif %}
 
-                                            {% if proposal.clientInterventionPostalCode or proposal.clientInterventionCity %}
-                                                <div>
-                                                    {{ proposal.clientInterventionPostalCode ?: '' }}
-                                                    {{ proposal.clientInterventionCity ?: '' }}
-                                                </div>
-                                            {% endif %}
+											{% if proposal.clientInterventionPostalCode or proposal.clientInterventionCity %}
+												<div>
+													{{ proposal.clientInterventionPostalCode ?: '' }}
+													{{ proposal.clientInterventionCity ?: '' }}
+												</div>
+											{% endif %}
 
-                                            {% if proposal.clientInterventionCountry %}
-                                                <div>{{ proposal.clientInterventionCountry }}</div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+											{% if proposal.clientInterventionCountry %}
+												<div>{{ proposal.clientInterventionCountry }}</div>
+											{% endif %}
+										</div>
+									</div>
+								{% endif %}
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
 
-            <div class="section">
-                <h2 class="section-title">{{ proposal.title ?: 'Objet du devis' }}</h2>
+			<div class="section">
+				<h2 class="section-title">{{ proposal.title ?: 'Objet du devis' }}</h2>
 
-                {% if proposal.introMessage %}
-                    <div class="box intro">
-                        {{ proposal.introMessage|nl2br }}
-                    </div>
-                {% endif %}
-            </div>
+				{% if proposal.introMessage %}
+					<div class="box intro">
+						{{ proposal.introMessage|nl2br }}
+					</div>
+				{% endif %}
+			</div>
 
-            <div class="section">
-                <h2 class="section-title">Détail des prestations</h2>
+			<div class="section">
+				<h2 class="section-title">Détail des prestations</h2>
 
-                <table class="items">
-                    <thead>
-                        <tr>
-                            <th>Prestations</th>
-                            <th class="text-end">Qté</th>
-                            <th class="text-end">PU HT</th>
-                            <th class="text-end">TVA</th>
-                            <th class="text-end">Total HT</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in proposal.items %}
-                            <tr>
-                                <td>
-                                    <div class="item-label">{{ item.label }}</div>
-                                    {% if item.description %}
-                                        <div class="item-description">{{ item.description }}</div>
-                                    {% endif %}
-                                </td>
-                                <td class="text-end">{{ item.quantity }}</td>
-                                <td class="text-end">{{ item.unitPriceHt|number_format(2, ',', ' ') }} €</td>
-                                <td class="text-end">{{ item.vatRate|number_format(2, ',', ' ') }} %</td>
-                                <td class="text-end">{{ item.totalHt|number_format(2, ',', ' ') }} €</td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="5">Aucune ligne n’a été ajoutée.</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+				<table class="items">
+					<thead>
+						<tr>
+							<th>Prestations</th>
+							<th class="text-end">Qté</th>
+							<th class="text-end">PU HT</th>
+							<th class="text-end">TVA</th>
+							<th class="text-end">Total HT</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for item in proposal.items %}
+							<tr>
+								<td>
+									<div class="item-label">{{ item.label }}</div>
+									{% if item.description %}
+										<div class="item-description">{{ item.description }}</div>
+									{% endif %}
+								</td>
+								<td class="text-end">{{ item.quantity }}</td>
+								<td class="text-end">{{ item.unitPriceHt|number_format(2, ',', ' ') }}
+									€</td>
+								<td class="text-end">{{ item.vatRate|number_format(2, ',', ' ') }}
+									%</td>
+								<td class="text-end">{{ item.totalHt|number_format(2, ',', ' ') }}
+									€</td>
+							</tr>
+						{% else %}
+							<tr>
+								<td colspan="5">Aucune ligne n’a été ajoutée.</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
 
-                <div class="totals-wrap">
-                    <table class="totals-table">
-                        <tr>
-                            <th>Total HT</th>
-                            <td>{{ proposal.subtotalHt|number_format(2, ',', ' ') }} €</td>
-                        </tr>
-                        <tr>
-                            <th>TVA</th>
-                            <td>{{ proposal.taxAmount|number_format(2, ',', ' ') }} €</td>
-                        </tr>
-                        <tr class="grand-total">
-                            <th>Total TTC</th>
-                            <td>{{ proposal.totalTtc|number_format(2, ',', ' ') }} €</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
+				<div class="totals-wrap">
+					<table class="totals-table">
+						<tr>
+							<th>Total HT</th>
+							<td>{{ proposal.subtotalHt|number_format(2, ',', ' ') }}
+								€</td>
+						</tr>
+						<tr>
+							<th>TVA</th>
+							<td>{{ proposal.taxAmount|number_format(2, ',', ' ') }}
+								€</td>
+						</tr>
+						<tr class="grand-total">
+							<th>Total TTC</th>
+							<td>{{ proposal.totalTtc|number_format(2, ',', ' ') }}
+								€</td>
+						</tr>
+					</table>
+				</div>
+			</div>
 
-            {% if proposal.terms %}
-                <div class="section">
-                    <h2 class="section-title">Conditions</h2>
-                    <div class="box">{{ proposal.terms|nl2br }}</div>
-                </div>
-            {% endif %}
+			{% if proposal.terms %}
+				<div class="section">
+					<h2 class="section-title">Conditions</h2>
+					<div class="box">{{ proposal.terms|nl2br }}</div>
+				</div>
+			{% endif %}
 
-            {% if proposal.notes %}
-                <div class="section">
-                    <h2 class="section-title">Notes</h2>
-                    <div class="box">{{ proposal.notes|nl2br }}</div>
-                </div>
-            {% endif %}
+			{% if proposal.notes %}
+				<div class="section">
+					<h2 class="section-title">Notes</h2>
+					<div class="box">{{ proposal.notes|nl2br }}</div>
+				</div>
+			{% endif %}
 
-            <div class="footer-note">
-                Document généré automatiquement — {{ proposal.proposalNumber ?: 'Devis' }}
-            </div>
-        </div>
-    </body>
+			<div class="footer-note">
+				Document généré automatiquement —
+				{{ proposal.proposalNumber ?: 'Devis' }}
+			</div>
+		</div>
+	</body>
 </html>

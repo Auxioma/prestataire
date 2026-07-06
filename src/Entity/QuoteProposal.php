@@ -164,6 +164,9 @@ class QuoteProposal
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $deletedAt = null;
 
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $acceptedAt = null;
+
     #[ORM\Column(length: 64, unique: true)]
     private ?string $publicReference = null;
 
@@ -810,6 +813,31 @@ class QuoteProposal
     {
         $this->deletedAt = $deletedAt;
         $this->touch();
+
+        return $this;
+    }
+
+    public function getAcceptedAt(): ?\DateTimeImmutable
+    {
+        return $this->acceptedAt;
+    }
+
+    public function setAcceptedAt(?\DateTimeImmutable $acceptedAt): self
+    {
+        $this->acceptedAt = $acceptedAt;
+        return $this;
+    }
+
+    public function isAccepted(): bool
+    {
+        return $this->status === QuoteProposalStatusEnum::ACCEPTED;
+    }
+
+    public function markAsAccepted(): self
+    {
+        $this->status = QuoteProposalStatusEnum::ACCEPTED;
+        $this->acceptedAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTime();
 
         return $this;
     }

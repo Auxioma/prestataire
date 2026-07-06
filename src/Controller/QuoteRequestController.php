@@ -11,6 +11,7 @@ use App\Entity\QuoteRequest;
 use App\Entity\User;
 use App\Enum\MessageTypeEnum;
 use App\Enum\NotificationTypeEnum;
+use App\Enum\QuoteProposalStatusEnum;
 use App\Enum\QuoteRequestStatusEnum;
 use App\Form\MessageType;
 use App\Form\QuoteRequestType;
@@ -22,17 +23,17 @@ use App\Service\ConversationMessageManager;
 use App\Service\NotificationManager;
 use App\Service\RealtimeNotifier;
 use Doctrine\ORM\EntityManagerInterface;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Dompdf\Dompdf;
-use Dompdf\Options;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 
@@ -252,7 +253,7 @@ final class QuoteRequestController extends AbstractController
 
         $quoteResponses = array_values(array_filter(
             $quoteResponses,
-            static fn(QuoteProposal $proposal): bool => $proposal->isFinalized()
+            static fn(QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted()
         ));
 
         // =========================
@@ -602,7 +603,6 @@ final class QuoteRequestController extends AbstractController
         }
 
         $prestataire = $proposal->getQuoteRequest()?->getPrestataire();
-
         $prestataireLogoUrl = null;
 
         if ($prestataire instanceof PrestataireProfile && $prestataire->getLogo()) {
@@ -643,5 +643,82 @@ final class QuoteRequestController extends AbstractController
                 ),
             ]
         );
+    }
+
+    #[Route('/devis/{publicReference}/accept', name: '_quote_proposal_accept', methods: ['POST'])]
+    public function acceptProposal(
+        string $publicReference,
+        Request $request,
+        QuoteProposalRepository $quoteProposalRepository,
+        EntityManagerInterface $entityManager,
+        NotificationManager $notificationManager,
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
+            throw $this->createAccessDeniedException('Accès réservé aux clients.');
+        }
+
+        $proposal = $quoteProposalRepository->findOneVisibleForClientByPublicReference(
+            $publicReference,
+            $user->getClientProfile()
+        );
+
+        if (!$proposal instanceof QuoteProposal) {
+            throw $this->createNotFoundException('Devis introuvable.');
+        }
+
+        if (!$this->isCsrfTokenValid(
+            'accept_quote_proposal_' . $proposal->getId(),
+            (string) $request->request->get('_token')
+        )) {
+            throw $this->createAccessDeniedException('Jeton CSRF invalide.');
+        }
+
+        if (!$proposal->isFinalized()) {
+            $this->addFlash('warning', 'Ce devis ne peut pas être accepté.');
+
+            return $this->redirectToRoute('app_quote_request_quote_proposal_show', [
+                'publicReference' => $proposal->getPublicReference(),
+            ], 303);
+        }
+
+        $proposal->setStatus(QuoteProposalStatusEnum::ACCEPTED);
+        $proposal->setAcceptedAt(new \DateTimeImmutable());
+        $proposal->setUpdatedAt(new \DateTime());
+
+        $quoteRequest = $proposal->getQuoteRequest();
+        if ($quoteRequest instanceof QuoteRequest) {
+            $quoteRequest->setStatus(QuoteRequestStatusEnum::CLOSED);
+            $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
+        }
+
+        $prestataireUser = $proposal->getPrestataire()?->getAccount();
+        if ($prestataireUser instanceof User) {
+            $notificationManager->notify(
+                $prestataireUser,
+                NotificationTypeEnum::QUOTE_PROPOSAL_RECEIVED,
+                'Devis accepté',
+                'Votre devis a été accepté par le client.',
+                $this->generateUrl('app_prestataire_quote_request_show', [
+                    'slug' => $quoteRequest?->getSlug(),
+                ]),
+                [
+                    'quoteProposalId' => $proposal->getId(),
+                    'quoteProposalReference' => $proposal->getPublicReference(),
+                    'quoteProposalNumber' => $proposal->getProposalNumber(),
+                    'quoteRequestId' => $quoteRequest?->getId(),
+                    'quoteRequestSlug' => $quoteRequest?->getSlug(),
+                ]
+            );
+        }
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le devis a bien été accepté.');
+
+        return $this->redirectToRoute('app_quote_request_quote_proposal_show', [
+            'publicReference' => $proposal->getPublicReference(),
+        ], 303);
     }
 }

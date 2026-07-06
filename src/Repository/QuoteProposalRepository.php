@@ -11,14 +11,50 @@ use App\Enum\QuoteProposalStatusEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<QuoteProposal>
- */
 class QuoteProposalRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, QuoteProposal::class);
+    }
+
+    public function findLastProposalNumberForYear(string $year): ?string
+    {
+        $result = $this->createQueryBuilder('qp')
+            ->select('qp.proposalNumber')
+            ->andWhere('qp.proposalNumber LIKE :pattern')
+            ->setParameter('pattern', 'DEV-' . $year . '-%')
+            ->orderBy('qp.proposalNumber', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (\is_array($result)) {
+            return $result['proposalNumber'] ?? null;
+        }
+
+        return null;
+    }
+
+    public function findOneVisibleForClientByPublicReference(
+        string $publicReference,
+        ClientProfile $client
+    ): ?QuoteProposal {
+        return $this->createQueryBuilder('qp')
+            ->andWhere('qp.publicReference = :publicReference')
+            ->andWhere('qp.client = :client')
+            ->andWhere('qp.deletedAt IS NULL')
+            ->andWhere('qp.archivedByPrestataireAt IS NULL')
+            ->andWhere('qp.status IN (:statuses)')
+            ->setParameter('publicReference', $publicReference)
+            ->setParameter('client', $client)
+            ->setParameter('statuses', [
+                QuoteProposalStatusEnum::FINALIZED,
+                QuoteProposalStatusEnum::ACCEPTED,
+            ])
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function findOneActiveByQuoteRequestAndPrestataire(
@@ -37,10 +73,8 @@ class QuoteProposalRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function findOneForPrestataireById(
-        string|int $id,
-        PrestataireProfile $prestataire
-    ): ?QuoteProposal {
+    public function findOneForPrestataireById(string|int $id, PrestataireProfile $prestataire): ?QuoteProposal
+    {
         return $this->createQueryBuilder('qp')
             ->andWhere('qp.id = :id')
             ->andWhere('qp.prestataire = :prestataire')
@@ -68,19 +102,20 @@ class QuoteProposalRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function findOneForClientById(
-        string|int $id,
-        ClientProfile $client
-    ): ?QuoteProposal {
+    public function findOneForClientById(string|int $id, ClientProfile $client): ?QuoteProposal
+    {
         return $this->createQueryBuilder('qp')
             ->andWhere('qp.id = :id')
             ->andWhere('qp.client = :client')
             ->andWhere('qp.deletedAt IS NULL')
             ->andWhere('qp.archivedByPrestataireAt IS NULL')
-            ->andWhere('qp.status = :status')
+            ->andWhere('qp.status IN (:statuses)')
             ->setParameter('id', (string) $id)
             ->setParameter('client', $client)
-            ->setParameter('status', QuoteProposalStatusEnum::FINALIZED)
+            ->setParameter('statuses', [
+                QuoteProposalStatusEnum::FINALIZED,
+                QuoteProposalStatusEnum::ACCEPTED,
+            ])
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
@@ -114,42 +149,6 @@ class QuoteProposalRepository extends ServiceEntityRepository
             ->setParameter('quoteRequest', $quoteRequest)
             ->getQuery()
             ->getResult();
-    }
-
-    public function findLastProposalNumberForYear(string $year): ?string
-    {
-        $result = $this->createQueryBuilder('qp')
-            ->select('qp.proposalNumber')
-            ->andWhere('qp.proposalNumber LIKE :pattern')
-            ->setParameter('pattern', 'DEV-' . $year . '-%')
-            ->orderBy('qp.proposalNumber', 'DESC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
-
-        if (\is_array($result)) {
-            return $result['proposalNumber'] ?? null;
-        }
-
-        return null;
-    }
-
-    public function findOneVisibleForClientByPublicReference(
-        string $publicReference,
-        ClientProfile $client
-    ): ?QuoteProposal {
-        return $this->createQueryBuilder('qp')
-            ->andWhere('qp.publicReference = :publicReference')
-            ->andWhere('qp.client = :client')
-            ->andWhere('qp.deletedAt IS NULL')
-            ->andWhere('qp.archivedByPrestataireAt IS NULL')
-            ->andWhere('qp.status = :status')
-            ->setParameter('publicReference', $publicReference)
-            ->setParameter('client', $client)
-            ->setParameter('status', QuoteProposalStatusEnum::FINALIZED)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
     }
 
     public function findOneArchivedByQuoteRequestAndPrestataire(

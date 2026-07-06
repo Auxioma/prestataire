@@ -1,314 +1,375 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ proposal.proposalNumber ?: 'Devis' }}{% endblock %}
+{% block title %}
+	{{ proposal.proposalNumber ?: 'Devis' }}
+{% endblock %}
 
 {% block body %}
-    {% set isArchivedView = quoteRequest is defined and quoteRequest.deletedAt is not null %}
+	{% set isArchivedView = quoteRequest is defined and quoteRequest.deletedAt is not null %}
 
-    <div class="qp-page">
-        <div class="qp-shell">
-            <header class="qp-hero">
-                <div class="qp-hero__main">
-                    <div class="qp-eyebrow">Devis publié</div>
-                    <h1 class="qp-title">Devis {{ proposal.proposalNumber ?: '—' }}</h1>
+	<div class="qp-page">
+		<div class="qp-shell">
+			<header class="qp-hero">
+				<div class="qp-hero__main">
+					<div class="qp-eyebrow">Devis publié</div>
+					<h1 class="qp-title">Devis
+						{{ proposal.proposalNumber ?: '—' }}</h1>
 
-                    <div class="qp-meta-list">
-                        <div class="qp-meta-pill">
-                            <span class="qp-meta-pill__label">Référence</span>
-                            <span class="qp-meta-pill__value">{{ proposal.publicReference ?: '—' }}</span>
-                        </div>
-                        <div class="qp-meta-pill">
-                            <span class="qp-meta-pill__label">Publié le</span>
-                            <span class="qp-meta-pill__value">
-                                {{ proposal.finalizedAt ? proposal.finalizedAt|date('d/m/Y à H:i') : '—' }}
-                            </span>
-                        </div>
-                        <div class="qp-meta-pill">
-                            <span class="qp-meta-pill__label">Valable jusqu’au</span>
-                            <span class="qp-meta-pill__value">
-                                {{ proposal.validUntil ? proposal.validUntil|date('d/m/Y') : '—' }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
+					<div class="qp-meta-list">
+						<div class="qp-meta-pill">
+							<span class="qp-meta-pill__label">Référence</span>
+							<span class="qp-meta-pill__value">{{ proposal.publicReference ?: '—' }}</span>
+						</div>
+						<div class="qp-meta-pill">
+							<span class="qp-meta-pill__label">Publié le</span>
+							<span class="qp-meta-pill__value">
+								{{ proposal.finalizedAt ? proposal.finalizedAt|date('d/m/Y à H:i') : '—' }}
+							</span>
+						</div>
+						<div class="qp-meta-pill">
+							<span class="qp-meta-pill__label">Valable jusqu’au</span>
+							<span class="qp-meta-pill__value">
+								{{ proposal.validUntil ? proposal.validUntil|date('d/m/Y') : '—' }}
+							</span>
+						</div>
+					</div>
+				</div>
 
-                <div class="qp-hero__actions">
-                    <a href="{{ path('app_quote_request_show', { slug: proposal.quoteRequest.slug }) }}" class="qp-btn qp-btn--ghost">
-                        {{ isArchivedView ? 'Retour à l’archive' : 'Retour à la demande' }}
-                    </a>
+				<div class="qp-hero__actions">
+					<a href="{{ path('app_quote_request_show', { slug: proposal.quoteRequest.slug }) }}" class="qp-btn qp-btn--ghost">
+						{{ isArchivedView ? 'Retour à l’archive' : 'Retour à la demande' }}
+					</a>
 
-                    <a href="{{ path('app_quote_request_quote_proposal_pdf', { publicReference: proposal.publicReference }) }}"
-                       class="qp-btn qp-btn--primary"
-                       target="_blank"
-                       rel="noopener">
-                        Voir le PDF
-                    </a>
-                </div>
-            </header>
+					<a href="{{ path('app_quote_request_quote_proposal_pdf', { publicReference: proposal.publicReference }) }}" class="qp-btn qp-btn--primary" target="_blank" rel="noopener">
+						Voir le PDF
+					</a>
 
-            {% if isArchivedView %}
-                <section class="qp-banner qp-banner--soft">
-                    <div class="qp-banner__title">Devis archivé</div>
-                    <div class="qp-banner__text">Ce devis reste consultable en lecture seule dans l’archive de la demande.</div>
-                </section>
-            {% else %}
-                <section class="qp-banner qp-banner--success">
-                    <div class="qp-banner__title">Devis disponible</div>
-                    <div class="qp-banner__text">Ce devis a été publié par le prestataire et peut être consulté ou téléchargé.</div>
-                </section>
-            {% endif %}
+					{% if viewerContext is defined and viewerContext == 'client' %}
+						{% if proposal.acceptedAt %}
+							<div class="qp-btn qp-btn--accepted-static" aria-disabled="true">
+								Accepté le
+								{{ proposal.acceptedAt|date('d/m/Y à H:i') }}
+							</div>
+						{% elseif proposal.status is defined and proposal.status.value == 'finalized' and not isArchivedView %}
+							<form method="post" action="{{ path('app_quote_request_quote_proposal_accept', { publicReference: proposal.publicReference }) }}" class="qp-inline-form" onsubmit="return confirm('Confirmer l’acceptation de ce devis ? Cette action est définitive et le devis ne pourra plus être modifié par le prestataire.');">
+								<input type="hidden" name="_token" value="{{ csrf_token('accept_quote_proposal_' ~ proposal.id) }}">
 
-            <div class="qp-layout">
-                <main class="qp-main">
-                    <section class="qp-card qp-card--hero">
-                        <div class="qp-card__body">
-                            <div class="qp-section-head qp-section-head--spread">
-                                <div>
-                                    <div class="qp-kicker">Objet du devis</div>
-                                    <h2 class="qp-section-title">{{ proposal.title ?: 'Sans titre' }}</h2>
-                                    <p class="qp-section-subtitle">
-                                        Prestataire :
-                                        {{ proposal.prestataireCompanyName ?: proposal.prestataireLegalName ?: '—' }}
-                                    </p>
-                                </div>
+								<button type="submit" class="qp-btn qp-btn-prop--success">
+									Accepter le devis
+								</button>
+							</form>
+						{% endif %}
+					{% endif %}
+				</div>
+			</header>
 
-                                <div class="qp-doc-resume">
-                                    <div><strong>N° devis :</strong> {{ proposal.proposalNumber ?: '—' }}</div>
-                                    <div><strong>Référence :</strong> {{ proposal.publicReference ?: '—' }}</div>
-                                </div>
-                            </div>
+			{% if isArchivedView %}
+				<section class="qp-banner qp-banner--soft">
+					<div class="qp-banner__title">Devis archivé</div>
+					<div class="qp-banner__text">Ce devis reste consultable en lecture seule dans l’archive de la demande.</div>
+				</section>
+			{% elseif proposal.acceptedAt %}
+				<section class="qp-banner qp-banner--success">
+					<div class="qp-banner__title">Devis accepté</div>
+					<div class="qp-banner__text">
+						Ce devis a été accepté par le client le
+						{{ proposal.acceptedAt|date('d/m/Y à H:i') }}.
+						            Il est désormais verrouillé et ne peut plus être modifié.
+					</div>
+				</section>
+			{% else %}
+				<section class="qp-banner qp-banner--success">
+					<div class="qp-banner__title">Devis disponible</div>
+					<div class="qp-banner__text">Ce devis a été publié par le prestataire et peut être consulté ou téléchargé.</div>
+				</section>
+			{% endif %}
 
-                            {% if proposal.introMessage %}
-                                <div class="qp-highlight-box">
-                                    {{ proposal.introMessage|nl2br }}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </section>
+			<div class="qp-layout">
+				<main class="qp-main">
+					<section class="qp-card qp-card--hero">
+						<div class="qp-card__body">
+							<div class="qp-section-head qp-section-head--spread">
+								<div>
+									<div class="qp-kicker">Objet du devis</div>
+									<h2 class="qp-section-title">{{ proposal.title ?: 'Sans titre' }}</h2>
+									<p class="qp-section-subtitle">
+										Prestataire :
+										{{ proposal.prestataireCompanyName ?: proposal.prestataireLegalName ?: '—' }}
+									</p>
+								</div>
 
-                    <section class="qp-card">
-                        <div class="qp-card__body">
-                            <div class="qp-section-head">
-                                <div class="qp-kicker">Prestations</div>
-                                <h2 class="qp-section-title">Détail du devis</h2>
-                            </div>
+								<div class="qp-doc-resume">
+									<div>
+										<strong>N° devis :</strong>
+										{{ proposal.proposalNumber ?: '—' }}</div>
+									<div>
+										<strong>Référence :</strong>
+										{{ proposal.publicReference ?: '—' }}</div>
+								</div>
+							</div>
 
-                            <div class="qp-table-wrap">
-                                <table class="qp-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Prestation</th>
-                                            <th class="is-right">Qté</th>
-                                            <th class="is-right">PU HT</th>
-                                            <th class="is-right">TVA</th>
-                                            <th class="is-right">Total HT</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for item in proposal.items %}
-                                            <tr>
-                                                <td>
-                                                    <div class="qp-item-title">{{ item.label }}</div>
-                                                    {% if item.description %}
-                                                        <div class="qp-item-description">{{ item.description }}</div>
-                                                    {% endif %}
-                                                </td>
-                                                <td class="is-right">
-                                                    <span class="qp-nowrap">{{ item.quantity|number_format(2, ',', ' ') }}</span>
-                                                </td>
-                                                <td class="is-right">
-                                                    <span class="qp-money">
-                                                        <span class="qp-money__value">{{ item.unitPriceHt|number_format(2, ',', ' ') }}</span>
-                                                        <span class="qp-money__currency">€</span>
-                                                    </span>
-                                                </td>
-                                                <td class="is-right">
-                                                    <span class="qp-percent">
-                                                        <span class="qp-percent__value">{{ item.vatRate|number_format(2, ',', ' ') }}</span>
-                                                        <span class="qp-percent__symbol">%</span>
-                                                    </span>
-                                                </td>
-                                                <td class="is-right qp-table__amount">
-                                                    <span class="qp-money qp-money--strong">
-                                                        <span class="qp-money__value">{{ item.totalHt|number_format(2, ',', ' ') }}</span>
-                                                        <span class="qp-money__currency">€</span>
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        {% else %}
-                                            <tr>
-                                                <td colspan="5" class="qp-empty">Aucune ligne n’a été ajoutée.</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </section>
+							{% if proposal.introMessage %}
+								<div class="qp-highlight-box">
+									{{ proposal.introMessage|nl2br }}
+								</div>
+							{% endif %}
+						</div>
+					</section>
 
-                    {% if proposal.terms %}
-                        <section class="qp-card">
-                            <div class="qp-card__body">
-                                <div class="qp-section-head">
-                                    <div class="qp-kicker">Cadre contractuel</div>
-                                    <h2 class="qp-section-title">Conditions</h2>
-                                </div>
+					<section class="qp-card">
+						<div class="qp-card__body">
+							<div class="qp-section-head">
+								<div class="qp-kicker">Prestations</div>
+								<h2 class="qp-section-title">Détail du devis</h2>
+							</div>
 
-                                <div class="qp-richtext">
-                                    {{ proposal.terms|nl2br }}
-                                </div>
-                            </div>
-                        </section>
-                    {% endif %}
+							<div class="qp-table-wrap">
+								<table class="qp-table">
+									<thead>
+										<tr>
+											<th>Prestation</th>
+											<th class="is-right">Qté</th>
+											<th class="is-right">PU HT</th>
+											<th class="is-right">TVA</th>
+											<th class="is-right">Total HT</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for item in proposal.items %}
+											<tr>
+												<td>
+													<div class="qp-item-title">{{ item.label }}</div>
+													{% if item.description %}
+														<div class="qp-item-description">{{ item.description }}</div>
+													{% endif %}
+												</td>
+												<td class="is-right">
+													<span class="qp-nowrap">{{ item.quantity|number_format(2, ',', ' ') }}</span>
+												</td>
+												<td class="is-right">
+													<span class="qp-money">
+														<span class="qp-money__value">{{ item.unitPriceHt|number_format(2, ',', ' ') }}</span>
+														<span class="qp-money__currency">€</span>
+													</span>
+												</td>
+												<td class="is-right">
+													<span class="qp-percent">
+														<span class="qp-percent__value">{{ item.vatRate|number_format(2, ',', ' ') }}</span>
+														<span class="qp-percent__symbol">%</span>
+													</span>
+												</td>
+												<td class="is-right qp-table__amount">
+													<span class="qp-money qp-money--strong">
+														<span class="qp-money__value">{{ item.totalHt|number_format(2, ',', ' ') }}</span>
+														<span class="qp-money__currency">€</span>
+													</span>
+												</td>
+											</tr>
+										{% else %}
+											<tr>
+												<td colspan="5" class="qp-empty">Aucune ligne n’a été ajoutée.</td>
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</section>
 
-                    {% if proposal.notes %}
-                        <section class="qp-card">
-                            <div class="qp-card__body">
-                                <div class="qp-section-head">
-                                    <div class="qp-kicker">Informations complémentaires</div>
-                                    <h2 class="qp-section-title">Notes</h2>
-                                </div>
+					{% if proposal.terms %}
+						<section class="qp-card">
+							<div class="qp-card__body">
+								<div class="qp-section-head">
+									<div class="qp-kicker">Cadre contractuel</div>
+									<h2 class="qp-section-title">Conditions</h2>
+								</div>
 
-                                <div class="qp-richtext">
-                                    {{ proposal.notes|nl2br }}
-                                </div>
-                            </div>
-                        </section>
-                    {% endif %}
-                </main>
+								<div class="qp-richtext">
+									{{ proposal.terms|nl2br }}
+								</div>
+							</div>
+						</section>
+					{% endif %}
 
-                <aside class="qp-sidebar">
-                    <section class="qp-card qp-card--accent">
-                        <div class="qp-card__body">
-                            <div class="qp-kicker qp-kicker--light">Montants</div>
-                            <h2 class="qp-section-title qp-section-title--light">Synthèse financière</h2>
+					{% if proposal.notes %}
+						<section class="qp-card">
+							<div class="qp-card__body">
+								<div class="qp-section-head">
+									<div class="qp-kicker">Informations complémentaires</div>
+									<h2 class="qp-section-title">Notes</h2>
+								</div>
 
-                            <dl class="qp-totals">
-                                <div class="qp-totals__row">
-                                    <dt>Total HT</dt>
-                                    <dd>{{ proposal.subtotalHt|number_format(2, ',', ' ') }} €</dd>
-                                </div>
-                                <div class="qp-totals__row">
-                                    <dt>TVA</dt>
-                                    <dd>{{ proposal.taxAmount|number_format(2, ',', ' ') }} €</dd>
-                                </div>
-                                <div class="qp-totals__row qp-totals__row--grand">
-                                    <dt>Total TTC</dt>
-                                    <dd>{{ proposal.totalTtc|number_format(2, ',', ' ') }} €</dd>
-                                </div>
-                            </dl>
-                        </div>
-                    </section>
+								<div class="qp-richtext">
+									{{ proposal.notes|nl2br }}
+								</div>
+							</div>
+						</section>
+					{% endif %}
+				</main>
 
-                    <section class="qp-card">
-                        <div class="qp-card__body">
-                            <div class="qp-kicker">Prestataire</div>
-                            <h2 class="qp-section-title qp-section-title--sm">
-                                {{ proposal.prestataireCompanyName ?: proposal.prestataireLegalName ?: '—' }}
-                            </h2>
+				<aside class="qp-sidebar">
+					<section class="qp-card qp-card--accent">
+						<div class="qp-card__body">
+							<div class="qp-kicker qp-kicker--light">Montants</div>
+							<h2 class="qp-section-title qp-section-title--light">Synthèse financière</h2>
 
-                            <div class="qp-identity">
-                                {% if proposal.prestataireLegalName and proposal.prestataireLegalName != proposal.prestataireCompanyName %}
-                                    <div>{{ proposal.prestataireLegalName }}</div>
-                                {% endif %}
-                                {% if proposal.prestataireAddress %}<div>{{ proposal.prestataireAddress }}</div>{% endif %}
-                                {% if proposal.prestataireAddressComplement %}<div>{{ proposal.prestataireAddressComplement }}</div>{% endif %}
-                                {% if proposal.prestatairePostalCode or proposal.prestataireCity %}
-                                    <div>{{ proposal.prestatairePostalCode ?: '' }} {{ proposal.prestataireCity ?: '' }}</div>
-                                {% endif %}
-                                {% if proposal.prestataireCountry %}<div>{{ proposal.prestataireCountry }}</div>{% endif %}
-                            </div>
+							<dl class="qp-totals">
+								<div class="qp-totals__row">
+									<dt>Total HT</dt>
+									<dd>{{ proposal.subtotalHt|number_format(2, ',', ' ') }}
+										€</dd>
+								</div>
+								<div class="qp-totals__row">
+									<dt>TVA</dt>
+									<dd>{{ proposal.taxAmount|number_format(2, ',', ' ') }}
+										€</dd>
+								</div>
+								<div class="qp-totals__row qp-totals__row--grand">
+									<dt>Total TTC</dt>
+									<dd>{{ proposal.totalTtc|number_format(2, ',', ' ') }}
+										€</dd>
+								</div>
+							</dl>
+						</div>
+					</section>
 
-                            <div class="qp-data-list">
-                                {% if proposal.prestatairePhone %}
-                                    <div><span>Téléphone</span><strong>{{ proposal.prestatairePhone }}</strong></div>
-                                {% endif %}
-                                {% if proposal.prestataireEmail %}
-                                    <div><span>Email</span><strong>{{ proposal.prestataireEmail }}</strong></div>
-                                {% endif %}
-                                {% if proposal.prestataireSiret %}
-                                    <div><span>SIRET</span><strong>{{ proposal.prestataireSiret }}</strong></div>
-                                {% endif %}
-                                {% if proposal.prestataireVatNumber %}
-                                    <div><span>TVA intracom</span><strong>{{ proposal.prestataireVatNumber }}</strong></div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </section>
+					<section class="qp-card">
+						<div class="qp-card__body">
+							<div class="qp-kicker">Prestataire</div>
+							<h2 class="qp-section-title qp-section-title--sm">
+								{{ proposal.prestataireCompanyName ?: proposal.prestataireLegalName ?: '—' }}
+							</h2>
 
-                    <section class="qp-card">
-                        <div class="qp-card__body">
-                            <div class="qp-kicker">Client</div>
-                            <h2 class="qp-section-title qp-section-title--sm">
-                                {{ proposal.clientFullName ?: proposal.clientCompanyName ?: '—' }}
-                            </h2>
+							<div class="qp-identity">
+								{% if proposal.prestataireLegalName and proposal.prestataireLegalName != proposal.prestataireCompanyName %}
+									<div>{{ proposal.prestataireLegalName }}</div>
+								{% endif %}
+								{% if proposal.prestataireAddress %}
+									<div>{{ proposal.prestataireAddress }}</div>
+								{% endif %}
+								{% if proposal.prestataireAddressComplement %}
+									<div>{{ proposal.prestataireAddressComplement }}</div>
+								{% endif %}
+								{% if proposal.prestatairePostalCode or proposal.prestataireCity %}
+									<div>{{ proposal.prestatairePostalCode ?: '' }}
+										{{ proposal.prestataireCity ?: '' }}</div>
+								{% endif %}
+								{% if proposal.prestataireCountry %}
+									<div>{{ proposal.prestataireCountry }}</div>
+								{% endif %}
+							</div>
 
-                            <div class="qp-identity">
-                                {% if proposal.clientCompanyName and proposal.clientCompanyName != proposal.clientFullName %}
-                                    <div>{{ proposal.clientCompanyName }}</div>
-                                {% endif %}
-                                {% if proposal.clientBillingAddress %}
-                                    <div>{{ proposal.clientBillingAddress }}</div>
-                                {% elseif proposal.clientInterventionAddress %}
-                                    <div>{{ proposal.clientInterventionAddress }}</div>
-                                {% endif %}
-                                {% if proposal.clientBillingPostalCode or proposal.clientBillingCity or proposal.clientInterventionPostalCode or proposal.clientInterventionCity %}
-                                    <div>
-                                        {{ proposal.clientBillingPostalCode ?: proposal.clientInterventionPostalCode ?: '' }}
-                                        {{ proposal.clientBillingCity ?: proposal.clientInterventionCity ?: '' }}
-                                    </div>
-                                {% endif %}
-                                {% if proposal.clientBillingCountry %}
-                                    <div>{{ proposal.clientBillingCountry }}</div>
-                                {% endif %}
-                            </div>
+							<div class="qp-data-list">
+								{% if proposal.prestatairePhone %}
+									<div>
+										<span>Téléphone</span>
+										<strong>{{ proposal.prestatairePhone }}</strong>
+									</div>
+								{% endif %}
+								{% if proposal.prestataireEmail %}
+									<div>
+										<span>Email</span>
+										<strong>{{ proposal.prestataireEmail }}</strong>
+									</div>
+								{% endif %}
+								{% if proposal.prestataireSiret %}
+									<div>
+										<span>SIRET</span>
+										<strong>{{ proposal.prestataireSiret }}</strong>
+									</div>
+								{% endif %}
+								{% if proposal.prestataireVatNumber %}
+									<div>
+										<span>TVA intracom</span>
+										<strong>{{ proposal.prestataireVatNumber }}</strong>
+									</div>
+								{% endif %}
+							</div>
+						</div>
+					</section>
 
-                            <div class="qp-data-list">
-                                {% if proposal.clientPhone %}
-                                    <div><span>Téléphone</span><strong>{{ proposal.clientPhone }}</strong></div>
-                                {% endif %}
-                                {% if proposal.clientEmail %}
-                                    <div><span>Email</span><strong>{{ proposal.clientEmail }}</strong></div>
-                                {% endif %}
-                                {% if proposal.clientSiret %}
-                                    <div><span>SIRET</span><strong>{{ proposal.clientSiret }}</strong></div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </section>
+					<section class="qp-card">
+						<div class="qp-card__body">
+							<div class="qp-kicker">Client</div>
+							<h2 class="qp-section-title qp-section-title--sm">
+								{{ proposal.clientFullName ?: proposal.clientCompanyName ?: '—' }}
+							</h2>
 
-                    {% if proposal.clientInterventionAddress
+							<div class="qp-identity">
+								{% if proposal.clientCompanyName and proposal.clientCompanyName != proposal.clientFullName %}
+									<div>{{ proposal.clientCompanyName }}</div>
+								{% endif %}
+								{% if proposal.clientBillingAddress %}
+									<div>{{ proposal.clientBillingAddress }}</div>
+								{% elseif proposal.clientInterventionAddress %}
+									<div>{{ proposal.clientInterventionAddress }}</div>
+								{% endif %}
+								{% if proposal.clientBillingPostalCode or proposal.clientBillingCity or proposal.clientInterventionPostalCode or proposal.clientInterventionCity %}
+									<div>
+										{{ proposal.clientBillingPostalCode ?: proposal.clientInterventionPostalCode ?: '' }}
+										{{ proposal.clientBillingCity ?: proposal.clientInterventionCity ?: '' }}
+									</div>
+								{% endif %}
+								{% if proposal.clientBillingCountry %}
+									<div>{{ proposal.clientBillingCountry }}</div>
+								{% endif %}
+							</div>
+
+							<div class="qp-data-list">
+								{% if proposal.clientPhone %}
+									<div>
+										<span>Téléphone</span>
+										<strong>{{ proposal.clientPhone }}</strong>
+									</div>
+								{% endif %}
+								{% if proposal.clientEmail %}
+									<div>
+										<span>Email</span>
+										<strong>{{ proposal.clientEmail }}</strong>
+									</div>
+								{% endif %}
+								{% if proposal.clientSiret %}
+									<div>
+										<span>SIRET</span>
+										<strong>{{ proposal.clientSiret }}</strong>
+									</div>
+								{% endif %}
+							</div>
+						</div>
+					</section>
+
+					{% if proposal.clientInterventionAddress
                         or proposal.clientInterventionAddressComplement
                         or proposal.clientInterventionPostalCode
                         or proposal.clientInterventionCity
                         or proposal.clientInterventionCountry %}
-                        <section class="qp-card qp-card--soft">
-                            <div class="qp-card__body">
-                                <div class="qp-kicker">Intervention</div>
-                                <h2 class="qp-section-title qp-section-title--sm">Adresse d’intervention</h2>
+						<section class="qp-card qp-card--soft">
+							<div class="qp-card__body">
+								<div class="qp-kicker">Intervention</div>
+								<h2 class="qp-section-title qp-section-title--sm">Adresse d’intervention</h2>
 
-                                <div class="qp-identity">
-                                    {% if proposal.clientInterventionAddress %}
-                                        <div>{{ proposal.clientInterventionAddress }}</div>
-                                    {% endif %}
-                                    {% if proposal.clientInterventionAddressComplement %}
-                                        <div>{{ proposal.clientInterventionAddressComplement }}</div>
-                                    {% endif %}
-                                    {% if proposal.clientInterventionPostalCode or proposal.clientInterventionCity %}
-                                        <div>
-                                            {{ proposal.clientInterventionPostalCode ?: '' }}
-                                            {{ proposal.clientInterventionCity ?: '' }}
-                                        </div>
-                                    {% endif %}
-                                    {% if proposal.clientInterventionCountry %}
-                                        <div>{{ proposal.clientInterventionCountry }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </section>
-                    {% endif %}
-                </aside>
-            </div>
-        </div>
-    </div>
+								<div class="qp-identity">
+									{% if proposal.clientInterventionAddress %}
+										<div>{{ proposal.clientInterventionAddress }}</div>
+									{% endif %}
+									{% if proposal.clientInterventionAddressComplement %}
+										<div>{{ proposal.clientInterventionAddressComplement }}</div>
+									{% endif %}
+									{% if proposal.clientInterventionPostalCode or proposal.clientInterventionCity %}
+										<div>
+											{{ proposal.clientInterventionPostalCode ?: '' }}
+											{{ proposal.clientInterventionCity ?: '' }}
+										</div>
+									{% endif %}
+									{% if proposal.clientInterventionCountry %}
+										<div>{{ proposal.clientInterventionCountry }}</div>
+									{% endif %}
+								</div>
+							</div>
+						</section>
+					{% endif %}
+				</aside>
+			</div>
+		</div>
+	</div>
 {% endblock %}
