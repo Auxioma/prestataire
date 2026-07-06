@@ -98,6 +98,7 @@ final class PrestataireDashboardController extends AbstractController
                 QuoteRequestStatusEnum::SUBMITTED,
                 QuoteRequestStatusEnum::ACCEPTED,
                 QuoteRequestStatusEnum::ANSWERED,
+                QuoteRequestStatusEnum::CLOSED,
             ]);
 
         foreach ($quoteOrderBy as $field => $direction) {
