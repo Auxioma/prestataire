@@ -1,11 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes demandes de devis{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('styles/client-quote-requests.css') }}">
+{% block title %}Mes demandes de devis
 {% endblock %}
+
 
 {% block body %}
     <section class="c-client-quotes-page">
@@ -15,8 +13,10 @@
                 <span>Retour aux paramètres</span>
             </a>
 
+
             <header class="c-client-quotes-hero">
                 <div class="c-client-quotes-hero__glow" aria-hidden="true"></div>
+
 
                 <div class="c-client-quotes-hero__content">
                     <span class="c-client-quotes-hero__eyebrow">Espace client</span>
@@ -25,6 +25,7 @@
                         Suivez vos demandes, repérez rapidement leur statut et retrouvez les informations clés de chaque projet en un coup d’œil.
                     </p>
                 </div>
+
 
                 {% if quoteRequests is not empty %}
                     <div class="c-client-quotes-hero__stats">
@@ -38,6 +39,7 @@
                 {% endif %}
             </header>
 
+
             {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
                 {% for message in messages %}
                     <div class="c-client-quotes-alert c-client-quotes-alert--{{ type }}">
@@ -46,6 +48,7 @@
                     </div>
                 {% endfor %}
             {% endfor %}
+
 
             <section class="c-client-quotes-panel">
                 {% if quoteRequests is not empty %}
@@ -58,16 +61,19 @@
                             </p>
                         </div>
 
+
                         <div class="c-client-quotes-panel__count">
                             {{ quoteRequests.getTotalItemCount }}
                             demande{{ quoteRequests.getTotalItemCount > 1 ? 's' : '' }}
                         </div>
                     </div>
 
+
                     <div class="c-client-quotes-list">
                         {% for quoteRequest in quoteRequests %}
                             <article class="c-client-quotes-card">
                                 <div class="c-client-quotes-card__accent" aria-hidden="true"></div>
+
 
                                 <div class="c-client-quotes-card__main">
                                     <div class="c-client-quotes-card__top">
@@ -76,20 +82,24 @@
                                                 {{ quoteRequest.title }}
                                             </h3>
 
+
                                             <span class="c-client-quotes-card__date">
                                                 Créée le
                                                 {{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y à H:i') : '—' }}
                                             </span>
                                         </div>
 
+
                                         <span class="c-client-quotes-status c-client-quotes-status--{{ quoteRequest.status.getBadgeClass() }}">
                                             {{ quoteRequest.status.getLabel() }}
                                         </span>
                                     </div>
 
+
                                     <p class="c-client-quotes-card__desc">
                                         {{ quoteRequest.description ? quoteRequest.description|slice(0, 180) ~ (quoteRequest.description|length > 180 ? '…' : '') : 'Aucune description fournie.' }}
                                     </p>
+
 
                                     <div class="c-client-quotes-card__meta">
                                         <div class="c-client-quotes-meta">
@@ -99,12 +109,14 @@
                                             </strong>
                                         </div>
 
+
                                         <div class="c-client-quotes-meta">
                                             <span class="c-client-quotes-meta__label">Budget</span>
                                             <strong class="c-client-quotes-meta__value">
                                                 {{ quoteRequest.budgetAmount is not null ? quoteRequest.budgetAmount|number_format(2, ',', ' ') ~ ' €' : 'Non renseigné' }}
                                             </strong>
                                         </div>
+
 
                                         <div class="c-client-quotes-meta">
                                             <span class="c-client-quotes-meta__label">Statut</span>
@@ -115,29 +127,30 @@
                                     </div>
                                 </div>
 
+
                                 <aside class="c-client-quotes-card__aside">
-                                    <a
-                                        href="{{ path('app_quote_request_show', { slug: quoteRequest.slug }) }}"
-                                        class="c-client-quotes-btn c-client-quotes-btn--primary"
-                                    >
+                                    <a href="{{ path('app_quote_request_show', { slug: quoteRequest.slug }) }}" class="c-client-quotes-btn c-client-quotes-btn--primary">
                                         Voir ma demande
                                     </a>
 
+
                                     {% if quoteRequest.canBeDeleted %}
-                                        <form
-                                            method="post"
-                                            action="{{ path('app_quote_request_delete', { slug: quoteRequest.slug }) }}"
-                                            onsubmit="return confirm('Supprimer cette demande de devis ?');"
-                                            class="c-client-quotes-card__form"
-                                        >
+                                        <form method="post" action="{{ path('app_quote_request_delete', { slug: quoteRequest.slug }) }}" onsubmit="return confirm('Supprimer définitivement cette demande de devis ? Cette action est irréversible.');" class="c-client-quotes-card__form">
                                             <input type="hidden" name="_token" value="{{ csrf_token('delete-quote-request-' ~ quoteRequest.id) }}">
                                             <button type="submit" class="c-client-quotes-btn c-client-quotes-btn--danger">
                                                 Supprimer la demande
                                             </button>
                                         </form>
+                                    {% elseif quoteRequest.archivedByClientAt is null %}
+                                        <form method="post" action="{{ path('app_quote_request_mark_as_archived', { slug: quoteRequest.slug }) }}" onsubmit="return confirm('Archiver cette demande ? Vous pourrez la consulter plus tard dans votre historique.');" class="c-client-quotes-card__form">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('archive-quote-request-' ~ quoteRequest.id) }}">
+                                            <button type="submit" class="c-client-quotes-btn c-client-quotes-btn--ghost">
+                                                Archiver la demande
+                                            </button>
+                                        </form>
                                     {% else %}
                                         <span class="c-client-quotes-btn c-client-quotes-btn--disabled">
-                                            À archiver plus tard
+                                            Demande archivée
                                         </span>
                                     {% endif %}
                                 </aside>
@@ -156,6 +169,7 @@
                         </p>
                     </div>
                 {% endif %}
+
 
                 {% if quoteRequests is not empty %}
                     <div class="c-client-quotes-pagination">

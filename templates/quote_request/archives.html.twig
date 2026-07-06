@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique des demandes{% endblock %}
+
+{% block body %}
+<section class="tm-qa-page">
+    <div class="tm-qa-shell">
+        <a href="{{ path('app_quote_request_index') }}" class="tm-qa-backlink">
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+            <span>Retour aux demandes en cours</span>
+        </a>
+
+        <header class="tm-qa-hero">
+            <div class="tm-qa-hero__inner">
+                <span class="tm-qa-hero__eyebrow">Espace client</span>
+                <h1 class="tm-qa-hero__title">Historique des demandes</h1>
+                <p class="tm-qa-hero__text">
+                    Retrouvez ici les demandes archivées que vous ne souhaitez plus garder dans la liste principale.
+                </p>
+            </div>
+        </header>
+
+        {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+            {% for message in messages %}
+                <div class="tm-qa-alert tm-qa-alert--{{ type }}">
+                    <div class="tm-qa-alert__body">{{ message }}</div>
+                    <button type="button" class="tm-qa-alert__close btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {% if archivedQuoteRequests is not empty %}
+            <div class="tm-qa-list">
+                {% for quoteRequest in archivedQuoteRequests %}
+                    <article class="tm-qa-card">
+                        <div class="tm-qa-card__accent" aria-hidden="true"></div>
+
+                        <div class="tm-qa-card__body">
+                            <div class="tm-qa-card__top">
+                                <div class="tm-qa-card__heading">
+                                    <h2 class="tm-qa-card__title">{{ quoteRequest.title }}</h2>
+                                    <p class="tm-qa-card__subtitle">
+                                        Archivée le {{ quoteRequest.archivedByClientAt ? quoteRequest.archivedByClientAt|date('d/m/Y à H:i') : '—' }}
+                                    </p>
+                                </div>
+
+                                <div class="tm-qa-card__meta-grid">
+                                    <div class="tm-qa-meta">
+                                        <span class="tm-qa-meta__label">Budget</span>
+                                        <strong class="tm-qa-meta__value">
+                                            {{ quoteRequest.budgetAmount is not null ? quoteRequest.budgetAmount|number_format(2, ',', ' ') ~ ' €' : 'Non renseigné' }}
+                                        </strong>
+                                    </div>
+
+                                    <div class="tm-qa-meta">
+                                        <span class="tm-qa-meta__label">Statut</span>
+                                        <strong class="tm-qa-meta__value">{{ quoteRequest.status.getLabel() }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <aside class="tm-qa-card__aside">
+                            <a href="{{ path('app_quote_request_history_show', { slug: quoteRequest.slug }) }}"
+                               class="tm-qa-btn tm-qa-btn--primary">
+                                Voir le détail
+                            </a>
+                        </aside>
+                    </article>
+                {% endfor %}
+            </div>
+
+            {% if archivedQuoteRequests.pageCount is defined and archivedQuoteRequests.pageCount > 1 %}
+                <div class="tm-qa-pagination">
+                    {{ knp_pagination_render(archivedQuoteRequests) }}
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="tm-qa-empty">
+                <div class="tm-qa-empty__icon">
+                    <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
+                </div>
+                <span class="tm-qa-empty__eyebrow">Historique</span>
+                <h2 class="tm-qa-empty__title">Aucune demande archivée</h2>
+                <p class="tm-qa-empty__text">
+                    Les demandes que vous archivez depuis la liste principale apparaîtront ici.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

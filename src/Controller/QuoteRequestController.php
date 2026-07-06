@@ -199,7 +199,12 @@ final class QuoteRequestController extends AbstractController
         ]);
     }
 
-    #[Route('/{slug}', name: '_show', methods: ['GET', 'POST'])]
+#[Route(
+    '/{slug}',
+    name: '_show',
+    methods: ['GET', 'POST'],
+    requirements: ['slug' => '(?!(historique|nouvelle)$)[a-z0-9-]+']
+)]
     public function show(
         Request $request,
         string $slug,
@@ -212,6 +217,7 @@ final class QuoteRequestController extends AbstractController
         NotificationManager $notificationManager,
         ConversationMessageManager $conversationMessageManager,
     ): Response {
+
         $user = $this->getUser();
 
         // =========================
@@ -361,6 +367,7 @@ final class QuoteRequestController extends AbstractController
             'messageForm' => $messageForm?->createView(),
             'hasConversationPhotos' => $hasConversationPhotos,
             'quoteResponses' => $quoteResponses,
+            'isArchivedView' => false,
         ]);
     }
 
@@ -432,58 +439,6 @@ final class QuoteRequestController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'La demande de devis a bien été supprimée.');
-
-        return $this->redirectToRoute('app_quote_request_index');
-    }
-
-    #[Route('/{slug}/archive', name: '_archive', methods: ['POST'])]
-    public function archive(
-        Request $request,
-        string $slug,
-        QuoteRequestRepository $quoteRequestRepository,
-        EntityManagerInterface $entityManager
-    ): Response {
-        $user = $this->getUser();
-
-        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
-            throw $this->createAccessDeniedException('Accès réservé aux clients.');
-        }
-
-        $quoteRequest = $quoteRequestRepository->findOneActiveForClientBySlug(
-            $slug,
-            $user->getClientProfile()
-        );
-
-        if (!$quoteRequest instanceof QuoteRequest) {
-            throw $this->createNotFoundException('Cette demande n’est pas disponible.');
-        }
-
-        if (
-            !$this->isCsrfTokenValid(
-                'archive-quote-request-' . $quoteRequest->getId(),
-                (string) $request->request->get('_token')
-            )
-        ) {
-            $this->addFlash('danger', 'Jeton CSRF invalide.');
-
-            return $this->redirectToRoute('app_quote_request_show', [
-                'slug' => $quoteRequest->getSlug(),
-            ]);
-        }
-
-        if (null !== $quoteRequest->getArchivedByClientAt()) {
-            $this->addFlash('warning', 'Cette demande est déjà archivée.');
-
-            return $this->redirectToRoute('app_quote_request_index');
-        }
-
-        $quoteRequest
-            ->setArchivedByClientAt(new \DateTimeImmutable())
-            ->setUpdatedAt(new \DateTimeImmutable());
-
-        $entityManager->flush();
-
-        $this->addFlash('success', 'La demande de devis a bien été archivée.');
 
         return $this->redirectToRoute('app_quote_request_index');
     }
@@ -720,5 +675,125 @@ final class QuoteRequestController extends AbstractController
         return $this->redirectToRoute('app_quote_request_quote_proposal_show', [
             'publicReference' => $proposal->getPublicReference(),
         ], 303);
+    }
+
+    #[Route('/historique', name: '_history', methods: ['GET'])]
+    public function history(
+        Request $request,
+        QuoteRequestRepository $quoteRequestRepository,
+        PaginatorInterface $paginator,
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
+            throw $this->createAccessDeniedException('Accès réservé aux clients.');
+        }
+
+        $queryBuilder = $quoteRequestRepository->createArchivedForClientQueryBuilder($user->getClientProfile());
+
+        $archivedQuoteRequests = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            8
+        );
+
+        return $this->render('quote_request/archives.html.twig', [
+            'archivedQuoteRequests' => $archivedQuoteRequests,
+        ]);
+    }
+
+    #[Route('/historique/{slug}', name: '_history_show', methods: ['GET'])]
+    public function historyShow(
+        string $slug,
+        QuoteRequestRepository $quoteRequestRepository,
+        ConversationRepository $conversationRepository,
+        MessageRepository $messageRepository,
+        QuoteProposalRepository $quoteProposalRepository,
+    ): Response {
+
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
+            throw $this->createAccessDeniedException('Accès réservé aux clients.');
+        }
+
+        $quoteRequest = $quoteRequestRepository->findOneArchivedForClientBySlug($slug, $user->getClientProfile());
+
+        if (!$quoteRequest instanceof QuoteRequest) {
+            throw $this->createNotFoundException('Cette demande archivée est introuvable.');
+        }
+
+        $conversation = $conversationRepository->findOneByQuoteRequest($quoteRequest);
+        $messages = $conversation ? $messageRepository->findByConversationOrderedByCreatedAt($conversation) : [];
+
+$quoteResponses = $quoteProposalRepository->findBy(
+    [
+        'quoteRequest' => $quoteRequest,
+        'deletedAt' => null,
+    ],
+    [
+        'finalizedAt' => 'DESC',
+        'createdAt' => 'DESC',
+    ]
+);
+
+$quoteResponses = array_values(array_filter(
+    $quoteResponses,
+    static fn(QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted()
+));
+
+        return $this->render('quote_request/archived_show.html.twig', [
+            'quoteRequest' => $quoteRequest,
+            'conversation' => $conversation,
+            'messages' => $messages,
+            'quoteResponses' => $quoteResponses,
+        ]);
+    }
+
+    #[Route('/{slug}/archive', name: '_mark_as_archived', methods: ['POST'])]
+    public function markAsArchived(
+        Request $request,
+        string $slug,
+        QuoteRequestRepository $quoteRequestRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
+            throw $this->createAccessDeniedException('Accès réservé aux clients.');
+        }
+
+        $quoteRequest = $quoteRequestRepository->findOneActiveForClientBySlug($slug, $user->getClientProfile());
+
+        if (!$quoteRequest instanceof QuoteRequest) {
+            throw $this->createNotFoundException('Cette demande n’est pas disponible.');
+        }
+
+        if (!$this->isCsrfTokenValid(
+            'archive-quote-request-' . $quoteRequest->getId(),
+            (string) $request->request->get('_token')
+        )) {
+            $this->addFlash('danger', 'Jeton CSRF invalide.');
+
+            return $this->redirectToRoute('app_quote_request_show', [
+                'slug' => $quoteRequest->getSlug(),
+            ]);
+        }
+
+        if (null !== $quoteRequest->getArchivedByClientAt()) {
+            $this->addFlash('warning', 'Cette demande est déjà archivée.');
+
+            return $this->redirectToRoute('app_quote_request_history');
+        }
+
+        $quoteRequest
+            ->setArchivedByClientAt(new \DateTimeImmutable())
+            ->setUpdatedAt(new \DateTimeImmutable());
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La demande de devis a bien été archivée.');
+
+        return $this->redirectToRoute('app_quote_request_history');
     }
 }

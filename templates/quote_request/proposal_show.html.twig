@@ -1,11 +1,15 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-	{{ proposal.proposalNumber ?: 'Devis' }}
+    {{ proposal.proposalNumber ?: 'Devis' }}
 {% endblock %}
 
 {% block body %}
-	{% set isArchivedView = quoteRequest is defined and quoteRequest.deletedAt is not null %}
+{% set quoteRequest = proposal.quoteRequest %}
+{% set isArchivedView = quoteRequest and quoteRequest.archivedByClientAt is not null %}
+{% set backToRequestUrl = isArchivedView
+    ? path('app_quote_request_history_show', { slug: quoteRequest.slug })
+    : path('app_quote_request_show', { slug: quoteRequest.slug }) %}
 
 	<div class="qp-page">
 		<div class="qp-shell">
@@ -36,9 +40,9 @@
 				</div>
 
 				<div class="qp-hero__actions">
-					<a href="{{ path('app_quote_request_show', { slug: proposal.quoteRequest.slug }) }}" class="qp-btn qp-btn--ghost">
-						{{ isArchivedView ? 'Retour à l’archive' : 'Retour à la demande' }}
-					</a>
+<a href="{{ backToRequestUrl }}" class="qp-btn qp-btn--ghost">
+    {{ isArchivedView ? 'Retour à l’archive' : 'Retour à la demande' }}
+</a>
 
 					<a href="{{ path('app_quote_request_quote_proposal_pdf', { publicReference: proposal.publicReference }) }}" class="qp-btn qp-btn--primary" target="_blank" rel="noopener">
 						Voir le PDF

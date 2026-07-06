@@ -117,7 +117,7 @@ final class PrestataireQuoteRequestController extends AbstractController
             $this->addFlash('danger', 'Jeton CSRF invalide.');
 
             return $this->redirectToRoute('app_prestataire_quote_request_show', [
-                'id' => $quoteRequest->getId(),
+                'slug' => $quoteRequest->getSlug(),
             ]);
         }
 

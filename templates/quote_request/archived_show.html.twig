@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demande archivée{% endblock %}
+
+{% block body %}
+<section class="tm-qad-page">
+    <div class="tm-qad-shell">
+        <a href="{{ path('app_quote_request_history') }}" class="tm-qad-backlink">
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+            <span>Retour à l’historique</span>
+        </a>
+
+        <header class="tm-qad-hero">
+            <div class="tm-qad-hero__inner">
+                <span class="tm-qad-hero__eyebrow">Demande archivée</span>
+                <h1 class="tm-qad-hero__title">{{ quoteRequest.title }}</h1>
+                <p class="tm-qad-hero__text">
+                    Cette demande est conservée dans votre historique et reste consultable en lecture seule.
+                </p>
+            </div>
+        </header>
+
+        <section class="tm-qad-panel">
+            <div class="tm-qad-panel__body">
+                <div class="tm-qad-panel__head">
+                    <div class="tm-qad-panel__heading">
+                        <h2 class="tm-qad-panel__title">Informations générales</h2>
+                    </div>
+
+                    <div class="tm-qad-panel__meta-grid">
+                        <div class="tm-qad-meta">
+                            <span class="tm-qad-meta__label">Statut</span>
+                            <strong class="tm-qad-meta__value">{{ quoteRequest.status.getLabel() }}</strong>
+                        </div>
+
+                        <div class="tm-qad-meta">
+                            <span class="tm-qad-meta__label">Archivée le</span>
+                            <strong class="tm-qad-meta__value">
+                                {{ quoteRequest.archivedByClientAt ? quoteRequest.archivedByClientAt|date('d/m/Y à H:i') : '—' }}
+                            </strong>
+                        </div>
+
+                        <div class="tm-qad-meta">
+                            <span class="tm-qad-meta__label">Budget</span>
+                            <strong class="tm-qad-meta__value">
+                                {{ quoteRequest.budgetAmount is not null ? quoteRequest.budgetAmount|number_format(2, ',', ' ') ~ ' €' : 'Non renseigné' }}
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+
+                {% if quoteRequest.description %}
+                    <div class="tm-qad-panel__block">
+                        <h3 class="tm-qad-panel__subtitle">Description</h3>
+                        <p class="tm-qad-panel__text">{{ quoteRequest.description|nl2br }}</p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="tm-qad-panel">
+            <div class="tm-qad-panel__body">
+                <div class="tm-qad-panel__heading">
+                    <h2 class="tm-qad-panel__title">Devis reçus</h2>
+                </div>
+
+                {% if quoteResponses is not empty %}
+                    <div class="tm-qad-proposals">
+                        {% for proposal in quoteResponses %}
+                            <article class="tm-qad-proposal">
+                                <div class="tm-qad-proposal__body">
+                                    <div class="tm-qad-proposal__top">
+                                        <div class="tm-qad-proposal__heading">
+                                            <h3 class="tm-qad-proposal__title">
+                                                {{ proposal.proposalNumber ?: 'Devis' }}
+                                            </h3>
+                                            <p class="tm-qad-proposal__subtitle">
+                                                Référence {{ proposal.publicReference }}
+                                            </p>
+                                        </div>
+
+                                        <div class="tm-qad-proposal__meta-grid">
+                                            <div class="tm-qad-meta">
+                                                <span class="tm-qad-meta__label">Statut</span>
+                                                <strong class="tm-qad-meta__value">{{ proposal.status.getLabel() }}</strong>
+                                            </div>
+
+                                            <div class="tm-qad-meta">
+                                                <span class="tm-qad-meta__label">Montant TTC</span>
+                                                <strong class="tm-qad-meta__value">
+                                                    {{ proposal.totalTtc is not null ? proposal.totalTtc|number_format(2, ',', ' ') ~ ' €' : '—' }}
+                                                </strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% if proposal.publicReference is defined and proposal.publicReference is not empty %}
+                                    <aside class="tm-qad-proposal__aside">
+                                        <a href="{{ path('app_quote_request_quote_proposal_show', { publicReference: proposal.publicReference }) }}"
+                                           class="tm-qad-btn tm-qad-btn--primary">
+                                            Voir le devis
+                                        </a>
+                                    </aside>
+                                {% endif %}
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="tm-qad-empty-text">Aucun devis n’est rattaché à cette demande.</p>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+</section>
+{% endblock %}
