@@ -145,10 +145,15 @@ final class PrestataireDashboardController extends AbstractController
          */
         $conversationId = $request->query->get('conversation');
 
-        $conversations = $conversationRepository->findBy(
-            ['prestataire' => $prestataireProfile],
-            ['lastMessageAt' => 'DESC', 'createdAt' => 'DESC']
-        );
+        $conversations = $conversationRepository->createQueryBuilder('c')
+            ->leftJoin('c.quoteRequest', 'qr')
+            ->andWhere('c.prestataire = :prestataire')
+            ->andWhere('qr IS NULL OR qr.archivedByPrestataireAt IS NULL')
+            ->setParameter('prestataire', $prestataireProfile)
+            ->addOrderBy('c.lastMessageAt', 'DESC')
+            ->addOrderBy('c.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
 
         $activeConversation = null;
         $activeTab = $request->query->get('tab', 'dashboard');
@@ -394,7 +399,7 @@ final class PrestataireDashboardController extends AbstractController
 
         $archivedQuoteRequests = $quoteRequestRepository->findBy(
             ['prestataire' => $prestataireProfile,],
-            ['updatedAt' => 'DESC','createdAt' => 'DESC',]
+            ['updatedAt' => 'DESC', 'createdAt' => 'DESC',]
         );
 
         /*

@@ -111,7 +111,7 @@
 
 								<div class="alert alert-info mb-3">
 									En acceptant d’étudier cette demande, vous vous engagez uniquement à apporter une réponse au client
-																		                dans les meilleurs délais. Cela ne vaut pas acceptation ferme et définitive de la prestation telle quelle.
+																																				                dans les meilleurs délais. Cela ne vaut pas acceptation ferme et définitive de la prestation telle quelle.
 								</div>
 
 								<div class="d-flex flex-column flex-md-row gap-2">
@@ -153,9 +153,15 @@
 					{% endif %}
 
 					{% if quoteRequest.conversation %}
-						<a href="{{ path('app_prestataire_dashboard', { tab: 'messages', conversation: quoteRequest.conversation.id }) ~ '#messages-main-panel' }}" class="btn btn-primary w-100 mt-3">
-							Ouvrir la discussion
-						</a>
+						{% if isArchivedView %}
+							<button type="button" class="btn btn-primary w-100 mt-3" disabled>
+								Discussion indisponible pour une demande archivée
+							</button>
+						{% else %}
+							<a href="{{ path('app_prestataire_dashboard', { tab: 'messages', conversation: quoteRequest.conversation.id }) ~ '#messages-main-panel' }}" class="btn btn-primary w-100 mt-3">
+								Ouvrir la discussion
+							</a>
+						{% endif %}
 					{% endif %}
 
 					<a href="{{ path('app_prestataire_dashboard', { tab: isArchivedView ? 'archives' : 'demandes' }) ~ (isArchivedView ? '#archives-main-panel' : '#demandes-main-panel') }}" class="btn btn-outline-primary w-100 mt-3">
