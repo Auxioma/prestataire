@@ -1021,12 +1021,12 @@
 
 /* --- SECTION COMMENT ÇA MARCHE --- */
 .tm-step-section {
-    background: #ffffff;
-    border: 1px solid #eef2f6;
-    border-radius: 24px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-    margin-top: 3rem;
-    margin-bottom: 3rem;
+    background:
+        radial-gradient(circle at top right, rgba(6, 27, 86, 0.05), transparent 22%),
+        radial-gradient(circle at bottom left, rgba(6, 27, 86, 0.03), transparent 26%),
+        linear-gradient(180deg, #f8faff 0%, #eef3ff 100%);
+    border: 1px solid rgba(6, 27, 86, 0.08);
+    border-radius: 32px;
 }
 
 .tm-step-title {
@@ -1070,18 +1070,37 @@
 }
 
 .tm-step-btn {
-    background-color: whitesmoke;
-    color: #061b56;
-    border-radius: 50px;
-    padding: 1rem 3rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 54px;
+    padding: 0 28px;
+    border: 1.5px solid #2b4aa0;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #061B56 !important;
     font-weight: 700;
-    transition: background 0.3s ease;
+    box-shadow: 0 10px 24px rgba(6, 27, 86, 0.08);
+    transition: all 0.2s ease;
 }
 
 .tm-step-btn:hover {
-    background-color: #1e3a8a;
+    background: #061B56;
+    border-color: #061B56;
+    color: #ffffff !important;
+    transform: translateY(-2px);
 }
 
+.tm-step-btn:focus {
+    box-shadow:
+        0 0 0 4px rgba(6, 27, 86, 0.12),
+        0 12px 26px rgba(6, 27, 86, 0.18);
+}
+
+.tm-step-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 8px 18px rgba(6, 27, 86, 0.18);
+}
 /* --- SECTION BONS PLANS PREMIUM --- */
 .tm-home-deals-section {
     position: relative;
@@ -1742,4 +1761,96 @@ SEARCH AUTOCOMPLETE
     .tm-homepage-search-suggestion__meta {
         font-size: 0.76rem;
     }
+}
+
+.tm-popular-categories .tm-category-card,
+.tm-popular-categories .all-categories-card {
+    background-color: #061B56;
+    color: #ffffff;
+    border-color: rgba(244, 169, 17, 0.18) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.tm-popular-categories .tm-category-card:hover,
+.tm-popular-categories .all-categories-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px rgba(6, 27, 86, 0.22) !important;
+    border-color: rgba(244, 169, 17, 0.4) !important;
+}
+
+.tm-popular-categories .tm-category-card .category-title,
+.tm-popular-categories .all-categories-card span,
+.tm-popular-categories .all-categories-card .arrow-indicator {
+    color: #ffffff !important;
+}
+
+.tm-popular-categories .category-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    background-color: rgba(244, 169, 17, 0.12);
+    color: #f4a911;
+}
+
+.tm-popular-categories .category-icon-wrapper i,
+.tm-popular-categories .category-icon-wrapper span {
+    color: #f4a911 !important;
+}
+
+.tm-popular-categories .tm-all-categories-icon {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(244, 169, 17, 0.12);
+    color: #f4a911;
+}
+
+.tm-popular-categories .tm-all-categories-icon i {
+    color: #f4a911 !important;
+}
+
+.tm-popular-categories .all-categories-card .arrow-indicator {
+    opacity: 0.85;
+}
+
+.tm-popular-categories h2 {
+    color: #061B56;
+}
+
+.tm-home-deals-wrap {
+    position: relative;
+    margin: 3rem 0;
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            rgba(244, 169, 17, 0.08) 0 16px,
+            rgba(255, 255, 255, 0.10) 16px 32px
+        ),
+        linear-gradient(135deg, #fff4dc 0%, #ffe3a3 100%);
+    border-top: 1px solid rgba(244, 169, 17, 0.28);
+    border-bottom: 1px solid rgba(244, 169, 17, 0.28);
+    border-radius: 1.35rem;
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+}
+
+.tm-home-deals-wrap .tm-home-deals-section {
+    position: relative;
+    z-index: 1;
+}
+
+.tm-home-deals-wrap .tm-home-deals-link {
+    color: #8f4300;
+    font-weight: 700;
+}
+
+.tm-home-deals-wrap .tm-home-deals-link:hover {
+    color: #6f3300;
+}
+
+.tm-home-deals-wrap .text-tm-accent {
+    color: #d97706 !important;
+}
+
+.tm-home-deals-wrap .tm-home-deals-empty {
+    background: rgba(255, 255, 255, 0.58);
+    border: 1px solid rgba(244, 169, 17, 0.25);
+    backdrop-filter: blur(6px);
 }
