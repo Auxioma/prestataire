@@ -101,47 +101,46 @@
 				<ul class="nav nav-tabs border-bottom gap-2 mb-4" id="settingsTabs" role="tablist">
 					<li class="nav-item" role="presentation">
 						<button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-panel" type="button" role="tab" aria-controls="profile-panel" aria-selected="true">
-							👤 Mon profil
+							<i class="fa-solid fa-user me-2" aria-hidden="true"></i>Mon profil
 						</button>
 					</li>
 
 					<li class="nav-item" role="presentation">
 						<button class="nav-link" id="company-tab" data-bs-toggle="tab" data-bs-target="#company-panel" type="button" role="tab" aria-controls="company-panel" aria-selected="false">
-							🏢 Mon entreprise
+							<i class="fa-solid fa-building me-2" aria-hidden="true"></i>Mon entreprise
 						</button>
 					</li>
 
 					<li class="nav-item" role="presentation">
 						<button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services-panel" type="button" role="tab" aria-controls="services-panel" aria-selected="false">
-							🛠️ Services
+							<i class="fa-solid fa-screwdriver-wrench me-2" aria-hidden="true"></i>Services
 						</button>
 					</li>
 
 					<li class="nav-item" role="presentation">
 						<button class="nav-link" id="zones-tab" data-bs-toggle="tab" data-bs-target="#zones-panel" type="button" role="tab" aria-controls="zones-panel" aria-selected="false">
-							📍 Zones
+							<i class="fa-solid fa-location-dot me-2" aria-hidden="true"></i>Zones
 						</button>
 					</li>
 
 					<li class="nav-item" role="presentation">
 						<button class="nav-link" id="dispo-tab" data-bs-toggle="tab" data-bs-target="#dispo-panel" type="button" role="tab" aria-controls="dispo-panel" aria-selected="false">
-							📅 Disponibilités
+							<i class="fa-solid fa-calendar-days me-2" aria-hidden="true"></i>Disponibilités
 						</button>
 					</li>
 
 					<li class="nav-item" role="presentation">
 						<button class="nav-link" id="notif-tab" data-bs-toggle="tab" data-bs-target="#notif-panel" type="button" role="tab" aria-controls="notif-panel" aria-selected="false">
-							🔔 Notifications
+							<i class="fa-solid fa-bell me-2" aria-hidden="true"></i>Notifications
 						</button>
 					</li>
 
 					<li class="nav-item" role="presentation">
 						<button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-panel" type="button" role="tab" aria-controls="security-panel" aria-selected="false">
-							🛡️ Sécurité
+							<i class="fa-solid fa-shield-halved me-2" aria-hidden="true"></i>Sécurité
 						</button>
 					</li>
 				</ul>
-
 				<div
 					class="tab-content" id="settingsTabsContent">
 					{# ================= PROFILE PANEL ================= #}
@@ -387,7 +386,7 @@
                     }) }}
 					</div>
 
-					{# ================= AUTRES TABS ================= #}
+					{# ================= DISPONIBILITES ================= #}
 					<div class="tab-pane fade" id="dispo-panel" role="tabpanel" aria-labelledby="dispo-tab">
 						{{ include ('settings/_prestataire_availability_tab.html.twig', {
                             availabilityForm: availabilityForm,
@@ -395,6 +394,7 @@
                         }) }}
 					</div>
 
+					{# ================= AUTRES TABS ================= #}
 					<div class="tab-pane fade" id="notif-panel" role="tabpanel" aria-labelledby="notif-tab">
 						<div class="card tm-card p-4">
 							<h4>🔔 Notifications</h4>
