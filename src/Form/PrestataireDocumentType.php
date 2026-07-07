@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class PrestataireDocumentType extends AbstractType
 {
@@ -22,8 +23,9 @@ class PrestataireDocumentType extends AbstractType
             // type de document
             ->add('type', EnumType::class, [
                 'class' => PrestataireDocumentTypeEnum::class,
+                'required' => true,
                 'label' => 'Type de document',
-                'choice_label' => static fn (PrestataireDocumentTypeEnum $choice): string => match ($choice) {
+                'choice_label' => static fn(PrestataireDocumentTypeEnum $choice): string => match ($choice) {
                     PrestataireDocumentTypeEnum::KBIS => 'Extrait Kbis / Justificatif d’entreprise',
                     PrestataireDocumentTypeEnum::RC_PRO => 'Assurance RC Pro',
                     PrestataireDocumentTypeEnum::DECENNALE => 'Attestation décennale',
@@ -32,6 +34,11 @@ class PrestataireDocumentType extends AbstractType
                     PrestataireDocumentTypeEnum::AUTRE => 'Autre document',
                 },
                 'placeholder' => 'Choisir un type',
+                'constraints' => [
+                    new NotNull(
+                        message: 'Veuillez sélectionner un type de document.',
+                    ),
+                ],
             ])
 
             // fichier réel uploadé
@@ -41,14 +48,14 @@ class PrestataireDocumentType extends AbstractType
                 'mapped' => true,
                 'constraints' => [
                     new File(
-                        maxSize : '8M',
-                        mimeTypes : [
+                        maxSize: '8M',
+                        mimeTypes: [
                             'application/pdf',
                             'image/jpeg',
                             'image/png',
                             'image/webp',
                         ],
-                        mimeTypesMessage : 'Veuillez envoyer un PDF, JPG, PNG ou WEBP.',
+                        mimeTypesMessage: 'Veuillez envoyer un PDF, JPG, PNG ou WEBP.',
                     ),
                 ],
             ])
