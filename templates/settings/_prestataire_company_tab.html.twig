@@ -12,8 +12,20 @@
 		<p class="tm-company-page-subtitle mb-0">Gérez les informations et documents de votre structure juridique</p>
 	</div>
 
+	{# Bandeau d’incitation au pré-remplissage par SIRET #}
+	<div class="alert alert-info border-0 shadow-sm mb-4 d-flex align-items-start gap-3" role="alert">
+		<div class="fs-4 lh-1">💡</div>
+		<div>
+			<div class="fw-bold mb-1">Commencez par votre numéro SIRET</div>
+			<p class="mb-0 small">
+				Renseignez d’abord votre SIRET pour récupérer automatiquement les informations officielles de votre entreprise via la base Sirene / INSEE. <br> Cela vous évite de remplir manuellement une grande partie du formulaire.
+			</p>
+		</div>
+	</div>
+
 	<div
-		class="row g-4 match-height">
+		class="row g-4">
+
 		{# Card 1 : Informations Légales & Identité #}
 		<div class="col-lg-6">
 			<section class="card tm-company-card p-4 h-100 d-flex flex-column justify-content-between">
@@ -22,7 +34,48 @@
 						<h3 class="tm-company-card-title mb-0">📋 Identité de l'entreprise</h3>
 					</div>
 
-					<div class="d-flex flex-column gap-3">
+					<div
+						class="d-flex flex-column gap-3">
+
+						{# Bloc prioritaire SIRET #}
+						<div class="p-3 rounded-3 border bg-light-subtle">
+							<div class="row g-3 align-items-end">
+								<div class="col-md-7 tm-form-row">
+									{{ form_row(companyForm.siret) }}
+								</div>
+								<div class="col-md-5 tm-form-row">
+									{{ form_widget(companyForm.verifyCompany, {
+                                        attr: {
+                                            class: 'btn btn-outline-primary w-100'
+                                        }
+                                    }) }}
+								</div>
+							</div>
+
+							<div
+								class="small text-muted mt-2">
+								{# Bandeau de confirmation si entreprise vérifiée et active #}
+								{% if
+        user.prestataireProfile
+        and user.prestataireProfile.verificationStatus == enum('App\\Enum\\VerificationStatusEnum').COMPANY_VERIFIED
+        and user.prestataireProfile.profileStatus == enum('App\\Enum\\PrestataireProfileStatusEnum').ACTIVE
+    %}
+									<div class="alert alert-success border-0 shadow-sm mb-4 d-flex align-items-start gap-3" role="alert">
+										<div class="fs-4 lh-1">✅</div>
+										<div>
+											<div class="fw-bold mb-1">Entreprise vérifiée et active</div>
+											<p class="mb-0 small">
+												Votre SIRET a été vérifié avec succès. Votre entreprise est désormais visible dans le catalogue client.
+											</p>
+										</div>
+									</div>
+								{% else %}
+									<p>
+										Une vérification réussie permet de pré-remplir automatiquement l’identité et les coordonnées administratives de votre entreprise.</p>
+								{% endif %}
+							</div>
+						</div>
+
 						<div class="row g-3">
 							<div class="col-sm-6 tm-form-row">
 								{{ form_row(companyForm.companyName) }}
@@ -32,24 +85,11 @@
 							</div>
 						</div>
 
-						<div class="row g-3 tm-align-inputs-bottom">
-							<div class="col-sm-4 tm-form-row">
+						<div class="row g-3">
+							<div class="col-sm-6 tm-form-row">
 								{{ form_row(companyForm.structureType) }}
 							</div>
-							<div class="col-sm-4 tm-form-row">
-								{{ form_row(companyForm.siret) }}
-							</div>
-							<div class="col-sm-4 tm-form-row d-flex align-items-end">
-								{{ form_widget(companyForm.verifyCompany, {
-            attr: {
-                class: 'btn btn-outline-primary w-100'
-            }
-        }) }}
-							</div>
-						</div>
-
-						<div class="row g-3">
-							<div class="col-12 tm-form-row">
+							<div class="col-sm-6 tm-form-row">
 								{{ form_row(companyForm.vatNumber) }}
 							</div>
 						</div>
@@ -164,93 +204,63 @@
 			</section>
 		</div>
 
-		{# Card 3 : Documents Administratifs #}
-		<div class="col-lg-6">
-			<section class="card tm-company-card p-4 h-100 d-flex flex-column justify-content-between">
-				<div>
-					<div class="tm-company-card-header mb-2 pb-2">
-						<h3 class="tm-company-card-title mb-0">📁 Documents administratifs</h3>
-					</div>
-					<p class="text-muted small mb-3">Justificatifs requis pour la certification de votre profil.</p>
-
-					<div class="tm-company-doc-list">
-						{% set docs = [
-                            {title: "Extrait Kbis / Justificatif d'entreprise", icon: '📄'},
-                            {title: 'Assurance RC Pro', icon: '🛡️'},
-                            {title: 'Attestation décennale', icon: '✅'},
-                        ] %}
-						{% for doc in docs %}
-							<div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-								<div class="d-flex align-items-center gap-2">
-									<span class="fs-5">{{ doc.icon }}</span>
-									<div>
-										<div class="fw-semibold text-dark fs-6" style="line-height: 1.2;">{{ doc.title }}</div>
-										<div class="text-muted fs-7">Ajouté le 12/04/2024</div>
-									</div>
-								</div>
-								<div class="d-flex align-items-center gap-2">
-									<span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill fw-semibold fs-7">Vérifié</span>
-									<button type="button" class="btn btn-light btn-sm px-2 py-1 border fs-7 fw-medium">Voir</button>
-								</div>
-							</div>
-						{% endfor %}
-					</div>
-				</div>
-
-				<button type="button" class="btn btn-sm btn-light border-dashed w-100 mt-4 py-3 text-primary fw-medium">
-					☁️ Ajouter un nouveau document (PDF, JPG, PNG)
-				</button>
-			</section>
-		</div>
-
-		{# Card 4 : Aperçu Public Entreprise #}
-		<div class="col-lg-6">
-			<section class="card tm-company-card p-0 overflow-hidden h-100 d-flex flex-column justify-content-between tm-company-preview-card bg-light-subtle border">
-				<div>
-					<div class="p-4 pb-2">
-						<h3 class="tm-company-card-title mb-0">👁️ Aperçu de votre encart public</h3>
-					</div>
-
-					{% if user.prestataireProfile and user.prestataireProfile.coverImage %}
-						<div class="tm-company-public-cover" style="height: 110px; background-image: url('{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}'); background-size: cover; background-position: center;"></div>
-					{% else %}
-						<div class="tm-company-public-cover" style="height: 110px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
-					{% endif %}
-
-					<div class="p-4 pt-0 position-relative mt-3">
-						<div class="tm-company-public-logo shadow-sm" style="width: 55px; height: 55px; top: -28px; font-size: 1.5rem; overflow: hidden; display: flex; align-items: center; justify-content: center; background-color: #fff; border-radius: 8px;">
-							{% if user.prestataireProfile and user.prestataireProfile.logo %}
-								<img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
-							{% else %}
-								⚡
-							{% endif %}
-						</div>
-
-						<h4 class="tm-company-public-title mb-1 fw-bold text-dark pt-4" style="font-size: 1.25rem;">
-							{{ user.prestataireProfile.companyName|default('Dupont Électricité') }}
-						</h4>
-
-						<p class="text-muted small mb-2 text-truncate-2">
-							{{ user.prestataireProfile.description|default("Entreprise d'électricité générale spécialisée dans l'installation, la rénovation et le dépannage.") }}
+		{# Card 3 : Documents Administratifs, moins dominante #}
+		<div class="col-12">
+			<section class="card tm-company-card p-4 border-light-subtle">
+				<div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-3">
+					<div>
+						<h3 class="tm-company-card-title mb-1">📁 Documents administratifs</h3>
+						<p class="text-muted small mb-0">
+							Ces justificatifs servent à renforcer la confiance et à compléter la certification de votre profil. Vous pourrez les ajouter tranquillement après avoir enregistré vos informations principales.
 						</p>
+					</div>
 
-						<div class="d-flex flex-wrap gap-1 mb-3">
-							<span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 11px;">⭐ 4,8 (142 avis)</span>
-							<span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 11px;">⏱️ Interventions rapides</span>
-						</div>
+					<div class="flex-shrink-0">
+						<button type="button" class="btn btn-sm btn-light border px-3 py-2 fw-medium">
+							☁️ Ajouter un document
+						</button>
 					</div>
 				</div>
 
-				<div class="p-4 py-3 border-top bg-light d-flex justify-content-between align-items-center mt-auto">
-					<span class="small text-muted fw-medium fs-7">Visible par tous les utilisateurs</span>
-					<a href="#" class="small fw-bold text-decoration-none" style="color: var(--tm-service, #2046D8);">Voir le profil complet ↗</a>
+				<div class="row g-3">
+					{% set docs = [
+                        {title: "Extrait Kbis / Justificatif d'entreprise", icon: '📄'},
+                        {title: 'Assurance RC Pro', icon: '🛡️'},
+                        {title: 'Attestation décennale', icon: '✅'},
+                    ] %}
+
+					{% for doc in docs %}
+						<div class="col-md-4">
+							<div class="border rounded-3 p-3 h-100 bg-light-subtle">
+								<div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+									<div class="d-flex align-items-start gap-2">
+										<span class="fs-5">{{ doc.icon }}</span>
+										<div>
+											<div class="fw-semibold text-dark small" style="line-height: 1.3;">{{ doc.title }}</div>
+											<div class="text-muted fs-7">Ajouté le 12/04/2024</div>
+										</div>
+									</div>
+									<span class="badge bg-success-subtle text-success rounded-pill fw-semibold">Vérifié</span>
+								</div>
+
+								<button type="button" class="btn btn-sm btn-light border w-100 mt-2">
+									Voir le document
+								</button>
+							</div>
+						</div>
+					{% endfor %}
 				</div>
 			</section>
 		</div>
 	</div>
 
-	<div class="mt-4 pt-3 border-top d-flex justify-content-center">
-		<button type="submit" class="btn tm-company-save-btn px-5 py-3 fw-bold col-12 col-md-auto">
+	{# Zone d’enregistrement #}
+	<div class="mt-4 pt-3 border-top text-center">
+		<p class="text-muted small fw-semibold mb-3">
+			Pensez à enregistrer vos modifications
+		</p>
+
+		<button type="submit" class="btn btn-primary tm-company-save-btn px-4 py-2 fw-semibold">
 			Enregistrer les informations de l'entreprise
 		</button>
 	</div>
@@ -258,118 +268,96 @@
 
 {# Modal : Vérification de l'entreprise #}
 {% if companyVerificationPreview is defined and companyVerificationPreview %}
-    <div
-        class="modal fade"
-        id="companyVerificationPreviewModal"
-        tabindex="-1"
-        aria-labelledby="companyVerificationPreviewModalLabel"
-        aria-hidden="true"
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
-    >
-        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header">
-                    <div>
-                        <h5 class="modal-title fw-bold" id="companyVerificationPreviewModalLabel">
-                            Vérification de l'entreprise
-                        </h5>
-                        <div class="text-muted small mt-1">
-                            SIRET analysé : {{ companyVerificationPreview.siret }}
-                        </div>
-                    </div>
+	<div class="modal fade" id="companyVerificationPreviewModal" tabindex="-1" aria-labelledby="companyVerificationPreviewModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+			<div class="modal-content border-0 shadow-lg">
+				<div class="modal-header">
+					<div>
+						<h5 class="modal-title fw-bold" id="companyVerificationPreviewModalLabel">
+							Vérification de l'entreprise
+						</h5>
+						<div class="text-muted small mt-1">
+							SIRET analysé :
+							{{ companyVerificationPreview.siret }}
+						</div>
+					</div>
 
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Fermer"
-                    ></button>
-                </div>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+				</div>
 
-                <div class="modal-body">
-                    <div class="alert alert-info border-0 mb-4">
-                        <div class="fw-semibold mb-1">Informations officielles détectées</div>
-                        <div class="small mb-0">
-                            Ces données proviennent de la base officielle Sirene / INSEE. Si elles sont inexactes, une formalité administrative de mise à jour peut être nécessaire avant leur correction dans les bases officielles.
-                        </div>
-                    </div>
+				<div class="modal-body">
+					<div class="alert alert-info border-0 mb-4">
+						<div class="fw-semibold mb-1">Informations officielles détectées</div>
+						<div class="small mb-0">
+							Ces données proviennent de la base officielle Sirene / INSEE. Si elles sont inexactes, une formalité administrative de mise à jour peut être nécessaire avant leur correction dans les bases officielles.
+						</div>
+					</div>
 
-                    <div class="table-responsive">
-                        <table class="table align-middle mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Champ</th>
-                                    <th>Valeur actuelle</th>
-                                    <th>Valeur officielle détectée</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for field in companyVerificationPreview.fields %}
-                                    {% set currentValue = field.current is not null and field.current is not same as('') ? field.current : '—' %}
-                                    {% set incomingValue = field.incoming is not null and field.incoming is not same as('') ? field.incoming : 'Aucune donnée détectée' %}
+					<div class="table-responsive">
+						<table class="table align-middle mb-0">
+							<thead>
+								<tr>
+									<th>Champ</th>
+									<th>Valeur actuelle</th>
+									<th>Valeur officielle détectée</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for field in companyVerificationPreview.fields %}
+									{% set currentValue = field.current is not null and field.current is not same as('') ? field.current : '—' %}
+									{% set incomingValue = field.incoming is not null and field.incoming is not same as('') ? field.incoming : 'Aucune donnée détectée' %}
 
-                                    <tr>
-                                        <td class="fw-semibold">{{ field.label }}</td>
-                                        <td class="text-muted">{{ currentValue }}</td>
-                                        <td>
-                                            {% if field.incoming is not null and field.incoming is not same as('') %}
-                                                <span class="text-dark">{{ incomingValue }}</span>
-                                            {% else %}
-                                                <span class="text-muted fst-italic">{{ incomingValue }}</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+									<tr>
+										<td class="fw-semibold">{{ field.label }}</td>
+										<td class="text-muted">{{ currentValue }}</td>
+										<td>
+											{% if field.incoming is not null and field.incoming is not same as('') %}
+												<span class="text-dark">{{ incomingValue }}</span>
+											{% else %}
+												<span class="text-muted fst-italic">{{ incomingValue }}</span>
+											{% endif %}
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
 
-                    <div class="mt-4 p-3 rounded-3 bg-light border">
-                        <div class="fw-semibold mb-2">Choix proposé</div>
-                        <p class="mb-0 small text-muted">
-                            En acceptant, les informations officielles détectées remplaceront les champs correspondants de votre fiche entreprise. Vous pourrez ensuite les modifier manuellement si nécessaire.
-                        </p>
-                    </div>
-                </div>
+					<div class="mt-4 p-3 rounded-3 bg-light border">
+						<div class="fw-semibold mb-2">Choix proposé</div>
+						<p class="mb-0 small text-muted">
+							En acceptant, les informations officielles détectées remplaceront les champs correspondants de votre fiche entreprise. Vous pourrez ensuite les modifier manuellement si nécessaire.
+						</p>
+					</div>
+				</div>
 
-                <div class="modal-footer">
-                    <button
-                        type="submit"
-                        name="rejectCompanyVerification"
-                        value="1"
-                        class="btn btn-light border"
-                    >
-                        Refuser
-                    </button>
+				<div class="modal-footer">
+					<button type="submit" name="rejectCompanyVerification" value="1" class="btn btn-light border">
+						Refuser
+					</button>
 
-                    <button
-                        type="submit"
-                        name="acceptCompanyVerification"
-                        value="1"
-                        class="btn btn-primary"
-                    >
-                        Accepter le pré-remplissage
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+					<button type="submit" name="acceptCompanyVerification" value="1" class="btn btn-primary">
+						Accepter le pré-remplissage
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endif %}
 
 {% if openCompanyVerificationModal is defined and openCompanyVerificationModal %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const modalElement = document.getElementById('companyVerificationPreviewModal');
-
-            if (!modalElement || typeof bootstrap === 'undefined') {
-                return;
-            }
-
-            const modal = new bootstrap.Modal(modalElement);
-            modal.show();
-        });
-    </script>
+	 <script>
+		        document.addEventListener('DOMContentLoaded', function () {
+		            const modalElement = document.getElementById('companyVerificationPreviewModal');
+		
+		            if (!modalElement || typeof bootstrap === 'undefined') {
+		                return;
+		            }
+		
+		            const modal = new bootstrap.Modal(modalElement);
+		            modal.show();
+		        });
+		    </script>
 {% endif %}
 
 {{ form_end(companyForm, {render_rest: false}) }}

@@ -19,6 +19,8 @@ use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
 use App\Entity\User;
 use App\Enum\FavoriteTypeEnum;
+use App\Enum\PrestataireProfileStatusEnum;
+use App\Enum\VerificationStatusEnum;
 use App\Form\AccountSettingsType;
 use App\Form\PrestataireAvailabilityCollectionType;
 use App\Form\PrestataireCompanyTabType;
@@ -253,6 +255,26 @@ class ProfileController extends AbstractController
                     $prestataireProfile->setSlug(
                         mb_strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName()))
                     );
+                }
+
+                // statut de vérification entreprise
+                $isVerified = !empty($previewPayload['isVerified']);
+                $isActive = !empty($previewPayload['isActive']);
+
+                // entreprise retrouvée dans Sirene
+                if ($isVerified) {
+                    $prestataireProfile->setVerificationStatus(VerificationStatusEnum::COMPANY_VERIFIED);
+                }
+
+                // entreprise retrouvée et établissement actif
+                if ($isVerified && $isActive) {
+                    $prestataireProfile->setProfileStatus(PrestataireProfileStatusEnum::ACTIVE);
+                }
+
+                // entreprise retrouvée mais établissement fermé
+                if ($isVerified && !$isActive) {
+                    $prestataireProfile->setProfileStatus(PrestataireProfileStatusEnum::PENDING_VALIDATION);
+                    $this->addFlash('warning', 'Le SIRET a bien été trouvé, mais l’établissement est indiqué comme fermé dans Sirene. Le profil n’a pas été activé automatiquement.');
                 }
 
                 $entityManager->persist($prestataireProfile);

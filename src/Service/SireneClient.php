@@ -10,8 +10,7 @@ class SireneClient
         private readonly HttpClientInterface $httpClient,
         private readonly string $sireneBaseUrl,
         private readonly string $sireneApiKey,
-    ) {
-    }
+    ) {}
 
     // récupération des données officielles d'un établissement via son SIRET
     public function getEtablissementBySiret(string $siret): array
@@ -51,6 +50,24 @@ class SireneClient
         $uniteLegale = $etablissement['uniteLegale'] ?? [];
         $adresse = $etablissement['adresseEtablissement'] ?? [];
 
+        // période courante de l'établissement
+        $currentPeriodeEtablissement = null;
+        foreach (($etablissement['periodesEtablissement'] ?? []) as $periodeEtablissement) {
+            if (null === ($periodeEtablissement['dateFin'] ?? null)) {
+                $currentPeriodeEtablissement = $periodeEtablissement;
+                break;
+            }
+        }
+
+        // statut administratif de l'établissement
+        $etablissementStatus = $currentPeriodeEtablissement['etatAdministratifEtablissement']
+            ?? $etablissement['etatAdministratifEtablissement']
+            ?? null;
+
+        // vérification métier du SIRET
+        $isVerified = !empty($etablissement['siret']);
+        $isActive = 'A' === $etablissementStatus;
+
         $companyName = $uniteLegale['denominationUniteLegale']
             ?? trim(sprintf(
                 '%s %s %s',
@@ -77,6 +94,12 @@ class SireneClient
 
         return [
             'siret' => $etablissement['siret'] ?? $siret,
+
+            // informations métier sur la vérification
+            'etablissementStatus' => $etablissementStatus,
+            'isVerified' => $isVerified,
+            'isActive' => $isActive,
+
             'fields' => [
                 'companyName' => $companyName ?: null,
                 'legalName' => $legalName ?: null,
