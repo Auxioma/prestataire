@@ -14,6 +14,8 @@ parameters:
     app.elasticsearch_verify_tls: '%env(bool:ELASTICSEARCH_VERIFY_TLS)%'
     app.maintenance_mode: '%env(bool:MAINTENANCE_MODE)%'
     app.maintenance_secret: '%env(default::MAINTENANCE_SECRET)%'
+    app.insee_sirene.base_url: '%env(INSEE_SIRENE_BASE_URL)%'
+    app.insee_sirene.api_key: '%env(INSEE_SIRENE_API_KEY)%'
 
 services:
     # default configuration for services in *this* file
@@ -27,6 +29,8 @@ services:
             bool $verifyTls: '%app.elasticsearch_verify_tls%'
             $realtimeBaseUrl: '%env(string:REALTIME_BASE_URL)%'
             $internalToken: '%env(string:REALTIME_INTERNAL_TOKEN)%'
+            string $sireneBaseUrl: '%app.insee_sirene.base_url%'
+            string $sireneApiKey: '%app.insee_sirene.api_key%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

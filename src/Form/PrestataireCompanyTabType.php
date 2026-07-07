@@ -19,6 +19,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Image;
 use Vich\UploaderBundle\Form\Type\VichImageType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 class PrestataireCompanyTabType extends AbstractType
 {
@@ -40,15 +43,17 @@ class PrestataireCompanyTabType extends AbstractType
                 'required' => false,
                 'attr' => ['placeholder' => 'ex: SAS, SARL, Auto-entrepreneur...'],
             ])
-            ->add('siren', TextType::class, [
-                'label' => 'Numéro SIREN',
-                'required' => false,
-                'attr' => ['placeholder' => 'ex: 123 456 789'],
-            ])
             ->add('siret', TextType::class, [
                 'label' => 'Numéro SIRET',
                 'required' => false,
-                'attr' => ['placeholder' => 'ex: 123 456 789 00012'],
+                'attr' => [
+                    'maxlength' => 14,
+                    'minlength' => 14,
+                    'inputmode' => 'numeric',
+                    'pattern' => '[0-9]{14}',
+                    'placeholder' => 'Ex : 12345678901234',
+                    'autocomplete' => 'off',
+                ],
             ])
             ->add('vatNumber', TextType::class, [
                 'label' => 'Numéro de TVA Intracommunautaire',
@@ -117,7 +122,28 @@ class PrestataireCompanyTabType extends AbstractType
                 'label' => 'Téléphone privé (commandes applicatives)',
                 'required' => false,
                 'attr' => ['placeholder' => 'ex: 06 00 00 00 00'],
+            ])
+            ->add('verifyCompany', SubmitType::class, [
+                'label' => 'Vérifier mon entreprise',
+                'attr' => [
+                    'class' => 'btn btn-outline-primary',
+                ],
             ]);
+
+            $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
+        $data = $event->getData();
+
+        if (!is_array($data)) {
+            return;
+        }
+
+        if (isset($data['siret']) && is_string($data['siret'])) {
+            $data['siret'] = preg_replace('/\D+/', '', $data['siret']);
+            $data['siret'] = mb_substr($data['siret'], 0, 14);
+        }
+
+        $event->setData($data);
+    });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

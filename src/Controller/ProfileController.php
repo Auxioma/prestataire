@@ -42,6 +42,7 @@ use Symfony\UX\Map\InfoWindow;
 use Symfony\UX\Map\Map;
 use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
+use App\Service\SireneClient;
 
 class ProfileController extends AbstractController
 {
@@ -51,14 +52,17 @@ class ProfileController extends AbstractController
         EntityManagerInterface $entityManager,
         ServiceCategoryRepository $categoryRepository,
         FormFactoryInterface $formFactory,
+        SireneClient $sireneClient,
     ): Response {
-        /** @var \App\Entity\User $user */
+    // utilisateur connecté
+        /** @var \App\Entity\User|null $user */
         $user = $this->getUser();
 
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
 
+        // profil prestataire
         if (null === $user->getPrestataireProfile()) {
             $profile = new PrestataireProfile();
             $user->setPrestataireProfile($profile);
@@ -87,27 +91,35 @@ class ProfileController extends AbstractController
         $entityManager->persist($prestataireProfile);
         $entityManager->flush();
 
+        // tri des disponibilités
         $availabilities = $prestataireProfile->getAvailabilities()->toArray();
-        usort($availabilities, static fn(PrestataireAvailability $a, PrestataireAvailability $b): int => $a->getDayOfWeek() <=> $b->getDayOfWeek());
+        usort(
+            $availabilities,
+            static fn(PrestataireAvailability $a, PrestataireAvailability $b): int => $a->getDayOfWeek() <=> $b->getDayOfWeek()
+        );
 
+        // formulaire profil utilisateur
         $userForm = $formFactory->createNamed(
             'user_profile_form',
             \App\Form\UserProfileTabType::class,
             $user
         );
 
+        // formulaire entreprise
         $companyForm = $formFactory->createNamed(
             'company_form',
             PrestataireCompanyTabType::class,
             $prestataireProfile
         );
 
+        // formulaire profil public
         $publicProfileForm = $formFactory->createNamed(
             'public_profile_form',
             \App\Form\PrestatairePublicProfileTabType::class,
             $prestataireProfile
         );
 
+        // formulaire disponibilités
         $availabilityForm = $this->createForm(
             PrestataireAvailabilityCollectionType::class,
             $prestataireProfile,
@@ -117,6 +129,7 @@ class ProfileController extends AbstractController
             ]
         );
 
+        // formulaire ajout de zone
         $zone = new PrestataireInterventionZone();
         $zone->setPrestataireProfile($prestataireProfile);
 
@@ -130,12 +143,18 @@ class ProfileController extends AbstractController
             ]
         );
 
+        // liste des zones
         $zones = $prestataireProfile->getPrestataireInterventionZones();
 
+        // traitement des requêtes formulaires
         $userForm->handleRequest($request);
         $publicProfileForm->handleRequest($request);
         $companyForm->handleRequest($request);
         $availabilityForm->handleRequest($request);
+
+        // état initial de la future modale de prévisualisation
+        $companyVerificationPreview = null;
+        $openCompanyVerificationModal = false;
 
         // infos utilisateur
         if ($userForm->isSubmitted() && $userForm->isValid()) {
@@ -150,7 +169,9 @@ class ProfileController extends AbstractController
         // infos profil public
         if ($publicProfileForm->isSubmitted() && $publicProfileForm->isValid()) {
             if ($prestataireProfile && $prestataireProfile->getCompanyName()) {
-                $prestataireProfile->setSlug(mb_strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName())));
+                $prestataireProfile->setSlug(
+                    mb_strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName()))
+                );
             }
 
             $entityManager->persist($prestataireProfile);
@@ -164,15 +185,156 @@ class ProfileController extends AbstractController
         // infos entreprise
         if ($companyForm->isSubmitted() && $companyForm->isValid()) {
             if ($prestataireProfile && $prestataireProfile->getCompanyName()) {
-                $prestataireProfile->setSlug(mb_strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName())));
+                $prestataireProfile->setSlug(
+                    mb_strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName()))
+                );
             }
 
-            $entityManager->persist($prestataireProfile);
-            $entityManager->flush();
+            // données brutes du formulaire entreprise
+            $companyFormData = $request->request->all('company_form');
 
-            $this->addFlash('success', 'Les informations de l’entreprise ont été enregistrées.');
+            // action : clic sur "Vérifier mon entreprise"
+            $isVerifyCompanyAction = is_array($companyFormData) && isset($companyFormData['verifyCompany']);
 
-            return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'company-panel']);
+            // action : clic sur "Accepter le pré-remplissage"
+            $isAcceptCompanyVerificationAction = $request->request->has('acceptCompanyVerification');
+
+            // action : clic sur "Refuser"
+            $isRejectCompanyVerificationAction = $request->request->has('rejectCompanyVerification');
+
+            // refus du pré-remplissage
+            if ($isRejectCompanyVerificationAction) {
+                $this->addFlash('info', 'Le pré-remplissage automatique a été refusé.');
+
+                return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'company-panel']);
+            }
+
+            // acceptation du pré-remplissage
+            if ($isAcceptCompanyVerificationAction) {
+                $previewPayload = $request->getSession()->get('company_verification_preview');
+
+                if (!is_array($previewPayload) || empty($previewPayload['fields'])) {
+                    $this->addFlash('warning', 'La prévisualisation a expiré. Veuillez relancer la vérification.');
+
+                    return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'company-panel']);
+                }
+
+                $fields = $previewPayload['fields'];
+
+                if (!empty($fields['companyName'])) {
+                    $prestataireProfile->setCompanyName($fields['companyName']);
+                }
+
+                if (!empty($fields['legalName'])) {
+                    $prestataireProfile->setLegalName($fields['legalName']);
+                }
+
+                if (!empty($fields['structureType'])) {
+                    $prestataireProfile->setStructureType($fields['structureType']);
+                }
+
+                if (!empty($fields['address'])) {
+                    $prestataireProfile->setAddress($fields['address']);
+                }
+
+                if (!empty($fields['postalCode'])) {
+                    $prestataireProfile->setPostalCode($fields['postalCode']);
+                }
+
+                if (!empty($fields['city'])) {
+                    $prestataireProfile->setCity($fields['city']);
+                }
+
+                if (!empty($fields['country'])) {
+                    $prestataireProfile->setCountry($fields['country']);
+                }
+
+                if ($prestataireProfile->getCompanyName()) {
+                    $prestataireProfile->setSlug(
+                        mb_strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName()))
+                    );
+                }
+
+                $entityManager->persist($prestataireProfile);
+                $entityManager->flush();
+
+                $request->getSession()->remove('company_verification_preview');
+
+                $this->addFlash('success', 'Les informations officielles de l’entreprise ont été injectées dans votre fiche.');
+
+                return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'company-panel']);
+            }
+
+            // clic sur le bouton de vérification entreprise
+            if ($isVerifyCompanyAction) {
+                $siret = $prestataireProfile->getSiret();
+
+                if (!$siret) {
+                    $this->addFlash('warning', 'Veuillez renseigner un numéro SIRET avant de lancer la vérification.');
+
+                    return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'company-panel']);
+                }
+
+                try {
+                    $previewPayload = $sireneClient->buildCompanyPreviewFromSiret($siret);
+
+                    $companyVerificationPreview = [
+                        'siret' => $previewPayload['siret'],
+                        'fields' => [
+                            [
+                                'label' => 'Nom de l’entreprise / Enseigne',
+                                'current' => $prestataireProfile->getCompanyName(),
+                                'incoming' => $previewPayload['fields']['companyName'] ?? null,
+                            ],
+                            [
+                                'label' => 'Raison sociale',
+                                'current' => $prestataireProfile->getLegalName(),
+                                'incoming' => $previewPayload['fields']['legalName'] ?? null,
+                            ],
+                            [
+                                'label' => 'Forme juridique',
+                                'current' => $prestataireProfile->getStructureType(),
+                                'incoming' => $previewPayload['fields']['structureType'] ?? null,
+                            ],
+                            [
+                                'label' => 'Adresse',
+                                'current' => $prestataireProfile->getAddress(),
+                                'incoming' => $previewPayload['fields']['address'] ?? null,
+                            ],
+                            [
+                                'label' => 'Code postal',
+                                'current' => $prestataireProfile->getPostalCode(),
+                                'incoming' => $previewPayload['fields']['postalCode'] ?? null,
+                            ],
+                            [
+                                'label' => 'Ville',
+                                'current' => $prestataireProfile->getCity(),
+                                'incoming' => $previewPayload['fields']['city'] ?? null,
+                            ],
+                            [
+                                'label' => 'Pays',
+                                'current' => $prestataireProfile->getCountry(),
+                                'incoming' => $previewPayload['fields']['country'] ?? null,
+                            ],
+                        ],
+                    ];
+
+                    $request->getSession()->set('company_verification_preview', $previewPayload);
+                    $openCompanyVerificationModal = true;
+                } catch (\Throwable $e) {
+                    $this->addFlash('danger', $e->getMessage());
+
+                    return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'company-panel']);
+                }
+            } else {
+                // sauvegarde classique entreprise
+                $entityManager->persist($prestataireProfile);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Les informations de l’entreprise ont été enregistrées.');
+
+                return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'company-panel']);
+            }
         }
 
         // disponibilités
@@ -185,7 +347,7 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'dispo-panel']);
         }
 
-        // zone map et radius
+        // carte des zones d’intervention
         $zoneMap = null;
         $firstMappableZone = null;
 
@@ -238,6 +400,7 @@ class ProfileController extends AbstractController
             }
         }
 
+        // rendu de la page paramètres
         return $this->render('profile/prestataire_profile.html.twig', [
             'userForm' => $userForm->createView(),
             'publicProfileForm' => $publicProfileForm->createView(),
@@ -249,6 +412,8 @@ class ProfileController extends AbstractController
             'zoneMap' => $zoneMap,
             'availabilityForm' => $availabilityForm->createView(),
             'availabilities' => $availabilities,
+            'companyVerificationPreview' => $companyVerificationPreview,
+            'openCompanyVerificationModal' => $openCompanyVerificationModal,
         ]);
     }
 

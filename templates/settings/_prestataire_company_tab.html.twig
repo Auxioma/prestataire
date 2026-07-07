@@ -7,245 +7,369 @@
 }) }}
 
 <div class="tm-company-shell">
-    <div class="tm-company-header mb-4">
-        <h2 class="tm-company-page-title mb-1">Mon entreprise</h2>
-        <p class="tm-company-page-subtitle mb-0">Gérez les informations et documents de votre structure juridique</p>
-    </div>
+	<div class="tm-company-header mb-4">
+		<h2 class="tm-company-page-title mb-1">Mon entreprise</h2>
+		<p class="tm-company-page-subtitle mb-0">Gérez les informations et documents de votre structure juridique</p>
+	</div>
 
-    <div class="row g-4 match-height">
-        {# Card 1 : Informations Légales & Identité #}
-        <div class="col-lg-6">
-            <section class="card tm-company-card p-4 h-100 d-flex flex-column justify-content-between">
-                <div>
-                    <div class="tm-company-card-header mb-4 pb-2">
-                        <h3 class="tm-company-card-title mb-0">📋 Identité de l'entreprise</h3>
-                    </div>
+	<div
+		class="row g-4 match-height">
+		{# Card 1 : Informations Légales & Identité #}
+		<div class="col-lg-6">
+			<section class="card tm-company-card p-4 h-100 d-flex flex-column justify-content-between">
+				<div>
+					<div class="tm-company-card-header mb-4 pb-2">
+						<h3 class="tm-company-card-title mb-0">📋 Identité de l'entreprise</h3>
+					</div>
 
-                    <div class="d-flex flex-column gap-3">
-                        <div class="row g-3">
-                            <div class="col-sm-6 tm-form-row">
-                                {{ form_row(companyForm.companyName) }}
-                            </div>
-                            <div class="col-sm-6 tm-form-row">
-                                {{ form_row(companyForm.legalName) }}
-                            </div>
-                        </div>
+					<div class="d-flex flex-column gap-3">
+						<div class="row g-3">
+							<div class="col-sm-6 tm-form-row">
+								{{ form_row(companyForm.companyName) }}
+							</div>
+							<div class="col-sm-6 tm-form-row">
+								{{ form_row(companyForm.legalName) }}
+							</div>
+						</div>
 
-                        <div class="row g-3 tm-align-inputs-bottom">
-                            <div class="col-sm-4 tm-form-row">
-                                {{ form_row(companyForm.structureType) }}
-                            </div>
-                            <div class="col-sm-4 tm-form-row">
-                                {{ form_row(companyForm.siret) }}
-                            </div>
-                        </div>
+						<div class="row g-3 tm-align-inputs-bottom">
+							<div class="col-sm-4 tm-form-row">
+								{{ form_row(companyForm.structureType) }}
+							</div>
+							<div class="col-sm-4 tm-form-row">
+								{{ form_row(companyForm.siret) }}
+							</div>
+							<div class="col-sm-4 tm-form-row d-flex align-items-end">
+								{{ form_widget(companyForm.verifyCompany, {
+            attr: {
+                class: 'btn btn-outline-primary w-100'
+            }
+        }) }}
+							</div>
+						</div>
 
-                        <div class="row g-3">
-                            <div class="col-12 tm-form-row">
-                                {{ form_row(companyForm.vatNumber) }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+						<div class="row g-3">
+							<div class="col-12 tm-form-row">
+								{{ form_row(companyForm.vatNumber) }}
+							</div>
+						</div>
+					</div>
+				</div>
 
-                {# BLOC MÉDIAS #}
-                <div class="tm-company-medias-block mt-4 pt-3 border-top">
-                    <div class="d-flex flex-column gap-4">
+				{# BLOC MÉDIAS #}
+				<div class="tm-company-medias-block mt-4 pt-3 border-top">
+					<div class="d-flex flex-column gap-4">
 
-                        <div class="tm-media-row">
-                            <label class="form-label fw-bold mb-2">Logo de l'entreprise</label>
-                            <div class="d-flex align-items-center gap-3 w-100">
-                                <div class="tm-company-logo-mark m-0 shrink-0">
-                                    {% if user.prestataireProfile and user.prestataireProfile.logo %}
-                                        <img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
-                                    {% else %}
-                                        ⚡
-                                    {% endif %}
-                                </div>
+						<div class="tm-media-row">
+							<label class="form-label fw-bold mb-2">Logo de l'entreprise</label>
+							<div class="d-flex align-items-center gap-3 w-100">
+								<div class="tm-company-logo-mark m-0 shrink-0">
+									{% if user.prestataireProfile and user.prestataireProfile.logo %}
+										<img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
+									{% else %}
+										⚡
+									{% endif %}
+								</div>
 
-                                <div class="grow">
-                                    <div class="tm-vich-custom-container">
-                                        {{ form_widget(companyForm.logoFile, {
+								<div class="grow">
+									<div class="tm-vich-custom-container">
+										{{ form_widget(companyForm.logoFile, {
                                             attr: {class: 'form-control form-control-sm mb-1'},
                                         }) }}
-                                    </div>
-                                    {{ form_errors(companyForm.logoFile) }}
-                                    <div class="text-muted fs-7">Max 2 Mo. (PNG, JPG, WEBP)</div>
-                                </div>
-                            </div>
-                        </div>
+									</div>
+									{{ form_errors(companyForm.logoFile) }}
+									<div class="text-muted fs-7">Max 2 Mo. (PNG, JPG, WEBP)</div>
+								</div>
+							</div>
+						</div>
 
-                        <div class="tm-media-row">
-                            <label class="form-label fw-bold mb-2">Image de couverture</label>
-                            <div class="d-flex align-items-center gap-3 w-100">
-                                <div class="tm-company-cover-mark m-0 shrink-0">
-                                    {% if user.prestataireProfile and user.prestataireProfile.coverImage %}
-                                        <img src="{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}" alt="Couverture" style="width: 100%; height: 100%; object-fit: cover;">
-                                    {% else %}
-                                        🖼️
-                                    {% endif %}
-                                </div>
+						<div class="tm-media-row">
+							<label class="form-label fw-bold mb-2">Image de couverture</label>
+							<div class="d-flex align-items-center gap-3 w-100">
+								<div class="tm-company-cover-mark m-0 shrink-0">
+									{% if user.prestataireProfile and user.prestataireProfile.coverImage %}
+										<img src="{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}" alt="Couverture" style="width: 100%; height: 100%; object-fit: cover;">
+									{% else %}
+										🖼️
+									{% endif %}
+								</div>
 
-                                <div class="grow">
-                                    <div class="tm-vich-custom-container">
-                                        {{ form_widget(companyForm.coverImageFile, {
+								<div class="grow">
+									<div class="tm-vich-custom-container">
+										{{ form_widget(companyForm.coverImageFile, {
                                             attr: {class: 'form-control form-control-sm mb-1'},
                                         }) }}
-                                    </div>
-                                    {{ form_errors(companyForm.coverImageFile) }}
-                                    <div class="text-muted fs-7">Max 3 Mo. Format paysage</div>
-                                </div>
-                            </div>
-                        </div>
+									</div>
+									{{ form_errors(companyForm.coverImageFile) }}
+									<div class="text-muted fs-7">Max 3 Mo. Format paysage</div>
+								</div>
+							</div>
+						</div>
 
-                    </div>
-                </div>
-            </section>
-        </div>
+					</div>
+				</div>
+			</section>
+		</div>
 
-        {# Card 2 : Coordonnées & Contact #}
-        <div class="col-lg-6">
-            <section class="card tm-company-card p-4 h-100 d-flex flex-column justify-content-between">
-                <div>
-                    <div class="tm-company-card-header mb-4 pb-2">
-                        <h3 class="tm-company-card-title mb-0">📍 Coordonnées & Contact</h3>
-                    </div>
+		{# Card 2 : Coordonnées & Contact #}
+		<div class="col-lg-6">
+			<section class="card tm-company-card p-4 h-100 d-flex flex-column justify-content-between">
+				<div>
+					<div class="tm-company-card-header mb-4 pb-2">
+						<h3 class="tm-company-card-title mb-0">📍 Coordonnées & Contact</h3>
+					</div>
 
-                    <div class="d-flex flex-column gap-3">
-                        <div class="row g-3">
-                            <div class="col-12 tm-form-row">
-                                {{ form_row(companyForm.address) }}
-                            </div>
-                        </div>
+					<div class="d-flex flex-column gap-3">
+						<div class="row g-3">
+							<div class="col-12 tm-form-row">
+								{{ form_row(companyForm.address) }}
+							</div>
+						</div>
 
-                        <div class="row g-3">
-                            <div class="col-12 tm-form-row">
-                                {{ form_row(companyForm.addressComplement) }}
-                            </div>
-                        </div>
+						<div class="row g-3">
+							<div class="col-12 tm-form-row">
+								{{ form_row(companyForm.addressComplement) }}
+							</div>
+						</div>
 
-                        <div class="row g-3">
-                            <div class="col-sm-4 tm-form-row">
-                                {{ form_row(companyForm.postalCode) }}
-                            </div>
-                            <div class="col-sm-4 tm-form-row">
-                                {{ form_row(companyForm.city) }}
-                            </div>
-                            <div class="col-sm-4 tm-form-row">
-                                {{ form_row(companyForm.country) }}
-                            </div>
-                        </div>
+						<div class="row g-3">
+							<div class="col-sm-4 tm-form-row">
+								{{ form_row(companyForm.postalCode) }}
+							</div>
+							<div class="col-sm-4 tm-form-row">
+								{{ form_row(companyForm.city) }}
+							</div>
+							<div class="col-sm-4 tm-form-row">
+								{{ form_row(companyForm.country) }}
+							</div>
+						</div>
 
-                        <div class="row g-3">
-                            <div class="col-sm-6 tm-form-row">
-                                {{ form_row(companyForm.phonePublic) }}
-                            </div>
-                            <div class="col-sm-6 tm-form-row">
-                                {{ form_row(companyForm.phonePrivate) }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+						<div class="row g-3">
+							<div class="col-sm-6 tm-form-row">
+								{{ form_row(companyForm.phonePublic) }}
+							</div>
+							<div class="col-sm-6 tm-form-row">
+								{{ form_row(companyForm.phonePrivate) }}
+							</div>
+						</div>
+					</div>
+				</div>
 
-                <div class="tm-company-info-note mt-4 p-3 rounded-3">
-                    <div class="small fw-bold mb-1" style="color: var(--tm-service, #2046D8);">🛡️ Visibilité des données</div>
-                    <p class="mb-0 fs-7 text-muted">
-                        Ces coordonnées permettent à vos futurs clients de vous joindre directement pour planifier les interventions.
-                    </p>
-                </div>
-            </section>
-        </div>
+				<div class="tm-company-info-note mt-4 p-3 rounded-3">
+					<div class="small fw-bold mb-1" style="color: var(--tm-service, #2046D8);">🛡️ Visibilité des données</div>
+					<p class="mb-0 fs-7 text-muted">
+						Ces coordonnées permettent à vos futurs clients de vous joindre directement pour planifier les interventions.
+					</p>
+				</div>
+			</section>
+		</div>
 
-        {# Card 3 : Documents Administratifs #}
-        <div class="col-lg-6">
-            <section class="card tm-company-card p-4 h-100 d-flex flex-column justify-content-between">
-                <div>
-                    <div class="tm-company-card-header mb-2 pb-2">
-                        <h3 class="tm-company-card-title mb-0">📁 Documents administratifs</h3>
-                    </div>
-                    <p class="text-muted small mb-3">Justificatifs requis pour la certification de votre profil.</p>
+		{# Card 3 : Documents Administratifs #}
+		<div class="col-lg-6">
+			<section class="card tm-company-card p-4 h-100 d-flex flex-column justify-content-between">
+				<div>
+					<div class="tm-company-card-header mb-2 pb-2">
+						<h3 class="tm-company-card-title mb-0">📁 Documents administratifs</h3>
+					</div>
+					<p class="text-muted small mb-3">Justificatifs requis pour la certification de votre profil.</p>
 
-                    <div class="tm-company-doc-list">
-                        {% set docs = [
+					<div class="tm-company-doc-list">
+						{% set docs = [
                             {title: "Extrait Kbis / Justificatif d'entreprise", icon: '📄'},
                             {title: 'Assurance RC Pro', icon: '🛡️'},
                             {title: 'Attestation décennale', icon: '✅'},
                         ] %}
-                        {% for doc in docs %}
-                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="fs-5">{{ doc.icon }}</span>
-                                    <div>
-                                        <div class="fw-semibold text-dark fs-6" style="line-height: 1.2;">{{ doc.title }}</div>
-                                        <div class="text-muted fs-7">Ajouté le 12/04/2024</div>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill fw-semibold fs-7">Vérifié</span>
-                                    <button type="button" class="btn btn-light btn-sm px-2 py-1 border fs-7 fw-medium">Voir</button>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
+						{% for doc in docs %}
+							<div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+								<div class="d-flex align-items-center gap-2">
+									<span class="fs-5">{{ doc.icon }}</span>
+									<div>
+										<div class="fw-semibold text-dark fs-6" style="line-height: 1.2;">{{ doc.title }}</div>
+										<div class="text-muted fs-7">Ajouté le 12/04/2024</div>
+									</div>
+								</div>
+								<div class="d-flex align-items-center gap-2">
+									<span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill fw-semibold fs-7">Vérifié</span>
+									<button type="button" class="btn btn-light btn-sm px-2 py-1 border fs-7 fw-medium">Voir</button>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
 
-                <button type="button" class="btn btn-sm btn-light border-dashed w-100 mt-4 py-3 text-primary fw-medium">
-                    ☁️ Ajouter un nouveau document (PDF, JPG, PNG)
-                </button>
-            </section>
-        </div>
+				<button type="button" class="btn btn-sm btn-light border-dashed w-100 mt-4 py-3 text-primary fw-medium">
+					☁️ Ajouter un nouveau document (PDF, JPG, PNG)
+				</button>
+			</section>
+		</div>
 
-        {# Card 4 : Aperçu Public Entreprise #}
-        <div class="col-lg-6">
-            <section class="card tm-company-card p-0 overflow-hidden h-100 d-flex flex-column justify-content-between tm-company-preview-card bg-light-subtle border">
-                <div>
-                    <div class="p-4 pb-2">
-                        <h3 class="tm-company-card-title mb-0">👁️ Aperçu de votre encart public</h3>
-                    </div>
+		{# Card 4 : Aperçu Public Entreprise #}
+		<div class="col-lg-6">
+			<section class="card tm-company-card p-0 overflow-hidden h-100 d-flex flex-column justify-content-between tm-company-preview-card bg-light-subtle border">
+				<div>
+					<div class="p-4 pb-2">
+						<h3 class="tm-company-card-title mb-0">👁️ Aperçu de votre encart public</h3>
+					</div>
 
-                    {% if user.prestataireProfile and user.prestataireProfile.coverImage %}
-                        <div class="tm-company-public-cover" style="height: 110px; background-image: url('{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}'); background-size: cover; background-position: center;"></div>
-                    {% else %}
-                        <div class="tm-company-public-cover" style="height: 110px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
-                    {% endif %}
+					{% if user.prestataireProfile and user.prestataireProfile.coverImage %}
+						<div class="tm-company-public-cover" style="height: 110px; background-image: url('{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}'); background-size: cover; background-position: center;"></div>
+					{% else %}
+						<div class="tm-company-public-cover" style="height: 110px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+					{% endif %}
 
-                    <div class="p-4 pt-0 position-relative mt-3">
-                        <div class="tm-company-public-logo shadow-sm" style="width: 55px; height: 55px; top: -28px; font-size: 1.5rem; overflow: hidden; display: flex; align-items: center; justify-content: center; background-color: #fff; border-radius: 8px;">
-                            {% if user.prestataireProfile and user.prestataireProfile.logo %}
-                                <img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
-                            {% else %}
-                                ⚡
-                            {% endif %}
-                        </div>
+					<div class="p-4 pt-0 position-relative mt-3">
+						<div class="tm-company-public-logo shadow-sm" style="width: 55px; height: 55px; top: -28px; font-size: 1.5rem; overflow: hidden; display: flex; align-items: center; justify-content: center; background-color: #fff; border-radius: 8px;">
+							{% if user.prestataireProfile and user.prestataireProfile.logo %}
+								<img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
+							{% else %}
+								⚡
+							{% endif %}
+						</div>
 
-                        <h4 class="tm-company-public-title mb-1 fw-bold text-dark pt-4" style="font-size: 1.25rem;">
-                            {{ user.prestataireProfile.companyName|default('Dupont Électricité') }}
-                        </h4>
+						<h4 class="tm-company-public-title mb-1 fw-bold text-dark pt-4" style="font-size: 1.25rem;">
+							{{ user.prestataireProfile.companyName|default('Dupont Électricité') }}
+						</h4>
 
-                        <p class="text-muted small mb-2 text-truncate-2">
-                            {{ user.prestataireProfile.description|default("Entreprise d'électricité générale spécialisée dans l'installation, la rénovation et le dépannage.") }}
-                        </p>
+						<p class="text-muted small mb-2 text-truncate-2">
+							{{ user.prestataireProfile.description|default("Entreprise d'électricité générale spécialisée dans l'installation, la rénovation et le dépannage.") }}
+						</p>
 
-                        <div class="d-flex flex-wrap gap-1 mb-3">
-                            <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 11px;">⭐ 4,8 (142 avis)</span>
-                            <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 11px;">⏱️ Interventions rapides</span>
-                        </div>
-                    </div>
-                </div>
+						<div class="d-flex flex-wrap gap-1 mb-3">
+							<span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 11px;">⭐ 4,8 (142 avis)</span>
+							<span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 11px;">⏱️ Interventions rapides</span>
+						</div>
+					</div>
+				</div>
 
-                <div class="p-4 py-3 border-top bg-light d-flex justify-content-between align-items-center mt-auto">
-                    <span class="small text-muted fw-medium fs-7">Visible par tous les utilisateurs</span>
-                    <a href="#" class="small fw-bold text-decoration-none" style="color: var(--tm-service, #2046D8);">Voir le profil complet ↗</a>
-                </div>
-            </section>
-        </div>
-    </div>
+				<div class="p-4 py-3 border-top bg-light d-flex justify-content-between align-items-center mt-auto">
+					<span class="small text-muted fw-medium fs-7">Visible par tous les utilisateurs</span>
+					<a href="#" class="small fw-bold text-decoration-none" style="color: var(--tm-service, #2046D8);">Voir le profil complet ↗</a>
+				</div>
+			</section>
+		</div>
+	</div>
 
-    <div class="mt-4 pt-3 border-top d-flex justify-content-center">
-        <button type="submit" class="btn tm-company-save-btn px-5 py-3 fw-bold col-12 col-md-auto">
-            Enregistrer les informations de l'entreprise
-        </button>
-    </div>
+	<div class="mt-4 pt-3 border-top d-flex justify-content-center">
+		<button type="submit" class="btn tm-company-save-btn px-5 py-3 fw-bold col-12 col-md-auto">
+			Enregistrer les informations de l'entreprise
+		</button>
+	</div>
 </div>
+
+{# Modal : Vérification de l'entreprise #}
+{% if companyVerificationPreview is defined and companyVerificationPreview %}
+    <div
+        class="modal fade"
+        id="companyVerificationPreviewModal"
+        tabindex="-1"
+        aria-labelledby="companyVerificationPreviewModalLabel"
+        aria-hidden="true"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+    >
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title fw-bold" id="companyVerificationPreviewModalLabel">
+                            Vérification de l'entreprise
+                        </h5>
+                        <div class="text-muted small mt-1">
+                            SIRET analysé : {{ companyVerificationPreview.siret }}
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Fermer"
+                    ></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="alert alert-info border-0 mb-4">
+                        <div class="fw-semibold mb-1">Informations officielles détectées</div>
+                        <div class="small mb-0">
+                            Ces données proviennent de la base officielle Sirene / INSEE. Si elles sont inexactes, une formalité administrative de mise à jour peut être nécessaire avant leur correction dans les bases officielles.
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Champ</th>
+                                    <th>Valeur actuelle</th>
+                                    <th>Valeur officielle détectée</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for field in companyVerificationPreview.fields %}
+                                    {% set currentValue = field.current is not null and field.current is not same as('') ? field.current : '—' %}
+                                    {% set incomingValue = field.incoming is not null and field.incoming is not same as('') ? field.incoming : 'Aucune donnée détectée' %}
+
+                                    <tr>
+                                        <td class="fw-semibold">{{ field.label }}</td>
+                                        <td class="text-muted">{{ currentValue }}</td>
+                                        <td>
+                                            {% if field.incoming is not null and field.incoming is not same as('') %}
+                                                <span class="text-dark">{{ incomingValue }}</span>
+                                            {% else %}
+                                                <span class="text-muted fst-italic">{{ incomingValue }}</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-4 p-3 rounded-3 bg-light border">
+                        <div class="fw-semibold mb-2">Choix proposé</div>
+                        <p class="mb-0 small text-muted">
+                            En acceptant, les informations officielles détectées remplaceront les champs correspondants de votre fiche entreprise. Vous pourrez ensuite les modifier manuellement si nécessaire.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button
+                        type="submit"
+                        name="rejectCompanyVerification"
+                        value="1"
+                        class="btn btn-light border"
+                    >
+                        Refuser
+                    </button>
+
+                    <button
+                        type="submit"
+                        name="acceptCompanyVerification"
+                        value="1"
+                        class="btn btn-primary"
+                    >
+                        Accepter le pré-remplissage
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% if openCompanyVerificationModal is defined and openCompanyVerificationModal %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modalElement = document.getElementById('companyVerificationPreviewModal');
+
+            if (!modalElement || typeof bootstrap === 'undefined') {
+                return;
+            }
+
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        });
+    </script>
+{% endif %}
 
 {{ form_end(companyForm, {render_rest: false}) }}

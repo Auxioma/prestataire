@@ -23,6 +23,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
 use App\Entity\PrestataireAppointment;
+use App\Enum\DocumentVerificationStatusEnum;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 #[ORM\Entity(repositoryClass: PrestataireProfileRepository::class)]
@@ -59,6 +61,14 @@ class PrestataireProfile
     private ?string $siren = null;
 
     #[ORM\Column(length: 14, nullable: true, unique: true)]
+    #[Assert\Length(
+        exactly: 14,
+        exactMessage: 'Le numéro SIRET doit contenir exactement 14 chiffres.'
+    )]
+    #[Assert\Regex(
+        pattern: '/^\d{14}$/',
+        message: 'Le numéro SIRET doit contenir uniquement 14 chiffres.'
+    )]
     private ?string $siret = null;
 
     #[ORM\Column(length: 50, nullable: true)]
@@ -174,6 +184,18 @@ class PrestataireProfile
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $experience = null;
 
+    #[ORM\Column(type: 'string', length: 50, enumType: DocumentVerificationStatusEnum::class)]
+    private ?DocumentVerificationStatusEnum $documentVerificationStatus = DocumentVerificationStatusEnum::NOT_SUBMITTED;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $companyLastVerificationAt = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $companyVerificationSource = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $companyVerificationNote = null;
+
     /**
      * @var Collection<int, PrestataireService>
      */
@@ -213,6 +235,7 @@ class PrestataireProfile
         $this->availabilities = new ArrayCollection();
         $this->appointments = new ArrayCollection();
         $this->quoteRequests = new ArrayCollection();
+        $this->documentVerificationStatus = DocumentVerificationStatusEnum::NOT_SUBMITTED;
     }
 
     // --- AVAILABILITY ---
@@ -757,6 +780,54 @@ class PrestataireProfile
     public function setExperience(?string $experience): static
     {
         $this->experience = $experience;
+
+        return $this;
+    }
+
+    public function getDocumentVerificationStatus(): ?DocumentVerificationStatusEnum
+    {
+        return $this->documentVerificationStatus;
+    }
+
+    public function setDocumentVerificationStatus(DocumentVerificationStatusEnum $documentVerificationStatus): static
+    {
+        $this->documentVerificationStatus = $documentVerificationStatus;
+
+        return $this;
+    }
+
+    public function getCompanyLastVerificationAt(): ?\DateTimeImmutable
+    {
+        return $this->companyLastVerificationAt;
+    }
+
+    public function setCompanyLastVerificationAt(?\DateTimeImmutable $companyLastVerificationAt): static
+    {
+        $this->companyLastVerificationAt = $companyLastVerificationAt;
+
+        return $this;
+    }
+
+    public function getCompanyVerificationSource(): ?string
+    {
+        return $this->companyVerificationSource;
+    }
+
+    public function setCompanyVerificationSource(?string $companyVerificationSource): static
+    {
+        $this->companyVerificationSource = $companyVerificationSource;
+
+        return $this;
+    }
+
+    public function getCompanyVerificationNote(): ?string
+    {
+        return $this->companyVerificationNote;
+    }
+
+    public function setCompanyVerificationNote(?string $companyVerificationNote): static
+    {
+        $this->companyVerificationNote = $companyVerificationNote;
 
         return $this;
     }
