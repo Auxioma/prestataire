@@ -231,3 +231,223 @@
     top: 50%;
     transform: translateY(-50%);
 }
+
+/* =========================================
+   DOCUMENTS ADMINISTRATIFS — VERSION COMPACTE
+   ========================================= */
+
+.tm-document-card-compact {
+    overflow: hidden;
+}
+
+.tm-document-card-compact .tm-company-card-title {
+    margin-bottom: 0.15rem;
+}
+
+.tm-document-card-compact .text-muted.small {
+    font-size: 0.82rem;
+    line-height: 1.35;
+}
+
+/* Carte ajout document */
+.tm-document-upload-card {
+    padding: 0.85rem !important;
+}
+
+.tm-document-upload-card h4 {
+    margin-bottom: 0.5rem !important;
+}
+
+.tm-document-upload-card .tm-form-row {
+    margin-bottom: 0;
+}
+
+.tm-document-upload-card .form-label {
+    margin-bottom: 0.2rem;
+    font-size: 0.80rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.tm-document-upload-card .form-control,
+.tm-document-upload-card .form-select {
+    padding-top: 0.32rem;
+    padding-bottom: 0.32rem;
+    font-size: 0.875rem;
+}
+
+.tm-document-upload-card .form-control-sm,
+.tm-document-upload-card .form-select-sm {
+    min-height: calc(1.45em + .42rem + 2px);
+}
+
+.tm-document-upload-card .form-text,
+.tm-document-upload-card .invalid-feedback {
+    margin-top: 0.15rem;
+    font-size: 0.74rem;
+    line-height: 1.2;
+}
+
+.tm-document-upload-card textarea,
+.tm-document-notes-input {
+    min-height: 56px !important;
+    resize: vertical;
+}
+
+/* Colonne type */
+.tm-document-type-col .form-select {
+    max-width: 100%;
+}
+
+/* Zone visibilité */
+.tm-document-visibility-col {
+    display: flex;
+    align-items: stretch;
+}
+
+.tm-document-visibility-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 100%;
+    padding-top: 0.15rem;
+}
+
+.tm-document-visibility-title {
+    margin-bottom: 0.35rem;
+    font-size: 0.80rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #212529;
+}
+
+.tm-document-checkbox-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.tm-document-checkbox-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.tm-document-checkbox-fake {
+    width: 14px;
+    height: 14px;
+    min-width: 14px;
+    border: 1.5px solid #9aa4b2;
+    border-radius: 3px;
+    background: #fff;
+    display: inline-block;
+    position: relative;
+    transition: all 0.15s ease;
+    margin-top: 1px;
+}
+
+.tm-document-checkbox-text {
+    font-size: 0.79rem;
+    line-height: 1.15;
+    color: #6c757d;
+}
+
+.tm-document-checkbox-input:checked + .tm-document-checkbox-fake {
+    background: #2046D8;
+    border-color: #2046D8;
+}
+
+.tm-document-checkbox-input:checked + .tm-document-checkbox-fake::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0px;
+    width: 4px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.tm-document-checkbox-input:focus + .tm-document-checkbox-fake {
+    outline: 2px solid rgba(32, 70, 216, 0.15);
+    outline-offset: 2px;
+}
+
+/* Bouton ajouter */
+.tm-document-upload-card .btn.btn-sm {
+    padding: 0.38rem 0.9rem;
+    font-size: 0.82rem;
+}
+
+/* Carte liste documents */
+.tm-document-list-card {
+    padding: 0.8rem !important;
+}
+
+.tm-document-list-card h4 {
+    margin-bottom: 0 !important;
+}
+
+.tm-document-list-card .badge {
+    font-size: 0.70rem;
+    font-weight: 500;
+}
+
+.tm-document-list-card .text-truncate {
+    max-width: 180px;
+}
+
+/* Items de la liste */
+.tm-document-list-item {
+    padding: 0.55rem 0.65rem !important;
+}
+
+.tm-document-list-item .small {
+    font-size: 0.77rem;
+    line-height: 1.2;
+}
+
+.tm-document-list-item .btn-sm {
+    padding: 0.18rem 0.45rem;
+    font-size: 0.74rem;
+}
+
+/* Réduction globale des espacements */
+.tm-document-card-compact .row.g-3 {
+    --bs-gutter-y: 0.75rem;
+}
+
+.tm-document-upload-card .row.g-2 {
+    --bs-gutter-y: 0.45rem;
+    --bs-gutter-x: 0.55rem;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+    .tm-document-list-card {
+        margin-top: 0.25rem;
+    }
+
+    .tm-document-list-card .text-truncate {
+        max-width: 100%;
+    }
+
+    .tm-document-visibility-box {
+        padding-top: 0;
+    }
+}
+
+.tm-document-list-item form {
+    margin: 0;
+}
+
+.tm-document-list-item .btn-outline-danger.btn-sm {
+    padding: 0.18rem 0.45rem;
+    font-size: 0.74rem;
+    line-height: 1.2;
+}

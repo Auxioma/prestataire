@@ -25,6 +25,8 @@ use Vich\UploaderBundle\Mapping\Attribute as Vich;
 use App\Entity\PrestataireAppointment;
 use App\Enum\DocumentVerificationStatusEnum;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\PrestataireDocument;
+
 
 
 #[ORM\Entity(repositoryClass: PrestataireProfileRepository::class)]
@@ -220,6 +222,17 @@ class PrestataireProfile
     #[ORM\OneToMany(mappedBy: 'prestataire', targetEntity: QuoteRequest::class)]
     private Collection $quoteRequests;
 
+    /**
+     * @var Collection<int, PrestataireDocument>
+     */
+    #[ORM\OneToMany(
+        mappedBy: 'prestataireProfile',
+        targetEntity: PrestataireDocument::class,
+        orphanRemoval: true,
+        cascade: ['persist', 'remove']
+    )]
+    private Collection $documents;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -236,6 +249,7 @@ class PrestataireProfile
         $this->appointments = new ArrayCollection();
         $this->quoteRequests = new ArrayCollection();
         $this->documentVerificationStatus = DocumentVerificationStatusEnum::NOT_SUBMITTED;
+        $this->documents = new ArrayCollection();
     }
 
     // --- AVAILABILITY ---
@@ -984,6 +998,35 @@ class PrestataireProfile
         if ($this->quoteRequests->removeElement($quoteRequest)) {
             if ($quoteRequest->getPrestataire() === $this) {
                 $quoteRequest->setPrestataire(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PrestataireDocument>
+     */
+    public function getDocuments(): Collection
+    {
+        return $this->documents;
+    }
+
+    public function addDocument(PrestataireDocument $document): static
+    {
+        if (!$this->documents->contains($document)) {
+            $this->documents->add($document);
+            $document->setPrestataireProfile($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDocument(PrestataireDocument $document): static
+    {
+        if ($this->documents->removeElement($document)) {
+            if ($document->getPrestataireProfile() === $this) {
+                $document->setPrestataireProfile(null);
             }
         }
 

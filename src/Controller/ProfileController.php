@@ -14,6 +14,7 @@ namespace App\Controller;
 
 use App\Entity\ClientProfile;
 use App\Entity\PrestataireAvailability;
+use App\Entity\PrestataireDocument;
 use App\Entity\PrestataireInterventionZone;
 use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
@@ -31,6 +32,7 @@ use App\Repository\PrestataireProfileRepository;
 use App\Repository\PrestataireServiceRepository;
 use App\Repository\ServiceCategoryRepository;
 use App\Repository\ServiceRepository;
+use App\Service\SireneClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -44,7 +46,6 @@ use Symfony\UX\Map\InfoWindow;
 use Symfony\UX\Map\Map;
 use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
-use App\Service\SireneClient;
 
 class ProfileController extends AbstractController
 {
@@ -145,6 +146,27 @@ class ProfileController extends AbstractController
             ]
         );
 
+        // formulaire ajout document
+        $document = new PrestataireDocument();
+        $document->setPrestataireProfile($prestataireProfile);
+
+        $documentForm = $formFactory->createNamed(
+            'document_form',
+            \App\Form\PrestataireDocumentType::class,
+            $document,
+            [
+                'action' => $this->generateUrl('app_prestataire_settings'),
+                'method' => 'POST',
+            ]
+        );
+
+        // documents existants
+        $documents = $prestataireProfile->getDocuments()->toArray();
+        usort(
+            $documents,
+            static fn(PrestataireDocument $a, PrestataireDocument $b): int => ($b->getCreatedAt()?->getTimestamp() ?? 0) <=> ($a->getCreatedAt()?->getTimestamp() ?? 0)
+        );
+
         // liste des zones
         $zones = $prestataireProfile->getPrestataireInterventionZones();
 
@@ -153,10 +175,31 @@ class ProfileController extends AbstractController
         $publicProfileForm->handleRequest($request);
         $companyForm->handleRequest($request);
         $availabilityForm->handleRequest($request);
+        $documentForm->handleRequest($request);
 
-        // état initial de la future modale de prévisualisation
+        // état initial de la modale de prévisualisation
         $companyVerificationPreview = null;
         $openCompanyVerificationModal = false;
+
+        // documents administratifs
+        if ($documentForm->isSubmitted()) {
+            if ($documentForm->isValid()) {
+                $document->setPrestataireProfile($prestataireProfile);
+                $prestataireProfile->addDocument($document);
+
+                $entityManager->persist($document);
+                $entityManager->persist($prestataireProfile);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Le document a bien été ajouté.');
+
+                return $this->redirectToRoute('app_prestataire_settings', [
+                    '_fragment' => 'company-panel',
+                ]);
+            }
+
+            $this->addFlash('danger', 'Le document n’a pas pu être ajouté. Vérifiez les champs du formulaire.');
+        }
 
         // infos utilisateur
         if ($userForm->isSubmitted() && $userForm->isValid()) {
@@ -170,7 +213,7 @@ class ProfileController extends AbstractController
 
         // infos profil public
         if ($publicProfileForm->isSubmitted() && $publicProfileForm->isValid()) {
-            if ($prestataireProfile && $prestataireProfile->getCompanyName()) {
+            if ($prestataireProfile->getCompanyName()) {
                 $prestataireProfile->setSlug(
                     mb_strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName()))
                 );
@@ -186,7 +229,7 @@ class ProfileController extends AbstractController
 
         // infos entreprise
         if ($companyForm->isSubmitted() && $companyForm->isValid()) {
-            if ($prestataireProfile && $prestataireProfile->getCompanyName()) {
+            if ($prestataireProfile->getCompanyName()) {
                 $prestataireProfile->setSlug(
                     mb_strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName()))
                 );
@@ -196,7 +239,7 @@ class ProfileController extends AbstractController
             $companyFormData = $request->request->all('company_form');
 
             // action : clic sur "Vérifier mon entreprise"
-            $isVerifyCompanyAction = is_array($companyFormData) && isset($companyFormData['verifyCompany']);
+            $isVerifyCompanyAction = is_array($companyFormData) && array_key_exists('verifyCompany', $companyFormData);
 
             // action : clic sur "Accepter le pré-remplissage"
             $isAcceptCompanyVerificationAction = $request->request->has('acceptCompanyVerification');
@@ -436,6 +479,8 @@ class ProfileController extends AbstractController
             'availabilities' => $availabilities,
             'companyVerificationPreview' => $companyVerificationPreview,
             'openCompanyVerificationModal' => $openCompanyVerificationModal,
+            'documentForm' => $documentForm->createView(),
+            'documents' => $documents,
         ]);
     }
 
@@ -654,6 +699,56 @@ class ProfileController extends AbstractController
             'favoriteProviders' => $favoriteProviders,
             'favoritePrestations' => $favoritePrestations,
             'favoriteBonsPlans' => $favoriteBonsPlans,
+        ]);
+    }
+
+    #[Route('/prestataire/document/{id}/supprimer', name: 'app_prestataire_document_delete', methods: ['POST'])]
+    public function deleteDocument(
+        Request $request,
+        PrestataireDocument $document,
+        EntityManagerInterface $entityManager,
+    ): Response {
+    // utilisateur connecté
+        /** @var \App\Entity\User|null $user */
+        $user = $this->getUser();
+
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        // profil prestataire courant
+        $prestataireProfile = $user->getPrestataireProfile();
+
+        if (!$prestataireProfile) {
+            $this->addFlash('danger', 'Profil prestataire introuvable.');
+
+            return $this->redirectToRoute('app_prestataire_settings', [
+                '_fragment' => 'company-panel',
+            ]);
+        }
+
+        // sécurité : le document doit appartenir au prestataire connecté
+        if ($document->getPrestataireProfile()?->getId() !== $prestataireProfile->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer ce document.');
+        }
+
+        // validation CSRF
+        if (!$this->isCsrfTokenValid('delete_document_' . $document->getId(), $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Le jeton CSRF est invalide. Veuillez réessayer.');
+
+            return $this->redirectToRoute('app_prestataire_settings', [
+                '_fragment' => 'company-panel',
+            ]);
+        }
+
+        // suppression document
+        $entityManager->remove($document);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le document a bien été supprimé.');
+
+        return $this->redirectToRoute('app_prestataire_settings', [
+            '_fragment' => 'company-panel',
         ]);
     }
 }
