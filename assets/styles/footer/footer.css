@@ -1,103 +1,229 @@
-.tm-footer-container {
-    background-color: #061b56 !important;
+.tmv2-footer {
+  background: var(--tmv2-encre, #0a1633);
+  color: #b9c4dc;
+  padding: 4.5rem 0 0;
+  margin-top: auto;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Animations des liens de navigation */
-.tm-footer-link {
-    color: rgba(255, 255, 255, 0.5);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: inline-block;
+.tmv2-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(520px 260px at 92% 8%, rgba(30, 73, 199, 0.22), transparent 60%),
+    radial-gradient(380px 220px at 6% 100%, rgba(255, 138, 30, 0.08), transparent 62%);
+  pointer-events: none;
 }
 
-.tm-footer-link:hover {
-    color: #ffffff !important;
-    transform: translateX(5px);
+.tmv2-footer > .container-fluid {
+  position: relative;
+  z-index: 1;
 }
 
-/* Effets boutons réseaux sociaux */
-.tm-footer-social-btn {
-    transition: transform 0.3s ease, background-color 0.3s ease;
-}
-.tm-footer-social-btn:hover {
-    transform: translateY(-3px);
-    background-color: rgba(255,255,255,0.1);
+.tmv2-footer__top {
+  padding-bottom: 3.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
 }
 
-/* Effet sur l'icône cœur */
-.tm-footer-heart-pulse {
-    animation: tm-footer-heart-beat 1.5s infinite;
+.tmv2-footer__brand {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
-@keyframes tm-footer-heart-beat {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
+.tmv2-footer__logo-link {
+  display: inline-flex;
+  align-items: center;
 }
 
-/* Bordure verticale responsive */
-@media(min-width: 1200px) {
-    .tm-footer-border-xl {
-        border-left: 1px solid rgba(255, 255, 255, 0.1);
-    }
+.tmv2-footer__logo-image {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+}
+
+.tmv2-footer__baseline {
+  margin: 1rem 0 0;
+  max-width: 290px;
+  color: #b9c4dc;
+  font-size: 0.92rem;
+  line-height: 1.75;
+}
+
+.tmv2-footer__socials {
+  display: flex;
+  gap: 0.65rem;
+  margin-top: 1.4rem;
+  flex-wrap: wrap;
+}
+
+.tmv2-footer__social-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.tmv2-footer__social-btn:hover {
+  background: var(--tmv2-safran, #ff8a1e);
+  color: var(--tmv2-encre, #0a1633);
+  transform: translateY(-2px);
+}
+
+.tmv2-footer__col,
+.tmv2-footer__contact-wrap {
+  height: 100%;
+}
+
+.tmv2-footer__title {
+  margin: 0 0 1rem;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.tmv2-footer__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tmv2-footer__links li + li {
+  margin-top: 0.45rem;
+}
+
+.tmv2-footer__link {
+  color: #b9c4dc;
+  text-decoration: none;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  transition: color 0.16s ease, transform 0.16s ease;
+}
+
+.tmv2-footer__link:hover {
+  color: var(--tmv2-safran, #ff8a1e);
+}
+
+.tmv2-footer__link--highlight {
+  color: #fff;
+  font-weight: 700;
+}
+
+.tmv2-footer__link--highlight:hover {
+  color: var(--tmv2-safran, #ff8a1e);
+}
+
+.tmv2-footer__contact {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tmv2-footer__contact li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  color: #b9c4dc;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.tmv2-footer__contact li + li {
+  margin-top: 0.95rem;
+}
+
+.tmv2-footer__contact i {
+  color: var(--tmv2-safran, #ff8a1e);
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+  font-size: 0.95rem;
+}
+
+.tmv2-footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  flex-wrap: wrap;
+  padding: 1.45rem 0 1.2rem;
+}
+
+.tmv2-footer__copyright {
+  margin: 0;
+  color: #8fa0c2;
+  font-size: 0.84rem;
+}
+
+.tmv2-footer__madein {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  color: #b9c4dc;
+  font-size: 0.84rem;
+}
+
+.tmv2-footer__heart {
+  color: #ff5c7a;
+  animation: tmv2FooterPulse 1.6s ease-in-out infinite;
+}
+
+.tmv2-footer__flag {
+  display: inline-block;
+  width: 16px;
+  height: 11px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #002395 33%, #ffffff 33%, #ffffff 66%, #ed2939 66%);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+@keyframes tmv2FooterPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.14);
+    opacity: 0.82;
+  }
+}
+
+@media (max-width: 1199.98px) {
+  .tmv2-footer__top {
+    row-gap: 2.5rem;
+  }
 }
 
 @media (max-width: 767.98px) {
-    /* Centre tout le footer sur mobile */
-    .tm-footer-container {
-        text-align: center;
-    }
+  .tmv2-footer {
+    padding-top: 3.5rem;
+  }
 
-    /* Centre les listes de liens */
-    .tm-footer-container ul {
-        align-items: center !important;
-    }
+  .tmv2-footer__top {
+    padding-bottom: 2.4rem;
+  }
 
-    /* Centre la zone de réseaux sociaux */
-    .tm-footer-container .d-flex.gap-2 {
-        justify-content: center;
-    }
+  .tmv2-footer__baseline {
+    max-width: none;
+  }
 
-    /* Ajuste la zone du copyright en bas */
-    .tm-footer-container .flex-column {
-        gap: 15px;
-    }
-}
+  .tmv2-footer__title {
+    margin-bottom: 0.85rem;
+  }
 
-/* Optionnel : si le footer fait trop "chargé" sur mobile */
-@media (max-width: 576px) {
-    .tm-footer-container h5 {
-        margin-top: 1rem;
-    }
-}
-
-/* --- FORCAGE RESPONSIVE FOOTER --- */
-@media (max-width: 991px) {
-    .tm-footer-container .row {
-        display: flex !important;
-        flex-direction: column !important;
-    }
-
-    .tm-footer-container .row > div {
-        flex: 0 0 100% !important;
-        max-width: 100% !important;
-        width: 100% !important;
-        margin-bottom: 30px !important; /* Espace vertical entre les blocs */
-        text-align: center !important;
-    }
-
-    /* Centre les listes de liens */
-    .tm-footer-container .list-unstyled {
-        align-items: center !important;
-    }
-
-    /* Centre les icônes réseaux sociaux */
-    .tm-footer-container .d-flex.gap-2 {
-        justify-content: center !important;
-    }
-
-    /* Supprime la bordure de gauche sur mobile */
-    .tm-footer-border-xl {
-        border-left: none !important;
-        padding-left: 0 !important;
-    }
+  .tmv2-footer__bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.2rem 0 1rem;
+  }
 }

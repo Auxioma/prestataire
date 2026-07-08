@@ -13,8 +13,14 @@ export default class extends Controller {
         this.debounceTimer = null;
         this.activeIndex = -1;
         this.items = [];
+        this.portalEl = null;
+
         this.boundClose = this.handleOutsideClick.bind(this);
+        this.boundReposition = this.positionPortal.bind(this);
+
         document.addEventListener('click', this.boundClose);
+        window.addEventListener('resize', this.boundReposition);
+        window.addEventListener('scroll', this.boundReposition, true);
     }
 
     disconnect() {
@@ -27,6 +33,10 @@ export default class extends Controller {
         }
 
         document.removeEventListener('click', this.boundClose);
+        window.removeEventListener('resize', this.boundReposition);
+        window.removeEventListener('scroll', this.boundReposition, true);
+
+        this.removePortal();
     }
 
     update() {
@@ -65,7 +75,7 @@ export default class extends Controller {
     }
 
     onQueryKeydown(event) {
-        if (!this.hasSuggestionsTarget || this.items.length === 0 || this.isHidden()) {
+        if (this.items.length === 0 || this.isHidden()) {
             return;
         }
 
@@ -146,16 +156,14 @@ export default class extends Controller {
     }
 
     renderSuggestions() {
-        if (!this.hasSuggestionsTarget) {
-            return;
-        }
-
         if (this.items.length === 0) {
             this.hideSuggestions();
             return;
         }
 
-        this.suggestionsTarget.innerHTML = this.items.map((item, index) => {
+        const container = this.ensurePortal();
+
+        container.innerHTML = this.items.map((item, index) => {
             const title = this.escapeHtml(item.companyName || item.metier || 'Suggestion');
             const subtitleParts = [
                 item.metier || '',
@@ -172,15 +180,25 @@ export default class extends Controller {
                     class="tm-homepage-search-suggestion${index === this.activeIndex ? ' is-active' : ''}"
                     data-index="${index}"
                 >
-                    <span class="tm-homepage-search-suggestion__title">${title}</span>
-                    ${subtitle ? `<span class="tm-homepage-search-suggestion__meta">${subtitle}</span>` : ''}
+                    <span class="tm-homepage-search-suggestion__icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                            <circle cx="11" cy="11" r="7"></circle>
+                            <path d="m21 21-4.3-4.3"></path>
+                        </svg>
+                    </span>
+                    <span class="tm-homepage-search-suggestion__content">
+                        <span class="tm-homepage-search-suggestion__title">${title}</span>
+                        ${subtitle ? `<span class="tm-homepage-search-suggestion__meta">${subtitle}</span>` : ''}
+                    </span>
                 </button>
             `;
         }).join('');
 
         this.suggestionsTarget.hidden = false;
+        container.hidden = false;
+        this.positionPortal();
 
-        this.suggestionsTarget.querySelectorAll('[data-index]').forEach((button) => {
+        container.querySelectorAll('[data-index]').forEach((button) => {
             button.addEventListener('mousedown', (event) => {
                 event.preventDefault();
             });
@@ -204,22 +222,60 @@ export default class extends Controller {
     }
 
     handleOutsideClick(event) {
-        if (!this.element.contains(event.target)) {
+        const clickedInPortal = this.portalEl && this.portalEl.contains(event.target);
+        if (!this.element.contains(event.target) && !clickedInPortal) {
             this.hideSuggestions();
         }
     }
 
     hideSuggestions() {
-        if (!this.hasSuggestionsTarget) {
-            return;
+        if (this.hasSuggestionsTarget) {
+            this.suggestionsTarget.hidden = true;
+            this.suggestionsTarget.innerHTML = '';
         }
 
-        this.suggestionsTarget.hidden = true;
-        this.suggestionsTarget.innerHTML = '';
+        if (this.portalEl) {
+            this.portalEl.hidden = true;
+            this.portalEl.innerHTML = '';
+        }
     }
 
     isHidden() {
-        return this.suggestionsTarget.hidden || this.suggestionsTarget.childElementCount === 0;
+        return !this.portalEl || this.portalEl.hidden || this.portalEl.childElementCount === 0;
+    }
+
+    ensurePortal() {
+        if (this.portalEl) {
+            return this.portalEl;
+        }
+
+        this.portalEl = document.createElement('div');
+        this.portalEl.className = 'tm-homepage-search-suggestions-portal';
+        this.portalEl.hidden = true;
+        document.body.appendChild(this.portalEl);
+
+        return this.portalEl;
+    }
+
+    positionPortal() {
+        if (!this.portalEl || this.portalEl.hidden || !this.hasQueryTarget) {
+            return;
+        }
+
+        const rect = this.queryTarget.getBoundingClientRect();
+
+        this.portalEl.style.position = 'fixed';
+        this.portalEl.style.top = `${rect.bottom + 12}px`;
+        this.portalEl.style.left = `${rect.left}px`;
+        this.portalEl.style.width = `${Math.max(rect.width, 360)}px`;
+        this.portalEl.style.zIndex = '999999';
+    }
+
+    removePortal() {
+        if (this.portalEl && this.portalEl.parentNode) {
+            this.portalEl.parentNode.removeChild(this.portalEl);
+        }
+        this.portalEl = null;
     }
 
     escapeHtml(value) {

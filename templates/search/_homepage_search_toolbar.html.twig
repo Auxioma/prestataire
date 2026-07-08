@@ -16,78 +16,123 @@
                 }) }}
 
                     <div class="tm-homepage-search-field tm-homepage-search-field--query">
-                        {{ form_label(formView.query, null, {
-                            label_attr: { class: 'tm-homepage-search-label' }
-                        }) }}
-                        <div class="tm-homepage-search-control">
-                            {{ form_widget(formView.query, {
-                                attr: {
-                                    class: 'tm-homepage-search-input',
-                                    placeholder: 'Ex. plomberie, jardinage...',
-                                    autocomplete: 'off',
-                                    'data-homepage-search-target': 'query',
-                                    'data-action': 'input->homepage-search#onQueryInput keydown->homepage-search#onQueryKeydown'
-                                }
+                        <span class="tm-homepage-search-field-icon" aria-hidden="true">
+                            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                                <circle cx="11" cy="11" r="7"/>
+                                <path d="m21 21-4.3-4.3"/>
+                            </svg>
+                        </span>
+
+                        <div class="tm-homepage-search-field-body">
+                            {{ form_label(formView.query, null, {
+                                label_attr: { class: 'tm-homepage-search-label' }
                             }) }}
-                            <div
-                                class="tm-homepage-search-suggestions"
-                                data-homepage-search-target="suggestions"
-                                hidden
-                            ></div>
+
+                            <div class="tm-homepage-search-control">
+                                {{ form_widget(formView.query, {
+                                    attr: {
+                                        class: 'tm-homepage-search-input',
+                                        placeholder: 'Ex. plomberie, jardinage...',
+                                        autocomplete: 'off',
+                                        'data-homepage-search-target': 'query',
+                                        'data-action': 'input->homepage-search#onQueryInput keydown->homepage-search#onQueryKeydown'
+                                    }
+                                }) }}
+
+                                <div
+                                    class="tm-homepage-search-suggestions"
+                                    data-homepage-search-target="suggestions"
+                                    hidden
+                                ></div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="tm-homepage-search-field tm-homepage-search-field--category">
-                        {{ form_label(formView.subCategory, null, {
-                            label_attr: { class: 'tm-homepage-search-label' }
-                        }) }}
-                        <div class="tm-homepage-search-control">
-                            {{ form_widget(formView.subCategory, {
-                                attr: {
-                                    class: 'tm-homepage-search-select'
-                                }
+                        <span class="tm-homepage-search-field-icon" aria-hidden="true">
+                            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 7h16"/>
+                                <path d="M4 12h16"/>
+                                <path d="M4 17h10"/>
+                            </svg>
+                        </span>
+
+                        <div class="tm-homepage-search-field-body">
+                            {{ form_label(formView.subCategory, null, {
+                                label_attr: { class: 'tm-homepage-search-label' }
                             }) }}
+
+                            <div class="tm-homepage-search-control">
+                                {{ form_widget(formView.subCategory, {
+                                    attr: {
+                                        class: 'tm-homepage-search-select'
+                                    }
+                                }) }}
+                            </div>
                         </div>
                     </div>
 
                     <div class="tm-homepage-search-field tm-homepage-search-field--location">
-                        {{ form_label(formView.location, null, {
-                            label_attr: { class: 'tm-homepage-search-label' }
-                        }) }}
-                        <div class="tm-homepage-search-control">
-                            {{ form_widget(formView.location, {
-                                attr: {
-                                    class: 'tm-homepage-search-input',
-                                    placeholder: 'Ville ou code postal...'
-                                }
+                        <span class="tm-homepage-search-field-icon" aria-hidden="true">
+                            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/>
+                                <circle cx="12" cy="10" r="2.6"/>
+                            </svg>
+                        </span>
+
+                        <div class="tm-homepage-search-field-body">
+                            {{ form_label(formView.location, null, {
+                                label_attr: { class: 'tm-homepage-search-label' }
                             }) }}
+
+                            <div class="tm-homepage-search-control">
+                                {{ form_widget(formView.location, {
+                                    attr: {
+                                        class: 'tm-homepage-search-input',
+                                        placeholder: 'Ville ou code postal...'
+                                    }
+                                }) }}
+                            </div>
                         </div>
                     </div>
 
                     <div class="tm-homepage-search-field tm-homepage-search-field--radius">
-                        <div class="tm-homepage-search-radius-head">
-                            {{ form_label(formView.radiusKm, null, {
-                                label_attr: { class: 'tm-homepage-search-label mb-0' }
-                            }) }}
-                            <span class="tm-homepage-search-radius-value" data-homepage-search-target="value">
-                                {{ formView.radiusKm.vars.value ?: 25 }} km
-                            </span>
-                        </div>
+                        <span class="tm-homepage-search-field-icon" aria-hidden="true">
+                            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 3a9 9 0 1 0 9 9"/>
+                                <path d="M12 7v5l3 3"/>
+                            </svg>
+                        </span>
 
-                        <div class="tm-homepage-search-radius-wrap">
-                            {{ form_widget(formView.radiusKm, {
-                                attr: {
-                                    class: 'tm-homepage-search-range',
-                                    'data-homepage-search-target': 'range',
-                                    'data-action': 'input->homepage-search#update change->homepage-search#update'
-                                }
-                            }) }}
+                        <div class="tm-homepage-search-field-body tm-homepage-search-field-body--radius">
+                            <div class="tm-homepage-search-radius-head">
+                                {{ form_label(formView.radiusKm, null, {
+                                    label_attr: { class: 'tm-homepage-search-label mb-0' }
+                                }) }}
+                                <span class="tm-homepage-search-radius-value" data-homepage-search-target="value">
+                                    {{ formView.radiusKm.vars.value ?: 25 }} km
+                                </span>
+                            </div>
+
+                            <div class="tm-homepage-search-radius-wrap">
+                                {{ form_widget(formView.radiusKm, {
+                                    attr: {
+                                        class: 'tm-homepage-search-range',
+                                        'data-homepage-search-target': 'range',
+                                        'data-action': 'input->homepage-search#update change->homepage-search#update'
+                                    }
+                                }) }}
+                            </div>
                         </div>
                     </div>
 
                     <div class="tm-homepage-search-action">
                         <button type="submit" class="tm-homepage-search-submit">
-                            {{ submitLabel }}
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+                                <circle cx="11" cy="11" r="7"/>
+                                <path d="m21 21-4.3-4.3"/>
+                            </svg>
+                            <span>{{ submitLabel }}</span>
                         </button>
                     </div>
 

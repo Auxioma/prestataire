@@ -1,19 +1,26 @@
-<footer class="text-white pb-3 mt-auto tm-footer-container" data-controller="footer">
+<footer class="tmv2-footer" data-controller="footer">
     <div class="container-fluid px-md-5">
-        <div
-            class="row justify-content-xl-between pt-4">
+        <div class="tmv2-footer__top row justify-content-xl-between pt-4 gy-5">
 
             {# Colonne 1 : Logo #}
             <div class="col-xl-3 col-lg-4 col-md-6">
-                <div class="d-flex align-items-center mb-3">
-                    <a class="navbar-brand tm-navbar__brand" href="{{ path('app_home') }}">
-                        <img src="{{ asset('images/logo_trouvemoipresta.png') }}" alt="Logo TrouveMoi" class="tm-navbar__brand-logo">
+                <div class="tmv2-footer__brand">
+                    <a class="tmv2-footer__logo-link" href="{{ path('app_home') }}" aria-label="TrouveMoi.com">
+                        <img src="{{ asset('images/logo_trouvemoipresta.png') }}"
+                             alt="Logo TrouveMoi"
+                             class="tmv2-footer__logo-image">
                     </a>
                 </div>
-                <p class="text-white-50 small lh-lg mb-3">La plateforme qui connecte les clients avec les meilleurs professionnels.</p>
-                <div class="d-flex gap-2">
+
+                <p class="tmv2-footer__baseline">
+                    La plateforme qui connecte les clients avec les meilleurs professionnels.
+                </p>
+
+                <div class="tmv2-footer__socials">
                     {% for icon in ['facebook-f', 'instagram', 'linkedin-in'] %}
-                        <a href="#" class="btn btn-outline-light btn-sm rounded-circle tm-footer-social-btn d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                        <a href="#"
+                           class="tmv2-footer__social-btn"
+                           aria-label="{{ icon }}">
                             <i class="fa-brands fa-{{ icon }}"></i>
                         </a>
                     {% endfor %}
@@ -33,55 +40,61 @@
                     {label: 'Avantages', slug: 'avantages'},
                     {label: 'Ressources', slug: 'ressources'},
                 ],
-                Informations: [
+                'Informations': [
                     {label: 'À propos de nous', slug: 'about'},
                     {label: 'CGU', slug: 'cgu'},
                     {label: 'Politique de confidentialité', slug: 'privacy'},
                     {label: 'Mentions légales', slug: 'legal'},
-                    {label: "Besoin d'aide ?", slug: 'help', class: 'text-teal fw-bold'},
+                    {label: "Besoin d'aide ?", slug: 'help', class: 'tmv2-footer__link--highlight'},
                 ],
             } %}
 
             {% for title, links in footer_links %}
-                <div class="col-xl-auto col-lg-2 col-md-6 col-12 mb-4 mb-md-0">
-                    <h5 class="text-white fs-6 mb-3 fw-bold">{{ title }}</h5>
-                    <ul class="list-unstyled small d-flex flex-column gap-2">
-                        {% for link in links %}
-                            <li>
-                                <a href="{{ path('app_static_page', {slug: link.slug}) }}" class="tm-footer-link text-decoration-none {{ link.class|default('') }}">
-                                    {{ link.label }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
+                <div class="col-xl-auto col-lg-2 col-md-6 col-12">
+                    <div class="tmv2-footer__col">
+                        <h3 class="tmv2-footer__title">{{ title }}</h3>
+                        <ul class="tmv2-footer__links">
+                            {% for link in links %}
+                                <li>
+                                    <a href="{{ path('app_static_page', {slug: link.slug}) }}"
+                                       class="tmv2-footer__link {{ link.class|default('') }}">
+                                        {{ link.label }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             {% endfor %}
 
             {# Contact #}
-            <div class="col-xl-2 col-lg-3 col-md-6 col-12 tm-footer-border-xl ps-xl-4">
-                <h5 class="text-white fs-6 mb-3 fw-bold">Besoin d'aide ?</h5>
-                <ul class="list-unstyled small d-flex flex-column gap-3 text-white-50">
-                    <li>
-                        <i class="fa-solid fa-phone me-2"></i>
-                        01 84 80 52 98</li>
-                    <li>
-                        <i class="fa-regular fa-envelope me-2"></i>
-                        contact@trouvemoi.com</li>
-                </ul>
+            <div class="col-xl-2 col-lg-3 col-md-6 col-12">
+                <div class="tmv2-footer__contact-wrap">
+                    <h3 class="tmv2-footer__title">Besoin d'aide ?</h3>
+                    <ul class="tmv2-footer__contact">
+                        <li>
+                            <i class="fa-solid fa-phone"></i>
+                            <span>01 84 80 52 98</span>
+                        </li>
+                        <li>
+                            <i class="fa-regular fa-envelope"></i>
+                            <span>contact@trouvemoi.com</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
 
-        <hr class="border-secondary">
+        <div class="tmv2-footer__bottom">
+            <p class="tmv2-footer__copyright">
+                &copy; {{ 'now'|date('Y') }} TrouveMoi.com - Tous droits réservés
+            </p>
 
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center small text-white-50">
-            <p>&copy;
-                {{ 'now'|date('Y') }}
-                TrouveMoi.com - Tous droits réservés</p>
-            <div class="d-flex align-items-center gap-2">
-                <span>Fait avec
-                    <i class="fa-solid fa-heart text-danger tm-footer-heart-pulse"></i>
-                    en France</span>
-                <span style="display: inline-block; width: 16px; height: 11px; background: linear-gradient(90deg, #002395 33%, #fff 33%, #fff 66%, #ed2939 66%); border-radius: 1px;"></span>
+            <div class="tmv2-footer__madein">
+                <span>
+                    Fait avec <i class="fa-solid fa-heart tmv2-footer__heart"></i> en France
+                </span>
+                <span class="tmv2-footer__flag" aria-hidden="true"></span>
             </div>
         </div>
     </div>

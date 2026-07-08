@@ -5,170 +5,164 @@
 
 {% block body %}
 	<div
-		class="homepage-wrapper">
+		class="tm-homepage-v2">
 
-		{# 1. SECTION HERO AVEC IMAGE D'ARRIÈRE-PLAN #}
-		<div class="hero-section position-relative text-white">
-			<div class="container py-4">
-				<div class="row">
-					<div class="col-lg-7 text-start">
-						<h1 class="display-5 fw-extrabold mb-3 hero-title">
-							Trouvez le prestataire idéal
-							<br>
-							<span class="text-tm-accent">pour tous vos projets</span>
-						</h1>
+		{# HERO #}
+		<section class="tmv2-hero">
+			<div class="container tmv2-hero__inner mb-4">
+				<div class="tmv2-hero__content">
+					<span class="tmv2-eyebrow">TrouveMoi</span>
 
-						<p class="fs-5 mb-4 opacity-90 max-w-540 hero-lead">
-							Des professionnels de confiance pour vous accompagner dans tous vos besoins, partout en France.
-						</p>
+					<h1 class="tmv2-hero__title">
+						Le bon prestataire, trouvé en
+						<span>
+							une phrase</span>
+					</h1>
 
-						<div class="d-flex flex-wrap gap-2 hero-badges-group">
-							<span class="badge hero-badge">
-								<i class="fa-solid fa-circle-plus text-tm-accent me-1"></i>
-								+
-								<span data-controller="counter-up" data-counter-up-target="number" data-counter-up-target-value="120000" class="tm-counter-digit">0</span>
-								prestataires
-							</span>
+					<p class="tmv2-hero__lead">
+						Des professionnels de confiance pour vous accompagner dans tous vos besoins, partout en France.
+					</p>
 
-							<span class="badge hero-badge">
-								<i class="fa-solid fa-star text-tm-accent me-1"></i>
-								Avis clients vérifiés
-							</span>
+					<div class="tmv2-hero__badges">
+						<span class="tmv2-pill">
+							<i class="fa-solid fa-circle-plus"></i>
+							+ 1200
+														prestataires
+						</span>
 
-							<span class="badge hero-badge">
-								<i class="fa-solid fa-file-invoice text-tm-accent me-1"></i>
-								Devis gratuits
-							</span>
+						<span class="tmv2-pill">
+							<i class="fa-solid fa-file-invoice"></i>
+							Devis gratuits
+						</span>
 
-							<span class="badge hero-badge">
-								<i class="fa-solid fa-shield-halved text-tm-accent me-1"></i>
-								Paiement sécurisé
-							</span>
+						<span class="tmv2-pill">
+							<i class="fa-solid fa-shield-halved"></i>
+							Paiement sécurisé
+						</span>
+					</div>
+				</div>
+
+				<div class="tmv2-hero__visual d-none d-lg-flex" aria-hidden="true">
+					<div class="tmv2-pro-card">
+						<div class="tmv2-pro-card__avatar">TM</div>
+						<h3>Prestataires vérifiés</h3>
+						<p>Comparez les profils, les avis et les disponibilités en quelques clics.</p>
+						<ul class="tmv2-pro-card__tags" role="list">
+							<li>Rapide</li>
+							<li>Fiable</li>
+							<li>Sécurisé</li>
+						</ul>
+					</div>
+
+					<div class="tmv2-floating tmv2-floating--top">
+						<span class="tmv2-floating__icon">
+							<i class="fa-solid fa-check"></i>
+						</span>
+						<div>
+							<strong>Devis acceptés</strong>
+							<small>en temps réel</small>
+						</div>
+					</div>
+
+					<div class="tmv2-floating tmv2-floating--bottom">
+						<span class="tmv2-floating__icon tmv2-floating__icon--blue">
+							<i class="fa-solid fa-bolt"></i>
+						</span>
+						<div>
+							<strong>Demandes traitées</strong>
+							<small>partout en France</small>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+			{# RECHERCHE #}
+			<div class="container tmv2-search-wrap mt-auto">
+				{% include 'search/_homepage_search_toolbar.html.twig' with {
+                formView: homepageSearchForm,
+                toolbarClass: 'tm-homepage-search-toolbar--home'
+            } only %}
+			</div>
+		</section>
 
-		{# BARRE DE RECHERCHE #}
-		<div class="container">
-			{% include 'search/_homepage_search_toolbar.html.twig' with {
-        formView: homepageSearchForm,
-        toolbarClass: 'tm-homepage-search-toolbar--home'
-    } only %}
-		</div>
 
 		{# CHIFFRES CLÉS #}
-		<div class="container tm-stats-container">
-			<section class="tm-stats-showcase tm-stats-showcase--compact">
-				<div class="row g-3 align-items-stretch">
-					<div class="col-lg-4">
-						<div class="tm-stats-intro tm-stats-intro--compact h-100">
-							<div class="tm-stats-intro__badge">
-								<i class="fa-solid fa-chart-line"></i>
-								TrouveMoi en chiffres
+		<section class="tmv2-chiffres-strip">
+			{% set quickStats = [
+        {
+            value: '120 000+',
+            label: 'prestataires actifs',
+            icon: 'users'
+        },
+        {
+            value: '890 000',
+            label: 'avis clients vérifiés',
+            icon: 'star'
+        },
+        {
+            value: '< 2 h',
+            label: 'de délai moyen de réponse',
+            icon: 'bolt'
+        },
+        {
+            value: '100 %',
+            label: 'des paiements sécurisés',
+            icon: 'shield'
+        }
+    ] %}
+
+			<div class="container">
+				<div class="tmv2-chiffres-strip__inner">
+					{% for stat in quickStats %}
+						<article class="tmv2-chiffre-item">
+							<span class="tmv2-chiffre-item__icon" aria-hidden="true">
+								{% if stat.icon == 'users' %}
+									<svg width="22" height="22" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+										<circle cx="9" cy="8" r="3.5"/>
+										<path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/>
+										<path d="M16 4a3.5 3.5 0 0 1 0 7"/>
+										<path d="M18 14.7c2.4.7 4 2.3 4 5.3"/>
+									</svg>
+								{% elseif stat.icon == 'star' %}
+									<svg width="22" height="22" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/>
+									</svg>
+								{% elseif stat.icon == 'bolt' %}
+									<svg width="22" height="22" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M13 2 4 14h6l-1 8 9-12h-6z"/>
+									</svg>
+								{% elseif stat.icon == 'shield' %}
+									<svg width="22" height="22" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/>
+										<path d="m9 12 2 2 4-4"/>
+									</svg>
+								{% endif %}
+							</span>
+
+							<div class="tmv2-chiffre-item__content">
+								<div class="tmv2-chiffre-item__value">{{ stat.value }}</div>
+								<div class="tmv2-chiffre-item__label">{{ stat.label }}</div>
 							</div>
-
-							<h2 class="tm-stats-intro__title">
-								Des résultats concrets pour vos projets
-							</h2>
-
-							<p class="tm-stats-intro__text">
-								Trouvez, comparez et contactez rapidement des professionnels fiables partout en France.
-							</p>
-
-							<div class="tm-stats-intro__highlights">
-								<span>
-									<i class="fa-solid fa-circle-check"></i>
-									Devis simples</span>
-								<span>
-									<i class="fa-solid fa-circle-check"></i>
-									Profils vérifiés</span>
-								<span>
-									<i class="fa-solid fa-circle-check"></i>
-									Réponse rapide</span>
-							</div>
-
-							<div class="tm-stats-intro__media">
-								<img src="{{ asset('images/worker-group.png') }}" alt="Professionnels TrouveMoi" class="tm-stats-intro__image">
-							</div>
-						</div>
-					</div>
-
-					<div class="col-lg-8">
-						{% set stats = [
-    {
-        icon: 'fa-users',
-        val: '1,200+',
-        label: 'Prestataires actifs',
-        note: 'Partout en France',
-        image: asset('images/worker-team.png'),
-        chip: 'Réseau',
-        chipClass: 'tm-stat-chip--network'
-    },
-    {
-        icon: 'fa-briefcase',
-        val: '8,500+',
-        label: 'Projets publiés',
-        note: 'Demandes variées',
-        image: asset('images/worker-petsitter.png'),
-        chip: 'Activité',
-        chipClass: 'tm-stat-chip--activity'
-    },
-    {
-        icon: 'fa-star',
-        val: '98%',
-        label: 'Satisfaction',
-        note: 'Avis très positifs',
-        image: asset('images/worker-satisfaction.png'),
-        chip: 'Confiance',
-        chipClass: 'tm-stat-chip--trust'
-    },
-    {
-        icon: 'fa-bolt',
-        val: '< 2h',
-        label: 'Temps de réponse',
-        note: 'Réactivité moyenne',
-        image: asset('images/worker-dev.png'),
-        chip: 'Rapidité',
-        chipClass: 'tm-stat-chip--speed'
-    }
-] %}
-
-						<div class="row g-3 h-100">
-							{% for stat in stats %}
-								<div class="col-sm-6">
-									<div class="tm-stat-card tm-stat-card--compact tm-stat-card--visual h-100">
-										<div class="tm-stat-card__top">
-											<div class="tm-stat-icon-wrap">
-												<i class="fa-solid {{ stat.icon }} tm-stat-icon"></i>
-											</div>
-											<span class="tm-stat-chip {{ stat.chipClass }}">{{ stat.chip }}</span>
-										</div>
-
-										<h3 class="tm-stat-value">{{ stat.val }}</h3>
-										<p class="tm-stat-label">{{ stat.label }}</p>
-										<p class="tm-stat-note">{{ stat.note }}</p>
-
-										<div class="tm-stat-card__visual">
-											<img src="{{ stat.image }}" alt="{{ stat.label }}" class="tm-stat-card__visual-image">
-										</div>
-									</div>
-								</div>
-							{% endfor %}
-						</div>
-					</div>
+						</article>
+					{% endfor %}
 				</div>
-			</section>
-		</div>
+			</div>
+		</section>
 
-		{# 3. SECTION CATÉGORIES POPULAIRES #}
-		<div class="container main-content-section tm-popular-categories">
-			<div class="mb-4 text-start">
-				<h2 class="fw-extrabold h4 mb-1 text-dark tracking-tight">Catégories populaires</h2>
+		{# CATÉGORIES #}
+		<section class="container tmv2-section tmv2-categories-section">
+			<div class="tmv2-section-head tmv2-section-head--split">
+				<div>
+					<span class="tmv2-eyebrow tmv2-eyebrow--blue">Catégories populaires</span>
+					<h2 class="tmv2-section-title">Un pro pour chaque besoin</h2>
+				</div>
+
+				<a href="{{ path('app_category_index') }}" class="tmv2-arrow-link">
+					Voir toutes les catégories
+					<i class="fa-solid fa-arrow-right"></i>
+				</a>
 			</div>
 
-			{% set raw_categories = (categories ?? [])|slice(0, 20) %}
+			{% set raw_categories = (categories ?? [])|slice(0, 10) %}
 			{% set fallback_cats = [
         {name: 'Bâtiment & Travaux', icon: 'fa-hammer'},
         {name: 'Déménagement', icon: 'fa-truck-ramp-box'},
@@ -179,483 +173,441 @@
         {name: 'Bien-être', icon: 'fa-heart-pulse'},
         {name: 'Cours & Formations', icon: 'fa-book-open'},
         {name: 'Mécanique', icon: 'fa-wrench'},
-        {name: 'Animaux', icon: 'fa-dog'},
+        {name: 'Animaux', icon: 'fa-dog'}
     ] %}
 
 			{% set display_categories = raw_categories is not empty ? raw_categories : fallback_cats %}
 
-			<div class="d-flex align-items-stretch gap-3 w-100">
-				<div class="tm-categories-slider grow position-relative" data-controller="categories-carousel" data-categories-carousel-step-value="1" style="min-width: 0;">
-					<div class="tm-categories-viewport" data-categories-carousel-target="viewport">
-						<div class="tm-categories-track" data-categories-carousel-target="track">
-							{% for category in display_categories %}
-								<div class="tm-category-item" data-categories-carousel-target="item">
-									<a href="{{ category.slug is defined ? path('app_category_show', {slug: category.slug}) : '#' }}" class="card h-100 border-0 shadow-sm p-3 text-decoration-none tm-category-card rounded-3 d-flex flex-column align-items-center justify-content-center">
-										<div class="d-flex align-items-center justify-content-center rounded-circle mb-2 category-icon-wrapper">
-											{% if category.icon %}
-												<i class="fa-solid {{ category.icon }} fs-3"></i>
-											{% else %}
-												<span class="fw-bold fs-5">{{ category.name|first|upper }}</span>
-											{% endif %}
-										</div>
-										<span class="text-center fw-bold category-title px-1">{{ category.name }}</span>
-									</a>
-								</div>
-							{% endfor %}
-						</div>
-					</div>
-				</div>
+			<div class="tmv2-categories-grid">
+				{% for category in display_categories %}
+					<a href="{{ category.slug is defined ? path('app_category_show', {slug: category.slug}) : '#' }}" class="tmv2-category-card text-decoration-none">
+						<span class="tmv2-category-card__icon">
+							{% if category.icon %}
+								<i class="fa-solid {{ category.icon }}"></i>
+							{% else %}
+								<span>{{ category.name|first|upper }}</span>
+							{% endif %}
+						</span>
 
-				<div style="width: 160px; min-width: 160px; flex-shrink: 0;">
-					<a href="{{ path('app_category_index') }}" class="card h-100 border p-2 text-decoration-none rounded-3 d-flex flex-column align-items-center justify-content-center gap-2 shadow-sm all-categories-card text-center">
-						<div class="rounded-circle d-flex align-items-center justify-content-center tm-all-categories-icon">
-							<i class="fa-solid fa-grid-2"></i>
-						</div>
-						<span class="fw-extrabold small lh-sm">Voir toutes<br>les catégories</span>
-						<i class="fa-solid fa-chevron-right arrow-indicator small"></i>
+						<h3 class="tmv2-category-card__title">{{ category.name }}</h3>
+
+						<p class="tmv2-category-card__meta">
+							Découvrir la catégorie
+						</p>
 					</a>
-				</div>
+				{% endfor %}
 			</div>
-		</div>
+		</section>
 
-		{# 4. SECTION PRESTATAIRES À LA UNE & ASIDE #}
-		<div class="container my-5 pb-5">
-			<div class="row gy-4 gx-lg-5">
-				<div class="col-xl-9 col-lg-8">
-					<div class="d-flex justify-content-between align-items-center mb-4">
-						<h2 class="fw-extrabold h4 mb-0 text-dark tracking-tight">
-							Prestataires à la une
-							<span class="text-tm-accent">
-								<i class="fa-solid fa-star"></i>
-							</span>
-						</h2>
-						<a href="{{ path('app_prestataire_browse') }}" class="text-tm-service fw-bold text-decoration-none small d-flex align-items-center gap-1 view-all-link">
-							Voir tous les prestataires
-							<i class="fa-solid fa-chevron-right fs-7"></i>
-						</a>
-					</div>
+{# PRESTATAIRES à la une #}
+<section class="container tmv2-section mb-4">
+    <div class="tmv2-section-head tmv2-section-head--split">
+        <div>
+            <span class="tmv2-eyebrow tmv2-eyebrow--blue">Prestataires à la une</span>
+            <h2 class="tmv2-section-title">Les mieux notés du moment</h2>
+        </div>
+        <a href="{{ path('app_prestataire_browse') }}" class="tmv2-arrow-link">
+            Voir tous les prestataires
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+    </div>
 
-					<div class="row g-3" data-controller="scroll-reveal">
-						{% for provider in providers|slice(0, 4) %}
-							<div class="col-md-6 col-xl-3" data-scroll-reveal-target="element">
-								<div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden bg-white position-relative provider-card">
+    <div class="row g-3" data-controller="scroll-reveal">
+        {% for provider in providers|slice(0, 4) %}
+            <div class="col-md-6 col-xl-3" data-scroll-reveal-target="element">
+                <article class="tmv2-provider-card h-100 position-relative">
+                    <a href="{{ path('app_prestataire_show', {slug: provider.slug}) }}" class="stretched-link"></a>
 
-									<a href="{{ path('app_prestataire_show', {slug: provider.slug}) }}" class="stretched-link"></a>
+                    {% set isFavorite = provider.id in (favoriteProviderIds|default([])) %}
+                    <button
+                        type="button"
+                        class="btn btn-light favorite-btn border-0 shadow-sm"
+                        data-controller="favorite-toggle"
+                        data-action="click->favorite-toggle#toggle"
+                        data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}"
+                        data-favorite-toggle-type-value="prestataire"
+                        data-favorite-toggle-target-id-value="{{ provider.id }}"
+                        data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}"
+                        data-favorite-toggle-is-favorite-value="{{ isFavorite ? 'true' : 'false' }}"
+                        data-favorite-toggle-login-url-value="{{ path('app_login') }}"
+                        aria-pressed="{{ isFavorite ? 'true' : 'false' }}"
+                        aria-label="{{ isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' }}"
+                    >
+                        <i data-favorite-toggle-target="icon" class="{{ isFavorite ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"></i>
+                    </button>
 
-									{% set isFavorite = provider.id in (favoriteProviderIds|default([])) %}
-									<button type="button" class="btn btn-light favorite-btn border-0 shadow-sm" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="prestataire" data-favorite-toggle-target-id-value="{{ provider.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="{{ isFavorite ? 'true' : 'false' }}" data-favorite-toggle-login-url-value="{{ path('app_login') }}" aria-pressed="{{ isFavorite ? 'true' : 'false' }}" aria-label="{{ isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
-										<i data-favorite-toggle-target="icon" class="{{ isFavorite ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"></i>
-									</button>
+                    <div class="tmv2-provider-card__cover">
+                        <img
+                            src="{{ provider.logo ? asset('uploads/providers/' ~ provider.logo) : asset('images/img_par_defaut.png') }}"
+                            alt="{{ provider.companyName }}"
+                            class="tmv2-provider-card__cover-image"
+                        >
 
-									<div class="position-relative">
-										<img src="{{ provider.logo ? asset('uploads/providers/' ~ provider.logo) : 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=400&q=80' }}" class="card-img-top provider-img" alt="{{ provider.companyName }}">
+                        <div class="tmv2-provider-card__cover-overlay"></div>
 
-										{% if provider.averageRating >= 4.8 %}
-											<span class="badge bg-tm-accent text-dark position-absolute start-0 top-0 m-2 fw-semibold border-0 px-2 py-1 fs-11">Excellent ({{ provider.averageRating }})</span>
-										{% else %}
-											<span class="badge bg-tm-service position-absolute start-0 top-0 m-2 text-white fw-medium border-0 px-2 py-1 fs-11">Top Prestataire</span>
-										{% endif %}
-									</div>
+                        {% if provider.averageRating >= 4.8 %}
+                            <span class="tmv2-provider-card__badge">Excellent ({{ provider.averageRating }})</span>
+                        {% else %}
+                            <span class="tmv2-provider-card__badge tmv2-provider-card__badge--muted">Top Prestataire</span>
+                        {% endif %}
 
-									<div class="card-body p-3 text-start d-flex flex-column justify-content-between">
-										<div>
-											<h3 class="fw-extrabold h6 text-dark mb-1 text-truncate">
-												{{ provider.companyName }}
-											</h3>
-											<p class="text-muted small mb-2 fs-12">
-												{{ provider.metier ? provider.metier : 'Prestataire' }}
-											</p>
-											<div class="d-flex align-items-center gap-1 text-muted small mb-2 fs-12 fw-semibold">
-												<i class="fa-solid fa-star text-tm-accent"></i>
-												<span class="text-dark fw-bold">{{ provider.averageRating|number_format(1, '.', '') }}</span>
-												({{ provider.reviewsCount ?? 0 }}
-												avis)
-											</div>
-											<p class="text-muted small mb-3 fs-12">
-												<i class="fa-solid fa-location-dot me-1"></i>
-												{{ provider.city }}
-											</p>
-										</div>
-										<div class="border-top pt-2 text-tm-success small fw-semibold fs-12 mt-auto">
-											<i class="fa-solid fa-file-circle-check me-1"></i>
-											Devis gratuit
-										</div>
-									</div>
+                        <span class="tmv2-provider-card__avatar">
+                            {{ provider.companyName|slice(0, 2)|upper }}
+                        </span>
+                    </div>
+
+                    <div class="tmv2-provider-card__body">
+                        <h3 class="tmv2-provider-card__title">{{ provider.companyName }}</h3>
+                        <p class="tmv2-provider-card__job">
+                            {{ provider.metier ? provider.metier : 'Prestataire' }}
+                        </p>
+
+                        <div class="tmv2-provider-card__rating">
+                            <i class="fa-solid fa-star"></i>
+                            <span>{{ provider.averageRating|number_format(1, '.', '') }}</span>
+                            <small>({{ provider.reviewsCount ?? 0 }} avis)</small>
+                        </div>
+
+                        <p class="tmv2-provider-card__city">
+                            <i class="fa-solid fa-location-dot"></i>
+                            {{ provider.city }}
+                        </p>
+
+                        <div class="tmv2-provider-card__footer">
+                            <span>
+                                <i class="fa-solid fa-file-circle-check"></i>
+                                Devis gratuit
+                            </span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info text-center border-0 shadow-sm">
+                    Aucun prestataire disponible pour le moment.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+			{# POURQUOI TROUVEMOI #}
+			<section class="tmv2-trust-section mt-4 mb-4">
+				<div class="container tmv2-trust-inner">
+					<div class="tmv2-trust-content">
+						<span class="tmv2-eyebrow tmv2-eyebrow--warm">Pourquoi TrouveMoi</span>
+
+						<h2 class="tmv2-trust-title">La confiance, notre métier</h2>
+
+						<p class="tmv2-trust-intro">
+							Chaque prestataire est contrôlé avant d'apparaître sur la plateforme.
+							                Chaque avis provient d'une prestation réellement effectuée.
+						</p>
+
+						<div class="tmv2-trust-list">
+							<div class="tmv2-trust-item">
+								<span class="tmv2-trust-item__icon" aria-hidden="true">
+									<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/>
+										<path d="m9 12 2 2 4-4"/>
+									</svg>
+								</span>
+
+								<div class="tmv2-trust-item__body">
+									<h3>Des pros vérifiés</h3>
+									<p>Identité, assurances et qualifications contrôlées avant la mise en ligne.</p>
 								</div>
 							</div>
-						{% else %}
-							<div class="col-12">
-								<div class="alert alert-info text-center border-0 shadow-sm">
-									Aucun prestataire disponible pour le moment.
-								</div>
-							</div>
-						{% endfor %}
-					</div>
-				</div>
 
-				{# SIDEBAR REASSURANCE #}
-				<div class="col-xl-3 col-lg-4 text-start">
-					<div class="card border-0 shadow-sm p-4 rounded-4 h-100 reassurance-aside d-flex flex-column">
-						<h3 class="fw-extrabold mb-4 reassurance-main-title">Pourquoi choisir<br>TrouveMoi ?</h3>
+							<div class="tmv2-trust-item">
+								<span class="tmv2-trust-item__icon" aria-hidden="true">
+									<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/>
+									</svg>
+								</span>
 
-						<div class="d-flex flex-column gap-3 mb-4">
-							<div class="d-flex align-items-start gap-2 reassurance-item">
-								<i class="fa-solid fa-circle-check fs-5 mt-1"></i>
-								<div>
-									<h4 class="fw-extrabold mb-0 fs-12">Des pros vérifiés</h4>
-									<p class="mb-0 reassurance-desc">Prestataires sélectionnés et contrôlés.</p>
+								<div class="tmv2-trust-item__body">
+									<h3>Avis 100 % authentiques</h3>
+									<p>Seuls les clients ayant réservé peuvent laisser un avis. Aucun avis acheté.</p>
 								</div>
 							</div>
 
-							<div class="d-flex align-items-start gap-2 reassurance-item">
-								<i class="fa-solid fa-comments fs-5 mt-1"></i>
-								<div>
-									<h4 class="fw-extrabold mb-0 fs-12">Avis authentiques</h4>
-									<p class="mb-0 reassurance-desc">Des retours fiables pour bien choisir.</p>
-								</div>
-							</div>
+							<div class="tmv2-trust-item">
+								<span class="tmv2-trust-item__icon" aria-hidden="true">
+									<svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+										<rect x="3" y="10" width="18" height="11" rx="2"/>
+										<path d="M7 10V7a5 5 0 0 1 10 0v3"/>
+									</svg>
+								</span>
 
-							<div class="d-flex align-items-start gap-2 reassurance-item">
-								<i class="fa-solid fa-file-signature fs-5 mt-1"></i>
-								<div>
-									<h4 class="fw-extrabold mb-0 fs-12">Devis gratuits</h4>
-									<p class="mb-0 reassurance-desc">Comparez et choisissez sans engagement.</p>
-								</div>
-							</div>
-
-							<div class="d-flex align-items-start gap-2 reassurance-item">
-								<i class="fa-solid fa-shield-halved fs-5 mt-1"></i>
-								<div>
-									<h4 class="fw-extrabold mb-0 fs-12">Paiement sécurisé</h4>
-									<p class="mb-0 reassurance-desc">Transactions 100% sécurisées.</p>
+								<div class="tmv2-trust-item__body">
+									<h3>Paiement protégé</h3>
+									<p>L'argent est bloqué jusqu'à validation de la prestation. Litige ? On vous accompagne.</p>
 								</div>
 							</div>
 						</div>
-
-						<a href="{{ path('app_static_page', { slug: 'about' }) }}" class="btn w-100 py-2 rounded-3 fw-bold d-flex align-items-center justify-content-between px-3 mt-auto reassurance-more-btn reassurance-more-btn--about-theme">
-							En savoir plus
-							<i class="fa-solid fa-chevron-right arrow-indicator reassurance-more-btn--about-theme__icon"></i>
-						</a>
 					</div>
+
+					<aside class="tmv2-trust-panel" aria-label="Indicateurs de confiance">
+						<div class="tmv2-trust-score">
+							4,8<span>/5</span>
+						</div>
+
+						<div class="tmv2-trust-stars" aria-label="4,8 étoiles sur 5">
+							<svg width="22" height="22" viewbox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>
+							<svg width="22" height="22" viewbox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>
+							<svg width="22" height="22" viewbox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>
+							<svg width="22" height="22" viewbox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>
+							<svg width="22" height="22" viewbox="0 0 24 24" fill="currentColor" opacity=".35"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>
+						</div>
+
+						<p class="tmv2-trust-panel__text">
+							Note moyenne calculée sur 890 000 avis vérifiés, mise à jour chaque jour.
+						</p>
+
+						<hr class="tmv2-trust-panel__divider">
+
+						<div class="tmv2-trust-mini-stats">
+							<div class="tmv2-trust-mini-stat">
+								<div class="tmv2-trust-mini-stat__value">96 %</div>
+								<div class="tmv2-trust-mini-stat__label">de clients satisfaits</div>
+							</div>
+
+							<div class="tmv2-trust-mini-stat">
+								<div class="tmv2-trust-mini-stat__value">72 %</div>
+								<div class="tmv2-trust-mini-stat__label">refont appel au même pro</div>
+							</div>
+						</div>
+					</aside>
+				</div>
+			</section>
+
+			{# AVIS #}
+			<section class="container tmv2-section mb-4" data-controller="scroll-reveal">
+				<div class="tmv2-section-head tmv2-section-head--center" data-scroll-reveal-target="element">
+					<span class="tmv2-eyebrow tmv2-eyebrow--blue">Ils nous font confiance</span>
+					<h2 class="tmv2-section-title">Ce que nos utilisateurs pensent de nous</h2>
+					<p class="tmv2-section-subtitle">Plus de 10 000 avis certifiés pour vous aider à choisir en toute sérénité.</p>
 				</div>
 
-				{# BON PLAN #}
-				<div class="tm-home-deals-wrap">
-				<section class="tm-home-deals-section container my-5">
-					<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-						<h2 class="fw-extrabold h4 mb-0 text-dark tracking-tight">
-							Nos Bons Plans
-							<span class="text-tm-accent">
-								<i class="fa-solid fa-percent"></i>
-							</span>
-						</h2>
-
-						<a href="{{ path('app_bons_plans') }}" class="tm-home-deals-link">
-							Voir toutes les offres
-							<i class="fa-solid fa-chevron-right"></i>
-						</a>
-					</div>
-
-					{% if bonsPlans is not empty %}
-						<div class="tm-home-deals-grid">
-							{% for bonPlan in bonsPlans %}
-								{% set service = bonPlan.service|default(null) %}
-								{% set prestataire = bonPlan.prestataire|default(null) %}
-								{% set account = prestataire and prestataire.account is defined ? prestataire.account : null %}
-								{% set category = service and service.category is defined ? service.category : null %}
-
-								{% set reduction = bonPlan.tauxReduction|default(0) %}
-								{% set prixCatalogue = bonPlan.prixCatalogue|default(0) %}
-								{% set prixRemise = bonPlan.prixRemise is defined and bonPlan.prixRemise is not null
-                    ? bonPlan.prixRemise
-                    : (prixCatalogue - (prixCatalogue * reduction / 100))
-                %}
-
-								{% set companyName = prestataire and prestataire.companyName is defined and prestataire.companyName
-                    ? prestataire.companyName
-                    : (
-                        account
-                        and account.firstName is defined
-                        and account.lastName is defined
-                        ? account.firstName ~ ' ' ~ account.lastName
-                        : 'Prestataire non renseigné'
-                    )
-                %}
-
-								{% set cityName = prestataire and prestataire.city is defined and prestataire.city
-                    ? prestataire.city
-                    : 'Ville non renseignée'
-                %}
-
-								{% set prestationTitle = bonPlan.title is defined and bonPlan.title
-                    ? bonPlan.title
-                    : (
-                        service and service.name is defined and service.name
-                        ? service.name
-                        : 'Service non renseigné'
-                    )
-                %}
-
-								{% set prestationDescription = bonPlan.shortDescription is defined and bonPlan.shortDescription
-                    ? bonPlan.shortDescription
-                    : (
-                        bonPlan.description is defined and bonPlan.description
-                        ? bonPlan.description|slice(0, 96) ~ (bonPlan.description|length > 96 ? '…' : '')
-                        : (
-                            service and service.description is defined and service.description
-                            ? service.description|slice(0, 96) ~ (service.description|length > 96 ? '…' : '')
-                            : 'Description non renseignée.'
-                        )
-                    )
-                %}
-
-								{% if reduction <= 15 %}
-									{% set promoLevel = 'low' %}
-								{% elseif reduction <= 25 %}
-									{% set promoLevel = 'medium' %}
-								{% elseif reduction <= 40 %}
-									{% set promoLevel = 'high' %}
-								{% else %}
-									{% set promoLevel = 'max' %}
-								{% endif %}
-
-								{% set coverImage = prestataire and prestataire.coverImage is defined and prestataire.coverImage
-                    ? prestataire.coverImage
-                    : null
-                %}
-
-								{% set ctaUrl = path('app_prestataire_service_prestation_show', { slug: bonPlan.slug }) %}
-								{% set ctaLabel = 'Voir la prestation' %}
-
-								{% set isFavoriteBonPlan = bonPlan.id in (favoriteBonPlanIds|default([])) %}
-								<article class="tm-home-deal-card tm-home-deal-card--{{ promoLevel }}">
-									<div class="tm-home-deal-card__glow"></div>
-
-									<button type="button" class="btn btn-light favorite-btn border-0 shadow-sm" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="bon_plan" data-favorite-toggle-target-id-value="{{ bonPlan.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="{{ isFavoriteBonPlan ? 'true' : 'false' }}" data-favorite-toggle-login-url-value="{{ path('app_login') }}" aria-pressed="{{ isFavoriteBonPlan ? 'true' : 'false' }}" aria-label="{{ isFavoriteBonPlan ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
-										<i data-favorite-toggle-target="icon" class="{{ isFavoriteBonPlan ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"></i>
-									</button>
-
-									<div class="tm-home-deal-card__hero">
-										<img src="{{ coverImage ? asset('uploads/covers/' ~ coverImage) : asset('images/img_par_defaut.png') }}" alt="{{ companyName }}" class="tm-home-deal-card__cover">
-										<div class="tm-home-deal-card__hero-overlay"></div>
-
-										<div class="tm-home-deal-card__hero-top">
-											<span class="tm-home-deal-card__badge tm-home-deal-card__badge--{{ promoLevel }}">
-												-{{ reduction|number_format(0, ',', ' ') }}%
-											</span>
-
-											{% if category and category.name is defined and category.name %}
-												<span class="tm-home-deal-card__category-chip">
-													{{ category.name }}
-												</span>
-											{% endif %}
-										</div>
+				<div class="row g-4">
+					{% for i in 1..3 %}
+						<div class="col-md-4" data-scroll-reveal-target="element">
+							<article class="tmv2-review-card h-100">
+								<span class="tmv2-review-card__quote">“</span>
+								<p class="tmv2-review-card__text">Une expérience exceptionnelle ! J'ai trouvé un plombier en moins de 30 minutes. Service rapide, efficace et très professionnel.</p>
+								<div class="tmv2-review-card__footer">
+									<img src="https://ui-avatars.com/api/?name=User+{{ i }}&background=random" class="tmv2-review-card__avatar" alt="Utilisateur">
+									<div>
+										<h5>Jean D.</h5>
+										<small>Prestation : Plomberie</small>
 									</div>
-
-									<div class="tm-home-deal-card__body">
-										<div class="tm-home-deal-card__provider-row">
-											<span class="tm-home-deal-card__provider-avatar">
-												{{ companyName|slice(0, 1)|upper }}
-											</span>
-											<span class="tm-home-deal-card__provider-text">
-												{{ companyName }}
-											</span>
-										</div>
-
-										<h3 class="tm-home-deal-card__title">
-											{{ prestationTitle }}
-										</h3>
-
-										<p class="tm-home-deal-card__description">
-											{{ prestationDescription }}
-										</p>
-
-										<div class="tm-home-deal-card__meta-wrap">
-											<p class="tm-home-deal-card__meta">
-												<i class="fa-solid fa-location-dot"></i>
-												{{ cityName }}
-											</p>
-
-											{% if prestataire and prestataire.averageRating is defined and prestataire.averageRating %}
-												<p class="tm-home-deal-card__rating">
-													<i class="fa-solid fa-star"></i>
-													{{ prestataire.averageRating|number_format(1, ',', ' ') }}/5
-												</p>
-											{% endif %}
-										</div>
+									<div class="tmv2-review-card__stars">
+										<i class="fa-solid fa-star"></i>
+										<i class="fa-solid fa-star"></i>
+										<i class="fa-solid fa-star"></i>
+										<i class="fa-solid fa-star"></i>
+										<i class="fa-solid fa-star"></i>
 									</div>
-
-									<div class="tm-home-deal-card__footer">
-										<div class="tm-home-deal-card__prices">
-											<span class="tm-home-deal-card__old-price">
-												{{ prixCatalogue|number_format(2, ',', ' ') }}
-												€
-											</span>
-											<span class="tm-home-deal-card__new-price">
-												{{ prixRemise|number_format(2, ',', ' ') }}
-												€
-											</span>
-										</div>
-
-										<a href="{{ ctaUrl }}" class="tm-home-deal-card__cta">
-											<span>{{ ctaLabel }}</span>
-											<i class="fa-solid fa-arrow-right"></i>
-										</a>
-									</div>
-								</article>
-							{% endfor %}
+								</div>
+							</article>
 						</div>
-					{% else %}
-						<div class="tm-home-deals-empty">
-							<div class="tm-home-deals-empty__icon">🏷️</div>
-							<h3 class="tm-home-deals-empty__title">Aucun bon plan pour le moment</h3>
-							<p class="tm-home-deals-empty__text">
-								Les offres promotionnelles apparaîtront ici dès qu'elles seront publiées.
+					{% endfor %}
+				</div>
+			</section>
+
+
+			{# STEPS #}
+			<section class="container tmv2-steps-band-section mb-4" data-controller="scroll-reveal">
+				<div class="tmv2-steps-band">
+					<div class="tmv2-steps-band__head" data-scroll-reveal-target="element">
+						<div class="tmv2-steps-band__intro">
+							<span class="tmv2-eyebrow tmv2-eyebrow--light">Comment ça marche</span>
+							<h2 class="tmv2-steps-band__title">Votre projet commence ici</h2>
+							<p class="tmv2-steps-band__subtitle">
+								6 étapes simples pour une collaboration réussie
 							</p>
 						</div>
-					{% endif %}
-				</section>
-				</div>
 
-				{# STEPS #}
-				<div class="container my-5 py-5 px-4 tm-step-section" data-controller="scroll-reveal">
-					<div class="text-center mb-5" data-scroll-reveal-target="element">
-						<h2 class="tm-step-title h3">Votre projet commence ici</h2>
-						<div class="tm-step-divider"></div>
-						<p class="text-muted">6 étapes simples pour une collaboration réussie</p>
+						<div class="tmv2-steps-band__actions">
+							<a href="/register" class="tmv2-steps-band__btn tmv2-steps-band__btn--primary">
+								Créer mon compte maintenant
+							</a>
+						</div>
 					</div>
 
-					<div class="row g-4">
-						{% set steps = [
+					{% set steps = [
             {icon: 'fa-magnifying-glass', label: '1. Recherchez', desc: 'Trouvez le pro idéal parmi nos experts.', bg: '#f0f4ff', color: '#061b56'},
             {icon: 'fa-user-plus', label: '2. Inscrivez-vous', desc: 'Créez votre compte en quelques secondes.', bg: '#eef2ff', color: '#4338ca'},
             {icon: 'fa-address-card', label: '3. Complétez', desc: 'Remplissez vos besoins sur mesure.', bg: '#fdf2f8', color: '#db2777'},
             {icon: 'fa-sliders', label: '4. Comparez', desc: 'Analysez les avis en toute confiance.', bg: '#fff1f2', color: '#e11d48'},
             {icon: 'fa-comments', label: '5. Échangez', desc: 'Discutez avec le prestataire choisi.', bg: '#f0fdf4', color: '#16a34a'},
-            {icon: 'fa-circle-check', label: '6. Réalisez', desc: 'Validez votre projet sereinement.', bg: '#fffbeb', color: '#d97706'},
+            {icon: 'fa-circle-check', label: '6. Réalisez', desc: 'Validez votre projet sereinement.', bg: '#fffbeb', color: '#d97706'}
         ] %}
 
+					<div class="row g-3 g-lg-4 tmv2-steps-band__grid">
 						{% for step in steps %}
-							<div class="col-md-4 col-lg-2" data-scroll-reveal-target="element">
-								<div class="tm-step-card">
-									<div class="tm-step-icon-wrapper" style="background: {{ step.bg }}; color: {{ step.color }};">
-										<i class="fa-solid {{ step.icon }}"></i>
+							<div class="col-md-6 col-lg-4" data-scroll-reveal-target="element">
+								<article class="tmv2-steps-band-card h-100">
+									<div class="tmv2-steps-band-card__top">
+										<div class="tmv2-steps-band-card__icon" style="background: {{ step.bg }}; color: {{ step.color }};">
+											<i class="fa-solid {{ step.icon }}"></i>
+										</div>
+
+										<span class="tmv2-steps-band-card__number">
+											{{ "%02d"|format(loop.index) }}
+										</span>
 									</div>
-									<h6 class="tm-step-label">{{ step.label }}</h6>
-									<p class="tm-step-desc">{{ step.desc }}</p>
-								</div>
+
+									<h3 class="tmv2-steps-band-card__label">{{ step.label }}</h3>
+									<p class="tmv2-steps-band-card__desc">{{ step.desc }}</p>
+								</article>
 							</div>
 						{% endfor %}
 					</div>
 
-					<div class="text-center mt-4" data-scroll-reveal-target="element">
-						<a href="/register" class="btn btn-primary tm-step-btn">
-							Créer mon compte maintenant
+					<div class="tmv2-steps-band__footer" data-scroll-reveal-target="element">
+						<div class="tmv2-steps-band__points">
+							<span>
+								<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M20 6 9 17l-5-5"/>
+								</svg>
+								Devis gratuits
+							</span>
+
+							<span>
+								<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M20 6 9 17l-5-5"/>
+								</svg>
+								Prestataires vérifiés
+							</span>
+
+							<span>
+								<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M20 6 9 17l-5-5"/>
+								</svg>
+								Paiement sécurisé
+							</span>
+						</div>
+
+						<a href="/register" class="tmv2-steps-band__btn tmv2-steps-band__btn--ghost">
+							Commencer maintenant
 						</a>
 					</div>
 				</div>
+			</section>
 
-				{# FAQ #}
-				<div class="container tm-faq-section" data-controller="scroll-reveal">
-					<div class="row align-items-center">
-						<div class="col-lg-1 d-none d-lg-block tm-faq-icon-wrapper" data-scroll-reveal-target="element">
-							<i class="fa-solid fa-circle-question tm-faq-icon"></i>
+			{# FAQ #}
+			<section class="tmv2-faq-section" style="padding-top:0">
+				<div class="container">
+					<div class="tmv2-faq-head" data-scroll-reveal-target="element">
+						<div class="tmv2-faq-head__inner">
+							<span class="tmv2-eyebrow tmv2-eyebrow--center">Questions fréquentes</span>
+							<h2 class="tmv2-faq-title">On répond à tout</h2>
 						</div>
-						<div class="col-lg-7" data-scroll-reveal-target="element">
-							<h3 class="tm-faq-title">Besoin d'aide pour bien démarrer ?</h3>
-							<p class="tm-faq-description">Notre équipe est là pour vous accompagner à chaque étape de votre projet.</p>
-						</div>
-						<div class="col-lg-4 mt-4 mt-lg-0 tm-faq-actions" data-scroll-reveal-target="element">
-							<a href="{{ path('app_static_page', {slug: 'aide-faq'}) }}" class="btn btn-outline-light px-4 py-2 me-2">
-								<i class="fa-solid fa-book-open me-2"></i>
-								FAQ
-							</a>
-							<a href="{{ path('app_static_page', {slug: 'help'}) }}" class="btn btn-light px-4 py-2 fw-bold text-primary">
-								<i class="fa-solid fa-envelope me-2"></i>
-								Support
-							</a>
-						</div>
+					</div>
+
+					<div class="tmv2-faq-list">
+						<details class="tmv2-faq-item" open>
+							<summary>
+								Les devis sont-ils vraiment gratuits ?
+								<span class="tmv2-faq-item__plus" aria-hidden="true">
+									<svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+										<path d="M12 5v14M5 12h14"/>
+									</svg>
+								</span>
+							</summary>
+							<p class="tmv2-faq-item__answer">
+								Oui, à 100 %. Vous décrivez votre besoin, les prestataires vous envoient leurs devis, et vous comparez librement.
+								                    Vous ne payez que si vous décidez de réserver une prestation.
+							</p>
+						</details>
+
+						<details class="tmv2-faq-item">
+							<summary>
+								Comment les prestataires sont-ils vérifiés ?
+								<span class="tmv2-faq-item__plus" aria-hidden="true">
+									<svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+										<path d="M12 5v14M5 12h14"/>
+									</svg>
+								</span>
+							</summary>
+							<p class="tmv2-faq-item__answer">
+								Avant d'apparaître sur la plateforme, chaque professionnel doit fournir une pièce d'identité, un justificatif
+								                    d'immatriculation (SIRET) et ses attestations d'assurance. Nous vérifions ces documents un par un.
+							</p>
+						</details>
+
+						<details class="tmv2-faq-item">
+							<summary>
+								Comment fonctionne le paiement sécurisé ?
+								<span class="tmv2-faq-item__plus" aria-hidden="true">
+									<svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+										<path d="M12 5v14M5 12h14"/>
+									</svg>
+								</span>
+							</summary>
+							<p class="tmv2-faq-item__answer">
+								Lors de la réservation, votre paiement est conservé sur un compte sécurisé. Le prestataire est payé uniquement
+								                    lorsque vous confirmez que la prestation est terminée et conforme.
+							</p>
+						</details>
+
+						<details class="tmv2-faq-item">
+							<summary>
+								Que se passe-t-il en cas de litige ?
+								<span class="tmv2-faq-item__plus" aria-hidden="true">
+									<svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+										<path d="M12 5v14M5 12h14"/>
+									</svg>
+								</span>
+							</summary>
+							<p class="tmv2-faq-item__answer">
+								Notre équipe support intervient sous 24 h. Tant que le litige n'est pas résolu, les fonds restent bloqués.
+								                    Vous pouvez ouvrir un dossier directement depuis votre espace client.
+							</p>
+						</details>
+
+						<details class="tmv2-faq-item">
+							<summary>
+								Puis-je annuler une réservation ?
+								<span class="tmv2-faq-item__plus" aria-hidden="true">
+									<svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+										<path d="M12 5v14M5 12h14"/>
+									</svg>
+								</span>
+							</summary>
+							<p class="tmv2-faq-item__answer">
+								Oui, gratuitement jusqu'à 48 h avant la prestation. Passé ce délai, les conditions d'annulation du prestataire
+								                    s'appliquent — elles sont toujours affichées avant votre réservation.
+							</p>
+						</details>
 					</div>
 				</div>
+			</section>
 
-				{# SECTION AVIS CLIENTS (Ajoutée) #}
-				<div class="container my-5" data-controller="scroll-reveal">
-					<div class="text-center mb-5" data-scroll-reveal-target="element">
-						<h2 class="fw-extrabold h4 text-dark">Ce que nos utilisateurs pensent de nous</h2>
-						<p class="text-muted">Plus de 10 000 avis certifiés pour vous aider à choisir en toute sérénité.</p>
+			{# FAQ CTA #}
+			<section class="container tmv2-faq-banner" data-controller="scroll-reveal">
+				<div class="row align-items-center">
+					<div class="col-lg-8" data-scroll-reveal-target="element">
+						<span class="tmv2-eyebrow tmv2-eyebrow--gold">Besoin d'aide</span>
+						<h3 class="tmv2-faq-banner__title">Besoin d'aide pour bien démarrer ?</h3>
+						<p class="tmv2-faq-banner__desc">Notre équipe est là pour vous accompagner à chaque étape de votre projet.</p>
 					</div>
-
-					<div class="row g-4">
-						{% for i in 1..3 %}
-							<div class="col-md-4" data-scroll-reveal-target="element">
-								<div class="card h-100 border-0 shadow-sm p-4 review-card">
-									<div class="d-flex align-items-center mb-3">
-										<img src="https://ui-avatars.com/api/?name=User+{{ i }}&background=random" class="rounded-circle reviewer-avatar me-3" alt="Utilisateur">
-										<div>
-											<h5 class="fw-bold fs-6 mb-0">Jean D.</h5>
-											<div class="text-tm-accent small">
-												<i class="fa-solid fa-star"></i>
-												<i class="fa-solid fa-star"></i>
-												<i class="fa-solid fa-star"></i>
-												<i class="fa-solid fa-star"></i>
-												<i class="fa-solid fa-star"></i>
-											</div>
-										</div>
-									</div>
-									<p class="text-muted small italic">"Une expérience exceptionnelle ! J'ai trouvé un plombier en moins de 30 minutes. Service rapide, efficace et très professionnel. Je recommande vivement !"</p>
-									<div class="mt-auto pt-3 border-top">
-										<span class="badge bg-light text-dark small">Prestation : Plomberie</span>
-									</div>
-								</div>
-							</div>
-						{% endfor %}
+					<div class="col-lg-4 mt-4 mt-lg-0 tmv2-faq-banner__actions" data-scroll-reveal-target="element">
+						<a href="{{ path('app_static_page', {slug: 'aide-faq'}) }}" class="tmv2-outline-btn">
+							<i class="fa-solid fa-book-open"></i>
+							FAQ
+						</a>
+						<a href="{{ path('app_static_page', {slug: 'help'}) }}" class="tmv2-light-btn">
+							<i class="fa-solid fa-envelope"></i>
+							Support
+						</a>
 					</div>
 				</div>
+			</section>
 
-				{# 5. BANDEAU DES CARACTÉRISTIQUES DU BAS #}
-				<div class="bg-white border-top py-4 mb-4">
-					<div class="container">
-						<div class="row g-4 justify-content-center text-center text-md-start">
-							<div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
-								<div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
-									<i class="fa-solid fa-calendar-check fs-5"></i>
-								</div>
-								<div>
-									<span class="d-block fw-extrabold text-dark small lh-1 fs-13">Demande de devis gratuite</span>
-									<small class="text-muted fw-medium fs-11">Réponse rapide sous 48h</small>
-								</div>
-							</div>
-							<div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
-								<div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
-									<i class="fa-solid fa-thumbs-up fs-5"></i>
-								</div>
-								<div>
-									<span class="d-block fw-extrabold text-dark small lh-1 fs-13">Aucun engagement</span>
-									<small class="text-muted fw-medium fs-11">Comparez et choisissez librement</small>
-								</div>
-							</div>
-							<div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
-								<div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
-									<i class="fa-solid fa-lock fs-5"></i>
-								</div>
-								<div>
-									<span class="d-block fw-extrabold text-dark small lh-1 fs-13">Paiement sécurisé</span>
-									<small class="text-muted fw-medium fs-11">Transactions cryptées</small>
-								</div>
-							</div>
-							<div class="col-sm-6 col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2 feature-bottom-item">
-								<div class="d-flex align-items-center justify-content-center rounded-3 shadow-xs feature-bottom-icon">
-									<i class="fa-solid fa-headset fs-5"></i>
-								</div>
-								<div>
-									<span class="d-block fw-extrabold text-dark small lh-1 fs-13">Support 7j/7</span>
-									<small class="text-muted fw-medium fs-11">Une équipe à votre écoute</small>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
 		</div>
-
-	{% endblock %}
+	</section>
+</div>{% endblock %}
