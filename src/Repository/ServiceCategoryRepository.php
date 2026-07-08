@@ -51,28 +51,35 @@ class ServiceCategoryRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    //    /**
-    //     * @return ServiceCategory[] Returns an array of ServiceCategory objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Catégories principales affichées sur la home.
+     *
+     * @return ServiceCategory[]
+     */
+    public function findPopularForHome(int $limit = 10): array
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.services', 's', 'WITH', 's.isActive = :active')
+            ->addSelect('COUNT(s.id) AS HIDDEN servicesCount')
+            ->andWhere('c.parent IS NULL')
+            ->andWhere('c.isActive = :active')
+            ->setParameter('active', true)
+            ->groupBy('c.id')
+            ->orderBy('c.position', 'ASC')
+            ->addOrderBy('servicesCount', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?ServiceCategory
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function countActiveRootCategories(): int
+    {
+        return (int) $this->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->andWhere('c.parent IS NULL')
+            ->andWhere('c.isActive = :active')
+            ->setParameter('active', true)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }
