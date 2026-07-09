@@ -3,258 +3,183 @@
 {% block title %}TrouveMoi - Toutes les catégories{% endblock %}
 
 {% block body %}
-    <div class="tm-cat-page">
-        <div class="container tm-cat-page__container py-4">
+    <div class="tmc-page">
 
-            <nav aria-label="breadcrumb" class="tm-cat-breadcrumb">
-                <ol class="breadcrumb tm-cat-breadcrumb__list">
+        <section class="tmc-hero">
+            <div class="tmc-hero__media" aria-hidden="true">
+                <img
+                    src="{{ asset('images/img_presta_homepage04.png') }}"
+                    alt=""
+                    class="tmc-hero__bg-image"
+                >
+            </div>
+
+            <div class="tmc-hero__overlay"></div>
+
+            <div class="tmc-shell">
+                <div class="tmc-hero__inner">
+                    <div class="tmc-hero__content">
+                        <span class="tmc-eyebrow">Explorer les services</span>
+
+                        <h1 class="tmc-hero__title">
+                            Toutes les catégories
+                            <span>pour tous vos besoins</span>
+                        </h1>
+
+                        <p class="tmc-hero__text">
+                            Trouvez facilement le professionnel qu'il vous faut, près de chez vous.
+                        </p>
+
+                        <div class="tmc-hero__badges">
+                            <span><i class="fa-solid fa-shield-halved"></i> Prestataires vérifiés</span>
+                            <span><i class="fa-solid fa-star"></i> Avis authentiques</span>
+                            <span><i class="fa-solid fa-file-signature"></i> Devis sans engagement</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="tmc-shell">
+            <nav aria-label="breadcrumb" class="tmc-breadcrumb">
+                <ol class="breadcrumb tmc-breadcrumb__list">
                     <li class="breadcrumb-item">
-                        <a href="{{ path('app_home') }}" class="tm-cat-breadcrumb__link">
+                        <a href="{{ path('app_home') }}" class="tmc-breadcrumb__link">
                             <i class="fa-solid fa-house"></i>
                             <span>Accueil</span>
                         </a>
                     </li>
-                    <li class="breadcrumb-item active tm-cat-breadcrumb__current" aria-current="page">
+                    <li class="breadcrumb-item active tmc-breadcrumb__current" aria-current="page">
                         Catégories
                     </li>
                 </ol>
             </nav>
 
-            <section class="tm-cat-hero">
-                <div class="tm-cat-hero__main">
-                    <div class="tm-cat-hero__content">
-                        <span class="tm-cat-hero__eyebrow">Explorer les services</span>
-
-                        <h1 class="tm-cat-hero__title">
-                            Toutes les catégories TrouveMoi
-                        </h1>
-
-                        <p class="tm-cat-hero__subtitle">
-                            Explorez les univers de services de la plateforme, trouvez un professionnel de confiance
-                            et lancez votre demande plus simplement, avec une expérience claire, rassurante et fluide.
-                        </p>
-
-                        <div class="tm-cat-hero__actions">
-                            <a href="#categories-grid" class="tm-cat-btn tm-cat-btn--primary">
-                                Voir les catégories
-                            </a>
-                            <a href="#" class="tm-cat-btn tm-cat-btn--ghost">
-                                Comment ça marche
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="tm-cat-hero__visual">
-                        <div class="tm-cat-hero__visual-card tm-cat-hero__visual-card--main">
-                            <img
-                                src="{{ asset('images/worker-peinture.png') }}"
-                                alt="Prestataire en peinture"
-                                class="tm-cat-hero__image"
-                            >
-                        </div>
-
-                        <div class="tm-cat-hero__floating tm-cat-hero__floating--top">
-                            <img
-                                src="{{ asset('images/worker-dev.png') }}"
-                                alt="Prestataire du numérique"
-                                class="tm-cat-hero__floating-image"
-                            >
-                        </div>
-
-                        <div class="tm-cat-hero__floating tm-cat-hero__floating--bottom">
-                            <img
-                                src="{{ asset('images/worker-menage.png') }}"
-                                alt="Prestataire de services à domicile"
-                                class="tm-cat-hero__floating-image"
-                            >
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="tm-cat-section" id="categories-grid">
-                <div class="tm-cat-section__head">
-                    <div class="tm-cat-section__intro">
-                        <span class="tm-cat-section__eyebrow">Navigation par univers</span>
-                        <h2 class="tm-cat-section__title">Choisissez une catégorie</h2>
-                        <p class="tm-cat-section__subtitle">
-                            Parcourez tous les univers de services disponibles sur TrouveMoi et accédez rapidement
-                            aux métiers qui correspondent à votre besoin.
+            <section class="tmc-categories" id="categories-grid">
+                <div class="tmc-section-head">
+                    <div class="tmc-section-copy">
+                        <span class="tmc-eyebrow">Navigation par univers</span>
+                        <h2 class="tmc-section-title">Choisissez une catégorie</h2>
+                        <p class="tmc-section-text">
+                            Parcourez l’ensemble des catégories disponibles et trouvez rapidement le métier qui correspond à votre besoin.
                         </p>
                     </div>
                 </div>
 
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-xl-3 g-4">
+                <div class="tmc-grid">
                     {% for category in categories %}
-                        <div class="col">
-                            <a
-                                href="{{ path('app_category_show', {slug: category.slug}) }}"
-                                class="tm-cat-card text-decoration-none"
-                            >
-                                <div class="tm-cat-card__inner">
-                                    <div class="tm-cat-card__top">
-                                        <div class="tm-cat-card__icon-box">
-                                            <i class="fa-solid {{ category.icon|default('fa-folder') }}"></i>
-                                        </div>
+                        {% set colorVariant = cycle(['blue', 'orange', 'green', 'violet'], loop.index0) %}
 
-                                        <span class="tm-cat-card__count">
-                                            {{ category.subCategories|length }}
-                                            {{ category.subCategories|length > 1 ? 'métiers' : 'métier' }}
-                                        </span>
-                                    </div>
+                        <a
+                            href="{{ path('app_category_show', {slug: category.slug}) }}"
+                            class="tmc-card"
+                        >
+                            <div class="tmc-card__media">
+                                <div class="tmc-card__cover tmc-card__cover--{{ colorVariant }}"></div>
 
-                                    <div class="tm-cat-card__body">
-                                        <h3 class="tm-cat-card__title">{{ category.name }}</h3>
-                                        <p class="tm-cat-card__meta">
-                                            Découvrez les services disponibles, les spécialités associées et les professionnels
-                                            que vous pouvez solliciter dans cet univers.
-                                        </p>
-                                    </div>
+                                <span class="tmc-card__icon tmc-card__icon--{{ colorVariant }}">
+                                    <i class="fa-solid {{ category.icon|default('fa-folder') }}"></i>
+                                </span>
+                            </div>
 
-                                    <div class="tm-cat-card__footer">
-                                        <span class="tm-cat-card__link">
-                                            Découvrir la catégorie
-                                            <i class="fa-solid fa-arrow-right"></i>
-                                        </span>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
+                            <div class="tmc-card__body">
+                                <h3 class="tmc-card__title">{{ category.name }}</h3>
+
+                                <p class="tmc-card__desc">
+                                    Découvrez les services disponibles, les spécialités associées et les professionnels
+                                    liés à cet univers.
+                                </p>
+
+                                <span class="tmc-card__count">
+                                    <span>
+                                        {{ category.subCategories|length }}
+                                        {{ category.subCategories|length > 1 ? 'métiers' : 'métier' }}
+                                    </span>
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </span>
+                            </div>
+                        </a>
                     {% else %}
-                        <div class="col-12">
-                            <div class="tm-cat-empty">
-                                <div class="tm-cat-empty__media">
-                                    <img
-                                        src="{{ asset('images/worker-coach.png') }}"
-                                        alt="Illustration d'un professionnel"
-                                        class="tm-cat-empty__image"
-                                    >
-                                </div>
-                                <div class="tm-cat-empty__content">
-                                    <h3 class="tm-cat-empty__title">Aucune catégorie disponible</h3>
-                                    <p class="tm-cat-empty__text">
-                                        Les catégories apparaîtront ici dès qu’elles seront publiées.
-                                    </p>
-                                </div>
+                        <div class="tmc-empty">
+                            <div class="tmc-empty__icon">
+                                <i class="fa-solid fa-layer-group"></i>
+                            </div>
+
+                            <div class="tmc-empty__content">
+                                <h3 class="tmc-empty__title">Aucune catégorie disponible</h3>
+                                <p class="tmc-empty__text">
+                                    Les catégories apparaîtront ici dès qu’elles seront publiées.
+                                </p>
                             </div>
                         </div>
                     {% endfor %}
                 </div>
             </section>
 
-            <section class="tm-cat-story">
-                <div class="tm-cat-story__grid">
-                    <article class="tm-cat-story-card tm-cat-story-card--text">
-                        <span class="tm-cat-story-card__eyebrow">L’esprit TrouveMoi</span>
-                        <h2 class="tm-cat-story-card__title">Une plateforme pensée pour la confiance</h2>
-                        <p class="tm-cat-story-card__text">
-                            Décrivez votre besoin, trouvez rapidement la bonne catégorie, échangez avec des prestataires
-                            qualifiés et avancez avec plus de clarté à chaque étape.
-                        </p>
-
-                        <ul class="tm-cat-story-card__list">
-                            <li><i class="fa-solid fa-check"></i> Recherche plus lisible</li>
-                            <li><i class="fa-solid fa-check"></i> Mise en relation plus rassurante</li>
-                            <li><i class="fa-solid fa-check"></i> Services adaptés aux besoins du quotidien</li>
-                        </ul>
-                    </article>
-
-                    <article class="tm-cat-story-card tm-cat-story-card--visual">
-                        <img
-                            src="{{ asset('images/worker-cours.png') }}"
-                            alt="Service de cours et accompagnement"
-                            class="tm-cat-story-card__image"
-                        >
-                    </article>
-
-                    <article class="tm-cat-story-card tm-cat-story-card--visual">
-                        <img
-                            src="{{ asset('images/worker-petsitter.png') }}"
-                            alt="Service de garde d'animaux"
-                            class="tm-cat-story-card__image"
-                        >
-                    </article>
-
-                    <article class="tm-cat-story-card tm-cat-story-card--visual">
-                        <img
-                            src="{{ asset('images/worker-pelouse.png') }}"
-                            alt="Service d'entretien extérieur"
-                            class="tm-cat-story-card__image"
-                        >
-                    </article>
-                </div>
-            </section>
-
-            <section class="tm-cat-universes">
-                <div class="tm-cat-universes__head">
-                    <span class="tm-cat-section__eyebrow">Univers de la plateforme</span>
-                    <h2 class="tm-cat-section__title">Des besoins très concrets, des profils très différents</h2>
-                </div>
-
-                <div class="tm-cat-universes__grid">
-                    <article class="tm-cat-universe-card">
-                        <div class="tm-cat-universe-card__image-wrap">
-                            <img src="{{ asset('images/worker-haie.png') }}" alt="Travaux de jardin et haies" class="tm-cat-universe-card__image">
-                        </div>
-                        <div class="tm-cat-universe-card__content">
-                            <h3 class="tm-cat-universe-card__title">Jardin & extérieur</h3>
-                            <p class="tm-cat-universe-card__text">Entretien, taille, aménagement et interventions locales du quotidien.</p>
+            <section class="tmc-reassurance">
+                <div class="tmc-reassurance__grid">
+                    <article class="tmc-reassurance__item">
+                        <span class="tmc-reassurance__icon">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </span>
+                        <div>
+                            <h3>Prestataires vérifiés</h3>
+                            <p>Des professionnels de confiance pour chaque besoin.</p>
                         </div>
                     </article>
 
-                    <article class="tm-cat-universe-card">
-                        <div class="tm-cat-universe-card__image-wrap">
-                            <img src="{{ asset('images/worker-dev.png') }}" alt="Services numériques" class="tm-cat-universe-card__image">
-                        </div>
-                        <div class="tm-cat-universe-card__content">
-                            <h3 class="tm-cat-universe-card__title">Numérique & accompagnement</h3>
-                            <p class="tm-cat-universe-card__text">Assistance web, digital, développement et solutions utiles aux particuliers comme aux pros.</p>
+                    <article class="tmc-reassurance__item">
+                        <span class="tmc-reassurance__icon">
+                            <i class="fa-solid fa-star"></i>
+                        </span>
+                        <div>
+                            <h3>Avis clients authentiques</h3>
+                            <p>Des retours d’expérience fiables pour faire le bon choix.</p>
                         </div>
                     </article>
 
-                    <article class="tm-cat-universe-card">
-                        <div class="tm-cat-universe-card__image-wrap">
-                            <img src="{{ asset('images/worker-coach.png') }}" alt="Coaching et accompagnement" class="tm-cat-universe-card__image">
+                    <article class="tmc-reassurance__item">
+                        <span class="tmc-reassurance__icon">
+                            <i class="fa-solid fa-file-signature"></i>
+                        </span>
+                        <div>
+                            <h3>Devis gratuits</h3>
+                            <p>Comparez les offres et avancez sans engagement.</p>
                         </div>
-                        <div class="tm-cat-universe-card__content">
-                            <h3 class="tm-cat-universe-card__title">Coaching & services humains</h3>
-                            <p class="tm-cat-universe-card__text">Cours, accompagnement, bien-être et services de proximité plus personnalisés.</p>
+                    </article>
+
+                    <article class="tmc-reassurance__item">
+                        <span class="tmc-reassurance__icon">
+                            <i class="fa-solid fa-headset"></i>
+                        </span>
+                        <div>
+                            <h3>Support 7j/7</h3>
+                            <p>Une équipe disponible pour vous accompagner.</p>
                         </div>
                     </article>
                 </div>
             </section>
 
-            <section class="tm-cat-banner">
-                <div class="tm-cat-banner__glow"></div>
+            <section class="tmc-pro-cta">
+                <div class="tmc-pro-cta__content">
+                    <span class="tmc-pro-cta__eyebrow">Espace professionnel</span>
 
-                <div class="tm-cat-banner__left">
-                    <div class="tm-cat-banner__media">
-                        <img
-                            src="{{ asset('images/worker-peinture.png') }}"
-                            alt="Prestataire TrouveMoi"
-                            class="tm-cat-banner__image"
-                        >
-                    </div>
+                    <h2 class="tmc-pro-cta__title">Vous êtes prestataire ?</h2>
 
-                    <div class="tm-cat-banner__content">
-                        <span class="tm-cat-banner__eyebrow">Espace professionnel</span>
-                        <h3 class="tm-cat-banner__title">Vous êtes prestataire ?</h3>
-                        <p class="tm-cat-banner__desc">
-                            Rejoignez des milliers de professionnels, gagnez en visibilité et recevez des demandes
-                            qualifiées dans votre zone d’intervention.
-                        </p>
+                    <p class="tmc-pro-cta__text">
+                        Rejoignez TrouveMoi, gagnez en visibilité et recevez des demandes qualifiées dans votre zone d’intervention.
+                    </p>
 
-                        <ul class="tm-cat-banner__features">
-                            <li><i class="fa-solid fa-circle-check"></i> Visibilité accrue</li>
-                            <li><i class="fa-solid fa-circle-check"></i> Clients qualifiés</li>
-                            <li><i class="fa-solid fa-circle-check"></i> Outils de gestion</li>
-                        </ul>
+                    <div class="tmc-pro-cta__points">
+                        <span><i class="fa-solid fa-circle-check"></i> Visibilité accrue</span>
+                        <span><i class="fa-solid fa-circle-check"></i> Clients qualifiés</span>
+                        <span><i class="fa-solid fa-circle-check"></i> Outils de gestion</span>
                     </div>
                 </div>
 
-                <div class="tm-cat-banner__actions">
-                    <a href="#" class="tm-cat-btn tm-cat-btn--ghost-light">En savoir plus</a>
-                    <a href="#" class="tm-cat-btn tm-cat-btn--primary-light">Devenir prestataire</a>
+                <div class="tmc-pro-cta__actions">
+                    <a href="#" class="tmc-btn tmc-btn--light-outline">En savoir plus</a>
+                    <a href="#" class="tmc-btn tmc-btn--light">Devenir prestataire</a>
                 </div>
             </section>
         </div>

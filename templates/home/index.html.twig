@@ -26,8 +26,7 @@
 					<div class="tmv2-hero__badges">
 						<span class="tmv2-pill">
 							<i class="fa-solid fa-circle-plus"></i>
-							+ 1200
-														prestataires
+							Prestataires Vérifiés
 						</span>
 
 						<span class="tmv2-pill">
@@ -238,10 +237,10 @@
 
                     <div class="tmv2-provider-card__cover">
                         <img
-                            src="{{ provider.logo ? asset('uploads/providers/' ~ provider.logo) : asset('images/img_par_defaut.png') }}"
-                            alt="{{ provider.companyName }}"
-                            class="tmv2-provider-card__cover-image"
-                        >
+    src="{{ provider.coverImage ? vich_uploader_asset(provider, 'coverImageFile') : asset('images/img_par_defaut.png') }}"
+    alt="{{ provider.companyName }}"
+    class="tmv2-provider-card__cover-image"
+>
 
                         <div class="tmv2-provider-card__cover-overlay"></div>
 
@@ -418,85 +417,53 @@
 			</section>
 
 
-			{# STEPS #}
-			<section class="container tmv2-steps-band-section mb-4" data-controller="scroll-reveal">
-				<div class="tmv2-steps-band">
-					<div class="tmv2-steps-band__head" data-scroll-reveal-target="element">
-						<div class="tmv2-steps-band__intro">
-							<span class="tmv2-eyebrow tmv2-eyebrow--light">Comment ça marche</span>
-							<h2 class="tmv2-steps-band__title">Votre projet commence ici</h2>
-							<p class="tmv2-steps-band__subtitle">
-								6 étapes simples pour une collaboration réussie
-							</p>
-						</div>
+{# CTA PROS #}
+<section class="container tmv2-cta-pros-section mb-4" data-controller="scroll-reveal">
+    <div class="tmv2-cta-pros" data-scroll-reveal-target="element">
+        <div class="tmv2-cta-pros__content">
+            <span class="tmv2-eyebrow tmv2-eyebrow--light">Espace prestataire</span>
+            <h2 class="tmv2-cta-pros__title">
+                Vous êtes prestataire ?<br>Développez votre activité.
+            </h2>
+            <p class="tmv2-cta-pros__text">
+                Rejoignez 120 000 professionnels qui trouvent de nouveaux clients chaque jour sur TrouveMoi — sans commission sur vos premiers devis.
+            </p>
 
-						<div class="tmv2-steps-band__actions">
-							<a href="/register" class="tmv2-steps-band__btn tmv2-steps-band__btn--primary">
-								Créer mon compte maintenant
-							</a>
-						</div>
-					</div>
+            <div class="tmv2-cta-pros__points">
+                <span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5"/>
+                    </svg>
+                    Inscription gratuite
+                </span>
 
-					{% set steps = [
-            {icon: 'fa-magnifying-glass', label: '1. Recherchez', desc: 'Trouvez le pro idéal parmi nos experts.', bg: '#f0f4ff', color: '#061b56'},
-            {icon: 'fa-user-plus', label: '2. Inscrivez-vous', desc: 'Créez votre compte en quelques secondes.', bg: '#eef2ff', color: '#4338ca'},
-            {icon: 'fa-address-card', label: '3. Complétez', desc: 'Remplissez vos besoins sur mesure.', bg: '#fdf2f8', color: '#db2777'},
-            {icon: 'fa-sliders', label: '4. Comparez', desc: 'Analysez les avis en toute confiance.', bg: '#fff1f2', color: '#e11d48'},
-            {icon: 'fa-comments', label: '5. Échangez', desc: 'Discutez avec le prestataire choisi.', bg: '#f0fdf4', color: '#16a34a'},
-            {icon: 'fa-circle-check', label: '6. Réalisez', desc: 'Validez votre projet sereinement.', bg: '#fffbeb', color: '#d97706'}
-        ] %}
+                <span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5"/>
+                    </svg>
+                    Demandes qualifiées
+                </span>
 
-					<div class="row g-3 g-lg-4 tmv2-steps-band__grid">
-						{% for step in steps %}
-							<div class="col-md-6 col-lg-4" data-scroll-reveal-target="element">
-								<article class="tmv2-steps-band-card h-100">
-									<div class="tmv2-steps-band-card__top">
-										<div class="tmv2-steps-band-card__icon" style="background: {{ step.bg }}; color: {{ step.color }};">
-											<i class="fa-solid {{ step.icon }}"></i>
-										</div>
+                <span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5"/>
+                    </svg>
+                    Paiement sécurisé
+                </span>
+            </div>
+        </div>
 
-										<span class="tmv2-steps-band-card__number">
-											{{ "%02d"|format(loop.index) }}
-										</span>
-									</div>
+        <div class="tmv2-cta-pros__actions">
+            <a href="/register/choice" class="tmv2-cta-pros__btn tmv2-cta-pros__btn--primary">
+                Créer mon espace pro
+            </a>
 
-									<h3 class="tmv2-steps-band-card__label">{{ step.label }}</h3>
-									<p class="tmv2-steps-band-card__desc">{{ step.desc }}</p>
-								</article>
-							</div>
-						{% endfor %}
-					</div>
-
-					<div class="tmv2-steps-band__footer" data-scroll-reveal-target="element">
-						<div class="tmv2-steps-band__points">
-							<span>
-								<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-									<path d="M20 6 9 17l-5-5"/>
-								</svg>
-								Devis gratuits
-							</span>
-
-							<span>
-								<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-									<path d="M20 6 9 17l-5-5"/>
-								</svg>
-								Prestataires vérifiés
-							</span>
-
-							<span>
-								<svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-									<path d="M20 6 9 17l-5-5"/>
-								</svg>
-								Paiement sécurisé
-							</span>
-						</div>
-
-						<a href="/register" class="tmv2-steps-band__btn tmv2-steps-band__btn--ghost">
-							Commencer maintenant
-						</a>
-					</div>
-				</div>
-			</section>
+            <a href="{{ path('app_static_page', { slug: 'about' }) }}" class="tmv2-cta-pros__btn tmv2-cta-pros__btn--ghost">
+                Découvrir les avantages
+            </a>
+        </div>
+    </div>
+</section>
 
 			{# FAQ #}
 			<section class="tmv2-faq-section" style="padding-top:0">
