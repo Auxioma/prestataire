@@ -11,25 +11,37 @@ export default class extends Controller {
         this.currentIndex = 0;
         this.visibleItems = 1;
         this.autoplayTimer = null;
+        this.metricsTimer = null;
 
         this.updateMetrics = this.updateMetrics.bind(this);
         this.onResize = this.onResize.bind(this);
+        this.onMouseEnter = this.stopAutoplay.bind(this);
+        this.onMouseLeave = this.startAutoplay.bind(this);
 
         window.addEventListener("resize", this.onResize);
 
         // Laisse un tick au navigateur pour poser le Flexbox avant de calculer les tailles
-        setTimeout(() => {
+        this.metricsTimer = window.setTimeout(() => {
             this.updateMetrics();
             this.startAutoplay();
+            this.metricsTimer = null;
         }, 200);
 
         // Gestion du survol
-        this.element.addEventListener("mouseenter", () => this.stopAutoplay());
-        this.element.addEventListener("mouseleave", () => this.startAutoplay());
+        this.element.addEventListener("mouseenter", this.onMouseEnter);
+        this.element.addEventListener("mouseleave", this.onMouseLeave);
     }
 
     disconnect() {
         window.removeEventListener("resize", this.onResize);
+        this.element.removeEventListener("mouseenter", this.onMouseEnter);
+        this.element.removeEventListener("mouseleave", this.onMouseLeave);
+
+        if (this.metricsTimer) {
+            clearTimeout(this.metricsTimer);
+            this.metricsTimer = null;
+        }
+
         this.stopAutoplay();
     }
 
@@ -57,6 +69,7 @@ export default class extends Controller {
     stopAutoplay() {
         if (this.autoplayTimer) {
             clearInterval(this.autoplayTimer);
+            this.autoplayTimer = null;
         }
     }
 

@@ -38,9 +38,17 @@ use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 
 #[Route('/demandes-de-devis', name: 'app_quote_request')]
+/**
+ * Gère les actions liées à quote request.
+ */
 final class QuoteRequestController extends AbstractController
 {
     #[Route('', name: '_index', methods: ['GET'])]
+    /**
+     * Affiche la page principale de ce contrôleur.
+     *
+     * @return Response
+     */
     public function index(
         Request $request,
         QuoteRequestRepository $quoteRequestRepository,
@@ -67,6 +75,11 @@ final class QuoteRequestController extends AbstractController
 
     #[Route('/nouvelle/prestataire/{prestataireSlug}', name: '_new_by_prestataire', methods: ['GET', 'POST'])]
     #[Route('/nouvelle/{slug}', name: '_new', methods: ['GET', 'POST'], defaults: ['slug' => null])]
+    /**
+     * Affiche et traite le formulaire de création.
+     *
+     * @return Response
+     */
     public function new(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -205,6 +218,11 @@ final class QuoteRequestController extends AbstractController
     methods: ['GET', 'POST'],
     requirements: ['slug' => '(?!(historique|nouvelle)$)[a-z0-9-]+']
 )]
+    /**
+     * Affiche le détail de la ressource demandée.
+     *
+     * @return Response
+     */
     public function show(
         Request $request,
         string $slug,
@@ -372,6 +390,11 @@ final class QuoteRequestController extends AbstractController
     }
 
     #[Route('/{slug}/delete', name: '_delete', methods: ['POST'])]
+    /**
+     * Supprime la ressource demandée.
+     *
+     * @return Response
+     */
     public function delete(
         Request $request,
         string $slug,
@@ -444,6 +467,11 @@ final class QuoteRequestController extends AbstractController
     }
 
     #[Route('/{slug}/photos', name: '_photos', methods: ['GET'])]
+    /**
+     * Traite l’action "photos" du contrôleur Quote Request.
+     *
+     * @return Response
+     */
     public function photos(
         string $slug,
         QuoteRequestRepository $quoteRequestRepository,
@@ -509,6 +537,11 @@ final class QuoteRequestController extends AbstractController
     }
 
     #[Route('/devis/{publicReference}', name: '_quote_proposal_show', methods: ['GET'])]
+    /**
+     * Traite l’action "showProposal" du contrôleur Quote Request.
+     *
+     * @return Response
+     */
     public function showProposal(
         string $publicReference,
         QuoteProposalRepository $quoteProposalRepository,
@@ -536,6 +569,11 @@ final class QuoteRequestController extends AbstractController
     }
 
     #[Route('/devis/{publicReference}/pdf', name: '_quote_proposal_pdf', methods: ['GET'])]
+    /**
+     * Traite l’action "showProposalPdf" du contrôleur Quote Request.
+     *
+     * @return Response
+     */
     public function showProposalPdf(
         string $publicReference,
         QuoteProposalRepository $quoteProposalRepository,
@@ -601,6 +639,11 @@ final class QuoteRequestController extends AbstractController
     }
 
     #[Route('/devis/{publicReference}/accept', name: '_quote_proposal_accept', methods: ['POST'])]
+    /**
+     * Traite l’action "acceptProposal" du contrôleur Quote Request.
+     *
+     * @return Response
+     */
     public function acceptProposal(
         string $publicReference,
         Request $request,
@@ -678,6 +721,11 @@ final class QuoteRequestController extends AbstractController
     }
 
     #[Route('/historique', name: '_history', methods: ['GET'])]
+    /**
+     * Traite l’action "history" du contrôleur Quote Request.
+     *
+     * @return Response
+     */
     public function history(
         Request $request,
         QuoteRequestRepository $quoteRequestRepository,
@@ -703,6 +751,11 @@ final class QuoteRequestController extends AbstractController
     }
 
     #[Route('/historique/{slug}', name: '_history_show', methods: ['GET'])]
+    /**
+     * Traite l’action "historyShow" du contrôleur Quote Request.
+     *
+     * @return Response
+     */
     public function historyShow(
         string $slug,
         QuoteRequestRepository $quoteRequestRepository,
@@ -751,6 +804,11 @@ $quoteResponses = array_values(array_filter(
     }
 
     #[Route('/{slug}/archive', name: '_mark_as_archived', methods: ['POST'])]
+    /**
+     * Traite l’action "markAsArchived" du contrôleur Quote Request.
+     *
+     * @return Response
+     */
     public function markAsArchived(
         Request $request,
         string $slug,

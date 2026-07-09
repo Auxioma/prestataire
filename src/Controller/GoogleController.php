@@ -18,9 +18,17 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Gère les actions liées à google.
+ */
 class GoogleController extends AbstractController
 {
     #[Route('/connect/google', name: 'connect_google_start')]
+    /**
+     * Traite l’action "connectAction" du contrôleur Google.
+     *
+     * @return RedirectResponse
+     */
     public function connectAction(Request $request, ClientRegistry $clientRegistry): RedirectResponse
     {
         $role = $request->query->get('role');
@@ -37,6 +45,11 @@ class GoogleController extends AbstractController
     }
 
     #[Route('/connect/google/check', name: 'connect_google_check')]
+    /**
+     * Traite l’action "connectCheckAction" du contrôleur Google.
+     *
+     * @return void
+     */
     public function connectCheckAction(Request $request): void
     {
         // Intercepté par le Guard Authenticator de Symfony

@@ -13,9 +13,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Gère les actions liées à homepage search.
+ */
 class HomepageSearchController extends AbstractController
 {
     #[Route('/recherche-prestataires', name: 'app_homepage_search', methods: ['GET'])]
+    /**
+     * Affiche la page principale de ce contrôleur.
+     *
+     * @return Response
+     */
     public function index(
         Request $request,
         PrestataireProfileRepository $prestataireProfileRepository,

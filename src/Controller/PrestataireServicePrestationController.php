@@ -37,9 +37,17 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 
+/**
+ * Gère les actions liées à prestataire service prestation.
+ */
 final class PrestataireServicePrestationController extends AbstractController
 {
     #[Route('/prestataire/service/{slug}/prestation', name: 'app_prestataire_service_prestation_edit', requirements: ['slug' => Requirement::ASCII_SLUG])]
+    /**
+     * Affiche et traite le formulaire de modification.
+     *
+     * @return Response
+     */
     public function edit(
         Request $request,
         #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireService $ps,
@@ -163,6 +171,11 @@ final class PrestataireServicePrestationController extends AbstractController
     }
 
     #[Route('/prestataire/prestations/nouvelle', name: 'app_prestataire_service_new', methods: ['GET', 'POST'])]
+    /**
+     * Affiche et traite le formulaire de création.
+     *
+     * @return Response
+     */
     public function new(
         Request $request,
         EntityManagerInterface $em,
@@ -236,6 +249,11 @@ final class PrestataireServicePrestationController extends AbstractController
     }
 
     #[Route('/prestataire/service/{slug}/prestation/voir', name: 'app_prestataire_service_prestation_show', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    /**
+     * Affiche le détail de la ressource demandée.
+     *
+     * @return Response
+     */
     public function show(
         #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireService $ps,
         FavoriteRepository $favoriteRepository
@@ -306,6 +324,11 @@ final class PrestataireServicePrestationController extends AbstractController
     }
 
     #[Route('/prestataire/service/{id}/toggle-active', name: 'app_prestataire_service_toggle_active', methods: ['POST'])]
+    /**
+     * Traite l’action "toggleActive" du contrôleur Prestataire Service Prestation.
+     *
+     * @return JsonResponse
+     */
     public function toggleActive(
         Request $request,
         PrestataireService $ps,

@@ -12,9 +12,17 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/favoris', name: 'app_favorite_')]
+/**
+ * Gère les actions liées à favorite.
+ */
 final class FavoriteController extends AbstractController
 {
     #[Route('/toggle', name: 'toggle', methods: ['POST'])]
+    /**
+     * Traite l’action "toggle" du contrôleur Favorite.
+     *
+     * @return JsonResponse
+     */
     public function toggle(
         Request $request,
         FavoriteManager $favoriteManager,

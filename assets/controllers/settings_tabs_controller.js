@@ -4,6 +4,7 @@ export default class extends Controller {
     static targets = ['sidebar', 'backdrop', 'toggle'];
 
     connect() {
+        this.boundTabShownHandlers = new Map();
         this.bindTabs();
         this.activateTabFromHash();
         this.onHashChange = this.activateTabFromHash.bind(this);
@@ -12,6 +13,13 @@ export default class extends Controller {
 
     disconnect() {
         window.removeEventListener('hashchange', this.onHashChange);
+
+        this.boundTabShownHandlers?.forEach((handler, trigger) => {
+            trigger.removeEventListener('shown.bs.tab', handler);
+            delete trigger.dataset.tabBound;
+        });
+
+        this.boundTabShownHandlers?.clear();
     }
 
     bindTabs() {
@@ -22,12 +30,15 @@ export default class extends Controller {
 
             trigger.dataset.tabBound = 'true';
 
-            trigger.addEventListener('shown.bs.tab', (event) => {
+            const handler = (event) => {
                 const target = event.target.getAttribute('data-bs-target');
                 if (target) {
                     history.replaceState(null, '', target);
                 }
-            });
+            };
+
+            this.boundTabShownHandlers.set(trigger, handler);
+            trigger.addEventListener('shown.bs.tab', handler);
         });
     }
 

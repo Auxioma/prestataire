@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Conversation;
 use App\Entity\Message;
 use App\Entity\MessageAttachment;
+use App\Entity\PrestataireProfile;
 use App\Entity\User;
 use App\Enum\MessageTypeEnum;
 use App\Enum\NotificationTypeEnum;
@@ -18,16 +19,29 @@ use App\Service\ConversationMessageManager;
 use App\Service\NotificationManager;
 use App\Service\RealtimeNotifier;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Gère les actions liées à prestataire dashboard.
+ */
 final class PrestataireDashboardController extends AbstractController
 {
+    private const DASHBOARD_PAGE_SIZE = 10;
+
     #[Route('/prestataire/espace-pro', name: 'app_prestataire_dashboard', methods: ['GET'])]
+    /**
+     * Affiche la page principale de ce contrôleur.
+     *
+     * @return Response
+     */
     public function index(
         Request $request,
         PrestataireProfileRepository $prestataireProfileRepository,
@@ -36,197 +50,32 @@ final class PrestataireDashboardController extends AbstractController
         ConversationRepository $conversationRepository,
         PaginatorInterface $paginator,
     ): Response {
-        /*
-         * ------------------------------------------------------------
-         * 1. Sécurité : utilisateur connecté + rôle prestataire requis
-         * ------------------------------------------------------------
-         */
         $user = $this->getUser();
 
-        if (!$user) {
+        if (!$user instanceof User) {
             return $this->redirectToRoute('app_login');
         }
 
-        if (!$this->isGranted('ROLE_PRESTATAIRE')) {
-            throw $this->createAccessDeniedException('Accès réservé aux prestataires.');
-        }
+        $user = $this->getAuthenticatedPrestataireUser();
+        $prestataireProfile = $this->getPrestataireProfile($user, $prestataireProfileRepository);
 
-        /*
-         * ------------------------------------------------------------
-         * 2. Chargement du profil prestataire connecté
-         * ------------------------------------------------------------
-         */
-        $prestataireProfile = $prestataireProfileRepository->findOneBy([
-            'account' => $user,
-        ]);
-
-        if (!$prestataireProfile) {
-            throw $this->createAccessDeniedException('Profil prestataire introuvable.');
-        }
-
-        /*
-         * ------------------------------------------------------------
-         * 3. Chargement des prestations du prestataire
-         * ------------------------------------------------------------
-         */
-        $prestations = $prestataireServiceRepository->findBy(
-            ['prestataire' => $prestataireProfile],
-            ['updatedAt' => 'DESC', 'createdAt' => 'DESC']
-        );
-
-        /*
-         * ------------------------------------------------------------
-         * 4. Préparation du tri et pagination des demandes de devis
-         * ------------------------------------------------------------
-         */
-        $quoteSort = $request->query->get('quote_sort', 'recent');
-
-        $quoteOrderBy = match ($quoteSort) {
-            'oldest' => ['createdAt' => 'ASC'],
-            'budget_asc' => ['budgetAmount' => 'ASC'],
-            'budget_desc' => ['budgetAmount' => 'DESC'],
-            default => ['createdAt' => 'DESC'],
-        };
-
-        $quoteQueryBuilder = $quoteRequestRepository->createQueryBuilder('qr')
-            ->where('qr.prestataire = :prestataire')
-            ->andWhere('qr.deletedAt IS NULL')
-            ->andWhere('qr.archivedByPrestataireAt IS NULL')
-            ->andWhere('qr.status IN (:activeStatuses)')
-            ->setParameter('prestataire', $prestataireProfile)
-            ->setParameter('activeStatuses', [
-                QuoteRequestStatusEnum::SUBMITTED,
-                QuoteRequestStatusEnum::ACCEPTED,
-                QuoteRequestStatusEnum::ANSWERED,
-                QuoteRequestStatusEnum::CLOSED,
-            ]);
-
-        foreach ($quoteOrderBy as $field => $direction) {
-            $quoteQueryBuilder->addOrderBy('qr.' . $field, $direction);
-        }
-
-        $quoteRequests = $paginator->paginate(
-            $quoteQueryBuilder,
-            $request->query->getInt('quotePage', 1),
-            10,
-            [
-                'pageParameterName' => 'quotePage',
-            ]
-        );
-
-        /*
-         * ------------------------------------------------------------
-         * 4.bis Préparation du tri et pagination des demandes de devis archivées
-         * ------------------------------------------------------------
-         */
-        $archivedQuoteQueryBuilder = $quoteRequestRepository->createQueryBuilder('qr')
-            ->where('qr.prestataire = :prestataire')
-            ->andWhere('qr.archivedByPrestataireAt IS NOT NULL')
-            ->andWhere('qr.deletedAt IS NULL')
-            ->setParameter('prestataire', $prestataireProfile);
-
-        foreach ($quoteOrderBy as $field => $direction) {
-            $archivedQuoteQueryBuilder->addOrderBy('qr.' . $field, $direction);
-        }
-
-        $archivedQuoteRequests = $paginator->paginate(
-            $archivedQuoteQueryBuilder,
-            $request->query->getInt('archivedQuotePage', 1),
-            10,
-            [
-                'pageParameterName' => 'archivedQuotePage',
-            ]
-        );
-
-        /*
-         * ------------------------------------------------------------
-         * 5. Chargement des conversations et détermination de l’active
-         * ------------------------------------------------------------
-         */
-        $conversationId = $request->query->get('conversation');
-
-        $conversations = $conversationRepository->createQueryBuilder('c')
-            ->leftJoin('c.quoteRequest', 'qr')
-            ->andWhere('c.prestataire = :prestataire')
-            ->andWhere('qr IS NULL OR qr.archivedByPrestataireAt IS NULL')
-            ->setParameter('prestataire', $prestataireProfile)
-            ->addOrderBy('c.lastMessageAt', 'DESC')
-            ->addOrderBy('c.createdAt', 'DESC')
-            ->getQuery()
-            ->getResult();
-
-        $activeConversation = null;
-        $activeTab = $request->query->get('tab', 'dashboard');
-
-        if (!empty($conversations)) {
-            if (is_string($conversationId) || is_numeric($conversationId)) {
-                foreach ($conversations as $conversation) {
-                    if ((string) $conversation->getId() === (string) $conversationId) {
-                        $activeConversation = $conversation;
-                        break;
-                    }
-                }
-            }
-
-            if (!$activeConversation instanceof Conversation) {
-                $activeConversation = $conversations[0];
-            }
-        }
-
-        // Determine si la conversation actuelle contient des photos
-        $hasConversationPhotos = false;
-
-        if ($activeConversation instanceof Conversation) {
-            foreach ($activeConversation->getMessages() as $message) {
-                foreach ($message->getAttachments() as $attachment) {
-                    if ($attachment->getFileName()) {
-                        $hasConversationPhotos = true;
-                        break 2;
-                    }
-                }
-            }
-        }
-
-        /*
-         * ------------------------------------------------------------
-         * 6. Construction du formulaire de message
-         *    Version simple : un seul champ fichier multiple
-         * ------------------------------------------------------------
-         */
-        $messageForm = null;
-
-        if ($activeConversation) {
-            $message = new Message();
-
-            $messageForm = $this->createForm(MessageType::class, $message, [
-                'action' => $this->generateUrl('app_prestataire_conversation_message_send', [
-                    'id' => $activeConversation->getId(),
-                ]),
-                'method' => 'POST',
-            ])->createView();
-        }
-
-        /*
-         * ------------------------------------------------------------
-         * 7. Rendu final du dashboard prestataire
-         * ------------------------------------------------------------
-         */
-        return $this->render('prestataire_dashboard/prestataire_dashboard.html.twig', [
-            'user' => $user,
-            'prestataireProfile' => $prestataireProfile,
-            'prestations' => $prestations,
-            'quoteRequests' => $quoteRequests,
-            'quoteSort' => $quoteSort,
-            'conversations' => $conversations,
-            'activeConversation' => $activeConversation,
-            'messageForm' => $messageForm,
-            'activeTab' => $activeTab,
-            'hasConversationPhotos' => $hasConversationPhotos,
-            'archivedQuoteRequests' => $archivedQuoteRequests,
-        ]);
+        return $this->render('prestataire_dashboard/prestataire_dashboard.html.twig', $this->buildDashboardViewData(
+            request: $request,
+            user: $user,
+            prestataireProfile: $prestataireProfile,
+            prestataireServiceRepository: $prestataireServiceRepository,
+            quoteRequestRepository: $quoteRequestRepository,
+            conversationRepository: $conversationRepository,
+            paginator: $paginator,
+        ));
     }
 
     #[Route('/prestataire/espace-pro/conversation/{id}/message', name: 'app_prestataire_conversation_message_send', methods: ['POST'])]
+    /**
+     * Traite l’action "sendMessage" du contrôleur Prestataire Dashboard.
+     *
+     * @return Response
+     */
     public function sendMessage(
         #[MapEntity(id: 'id')] Conversation $conversation,
         Request $request,
@@ -237,45 +86,19 @@ final class PrestataireDashboardController extends AbstractController
         ConversationRepository $conversationRepository,
         PrestataireServiceRepository $prestataireServiceRepository,
         ConversationMessageManager $conversationMessageManager,
+        PaginatorInterface $paginator,
     ): Response {
-        /*
-     * ------------------------------------------------------------
-     * 1. Sécurité : utilisateur connecté + profil prestataire valide
-     * ------------------------------------------------------------
-     */
-        $user = $this->getUser();
-
-        if (!$user instanceof \App\Entity\User || !$user->getPrestataireProfile()) {
-            throw $this->createAccessDeniedException('Accès refusé.');
-        }
-
+        $user = $this->getAuthenticatedPrestataireUser();
         $prestataireProfile = $user->getPrestataireProfile();
 
         if ($conversation->getPrestataire()?->getId() !== $prestataireProfile->getId()) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas répondre à cette conversation.');
         }
 
-        /*
-     * ------------------------------------------------------------
-     * 2. Préparation du message et du formulaire
-     * ------------------------------------------------------------
-     */
         $message = new Message();
-
-        $form = $this->createForm(MessageType::class, $message, [
-            'action' => $this->generateUrl('app_prestataire_conversation_message_send', [
-                'id' => $conversation->getId(),
-            ]),
-            'method' => 'POST',
-        ]);
-
+        $form = $this->createMessageForm($conversation, $message);
         $form->handleRequest($request);
 
-        /*
-     * ------------------------------------------------------------
-     * 3. Traitement du submit valide
-     * ------------------------------------------------------------
-     */
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var array<\Symfony\Component\HttpFoundation\File\UploadedFile>|null $uploadedFiles */
             $uploadedFiles = $form->get('attachments')->getData();
@@ -301,11 +124,6 @@ final class PrestataireDashboardController extends AbstractController
                 ], 303);
             }
 
-            /*
-         * ------------------------------------------------------------
-         * 4. Mise à jour des dates de conversation
-         * ------------------------------------------------------------
-         */
             if (method_exists($conversation, 'setLastMessageAt')) {
                 $conversation->setLastMessageAt(new \DateTimeImmutable());
             }
@@ -314,29 +132,12 @@ final class PrestataireDashboardController extends AbstractController
                 $conversation->setUpdatedAt(new \DateTimeImmutable());
             }
 
-            /*
-         * ------------------------------------------------------------
-         * 5. Persistance du message et des pièces jointes
-         * ------------------------------------------------------------
-         */
             $entityManager->persist($message);
             $entityManager->flush();
-
-            /*
-         * ------------------------------------------------------------
-         * 6. Temps réel : diffusion immédiate du nouveau message
-         * ------------------------------------------------------------
-         */
             $realtimeNotifier->notifyMessageCreated($conversation->getId(), $message);
-
-            /*
-         * ------------------------------------------------------------
-         * 7. Notification applicative au client
-         * ------------------------------------------------------------
-         */
             $clientUser = $conversation->getClient()?->getAccount();
 
-            if ($clientUser instanceof \App\Entity\User && $clientUser->getId() !== $user->getId()) {
+            if ($clientUser instanceof User && $clientUser->getId() !== $user->getId()) {
                 $notificationManager->notify(
                     $clientUser,
                     NotificationTypeEnum::MESSAGE_RECEIVED,
@@ -356,72 +157,37 @@ final class PrestataireDashboardController extends AbstractController
                 );
             }
 
-            /*
-         * ------------------------------------------------------------
-         * 8. Redirection post-submit
-         * ------------------------------------------------------------
-         */
             return $this->redirectToRoute('app_prestataire_dashboard', [
                 'conversation' => $conversation->getId(),
                 'tab' => 'messages',
                 '_fragment' => 'messages-main-panel',
-            ], 303);
+                ], 303);
         }
 
-        /*
-     * ------------------------------------------------------------
-     * 9. Rechargement des données du dashboard si formulaire invalide
-     * ------------------------------------------------------------
-     */
-        $quoteSort = $request->query->get('quoteSort', 'latest');
-
-        $quoteOrderBy = match ($quoteSort) {
-            'oldest' => ['createdAt' => 'ASC'],
-            'budget_asc' => ['budgetAmount' => 'ASC'],
-            'budget_desc' => ['budgetAmount' => 'DESC'],
-            default => ['createdAt' => 'DESC'],
-        };
-
-        $prestations = $prestataireServiceRepository->findBy(
-            ['prestataire' => $prestataireProfile],
-            ['createdAt' => 'DESC']
+        return $this->render(
+            'prestataire_dashboard/prestataire_dashboard.html.twig',
+            $this->buildDashboardViewData(
+                request: $request,
+                user: $user,
+                prestataireProfile: $prestataireProfile,
+                prestataireServiceRepository: $prestataireServiceRepository,
+                quoteRequestRepository: $quoteRequestRepository,
+                conversationRepository: $conversationRepository,
+                paginator: $paginator,
+                messageFormView: $form->createView(),
+                forcedActiveConversation: $conversation,
+                forcedActiveTab: 'messages',
+            ),
+            new Response('', Response::HTTP_UNPROCESSABLE_ENTITY)
         );
-
-        $quoteRequests = $quoteRequestRepository->findBy(
-            ['prestataire' => $prestataireProfile],
-            $quoteOrderBy
-        );
-
-        $conversations = $conversationRepository->findBy(
-            ['prestataire' => $prestataireProfile],
-            ['lastMessageAt' => 'DESC', 'createdAt' => 'DESC']
-        );
-
-        $archivedQuoteRequests = $quoteRequestRepository->findBy(
-            ['prestataire' => $prestataireProfile,],
-            ['updatedAt' => 'DESC', 'createdAt' => 'DESC',]
-        );
-
-        /*
-     * ------------------------------------------------------------
-     * 10. Réaffichage du dashboard avec le formulaire et ses erreurs
-     * ------------------------------------------------------------
-     */
-        return $this->render('prestataire_dashboard/prestataire_dashboard.html.twig', [
-            'user' => $user,
-            'prestataireProfile' => $prestataireProfile,
-            'prestations' => $prestations,
-            'quoteRequests' => $quoteRequests,
-            'archivedQuoteRequests' => $archivedQuoteRequests,
-            'quoteSort' => $quoteSort,
-            'conversations' => $conversations,
-            'activeConversation' => $conversation,
-            'messageForm' => $form->createView(),
-            'activeTab' => 'messages',
-        ], new Response('', Response::HTTP_UNPROCESSABLE_ENTITY));
     }
 
     #[Route('/prestataire/espace-pro/conversation/{id}/photos', name: 'app_prestataire_conversation_photos', methods: ['GET'])]
+    /**
+     * Traite l’action "conversationPhotos" du contrôleur Prestataire Dashboard.
+     *
+     * @return Response
+     */
     public function conversationPhotos(
         #[MapEntity(id: 'id')] Conversation $conversation,
         Request $request,
@@ -484,6 +250,11 @@ final class PrestataireDashboardController extends AbstractController
 
 
     #[Route('/conversation/attachment/{id}/delete', name: 'app_conversation_attachment_delete', methods: ['POST'])]
+    /**
+     * Traite l’action "deleteAttachment" du contrôleur Prestataire Dashboard.
+     *
+     * @return Response
+     */
     public function deleteAttachment(
         Request $request,
         MessageAttachment $attachment,
@@ -522,5 +293,205 @@ final class PrestataireDashboardController extends AbstractController
         }
 
         return $this->redirectToRoute('app_home');
+    }
+
+    private function getAuthenticatedPrestataireUser(): User
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException('Accès refusé.');
+        }
+
+        if (!$this->isGranted('ROLE_PRESTATAIRE')) {
+            throw $this->createAccessDeniedException('Accès réservé aux prestataires.');
+        }
+
+        if (!$user->getPrestataireProfile()) {
+            throw $this->createAccessDeniedException('Profil prestataire introuvable.');
+        }
+
+        return $user;
+    }
+
+    private function getPrestataireProfile(User $user, PrestataireProfileRepository $prestataireProfileRepository): PrestataireProfile
+    {
+        $prestataireProfile = $prestataireProfileRepository->findOneBy([
+            'account' => $user,
+        ]);
+
+        if (!$prestataireProfile instanceof PrestataireProfile) {
+            throw $this->createAccessDeniedException('Profil prestataire introuvable.');
+        }
+
+        return $prestataireProfile;
+    }
+
+    private function buildDashboardViewData(
+        Request $request,
+        User $user,
+        PrestataireProfile $prestataireProfile,
+        PrestataireServiceRepository $prestataireServiceRepository,
+        QuoteRequestRepository $quoteRequestRepository,
+        ConversationRepository $conversationRepository,
+        PaginatorInterface $paginator,
+        ?FormView $messageFormView = null,
+        ?Conversation $forcedActiveConversation = null,
+        ?string $forcedActiveTab = null,
+    ): array {
+        $quoteSort = $this->resolveQuoteSort($request);
+        $quoteOrderBy = $this->resolveQuoteOrderBy($quoteSort);
+        $conversations = $this->loadConversations($conversationRepository, $prestataireProfile);
+        $activeConversation = $forcedActiveConversation ?? $this->resolveActiveConversation(
+            $conversations,
+            $request->query->get('conversation')
+        );
+
+        if (!$activeConversation instanceof Conversation && $forcedActiveConversation instanceof Conversation) {
+            $activeConversation = $forcedActiveConversation;
+        }
+
+        if (null === $messageFormView && $activeConversation instanceof Conversation) {
+            $messageFormView = $this->createMessageForm($activeConversation, new Message())->createView();
+        }
+
+        return [
+            'user' => $user,
+            'prestataireProfile' => $prestataireProfile,
+            'prestations' => $prestataireServiceRepository->findBy(
+                ['prestataire' => $prestataireProfile],
+                ['updatedAt' => 'DESC', 'createdAt' => 'DESC']
+            ),
+            'quoteRequests' => $paginator->paginate(
+                $this->createQuoteRequestsQueryBuilder($quoteRequestRepository, $prestataireProfile, false, $quoteOrderBy),
+                $request->query->getInt('quotePage', 1),
+                self::DASHBOARD_PAGE_SIZE,
+                ['pageParameterName' => 'quotePage']
+            ),
+            'archivedQuoteRequests' => $paginator->paginate(
+                $this->createQuoteRequestsQueryBuilder($quoteRequestRepository, $prestataireProfile, true, $quoteOrderBy),
+                $request->query->getInt('archivedQuotePage', 1),
+                self::DASHBOARD_PAGE_SIZE,
+                ['pageParameterName' => 'archivedQuotePage']
+            ),
+            'quoteSort' => $quoteSort,
+            'conversations' => $conversations,
+            'activeConversation' => $activeConversation,
+            'messageForm' => $messageFormView,
+            'activeTab' => $forcedActiveTab ?? (string) $request->query->get('tab', 'dashboard'),
+            'hasConversationPhotos' => $this->conversationHasPhotos($activeConversation),
+        ];
+    }
+
+    private function resolveQuoteSort(Request $request): string
+    {
+        return (string) $request->query->get('quote_sort', 'recent');
+    }
+
+    private function resolveQuoteOrderBy(string $quoteSort): array
+    {
+        return match ($quoteSort) {
+            'oldest' => ['createdAt' => 'ASC'],
+            'budget_asc' => ['budgetAmount' => 'ASC'],
+            'budget_desc' => ['budgetAmount' => 'DESC'],
+            default => ['createdAt' => 'DESC'],
+        };
+    }
+
+    private function createQuoteRequestsQueryBuilder(
+        QuoteRequestRepository $quoteRequestRepository,
+        PrestataireProfile $prestataireProfile,
+        bool $archived,
+        array $quoteOrderBy,
+    ): QueryBuilder {
+        $queryBuilder = $quoteRequestRepository->createQueryBuilder('qr')
+            ->where('qr.prestataire = :prestataire')
+            ->andWhere('qr.deletedAt IS NULL')
+            ->setParameter('prestataire', $prestataireProfile);
+
+        if ($archived) {
+            $queryBuilder->andWhere('qr.archivedByPrestataireAt IS NOT NULL');
+        } else {
+            $queryBuilder
+                ->andWhere('qr.archivedByPrestataireAt IS NULL')
+                ->andWhere('qr.status IN (:activeStatuses)')
+                ->setParameter('activeStatuses', [
+                    QuoteRequestStatusEnum::SUBMITTED,
+                    QuoteRequestStatusEnum::ACCEPTED,
+                    QuoteRequestStatusEnum::ANSWERED,
+                    QuoteRequestStatusEnum::CLOSED,
+                ]);
+        }
+
+        foreach ($quoteOrderBy as $field => $direction) {
+            $queryBuilder->addOrderBy('qr.' . $field, $direction);
+        }
+
+        return $queryBuilder;
+    }
+
+    /**
+     * @return list<Conversation>
+     */
+    private function loadConversations(
+        ConversationRepository $conversationRepository,
+        PrestataireProfile $prestataireProfile,
+    ): array {
+        return $conversationRepository->createQueryBuilder('c')
+            ->leftJoin('c.quoteRequest', 'qr')
+            ->andWhere('c.prestataire = :prestataire')
+            ->andWhere('qr IS NULL OR qr.archivedByPrestataireAt IS NULL')
+            ->setParameter('prestataire', $prestataireProfile)
+            ->addOrderBy('c.lastMessageAt', 'DESC')
+            ->addOrderBy('c.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param list<Conversation> $conversations
+     */
+    private function resolveActiveConversation(array $conversations, mixed $conversationId): ?Conversation
+    {
+        if ([] === $conversations) {
+            return null;
+        }
+
+        if (is_string($conversationId) || is_numeric($conversationId)) {
+            foreach ($conversations as $conversation) {
+                if ((string) $conversation->getId() === (string) $conversationId) {
+                    return $conversation;
+                }
+            }
+        }
+
+        return $conversations[0];
+    }
+
+    private function conversationHasPhotos(?Conversation $conversation): bool
+    {
+        if (!$conversation instanceof Conversation) {
+            return false;
+        }
+
+        foreach ($conversation->getMessages() as $message) {
+            foreach ($message->getAttachments() as $attachment) {
+                if ($attachment->getFileName()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private function createMessageForm(Conversation $conversation, Message $message): FormInterface
+    {
+        return $this->createForm(MessageType::class, $message, [
+            'action' => $this->generateUrl('app_prestataire_conversation_message_send', [
+                'id' => $conversation->getId(),
+            ]),
+            'method' => 'POST',
+        ]);
     }
 }

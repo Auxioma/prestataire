@@ -20,6 +20,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+/**
+ * Gère les actions liées à user  c r u d.
+ */
 class UserCrudController extends AbstractCrudController
 {
     public function __construct(
@@ -32,6 +35,11 @@ class UserCrudController extends AbstractCrudController
         return User::class;
     }
 
+    /**
+     * Traite l’action "configureCrud" du contrôleur User  C R U D.
+     *
+     * @return Crud
+     */
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
@@ -40,6 +48,11 @@ class UserCrudController extends AbstractCrudController
             ->setDefaultSort(['createdAt' => 'DESC']);
     }
 
+    /**
+     * Traite l’action "configureActions" du contrôleur User  C R U D.
+     *
+     * @return Actions
+     */
     public function configureActions(Actions $actions): Actions
     {
         $ban = Action::new('banUser', 'Bannir')
@@ -59,6 +72,11 @@ class UserCrudController extends AbstractCrudController
     }
 
     #[AdminRoute(path: '/ban-user', name: 'ban_user')]
+    /**
+     * Traite l’action "banUser" du contrôleur User  C R U D.
+     *
+     * @return RedirectResponse
+     */
     public function banUser(): RedirectResponse
     {
         $id = $this->getContext()->getRequest()->query->get('entityId');
@@ -74,6 +92,11 @@ class UserCrudController extends AbstractCrudController
     }
 
     #[AdminRoute(path: '/reactivate-user', name: 'reactivate_user')]
+    /**
+     * Traite l’action "reactivateUser" du contrôleur User  C R U D.
+     *
+     * @return RedirectResponse
+     */
     public function reactivateUser(): RedirectResponse
     {
         $id = $this->getContext()->getRequest()->query->get('entityId');
@@ -88,6 +111,11 @@ class UserCrudController extends AbstractCrudController
         return $this->redirect($this->generateUrl('admin'));
     }
 
+    /**
+     * Traite l’action "configureFields" du contrôleur User  C R U D.
+     *
+     * @return iterable
+     */
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id')->hideOnForm();

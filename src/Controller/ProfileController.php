@@ -12,52 +12,56 @@
 
 namespace App\Controller;
 
+use App\Dto\PrestataireSettingsForms;
 use App\Entity\ClientProfile;
-use App\Entity\PrestataireAvailability;
 use App\Entity\PrestataireDocument;
-use App\Entity\PrestataireInterventionZone;
 use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
 use App\Entity\User;
 use App\Enum\FavoriteTypeEnum;
-use App\Enum\PrestataireProfileStatusEnum;
-use App\Enum\VerificationStatusEnum;
 use App\Form\AccountSettingsType;
-use App\Form\PrestataireAvailabilityCollectionType;
-use App\Form\PrestataireCompanyTabType;
-use App\Form\PrestataireInterventionZoneType;
 use App\Form\PrestataireServiceType;
 use App\Repository\FavoriteRepository;
 use App\Repository\PrestataireProfileRepository;
 use App\Repository\PrestataireServiceRepository;
 use App\Repository\ServiceCategoryRepository;
 use App\Repository\ServiceRepository;
+use App\Service\CompanyVerificationManager;
+use App\Service\PrestataireProfileManager;
+use App\Service\PrestataireSettingsFormsFactory;
 use App\Service\SireneClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
-use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
-use Symfony\UX\Map\InfoWindow;
-use Symfony\UX\Map\Map;
-use Symfony\UX\Map\Marker;
-use Symfony\UX\Map\Point;
-use Symfony\Component\Form\FormInterface;
 
 
+/**
+ * Gère les actions liées à profile.
+ */
 class ProfileController extends AbstractController
 {
+    public function __construct(
+        private readonly PrestataireProfileManager $prestataireProfileManager,
+        private readonly CompanyVerificationManager $companyVerificationManager,
+        private readonly PrestataireSettingsFormsFactory $prestataireSettingsFormsFactory,
+    ) {
+    }
+
     // #region Settings
     #[Route('/prestataire/parametres', name: 'app_prestataire_settings')]
+    /**
+     * Affiche et traite les paramètres associés à ce contrôleur.
+     *
+     * @return Response
+     */
     public function settings(
         Request $request,
         EntityManagerInterface $entityManager,
         ServiceCategoryRepository $categoryRepository,
-        FormFactoryInterface $formFactory,
         SireneClient $sireneClient,
     ): Response {
         /** @var \App\Entity\User|null $user */
@@ -67,24 +71,20 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $prestataireProfile = $this->getOrCreatePrestataireProfile($user, $entityManager);
-        $this->ensureDefaultAvailabilities($prestataireProfile, $entityManager);
+        $prestataireProfile = $this->prestataireProfileManager->getOrCreateProfile($user);
+        $this->prestataireProfileManager->ensureDefaultAvailabilities($prestataireProfile);
 
-        $availabilities = $this->getSortedAvailabilities($prestataireProfile);
-        $documents = $this->getSortedDocuments($prestataireProfile);
+        $availabilities = $this->prestataireProfileManager->getSortedAvailabilities($prestataireProfile);
+        $documents = $this->prestataireProfileManager->getSortedDocuments($prestataireProfile);
         $zones = $prestataireProfile->getPrestataireInterventionZones();
 
-        $forms = $this->buildSettingsForms(
-            user: $user,
-            prestataireProfile: $prestataireProfile,
-            formFactory: $formFactory
-        );
+        $forms = $this->prestataireSettingsFormsFactory->create($user, $prestataireProfile);
 
-        $forms['userForm']->handleRequest($request);
-        $forms['publicProfileForm']->handleRequest($request);
-        $forms['companyForm']->handleRequest($request);
-        $forms['availabilityForm']->handleRequest($request);
-        $forms['documentForm']->handleRequest($request);
+        $forms->userForm->handleRequest($request);
+        $forms->publicProfileForm->handleRequest($request);
+        $forms->companyForm->handleRequest($request);
+        $forms->availabilityForm->handleRequest($request);
+        $forms->documentForm->handleRequest($request);
 
         $companyVerificationPreview = null;
         $openCompanyVerificationModal = false;
@@ -93,15 +93,15 @@ class ProfileController extends AbstractController
             request: $request,
             entityManager: $entityManager,
             prestataireProfile: $prestataireProfile,
-            documentForm: $forms['documentForm'],
-            document: $forms['documentEntity'],
+            documentForm: $forms->documentForm,
+            document: $forms->documentEntity,
         )) {
             return $response;
         }
 
         if ($response = $this->handleUserForm(
             entityManager: $entityManager,
-            userForm: $forms['userForm'],
+            userForm: $forms->userForm,
             user: $user,
         )) {
             return $response;
@@ -109,7 +109,7 @@ class ProfileController extends AbstractController
 
         if ($response = $this->handlePublicProfileForm(
             entityManager: $entityManager,
-            publicProfileForm: $forms['publicProfileForm'],
+            publicProfileForm: $forms->publicProfileForm,
             prestataireProfile: $prestataireProfile,
         )) {
             return $response;
@@ -118,7 +118,7 @@ class ProfileController extends AbstractController
         $companyResult = $this->handleCompanyForm(
             request: $request,
             entityManager: $entityManager,
-            companyForm: $forms['companyForm'],
+            companyForm: $forms->companyForm,
             prestataireProfile: $prestataireProfile,
             sireneClient: $sireneClient,
         );
@@ -132,177 +132,31 @@ class ProfileController extends AbstractController
 
         if ($response = $this->handleAvailabilityForm(
             entityManager: $entityManager,
-            availabilityForm: $forms['availabilityForm'],
+            availabilityForm: $forms->availabilityForm,
             prestataireProfile: $prestataireProfile,
         )) {
             return $response;
         }
 
-        $zoneMap = $this->buildZoneMap($zones);
+        $zoneMap = $this->prestataireProfileManager->buildZoneMap($zones);
 
         return $this->render('profile/prestataire_profile.html.twig', [
-            'userForm' => $forms['userForm']->createView(),
-            'publicProfileForm' => $forms['publicProfileForm']->createView(),
-            'companyForm' => $forms['companyForm']->createView(),
-            'zoneForm' => $forms['zoneForm']->createView(),
+            'userForm' => $forms->userForm->createView(),
+            'publicProfileForm' => $forms->publicProfileForm->createView(),
+            'companyForm' => $forms->companyForm->createView(),
+            'zoneForm' => $forms->zoneForm->createView(),
             'zones' => $zones,
             'user' => $user,
             'categories' => $categoryRepository->findWithSubCategories(),
             'zoneMap' => $zoneMap,
-            'availabilityForm' => $forms['availabilityForm']->createView(),
+            'availabilityForm' => $forms->availabilityForm->createView(),
             'availabilities' => $availabilities,
             'companyVerificationPreview' => $companyVerificationPreview,
             'openCompanyVerificationModal' => $openCompanyVerificationModal,
-            'documentForm' => $forms['documentForm']->createView(),
+            'documentForm' => $forms->documentForm->createView(),
             'documents' => $documents,
         ]);
     }
-
-    // #region Creation/récuperation de profil
-    private function getOrCreatePrestataireProfile(User $user, EntityManagerInterface $entityManager): PrestataireProfile
-    {
-        if (null === $user->getPrestataireProfile()) {
-            $profile = new PrestataireProfile();
-            $user->setPrestataireProfile($profile);
-            $profile->setAccount($user);
-
-            $entityManager->persist($profile);
-            $entityManager->persist($user);
-            $entityManager->flush();
-        }
-
-        return $user->getPrestataireProfile();
-    }
-    // #endregion
-
-    // #region Initialisation des disponibilités 
-    private function ensureDefaultAvailabilities(PrestataireProfile $prestataireProfile, EntityManagerInterface $entityManager): void
-    {
-        $existingDays = [];
-
-        foreach ($prestataireProfile->getAvailabilities() as $availability) {
-            $existingDays[] = $availability->getDayOfWeek();
-        }
-
-        $hasChanges = false;
-
-        for ($day = 1; $day <= 7; ++$day) {
-            if (!in_array($day, $existingDays, true)) {
-                $availability = new PrestataireAvailability();
-                $availability->setPrestataireProfile($prestataireProfile);
-                $availability->setDayOfWeek($day);
-
-                $prestataireProfile->addAvailability($availability);
-                $entityManager->persist($availability);
-                $hasChanges = true;
-            }
-        }
-
-        if ($hasChanges) {
-            $entityManager->persist($prestataireProfile);
-            $entityManager->flush();
-        }
-    }
-    // #endregion
-
-    // #region Tri des disponibilités
-    private function getSortedAvailabilities(PrestataireProfile $prestataireProfile): array
-    {
-        $availabilities = $prestataireProfile->getAvailabilities()->toArray();
-
-        usort(
-            $availabilities,
-            static fn(PrestataireAvailability $a, PrestataireAvailability $b): int => $a->getDayOfWeek() <=> $b->getDayOfWeek()
-        );
-
-        return $availabilities;
-    }
-    // #endregion
-
-    // #region Tri des documments
-    private function getSortedDocuments(PrestataireProfile $prestataireProfile): array
-    {
-        $documents = $prestataireProfile->getDocuments()->toArray();
-
-        usort(
-            $documents,
-            static fn(PrestataireDocument $a, PrestataireDocument $b): int => ($b->getCreatedAt()?->getTimestamp() ?? 0) <=> ($a->getCreatedAt()?->getTimestamp() ?? 0)
-        );
-
-        return $documents;
-    }
-    // #endregion
-
-    // #region Construction de tous les formulaires
-    private function buildSettingsForms(
-        User $user,
-        PrestataireProfile $prestataireProfile,
-        FormFactoryInterface $formFactory,
-    ): array {
-        $userForm = $formFactory->createNamed(
-            'user_profile_form',
-            \App\Form\UserProfileTabType::class,
-            $user
-        );
-
-        $companyForm = $formFactory->createNamed(
-            'company_form',
-            PrestataireCompanyTabType::class,
-            $prestataireProfile
-        );
-
-        $publicProfileForm = $formFactory->createNamed(
-            'public_profile_form',
-            \App\Form\PrestatairePublicProfileTabType::class,
-            $prestataireProfile
-        );
-
-        $availabilityForm = $this->createForm(
-            PrestataireAvailabilityCollectionType::class,
-            $prestataireProfile,
-            [
-                'action' => $this->generateUrl('app_prestataire_settings'),
-                'method' => 'POST',
-            ]
-        );
-
-        $zone = new PrestataireInterventionZone();
-        $zone->setPrestataireProfile($prestataireProfile);
-
-        $zoneForm = $formFactory->createNamed(
-            'zone_form',
-            PrestataireInterventionZoneType::class,
-            $zone,
-            [
-                'action' => $this->generateUrl('app_prestataire_zone_add'),
-                'method' => 'POST',
-            ]
-        );
-
-        $document = new PrestataireDocument();
-        $document->setPrestataireProfile($prestataireProfile);
-
-        $documentForm = $formFactory->createNamed(
-            'document_form',
-            \App\Form\PrestataireDocumentType::class,
-            $document,
-            [
-                'action' => $this->generateUrl('app_prestataire_settings'),
-                'method' => 'POST',
-            ]
-        );
-
-        return [
-            'userForm' => $userForm,
-            'companyForm' => $companyForm,
-            'publicProfileForm' => $publicProfileForm,
-            'availabilityForm' => $availabilityForm,
-            'zoneForm' => $zoneForm,
-            'documentForm' => $documentForm,
-            'documentEntity' => $document,
-        ];
-    }
-    // #endregion
 
     // METHODES DE TRAITEMENT DES FORMULAIRES
     // #region Documents
@@ -369,7 +223,7 @@ class ProfileController extends AbstractController
             return null;
         }
 
-        $this->updatePrestataireSlug($prestataireProfile);
+        $this->prestataireProfileManager->syncSlug($prestataireProfile);
 
         $entityManager->persist($prestataireProfile);
         $entityManager->flush();
@@ -401,7 +255,7 @@ class ProfileController extends AbstractController
             ];
         }
 
-        $this->updatePrestataireSlug($prestataireProfile);
+        $this->prestataireProfileManager->syncSlug($prestataireProfile);
 
         $companyFormData = $request->request->all('company_form');
 
@@ -410,6 +264,7 @@ class ProfileController extends AbstractController
         $isRejectCompanyVerificationAction = $request->request->has('rejectCompanyVerification');
 
         if ($isRejectCompanyVerificationAction) {
+            $this->companyVerificationManager->clearPreview();
             $this->addFlash('info', 'Le pré-remplissage automatique a été refusé.');
 
             return [
@@ -420,10 +275,29 @@ class ProfileController extends AbstractController
         }
 
         if ($isAcceptCompanyVerificationAction) {
-            $response = $this->applyAcceptedCompanyVerification($request, $entityManager, $prestataireProfile);
+            try {
+                $result = $this->companyVerificationManager->applyAcceptedPreview($prestataireProfile);
+            } catch (\RuntimeException $e) {
+                $this->addFlash('warning', $e->getMessage());
+
+                return [
+                    'response' => $this->redirectToRoute('app_prestataire_settings', ['tab' => 'company']),
+                    'companyVerificationPreview' => null,
+                    'openCompanyVerificationModal' => false,
+                ];
+            }
+
+            $entityManager->persist($prestataireProfile);
+            $entityManager->flush();
+
+            if ($result['isVerified'] && !$result['isActive']) {
+                $this->addFlash('warning', 'Le SIRET a bien été trouvé, mais l’établissement est indiqué comme fermé dans Sirene. Le profil n’a pas été activé automatiquement.');
+            }
+
+            $this->addFlash('success', 'Les informations officielles de l’entreprise ont été injectées dans votre fiche.');
 
             return [
-                'response' => $response,
+                'response' => $this->redirectToRoute('app_prestataire_settings', ['tab' => 'company']),
                 'companyVerificationPreview' => null,
                 'openCompanyVerificationModal' => false,
             ];
@@ -431,7 +305,7 @@ class ProfileController extends AbstractController
 
         if ($isVerifyCompanyAction) {
             try {
-                $preview = $this->buildCompanyVerificationPreview($request, $prestataireProfile, $sireneClient);
+                $preview = $this->companyVerificationManager->buildPreview($prestataireProfile, $sireneClient);
 
                 return [
                     'response' => null,
@@ -483,221 +357,25 @@ class ProfileController extends AbstractController
     }
     // #endregion
 
-    // #region Slug
-    private function updatePrestataireSlug(PrestataireProfile $prestataireProfile): void
-    {
-        if ($prestataireProfile->getCompanyName()) {
-            $prestataireProfile->setSlug(
-                mb_strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName()))
-            );
-        }
-    }
-    // #endregion
-
-    // #region application du pre remplissage
-    private function applyAcceptedCompanyVerification(
-        Request $request,
-        EntityManagerInterface $entityManager,
-        PrestataireProfile $prestataireProfile,
-    ): Response {
-        $previewPayload = $request->getSession()->get('company_verification_preview');
-
-        if (!is_array($previewPayload) || empty($previewPayload['fields'])) {
-            $this->addFlash('warning', 'La prévisualisation a expiré. Veuillez relancer la vérification.');
-
-            return $this->redirectToRoute('app_prestataire_settings', ['tab' => 'company']);
-        }
-
-        $fields = $previewPayload['fields'];
-
-        if (!empty($fields['companyName'])) {
-            $prestataireProfile->setCompanyName($fields['companyName']);
-        }
-
-        if (!empty($fields['legalName'])) {
-            $prestataireProfile->setLegalName($fields['legalName']);
-        }
-
-        if (!empty($fields['structureType'])) {
-            $prestataireProfile->setStructureType($fields['structureType']);
-        }
-
-        if (!empty($fields['address'])) {
-            $prestataireProfile->setAddress($fields['address']);
-        }
-
-        if (!empty($fields['postalCode'])) {
-            $prestataireProfile->setPostalCode($fields['postalCode']);
-        }
-
-        if (!empty($fields['city'])) {
-            $prestataireProfile->setCity($fields['city']);
-        }
-
-        if (!empty($fields['country'])) {
-            $prestataireProfile->setCountry($fields['country']);
-        }
-
-        $this->updatePrestataireSlug($prestataireProfile);
-
-        $isVerified = !empty($previewPayload['isVerified']);
-        $isActive = !empty($previewPayload['isActive']);
-
-        if ($isVerified) {
-            $prestataireProfile->setVerificationStatus(VerificationStatusEnum::COMPANY_VERIFIED);
-        }
-
-        if ($isVerified && $isActive) {
-            $prestataireProfile->setProfileStatus(PrestataireProfileStatusEnum::ACTIVE);
-        }
-
-        if ($isVerified && !$isActive) {
-            $prestataireProfile->setProfileStatus(PrestataireProfileStatusEnum::PENDING_VALIDATION);
-            $this->addFlash('warning', 'Le SIRET a bien été trouvé, mais l’établissement est indiqué comme fermé dans Sirene. Le profil n’a pas été activé automatiquement.');
-        }
-
-        $entityManager->persist($prestataireProfile);
-        $entityManager->flush();
-
-        $request->getSession()->remove('company_verification_preview');
-
-        $this->addFlash('success', 'Les informations officielles de l’entreprise ont été injectées dans votre fiche.');
-
-        return $this->redirectToRoute('app_prestataire_settings', ['tab' => 'company']);
-    }
-    // #endregion
-
-    // #region construction de la preview
-    private function buildCompanyVerificationPreview(
-        Request $request,
-        PrestataireProfile $prestataireProfile,
-        SireneClient $sireneClient,
-    ): array {
-        $siret = $prestataireProfile->getSiret();
-
-        if (!$siret) {
-            throw new \RuntimeException('Veuillez renseigner un numéro SIRET avant de lancer la vérification.');
-        }
-
-        $previewPayload = $sireneClient->buildCompanyPreviewFromSiret($siret);
-
-        $companyVerificationPreview = [
-            'siret' => $previewPayload['siret'],
-            'fields' => [
-                [
-                    'label' => 'Nom de l’entreprise / Enseigne',
-                    'current' => $prestataireProfile->getCompanyName(),
-                    'incoming' => $previewPayload['fields']['companyName'] ?? null,
-                ],
-                [
-                    'label' => 'Raison sociale',
-                    'current' => $prestataireProfile->getLegalName(),
-                    'incoming' => $previewPayload['fields']['legalName'] ?? null,
-                ],
-                [
-                    'label' => 'Forme juridique',
-                    'current' => $prestataireProfile->getStructureType(),
-                    'incoming' => $previewPayload['fields']['structureType'] ?? null,
-                ],
-                [
-                    'label' => 'Adresse',
-                    'current' => $prestataireProfile->getAddress(),
-                    'incoming' => $previewPayload['fields']['address'] ?? null,
-                ],
-                [
-                    'label' => 'Code postal',
-                    'current' => $prestataireProfile->getPostalCode(),
-                    'incoming' => $previewPayload['fields']['postalCode'] ?? null,
-                ],
-                [
-                    'label' => 'Ville',
-                    'current' => $prestataireProfile->getCity(),
-                    'incoming' => $previewPayload['fields']['city'] ?? null,
-                ],
-                [
-                    'label' => 'Pays',
-                    'current' => $prestataireProfile->getCountry(),
-                    'incoming' => $previewPayload['fields']['country'] ?? null,
-                ],
-            ],
-        ];
-
-        $request->getSession()->set('company_verification_preview', $previewPayload);
-
-        return $companyVerificationPreview;
-    }
-    // #endregion
-
-    // #region construction de la cartes des zones
-    private function buildZoneMap(iterable $zones): ?Map
-    {
-        $firstMappableZone = null;
-
-        foreach ($zones as $existingZone) {
-            if (
-                null !== $existingZone
-                && null !== $existingZone->getLatitude()
-                && null !== $existingZone->getLongitude()
-            ) {
-                $firstMappableZone = $existingZone;
-                break;
-            }
-        }
-
-        if (null === $firstMappableZone) {
-            return null;
-        }
-
-        $zoneMap = (new Map('default'))
-            ->center(new Point(
-                (float) $firstMappableZone->getLatitude(),
-                (float) $firstMappableZone->getLongitude()
-            ))
-            ->zoom(8)
-            ->options(
-                (new LeafletOptions())
-                    ->tileLayer(new TileLayer(
-                        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                        options: ['maxZoom' => 19]
-                    ))
-            );
-
-        foreach ($zones as $existingZone) {
-            if (
-                null !== $existingZone
-                && null !== $existingZone->getLatitude()
-                && null !== $existingZone->getLongitude()
-            ) {
-                $label = $existingZone->getCity() ?: 'Zone d’intervention';
-
-                $zoneMap->addMarker(new Marker(
-                    position: new Point(
-                        (float) $existingZone->getLatitude(),
-                        (float) $existingZone->getLongitude()
-                    ),
-                    title: $label,
-                    infoWindow: new InfoWindow(
-                        content: '<strong>' . htmlspecialchars($label) . '</strong><br>Rayon : ' . (int) $existingZone->getRadiusKm() . ' km'
-                    )
-                ));
-            }
-        }
-
-        return $zoneMap;
-    }
-    #endregion
-    #endregion
-
-
     // #region services
     #[Route('/prestataire/service/ajouter', name: 'app_prestataire_add_service', methods: ['POST'])]
+    /**
+     * Traite l’action "addService" du contrôleur Profile.
+     *
+     * @return Response
+     */
     public function addService(
         Request $request,
         EntityManagerInterface $em,
         ServiceRepository $serviceRepo,
         SluggerInterface $slugger,
     ): Response {
+        if (!$this->isCsrfTokenValid('add_service', (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
+
+            return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
+        }
+
         $serviceId = $request->request->get('service_id');
         $user = $this->getUser();
         $service = $serviceRepo->find($serviceId);
@@ -737,6 +415,11 @@ class ProfileController extends AbstractController
 
     // #region Suppression d'un service
     #[Route('/prestataire/service/supprimer/{id}', name: 'app_prestataire_service_delete', methods: ['POST'])]
+    /**
+     * Supprime la ressource demandée.
+     *
+     * @return Response
+     */
     public function delete(Request $request, PrestataireService $ps, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
@@ -761,6 +444,11 @@ class ProfileController extends AbstractController
 
     // #region Edition d'un service
     #[Route('/prestataire/service/editer/{id}', name: 'app_prestataire_service_edit')]
+    /**
+     * Affiche et traite le formulaire de modification.
+     *
+     * @return Response
+     */
     public function edit(Request $request, PrestataireService $ps, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
@@ -814,6 +502,11 @@ class ProfileController extends AbstractController
 
     // #region Suppression d'un document
     #[Route('/prestataire/document/{id}/supprimer', name: 'app_prestataire_document_delete', methods: ['POST'])]
+    /**
+     * Traite l’action "deleteDocument" du contrôleur Profile.
+     *
+     * @return Response
+     */
     public function deleteDocument(
         Request $request,
         PrestataireDocument $document,
@@ -869,6 +562,11 @@ class ProfileController extends AbstractController
 
     #region Affichage
     #[Route('/client/parametres', name: 'app_client_settings')]
+    /**
+     * Traite l’action "clientSettings" du contrôleur Profile.
+     *
+     * @return Response
+     */
     public function clientSettings(Request $request, EntityManagerInterface $entityManager): Response
     {
         /** @var \App\Entity\User $user */
@@ -912,6 +610,11 @@ class ProfileController extends AbstractController
 
     #region Affichage des favoris
     #[Route('/client/parametres/favoris', name: 'app_client_settings_favorites', methods: ['GET'])]
+    /**
+     * Traite l’action "clientFavorites" du contrôleur Profile.
+     *
+     * @return Response
+     */
     public function clientFavorites(
         FavoriteRepository $favoriteRepository,
         PrestataireProfileRepository $prestataireProfileRepository,

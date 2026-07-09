@@ -17,11 +17,19 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/prestataire/calendrier', name: 'app_prestataire_appointment_')]
+/**
+ * Gère les actions liées à prestataire appointment.
+ */
 final class PrestataireAppointmentController extends AbstractController
 {
 
     // RECUPERER LES RENDEZ-VOUS
     #[Route('/events', name: 'events', methods: ['GET'])]
+    /**
+     * Traite l’action "events" du contrôleur Prestataire Appointment.
+     *
+     * @return JsonResponse
+     */
     public function events(
         Request $request,
         PrestataireAppointmentRepository $appointmentRepository,
@@ -110,6 +118,11 @@ final class PrestataireAppointmentController extends AbstractController
 
     // AJOUTER UN RENDEZ-VOUS
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
+    /**
+     * Affiche et traite le formulaire de création.
+     *
+     * @return Response
+     */
     public function new(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -172,6 +185,11 @@ final class PrestataireAppointmentController extends AbstractController
 
     // LISTE DE TOUS LES RENDEZ-VOUS
     #[Route('', name: 'index', methods: ['GET'])]
+    /**
+     * Affiche la page principale de ce contrôleur.
+     *
+     * @return Response
+     */
     public function index(
         PrestataireAppointmentRepository $appointmentRepository,
     ): Response {
@@ -195,6 +213,11 @@ final class PrestataireAppointmentController extends AbstractController
 
     // VISUALISER UN RENDEZ-VOUS
     #[Route('/{slug}', name: 'show', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    /**
+     * Affiche le détail de la ressource demandée.
+     *
+     * @return Response
+     */
     public function show(
         #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireAppointment $appointment,
     ): Response {
@@ -217,6 +240,11 @@ final class PrestataireAppointmentController extends AbstractController
 
     // MODIFIER UN RENDEZ-VOUS
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
+    /**
+     * Affiche et traite le formulaire de modification.
+     *
+     * @return Response
+     */
     public function edit(
         Request $request,
         #[MapEntity(id: 'id')] PrestataireAppointment $appointment,
@@ -255,6 +283,11 @@ final class PrestataireAppointmentController extends AbstractController
 
     // SUPPRIMER UN RENDEZ-VOUS
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'], requirements: ['id' => '\d+'])]
+    /**
+     * Supprime la ressource demandée.
+     *
+     * @return Response
+     */
     public function delete(
         Request $request,
         #[MapEntity(id: 'id')] PrestataireAppointment $appointment,
@@ -288,6 +321,11 @@ final class PrestataireAppointmentController extends AbstractController
 
     // DEPLACER UN RENDEZ-VOUS DRAG & DROP
     #[Route('/move', name: 'move', methods: ['POST'])]
+    /**
+     * Traite l’action "move" du contrôleur Prestataire Appointment.
+     *
+     * @return JsonResponse
+     */
     public function move(
         Request $request,
         PrestataireAppointmentRepository $appointmentRepository,

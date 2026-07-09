@@ -8,10 +8,14 @@ export default class extends Controller {
     connect() {
         this.handleMapConnect = this.handleMapConnect.bind(this);
         this.handleTabShown = this.handleTabShown.bind(this);
+        this.refreshTimeout = null;
+        this.tabTriggers = Array.from(
+            document.querySelectorAll('#settingsTabs [data-bs-toggle="tab"]')
+        );
 
         this.element.addEventListener('ux:map:connect', this.handleMapConnect);
 
-        document.querySelectorAll('#settingsTabs [data-bs-toggle="tab"]').forEach((tabTrigger) => {
+        this.tabTriggers.forEach((tabTrigger) => {
             tabTrigger.addEventListener('shown.bs.tab', this.handleTabShown);
         });
     }
@@ -19,9 +23,16 @@ export default class extends Controller {
     disconnect() {
         this.element.removeEventListener('ux:map:connect', this.handleMapConnect);
 
-        document.querySelectorAll('#settingsTabs [data-bs-toggle="tab"]').forEach((tabTrigger) => {
+        this.tabTriggers.forEach((tabTrigger) => {
             tabTrigger.removeEventListener('shown.bs.tab', this.handleTabShown);
         });
+
+        this.tabTriggers = [];
+
+        if (this.refreshTimeout) {
+            clearTimeout(this.refreshTimeout);
+            this.refreshTimeout = null;
+        }
     }
 
     handleMapConnect(event) {
@@ -63,8 +74,13 @@ export default class extends Controller {
             return;
         }
 
-        setTimeout(() => {
+        if (this.refreshTimeout) {
+            clearTimeout(this.refreshTimeout);
+        }
+
+        this.refreshTimeout = window.setTimeout(() => {
             this.map.invalidateSize();
+            this.refreshTimeout = null;
         }, 150);
     }
 }

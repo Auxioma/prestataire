@@ -16,9 +16,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Gère les actions liées à static page.
+ */
 class StaticPageController extends AbstractController
 {
     #[Route('/page/{slug}', name: 'app_static_page', requirements: ['slug' => '[a-z0-9\-]+'])]
+    /**
+     * Affiche le détail de la ressource demandée.
+     *
+     * @return Response
+     */
     public function show(string $slug): Response
     {
         // Nettoyage simple du nom pour correspondre au fichier twig

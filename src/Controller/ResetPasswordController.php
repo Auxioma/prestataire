@@ -31,6 +31,9 @@ use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 #[Route('/reset-password')]
+/**
+ * Gère les actions liées à reset password.
+ */
 class ResetPasswordController extends AbstractController
 {
     use ResetPasswordControllerTrait;

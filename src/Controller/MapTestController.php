@@ -22,9 +22,17 @@ use Symfony\UX\Map\Map;
 use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
 
+/**
+ * Gère les actions liées à map test.
+ */
 final class MapTestController extends AbstractController
 {
     #[Route('/test-map', name: 'app_test_map', methods: ['GET'])]
+    /**
+     * Traite l’action "__invoke" du contrôleur Map Test.
+     *
+     * @return Response
+     */
     public function __invoke(): Response
     {
         $map = (new Map('default'))

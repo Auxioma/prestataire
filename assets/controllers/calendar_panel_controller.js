@@ -9,6 +9,8 @@ export default class extends Controller {
 
     connect() {
         this.initialized = false;
+        this.initTimeout = null;
+        this.resizeTimeout = null;
         this.handleTabShown = this.handleTabShown.bind(this);
 
         document.addEventListener("shown.bs.tab", this.handleTabShown);
@@ -20,6 +22,16 @@ export default class extends Controller {
 
     disconnect() {
         document.removeEventListener("shown.bs.tab", this.handleTabShown);
+
+        if (this.initTimeout) {
+            clearTimeout(this.initTimeout);
+            this.initTimeout = null;
+        }
+
+        if (this.resizeTimeout) {
+            clearTimeout(this.resizeTimeout);
+            this.resizeTimeout = null;
+        }
 
         if (this.calendar) {
             this.calendar.destroy();
@@ -35,11 +47,17 @@ export default class extends Controller {
         }
 
         if (!this.initialized) {
-            window.setTimeout(() => this.initCalendar(), 30);
+            this.initTimeout = window.setTimeout(() => {
+                this.initCalendar();
+                this.initTimeout = null;
+            }, 30);
             return;
         }
 
-        window.setTimeout(() => this.calendar?.updateSize(), 60);
+        this.resizeTimeout = window.setTimeout(() => {
+            this.calendar?.updateSize();
+            this.resizeTimeout = null;
+        }, 60);
     }
 
     initCalendar() {

@@ -20,6 +20,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+/**
+ * Gère les actions liées à prestataire profile  c r u d.
+ */
 class PrestataireProfileCrudController extends AbstractCrudController
 {
     public function __construct(
@@ -32,6 +35,11 @@ class PrestataireProfileCrudController extends AbstractCrudController
         return PrestataireProfile::class;
     }
 
+    /**
+     * Traite l’action "configureCrud" du contrôleur Prestataire Profile  C R U D.
+     *
+     * @return Crud
+     */
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
@@ -40,6 +48,11 @@ class PrestataireProfileCrudController extends AbstractCrudController
             ->setDefaultSort(['id' => 'DESC']);
     }
 
+    /**
+     * Traite l’action "configureActions" du contrôleur Prestataire Profile  C R U D.
+     *
+     * @return Actions
+     */
     public function configureActions(Actions $actions): Actions
     {
         $verify = Action::new('verifyManually', 'Vérifier manuellement')
@@ -65,6 +78,11 @@ class PrestataireProfileCrudController extends AbstractCrudController
     }
 
     #[AdminRoute(path: '/verify-manually', name: 'verify_manually')]
+    /**
+     * Traite l’action "verifyManually" du contrôleur Prestataire Profile  C R U D.
+     *
+     * @return RedirectResponse
+     */
     public function verifyManually(): RedirectResponse
     {
         $id = $this->getContext()->getRequest()->query->get('entityId');
@@ -83,6 +101,11 @@ class PrestataireProfileCrudController extends AbstractCrudController
     }
 
     #[AdminRoute(path: '/suspend-profile', name: 'suspend_profile')]
+    /**
+     * Traite l’action "suspendProfile" du contrôleur Prestataire Profile  C R U D.
+     *
+     * @return RedirectResponse
+     */
     public function suspendProfile(): RedirectResponse
     {
         $id = $this->getContext()->getRequest()->query->get('entityId');
@@ -98,6 +121,11 @@ class PrestataireProfileCrudController extends AbstractCrudController
     }
 
     #[AdminRoute(path: '/reactivate-profile', name: 'reactivate_profile')]
+    /**
+     * Traite l’action "reactivateProfile" du contrôleur Prestataire Profile  C R U D.
+     *
+     * @return RedirectResponse
+     */
     public function reactivateProfile(): RedirectResponse
     {
         $id = $this->getContext()->getRequest()->query->get('entityId');
@@ -112,6 +140,11 @@ class PrestataireProfileCrudController extends AbstractCrudController
         return $this->redirect($this->generateUrl('admin'));
     }
 
+    /**
+     * Traite l’action "configureFields" du contrôleur Prestataire Profile  C R U D.
+     *
+     * @return iterable
+     */
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id')->hideOnForm();

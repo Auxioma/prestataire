@@ -27,9 +27,17 @@ use App\Entity\User;
 use App\Enum\FavoriteTypeEnum;
 use App\Repository\FavoriteRepository;
 
+/**
+ * Gère les actions liées à show prestataire.
+ */
 class ShowPrestataireController extends AbstractController
 {
     #[Route('/prestataire/{slug}', name: 'app_prestataire_show', methods: ['GET'])]
+    /**
+     * Traite l’action "__invoke" du contrôleur Show Prestataire.
+     *
+     * @return Response
+     */
     public function __invoke(
         #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireProfile $prestataire,
         FavoriteRepository $favoriteRepository,

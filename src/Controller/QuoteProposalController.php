@@ -28,9 +28,17 @@ use Symfony\Component\Routing\Attribute\Route;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 #[Route('/prestataire/devis', name: 'app_prestataire_quote_proposal_')]
+/**
+ * Gère les actions liées à quote proposal.
+ */
 class QuoteProposalController extends AbstractController
 {
     #[Route('/new/{id}', name: 'new', methods: ['GET'])]
+    /**
+     * Affiche et traite le formulaire de création.
+     *
+     * @return Response
+     */
     public function new(
         int $id,
         Request $request,
@@ -60,6 +68,11 @@ class QuoteProposalController extends AbstractController
     }
 
     #[Route('/{publicReference}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    /**
+     * Affiche et traite le formulaire de modification.
+     *
+     * @return Response
+     */
     public function edit(
         string $publicReference,
         Request $request,
@@ -115,6 +128,11 @@ class QuoteProposalController extends AbstractController
     }
 
     #[Route('/{publicReference}', name: 'show', methods: ['GET'])]
+    /**
+     * Affiche le détail de la ressource demandée.
+     *
+     * @return Response
+     */
     public function show(
         string $publicReference,
         PrestataireProfileRepository $prestataireProfileRepository,
@@ -138,6 +156,11 @@ class QuoteProposalController extends AbstractController
     }
 
     #[Route('/{publicReference}/finalize', name: 'finalize', methods: ['POST'])]
+    /**
+     * Traite l’action "finalize" du contrôleur Quote Proposal.
+     *
+     * @return Response
+     */
     public function finalize(
         string $publicReference,
         Request $request,
@@ -225,6 +248,11 @@ class QuoteProposalController extends AbstractController
     }
 
     #[Route('/{publicReference}/delete', name: 'delete', methods: ['POST'])]
+    /**
+     * Supprime la ressource demandée.
+     *
+     * @return Response
+     */
     public function delete(
         string $publicReference,
         Request $request,
@@ -266,6 +294,11 @@ class QuoteProposalController extends AbstractController
     }
 
     #[Route('/{publicReference}/archive', name: 'archive', methods: ['POST'])]
+    /**
+     * Traite l’action "archive" du contrôleur Quote Proposal.
+     *
+     * @return Response
+     */
     public function archive(
         string $publicReference,
         Request $request,
@@ -334,6 +367,11 @@ class QuoteProposalController extends AbstractController
     }
 
     #[Route('/devis/{publicReference}/pdf', name: 'pdf', methods: ['GET'])]
+    /**
+     * Traite l’action "showPdf" du contrôleur Quote Proposal.
+     *
+     * @return Response
+     */
     public function showPdf(
         string $publicReference,
         QuoteProposalRepository $quoteProposalRepository,
@@ -406,6 +444,11 @@ class QuoteProposalController extends AbstractController
     }
 
     #[Route('/{publicReference}/archived-show', name: 'archived_show', methods: ['GET'])]
+    /**
+     * Traite l’action "archivedShow" du contrôleur Quote Proposal.
+     *
+     * @return Response
+     */
     public function archivedShow(
         string $publicReference,
         PrestataireProfileRepository $prestataireProfileRepository,

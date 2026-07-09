@@ -115,6 +115,8 @@
 
 			<div class="modal-body" data-controller="chained-selects">
 				<form action="{{ path('app_prestataire_add_service') }}" method="POST" data-turbo="false" class="tm-add-service-form">
+					<input type="hidden" name="_token" value="{{ csrf_token('add_service') }}">
+
 					<div class="tm-field-group">
 						<select data-chained-selects-target="category" data-action="change->chained-selects#loadSubCategories" data-controller="symfony--ux-autocomplete--autocomplete" data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false}}' required>
 							<option value="">Choisir une catégorie principale</option>

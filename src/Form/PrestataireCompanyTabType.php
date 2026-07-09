@@ -130,27 +130,26 @@ class PrestataireCompanyTabType extends AbstractType
                 ],
             ]);
 
-            $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
-        $data = $event->getData();
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
+            $data = $event->getData();
 
-        if (!is_array($data)) {
-            return;
-        }
+            if (!is_array($data)) {
+                return;
+            }
 
-        if (isset($data['siret']) && is_string($data['siret'])) {
-            $data['siret'] = preg_replace('/\D+/', '', $data['siret']);
-            $data['siret'] = mb_substr($data['siret'], 0, 14);
-        }
+            if (isset($data['siret']) && is_string($data['siret'])) {
+                $data['siret'] = preg_replace('/\D+/', '', $data['siret']);
+                $data['siret'] = mb_substr($data['siret'], 0, 14);
+            }
 
-        $event->setData($data);
-    });
+            $event->setData($data);
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => PrestataireProfile::class,
-            'csrf_protection' => false,
         ]);
     }
 }

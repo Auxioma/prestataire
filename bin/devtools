@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+MAMBA_BIN="$PROJECT_DIR/.local-tools/micromamba-extract/bin/micromamba"
+MAMBA_ROOT="$PROJECT_DIR/.local-tools/mamba-root"
+CACHE_DIR="$PROJECT_DIR/.local-tools/.cache"
+
+if [ ! -x "$MAMBA_BIN" ]; then
+    echo "micromamba introuvable: $MAMBA_BIN" >&2
+    exit 1
+fi
+
+mkdir -p "$CACHE_DIR"
+
+exec env XDG_CACHE_HOME="$CACHE_DIR" "$MAMBA_BIN" run -r "$MAMBA_ROOT" -n devtools "$@"

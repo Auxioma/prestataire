@@ -21,6 +21,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Gère les actions liées à category.
+ */
 class CategoryController extends AbstractController
 {
     /**
@@ -78,6 +81,11 @@ class CategoryController extends AbstractController
     // src/Controller/CategoryController.php
 
     #[Route('/api/subcategories/{categoryId}', name: 'api_subcategories', methods: ['GET'])]
+    /**
+     * Traite l’action "getSubCategories" du contrôleur Category.
+     *
+     * @return JsonResponse
+     */
     public function getSubCategories(int $categoryId, ServiceCategoryRepository $repo): JsonResponse
     {
         $subCategories = $repo->findBy(['parent' => $categoryId, 'isActive' => true]);
@@ -87,6 +95,11 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/api/services/{subCategoryId}', name: 'api_services', methods: ['GET'])]
+    /**
+     * Traite l’action "getServices" du contrôleur Category.
+     *
+     * @return JsonResponse
+     */
     public function getServices(int $subCategoryId, ServiceRepository $serviceRepo): JsonResponse
     {
         // Ici on cherche les services liés à cette sous-catégorie

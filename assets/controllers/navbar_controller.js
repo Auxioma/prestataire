@@ -8,20 +8,24 @@ export default class extends Controller {
 
     connect() {
         this.dropdownElements = this.element.querySelectorAll('.dropdown');
+        this.dropdownListeners = [];
+
         this.dropdownElements.forEach((dropdown) => {
             const menu = dropdown.querySelector('.dropdown-menu');
-
-            dropdown.addEventListener('show.bs.dropdown', () => {
+            const showHandler = () => {
                 if (menu) {
                     menu.classList.add('animate-fade-in');
                 }
-            });
-
-            dropdown.addEventListener('hide.bs.dropdown', () => {
+            };
+            const hideHandler = () => {
                 if (menu) {
                     menu.classList.remove('animate-fade-in');
                 }
-            });
+            };
+
+            dropdown.addEventListener('show.bs.dropdown', showHandler);
+            dropdown.addEventListener('hide.bs.dropdown', hideHandler);
+            this.dropdownListeners.push({ dropdown, showHandler, hideHandler });
         });
 
         this.abortController = null;
@@ -33,6 +37,11 @@ export default class extends Controller {
 
     disconnect() {
         document.removeEventListener('click', this.handleDocumentClick);
+        this.dropdownListeners.forEach(({ dropdown, showHandler, hideHandler }) => {
+            dropdown.removeEventListener('show.bs.dropdown', showHandler);
+            dropdown.removeEventListener('hide.bs.dropdown', hideHandler);
+        });
+        this.dropdownListeners = [];
 
         if (this.abortController) {
             this.abortController.abort();
@@ -145,7 +154,7 @@ export default class extends Controller {
     }
 
     escapeHtml(value) {
-        return value
+        return String(value ?? '')
             .replaceAll('&', '&amp;')
             .replaceAll('<', '&lt;')
             .replaceAll('>', '&gt;')

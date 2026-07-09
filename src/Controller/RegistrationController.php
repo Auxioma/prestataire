@@ -31,6 +31,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
+/**
+ * Gère les actions liées à registration.
+ */
 class RegistrationController extends AbstractController
 {
     public function __construct(private EmailVerifier $emailVerifier)
@@ -38,12 +41,22 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/register/choice', name: 'app_register_choice')]
+    /**
+     * Traite l’action "choice" du contrôleur Registration.
+     *
+     * @return Response
+     */
     public function choice(): Response
     {
         return $this->render('registration/choice.html.twig');
     }
 
     #[Route('/register', name: 'app_register')]
+    /**
+     * Traite l’action "register" du contrôleur Registration.
+     *
+     * @return Response
+     */
     public function register(
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
@@ -113,6 +126,11 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/verify/email', name: 'app_verify_email')]
+    /**
+     * Traite l’action "verifyUserEmail" du contrôleur Registration.
+     *
+     * @return Response
+     */
     public function verifyUserEmail(
         Request $request,
         TranslatorInterface $translator,

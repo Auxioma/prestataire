@@ -19,9 +19,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Gère les actions liées à prestataire browse.
+ */
 class PrestataireBrowseController extends AbstractController
 {
     #[Route('/prestataires', name: 'app_prestataire_browse', methods: ['GET'])]
+    /**
+     * Affiche la page principale de ce contrôleur.
+     *
+     * @return Response
+     */
     public function index(
         Request $request,
         PrestataireProfileRepository $profileRepository,

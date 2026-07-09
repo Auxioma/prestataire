@@ -23,9 +23,17 @@ use App\Entity\User;
 use App\Enum\FavoriteTypeEnum;
 use App\Repository\FavoriteRepository;
 
+/**
+ * Gère les actions liées à home.
+ */
 class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home', methods: ['GET'])]
+    /**
+     * Affiche la page principale de ce contrôleur.
+     *
+     * @return Response
+     */
     public function index(
         ServiceCategoryRepository $categoryRepository,
         PrestataireProfileRepository $prestataireProfileRepository,

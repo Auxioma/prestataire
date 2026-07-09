@@ -20,9 +20,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Gère les actions liées à bons plans.
+ */
 class BonsPlansController extends AbstractController
 {
     #[Route('/bons-plans', name: 'app_bons_plans', methods: ['GET'])]
+    /**
+     * Affiche la page principale de ce contrôleur.
+     *
+     * @return Response
+     */
     public function index(
         Request $request,
         PrestataireServiceRepository $prestataireServiceRepository,

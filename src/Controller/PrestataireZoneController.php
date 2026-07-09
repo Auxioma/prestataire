@@ -24,9 +24,17 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/prestataire/zones', name: 'app_prestataire_zone_')]
+/**
+ * Gère les actions liées à prestataire zone.
+ */
 final class PrestataireZoneController extends AbstractController
 {
     #[Route('/ajouter', name: 'add', methods: ['POST'])]
+    /**
+     * Ajoute la ressource demandée.
+     *
+     * @return Response
+     */
     public function add(
         Request $request,
         EntityManagerInterface $em,
@@ -81,6 +89,11 @@ final class PrestataireZoneController extends AbstractController
     }
 
     #[Route('/supprimer/{id}', name: 'delete', methods: ['POST'])]
+    /**
+     * Supprime la ressource demandée.
+     *
+     * @return Response
+     */
     public function delete(
         Request $request,
         PrestataireInterventionZone $zone,

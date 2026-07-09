@@ -11,6 +11,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
+/**
+ * Gère les actions liées à client profile  c r u d.
+ */
 class ClientProfileCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -18,6 +21,11 @@ class ClientProfileCrudController extends AbstractCrudController
         return ClientProfile::class;
     }
 
+    /**
+     * Traite l’action "configureCrud" du contrôleur Client Profile  C R U D.
+     *
+     * @return Crud
+     */
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
@@ -26,6 +34,11 @@ class ClientProfileCrudController extends AbstractCrudController
             ->setDefaultSort(['id' => 'DESC']);
     }
 
+    /**
+     * Traite l’action "configureFields" du contrôleur Client Profile  C R U D.
+     *
+     * @return iterable
+     */
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id')->hideOnForm();

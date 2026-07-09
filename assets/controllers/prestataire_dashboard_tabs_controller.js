@@ -5,6 +5,7 @@ export default class extends Controller {
 
     connect() {
         this.onHashChange = this.activateTabsFromHash.bind(this);
+        this.boundTabShownHandlers = new Map();
         this.bindTabs();
         this.activateTabsFromHash();
         window.addEventListener('hashchange', this.onHashChange);
@@ -12,6 +13,13 @@ export default class extends Controller {
 
     disconnect() {
         window.removeEventListener('hashchange', this.onHashChange);
+
+        this.boundTabShownHandlers?.forEach((handler, trigger) => {
+            trigger.removeEventListener('shown.bs.tab', handler);
+            delete trigger.dataset.tabBound;
+        });
+
+        this.boundTabShownHandlers?.clear();
     }
 
     bindTabs() {
@@ -24,7 +32,7 @@ export default class extends Controller {
 
             trigger.dataset.tabBound = 'true';
 
-            trigger.addEventListener('shown.bs.tab', (event) => {
+            const handler = (event) => {
                 const currentTrigger = event.target;
                 const currentTarget = currentTrigger.getAttribute('data-bs-target');
                 const tabLevel = currentTrigger.dataset.tabLevel;
@@ -56,7 +64,10 @@ export default class extends Controller {
 
                     this.closeSidebar();
                 }
-            });
+            };
+
+            this.boundTabShownHandlers.set(trigger, handler);
+            trigger.addEventListener('shown.bs.tab', handler);
         });
     }
 

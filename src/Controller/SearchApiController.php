@@ -8,9 +8,17 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Gère les actions liées à search api.
+ */
 final class SearchApiController extends AbstractController
 {
     #[Route('/api/search/autocomplete', name: 'app_search_autocomplete', methods: ['GET'])]
+    /**
+     * Traite l’action "autocomplete" du contrôleur Search Api.
+     *
+     * @return JsonResponse
+     */
     public function autocomplete(
         Request $request,
         PrestataireSearchService $prestataireSearchService,

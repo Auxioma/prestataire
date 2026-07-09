@@ -23,6 +23,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 #[IsGranted('ROLE_ADMIN')]
+/**
+ * Gère les actions liées à dashboard.
+ */
 class DashboardController extends AbstractDashboardController
 {
     public function __construct(
@@ -30,6 +33,11 @@ class DashboardController extends AbstractDashboardController
     ) {
     }
 
+    /**
+     * Affiche la page principale de ce contrôleur.
+     *
+     * @return Response
+     */
     public function index(): Response
     {
         $url = $this->adminUrlGenerator
@@ -40,6 +48,11 @@ class DashboardController extends AbstractDashboardController
         return $this->redirect($url);
     }
 
+    /**
+     * Traite l’action "configureDashboard" du contrôleur Dashboard.
+     *
+     * @return Dashboard
+     */
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
@@ -47,6 +60,11 @@ class DashboardController extends AbstractDashboardController
             ->renderContentMaximized();
     }
 
+    /**
+     * Traite l’action "configureMenuItems" du contrôleur Dashboard.
+     *
+     * @return iterable
+     */
     public function configureMenuItems(): iterable
 {
     yield MenuItem::linkToDashboard('Accueil', 'fa fa-home');

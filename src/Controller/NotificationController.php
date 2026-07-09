@@ -15,9 +15,17 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/notifications', name: 'app_notification_')]
+/**
+ * Gère les actions liées à notification.
+ */
 final class NotificationController extends AbstractController
 {
     #[Route('', name: 'index', methods: ['GET'])]
+    /**
+     * Affiche la page principale de ce contrôleur.
+     *
+     * @return Response
+     */
     public function index(
         Request $request,
         NotificationRepository $notificationRepository,
@@ -48,6 +56,11 @@ final class NotificationController extends AbstractController
     }
 
     #[Route('/{id}/open', name: 'open', methods: ['GET'])]
+    /**
+     * Ouvre la ressource ciblée.
+     *
+     * @return RedirectResponse
+     */
     public function open(
         Notification $notification,
         NotificationManager $notificationManager
@@ -71,6 +84,11 @@ final class NotificationController extends AbstractController
     }
 
     #[Route('/{id}/read', name: 'mark_read', methods: ['POST'])]
+    /**
+     * Traite l’action "markRead" du contrôleur Notification.
+     *
+     * @return RedirectResponse
+     */
     public function markRead(
         Request $request,
         Notification $notification,
@@ -104,6 +122,11 @@ final class NotificationController extends AbstractController
     }
 
     #[Route('/read-all', name: 'mark_all_read', methods: ['POST'])]
+    /**
+     * Traite l’action "markAllRead" du contrôleur Notification.
+     *
+     * @return RedirectResponse
+     */
     public function markAllRead(
         Request $request,
         NotificationManager $notificationManager
@@ -138,6 +161,11 @@ final class NotificationController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
+    /**
+     * Supprime la ressource demandée.
+     *
+     * @return RedirectResponse
+     */
     public function delete(
         Request $request,
         Notification $notification,
@@ -172,6 +200,11 @@ final class NotificationController extends AbstractController
     }
 
     #[Route('/delete-all', name: 'delete_all', methods: ['POST'])]
+    /**
+     * Traite l’action "deleteAll" du contrôleur Notification.
+     *
+     * @return RedirectResponse
+     */
     public function deleteAll(
         Request $request,
         NotificationRepository $notificationRepository,

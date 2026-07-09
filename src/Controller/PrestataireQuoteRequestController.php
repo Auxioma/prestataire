@@ -23,9 +23,17 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/prestataire/demandes', name: 'app_prestataire_quote_request_')]
+/**
+ * Gère les actions liées à prestataire quote request.
+ */
 final class PrestataireQuoteRequestController extends AbstractController
 {
     #[Route('', name: 'index', methods: ['GET'])]
+    /**
+     * Affiche la page principale de ce contrôleur.
+     *
+     * @return Response
+     */
     public function index(
         Request $request,
         QuoteRequestRepository $quoteRequestRepository,
@@ -57,6 +65,11 @@ final class PrestataireQuoteRequestController extends AbstractController
     }
 
     #[Route('/{slug}', name: 'show', methods: ['GET'])]
+    /**
+     * Affiche le détail de la ressource demandée.
+     *
+     * @return Response
+     */
     public function show(
         #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
         QuoteProposalRepository $quoteProposalRepository
@@ -90,6 +103,11 @@ final class PrestataireQuoteRequestController extends AbstractController
     }
 
     #[Route('/{slug}/accept-study', name: 'accept_study', methods: ['POST'])]
+    /**
+     * Traite l’action "acceptStudy" du contrôleur Prestataire Quote Request.
+     *
+     * @return RedirectResponse
+     */
     public function acceptStudy(
         Request $request,
         #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
@@ -188,6 +206,11 @@ final class PrestataireQuoteRequestController extends AbstractController
     }
 
     #[Route('/{slug}/deny', name: 'deny', methods: ['POST'])]
+    /**
+     * Traite l’action "deny" du contrôleur Prestataire Quote Request.
+     *
+     * @return RedirectResponse
+     */
     public function deny(
         Request $request,
         #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
@@ -214,7 +237,7 @@ final class PrestataireQuoteRequestController extends AbstractController
             $this->addFlash('danger', 'Jeton CSRF invalide.');
 
             return $this->redirectToRoute('app_prestataire_quote_request_show', [
-                'id' => $quoteRequest->getId(),
+                'slug' => $quoteRequest->getSlug(),
             ]);
         }
 
@@ -222,7 +245,7 @@ final class PrestataireQuoteRequestController extends AbstractController
             $this->addFlash('warning', 'Cette demande ne peut plus être refusée.');
 
             return $this->redirectToRoute('app_prestataire_quote_request_show', [
-                'id' => $quoteRequest->getId(),
+                'slug' => $quoteRequest->getSlug(),
             ]);
         }
 
@@ -257,6 +280,11 @@ final class PrestataireQuoteRequestController extends AbstractController
     }
 
     #[Route('/{slug}/delete', name: 'delete', methods: ['POST'])]
+    /**
+     * Supprime la ressource demandée.
+     *
+     * @return RedirectResponse
+     */
     public function delete(
         Request $request,
         #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
@@ -312,7 +340,7 @@ final class PrestataireQuoteRequestController extends AbstractController
         )) {
             $this->addFlash('warning', 'Cette demande ne peut plus être supprimée dans son état actuel.');
 
-            return $this->redirectToRoute('app_quote_request_show', [
+            return $this->redirectToRoute('app_prestataire_quote_request_show', [
                 'slug' => $quoteRequest->getSlug(),
             ]);
         }
@@ -325,6 +353,11 @@ final class PrestataireQuoteRequestController extends AbstractController
     }
 
     #[Route('/{slug}/archive', name: 'archive', methods: ['POST'])]
+    /**
+     * Traite l’action "archive" du contrôleur Prestataire Quote Request.
+     *
+     * @return RedirectResponse
+     */
     public function archive(
         Request $request,
         #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,

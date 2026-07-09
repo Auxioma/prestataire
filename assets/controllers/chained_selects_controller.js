@@ -11,11 +11,26 @@ export default class extends Controller {
 
         if (!catId) return;
 
-        const response = await fetch(`/api/subcategories/${catId}`);
-        const data = await response.json();
+        try {
+            const response = await fetch(`/api/subcategories/${catId}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                },
+            });
 
-        this.populateSelect(this.subcategoryTarget, data, 'Choisir une sous-catégorie...');
-        this.enableSelect(this.subcategoryTarget);
+            if (!response.ok) {
+                throw new Error('Erreur lors du chargement des sous-categories');
+            }
+
+            const data = await response.json();
+
+            this.populateSelect(this.subcategoryTarget, Array.isArray(data) ? data : [], 'Choisir une sous-catégorie...');
+            this.enableSelect(this.subcategoryTarget);
+        } catch (error) {
+            this.resetSelect(this.subcategoryTarget, 'Choisir une sous-catégorie...');
+            this.resetSelect(this.serviceTarget, 'Choisir un service...');
+        }
     }
 
     async loadServices() {
@@ -25,11 +40,25 @@ export default class extends Controller {
 
         if (!subId) return;
 
-        const response = await fetch(`/api/services/${subId}`);
-        const data = await response.json();
+        try {
+            const response = await fetch(`/api/services/${subId}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                },
+            });
 
-        this.populateSelect(this.serviceTarget, data, 'Choisir un service...');
-        this.enableSelect(this.serviceTarget);
+            if (!response.ok) {
+                throw new Error('Erreur lors du chargement des services');
+            }
+
+            const data = await response.json();
+
+            this.populateSelect(this.serviceTarget, Array.isArray(data) ? data : [], 'Choisir un service...');
+            this.enableSelect(this.serviceTarget);
+        } catch (error) {
+            this.resetSelect(this.serviceTarget, 'Choisir un service...');
+        }
     }
 
     populateSelect(element, data, placeholder = 'Sélectionnez...') {

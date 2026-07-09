@@ -19,10 +19,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Gère les actions liées à search.
+ */
 class SearchController extends AbstractController
 {
     // Une seule route flexible qui accepte soit un slug de catégorie/sous-catégorie, soit un slug de service
     #[Route('/trouver-un-pro/{type}/{slug}', name: 'app_search_flow', defaults: ['type' => null, 'slug' => null], methods: ['GET'])]
+    /**
+     * Affiche la page principale de ce contrôleur.
+     *
+     * @return Response
+     */
     public function index(
         ?string $type,
         ?string $slug,

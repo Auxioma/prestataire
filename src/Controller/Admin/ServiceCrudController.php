@@ -15,6 +15,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 
+/**
+ * Gère les actions liées à service  c r u d.
+ */
 class ServiceCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -22,6 +25,11 @@ class ServiceCrudController extends AbstractCrudController
         return Service::class;
     }
 
+    /**
+     * Traite l’action "configureCrud" du contrôleur Service  C R U D.
+     *
+     * @return Crud
+     */
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
@@ -30,6 +38,11 @@ class ServiceCrudController extends AbstractCrudController
             ->setDefaultSort(['position' => 'ASC']);
     }
 
+    /**
+     * Traite l’action "configureFields" du contrôleur Service  C R U D.
+     *
+     * @return iterable
+     */
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id')->hideOnForm();

@@ -15,6 +15,8 @@ export default class extends Controller {
     };
 
     connect() {
+        this.scrollTimeout = null;
+
         if (typeof io === "undefined") {
             console.error("Socket.IO non chargé");
             return;
@@ -53,6 +55,11 @@ export default class extends Controller {
     }
 
     disconnect() {
+        if (this.scrollTimeout) {
+            clearTimeout(this.scrollTimeout);
+            this.scrollTimeout = null;
+        }
+
         if (this.socket) {
             this.socket.disconnect();
             this.socket = null;
@@ -122,8 +129,13 @@ export default class extends Controller {
         requestAnimationFrame(() => {
             scroll();
 
-            setTimeout(() => {
+            if (this.scrollTimeout) {
+                clearTimeout(this.scrollTimeout);
+            }
+
+            this.scrollTimeout = window.setTimeout(() => {
                 scroll();
+                this.scrollTimeout = null;
             }, 60);
         });
     }
@@ -156,15 +168,33 @@ export default class extends Controller {
     buildDashboardMessageElement(message) {
         const row = document.createElement("div");
         const isOwn = this.isOwnMessage(message);
+        const isSystem = (message.authorType ?? "") === "system";
         const attachmentsHtml = this.buildDashboardAttachmentsHtml(message.attachments ?? []);
+        const authorLabel = this.escapeHtml(
+            message.authorName ?? (isOwn ? "Moi" : "Interlocuteur")
+        );
+        const createdAt = this.escapeHtml(message.createdAt ?? "À l’instant");
 
-        row.className = `tm-msg-row ${isOwn ? "is-own" : "is-other"}`;
+        row.className = `tm-msg-row ${
+            isSystem ? "is-system" : (isOwn ? "is-own" : "is-other")
+        }`;
+
+        if (isSystem) {
+            row.innerHTML = `
+                <div class="tm-msg-system">
+                    ${message.content ? this.nl2br(message.content) : ""}
+                </div>
+            `;
+
+            return row;
+        }
+
         row.innerHTML = `
             <div class="tm-msg-bubble">
                 <div class="tm-msg-meta">
-                    ${this.escapeHtml(message.authorName ?? (isOwn ? "Moi" : "Interlocuteur"))}
+                    ${authorLabel}
                     <span>·</span>
-                    <span>${this.escapeHtml(message.createdAt ?? "À l’instant")}</span>
+                    <span>${createdAt}</span>
                 </div>
                 ${message.content ? `<div class="tm-msg-content">${this.nl2br(message.content)}</div>` : ""}
                 ${attachmentsHtml}
