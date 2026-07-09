@@ -1,525 +1,418 @@
 {# NAVBAR #}
-<nav class="navbar navbar-expand-xl navbar-dark sticky-top tm-navbar tm-navbar--v2"
-     data-controller="navbar"
-     data-navbar-autocomplete-url-value="{{ path('app_search_autocomplete') }}">
+<nav class="navbar navbar-expand-xl navbar-dark sticky-top tm-navbar tm-navbar--v2" data-controller="navbar" data-navbar-autocomplete-url-value="{{ path('app_search_autocomplete') }}">
 
-    <div class="container tm-navbar__container tm-navbar__container--v2">
+	<div
+		class="container tm-navbar__container tm-navbar__container--v2">
 
-        {# LIGNE 1 #}
-        <div class="tm-navbar__topline">
+		{# LIGNE 1 #}
+		<div class="tm-navbar__topline">
 
-            <div class="tm-navbar__topline-left">
-                <a class="navbar-brand tm-navbar__brand" href="{{ path('app_home') }}">
-                    <img src="{{ asset('images/logo_trouvemoipresta.png') }}"
-                         alt="Logo TrouveMoi"
-                         class="tm-navbar__brand-logo">
-                </a>
+			<div class="tm-navbar__topline-left">
+				<a class="navbar-brand tm-navbar__brand" href="{{ path('app_home') }}">
+					<img src="{{ asset('images/logo_trouvemoipresta.png') }}" alt="Logo TrouveMoi" class="tm-navbar__brand-logo">
+				</a>
 
-                <div class="tm-navbar__search tm-navbar__search--desktop">
-                    <div class="tm-navbar__search-wrap">
-                        <input type="text"
-                               class="form-control tm-navbarsearch-input"
-                               placeholder="Rechercher un prestataire..."
-                               data-navbar-target="input"
-                               data-action="input->navbar#onInput focus->navbar#onInput" />
-                        <div class="tm-navbarsearch-results d-none"
-                             data-navbar-target="results desktopResults"></div>
-                        <span class="tm-navbar__search-icon">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </span>
-                    </div>
-                </div>
-            </div>
+				{# Barre de recherche NAVBAR #}
+				{# <div class="tm-navbar__search tm-navbar__search--desktop">
+				                    <div class="tm-navbar__search-wrap">
+				                        <input type="text"
+				                               class="form-control tm-navbarsearch-input"
+				                               placeholder="Rechercher un prestataire..."
+				                               data-navbar-target="input"
+				                               data-action="input->navbar#onInput focus->navbar#onInput" />
+				                        <div class="tm-navbarsearch-results d-none"
+				                             data-navbar-target="results desktopResults"></div>
+				                        <span class="tm-navbar__search-icon">
+				                            <i class="fa-solid fa-magnifying-glass"></i>
+				                        </span>
+				                    </div>
+				                </div> #}
 
-            <div class="tm-navbar__topline-right">
-                {% if not app.user %}
-                    <a class="nav-link tm-navbar__link tm-navbar__link--icon tm-navbar__top-action d-none d-xl-inline-flex"
-                       href="{{ path('app_login') }}">
-                        <i class="fa-regular fa-user"></i>
-                        <span>Connexion</span>
-                    </a>
-                {% endif %}
+			</div>
 
-                {% if app.user %}
-                    <div class="nav-item dropdown d-none d-xl-block">
-                        <a class="nav-link dropdown-toggle tm-navbar__link tm-navbar__link--account tm-navbar__top-action"
-                           href="#"
-                           role="button"
-                           data-bs-toggle="dropdown"
-                           aria-expanded="false">
-                            <i class="fa-solid fa-circle-user"></i>
-                            <span>Mon Compte</span>
-                        </a>
+			<div class="tm-navbar__topline-right">
+				{% if not app.user %}
+					<a class="nav-link tm-navbar__link tm-navbar__link--icon tm-navbar__top-action d-none d-xl-inline-flex" href="{{ path('app_login') }}">
+						<i class="fa-regular fa-user"></i>
+						<span>Connexion</span>
+					</a>
+				{% endif %}
 
-                        <ul class="dropdown-menu dropdown-menu-end tm-navbar__dropdown">
-                            <li>
-                                <span class="dropdown-item-text tm-navbar__dropdown-text">
-                                    {{ app.user.email }}
-                                </span>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
+				{% if app.user %}
+					<div class="nav-item dropdown d-none d-xl-block">
+						<a class="nav-link dropdown-toggle tm-navbar__link tm-navbar__link--account tm-navbar__top-action" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<i class="fa-solid fa-circle-user"></i>
+							<span>Mon Compte</span>
+						</a>
 
-                            {% if is_granted('ROLE_PRESTATAIRE') %}
-                                <li>
-                                    <a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--primary"
-                                       href="{{ path('app_prestataire_dashboard') }}">
-                                        <i class="fa-solid fa-gauge me-2"></i>Espace Pro
-                                    </a>
-                                </li>
-                            {% elseif is_granted('ROLE_CLIENT') %}
-                                <li>
-                                    <a class="dropdown-item tm-navbar__dropdown-link"
-                                       href="{{ path('app_quote_request_index') }}">
-                                        <i class="fa-solid fa-file-invoice me-2"></i>Mes Demandes
-                                    </a>
-                                </li>
-                            {% endif %}
+						<ul class="dropdown-menu dropdown-menu-end tm-navbar__dropdown">
+							<li>
+								<span class="dropdown-item-text tm-navbar__dropdown-text">
+									{{ app.user.email }}
+								</span>
+							</li>
+							<li><hr class="dropdown-divider"></li>
 
-                            <li>
-                                <a class="dropdown-item tm-navbar__dropdown-link"
-                                   href="{{ is_granted('ROLE_PRESTATAIRE') ? path('app_prestataire_settings') : path('app_client_settings') }}">
-                                    <i class="fa-solid fa-gear me-2"></i>Paramètres
-                                </a>
-                            </li>
+							{% if is_granted('ROLE_PRESTATAIRE') %}
+								<li>
+									<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--primary" href="{{ path('app_prestataire_dashboard') }}">
+										<i class="fa-solid fa-gauge me-2"></i>Espace Pro
+									</a>
+								</li>
+							{% elseif is_granted('ROLE_CLIENT') %}
+								<li>
+									<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_quote_request_index') }}">
+										<i class="fa-solid fa-file-invoice me-2"></i>Mes Demandes
+									</a>
+								</li>
+							{% endif %}
 
-                            <li><hr class="dropdown-divider"></li>
+							<li>
+								<a class="dropdown-item tm-navbar__dropdown-link" href="{{ is_granted('ROLE_PRESTATAIRE') ? path('app_prestataire_settings') : path('app_client_settings') }}">
+									<i class="fa-solid fa-gear me-2"></i>Paramètres
+								</a>
+							</li>
 
-                            <li>
-                                <a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--danger"
-                                   href="{{ path('app_logout') }}">
-                                    <i class="fa-solid fa-right-from-bracket me-2"></i>Déconnexion
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                {% endif %}
+							<li><hr class="dropdown-divider"></li>
 
-                {% if app.user and is_granted('ROLE_PRESTATAIRE') %}
-                    <a class="btn tm-navbar__btn-cta d-none d-xl-inline-flex"
-                       href="{{ path('app_prestataire_service_new') }}">
-                        <i class="fa-solid fa-briefcase me-2"></i>Proposer une prestation
-                    </a>
-                {% endif %}
+							<li>
+								<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--danger" href="{{ path('app_logout') }}">
+									<i class="fa-solid fa-right-from-bracket me-2"></i>Déconnexion
+								</a>
+							</li>
+						</ul>
+					</div>
+				{% endif %}
 
-                {% if app.user %}
-                    <div class="nav-item dropdown d-none d-xl-block"
-                         data-controller="realtime-notifications"
-                         data-realtime-notifications-url-value="http://localhost:3001"
-                         data-realtime-notifications-user-id-value="{{ app.user.id }}"
-                         data-realtime-notifications-event-name-value="notification_created"
-                         data-realtime-notifications-join-event-name-value="join_user"
-                         data-realtime-notifications-max-items-value="5"
-                         data-realtime-notifications-mark-read-url-pattern-value="/notifications/__ID__/read">
+				{% if app.user and is_granted('ROLE_PRESTATAIRE') %}
+					<a class="btn tm-navbar__btn-cta d-none d-xl-inline-flex" href="{{ path('app_prestataire_service_new') }}">
+						<i class="fa-solid fa-briefcase me-2"></i>Proposer une prestation
+					</a>
+				{% endif %}
 
-                        <a class="nav-link tm-navbarlink tm-navbar__notif-trigger position-relative"
-                           href="#"
-                           id="tmNavbarNotificationsDropdown"
-                           role="button"
-                           data-bs-toggle="dropdown"
-                           data-bs-auto-close="outside"
-                           aria-expanded="false">
-                            <i class="bi bi-bell-fill"></i>
+				{% if app.user %}
+					<div class="nav-item dropdown d-none d-xl-block" data-controller="realtime-notifications" data-realtime-notifications-url-value="http://localhost:3001" data-realtime-notifications-user-id-value="{{ app.user.id }}" data-realtime-notifications-event-name-value="notification_created" data-realtime-notifications-join-event-name-value="join_user" data-realtime-notifications-max-items-value="5" data-realtime-notifications-mark-read-url-pattern-value="/notifications/__ID__/read">
 
-                            <span data-realtime-notifications-target="badge"
-                                  data-count-value="{{ navbarUnreadNotificationCount }}"
-                                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger tm-navbar-notification-badge {{ navbarUnreadNotificationCount > 0 ? '' : 'd-none' }}">
-                                {{ navbarUnreadNotificationCount > 99 ? '99+' : navbarUnreadNotificationCount }}
-                                <span class="visually-hidden">notifications non lues</span>
-                            </span>
-                        </a>
+						<a class="nav-link tm-navbarlink tm-navbar__notif-trigger position-relative" href="#" id="tmNavbarNotificationsDropdown" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+							<i class="bi bi-bell-fill"></i>
 
-                        <div class="dropdown-menu dropdown-menu-end tm-navbardropdown tm-navbar-notification-menu"
-                             aria-labelledby="tmNavbarNotificationsDropdown">
+							<span data-realtime-notifications-target="badge" data-count-value="{{ navbarUnreadNotificationCount }}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger tm-navbar-notification-badge {{ navbarUnreadNotificationCount > 0 ? '' : 'd-none' }}">
+								{{ navbarUnreadNotificationCount > 99 ? '99+' : navbarUnreadNotificationCount }}
+								<span class="visually-hidden">notifications non lues</span>
+							</span>
+						</a>
 
-                            <div class="tm-navbar-notification-menu__head">
-                                <div>
-                                    <div class="tm-navbar-notification-menu__title">Notifications</div>
-                                    <div class="tm-navbar-notification-menu__count"
-                                         data-realtime-notifications-target="countText"
-                                         data-count-value="{{ navbarUnreadNotificationCount }}">
-                                        {{ navbarUnreadNotificationCount }}
-                                        non lue{{ navbarUnreadNotificationCount > 1 ? 's' : '' }}
-                                    </div>
-                                </div>
-                            </div>
+						<div class="dropdown-menu dropdown-menu-end tm-navbardropdown tm-navbar-notification-menu" aria-labelledby="tmNavbarNotificationsDropdown">
 
-                            <div class="tm-navbar-notification-menu__list"
-                                 data-realtime-notifications-target="list">
-                                {% if navbarLatestNotifications is not empty %}
-                                    {% for notification in navbarLatestNotifications %}
-                                        <form method="post"
-                                              action="{{ path('app_notification_mark_read', {id: notification.id}) }}"
-                                              data-notification-item>
-                                            <input type="hidden"
-                                                   name="_token"
-                                                   value="{{ csrf_token('mark-notification-read-' ~ notification.id) }}">
+							<div class="tm-navbar-notification-menu__head">
+								<div>
+									<div class="tm-navbar-notification-menu__title">Notifications</div>
+									<div class="tm-navbar-notification-menu__count" data-realtime-notifications-target="countText" data-count-value="{{ navbarUnreadNotificationCount }}">
+										{{ navbarUnreadNotificationCount }}
+										non lue{{ navbarUnreadNotificationCount > 1 ? 's' : '' }}
+									</div>
+								</div>
+							</div>
 
-                                            <button type="submit"
-                                                    class="dropdown-item tm-navbardropdown-link tm-navbar-notification-item {{ not notification.isRead ? 'tm-navbar-notification-item--unread' : '' }}">
-                                                <div class="tm-navbar-notification-item__indicator"></div>
+							<div class="tm-navbar-notification-menu__list" data-realtime-notifications-target="list">
+								{% if navbarLatestNotifications is not empty %}
+									{% for notification in navbarLatestNotifications %}
+										<form method="post" action="{{ path('app_notification_mark_read', {id: notification.id}) }}" data-notification-item>
+											<input type="hidden" name="_token" value="{{ csrf_token('mark-notification-read-' ~ notification.id) }}">
 
-                                                <div class="tm-navbar-notification-item__body">
-                                                    <div class="tm-navbar-notification-item__top">
-                                                        <span class="tm-navbar-notification-title">
-                                                            {{ notification.title }}
-                                                        </span>
-                                                        <span class="tm-navbar-notification-date">
-                                                            {{ notification.createdAt|date('d/m/Y H:i') }}
-                                                        </span>
-                                                    </div>
+											<button type="submit" class="dropdown-item tm-navbardropdown-link tm-navbar-notification-item {{ not notification.isRead ? 'tm-navbar-notification-item--unread' : '' }}">
+												<div class="tm-navbar-notification-item__indicator"></div>
 
-                                                    <div class="tm-navbar-notification-content">
-                                                        {{ notification.body|length > 100 ? notification.body|slice(0, 100) ~ '…' : notification.body }}
-                                                    </div>
+												<div class="tm-navbar-notification-item__body">
+													<div class="tm-navbar-notification-item__top">
+														<span class="tm-navbar-notification-title">
+															{{ notification.title }}
+														</span>
+														<span class="tm-navbar-notification-date">
+															{{ notification.createdAt|date('d/m/Y H:i') }}
+														</span>
+													</div>
 
-                                                    {% if not notification.isRead %}
-                                                        <span class="tm-navbar-notification-item__badge">Non lue</span>
-                                                    {% endif %}
-                                                </div>
-                                            </button>
-                                        </form>
-                                    {% endfor %}
-                                {% endif %}
-                            </div>
+													<div class="tm-navbar-notification-content">
+														{{ notification.body|length > 100 ? notification.body|slice(0, 100) ~ '…' : notification.body }}
+													</div>
 
-                            <div class="tm-navbar-notification-empty {{ navbarLatestNotifications is not empty ? 'd-none' : '' }}"
-                                 data-realtime-notifications-target="empty">
-                                <i class="bi bi-bell-slash"></i>
-                                <span>Aucune notification pour le moment.</span>
-                            </div>
+													{% if not notification.isRead %}
+														<span class="tm-navbar-notification-item__badge">Non lue</span>
+													{% endif %}
+												</div>
+											</button>
+										</form>
+									{% endfor %}
+								{% endif %}
+							</div>
 
-                            <div class="tm-navbar-notification-menu__footer">
-                                <a href="{{ path('app_notification_index') }}"
-                                   class="tm-navbar-notification-action tm-navbar-notification-action--secondary">
-                                    Voir toutes les notifications
-                                </a>
+							<div class="tm-navbar-notification-empty {{ navbarLatestNotifications is not empty ? 'd-none' : '' }}" data-realtime-notifications-target="empty">
+								<i class="bi bi-bell-slash"></i>
+								<span>Aucune notification pour le moment.</span>
+							</div>
 
-                                <form method="post" action="{{ path('app_notification_mark_all_read') }}">
-                                    <input type="hidden"
-                                           name="_token"
-                                           value="{{ csrf_token('mark-all-notifications-read') }}">
-                                    <input type="hidden" name="redirect" value="{{ app.request.uri }}">
-                                    <button type="submit"
-                                            class="tm-navbar-notification-action tm-navbar-notification-action--primary">
-                                        Tout marquer comme lu
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
+							<div class="tm-navbar-notification-menu__footer">
+								<a href="{{ path('app_notification_index') }}" class="tm-navbar-notification-action tm-navbar-notification-action--secondary">
+									Voir toutes les notifications
+								</a>
 
-                <button class="navbar-toggler tm-navbar__toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#tmNavbarContent"
-                        aria-controls="tmNavbarContent"
-                        aria-expanded="false"
-                        aria-label="Ouvrir le menu">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-            </div>
-        </div>
+								<form method="post" action="{{ path('app_notification_mark_all_read') }}">
+									<input type="hidden" name="_token" value="{{ csrf_token('mark-all-notifications-read') }}">
+									<input type="hidden" name="redirect" value="{{ app.request.uri }}">
+									<button type="submit" class="tm-navbar-notification-action tm-navbar-notification-action--primary">
+										Tout marquer comme lu
+									</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				{% endif %}
 
-        {# LIGNE 2 #}
-        <div class="tm-navbar__bottomline">
-            <div class="collapse navbar-collapse tm-navbar__collapse" id="tmNavbarContent">
+				<button class="navbar-toggler tm-navbar__toggler" type="button" data-bs-toggle="collapse" data-bs-target="#tmNavbarContent" aria-controls="tmNavbarContent" aria-expanded="false" aria-label="Ouvrir le menu">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+			</div>
+		</div>
 
-                <div class="tm-navbar__search tm-navbar__search--mobile">
-                    <div class="tm-navbar__search-wrap">
-                        <input type="text"
-                               class="form-control tm-navbarsearch-input"
-                               placeholder="Rechercher un prestataire..."
-                               data-navbar-target="input"
-                               data-action="input->navbar#onInput focus->navbar#onInput" />
-                        <div class="tm-navbarsearch-results d-none"
-                             data-navbar-target="results mobileResults"></div>
-                        <span class="tm-navbar__search-icon">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </span>
-                    </div>
-                </div>
+		{# LIGNE 2 #}
+		<div class="tm-navbar__bottomline">
+			<div class="collapse navbar-collapse tm-navbar__collapse" id="tmNavbarContent">
 
-                <ul class="navbar-nav tm-navbar__nav tm-navbar__nav--bottom">
+				<div class="tm-navbar__search tm-navbar__search--mobile">
+					<div class="tm-navbar__search-wrap">
+						<input type="text" class="form-control tm-navbarsearch-input" placeholder="Rechercher un prestataire..." data-navbar-target="input" data-action="input->navbar#onInput focus->navbar#onInput"/>
+						<div class="tm-navbarsearch-results d-none" data-navbar-target="results mobileResults"></div>
+						<span class="tm-navbar__search-icon">
+							<i class="fa-solid fa-magnifying-glass"></i>
+						</span>
+					</div>
+				</div>
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle tm-navbar__link"
-                           href="#"
-                           role="button"
-                           data-bs-toggle="dropdown"
-                           data-bs-auto-close="outside"
-                           aria-expanded="false">
-                            Prestataires
-                        </a>
-                        <ul class="dropdown-menu tm-navbar__dropdown">
-                            <li>
-                                <a class="dropdown-item tm-navbar__dropdown-link"
-                                   href="{{ path('app_prestataire_browse') }}">
-                                    Tous les prestataires
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item tm-navbar__dropdown-link"
-                                   href="{{ path('app_prestataire_browse', {sort: 'p.averageRating', direction: 'desc'}) }}">
-                                    Les mieux notés
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+				<ul class="navbar-nav tm-navbar__nav tm-navbar__nav--bottom">
 
-                    <li class="nav-item dropdown position-static">
-                        <a class="nav-link dropdown-toggle tm-navbar__link"
-                           href="#"
-                           role="button"
-                           data-bs-toggle="dropdown"
-                           aria-expanded="false">
-                            Catégories
-                        </a>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle tm-navbar__link" href="#" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+							Prestataires
+						</a>
+						<ul class="dropdown-menu tm-navbar__dropdown">
+							<li>
+								<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_prestataire_browse') }}">
+									Tous les prestataires
+								</a>
+							</li>
+							<li><hr class="dropdown-divider"></li>
+							<li>
+								<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_prestataire_browse', {sort: 'p.averageRating', direction: 'desc'}) }}">
+									Les mieux notés
+								</a>
+							</li>
+						</ul>
+					</li>
 
-                        <div class="dropdown-menu tm-navbar__megamenu">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-12 mb-3">
-                                        <a class="dropdown-item tm-navbar__dropdown-link fw-bold text-primary font-weight-bold"
-                                           href="{{ path('app_category_index') }}">
-                                            <i class="fa-solid fa-layer-group me-2"></i>Toutes les catégories
-                                        </a>
-                                        <hr class="dropdown-divider">
-                                    </div>
+					<li class="nav-item dropdown position-static">
+						<a class="nav-link dropdown-toggle tm-navbar__link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							Catégories
+						</a>
 
-                                    {% for category in navbarCategories %}
-                                        <div class="col-lg-3 mb-3">
-                                            <a class="dropdown-item tm-navbar__dropdown-link--strong mb-2 d-block"
-                                               href="{{ path('app_search_flow', {type: 'categorie', slug: category.slug}) }}">
-                                                {{ category.name }}
-                                            </a>
-                                            <ul class="list-unstyled ps-2">
-                                                {% for subCategory in category.subCategories|slice(0, 5) %}
-                                                    <li>
-                                                        <a class="dropdown-item tm-navbar__dropdown-link"
-                                                           href="{{ path('app_search_flow', {type: 'categorie', slug: subCategory.slug}) }}">
-                                                            {{ subCategory.name }}
-                                                        </a>
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+						<div class="dropdown-menu tm-navbar__megamenu">
+							<div class="container">
+								<div class="row">
+									<div class="col-12 mb-3">
+										<a class="dropdown-item tm-navbar__dropdown-link fw-bold text-primary font-weight-bold" href="{{ path('app_category_index') }}">
+											<i class="fa-solid fa-layer-group me-2"></i>Toutes les catégories
+										</a>
+										<hr class="dropdown-divider">
+									</div>
 
-                    <li class="nav-item">
-                        <a class="nav-link tm-navbar__link tm-navbar__link--icon"
-                           href="{{ path('app_bons_plans') }}">
-                            <i class="fa-solid fa-percent"></i>
-                            <span>Bons plans</span>
-                        </a>
-                    </li>
+									{% for category in navbarCategories %}
+										<div class="col-lg-3 mb-3">
+											<a class="dropdown-item tm-navbar__dropdown-link--strong mb-2 d-block" href="{{ path('app_search_flow', {type: 'categorie', slug: category.slug}) }}">
+												{{ category.name }}
+											</a>
+											<ul class="list-unstyled ps-2">
+												{% for subCategory in category.subCategories|slice(0, 5) %}
+													<li>
+														<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_search_flow', {type: 'categorie', slug: subCategory.slug}) }}">
+															{{ subCategory.name }}
+														</a>
+													</li>
+												{% endfor %}
+											</ul>
+										</div>
+									{% endfor %}
+								</div>
+							</div>
+						</div>
+					</li>
 
-                    {% if app.user and is_granted('ROLE_CLIENT') %}
-                        <li class="nav-item">
-                            <a class="nav-link tm-navbar__link tm-navbar__link--icon"
-                               href="{{ path('app_client_settings_favorites') }}">
-                                <i class="fa-regular fa-heart"></i>
-                                <span>Mes favoris</span>
-                            </a>
-                        </li>
-                    {% endif %}
+					<li class="nav-item">
+						<a class="nav-link tm-navbar__link tm-navbar__link--icon" href="{{ path('app_bons_plans') }}">
+							<i class="fa-solid fa-percent"></i>
+							<span>Bons plans</span>
+						</a>
+					</li>
 
-                    {# Éléments mobiles uniquement #}
-                    {% if not app.user %}
-                        <li class="nav-item d-xl-none">
-                            <a class="nav-link tm-navbar__link tm-navbar__link--icon"
-                               href="{{ path('app_login') }}">
-                                <i class="fa-regular fa-user"></i>
-                                <span>Connexion</span>
-                            </a>
-                        </li>
+					{% if app.user and is_granted('ROLE_CLIENT') %}
+						<li class="nav-item">
+							<a class="nav-link tm-navbar__link tm-navbar__link--icon" href="{{ path('app_client_settings_favorites') }}">
+								<i class="fa-regular fa-heart"></i>
+								<span>Mes favoris</span>
+							</a>
+						</li>
+					{% endif %}
 
-                        <li class="nav-item tm-navbar__mobile-full d-xl-none">
-                            <a class="btn tm-navbar__btn-outline"
-                               href="{{ path('app_register_choice') }}">
-                                Inscription
-                            </a>
-                        </li>
-                    {% endif %}
+					{# Éléments mobiles uniquement #}
+					{% if not app.user %}
+						<li class="nav-item d-xl-none">
+							<a class="nav-link tm-navbar__link tm-navbar__link--icon" href="{{ path('app_login') }}">
+								<i class="fa-regular fa-user"></i>
+								<span>Connexion</span>
+							</a>
+						</li>
 
-                    {% if app.user %}
-                        <li class="nav-item dropdown d-xl-none">
-                            <a class="nav-link dropdown-toggle tm-navbar__link tm-navbar__link--account"
-                               href="#"
-                               role="button"
-                               data-bs-toggle="dropdown"
-                               aria-expanded="false">
-                                <i class="fa-solid fa-circle-user"></i>
-                                <span>Mon Compte</span>
-                            </a>
+						<li class="nav-item tm-navbar__mobile-full d-xl-none">
+							<a class="btn tm-navbar__btn-outline" href="{{ path('app_register_choice') }}">
+								Inscription
+							</a>
+						</li>
+					{% endif %}
 
-                            <ul class="dropdown-menu tm-navbar__dropdown">
-                                <li>
-                                    <span class="dropdown-item-text tm-navbar__dropdown-text">
-                                        {{ app.user.email }}
-                                    </span>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
+					{% if app.user %}
+						<li class="nav-item dropdown d-xl-none">
+							<a class="nav-link dropdown-toggle tm-navbar__link tm-navbar__link--account" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="fa-solid fa-circle-user"></i>
+								<span>Mon Compte</span>
+							</a>
 
-                                {% if is_granted('ROLE_PRESTATAIRE') %}
-                                    <li>
-                                        <a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--primary"
-                                           href="{{ path('app_prestataire_dashboard') }}">
-                                            <i class="fa-solid fa-gauge me-2"></i>Espace Pro
-                                        </a>
-                                    </li>
-                                {% elseif is_granted('ROLE_CLIENT') %}
-                                    <li>
-                                        <a class="dropdown-item tm-navbar__dropdown-link"
-                                           href="{{ path('app_quote_request_index') }}">
-                                            <i class="fa-solid fa-file-invoice me-2"></i>Mes Demandes
-                                        </a>
-                                    </li>
-                                {% endif %}
+							<ul class="dropdown-menu tm-navbar__dropdown">
+								<li>
+									<span class="dropdown-item-text tm-navbar__dropdown-text">
+										{{ app.user.email }}
+									</span>
+								</li>
+								<li><hr class="dropdown-divider"></li>
 
-                                <li>
-                                    <a class="dropdown-item tm-navbar__dropdown-link"
-                                       href="{{ is_granted('ROLE_PRESTATAIRE') ? path('app_prestataire_settings') : path('app_client_settings') }}">
-                                        <i class="fa-solid fa-gear me-2"></i>Paramètres
-                                    </a>
-                                </li>
+								{% if is_granted('ROLE_PRESTATAIRE') %}
+									<li>
+										<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--primary" href="{{ path('app_prestataire_dashboard') }}">
+											<i class="fa-solid fa-gauge me-2"></i>Espace Pro
+										</a>
+									</li>
+								{% elseif is_granted('ROLE_CLIENT') %}
+									<li>
+										<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_quote_request_index') }}">
+											<i class="fa-solid fa-file-invoice me-2"></i>Mes Demandes
+										</a>
+									</li>
+								{% endif %}
 
-                                <li><hr class="dropdown-divider"></li>
+								<li>
+									<a class="dropdown-item tm-navbar__dropdown-link" href="{{ is_granted('ROLE_PRESTATAIRE') ? path('app_prestataire_settings') : path('app_client_settings') }}">
+										<i class="fa-solid fa-gear me-2"></i>Paramètres
+									</a>
+								</li>
 
-                                <li>
-                                    <a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--danger"
-                                       href="{{ path('app_logout') }}">
-                                        <i class="fa-solid fa-right-from-bracket me-2"></i>Déconnexion
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    {% endif %}
+								<li><hr class="dropdown-divider"></li>
 
-                    {% if app.user and is_granted('ROLE_PRESTATAIRE') %}
-                        <li class="nav-item tm-navbar__mobile-full d-xl-none">
-                            <a class="btn tm-navbar__btn-cta"
-                               href="{{ path('app_prestataire_service_new') }}">
-                                <i class="fa-solid fa-briefcase me-2"></i>Proposer une prestation
-                            </a>
-                        </li>
-                    {% endif %}
+								<li>
+									<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--danger" href="{{ path('app_logout') }}">
+										<i class="fa-solid fa-right-from-bracket me-2"></i>Déconnexion
+									</a>
+								</li>
+							</ul>
+						</li>
+					{% endif %}
 
-                    {% if app.user %}
-                        <li class="nav-item dropdown d-xl-none"
-                            data-controller="realtime-notifications"
-                            data-realtime-notifications-url-value="http://localhost:3001"
-                            data-realtime-notifications-user-id-value="{{ app.user.id }}"
-                            data-realtime-notifications-event-name-value="notification_created"
-                            data-realtime-notifications-join-event-name-value="join_user"
-                            data-realtime-notifications-max-items-value="5"
-                            data-realtime-notifications-mark-read-url-pattern-value="/notifications/__ID__/read">
+					{% if app.user and is_granted('ROLE_PRESTATAIRE') %}
+						<li class="nav-item tm-navbar__mobile-full d-xl-none">
+							<a class="btn tm-navbar__btn-cta" href="{{ path('app_prestataire_service_new') }}">
+								<i class="fa-solid fa-briefcase me-2"></i>Proposer une prestation
+							</a>
+						</li>
+					{% endif %}
 
-                            <a class="nav-link tm-navbar__link tm-navbar__link--icon position-relative"
-                               href="#"
-                               id="tmNavbarNotificationsDropdownMobile"
-                               role="button"
-                               data-bs-toggle="dropdown"
-                               data-bs-auto-close="outside"
-                               aria-expanded="false">
-                                <i class="bi bi-bell-fill"></i>
-                                <span>Notifications</span>
+					{% if app.user %}
+						<li class="nav-item dropdown d-xl-none" data-controller="realtime-notifications" data-realtime-notifications-url-value="http://localhost:3001" data-realtime-notifications-user-id-value="{{ app.user.id }}" data-realtime-notifications-event-name-value="notification_created" data-realtime-notifications-join-event-name-value="join_user" data-realtime-notifications-max-items-value="5" data-realtime-notifications-mark-read-url-pattern-value="/notifications/__ID__/read">
 
-                                <span data-realtime-notifications-target="badge"
-                                      data-count-value="{{ navbarUnreadNotificationCount }}"
-                                      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger tm-navbar-notification-badge {{ navbarUnreadNotificationCount > 0 ? '' : 'd-none' }}">
-                                    {{ navbarUnreadNotificationCount > 99 ? '99+' : navbarUnreadNotificationCount }}
-                                    <span class="visually-hidden">notifications non lues</span>
-                                </span>
-                            </a>
+							<a class="nav-link tm-navbar__link tm-navbar__link--icon position-relative" href="#" id="tmNavbarNotificationsDropdownMobile" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+								<i class="bi bi-bell-fill"></i>
+								<span>Notifications</span>
 
-                            <div class="dropdown-menu dropdown-menu-end tm-navbardropdown tm-navbar-notification-menu"
-                                 aria-labelledby="tmNavbarNotificationsDropdownMobile">
+								<span data-realtime-notifications-target="badge" data-count-value="{{ navbarUnreadNotificationCount }}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger tm-navbar-notification-badge {{ navbarUnreadNotificationCount > 0 ? '' : 'd-none' }}">
+									{{ navbarUnreadNotificationCount > 99 ? '99+' : navbarUnreadNotificationCount }}
+									<span class="visually-hidden">notifications non lues</span>
+								</span>
+							</a>
 
-                                <div class="tm-navbar-notification-menu__head">
-                                    <div>
-                                        <div class="tm-navbar-notification-menu__title">Notifications</div>
-                                        <div class="tm-navbar-notification-menu__count"
-                                             data-realtime-notifications-target="countText"
-                                             data-count-value="{{ navbarUnreadNotificationCount }}">
-                                            {{ navbarUnreadNotificationCount }}
-                                            non lue{{ navbarUnreadNotificationCount > 1 ? 's' : '' }}
-                                        </div>
-                                    </div>
-                                </div>
+							<div class="dropdown-menu dropdown-menu-end tm-navbardropdown tm-navbar-notification-menu" aria-labelledby="tmNavbarNotificationsDropdownMobile">
 
-                                <div class="tm-navbar-notification-menu__list"
-                                     data-realtime-notifications-target="list">
-                                    {% if navbarLatestNotifications is not empty %}
-                                        {% for notification in navbarLatestNotifications %}
-                                            <form method="post"
-                                                  action="{{ path('app_notification_mark_read', {id: notification.id}) }}"
-                                                  data-notification-item>
-                                                <input type="hidden"
-                                                       name="_token"
-                                                       value="{{ csrf_token('mark-notification-read-' ~ notification.id) }}">
+								<div class="tm-navbar-notification-menu__head">
+									<div>
+										<div class="tm-navbar-notification-menu__title">Notifications</div>
+										<div class="tm-navbar-notification-menu__count" data-realtime-notifications-target="countText" data-count-value="{{ navbarUnreadNotificationCount }}">
+											{{ navbarUnreadNotificationCount }}
+											non lue{{ navbarUnreadNotificationCount > 1 ? 's' : '' }}
+										</div>
+									</div>
+								</div>
 
-                                                <button type="submit"
-                                                        class="dropdown-item tm-navbardropdown-link tm-navbar-notification-item {{ not notification.isRead ? 'tm-navbar-notification-item--unread' : '' }}">
-                                                    <div class="tm-navbar-notification-item__indicator"></div>
+								<div class="tm-navbar-notification-menu__list" data-realtime-notifications-target="list">
+									{% if navbarLatestNotifications is not empty %}
+										{% for notification in navbarLatestNotifications %}
+											<form method="post" action="{{ path('app_notification_mark_read', {id: notification.id}) }}" data-notification-item>
+												<input type="hidden" name="_token" value="{{ csrf_token('mark-notification-read-' ~ notification.id) }}">
 
-                                                    <div class="tm-navbar-notification-item__body">
-                                                        <div class="tm-navbar-notification-item__top">
-                                                            <span class="tm-navbar-notification-title">
-                                                                {{ notification.title }}
-                                                            </span>
-                                                            <span class="tm-navbar-notification-date">
-                                                                {{ notification.createdAt|date('d/m/Y H:i') }}
-                                                            </span>
-                                                        </div>
+												<button type="submit" class="dropdown-item tm-navbardropdown-link tm-navbar-notification-item {{ not notification.isRead ? 'tm-navbar-notification-item--unread' : '' }}">
+													<div class="tm-navbar-notification-item__indicator"></div>
 
-                                                        <div class="tm-navbar-notification-content">
-                                                            {{ notification.body|length > 100 ? notification.body|slice(0, 100) ~ '…' : notification.body }}
-                                                        </div>
+													<div class="tm-navbar-notification-item__body">
+														<div class="tm-navbar-notification-item__top">
+															<span class="tm-navbar-notification-title">
+																{{ notification.title }}
+															</span>
+															<span class="tm-navbar-notification-date">
+																{{ notification.createdAt|date('d/m/Y H:i') }}
+															</span>
+														</div>
 
-                                                        {% if not notification.isRead %}
-                                                            <span class="tm-navbar-notification-item__badge">Non lue</span>
-                                                        {% endif %}
-                                                    </div>
-                                                </button>
-                                            </form>
-                                        {% endfor %}
-                                    {% endif %}
-                                </div>
+														<div class="tm-navbar-notification-content">
+															{{ notification.body|length > 100 ? notification.body|slice(0, 100) ~ '…' : notification.body }}
+														</div>
 
-                                <div class="tm-navbar-notification-empty {{ navbarLatestNotifications is not empty ? 'd-none' : '' }}"
-                                     data-realtime-notifications-target="empty">
-                                    <i class="bi bi-bell-slash"></i>
-                                    <span>Aucune notification pour le moment.</span>
-                                </div>
+														{% if not notification.isRead %}
+															<span class="tm-navbar-notification-item__badge">Non lue</span>
+														{% endif %}
+													</div>
+												</button>
+											</form>
+										{% endfor %}
+									{% endif %}
+								</div>
 
-                                <div class="tm-navbar-notification-menu__footer">
-                                    <a href="{{ path('app_notification_index') }}"
-                                       class="tm-navbar-notification-action tm-navbar-notification-action--secondary">
-                                        Voir toutes les notifications
-                                    </a>
+								<div class="tm-navbar-notification-empty {{ navbarLatestNotifications is not empty ? 'd-none' : '' }}" data-realtime-notifications-target="empty">
+									<i class="bi bi-bell-slash"></i>
+									<span>Aucune notification pour le moment.</span>
+								</div>
 
-                                    <form method="post" action="{{ path('app_notification_mark_all_read') }}">
-                                        <input type="hidden"
-                                               name="_token"
-                                               value="{{ csrf_token('mark-all-notifications-read') }}">
-                                        <input type="hidden" name="redirect" value="{{ app.request.uri }}">
-                                        <button type="submit"
-                                                class="tm-navbar-notification-action tm-navbar-notification-action--primary">
-                                            Tout marquer comme lu
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </div>
+								<div class="tm-navbar-notification-menu__footer">
+									<a href="{{ path('app_notification_index') }}" class="tm-navbar-notification-action tm-navbar-notification-action--secondary">
+										Voir toutes les notifications
+									</a>
+
+									<form method="post" action="{{ path('app_notification_mark_all_read') }}">
+										<input type="hidden" name="_token" value="{{ csrf_token('mark-all-notifications-read') }}">
+										<input type="hidden" name="redirect" value="{{ app.request.uri }}">
+										<button type="submit" class="tm-navbar-notification-action tm-navbar-notification-action--primary">
+											Tout marquer comme lu
+										</button>
+									</form>
+								</div>
+							</div>
+						</li>
+					{% endif %}
+				</ul>
+			</div>
+		</div>
+	</div>
 </nav>
