@@ -1,1049 +1,748 @@
-/* =========================================================
-   PAGE
-   Base propre + variables renforcées
-========================================================= */
-.tm-bonsplans-page {
-    --tm-bp-primary: #061B56;
-    --tm-bp-primary-strong: #03113a;
-    --tm-bp-accent: #f4a911;
-    --tm-bp-accent-strong: #d79410;
-    --tm-bp-accent-glow: rgba(244, 169, 17, 0.16);
-    --tm-bp-text: #09183f;
-    --tm-bp-text-soft: #5a6783;
-    --tm-bp-text-faint: #8691aa;
-    --tm-bp-border: rgba(6, 27, 86, 0.08);
-    --tm-bp-border-strong: rgba(6, 27, 86, 0.16);
-    --tm-bp-shadow-sm: 0 12px 24px rgba(6, 27, 86, 0.05);
-    --tm-bp-shadow-md: 0 18px 38px rgba(6, 27, 86, 0.08);
-    --tm-bp-shadow-lg: 0 30px 70px rgba(6, 27, 86, 0.14);
-    --tm-bp-shadow-gold: 0 18px 34px rgba(244, 169, 17, 0.22);
-
-    position: relative;
-    padding: 2rem 0 3.5rem;
-    background:
-        radial-gradient(circle at top left, rgba(244, 169, 17, 0.06), transparent 28%),
-        radial-gradient(circle at top right, rgba(6, 27, 86, 0.06), transparent 34%),
-        linear-gradient(180deg, #f8faff 0%, #f3f6fc 100%);
-}
-
-.tm-bonsplans-container {
-    max-width: 1160px;
-}
-
-/* =========================================================
-   HERO
-========================================================= */
-.tm-bonsplans-hero {
-    position: relative;
-    overflow: hidden;
-    display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(320px, 430px);
-    gap: 1.4rem;
-    align-items: center;
-    margin-bottom: 1.35rem;
-    padding: 1.55rem 1.55rem 1.45rem;
-    border: 1px solid rgba(6, 27, 86, 0.08);
-    border-radius: 1.5rem;
-    background:
-        radial-gradient(circle at 88% 18%, rgba(244, 169, 17, 0.14), transparent 18%),
-        linear-gradient(135deg, rgba(6, 27, 86, 0.98) 0%, rgba(9, 32, 96, 0.96) 58%, rgba(12, 41, 118, 0.92) 100%);
-    color: #fff;
-    box-shadow: var(--tm-bp-shadow-lg);
-}
-
-.tm-bonsplans-hero__content,
-.tm-bonsplans-hero__visual {
-    position: relative;
-    z-index: 1;
-}
-
-.tm-bonsplans-hero__content {
-    max-width: 620px;
-}
-
-.tm-bonsplans-hero__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 0.85rem;
-    padding: 0.42rem 0.85rem;
-    border-radius: 999px;
-    border: 1px solid rgba(244, 169, 17, 0.18);
-    background: rgba(244, 169, 17, 0.12);
-    color: #ffe1a0;
-    font-size: 0.74rem;
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-}
-
-.tm-bonsplans-hero__title {
-    margin: 0 0 0.45rem;
-    font-size: clamp(2rem, 2.2vw, 2.7rem);
-    font-weight: 900;
-    line-height: 1.02;
-    letter-spacing: -0.045em;
-    color: #ffffff;
-}
-
-.tm-bonsplans-hero__subtitle {
-    margin: 0;
-    max-width: 560px;
-    font-size: 0.98rem;
-    line-height: 1.68;
-    color: rgba(255, 255, 255, 0.84);
-}
-
-.tm-bonsplans-hero__notes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.7rem;
-    margin-top: 1.05rem;
-}
-
-.tm-bonsplans-hero__notes span {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2.15rem;
-    padding: 0.42rem 0.78rem;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.09);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.78rem;
-    font-weight: 700;
-    backdrop-filter: blur(8px);
-}
-
-.tm-bonsplans-hero__visual {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.tm-bonsplans-hero__fan {
-    position: relative;
-    width: 100%;
-    max-width: 390px;
-    height: 265px;
-}
-
-.tm-bonsplans-hero__polaroid {
-    position: absolute;
-    bottom: 0;
-    margin: 0;
-    width: 160px;
-    height: 210px;
-    padding: 0.6rem 0.6rem 1rem;
-    border-radius: 1rem;
-    background: linear-gradient(180deg, #ffffff 0%, #f8f9fc 100%);
-    box-shadow:
-        0 18px 35px rgba(3, 17, 58, 0.2),
-        0 2px 0 rgba(255, 255, 255, 0.85) inset;
-    transform-origin: bottom center;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.tm-bonsplans-hero__polaroid-frame {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    border-radius: 0.7rem;
-    background: linear-gradient(180deg, #eef3ff 0%, #f7f9ff 100%);
-}
-
-.tm-bonsplans-hero__polaroid-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-}
-
-.tm-bonsplans-hero__polaroid--one {
-    left: 4px;
-    z-index: 1;
-    transform: rotate(-17deg) translateY(10px);
-}
-
-.tm-bonsplans-hero__polaroid--two {
-    left: 76px;
-    z-index: 2;
-    transform: rotate(-7deg) translateY(0);
-}
-
-.tm-bonsplans-hero__polaroid--three {
-    right: 74px;
-    z-index: 3;
-    transform: rotate(7deg) translateY(0);
-}
-
-.tm-bonsplans-hero__polaroid--four {
-    right: 2px;
-    z-index: 4;
-    transform: rotate(17deg) translateY(10px);
-}
-
-.tm-bonsplans-hero:hover .tm-bonsplans-hero__polaroid--one {
-    transform: rotate(-18deg) translateY(6px);
-}
-
-.tm-bonsplans-hero:hover .tm-bonsplans-hero__polaroid--two {
-    transform: rotate(-8deg) translateY(-3px);
-}
-
-.tm-bonsplans-hero:hover .tm-bonsplans-hero__polaroid--three {
-    transform: rotate(8deg) translateY(-3px);
-}
-
-.tm-bonsplans-hero:hover .tm-bonsplans-hero__polaroid--four {
-    transform: rotate(18deg) translateY(6px);
-}
-
-/* =========================================================
-   FILTRES
-========================================================= */
-.tm-bonsplans-toolbar {
-    margin-bottom: 1.4rem;
-}
-
-.tm-bonsplans-filters {
-    padding: 1rem;
-    border: 1px solid rgba(6, 27, 86, 0.08);
-    border-radius: 1.15rem;
-    background: rgba(255, 255, 255, 0.96);
-    box-shadow: 0 12px 32px rgba(6, 27, 86, 0.06);
-}
-
-.tm-bonsplans-filters__grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 160px;
-    gap: 0.95rem;
-    align-items: end;
-}
-
-.tm-bonsplans-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.45rem;
-}
-
-.tm-bonsplans-field__label {
-    margin: 0;
-    font-size: 0.9rem;
-    font-weight: 700;
-    line-height: 1.2;
-    color: #1a2754;
-}
-
-.tm-bonsplans-field__control {
-    position: relative;
-}
-
-.tm-bonsplans-select {
-    width: 100%;
-    min-height: 48px;
-    padding: 0.8rem 0.95rem;
-    border: 1px solid #dbe2f2;
-    border-radius: 0.95rem;
-    background-color: #ffffff;
-    color: #1f2a44;
-    font-size: 0.94rem;
-    font-weight: 500;
-    outline: none;
-    appearance: none;
-}
-
-.tm-bonsplans-select:focus {
-    border-color: rgba(244, 169, 17, 0.38);
-    box-shadow: 0 0 0 4px rgba(244, 169, 17, 0.10);
-}
-
-.tm-bonsplans-select:disabled {
-    background-color: #f4f6fb;
-    color: #9aa3b8;
-    cursor: not-allowed;
-}
-
-.tm-bonsplans-actions {
-    display: flex;
-}
-
-.tm-bonsplans-reset {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-height: 48px;
-    padding: 0.82rem 1rem;
-    border: 1px solid rgba(6, 27, 86, 0.12);
-    border-radius: 0.95rem;
-    background: linear-gradient(180deg, #f9fbff 0%, #eef3ff 100%);
-    color: #061B56;
-    font-size: 0.94rem;
-    font-weight: 800;
-    text-decoration: none;
-    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
-}
-
-.tm-bonsplans-reset:hover {
-    color: #061B56;
-    background: linear-gradient(180deg, #f4f8ff 0%, #e9f0ff 100%);
-    border-color: rgba(244, 169, 17, 0.24);
-    transform: translateY(-1px);
-}
-
-/* =========================================================
-   GRILLE + CARDS
-========================================================= */
-.tm-bonsplans-results {
-    position: relative;
-}
-
-.tm-bonsplans-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.25rem;
-}
-
-.tm-bonsplans-card-link {
-    display: block;
-    color: inherit;
-    text-decoration: none;
-}
-
-.tm-bonsplans-card-link:hover,
-.tm-bonsplans-card-link:focus,
-.tm-bonsplans-card-link:active {
-    color: inherit;
-    text-decoration: none;
-}
-
-.tm-bonsplans-card {
-    min-width: 0;
-}
-
-.tm-bonsplans-card__inner {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-    padding: 0;
-    border: 1px solid rgba(6, 27, 86, 0.08);
-    border-radius: 1.25rem;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(247, 250, 255, 0.98) 100%);
-    box-shadow: 0 12px 30px rgba(6, 27, 86, 0.06);
-    overflow: hidden;
-    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-}
-
-.tm-bonsplans-card__inner::before {
-    content: "";
-    position: absolute;
-    inset: 0 auto 0 0;
-    z-index: 2;
-    width: 5px;
-    border-radius: 1.25rem 0 0 1.25rem;
-    background: linear-gradient(180deg, #d4dceb 0%, #bcc7dd 100%);
-}
-
-.tm-bonsplans-card__inner::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(180deg, rgba(6, 27, 86, 0.01), rgba(6, 27, 86, 0.02) 32%, rgba(244, 169, 17, 0.02) 100%);
-}
-
-.tm-bonsplans-card-link:hover .tm-bonsplans-card__inner {
-    transform: translateY(-6px);
-    box-shadow:
-        0 22px 44px rgba(6, 27, 86, 0.12),
-        0 10px 24px rgba(244, 169, 17, 0.08);
-}
-
-/* =========================================================
-   IMAGE CARD
-========================================================= */
-.tm-bonsplans-card__media {
-    position: relative;
-    z-index: 1;
-    overflow: hidden;
-    height: 185px;
-    background: linear-gradient(180deg, #edf2ff 0%, #f8faff 100%);
-    border-radius: 1.25rem 1.25rem 0 0;
-}
-
-.tm-bonsplans-card__media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transform: scale(1.01);
-    transition: transform 0.45s ease;
-}
-
-.tm-bonsplans-card__media-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(6, 27, 86, 0.02) 0%, rgba(6, 27, 86, 0.08) 62%, rgba(255, 255, 255, 0.96) 100%);
-    pointer-events: none;
-}
-
-.tm-bonsplans-card-link:hover .tm-bonsplans-card__media img {
-    transform: scale(1.05);
-}
-
-/* =========================================================
-   CONTENU CARD
-========================================================= */
-.tm-bonsplans-card__top,
-.tm-bonsplans-card__body,
-.tm-bonsplans-card__footer {
-    position: relative;
-    z-index: 3;
-    padding-left: 1.08rem;
-    padding-right: 1.08rem;
-}
-
-.tm-bonsplans-card__top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 0.75rem;
-    margin-top: -1.05rem;
-    margin-bottom: 0.85rem;
-}
-
-.tm-bonsplans-card__discount {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.4rem 0.72rem;
-    border-radius: 999px;
-    color: #fff;
-    font-size: 0.8rem;
-    font-weight: 900;
-    line-height: 1;
-    white-space: nowrap;
-    box-shadow: 0 10px 20px rgba(6, 27, 86, 0.12);
-}
-
-.tm-bonsplans-card__date {
-    font-size: 0.74rem;
-    font-weight: 600;
-    line-height: 1.35;
-    color: #7f879b;
-    text-align: right;
-    padding-right: 0.3rem;
-}
-
-.tm-bonsplans-card__body {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    min-width: 0;
-}
-
-.tm-bonsplans-card__service-icon-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.9rem;
-}
-
-.tm-bonsplans-card__service-icon {
-    width: 54px;
-    height: 54px;
-    border-radius: 1rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(180deg, #f7faff 0%, #edf2ff 100%);
-    border: 1px solid rgba(6, 27, 86, 0.08);
-    color: #061B56;
-    box-shadow: 0 8px 18px rgba(6, 27, 86, 0.08);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
-}
-
-.tm-bonsplans-card-link:hover .tm-bonsplans-card__service-icon {
-    transform: translateY(-2px);
-    background: linear-gradient(135deg, #061B56 0%, #12358e 100%);
-    color: #ffffff;
-    box-shadow: 0 14px 26px rgba(6, 27, 86, 0.18);
-}
-
-.tm-bonsplans-card__service-icon i {
-    font-size: 1.12rem;
-    line-height: 1;
-}
-
-.tm-bonsplans-card__promo-pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 30px;
-    padding: 0.35rem 0.7rem;
-    border-radius: 999px;
-    background: rgba(6, 27, 86, 0.06);
-    color: #061B56;
-    font-size: 0.73rem;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    transition: background 0.2s ease, color 0.2s ease;
-}
-
-.tm-bonsplans-card-link:hover .tm-bonsplans-card__promo-pill {
-    background: rgba(244, 169, 17, 0.16);
-    color: #7d5708;
-}
-
-.tm-bonsplans-card__title {
-    margin: 0 0 0.52rem;
-    font-size: 1.03rem;
-    font-weight: 850;
-    line-height: 1.24;
-    letter-spacing: -0.015em;
-    color: #14214d;
-    text-align: left;
-    text-wrap: balance;
-}
-
-.tm-bonsplans-card__company {
-    margin: 0 0 0.45rem;
-    font-size: 0.93rem;
-    font-weight: 700;
-    line-height: 1.35;
-    color: #20293f;
-    text-align: left;
-}
-
-.tm-bonsplans-card__description {
-    margin: 0 0 0.7rem;
-    font-size: 0.85rem;
-    line-height: 1.58;
-    color: #667089;
-    text-align: left;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    min-height: calc(1.58em * 3);
-}
-
-.tm-bonsplans-card__category {
-    margin: 0 0 0.3rem;
-    font-size: 0.81rem;
-    font-weight: 700;
-    line-height: 1.4;
-    color: #5d6883;
-    text-align: left;
-}
-
-.tm-bonsplans-card__city {
-    margin: 0 0 0.95rem;
-    font-size: 0.83rem;
-    line-height: 1.4;
-    color: #7c8497;
-    text-align: left;
-}
-
-.tm-bonsplans-card__footer {
-    margin-top: auto;
-    padding-top: 0.9rem;
-    padding-bottom: 1rem;
-    border-top: 1px solid rgba(6, 27, 86, 0.08);
-    display: flex;
-    align-items: end;
-    justify-content: space-between;
-    gap: 0.8rem;
-}
-
-.tm-bonsplans-card__prices {
-    display: flex;
-    flex-direction: column;
-    gap: 0.28rem;
-}
-
-.tm-bonsplans-card__old-price {
-    font-size: 0.88rem;
-    font-weight: 500;
-    line-height: 1.3;
-    color: #80879a;
-    text-decoration: line-through;
-}
-
-.tm-bonsplans-card__new-price {
-    font-size: 1.2rem;
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    color: #061B56;
-}
-
-/* CTA rendu beaucoup plus visible pour inviter au clic */
-.tm-bonsplans-card__cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    min-height: 2.7rem;
-    padding: 0.58rem 0.9rem;
-    border-radius: 0.9rem;
-    background: linear-gradient(135deg, #f4a911 0%, #ffc758 100%);
-    color: #442b00;
-    font-size: 0.84rem;
-    font-weight: 900;
-    white-space: nowrap;
-    box-shadow: var(--tm-bp-shadow-gold);
-    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
-}
-
-.tm-bonsplans-card__cta i {
-    transition: transform 0.2s ease;
-}
-
-.tm-bonsplans-card-link:hover .tm-bonsplans-card__cta {
-    transform: translateY(-3px);
-    box-shadow: 0 24px 40px rgba(244, 169, 17, 0.28);
-    filter: saturate(1.03);
-}
-
-.tm-bonsplans-card-link:hover .tm-bonsplans-card__cta i {
-    transform: translateX(4px);
-}
-
-/* Animation optionnelle pour mettre en avant une seule card */
-@keyframes tm-bonsplans-pulse {
-    0% {
-        box-shadow: 0 18px 34px rgba(244, 169, 17, 0.18);
-    }
-    50% {
-        box-shadow: 0 24px 44px rgba(244, 169, 17, 0.28);
-    }
-    100% {
-        box-shadow: 0 18px 34px rgba(244, 169, 17, 0.18);
-    }
-}
-
-.tm-bonsplans-card__cta--pulse {
-    animation: tm-bonsplans-pulse 3s ease-in-out infinite;
-}
-
-/* =========================================================
-   NIVEAUX PROMO
-========================================================= */
-.tm-bonsplans-card--low .tm-bonsplans-card__inner {
-    border-color: rgba(44, 148, 94, 0.24);
-}
-
-.tm-bonsplans-card--medium .tm-bonsplans-card__inner {
-    border-color: rgba(244, 169, 17, 0.28);
-}
-
-.tm-bonsplans-card--high .tm-bonsplans-card__inner {
-    border-color: rgba(222, 132, 41, 0.3);
-}
-
-.tm-bonsplans-card--max .tm-bonsplans-card__inner {
-    border-color: rgba(190, 68, 68, 0.3);
-}
-
-.tm-bonsplans-card--low .tm-bonsplans-card__inner::before {
-    background: linear-gradient(180deg, #2f9b63 0%, #22754b 100%);
-}
-
-.tm-bonsplans-card--medium .tm-bonsplans-card__inner::before {
-    background: linear-gradient(180deg, #f4be3c 0%, #f4a911 100%);
-}
-
-.tm-bonsplans-card--high .tm-bonsplans-card__inner::before {
-    background: linear-gradient(180deg, #f0a14c 0%, #de8429 100%);
-}
-
-.tm-bonsplans-card--max .tm-bonsplans-card__inner::before {
-    background: linear-gradient(180deg, #d36a5f 0%, #be4444 100%);
-}
-
-.tm-bonsplans-card__discount--low {
-    background: linear-gradient(135deg, #2f9b63 0%, #22754b 100%);
-    box-shadow: 0 8px 18px rgba(47, 155, 99, 0.2);
-}
-
-.tm-bonsplans-card__discount--medium {
-    background: linear-gradient(135deg, #f7c54d 0%, #f4a911 100%);
-    color: #3d2a00;
-    box-shadow: 0 8px 18px rgba(244, 169, 17, 0.22);
-}
-
-.tm-bonsplans-card__discount--high {
-    background: linear-gradient(135deg, #f0a14c 0%, #de8429 100%);
-    box-shadow: 0 8px 18px rgba(222, 132, 41, 0.22);
-}
-
-.tm-bonsplans-card__discount--max {
-    background: linear-gradient(135deg, #d36a5f 0%, #be4444 100%);
-    box-shadow: 0 8px 18px rgba(190, 68, 68, 0.24);
-}
-
-/* =========================================================
-   EMPTY
-========================================================= */
-.tm-bonsplans-empty {
-    grid-column: 1 / -1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2.6rem 1.4rem;
-    border: 1px dashed rgba(6, 27, 86, 0.18);
-    border-radius: 1.2rem;
-    background: rgba(255, 255, 255, 0.92);
-    text-align: center;
-}
-
-.tm-bonsplans-empty__icon {
-    margin-bottom: 0.8rem;
-    font-size: 2rem;
-    line-height: 1;
-}
-
-.tm-bonsplans-empty__title {
-    margin: 0 0 0.4rem;
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: #1e2853;
-}
-
-.tm-bonsplans-empty__text {
-    margin: 0 0 1rem;
-    max-width: 560px;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: #667089;
-}
-
-.tm-bonsplans-empty__cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 46px;
-    padding: 0.8rem 1.15rem;
-    border-radius: 0.9rem;
-    background: #061B56;
-    color: #ffffff;
-    font-size: 0.92rem;
-    font-weight: 700;
-    text-decoration: none;
-    box-shadow: 0 12px 24px rgba(6, 27, 86, 0.18);
-}
-
-.tm-bonsplans-empty__cta:hover {
-    color: #ffffff;
-    background: #041540;
-}
-
-/* =========================================================
-   PAGINATION
-========================================================= */
-.tm-bonsplans-pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 1.9rem;
-}
-
-.tm-bonsplans-pagination .pagination {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    margin: 0;
-}
-
-.tm-bonsplans-pagination .page-item {
-    list-style: none;
-}
-
-.tm-bonsplans-pagination .page-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 42px;
-    min-height: 42px;
-    padding: 0.55rem 0.82rem;
-    border: 1px solid rgba(6, 27, 86, 0.1);
-    border-radius: 0.85rem;
-    background: #ffffff;
-    color: #061B56;
-    font-size: 0.9rem;
-    font-weight: 700;
-}
-
-.tm-bonsplans-pagination .page-link:hover {
-    color: #061B56;
-    background: #f5f8ff;
-    border-color: rgba(244, 169, 17, 0.22);
-}
-
-.tm-bonsplans-pagination .page-item.active .page-link {
-    background: #061B56;
-    border-color: #061B56;
-    color: #ffffff;
-    box-shadow: 0 10px 18px rgba(6, 27, 86, 0.18);
-}
-
-.tm-bonsplans-pagination .page-item.disabled .page-link {
-    background: #f4f6fb;
-    color: #9aa3b8;
-    border-color: #e2e7f2;
-}
-
-/* =========================================================
-   CLOSING / FOOTER VISUEL
-========================================================= */
-.tm-bonsplans-closing {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.95fr);
-    gap: 2rem;
-    align-items: center;
-    margin-top: 1.7rem;
-    padding: 2rem;
-    border: 1px solid rgba(6, 27, 86, 0.08);
-    border-radius: 1.7rem;
-    background:
-        radial-gradient(circle at top right, rgba(244, 169, 17, 0.08), transparent 22%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(245, 248, 255, 0.97));
-    box-shadow: 0 22px 44px rgba(6, 27, 86, 0.08);
-}
-
-.tm-bonsplans-closing__eyebrow {
-    display: inline-block;
-    margin-bottom: 0.6rem;
-    color: #8b96b1;
-    font-size: 0.77rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
-.tm-bonsplans-closing__title {
-    margin: 0 0 0.7rem;
-    color: #061B56;
-    font-size: clamp(1.65rem, 1.3rem + 0.6vw, 2.3rem);
-    line-height: 1.08;
-    font-weight: 900;
-    letter-spacing: -0.035em;
-}
-
-.tm-bonsplans-closing__text {
-    max-width: 60ch;
-    margin: 0;
-    color: #5a6783;
-    line-height: 1.8;
-}
-
-.tm-bonsplans-closing__points {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.7rem;
-    margin-top: 1.15rem;
-}
-
-.tm-bonsplans-closing__points span {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2.2rem;
-    padding: 0.42rem 0.8rem;
-    border-radius: 999px;
-    background: rgba(6, 27, 86, 0.06);
-    color: #061B56;
-    font-size: 0.78rem;
-    font-weight: 800;
-}
-
-.tm-bonsplans-closing__gallery {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-}
-
-.tm-bonsplans-closing__photo {
-    overflow: hidden;
-    border: 1px solid rgba(6, 27, 86, 0.08);
-    border-radius: 1.35rem;
-    background: linear-gradient(180deg, #ffffff 0%, #f3f7ff 100%);
-    box-shadow: 0 14px 28px rgba(6, 27, 86, 0.06);
-    padding: 0.95rem;
-    min-height: 186px;
-    transition: transform 0.22s ease, box-shadow 0.22s ease;
-}
-
-.tm-bonsplans-closing__photo:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 34px rgba(6, 27, 86, 0.1);
-}
-
-.tm-bonsplans-closing__photo img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-}
-
-/* =========================================================
-   ACCESSIBILITÉ
-========================================================= */
-.tm-bonsplans-card-link:focus-visible .tm-bonsplans-card__inner {
-    box-shadow:
-        0 0 0 4px rgba(244, 169, 17, 0.14),
-        0 18px 38px rgba(6, 27, 86, 0.1);
-    border-color: rgba(244, 169, 17, 0.28);
-}
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-@media (max-width: 1199.98px) {
-    .tm-bonsplans-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .tm-bonsplans-hero,
-    .tm-bonsplans-closing {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 991.98px) {
-    .tm-bonsplans-page {
-        padding: 1.7rem 0 3rem;
-    }
-
-    .tm-bonsplans-filters__grid {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .tm-bonsplans-actions {
-        grid-column: 1 / -1;
-    }
-}
-
-@media (max-width: 767.98px) {
-    .tm-bonsplans-page {
-        padding: 1.4rem 0 2.7rem;
-    }
-
-    .tm-bonsplans-container {
-        padding-left: 0.9rem;
-        padding-right: 0.9rem;
-    }
-
-    .tm-bonsplans-hero {
-        grid-template-columns: 1fr;
-        padding: 1.2rem 1rem 1.15rem;
-        border-radius: 1.2rem;
-    }
-
-    .tm-bonsplans-hero__fan {
-        max-width: 320px;
-        height: 220px;
-    }
-
-    .tm-bonsplans-hero__polaroid {
-        width: 128px;
-        height: 176px;
-        padding: 0.5rem 0.5rem 0.85rem;
-    }
-
-    .tm-bonsplans-hero__polaroid--one {
-        left: 0;
-    }
-
-    .tm-bonsplans-hero__polaroid--two {
-        left: 58px;
-    }
-
-    .tm-bonsplans-hero__polaroid--three {
-        right: 56px;
-    }
-
-    .tm-bonsplans-hero__polaroid--four {
-        right: 0;
-    }
-
-    .tm-bonsplans-filters {
-        padding: 0.9rem;
-    }
-
-    .tm-bonsplans-filters__grid {
-        grid-template-columns: 1fr;
-        gap: 0.85rem;
-    }
-
-    .tm-bonsplans-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .tm-bonsplans-card__media {
-        height: 150px;
-    }
-
-    .tm-bonsplans-card__top,
-    .tm-bonsplans-card__body,
-    .tm-bonsplans-card__footer {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-
-    .tm-bonsplans-card__top {
-        margin-top: -0.95rem;
-    }
-
-    .tm-bonsplans-card__title {
-        font-size: 0.98rem;
-    }
-
-    .tm-bonsplans-card__company {
-        font-size: 0.9rem;
-    }
-
-    .tm-bonsplans-card__description {
-        font-size: 0.84rem;
-        min-height: auto;
-    }
-
-    .tm-bonsplans-card__footer {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .tm-bonsplans-card__new-price {
-        font-size: 1.08rem;
-    }
-
-    .tm-bonsplans-card__cta {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .tm-bonsplans-closing {
-        padding: 1.2rem;
-        border-radius: 1.2rem;
-    }
-
-    .tm-bonsplans-closing__gallery {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .tm-bonsplans-closing__photo {
-        min-height: 140px;
-    }
-
-    .tm-bonsplans-pagination .page-link {
-        min-width: 40px;
-        min-height: 40px;
-        padding: 0.5rem 0.72rem;
-        font-size: 0.86rem;
-    }
-}
+  /* ============================================================
+     PAGE BONS PLANS
+     Feuille de style dédiée à la vue Twig bons_plans.html.twig
+     ============================================================ */
+
+  :root {
+      --tm-bp-encre: #0a1633;
+      --tm-bp-encre-2: #101f45;
+      --tm-bp-bleu: #1e49c7;
+      --tm-bp-bleu-clair: #e6ecfc;
+      --tm-bp-safran: #ff8a1e;
+      --tm-bp-safran-fonce: #e8760a;
+      --tm-bp-papier: #f4f6fa;
+      --tm-bp-blanc: #ffffff;
+      --tm-bp-vert: #0e9f6e;
+      --tm-bp-vert-clair: #e2f5ee;
+      --tm-bp-texte: #233047;
+      --tm-bp-texte-doux: #5b6b85;
+      --tm-bp-bordure: #e3e8f1;
+      --tm-bp-radius: 16px;
+      --tm-bp-radius-s: 10px;
+      --tm-bp-ombre: 0 8px 30px rgba(10, 22, 51, 0.08);
+      --tm-bp-ombre-forte: 0 18px 50px rgba(10, 22, 51, 0.16);
+  }
+
+  .conteneur {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+  }
+
+  .section {
+      padding: 88px 0;
+  }
+
+  .section-titre {
+      margin: 0;
+      font-size: clamp(28px, 3.4vw, 40px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--tm-bp-encre);
+      line-height: 1.15;
+  }
+
+  .entete-section {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 44px;
+      flex-wrap: wrap;
+  }
+
+  .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--tm-bp-bleu);
+  }
+
+  .eyebrow::before {
+      content: "";
+      width: 22px;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--tm-bp-safran);
+  }
+
+  .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 26px;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+
+ 
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s, color 0.15s;
+  }
+
+  .btn:active {
+      transform: scale(0.98);
+  }
+
+  .btn-bleu {
+      background: var(--tm-bp-bleu);
+      color: #fff;
+  }
+
+  .btn-bleu:hover {
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(30, 73, 199, 0.35);
+      transform: translateY(-1px);
+  }
+
+  .filtres-inner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+  }
+
+  /* ============================================================
+     HERO BONS PLANS
+     ============================================================ */
+
+  .hero-liste {
+      position: relative;
+      overflow: hidden;
+      background: var(--tm-bp-encre);
+      color: #fff;
+  }
+
+  .hero-liste .fond {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center right;
+  }
+
+  .hero-liste .voile {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+          90deg,
+          var(--tm-bp-encre) 32%,
+          rgba(10, 22, 51, 0.86) 50%,
+          rgba(10, 22, 51, 0.25) 100%
+      );
+  }
+
+  .hero-liste-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 600px;
+      padding: 72px 0 64px;
+  }
+
+  .hero-liste h1 {
+      margin: 0;
+      font-size: clamp(34px, 4.6vw, 52px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+  }
+
+  .hero-liste h1 span {
+      color: var(--tm-bp-safran);
+  }
+
+  .hero-liste p {
+      margin: 18px 0 0;
+      max-width: 480px;
+      font-size: 17.5px;
+      color: #c9d3e8;
+  }
+
+  .hero-atouts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+  }
+
+  .hero-atout {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 13px 17px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 14px;
+      background: rgba(10, 22, 51, 0.55);
+      backdrop-filter: blur(6px);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.3;
+  }
+
+  .hero-atout .rond {
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border-radius: 11px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--tm-bp-safran);
+  }
+
+  .hero-liste .pastille-promo {
+      position: absolute;
+      top: 50%;
+      right: 6%;
+      z-index: 2;
+      padding: 22px 26px;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: var(--tm-bp-ombre-forte);
+      color: var(--tm-bp-encre);
+      text-align: center;
+      transform: translateY(-50%) rotate(6deg);
+  }
+
+  .pastille-promo .jusqua {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--tm-bp-texte-doux);
+  }
+
+  .pastille-promo .pourcent {
+      font-size: 46px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      color: var(--tm-bp-safran);
+  }
+
+  .pastille-promo .sur {
+      font-size: 13.5px;
+      font-weight: 700;
+  }
+
+  .pastille-promo .etincelles {
+      position: absolute;
+      top: -22px;
+      left: -18px;
+      color: var(--tm-bp-safran);
+  }
+
+  /* ============================================================
+     RESULTATS / FILTRES
+     ============================================================ */
+
+  .resultats {
+      background: var(--tm-bp-papier);
+  }
+
+  .filtre {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 48px;
+      padding: 10px 16px;
+      border: 1.5px solid var(--tm-bp-bordure);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--tm-bp-encre);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s, color 0.15s, transform 0.15s;
+  }
+
+  .filtre:hover {
+      border-color: var(--tm-bp-bleu);
+      color: var(--tm-bp-bleu);
+  }
+
+  .filtre svg:first-child {
+      flex-shrink: 0;
+      color: var(--tm-bp-bleu);
+  }
+
+  .filtre .chevron {
+      color: var(--tm-bp-texte-doux);
+  }
+
+  .filtre select {
+      border: none;
+      background: none;
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      outline: none;
+      min-width: 0;
+  }
+
+  .bons-plans-layout {
+      display: grid;
+      grid-template-columns: 1fr 296px;
+      gap: 24px;
+      align-items: start;
+  }
+
+  .grille-deals {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+  }
+
+  /* ============================================================
+     CARTE DEAL
+     ============================================================ */
+
+  .deal {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--tm-bp-bordure);
+      border-radius: var(--tm-bp-radius);
+      background: #fff;
+      transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+  }
+
+  .deal:hover {
+      border-color: var(--tm-bp-bleu);
+      box-shadow: 0 14px 36px rgba(30, 73, 199, 0.18), 0 4px 14px rgba(255, 138, 30, 0.12);
+      transform: translateY(-2px);
+  }
+
+  .deal .visuel {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+  }
+
+  .deal .visuel a {
+      display: block;
+      width: 100%;
+      height: 100%;
+  }
+
+  .deal .visuel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+  }
+
+  .badge-remise {
+      position: absolute;
+      top: 11px;
+      left: 11px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      background: var(--tm-bp-safran);
+      color: var(--tm-bp-encre);
+      padding: 5px 12px;
+      font-size: 14px;
+      font-weight: 800;
+  }
+
+  .deal .timer {
+      position: absolute;
+      top: 13px;
+      left: 76px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(10, 22, 51, 0.82);
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      backdrop-filter: blur(4px);
+  }
+
+  .deal .favori {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--tm-bp-encre);
+      transition: color 0.15s, transform 0.15s;
+  }
+
+  .deal .favori:hover {
+      color: #e0245e;
+      transform: scale(1.1);
+  }
+
+  .deal .icone-cat {
+      position: absolute;
+      bottom: -19px;
+      left: 14px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid #fff;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: var(--tm-bp-ombre);
+      color: var(--tm-bp-bleu);
+      font-size: 16px;
+  }
+
+  .icone-cat.c-bleu {
+      background: var(--tm-bp-bleu);
+      color: #fff;
+  }
+
+  .icone-cat.c-vert {
+      background: var(--tm-bp-vert);
+      color: #fff;
+  }
+
+  .icone-cat.c-violet {
+      background: #7c3aed;
+      color: #fff;
+  }
+
+  .icone-cat.c-safran {
+      background: var(--tm-bp-safran);
+      color: var(--tm-bp-encre);
+  }
+
+  .deal .corps {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      padding: 28px 16px 16px;
+  }
+
+  .deal h3 {
+      margin: 0;
+      font-size: 16px;
+      color: var(--tm-bp-encre);
+  }
+
+  .deal h3 a {
+      color: inherit;
+      text-decoration: none;
+  }
+
+  .deal h3 a:hover {
+      color: var(--tm-bp-bleu);
+  }
+
+  .deal .metier {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: var(--tm-bp-texte-doux);
+  }
+
+  .deal .prix {
+      display: flex;
+      align-items: baseline;
+      gap: 9px;
+      margin: 10px 0 0;
+  }
+
+  .deal .prix s {
+      color: var(--tm-bp-texte-doux);
+      font-size: 13.5px;
+  }
+
+  .deal .prix strong {
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--tm-bp-bleu);
+  }
+
+  .deal .ligne {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin: 9px 0 0;
+      font-size: 13.5px;
+      color: var(--tm-bp-texte-doux);
+  }
+
+  .deal .ligne svg {
+      flex-shrink: 0;
+  }
+
+  .deal .ligne.note {
+      color: var(--tm-bp-encre);
+      font-weight: 700;
+  }
+
+  .deal .ligne.note svg {
+      color: var(--tm-bp-safran);
+  }
+
+  .deal .ligne.note span {
+      color: var(--tm-bp-texte-doux);
+      font-weight: 500;
+  }
+
+  .deal .ligne.lieu svg {
+      color: var(--tm-bp-bleu);
+  }
+
+  /* ============================================================
+     ENCAT NOTIF
+     ============================================================ */
+
+  .encart-notif {
+      position: sticky;
+      top: 150px;
+      padding: 28px 24px;
+      border: 1px solid #d4dffa;
+      border-radius: var(--tm-bp-radius);
+      background: var(--tm-bp-bleu-clair);
+      text-align: center;
+  }
+
+  .encart-notif .cloche {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: var(--tm-bp-ombre);
+      color: var(--tm-bp-bleu);
+  }
+
+  .encart-notif h3 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.25;
+      color: var(--tm-bp-encre);
+  }
+
+  .encart-notif > p {
+      margin: 10px 0 0;
+      font-size: 13.5px;
+      color: var(--tm-bp-texte-doux);
+  }
+
+  .encart-notif .btn {
+      width: 100%;
+      margin-top: 18px;
+      padding: 13px 18px;
+      font-size: 14px;
+  }
+
+  .encart-notif ul {
+      display: grid;
+      gap: 10px;
+      margin: 20px 0 0;
+      padding: 0;
+      text-align: left;
+      list-style: none;
+  }
+
+  .encart-notif li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--tm-bp-encre);
+  }
+
+  .encart-notif li svg {
+      flex-shrink: 0;
+      color: var(--tm-bp-bleu);
+  }
+
+  /* ============================================================
+     ETAT VIDE
+     ============================================================ */
+
+  .tm-bonsplans-empty {
+      grid-column: 1 / -1;
+      padding: 48px 24px;
+      border: 1px solid var(--tm-bp-bordure);
+      border-radius: var(--tm-bp-radius);
+      background: #fff;
+      text-align: center;
+      box-shadow: var(--tm-bp-ombre);
+  }
+
+  .tm-bonsplans-empty__icon {
+      font-size: 36px;
+      line-height: 1;
+  }
+
+  .tm-bonsplans-empty__title {
+      margin: 14px 0 0;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--tm-bp-encre);
+  }
+
+  .tm-bonsplans-empty__text {
+      max-width: 560px;
+      margin: 12px auto 0;
+      font-size: 15px;
+      color: var(--tm-bp-texte-doux);
+  }
+
+  .tm-bonsplans-empty__cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 22px;
+      padding: 13px 22px;
+      border-radius: 999px;
+      background: var(--tm-bp-bleu);
+      color: #fff;
+      font-weight: 700;
+      text-decoration: none;
+      transition: box-shadow 0.15s, transform 0.15s, background 0.15s;
+  }
+
+  .tm-bonsplans-empty__cta:hover {
+      background: #163fb5;
+      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(30, 73, 199, 0.35);
+  }
+
+  /* ============================================================
+     PAGINATION KNP
+     ============================================================ */
+
+  .tm-bonsplans-pagination {
+      margin-top: 44px;
+  }
+
+  .tm-bonsplans-pagination .pagination {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 0;
+  }
+
+  .tm-bonsplans-pagination .page-item {
+      list-style: none;
+  }
+
+  .tm-bonsplans-pagination .page-link {
+      min-width: 42px;
+      height: 42px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid var(--tm-bp-bordure);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--tm-bp-encre);
+      font-size: 14.5px;
+      font-weight: 700;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+  }
+
+  .tm-bonsplans-pagination .page-link:hover {
+      border-color: var(--tm-bp-bleu);
+      background: #fff;
+      color: var(--tm-bp-bleu);
+  }
+
+  .tm-bonsplans-pagination .page-item.active .page-link {
+      border-color: var(--tm-bp-bleu);
+      background: var(--tm-bp-bleu);
+      color: #fff;
+  }
+
+  .tm-bonsplans-pagination .page-item.disabled .page-link {
+      opacity: 0.55;
+      pointer-events: none;
+  }
+
+  /* ============================================================
+     RESPONSIVE
+     ============================================================ */
+
+  @media (max-width: 1200px) {
+      .grille-deals {
+          grid-template-columns: repeat(3, 1fr);
+      }
+  }
+
+  @media (max-width: 1024px) {
+      .bons-plans-layout {
+          grid-template-columns: 1fr;
+      }
+
+      .encart-notif {
+          position: static;
+      }
+
+      .grille-deals {
+          grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hero-liste .voile {
+          background: linear-gradient(
+              90deg,
+              var(--tm-bp-encre) 20%,
+              rgba(10, 22, 51, 0.88) 60%,
+              rgba(10, 22, 51, 0.55) 100%
+          );
+      }
+
+      .hero-liste .pastille-promo {
+          display: none;
+      }
+  }
+
+  @media (max-width: 640px) {
+      .section {
+          padding: 60px 0;
+      }
+
+      .conteneur {
+          padding: 0 16px;
+      }
+
+      .hero-liste-inner {
+          padding: 52px 0 48px;
+      }
+
+      .grille-deals {
+          grid-template-columns: 1fr;
+      }
+
+      .filtre {
+          width: 100%;
+          justify-content: space-between;
+      }
+
+      .filtres-inner {
+          align-items: stretch;
+      }
+
+      .tm-bonsplans-pagination .page-link {
+          min-width: 38px;
+          height: 38px;
+          padding: 0 12px;
+      }
+  }

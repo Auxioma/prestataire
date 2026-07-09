@@ -43,9 +43,6 @@ final class ConversationMessageManager
             $attachment->setMessage($message);
             $attachment->setFile($uploadedFile);
             $attachment->setPosition($position++);
-            $attachment->setOriginalName($uploadedFile->getClientOriginalName());
-            $attachment->setMimeType($uploadedFile->getClientMimeType());
-            $attachment->setFileSize((int) $uploadedFile->getSize());
 
             $message->addAttachment($attachment);
         }

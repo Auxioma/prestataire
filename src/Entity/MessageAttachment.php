@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: MessageAttachmentRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[Vich\Uploadable]
 class MessageAttachment
 {
@@ -16,7 +17,13 @@ class MessageAttachment
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Vich\UploadableField(mapping: 'message_attachments', fileNameProperty: 'fileName')]
+    #[Vich\UploadableField(
+        mapping: 'message_attachments',
+        fileNameProperty: 'fileName',
+        size: 'fileSize',
+        mimeType: 'mimeType',
+        originalName: 'originalName'
+    )]
     private ?File $file = null;
 
     #[ORM\Column(length: 255)]
@@ -164,5 +171,20 @@ class MessageAttachment
         $this->message = $message;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        $now = new \DateTimeImmutable();
+
+        $this->createdAt ??= $now;
+        $this->updatedAt ??= $now;
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 }
