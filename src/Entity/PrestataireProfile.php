@@ -15,6 +15,9 @@ namespace App\Entity;
 use App\Enum\PrestataireProfileStatusEnum;
 use App\Enum\SearchVisibilityEnum;
 use App\Enum\VerificationStatusEnum;
+use App\Entity\Subscription\PrestataireSubscription;
+use App\Entity\Subscription\SubscriptionCreditMovement;
+use App\Entity\Subscription\SubscriptionCustomer;
 use App\Repository\PrestataireProfileRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -233,6 +236,21 @@ class PrestataireProfile
     )]
     private Collection $documents;
 
+    #[ORM\OneToOne(mappedBy: 'prestataireProfile', targetEntity: SubscriptionCustomer::class, cascade: ['persist', 'remove'])]
+    private ?SubscriptionCustomer $subscriptionCustomer = null;
+
+    /**
+     * @var Collection<int, PrestataireSubscription>
+     */
+    #[ORM\OneToMany(mappedBy: 'prestataireProfile', targetEntity: PrestataireSubscription::class, cascade: ['persist'])]
+    private Collection $subscriptions;
+
+    /**
+     * @var Collection<int, SubscriptionCreditMovement>
+     */
+    #[ORM\OneToMany(mappedBy: 'prestataireProfile', targetEntity: SubscriptionCreditMovement::class, cascade: ['persist'])]
+    private Collection $subscriptionCreditMovements;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -250,6 +268,8 @@ class PrestataireProfile
         $this->quoteRequests = new ArrayCollection();
         $this->documentVerificationStatus = DocumentVerificationStatusEnum::NOT_SUBMITTED;
         $this->documents = new ArrayCollection();
+        $this->subscriptions = new ArrayCollection();
+        $this->subscriptionCreditMovements = new ArrayCollection();
     }
 
     // --- AVAILABILITY ---
@@ -1028,6 +1048,83 @@ class PrestataireProfile
             if ($document->getPrestataireProfile() === $this) {
                 $document->setPrestataireProfile(null);
             }
+        }
+
+        return $this;
+    }
+
+    public function getSubscriptionCustomer(): ?SubscriptionCustomer
+    {
+        return $this->subscriptionCustomer;
+    }
+
+    public function setSubscriptionCustomer(?SubscriptionCustomer $subscriptionCustomer): static
+    {
+        if ($subscriptionCustomer === null && $this->subscriptionCustomer !== null) {
+            $this->subscriptionCustomer->setPrestataireProfile(null);
+        }
+
+        if ($subscriptionCustomer !== null && $subscriptionCustomer->getPrestataireProfile() !== $this) {
+            $subscriptionCustomer->setPrestataireProfile($this);
+        }
+
+        $this->subscriptionCustomer = $subscriptionCustomer;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PrestataireSubscription>
+     */
+    public function getSubscriptions(): Collection
+    {
+        return $this->subscriptions;
+    }
+
+    public function addSubscription(PrestataireSubscription $subscription): static
+    {
+        if (!$this->subscriptions->contains($subscription)) {
+            $this->subscriptions->add($subscription);
+            $subscription->setPrestataireProfile($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubscription(PrestataireSubscription $subscription): static
+    {
+        if ($this->subscriptions->removeElement($subscription) && $subscription->getPrestataireProfile() === $this) {
+            $subscription->setPrestataireProfile(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SubscriptionCreditMovement>
+     */
+    public function getSubscriptionCreditMovements(): Collection
+    {
+        return $this->subscriptionCreditMovements;
+    }
+
+    public function addSubscriptionCreditMovement(SubscriptionCreditMovement $subscriptionCreditMovement): static
+    {
+        if (!$this->subscriptionCreditMovements->contains($subscriptionCreditMovement)) {
+            $this->subscriptionCreditMovements->add($subscriptionCreditMovement);
+            $subscriptionCreditMovement->setPrestataireProfile($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubscriptionCreditMovement(SubscriptionCreditMovement $subscriptionCreditMovement): static
+    {
+        if (
+            $this->subscriptionCreditMovements->removeElement($subscriptionCreditMovement)
+            && $subscriptionCreditMovement->getPrestataireProfile() === $this
+        ) {
+            $subscriptionCreditMovement->setPrestataireProfile(null);
         }
 
         return $this;

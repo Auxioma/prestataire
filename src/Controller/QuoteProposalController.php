@@ -17,6 +17,8 @@ use App\Repository\QuoteProposalRepository;
 use App\Repository\QuoteRequestRepository;
 use App\Service\NotificationManager;
 use App\Service\QuoteProposalManager;
+use App\Service\Subscription\SubscriptionAccessManager;
+use App\Service\Subscription\SubscriptionCreditManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -169,6 +171,8 @@ class QuoteProposalController extends AbstractController
         QuoteProposalManager $quoteProposalManager,
         NotificationManager $notificationManager,
         EntityManagerInterface $entityManager,
+        SubscriptionAccessManager $subscriptionAccessManager,
+        SubscriptionCreditManager $subscriptionCreditManager,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_PRESTATAIRE');
 
@@ -207,9 +211,24 @@ class QuoteProposalController extends AbstractController
             ], 303);
         }
 
+        $activeSubscription = $subscriptionAccessManager->getCurrentUsableSubscription($prestataire);
+        if (!$activeSubscription || !$activeSubscription->canRespondToQuoteRequests()) {
+            $this->addFlash('warning', 'Un abonnement actif avec au moins un crédit est requis pour envoyer un devis.');
+
+            return $this->redirectToRoute('app_subscription_index');
+        }
+
         $quoteProposalManager->finalize($securedProposal);
 
         $quoteRequest = $securedProposal->getQuoteRequest();
+
+        if ($quoteRequest instanceof QuoteRequest) {
+            $subscriptionCreditManager->consumeQuoteResponseCredit(
+                $activeSubscription,
+                $quoteRequest,
+                'Consommation automatique d’un crédit lors de l’envoi d’un devis finalisé.'
+            );
+        }
 
         if ($quoteRequest instanceof QuoteRequest && $quoteRequest->getStatus() !== QuoteRequestStatusEnum::CLOSED) {
             $quoteRequest->setStatus(QuoteRequestStatusEnum::ANSWERED);

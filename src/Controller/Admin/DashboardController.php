@@ -115,5 +115,33 @@ class DashboardController extends AbstractDashboardController
             ->setAction(Action::INDEX)
             ->generateUrl()
     );
+
+    yield MenuItem::section('Abonnements');
+    yield MenuItem::linkToUrl(
+        'Plans d’abonnement',
+        'fas fa-layer-group',
+        $this->adminUrlGenerator->unsetAll()
+            ->setController(SubscriptionPlanCrudController::class)
+            ->setAction(Action::INDEX)
+            ->generateUrl()
+    );
+
+    yield MenuItem::linkToUrl(
+        'Souscriptions',
+        'fas fa-repeat',
+        $this->adminUrlGenerator->unsetAll()
+            ->setController(PrestataireSubscriptionCrudController::class)
+            ->setAction(Action::INDEX)
+            ->generateUrl()
+    );
+
+    yield MenuItem::linkToUrl(
+        'Factures Stripe',
+        'fas fa-file-invoice-dollar',
+        $this->adminUrlGenerator->unsetAll()
+            ->setController(SubscriptionInvoiceCrudController::class)
+            ->setAction(Action::INDEX)
+            ->generateUrl()
+    );
 }
 }

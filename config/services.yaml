@@ -16,6 +16,9 @@ parameters:
     app.maintenance_secret: '%env(default::MAINTENANCE_SECRET)%'
     app.insee_sirene.base_url: '%env(INSEE_SIRENE_BASE_URL)%'
     app.insee_sirene.api_key: '%env(INSEE_SIRENE_API_KEY)%'
+    app.stripe.secret_key: '%env(default::STRIPE_SECRET_KEY)%'
+    app.stripe.public_key: '%env(default::STRIPE_PUBLIC_KEY)%'
+    app.stripe.webhook_secret: '%env(default::STRIPE_WEBHOOK_SECRET)%'
 
 services:
     # default configuration for services in *this* file
@@ -31,6 +34,8 @@ services:
             $internalToken: '%env(string:REALTIME_INTERNAL_TOKEN)%'
             string $sireneBaseUrl: '%app.insee_sirene.base_url%'
             string $sireneApiKey: '%app.insee_sirene.api_key%'
+            string $stripeSecretKey: '%app.stripe.secret_key%'
+            string $webhookSecret: '%app.stripe.webhook_secret%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

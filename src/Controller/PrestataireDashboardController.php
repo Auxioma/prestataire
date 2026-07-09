@@ -18,6 +18,7 @@ use App\Repository\QuoteRequestRepository;
 use App\Service\ConversationMessageManager;
 use App\Service\NotificationManager;
 use App\Service\RealtimeNotifier;
+use App\Service\Subscription\SubscriptionAccessManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Knp\Component\Pager\PaginatorInterface;
@@ -87,12 +88,19 @@ final class PrestataireDashboardController extends AbstractController
         PrestataireServiceRepository $prestataireServiceRepository,
         ConversationMessageManager $conversationMessageManager,
         PaginatorInterface $paginator,
+        SubscriptionAccessManager $subscriptionAccessManager,
     ): Response {
         $user = $this->getAuthenticatedPrestataireUser();
         $prestataireProfile = $user->getPrestataireProfile();
 
         if ($conversation->getPrestataire()?->getId() !== $prestataireProfile->getId()) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas répondre à cette conversation.');
+        }
+
+        if (!$subscriptionAccessManager->canUseInstantMessaging($prestataireProfile)) {
+            $this->addFlash('warning', 'Un abonnement actif est requis pour utiliser la messagerie instantanée.');
+
+            return $this->redirectToRoute('app_subscription_index');
         }
 
         $message = new Message();

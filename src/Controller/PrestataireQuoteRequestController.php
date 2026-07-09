@@ -13,6 +13,7 @@ use App\Repository\ConversationRepository;
 use App\Repository\QuoteProposalRepository;
 use App\Repository\QuoteRequestRepository;
 use App\Service\NotificationManager;
+use App\Service\Subscription\SubscriptionAccessManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -113,7 +114,8 @@ final class PrestataireQuoteRequestController extends AbstractController
         #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
         ConversationRepository $conversationRepository,
         EntityManagerInterface $entityManager,
-        NotificationManager $notificationManager
+        NotificationManager $notificationManager,
+        SubscriptionAccessManager $subscriptionAccessManager,
     ): RedirectResponse {
         $user = $this->getUser();
 
@@ -129,6 +131,12 @@ final class PrestataireQuoteRequestController extends AbstractController
 
         if ($quoteRequest->getPrestataire()?->getId() !== $prestataire->getId()) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas traiter cette demande.');
+        }
+
+        if (!$subscriptionAccessManager->canRespondToQuoteRequests($prestataire)) {
+            $this->addFlash('warning', 'Un abonnement actif avec au moins un crédit est requis pour accepter et traiter une demande de devis.');
+
+            return $this->redirectToRoute('app_subscription_index');
         }
 
         if (!$this->isCsrfTokenValid('accept-study-' . $quoteRequest->getId(), (string) $request->request->get('_token'))) {
