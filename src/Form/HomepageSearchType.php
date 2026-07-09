@@ -6,12 +6,11 @@ use App\Entity\ServiceCategory;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\RangeType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\RangeType;
 
 class HomepageSearchType extends AbstractType
 {
@@ -22,6 +21,7 @@ class HomepageSearchType extends AbstractType
                 'label' => 'Que recherchez-vous ?',
                 'required' => false,
                 'trim' => true,
+                'empty_data' => '',
                 'attr' => [
                     'class' => 'form-control search-input',
                     'placeholder' => 'Ex. plomberie, jardinage...',
@@ -33,6 +33,7 @@ class HomepageSearchType extends AbstractType
                 'label' => 'Type de prestation',
                 'required' => false,
                 'placeholder' => 'Métier, spécialité...',
+                'choice_value' => 'id',
                 'choice_label' => static function (ServiceCategory $category): string {
                     $parent = $category->getParent();
 
@@ -59,6 +60,7 @@ class HomepageSearchType extends AbstractType
                 'label' => 'Où ?',
                 'required' => false,
                 'trim' => true,
+                'empty_data' => '',
                 'attr' => [
                     'class' => 'form-control search-input',
                     'placeholder' => 'Ville ou code postal...',
@@ -69,14 +71,14 @@ class HomepageSearchType extends AbstractType
                 'label' => 'Rayon',
                 'required' => false,
                 'empty_data' => '25',
+                'data' => 25,
                 'attr' => [
                     'class' => 'form-range tm-homepage-radius-range',
                     'min' => 5,
                     'max' => 100,
                     'step' => 5,
                 ],
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

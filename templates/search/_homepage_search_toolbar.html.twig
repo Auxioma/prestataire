@@ -7,8 +7,11 @@
         <div class="tm-homepage-search-form-card">
             <div class="tm-homepage-search-form-card-body">
                 {{ form_start(formView, {
+                    action: path('app_homepage_search'),
+                    method: 'GET',
                     attr: {
                         class: 'tm-homepage-search-form',
+                        novalidate: 'novalidate',
                         'data-controller': 'homepage-search',
                         'data-homepage-search-default-radius-value': formView.radiusKm.vars.value ?: 25,
                         'data-homepage-search-autocomplete-url-value': path('app_search_autocomplete')
@@ -89,7 +92,8 @@
                                 {{ form_widget(formView.location, {
                                     attr: {
                                         class: 'tm-homepage-search-input',
-                                        placeholder: 'Ville ou code postal...'
+                                        placeholder: 'Ville ou code postal...',
+                                        autocomplete: 'off'
                                     }
                                 }) }}
                             </div>
@@ -118,6 +122,9 @@
                                 {{ form_widget(formView.radiusKm, {
                                     attr: {
                                         class: 'tm-homepage-search-range',
+                                        min: 5,
+                                        max: 100,
+                                        step: 5,
                                         'data-homepage-search-target': 'range',
                                         'data-action': 'input->homepage-search#update change->homepage-search#update'
                                     }

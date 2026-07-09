@@ -5,6 +5,12 @@
 {% endblock %}
 
 {% block body %}
+{% set currentPage = currentPage|default(1) %}
+{% set totalPages = totalPages|default(1) %}
+{% set totalResults = totalResults|default(0) %}
+{% set totalFallbackResults = totalFallbackResults|default(0) %}
+{% set directResults = directResults|default([]) %}
+{% set fallbackResults = fallbackResults|default([]) %}
     {% set hasFilters = query is not empty or location is not empty or subCategory is not null %}
     {% set hasDirectResults = directResults is defined and directResults|length > 0 %}
     {% set hasFallbackResults = fallbackResults is defined and fallbackResults|length > 0 %}

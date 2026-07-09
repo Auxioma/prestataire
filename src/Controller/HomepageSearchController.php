@@ -13,36 +13,40 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * Gère les actions liées à homepage search.
- */
 class HomepageSearchController extends AbstractController
 {
     #[Route('/recherche-prestataires', name: 'app_homepage_search', methods: ['GET'])]
-    /**
-     * Affiche la page principale de ce contrôleur.
-     *
-     * @return Response
-     */
     public function index(
         Request $request,
         PrestataireProfileRepository $prestataireProfileRepository,
         PrestataireSearchService $prestataireSearchService,
         ZoneGeocoder $zoneGeocoder,
     ): Response {
-        $form = $this->createForm(HomepageSearchType::class);
+        $form = $this->createForm(HomepageSearchType::class, [
+            'query' => '',
+            'subCategory' => null,
+            'location' => '',
+            'radiusKm' => 25,
+        ], [
+            'method' => 'GET',
+        ]);
+
+        
+
         $form->handleRequest($request);
 
-        $data = $form->isSubmitted() ? ($form->getData() ?? []) : [];
+        $data = ($form->isSubmitted() && $form->isValid())
+            ? ($form->getData() ?? [])
+            : [];
 
         $radiusKm = max(5, min(100, (int) ($data['radiusKm'] ?? 25)));
-        $query = mb_trim((string) ($data['query'] ?? ''));
-        $location = mb_trim((string) ($data['location'] ?? ''));
+        $query = trim((string) ($data['query'] ?? ''));
+        $location = trim((string) ($data['location'] ?? ''));
 
         /** @var ServiceCategory|null $subCategory */
         $subCategory = $data['subCategory'] ?? null;
 
-        $searchedLocation = '' !== $location ? $zoneGeocoder->geocode($location, null) : null;
+        $searchedLocation = $location !== '' ? $zoneGeocoder->geocode($location, null) : null;
 
         $criteria = [
             'query' => $query,
@@ -56,8 +60,8 @@ class HomepageSearchController extends AbstractController
         $perPage = 9;
 
         $searchResponse = $prestataireSearchService->search(
-            '' !== $query ? $query : null,
-            '' !== $location ? $location : null,
+            $query !== '' ? $query : null,
+            $location !== '' ? $location : null,
             $subCategory?->getSlug(),
             200,
             0,
@@ -67,12 +71,13 @@ class HomepageSearchController extends AbstractController
 
         $hits = $searchResponse['hits'] ?? [];
         $hitIds = array_values(array_filter(array_map(
-            static fn(array $hit): ?int => isset($hit['id']) ? (int) $hit['id'] : null,
+            static fn (array $hit): ?int => isset($hit['id']) ? (int) $hit['id'] : null,
             $hits
         )));
 
         $profilesById = [];
-        if ([] !== $hitIds) {
+
+        if ($hitIds !== []) {
             $profiles = $prestataireProfileRepository->createQueryBuilder('p')
                 ->leftJoin('p.account', 'a')->addSelect('a')
                 ->leftJoin('p.prestataireServices', 'ps')->addSelect('ps')
@@ -95,25 +100,27 @@ class HomepageSearchController extends AbstractController
 
         foreach ($hits as $hit) {
             $id = isset($hit['id']) ? (int) $hit['id'] : null;
-            if (null === $id || !isset($profilesById[$id])) {
+
+            if ($id === null || !isset($profilesById[$id])) {
                 continue;
             }
 
             $profile = $profilesById[$id];
 
-            if (null === $searchedLocation) {
+            if ($searchedLocation === null) {
                 $directResults[] = $profile;
                 continue;
             }
 
             $matchType = $this->getPrestataireMatchType($profile, $searchedLocation, $radiusKm);
-            if (null === $matchType) {
+
+            if ($matchType === null) {
                 continue;
             }
 
             $profile->matchedDistanceKm = $this->getClosestReachableDistanceKm($profile, $searchedLocation, $radiusKm);
 
-            if ('direct' === $matchType) {
+            if ($matchType === 'direct') {
                 $directResults[] = $profile;
                 continue;
             }
@@ -121,8 +128,15 @@ class HomepageSearchController extends AbstractController
             $fallbackResults[] = $profile;
         }
 
-        usort($directResults, static fn($a, $b): int => ($a->matchedDistanceKm ?? 999999) <=> ($b->matchedDistanceKm ?? 999999));
-        usort($fallbackResults, static fn($a, $b): int => ($a->matchedDistanceKm ?? 999999) <=> ($b->matchedDistanceKm ?? 999999));
+        usort(
+            $directResults,
+            static fn ($a, $b): int => ($a->matchedDistanceKm ?? 999999) <=> ($b->matchedDistanceKm ?? 999999)
+        );
+
+        usort(
+            $fallbackResults,
+            static fn ($a, $b): int => ($a->matchedDistanceKm ?? 999999) <=> ($b->matchedDistanceKm ?? 999999)
+        );
 
         $totalPages = max(1, (int) ceil(count($directResults) / $perPage));
         $page = min($page, $totalPages);
@@ -152,7 +166,7 @@ class HomepageSearchController extends AbstractController
         ?array $searchedLocation,
         int $radiusKm = 25,
     ): ?string {
-        if (null === $searchedLocation) {
+        if ($searchedLocation === null) {
             return 'direct';
         }
 
@@ -170,7 +184,7 @@ class HomepageSearchController extends AbstractController
                 continue;
             }
 
-            if (null === $zone->getLatitude() || null === $zone->getLongitude()) {
+            if ($zone->getLatitude() === null || $zone->getLongitude() === null) {
                 continue;
             }
 
@@ -200,7 +214,7 @@ class HomepageSearchController extends AbstractController
         ?array $searchedLocation,
         int $radiusKm = 25,
     ): ?float {
-        if (null === $searchedLocation) {
+        if ($searchedLocation === null) {
             return null;
         }
 
@@ -218,7 +232,7 @@ class HomepageSearchController extends AbstractController
                 continue;
             }
 
-            if (null === $zone->getLatitude() || null === $zone->getLongitude()) {
+            if ($zone->getLatitude() === null || $zone->getLongitude() === null) {
                 continue;
             }
 
@@ -232,7 +246,7 @@ class HomepageSearchController extends AbstractController
             $zoneRadiusKm = max(0, (int) $zone->getRadiusKm());
 
             if ($distanceKm <= ($radiusKm + $zoneRadiusKm)) {
-                if (null === $bestDistance || $distanceKm < $bestDistance) {
+                if ($bestDistance === null || $distanceKm < $bestDistance) {
                     $bestDistance = $distanceKm;
                 }
             }

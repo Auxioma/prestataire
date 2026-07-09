@@ -8,22 +8,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * Gère les actions liées à search api.
- */
 final class SearchApiController extends AbstractController
 {
     #[Route('/api/search/autocomplete', name: 'app_search_autocomplete', methods: ['GET'])]
-    /**
-     * Traite l’action "autocomplete" du contrôleur Search Api.
-     *
-     * @return JsonResponse
-     */
     public function autocomplete(
         Request $request,
         PrestataireSearchService $prestataireSearchService,
     ): JsonResponse {
         $query = trim((string) $request->query->get('q', ''));
+        $query = mb_substr($query, 0, 100);
 
         if (mb_strlen($query) < 2) {
             return $this->json([
@@ -33,26 +26,51 @@ final class SearchApiController extends AbstractController
 
         $results = $prestataireSearchService->autocomplete($query, 6);
 
-        $items = array_map(static function (array $item): array {
+        $items = [];
+        $seen = [];
+
+        foreach ($results as $item) {
+            $id = $item['id'] ?? null;
+            $slug = $item['slug'] ?? null;
+
+            if (!$id || !$slug) {
+                continue;
+            }
+
+            $key = $id.'|'.$slug;
+            if (isset($seen[$key])) {
+                continue;
+            }
+
+            $seen[$key] = true;
+
             $firstCategory = $item['subCategories'][0]['name'] ?? $item['categories'][0]['name'] ?? null;
             $firstService = $item['services'][0]['title'] ?? $item['services'][0]['service']['name'] ?? null;
 
-            return [
-                'id' => $item['id'] ?? null,
-                'slug' => $item['slug'] ?? null,
-                'companyName' => $item['companyName'] ?? '',
-                'metier' => $item['metier'] ?? '',
-                'city' => $item['city'] ?? '',
-                'averageRating' => $item['averageRating'] ?? 0,
-                'reviewsCount' => $item['reviewsCount'] ?? 0,
+            $companyName = trim((string) ($item['companyName'] ?? ''));
+            $metier = trim((string) ($item['metier'] ?? ''));
+            $city = trim((string) ($item['city'] ?? ''));
+
+            if ($companyName === '' && $metier === '' && $firstCategory === null && $firstService === null) {
+                continue;
+            }
+
+            $items[] = [
+                'id' => $id,
+                'slug' => $slug,
+                'companyName' => $companyName,
+                'metier' => $metier,
+                'city' => $city,
+                'averageRating' => (float) ($item['averageRating'] ?? 0),
+                'reviewsCount' => (int) ($item['reviewsCount'] ?? 0),
                 'categoryLabel' => $firstCategory,
                 'serviceLabel' => $firstService,
-                'url' => isset($item['slug']) ? '/prestataire/'.$item['slug'] : null,
+                'url' => '/prestataire/'.$slug,
             ];
-        }, $results);
+        }
 
         return $this->json([
-            'items' => $items,
+            'items' => array_slice($items, 0, 6),
         ]);
     }
 }
