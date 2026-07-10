@@ -19,9 +19,11 @@ use App\Repository\ConversationRepository;
 use App\Repository\MessageRepository;
 use App\Repository\QuoteProposalRepository;
 use App\Repository\QuoteRequestRepository;
+use App\Repository\ReviewRepository;
 use App\Service\ConversationMessageManager;
 use App\Service\NotificationManager;
 use App\Service\RealtimeNotifier;
+use App\Service\ReviewManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -230,10 +232,12 @@ final class QuoteRequestController extends AbstractController
         ConversationRepository $conversationRepository,
         MessageRepository $messageRepository,
         QuoteProposalRepository $quoteProposalRepository,
+        ReviewRepository $reviewRepository,
         EntityManagerInterface $entityManager,
         RealtimeNotifier $realtimeNotifier,
         NotificationManager $notificationManager,
         ConversationMessageManager $conversationMessageManager,
+        ReviewManager $reviewManager,
     ): Response {
 
         $user = $this->getUser();
@@ -279,6 +283,9 @@ final class QuoteRequestController extends AbstractController
             $quoteResponses,
             static fn(QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted()
         ));
+
+        $existingReview = $reviewRepository->findOneByQuoteRequest($quoteRequest);
+        $canLeaveReview = $reviewManager->canClientReviewQuoteRequest($user->getClientProfile(), $quoteRequest);
 
         // =========================
         // Présence de photos
@@ -385,6 +392,8 @@ final class QuoteRequestController extends AbstractController
             'messageForm' => $messageForm?->createView(),
             'hasConversationPhotos' => $hasConversationPhotos,
             'quoteResponses' => $quoteResponses,
+            'existingReview' => $existingReview,
+            'canLeaveReview' => $canLeaveReview,
             'isArchivedView' => false,
         ]);
     }
@@ -762,6 +771,8 @@ final class QuoteRequestController extends AbstractController
         ConversationRepository $conversationRepository,
         MessageRepository $messageRepository,
         QuoteProposalRepository $quoteProposalRepository,
+        ReviewRepository $reviewRepository,
+        ReviewManager $reviewManager,
     ): Response {
 
         $user = $this->getUser();
@@ -795,11 +806,16 @@ $quoteResponses = array_values(array_filter(
     static fn(QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted()
 ));
 
+        $existingReview = $reviewRepository->findOneByQuoteRequest($quoteRequest);
+        $canLeaveReview = $reviewManager->canClientReviewQuoteRequest($user->getClientProfile(), $quoteRequest);
+
         return $this->render('quote_request/archived_show.html.twig', [
             'quoteRequest' => $quoteRequest,
             'conversation' => $conversation,
             'messages' => $messages,
             'quoteResponses' => $quoteResponses,
+            'existingReview' => $existingReview,
+            'canLeaveReview' => $canLeaveReview,
         ]);
     }
 

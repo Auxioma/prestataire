@@ -1,0 +1,6 @@
+{% set currentRating = rating|default(0) %}
+<div class="d-inline-flex align-items-center gap-1" aria-label="{{ currentRating }}/5">
+    {% for star in 1..5 %}
+        <span class="{{ star <= currentRating ? 'text-warning' : 'text-secondary opacity-50' }}" aria-hidden="true">★</span>
+    {% endfor %}
+</div>

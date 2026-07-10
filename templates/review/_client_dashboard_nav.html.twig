@@ -1,0 +1,8 @@
+<div class="d-flex flex-wrap gap-2 mb-4" aria-label="Navigation de l’espace client">
+    <a href="{{ path('app_quote_request_index') }}" class="btn {{ app.request.attributes.get('_route') == 'app_quote_request_index' ? 'btn-primary' : 'btn-outline-primary' }}">
+        Mes demandes
+    </a>
+    <a href="{{ path('app_review_my_reviews') }}" class="btn {{ app.request.attributes.get('_route') starts with 'app_review_' and app.request.attributes.get('_route') != 'app_review_prestataire_reviews' ? 'btn-primary' : 'btn-outline-primary' }}">
+        Mes avis
+    </a>
+</div>

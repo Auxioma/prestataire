@@ -65,6 +65,11 @@
 										<i class="fa-solid fa-file-invoice me-2"></i>Mes Demandes
 									</a>
 								</li>
+								<li>
+									<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_review_my_reviews') }}">
+										<i class="fa-regular fa-star me-2"></i>Mes avis
+									</a>
+								</li>
 							{% endif %}
 
 							<li>
@@ -260,6 +265,12 @@
 								<span>Mes favoris</span>
 							</a>
 						</li>
+                        <li class="nav-item">
+                            <a class="nav-link tm-navbar__link tm-navbar__link--icon" href="{{ path('app_review_my_reviews') }}">
+                                <i class="fa-regular fa-star"></i>
+                                <span>Mes avis</span>
+                            </a>
+                        </li>
 					{% endif %}
 
 					{# Éléments mobiles uniquement #}
@@ -303,6 +314,11 @@
 									<li>
 										<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_quote_request_index') }}">
 											<i class="fa-solid fa-file-invoice me-2"></i>Mes Demandes
+										</a>
+									</li>
+									<li>
+										<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_review_my_reviews') }}">
+											<i class="fa-regular fa-star me-2"></i>Mes avis
 										</a>
 									</li>
 								{% endif %}

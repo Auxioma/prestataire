@@ -1,0 +1,164 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes avis{% endblock %}
+
+{% block body %}
+
+    <section class="c-client-quotes-page">
+        <div class="c-client-quotes-page__container">
+            <a href="{{ path('app_client_settings') }}" class="c-client-quotes-backlink">
+                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                <span>Retour aux paramètres</span>
+            </a>
+
+            <header class="c-client-quotes-hero">
+                <div class="c-client-quotes-hero__glow" aria-hidden="true"></div>
+
+                <div class="c-client-quotes-hero__content">
+                    <span class="c-client-quotes-hero__eyebrow">Espace client</span>
+                    <h1 class="c-client-quotes-hero__title">Mes avis</h1>
+                    <p class="c-client-quotes-hero__subtitle">
+                        Retrouvez vos avis publiés et les demandes qui attendent encore votre retour.
+                    </p>
+                </div>
+
+                <div class="c-client-quotes-hero__stats">
+                    <div class="c-client-quotes-stat">
+                        <span class="c-client-quotes-stat__label">Avis publiés</span>
+                        <strong class="c-client-quotes-stat__value">{{ reviews|length }}</strong>
+                    </div>
+                    <div class="c-client-quotes-stat">
+                        <span class="c-client-quotes-stat__label">En attente</span>
+                        <strong class="c-client-quotes-stat__value">{{ pendingQuoteRequests|length }}</strong>
+                    </div>
+                </div>
+            </header>
+
+            {{ include('review/_client_dashboard_nav.html.twig') }}
+
+            {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show mb-4" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            <div class="row g-4">
+                <div class="col-12">
+                    <section class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+                                <div>
+                                    <span class="text-uppercase small text-muted">Demandes en attente d’avis</span>
+                                    <h2 class="h4 mb-1">Vous pouvez encore laisser un retour</h2>
+                                    <p class="mb-0 text-muted">Chaque demande acceptée peut recevoir un seul avis.</p>
+                                </div>
+                            </div>
+
+                            {% if pendingQuoteRequests is not empty %}
+                                <div class="row g-3">
+                                    {% for quoteRequest in pendingQuoteRequests %}
+                                        <div class="col-12 col-lg-6">
+                                            <article class="border rounded-4 p-3 h-100 bg-light-subtle">
+                                                <h3 class="h6 mb-1">{{ quoteRequest.title }}</h3>
+                                                <p class="text-muted small mb-3">
+                                                    Prestataire : {{ quoteRequest.prestataire.companyName|default('Non renseigné') }}
+                                                </p>
+                                                <div class="d-flex flex-wrap gap-2 align-items-center">
+                                                    <span class="badge text-bg-secondary">{{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y') : '—' }}</span>
+                                                    <a href="{{ path('app_review_create', { quoteRequestSlug: quoteRequest.slug }) }}" class="btn btn-sm btn-primary">
+                                                        Laisser un avis
+                                                    </a>
+                                                    <a href="{{ path(quoteRequest.archivedByClientAt ? 'app_quote_request_history_show' : 'app_quote_request_show', { slug: quoteRequest.slug }) }}" class="btn btn-sm btn-outline-secondary">
+                                                        Voir la demande
+                                                    </a>
+                                                </div>
+                                            </article>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4 text-muted">
+                                    <i class="fa-regular fa-star fs-1 d-block mb-3" aria-hidden="true"></i>
+                                    <p class="mb-0">Aucune demande n’attend actuellement votre avis.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </section>
+                </div>
+
+                <div class="col-12">
+                    <section class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+                                <div>
+                                    <span class="text-uppercase small text-muted">Avis laissés</span>
+                                    <h2 class="h4 mb-1">Historique de vos retours</h2>
+                                    <p class="mb-0 text-muted">Supprimez un avis si vous souhaitez retirer votre publication.</p>
+                                </div>
+                            </div>
+
+                            {% if reviews is not empty %}
+                                <div class="d-grid gap-3">
+                                    {% for review in reviews %}
+                                        <article class="border rounded-4 p-4">
+                                            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
+                                                <div>
+                                                    <h3 class="h5 mb-1">{{ review.prestataireProfile.companyName|default('Prestataire') }}</h3>
+                                                    <p class="text-muted mb-2">{{ review.quoteRequest.title|default('Demande associée') }}</p>
+                                                    {{ include('review/_stars.html.twig', { rating: review.rating }) }}
+                                                </div>
+
+                                                <div class="d-flex flex-column align-items-lg-end gap-2">
+                                                    <span class="text-muted small">{{ review.createdAt|date('d/m/Y à H:i') }}</span>
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deleteReviewModal{{ review.id|e('html_attr') }}"
+                                                    >
+                                                        Supprimer
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <p class="mb-0">{{ review.comment|default('Aucun commentaire ajouté.') }}</p>
+                                        </article>
+
+                                        <div class="modal fade" id="deleteReviewModal{{ review.id|e('html_attr') }}" tabindex="-1" aria-labelledby="deleteReviewModalLabel{{ review.id|e('html_attr') }}" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h2 class="modal-title fs-5" id="deleteReviewModalLabel{{ review.id|e('html_attr') }}">Supprimer cet avis</h2>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Cet avis sur <strong>{{ review.prestataireProfile.companyName|default('ce prestataire') }}</strong> sera supprimé définitivement.
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                        <form method="post" action="{{ path('app_review_delete', { id: review.id }) }}">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token('delete-review-' ~ review.id) }}">
+                                                            <button type="submit" class="btn btn-danger">Supprimer l’avis</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-5 text-muted">
+                                    <i class="fa-regular fa-message fs-1 d-block mb-3" aria-hidden="true"></i>
+                                    <p class="mb-0">Vous n’avez encore laissé aucun avis.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

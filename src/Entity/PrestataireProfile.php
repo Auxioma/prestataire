@@ -674,6 +674,18 @@ class PrestataireProfile
         return $this;
     }
 
+    public function getRatingAverage(): ?string
+    {
+        return $this->averageRating;
+    }
+
+    public function setRatingAverage(string $ratingAverage): static
+    {
+        $this->averageRating = $ratingAverage;
+
+        return $this;
+    }
+
     public function getReviewsCount(): ?int
     {
         return $this->reviewsCount;

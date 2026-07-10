@@ -1,0 +1,125 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Laisser un avis{% endblock %}
+
+{% block body %}
+    <section class="c-client-quotes-page">
+        <div class="c-client-quotes-page__container">
+            <a href="{{ path('app_quote_request_show', { slug: quoteRequest.slug }) }}" class="c-client-quotes-backlink">
+                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                <span>Retour à la demande</span>
+            </a>
+
+            <header class="c-client-quotes-hero">
+                <div class="c-client-quotes-hero__glow" aria-hidden="true"></div>
+
+                <div class="c-client-quotes-hero__content">
+                    <span class="c-client-quotes-hero__eyebrow">Espace client</span>
+                    <h1 class="c-client-quotes-hero__title">Laisser un avis</h1>
+                    <p class="c-client-quotes-hero__subtitle">
+                        Partagez votre retour après votre mise en relation avec {{ prestataire.companyName|default('ce prestataire') }}.
+                    </p>
+                </div>
+            </header>
+
+            {{ include('review/_client_dashboard_nav.html.twig') }}
+
+            {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show mb-4" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <section class="card shadow-sm border-0">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="d-flex flex-column gap-2 mb-4">
+                                <span class="text-uppercase small text-muted">Avis client</span>
+                                <h2 class="h4 mb-0">{{ quoteRequest.title }}</h2>
+                                <p class="mb-0 text-muted">
+                                    Prestataire concerné : <strong>{{ prestataire.companyName|default('Non renseigné') }}</strong>
+                                </p>
+                            </div>
+
+                            {{ form_start(form) }}
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">Votre note</label>
+                                    <div
+                                        class="d-inline-flex flex-column gap-2"
+                                        data-controller="star-rating"
+                                        data-star-rating-rating-value="{{ form.rating.vars.value|default(0) }}"
+                                    >
+                                        <div
+                                            class="d-flex align-items-center gap-2"
+                                            role="radiogroup"
+                                            aria-label="Sélectionner une note de 0 à 5"
+                                            data-action="mouseleave->star-rating#resetPreview"
+                                        >
+                                            {% for star in 1..5 %}
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-link p-0 fs-2 text-decoration-none"
+                                                    role="radio"
+                                                    aria-label="Attribuer {{ star }} étoile{{ star > 1 ? 's' : '' }}"
+                                                    aria-checked="false"
+                                                    data-star-rating-target="star"
+                                                    data-value="{{ star }}"
+                                                    data-action="click->star-rating#select mouseenter->star-rating#preview focus->star-rating#preview"
+                                                >
+                                                    <span aria-hidden="true">☆</span>
+                                                </button>
+                                            {% endfor %}
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-outline-secondary align-self-start"
+                                            aria-label="Aucune étoile"
+                                            data-action="click->star-rating#select"
+                                            data-value="0"
+                                        >
+                                            Remettre à 0
+                                        </button>
+
+                                        {{ form_widget(form.rating, {
+                                            attr: {
+                                                'data-star-rating-target': 'input'
+                                            }
+                                        }) }}
+                                    </div>
+                                    {{ form_errors(form.rating) }}
+                                </div>
+
+                                <div class="mb-4">
+                                    {{ form_row(form.comment) }}
+                                </div>
+
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button type="submit" class="btn btn-primary">Publier mon avis</button>
+                                    <a href="{{ path('app_review_my_reviews') }}" class="btn btn-outline-secondary">Annuler</a>
+                                </div>
+                            {{ form_end(form) }}
+                        </div>
+                    </section>
+                </div>
+
+                <div class="col-lg-4">
+                    <aside class="card shadow-sm border-0 h-100">
+                        <div class="card-body p-4">
+                            <h2 class="h5 mb-3">Bonnes pratiques</h2>
+                            <ul class="mb-0 ps-3 text-muted">
+                                <li>Notez votre expérience globale de 0 à 5.</li>
+                                <li>Expliquez ce qui s’est bien passé ou ce qui a manqué.</li>
+                                <li>Restez factuel pour aider les autres clients.</li>
+                            </ul>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -170,6 +170,32 @@
 						</div>
 					</section>
 
+                    {% if canLeaveReview or existingReview %}
+                        <section class="tm-client-quotes-detailcard mb-4">
+                            <div class="card-body">
+                                <div class="tm-client-quotes-section-head">
+                                    <h2 class="tm-client-quotes-section-title">Votre avis client</h2>
+                                    <p class="tm-client-quotes-section-text mb-0">
+                                        Laissez un retour une fois votre mise en relation confirmée.
+                                    </p>
+                                </div>
+
+                                <div class="d-flex flex-wrap gap-2 align-items-center">
+                                    {% if canLeaveReview %}
+                                        <a href="{{ path('app_review_create', { quoteRequestSlug: quoteRequest.slug }) }}" class="btn tm-client-quotes-btn tm-client-quotes-btn--primary">
+                                            Laisser un avis
+                                        </a>
+                                    {% elseif existingReview %}
+                                        <span class="badge text-bg-success">Avis déjà laissé</span>
+                                        <a href="{{ path('app_review_my_reviews') }}" class="btn btn-outline-secondary">
+                                            Voir mes avis
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </section>
+                    {% endif %}
+
 					{% set hasQuoteResponses = quoteResponses is defined and quoteResponses is not empty %}
 
 					<section class="tm-client-quotes-detailcard mb-4 {{ hasQuoteResponses ? 'tm-client-quotes-detailcard--celebration tm-client-quotes-detailcard--has-response' : 'tm-client-quotes-detailcard--empty' }}">

@@ -111,7 +111,8 @@ final class PrestataireQuoteRequestController extends AbstractController
      */
     public function acceptStudy(
         Request $request,
-        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
+        string $slug,
+        QuoteRequestRepository $quoteRequestRepository,
         ConversationRepository $conversationRepository,
         EntityManagerInterface $entityManager,
         NotificationManager $notificationManager,
@@ -119,15 +120,18 @@ final class PrestataireQuoteRequestController extends AbstractController
     ): RedirectResponse {
         $user = $this->getUser();
 
-        if ($quoteRequest->isDeleted()) {
-            throw $this->createNotFoundException('Cette demande n’est plus disponible.');
-        }
-
         if (!$user instanceof User || !$user->getPrestataireProfile()) {
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
         $prestataire = $user->getPrestataireProfile();
+        $quoteRequest = $quoteRequestRepository->findOneBy([
+            'slug' => $slug,
+        ]);
+
+        if (!$quoteRequest instanceof QuoteRequest || $quoteRequest->isDeleted()) {
+            throw $this->createNotFoundException('Cette demande n’est plus disponible.');
+        }
 
         if ($quoteRequest->getPrestataire()?->getId() !== $prestataire->getId()) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas traiter cette demande.');
@@ -136,7 +140,9 @@ final class PrestataireQuoteRequestController extends AbstractController
         if (!$subscriptionAccessManager->canRespondToQuoteRequests($prestataire)) {
             $this->addFlash('warning', 'Un abonnement actif avec au moins un crédit est requis pour accepter et traiter une demande de devis.');
 
-            return $this->redirectToRoute('app_subscription_index');
+            return $this->redirectToRoute('app_prestataire_quote_request_show', [
+                'slug' => $quoteRequest->getSlug(),
+            ]);
         }
 
         if (!$this->isCsrfTokenValid('accept-study-' . $quoteRequest->getId(), (string) $request->request->get('_token'))) {

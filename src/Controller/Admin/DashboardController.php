@@ -97,6 +97,15 @@ class DashboardController extends AbstractDashboardController
             ->generateUrl()
     );
 
+    yield MenuItem::linkToUrl(
+        'Avis clients',
+        'fas fa-star',
+        $this->adminUrlGenerator->unsetAll()
+            ->setController(ReviewCrudController::class)
+            ->setAction(Action::INDEX)
+            ->generateUrl()
+    );
+
     yield MenuItem::section('Catalogue');
     yield MenuItem::linkToUrl(
         'Catégories / Sous-catégories',

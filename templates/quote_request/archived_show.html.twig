@@ -55,6 +55,24 @@
                         <p class="tm-qad-panel__text">{{ quoteRequest.description|nl2br }}</p>
                     </div>
                 {% endif %}
+
+                {% if canLeaveReview or existingReview %}
+                    <div class="tm-qad-panel__block">
+                        <h3 class="tm-qad-panel__subtitle">Votre avis client</h3>
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            {% if canLeaveReview %}
+                                <a href="{{ path('app_review_create', { quoteRequestSlug: quoteRequest.slug }) }}" class="tm-qad-btn tm-qad-btn--primary">
+                                    Laisser un avis
+                                </a>
+                            {% elseif existingReview %}
+                                <span class="badge text-bg-success">Avis déjà laissé</span>
+                                <a href="{{ path('app_review_my_reviews') }}" class="btn btn-outline-secondary btn-sm">
+                                    Voir mes avis
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </section>
 
