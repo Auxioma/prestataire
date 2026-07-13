@@ -143,8 +143,8 @@ h1,h2,h3,.display{font-family:var(--display)}
 
 /* ---------- Catégories ---------- */
 .grille-categories{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
-.cat{background:var(--blanc);border:1px solid var(--bordure);border-radius:var(--radius);padding:24px 18px;text-align:center;transition:transform .18s,box-shadow .18s,border-color .18s;position:relative}
-.cat:hover{transform:translateY(-4px);box-shadow:var(--ombre);border-color:var(--bleu)}
+.cat{background:var(--blanc);border:1px solid var(--bordure);border-radius:var(--radius);padding:24px 18px;text-align:center;transition:box-shadow .2s,border-color .2s;position:relative}
+.cat:hover{border-color:var(--bleu);box-shadow:0 10px 28px rgba(30,73,199,.15)}
 .cat .icone{width:56px;height:56px;margin:0 auto 14px;border-radius:16px;background:var(--bleu-clair);color:var(--bleu);display:flex;align-items:center;justify-content:center;transition:background .18s,color .18s}
 .cat:hover .icone{background:var(--safran);color:var(--encre)}
 .cat h3{font-size:15.5px;font-weight:700;color:var(--encre)}
@@ -161,8 +161,8 @@ h1,h2,h3,.display{font-family:var(--display)}
 
 /* ---------- Prestataires à la une ---------- */
 .grille-pros{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
-.pro{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);overflow:hidden;transition:transform .18s,box-shadow .18s}
-.pro:hover{transform:translateY(-5px);box-shadow:var(--ombre-forte)}
+.pro{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);overflow:hidden;transition:box-shadow .2s,border-color .2s}
+.pro:hover{border-color:var(--bleu);box-shadow:0 14px 36px rgba(30,73,199,.18),0 4px 14px rgba(255,138,30,.12)}
 .pro-cover{height:130px;position:relative;display:flex;align-items:flex-start;justify-content:space-between;padding:12px}
 .cover-1{background:linear-gradient(135deg,#1E49C7,#4A74E8)}
 .cover-2{background:linear-gradient(135deg,#0E9F6E,#3BC492)}
@@ -250,7 +250,7 @@ h1,h2,h3,.display{font-family:var(--display)}
       <div class="hero-badges">
         <span class="hero-badge"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Pros vérifiés</span>
         <span class="hero-badge"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Devis gratuits</span>
-        <span class="hero-badge"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Paiement sécurisé</span>
+        <span class="hero-badge"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Mise en relation directe</span>
       </div>
     </div>
 
@@ -325,7 +325,7 @@ h1,h2,h3,.display{font-family:var(--display)}
     <div class="chiffre"><span class="rond"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/><path d="M16 4a3.5 3.5 0 0 1 0 7M18 14.7c2.4.7 4 2.3 4 5.3"/></svg></span><div><div class="val">120 000+</div><div class="lab">prestataires actifs</div></div></div>
     <div class="chiffre"><span class="rond"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg></span><div><div class="val">890 000</div><div class="lab">avis clients vérifiés</div></div></div>
     <div class="chiffre"><span class="rond"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span><div><div class="val">&lt; 2 h</div><div class="lab">de délai moyen de réponse</div></div></div>
-    <div class="chiffre"><span class="rond"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span><div><div class="val">100 %</div><div class="lab">des paiements sécurisés</div></div></div>
+    <div class="chiffre"><span class="rond"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span><div><div class="val">100 %</div><div class="lab">gratuit pour les particuliers</div></div></div>
   </div>
 </section>
 
@@ -377,8 +377,8 @@ h1,h2,h3,.display{font-family:var(--display)}
       </div>
       <div class="etape">
         <span class="rond"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
-        <h3>Réservez l'esprit tranquille</h3>
-        <p>Payez en ligne de façon sécurisée. Les fonds sont libérés uniquement quand la prestation est terminée et validée par vous.</p>
+        <h3>Choisissez votre prestataire</h3>
+        <p>Échangez directement avec le professionnel de votre choix, convenez ensemble des détails, puis laissez un avis une fois la prestation terminée.</p>
       </div>
     </div>
   </div>
@@ -468,8 +468,8 @@ h1,h2,h3,.display{font-family:var(--display)}
           <div><h3>Avis 100 % authentiques</h3><p>Seuls les clients ayant réservé peuvent laisser un avis. Aucun avis acheté.</p></div>
         </div>
         <div class="avantage">
-          <span class="rond"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="11" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg></span>
-          <div><h3>Paiement protégé</h3><p>L'argent est bloqué jusqu'à validation de la prestation. Litige ? On vous accompagne.</p></div>
+          <span class="rond"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg></span>
+          <div><h3>Un support à votre écoute</h3><p>Une question, un souci ? Notre équipe vous accompagne 7 j/7, avant comme après la mise en relation.</p></div>
         </div>
       </div>
     </div>
@@ -495,8 +495,8 @@ h1,h2,h3,.display{font-family:var(--display)}
 <style>
 /* ---------- Témoignages ---------- */
 .temoignages-grille{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.temoignage{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);padding:28px;display:flex;flex-direction:column;gap:16px;position:relative;transition:transform .18s,box-shadow .18s}
-.temoignage:hover{transform:translateY(-4px);box-shadow:var(--ombre)}
+.temoignage{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);padding:28px;display:flex;flex-direction:column;gap:16px;position:relative;transition:box-shadow .2s,border-color .2s}
+.temoignage:hover{border-color:var(--bleu);box-shadow:0 10px 28px rgba(30,73,199,.13)}
 .temoignage .guillemet{font-family:var(--display);font-weight:800;font-size:52px;line-height:0;color:var(--safran);height:18px}
 .temoignage p{font-size:15px;color:var(--texte);flex-grow:1}
 .temoignage .auteur{display:flex;align-items:center;gap:12px;border-top:1px solid var(--bordure);padding-top:16px}
@@ -632,7 +632,7 @@ h1,h2,h3,.display{font-family:var(--display)}
       </article>
       <article class="temoignage">
         <span class="guillemet">“</span>
-        <p>J'ai comparé trois devis pour la taille de mes haies. Les avis m'ont aidée à choisir, et le paiement bloqué jusqu'à la fin du chantier m'a vraiment rassurée.</p>
+        <p>J'ai comparé trois devis pour la taille de mes haies. Les avis clients m'ont vraiment aidée à choisir, et le contact direct avec le jardinier a rendu tout le reste très simple.</p>
         <div class="auteur">
           <span class="avatar" style="background:linear-gradient(135deg,#0E9F6E,#3BC492)">SB</span>
           <div><strong>Sophie B.</strong><small>Bordeaux · Jardinage</small></div>
@@ -689,7 +689,7 @@ h1,h2,h3,.display{font-family:var(--display)}
         <div class="points">
           <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Inscription gratuite</span>
           <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Demandes qualifiées</span>
-          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Paiement garanti</span>
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Visibilité locale</span>
         </div>
       </div>
       <div class="cta-pros-droite">
@@ -712,23 +712,23 @@ h1,h2,h3,.display{font-family:var(--display)}
     <div class="faq-liste">
       <details class="faq-item" open>
         <summary>Les devis sont-ils vraiment gratuits ?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
-        <p class="reponse">Oui, à 100 %. Vous décrivez votre besoin, les prestataires vous envoient leurs devis, et vous comparez librement. Vous ne payez que si vous décidez de réserver une prestation.</p>
+        <p class="reponse">Oui, à 100 %. Vous décrivez votre besoin, les prestataires vous envoient leurs devis, et vous comparez librement, sans aucun engagement. La mise en relation est entièrement gratuite pour les particuliers.</p>
       </details>
       <details class="faq-item">
         <summary>Comment les prestataires sont-ils vérifiés ?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
         <p class="reponse">Avant d'apparaître sur la plateforme, chaque professionnel doit fournir une pièce d'identité, un justificatif d'immatriculation (SIRET) et ses attestations d'assurance. Nous vérifions ces documents un par un.</p>
       </details>
       <details class="faq-item">
-        <summary>Comment fonctionne le paiement sécurisé ?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
-        <p class="reponse">Lors de la réservation, votre paiement est conservé sur un compte sécurisé. Le prestataire est payé uniquement lorsque vous confirmez que la prestation est terminée et conforme.</p>
+        <summary>Le service est-il payant pour les particuliers ?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <p class="reponse">Non, TrouveMoi est entièrement gratuit pour les particuliers : la demande de devis, la comparaison et la mise en relation. Vous réglez la prestation directement auprès du professionnel, selon les modalités convenues avec lui.</p>
       </details>
       <details class="faq-item">
         <summary>Que se passe-t-il en cas de litige ?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
-        <p class="reponse">Notre équipe support intervient sous 24 h. Tant que le litige n'est pas résolu, les fonds restent bloqués. Vous pouvez ouvrir un dossier directement depuis votre espace client.</p>
+        <p class="reponse">Notre équipe support intervient sous 24 h pour faciliter le dialogue entre vous et le prestataire. Vous pouvez ouvrir un dossier directement depuis votre espace client.</p>
       </details>
       <details class="faq-item">
-        <summary>Puis-je annuler une réservation ?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
-        <p class="reponse">Oui, gratuitement jusqu'à 48 h avant la prestation. Passé ce délai, les conditions d'annulation du prestataire s'appliquent — elles sont toujours affichées avant votre réservation.</p>
+        <summary>Puis-je annuler une demande ?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <p class="reponse">Oui, à tout moment et gratuitement. Prévenez simplement le prestataire au plus tôt depuis votre messagerie TrouveMoi — chaque professionnel indique ses éventuelles conditions sur son profil.</p>
       </details>
     </div>
   </div>

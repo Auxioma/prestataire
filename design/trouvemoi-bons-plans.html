@@ -361,15 +361,15 @@ h1,h2,h3,.display{font-family:var(--display)}
 /* Carte prestataire avec photo */
 .pro-photo{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);overflow:hidden;transition:box-shadow .2s,border-color .2s;display:flex;flex-direction:column}
 .pro-photo:hover{border-color:var(--bleu);box-shadow:0 14px 36px rgba(30,73,199,.18),0 4px 14px rgba(255,138,30,.12)}
-.pro-photo .visuel{position:relative;aspect-ratio:4/3;overflow:hidden}
-.pro-photo .visuel img{width:100%;height:100%;object-fit:cover}
+.pro-photo .visuel{position:relative;aspect-ratio:4/3}
+.pro-photo .visuel img{width:100%;height:100%;object-fit:cover;display:block}
 .pro-photo .badge{position:absolute;top:11px;left:11px;font-size:11.5px;font-weight:700;color:#fff;border-radius:999px;padding:5px 11px;display:inline-flex;align-items:center;gap:6px}
 .badge-vert{background:var(--vert)}
 .badge-safran{background:var(--safran);color:var(--encre)}
 .badge-bleu{background:var(--bleu)}
 .badge-violet{background:#7C3AED}
 .pro-photo .favori{position:absolute;top:10px;right:10px}
-.pro-photo .icone-cat{position:absolute;bottom:-19px;left:14px;width:44px;height:44px;border-radius:50%;background:#fff;box-shadow:var(--ombre);display:flex;align-items:center;justify-content:center;color:var(--bleu);border:3px solid #fff}
+.pro-photo .icone-cat{position:absolute;bottom:-19px;left:14px;width:44px;height:44px;border-radius:50%;background:#fff;box-shadow:var(--ombre);display:flex;align-items:center;justify-content:center;color:var(--bleu);border:3px solid #fff;z-index:2}
 .icone-cat.c-bleu{background:var(--bleu);color:#fff}
 .icone-cat.c-vert{background:var(--vert);color:#fff}
 .icone-cat.c-violet{background:#7C3AED;color:#fff}
@@ -435,8 +435,8 @@ h1,h2,h3,.display{font-family:var(--display)}
 
 .deal{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .2s,border-color .2s}
 .deal:hover{border-color:var(--bleu);box-shadow:0 14px 36px rgba(30,73,199,.18),0 4px 14px rgba(255,138,30,.12)}
-.deal .visuel{position:relative;aspect-ratio:4/3;overflow:hidden}
-.deal .visuel img{width:100%;height:100%;object-fit:cover}
+.deal .visuel{position:relative;aspect-ratio:4/3}
+.deal .visuel img{width:100%;height:100%;object-fit:cover;display:block}
 .badge-remise{position:absolute;top:11px;left:11px;font-family:var(--display);font-size:14px;font-weight:800;background:var(--safran);color:var(--encre);border-radius:999px;padding:5px 12px}
 .deal .timer{position:absolute;top:13px;left:76px;display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;background:rgba(10,22,51,.82);color:#fff;border-radius:999px;padding:5px 10px;backdrop-filter:blur(4px)}
 .deal .favori{position:absolute;top:10px;right:10px}

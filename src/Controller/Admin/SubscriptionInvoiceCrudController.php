@@ -43,8 +43,8 @@ final class SubscriptionInvoiceCrudController extends AbstractCrudController
                 'Annulée' => SubscriptionInvoiceStatusEnum::VOID,
             ])
             ->renderAsBadges();
-        yield MoneyField::new('totalAmount', 'Montant total')->setCurrencyPropertyPath('currency')->setStoredAsCents(false);
-        yield MoneyField::new('amountPaid', 'Montant payé')->setCurrencyPropertyPath('currency')->setStoredAsCents(false);
+        yield MoneyField::new('totalAmount', 'Montant total')->setCurrencyPropertyPath('currencyCode')->setStoredAsCents(false);
+        yield MoneyField::new('amountPaid', 'Montant payé')->setCurrencyPropertyPath('currencyCode')->setStoredAsCents(false);
         yield DateTimeField::new('paidAt', 'Payée le');
         yield DateTimeField::new('createdAt', 'Créée le')->hideOnForm();
     }

@@ -32,7 +32,12 @@ use App\Repository\FavoriteRepository;
  */
 class ShowPrestataireController extends AbstractController
 {
-    #[Route('/prestataire/{slug}', name: 'app_prestataire_show', methods: ['GET'])]
+    #[Route(
+        '/prestataire/{slug}',
+        name: 'app_prestataire_show',
+        methods: ['GET'],
+        requirements: ['slug' => '(?!abonnements$)[a-z0-9-]+']
+    )]
     /**
      * Traite l’action "__invoke" du contrôleur Show Prestataire.
      *

@@ -170,6 +170,11 @@ class SubscriptionInvoice
         return $this->currency;
     }
 
+    public function getCurrencyCode(): string
+    {
+        return mb_strtoupper($this->currency ?: 'eur');
+    }
+
     public function setCurrency(string $currency): static
     {
         $this->currency = mb_strtolower($currency);

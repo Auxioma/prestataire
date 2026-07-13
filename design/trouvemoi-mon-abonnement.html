@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon abonnement — Espace prestataire — TrouveMoi.com</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* ============================================================
+   TROUVEMOI — Espace prestataire · Paramètres
+   Design system : Encre #0A1633 · Bleu #1E49C7 · Safran #FF8A1E
+   ============================================================ */
+:root{
+  --encre:#0A1633;--encre-2:#101F45;--bleu:#1E49C7;--bleu-clair:#E6ECFC;
+  --safran:#FF8A1E;--safran-fonce:#E8760A;--papier:#F4F6FA;--blanc:#FFFFFF;
+  --vert:#0E9F6E;--vert-clair:#E2F5EE;--texte:#233047;--texte-doux:#5B6B85;
+  --bordure:#E3E8F1;--radius:16px;--ombre:0 8px 30px rgba(10,22,51,.08);
+  --display:"Bricolage Grotesque",sans-serif;--body:"Inter",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);color:var(--texte);background:var(--papier);line-height:1.6;font-size:15px}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,textarea{font-family:inherit}
+:focus-visible{outline:3px solid var(--safran);outline-offset:2px;border-radius:6px}
+
+.app{display:grid;grid-template-columns:282px 1fr;min-height:100vh}
+
+/* ============ SIDEBAR ============ */
+.sidebar{background:var(--encre);color:#C9D3E8;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:thin}
+.sidebar-logo{display:flex;align-items:center;gap:11px;padding:22px 22px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.logo-mark{width:40px;height:40px;flex-shrink:0}
+.logo-nom{font-family:var(--display);font-weight:800;font-size:20px;color:#fff;letter-spacing:-.01em;line-height:1.1}
+.logo-nom span{color:var(--safran)}
+.logo-slogan{font-size:10.5px;color:#8FA0C2;margin-top:2px}
+.sidebar-profil{display:flex;align-items:center;gap:13px;padding:20px 22px 6px}
+.sidebar-profil img{width:54px;height:54px;border-radius:50%;object-fit:cover;border:2.5px solid var(--safran)}
+.sidebar-profil h2{font-family:var(--display);font-size:16px;font-weight:700;color:#fff}
+.sidebar-profil p{font-size:12px;color:#8FA0C2}
+.sidebar-profil .note{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#fff;margin-top:3px}
+.sidebar-profil .note svg{color:var(--safran)}
+.sidebar-profil .note span{font-weight:500;color:#8FA0C2}
+.btn-profil-public{display:flex;align-items:center;justify-content:center;gap:9px;background:var(--bleu);color:#fff;font-weight:700;font-size:13.5px;border-radius:11px;padding:12px;margin:14px 22px 8px;transition:background .15s,box-shadow .15s}
+.btn-profil-public:hover{background:#2A56D8;box-shadow:0 8px 20px rgba(30,73,199,.4)}
+.sidebar nav{padding:10px 12px;flex:1}
+.sidebar nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;font-size:14px;font-weight:500;color:#C9D3E8;transition:background .15s,color .15s;margin-bottom:2px}
+.sidebar nav a:hover{background:rgba(255,255,255,.07);color:#fff}
+.sidebar nav a.actif{background:rgba(255,255,255,.1);color:#fff;font-weight:700;box-shadow:inset 3px 0 0 var(--safran)}
+.sidebar nav a svg{flex-shrink:0;color:#8FA0C2}
+.sidebar nav a.actif svg,.sidebar nav a:hover svg{color:var(--safran)}
+.sidebar nav .nb{margin-left:auto;background:var(--bleu);color:#fff;font-size:11px;font-weight:800;border-radius:999px;min-width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px}
+.groupe-titre{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#5B6B85;padding:18px 12px 8px}
+.deconnexion{padding:14px 12px;border-top:1px solid rgba(255,255,255,.08)}
+.deconnexion a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;font-size:14px;color:#C9D3E8;transition:background .15s,color .15s}
+.deconnexion a:hover{background:rgba(224,36,94,.15);color:#FF7A9C}
+
+/* ============ MAIN ============ */
+.principal{display:flex;flex-direction:column;min-width:0}
+.barre-haute{background:#fff;border-bottom:1px solid var(--bordure);display:flex;align-items:center;gap:18px;padding:16px 30px;position:sticky;top:0;z-index:20}
+.barre-haute .burger{color:var(--encre);padding:6px;display:flex}
+.barre-haute h1{font-family:var(--display);font-size:21px;font-weight:800;letter-spacing:-.01em;color:var(--encre)}
+.barre-haute .sous{font-size:13px;color:var(--texte-doux)}
+.barre-droite{margin-left:auto;display:flex;align-items:center;gap:16px}
+.lien-aide{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--bleu)}
+.lien-aide:hover{text-decoration:underline}
+.btn-cloche{position:relative;color:var(--encre);display:flex;padding:6px}
+.btn-cloche .pastille{position:absolute;top:0;right:0;background:#E0245E;color:#fff;font-size:10px;font-weight:800;border-radius:999px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.avatar-haut{display:flex;align-items:center;gap:8px;color:var(--texte-doux)}
+.avatar-haut img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+
+.contenu{padding:26px 30px 46px;max-width:1400px;width:100%}
+
+/* Onglets */
+.onglets{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);display:flex;box-shadow:var(--ombre);overflow-x:auto;scrollbar-width:none;margin-bottom:24px}
+.onglets::-webkit-scrollbar{display:none}
+.onglet{padding:17px 22px;font-size:14px;font-weight:600;color:var(--texte-doux);border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s}
+.onglet:hover{color:var(--encre)}
+.onglet.actif{color:var(--bleu);font-weight:700;border-bottom-color:var(--bleu)}
+
+/* Layout paramètres */
+.parametres-layout{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start}
+.bloc{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);box-shadow:var(--ombre)}
+.bloc-corps{padding:26px 28px}
+.bloc h2{font-family:var(--display);font-size:17px;font-weight:700;color:var(--encre)}
+.bloc .desc{font-size:13px;color:var(--texte-doux);margin-top:3px}
+
+/* Formulaire */
+.forme{margin-top:22px}
+.rangee{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.champ{margin-bottom:16px;min-width:0}
+.champ label{display:block;font-size:13px;font-weight:700;color:var(--encre);margin-bottom:7px}
+.champ label small{font-weight:500;color:var(--texte-doux)}
+.champ .enveloppe{position:relative}
+.champ input,.champ textarea{width:100%;border:1.5px solid var(--bordure);border-radius:11px;padding:11px 14px;font-size:14px;color:var(--encre);background:#fff;transition:border-color .15s,box-shadow .15s}
+.champ input:focus,.champ textarea:focus{outline:none;border-color:var(--bleu);box-shadow:0 0 0 4px var(--bleu-clair)}
+.champ textarea{resize:vertical;min-height:104px;line-height:1.6}
+.compteur{position:absolute;right:12px;bottom:9px;font-size:11.5px;color:var(--texte-doux);background:#fff;padding:0 4px}
+.photo-ligne{display:flex;align-items:center;gap:16px}
+.photo-ligne img{width:78px;height:78px;border-radius:50%;object-fit:cover;border:1px solid var(--bordure)}
+.btn-contour{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:13.5px;color:var(--bleu);background:#fff;border:1.5px solid var(--bleu);border-radius:11px;padding:11px 18px;transition:background .15s,color .15s}
+.btn-contour:hover{background:var(--bleu);color:#fff}
+.photo-ligne small{display:block;font-size:12px;color:var(--texte-doux);margin-top:7px}
+.actions-forme{display:flex;justify-content:flex-end;margin-top:6px}
+.btn-bleu{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--bleu);color:#fff;font-weight:700;font-size:14px;border-radius:11px;padding:13px 24px;transition:background .15s,box-shadow .15s}
+.btn-bleu:hover{background:#2A56D8;box-shadow:0 10px 24px rgba(30,73,199,.35)}
+
+/* Services aperçu */
+.bloc-services{margin-top:20px}
+.bloc-services .entete{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.bloc-services .entete a{font-size:13.5px;font-weight:700;color:var(--bleu)}
+.bloc-services .entete a:hover{text-decoration:underline}
+.chips-services{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.chip-service{display:inline-flex;align-items:center;gap:8px;background:var(--papier);border:1px solid var(--bordure);border-radius:999px;padding:8px 16px;font-size:13.5px;font-weight:600;color:var(--encre)}
+.chip-service i{width:8px;height:8px;border-radius:50%;background:var(--vert)}
+
+/* Bandeau aide */
+.bandeau-aide{background:var(--bleu-clair);border-radius:var(--radius);padding:20px 24px;display:flex;align-items:center;gap:16px;margin-top:20px;flex-wrap:wrap}
+.bandeau-aide .rond{width:48px;height:48px;border-radius:50%;background:var(--bleu);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bandeau-aide h3{font-size:14.5px;font-weight:700;color:var(--encre)}
+.bandeau-aide p{font-size:13px;color:var(--texte-doux);margin-top:2px}
+.bandeau-aide .btn-contour{margin-left:auto;background:#fff}
+
+/* Colonne droite */
+.colonne-droite{display:grid;gap:20px}
+.apercu-profil .cover{position:relative;height:140px;border-radius:var(--radius) var(--radius) 0 0;overflow:hidden}
+.apercu-profil .cover img{width:100%;height:100%;object-fit:cover}
+.apercu-profil .avatar{position:absolute;left:22px;bottom:-34px;width:86px;height:86px;border-radius:50%;object-fit:cover;border:4px solid #fff;box-shadow:var(--ombre);z-index:2}
+.apercu-corps{padding:46px 24px 24px;position:relative}
+.apercu-corps h3{font-family:var(--display);font-size:19px;font-weight:800;color:var(--encre);display:flex;align-items:center;gap:8px}
+.apercu-corps h3 svg{color:var(--bleu)}
+.apercu-corps .slogan{font-size:13.5px;color:var(--texte-doux);margin-top:3px}
+.apercu-corps .infos{display:flex;align-items:center;gap:16px;margin-top:12px;font-size:13px;color:var(--texte-doux);flex-wrap:wrap}
+.apercu-corps .infos .note{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--encre)}
+.apercu-corps .infos .note svg{color:var(--safran)}
+.apercu-corps .infos .lieu{display:inline-flex;align-items:center;gap:6px}
+.apercu-corps .infos .lieu svg{color:var(--bleu)}
+.apercu-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.apercu-actions .btn-contour,.apercu-actions .btn-bleu{padding:12px 10px;font-size:13px}
+
+/* Statut du profil */
+.statut-corps{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;padding:22px 24px}
+.statut-liste li{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--texte);padding:5px 0;list-style:none}
+.statut-liste .ok{width:20px;height:20px;border-radius:50%;background:var(--vert-clair);color:var(--vert);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.statut-liste .attention{width:20px;height:20px;border-radius:50%;background:#FFF2DB;color:#D98A00;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.anneau{position:relative;width:96px;height:96px;text-align:center}
+.anneau svg{transform:rotate(-90deg)}
+.anneau .fond-a{stroke:var(--papier)}
+.anneau .val-a{stroke:var(--vert);stroke-linecap:round}
+.anneau .pct{position:absolute;inset:0 0 18px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:20px;color:var(--encre)}
+.anneau .lab{font-size:11px;color:var(--texte-doux);font-weight:600}
+.statut-note{font-size:12.5px;color:var(--texte-doux);padding:0 24px 20px}
+
+/* Raccourcis */
+.raccourcis-grille{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:18px 20px 20px}
+.raccourci{border:1px solid var(--bordure);border-radius:12px;padding:14px 12px;text-align:center;transition:border-color .15s,box-shadow .15s;display:block}
+.raccourci:hover{border-color:var(--bleu);box-shadow:0 10px 24px rgba(30,73,199,.14)}
+.raccourci svg{color:var(--bleu);margin:0 auto 8px;display:block}
+.raccourci h4{font-size:12px;font-weight:700;color:var(--encre);line-height:1.3}
+.raccourci p{font-size:10.5px;color:var(--texte-doux);margin-top:4px;line-height:1.4}
+.bloc > h2.titre-bloc{padding:20px 24px 0}
+
+/* Responsive */
+@media (max-width:1280px){.parametres-layout{grid-template-columns:1fr}}
+@media (max-width:1024px){.app{grid-template-columns:1fr}.sidebar{position:static;height:auto}.sidebar nav{display:grid;grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.rangee{grid-template-columns:1fr}.contenu{padding:18px 16px 36px}.barre-haute{padding:14px 16px}.barre-haute .sous{display:none}.raccourcis-grille{grid-template-columns:1fr}.statut-corps{grid-template-columns:1fr}.apercu-actions{grid-template-columns:1fr}}
+
+
+/* ============================================================
+   PAGE MON ABONNEMENT — styles spécifiques
+   ============================================================ */
+.bloc-blanc{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);box-shadow:var(--ombre)}
+.bloc-blanc > .titre-bloc{font-family:var(--display);font-size:16.5px;font-weight:700;color:var(--encre);padding:20px 24px;border-bottom:1px solid var(--bordure)}
+
+/* Offre actuelle */
+.offre-actuelle{display:grid;grid-template-columns:1.3fr .8fr 1fr auto;gap:24px;padding:24px;align-items:center}
+.offre-actuelle > div + div{border-left:1px solid var(--bordure);padding-left:24px}
+.offre-plan{display:flex;gap:15px;align-items:flex-start}
+.icone-plan{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ip-bleu{background:var(--bleu);color:#fff}
+.ip-vert{background:var(--vert);color:#fff}
+.ip-violet{background:#7C3AED;color:#fff}
+.offre-plan h2{font-family:var(--display);font-size:20px;font-weight:800;color:var(--encre);display:flex;align-items:center;gap:10px}
+.chip-mensuel{font-size:11px;font-weight:700;background:var(--bleu-clair);color:var(--bleu);border-radius:999px;padding:4px 12px}
+.offre-plan p{font-size:13px;color:var(--texte-doux);margin-top:5px;max-width:280px}
+.lien-bleu{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--bleu);margin-top:10px}
+.lien-bleu:hover{text-decoration:underline}
+.prix-actuel .montant{font-family:var(--display);font-weight:800;font-size:27px;color:var(--encre);letter-spacing:-.02em}
+.prix-actuel small{display:block;font-size:12.5px;color:var(--texte-doux);margin-top:2px}
+.chip-actif-abo{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;background:var(--vert-clair);color:var(--vert);border-radius:999px;padding:6px 14px}
+.info-prelevement{margin-top:12px;font-size:12.5px;color:var(--texte-doux)}
+.info-prelevement strong{display:flex;align-items:center;gap:8px;color:var(--encre);font-size:13.5px;font-weight:700;margin-top:3px}
+.info-prelevement strong svg{color:var(--bleu)}
+.badge-visa{display:inline-flex;align-items:center;background:var(--encre);color:#fff;font-size:9px;font-weight:800;font-style:italic;border-radius:4px;padding:3px 7px;letter-spacing:.04em}
+.carte-num{font-size:13px;font-weight:700;color:var(--encre);letter-spacing:1px}
+.actions-abo{display:grid;gap:10px}
+.btn-contour-bleu{display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--bleu);color:var(--bleu);font-weight:700;font-size:13.5px;border-radius:11px;padding:11px 20px;transition:background .15s,color .15s;white-space:nowrap}
+.btn-contour-bleu:hover{background:var(--bleu);color:#fff}
+.btn-contour-rouge{display:inline-flex;align-items:center;justify-content:center;border:1.5px solid #D93025;color:#D93025;font-weight:700;font-size:13.5px;border-radius:11px;padding:11px 20px;transition:background .15s,color .15s;white-space:nowrap}
+.btn-contour-rouge:hover{background:#D93025;color:#fff}
+
+/* Layout comparer + colonne droite */
+.abo-layout{display:grid;grid-template-columns:1fr 330px;gap:18px;margin-top:18px;align-items:start}
+
+/* Comparer les offres */
+.comparer-entete{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 24px 0;flex-wrap:wrap}
+.comparer-entete h2{font-family:var(--display);font-size:16.5px;font-weight:700;color:var(--encre)}
+.bascule-facturation{display:flex;align-items:center;gap:10px}
+.bascule-facturation .groupe{display:flex;border:1.5px solid var(--bordure);border-radius:999px;overflow:hidden}
+.bf{padding:8px 18px;font-size:13px;font-weight:600;color:var(--texte-doux);transition:background .15s,color .15s}
+.bf.actif{background:var(--bleu-clair);color:var(--bleu);font-weight:700}
+.chip-remise{font-size:11.5px;font-weight:700;background:var(--vert-clair);color:var(--vert);border-radius:999px;padding:5px 11px}
+.grille-offres{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:20px 24px 24px;align-items:start}
+.carte-offre{border:1px solid var(--bordure);border-radius:16px;padding:22px;position:relative;background:#fff}
+.carte-offre.recommandee{border:2px solid var(--bleu);padding-top:44px;margin-top:-14px;box-shadow:0 14px 36px rgba(30,73,199,.16)}
+.bandeau-reco{position:absolute;top:-1px;left:-1px;right:-1px;background:var(--bleu);color:#fff;font-size:12px;font-weight:700;text-align:center;padding:8px;border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:center;gap:7px}
+.carte-offre .entete-offre{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.carte-offre h3{font-family:var(--display);font-size:17px;font-weight:800;color:var(--encre)}
+.carte-offre .desc-offre{font-size:12.5px;color:var(--texte-doux);min-height:38px;line-height:1.5}
+.prix-offre{margin:16px 0 4px}
+.prix-offre .montant{font-family:var(--display);font-weight:800;font-size:24px;color:var(--encre);letter-spacing:-.02em}
+.prix-offre .unite{font-size:12.5px;font-weight:600;color:var(--texte-doux)}
+.prix-offre small{display:block;font-size:12px;color:var(--texte-doux);margin-top:2px}
+.carte-offre .btn-choisir{display:flex;align-items:center;justify-content:center;width:100%;border:1.5px solid var(--bleu);color:var(--bleu);font-weight:700;font-size:13.5px;border-radius:11px;padding:11px;margin:14px 0 16px;transition:background .15s,color .15s}
+.carte-offre .btn-choisir:hover{background:var(--bleu);color:#fff}
+.carte-offre .btn-actuelle{display:flex;align-items:center;justify-content:center;width:100%;background:var(--bleu);color:#fff;font-weight:700;font-size:13.5px;border-radius:11px;padding:12px;margin:14px 0 16px;box-shadow:0 8px 20px rgba(30,73,199,.3)}
+.liste-fonctions li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--texte);padding:5px 0;list-style:none}
+.liste-fonctions .coche{width:19px;height:19px;border-radius:50%;background:var(--vert-clair);color:var(--vert);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+
+/* Colonne droite */
+.colonne-droite{display:grid;gap:18px}
+.ligne-facturation{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:11px 24px;font-size:13.5px;border-bottom:1px solid var(--bordure)}
+.ligne-facturation:last-of-type{border-bottom:none}
+.ligne-facturation .lab{color:var(--texte-doux);font-weight:600}
+.ligne-facturation .val{font-weight:700;color:var(--encre);text-align:right}
+.ligne-facturation .val small{display:block;font-weight:500;color:var(--texte-doux);font-size:12px}
+.ligne-facturation .val .badge-visa{margin-right:7px}
+.pied-facturation{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 24px;border-top:1px solid var(--bordure)}
+.pied-facturation a{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--bleu)}
+.pied-facturation a:hover{text-decoration:underline}
+.pied-facturation svg:last-child{color:var(--texte-doux)}
+.entete-historique{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 24px 8px}
+.entete-historique h2{font-family:var(--display);font-size:16.5px;font-weight:700;color:var(--encre)}
+.entete-historique a{font-size:13px;font-weight:700;color:var(--bleu)}
+.entete-historique a:hover{text-decoration:underline}
+.facture-ligne{display:flex;align-items:center;gap:14px;padding:12px 24px;border-top:1px solid var(--bordure);font-size:13px}
+.facture-ligne .date{color:var(--texte-doux);white-space:nowrap;width:74px}
+.facture-ligne .num{font-weight:700;color:var(--encre);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.facture-ligne .montant{font-weight:800;color:var(--encre);white-space:nowrap}
+.facture-ligne button{color:var(--bleu);display:flex;padding:5px;border-radius:8px;transition:background .15s}
+.facture-ligne button:hover{background:var(--bleu-clair)}
+
+/* Bandeau support */
+.bandeau-support{background:var(--bleu-clair);border-radius:var(--radius);padding:22px 26px;display:flex;align-items:center;gap:18px;margin-top:18px;flex-wrap:wrap}
+.bandeau-support .rond{width:52px;height:52px;border-radius:50%;background:#fff;color:var(--bleu);display:flex;align-items:center;justify-content:center;box-shadow:var(--ombre);flex-shrink:0}
+.bandeau-support h2{font-family:var(--display);font-size:16px;font-weight:700;color:var(--encre)}
+.bandeau-support p{font-size:13.5px;color:var(--texte-doux);margin-top:3px}
+.bandeau-support .btn-contour-bleu{margin-left:auto;background:#fff}
+
+@media (max-width:1400px){.offre-actuelle{grid-template-columns:1fr 1fr;gap:20px}.offre-actuelle > div + div{border-left:none;padding-left:0}.actions-abo{grid-template-columns:1fr 1fr;grid-column:1 / -1}}
+@media (max-width:1280px){.abo-layout{grid-template-columns:1fr}.colonne-droite{grid-template-columns:1fr 1fr}}
+@media (max-width:1024px){.grille-offres{grid-template-columns:1fr}.carte-offre.recommandee{margin-top:14px}.colonne-droite{grid-template-columns:1fr}}
+@media (max-width:640px){.offre-actuelle{grid-template-columns:1fr}.actions-abo{grid-template-columns:1fr}.bandeau-support .btn-contour-bleu{margin-left:0;width:100%}}
+
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <svg class="logo-mark" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+        <rect x="2" y="10" width="24" height="24" rx="7" fill="#1E49C7" transform="rotate(-8 14 22)"/>
+        <rect x="18" y="10" width="24" height="24" rx="7" fill="#FF8A1E" transform="rotate(8 30 22)"/>
+        <circle cx="22" cy="22" r="5.5" fill="#fff"/>
+      </svg>
+      <div>
+        <div class="logo-nom">TrouveMoi<span>.com</span></div>
+        <div class="logo-slogan">Trouvez. Réservez. Réalisez.</div>
+      </div>
+    </div>
+
+    <div class="sidebar-profil">
+      <img src="https://picsum.photos/seed/thomas-tm/108/108" alt="Photo de Thomas Martin">
+      <div>
+        <h2>Thomas Martin</h2>
+        <p>Plombier chauffagiste</p>
+        <p class="note"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>4,8/5 <span>(128 avis)</span></p>
+      </div>
+    </div>
+    <a href="#" class="btn-profil-public">Voir mon profil public <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"/></svg></a>
+
+    <nav aria-label="Navigation de l'espace prestataire">
+      <a href="#" class="actif" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span>Tableau de bord</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11h6M9 15h4"/><path d="M6 3h9l4 4v14H6z"/></svg><span>Demandes</span><span class="nb">8</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5 5L3 18v3h3l6.7-6.7a4 4 0 0 0 5-5L15 12l-3-3z"/></svg><span>Mes prestations</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg><span>Messages</span><span class="nb">3</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg><span>Avis clients</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span>Calendrier</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Facturation</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20v-6M9 20V9M14 20v-9M19 20V5"/></svg><span>Statistiques</span></a>
+      <p class="groupe-titre">Paramètres</p>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg><span>Paramètres</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg><span>Mon abonnement</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span>Notifications</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="11" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg><span>Sécurité</span></a>
+    </nav>
+
+    <div class="deconnexion">
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg><span>Déconnexion</span></a>
+    </div>
+  </aside>
+
+  <!-- ============ PRINCIPAL ============ -->
+  <div class="principal">
+
+    <header class="barre-haute">
+      <button class="burger" aria-label="Ouvrir le menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg></button>
+      <div>
+        <h1>Mon abonnement</h1>
+        <p class="sous">Gérez votre abonnement et vos options</p>
+      </div>
+      <div class="barre-droite">
+        <a href="#" class="lien-aide"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4.9.8c0 1.6-2.4 2.2-2.4 3.7M12 17h.01"/></svg>Besoin d'aide ?</a>
+        <button class="btn-cloche" aria-label="Notifications"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="pastille">2</span></button>
+        <a href="#" class="avatar-haut"><img src="https://picsum.photos/seed/thomas-tm/80/80" alt=""><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></a>
+      </div>
+    </header>
+
+    <main class="contenu">
+
+      <!-- Mon offre actuelle -->
+      <section class="bloc-blanc">
+        <h2 class="titre-bloc">Mon offre actuelle</h2>
+        <div class="offre-actuelle">
+          <div class="offre-plan">
+            <span class="icone-plan ip-bleu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" fill="currentColor" stroke="none"/></svg></span>
+            <div>
+              <h2>Pro <span class="chip-mensuel">Mensuel</span></h2>
+              <p>Profitez de toutes les fonctionnalités pour développer votre activité.</p>
+              <a href="#" class="lien-bleu">Voir le détail des fonctionnalités <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            </div>
+          </div>
+          <div class="prix-actuel">
+            <div class="montant">39,00 €</div>
+            <small>par mois HT</small>
+            <small>46,80 € TTC</small>
+          </div>
+          <div>
+            <span class="chip-actif-abo"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Abonnement actif</span>
+            <div class="info-prelevement">Prochain prélèvement<strong><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>15/06/2024</strong></div>
+            <div class="info-prelevement">Moyen de paiement<strong><span class="badge-visa">VISA</span><span class="carte-num">•••• 4242</span></strong></div>
+          </div>
+          <div class="actions-abo">
+            <button class="btn-contour-bleu" type="button">Modifier mon abonnement</button>
+            <button class="btn-contour-rouge" type="button">Résilier mon abonnement</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="abo-layout">
+
+        <!-- Comparer les offres -->
+        <section class="bloc-blanc">
+          <div class="comparer-entete">
+            <h2>Comparer les offres</h2>
+            <div class="bascule-facturation">
+              <div class="groupe" role="tablist" aria-label="Périodicité de facturation">
+                <button class="bf actif" type="button" data-mode="mensuel">Mensuel</button>
+                <button class="bf" type="button" data-mode="annuel">Annuel</button>
+              </div>
+              <span class="chip-remise">−20 %</span>
+            </div>
+          </div>
+
+          <div class="grille-offres">
+
+            <article class="carte-offre">
+              <div class="entete-offre"><span class="icone-plan ip-vert"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></span><h3>Essentiel</h3></div>
+              <p class="desc-offre">L'essentiel pour bien démarrer votre activité.</p>
+              <div class="prix-offre">
+                <span class="montant" data-mensuel="19,00 €" data-annuel="15,20 €">19,00 €</span> <span class="unite">/mois HT</span>
+                <small data-mensuel="22,80 € TTC" data-annuel="18,24 € TTC — facturé annuellement">22,80 € TTC</small>
+              </div>
+              <button class="btn-choisir" type="button">Choisir cette offre</button>
+              <ul class="liste-fonctions">
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Jusqu'à 30 demandes / mois</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Gestion des prestations</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Messages (WhatsApp, e-mail, SMS)</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Calendrier</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Facturation</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Support par e-mail</li>
+              </ul>
+            </article>
+
+            <article class="carte-offre recommandee">
+              <div class="bandeau-reco">Recommandé <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></div>
+              <div class="entete-offre"><span class="icone-plan ip-bleu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" fill="currentColor" stroke="none"/></svg></span><h3>Pro</h3></div>
+              <p class="desc-offre">La solution idéale pour développer votre activité.</p>
+              <div class="prix-offre">
+                <span class="montant" data-mensuel="39,00 €" data-annuel="31,20 €">39,00 €</span> <span class="unite">/mois HT</span>
+                <small data-mensuel="46,80 € TTC" data-annuel="37,44 € TTC — facturé annuellement">46,80 € TTC</small>
+              </div>
+              <button class="btn-actuelle" type="button">Offre actuelle</button>
+              <ul class="liste-fonctions">
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Demandes illimitées</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Gestion des prestations</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Messages (WhatsApp, e-mail, SMS)</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Calendrier</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Facturation</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Statistiques avancées</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Support prioritaire</li>
+              </ul>
+            </article>
+
+            <article class="carte-offre">
+              <div class="entete-offre"><span class="icone-plan ip-violet"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z" fill="currentColor" stroke="none"/></svg></span><h3>Business</h3></div>
+              <p class="desc-offre">Pour les professionnels qui veulent aller plus loin.</p>
+              <div class="prix-offre">
+                <span class="montant" data-mensuel="69,00 €" data-annuel="55,20 €">69,00 €</span> <span class="unite">/mois HT</span>
+                <small data-mensuel="82,80 € TTC" data-annuel="66,24 € TTC — facturé annuellement">82,80 € TTC</small>
+              </div>
+              <button class="btn-choisir" type="button">Choisir cette offre</button>
+              <ul class="liste-fonctions">
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Demandes illimitées</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Gestion des prestations</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Messages (WhatsApp, e-mail, SMS)</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Calendrier</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Facturation</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Statistiques avancées</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Mise en avant de votre profil</li>
+              <li><span class="coche"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Support prioritaire</li>
+              </ul>
+            </article>
+
+          </div>
+        </section>
+
+        <!-- Colonne droite -->
+        <div class="colonne-droite">
+
+          <section class="bloc-blanc">
+            <h2 class="titre-bloc" style="border-bottom:none;padding-bottom:8px">Informations de facturation</h2>
+            <div class="ligne-facturation"><span class="lab">Facturation</span><span class="val">Mensuelle</span></div>
+            <div class="ligne-facturation"><span class="lab">Prochain prélèvement</span><span class="val">15/06/2024</span></div>
+            <div class="ligne-facturation"><span class="lab">Montant</span><span class="val">39,00 € HT<small>46,80 € TTC</small></span></div>
+            <div class="ligne-facturation"><span class="lab">Moyen de paiement</span><span class="val"><span class="badge-visa">VISA</span><span class="carte-num">•••• 4242</span></span></div>
+            <div class="pied-facturation">
+              <a href="#">Mettre à jour mes informations de paiement <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+            </div>
+          </section>
+
+          <section class="bloc-blanc">
+            <div class="entete-historique"><h2>Historique des factures</h2><a href="#">Voir toutes</a></div>
+          <div class="facture-ligne"><span class="date">15/05/2024</span><span class="num">Facture n° F2024-0056</span><span class="montant">46,80 €</span><button type="button" aria-label="Télécharger la facture F2024-0056"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></button></div>
+          <div class="facture-ligne"><span class="date">15/04/2024</span><span class="num">Facture n° F2024-0045</span><span class="montant">46,80 €</span><button type="button" aria-label="Télécharger la facture F2024-0045"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></button></div>
+          <div class="facture-ligne"><span class="date">15/03/2024</span><span class="num">Facture n° F2024-0034</span><span class="montant">46,80 €</span><button type="button" aria-label="Télécharger la facture F2024-0034"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></button></div>
+          <div class="facture-ligne"><span class="date">15/02/2024</span><span class="num">Facture n° F2024-0023</span><span class="montant">46,80 €</span><button type="button" aria-label="Télécharger la facture F2024-0023"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></button></div>
+          <div class="facture-ligne"><span class="date">15/01/2024</span><span class="num">Facture n° F2024-0012</span><span class="montant">46,80 €</span><button type="button" aria-label="Télécharger la facture F2024-0012"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></button></div>
+          </section>
+
+        </div>
+      </div>
+
+      <!-- Bandeau support -->
+      <div class="bandeau-support">
+        <span class="rond"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="14" width="5" height="6" rx="2"/><rect x="17" y="14" width="5" height="6" rx="2"/></svg></span>
+        <div>
+          <h2>Besoin d'aide ?</h2>
+          <p>Notre équipe est à votre disposition pour répondre à toutes vos questions.</p>
+        </div>
+        <a href="#" class="btn-contour-bleu">Contacter le support <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"/></svg></a>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+
+// Bascule Mensuel / Annuel : mise à jour des prix
+document.querySelectorAll('.bf').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.bf').forEach(b => b.classList.toggle('actif', b === btn));
+    const mode = btn.dataset.mode;
+    document.querySelectorAll('[data-mensuel]').forEach(el => {
+      el.textContent = el.dataset[mode];
+    });
+  });
+});
+
+</script>
+</body>
+</html>

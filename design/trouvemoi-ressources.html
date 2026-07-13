@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Catégories — TrouveMoi.com</title>
+<title>Ressources — TrouveMoi.com</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -361,15 +361,15 @@ h1,h2,h3,.display{font-family:var(--display)}
 /* Carte prestataire avec photo */
 .pro-photo{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);overflow:hidden;transition:box-shadow .2s,border-color .2s;display:flex;flex-direction:column}
 .pro-photo:hover{border-color:var(--bleu);box-shadow:0 14px 36px rgba(30,73,199,.18),0 4px 14px rgba(255,138,30,.12)}
-.pro-photo .visuel{position:relative;aspect-ratio:4/3;overflow:hidden}
-.pro-photo .visuel img{width:100%;height:100%;object-fit:cover}
+.pro-photo .visuel{position:relative;aspect-ratio:4/3}
+.pro-photo .visuel img{width:100%;height:100%;object-fit:cover;display:block}
 .pro-photo .badge{position:absolute;top:11px;left:11px;font-size:11.5px;font-weight:700;color:#fff;border-radius:999px;padding:5px 11px;display:inline-flex;align-items:center;gap:6px}
 .badge-vert{background:var(--vert)}
 .badge-safran{background:var(--safran);color:var(--encre)}
 .badge-bleu{background:var(--bleu)}
 .badge-violet{background:#7C3AED}
 .pro-photo .favori{position:absolute;top:10px;right:10px}
-.pro-photo .icone-cat{position:absolute;bottom:-19px;left:14px;width:44px;height:44px;border-radius:50%;background:#fff;box-shadow:var(--ombre);display:flex;align-items:center;justify-content:center;color:var(--bleu);border:3px solid #fff}
+.pro-photo .icone-cat{position:absolute;bottom:-19px;left:14px;width:44px;height:44px;border-radius:50%;background:#fff;box-shadow:var(--ombre);display:flex;align-items:center;justify-content:center;color:var(--bleu);border:3px solid #fff;z-index:2}
 .icone-cat.c-bleu{background:var(--bleu);color:#fff}
 .icone-cat.c-vert{background:var(--vert);color:#fff}
 .icone-cat.c-violet{background:#7C3AED;color:#fff}
@@ -421,26 +421,79 @@ h1,h2,h3,.display{font-family:var(--display)}
 
 
 
+.fil-ariane{background:var(--papier);padding:20px 0 0}
+.fil-ariane .conteneur{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--texte-doux)}
+.fil-ariane a{font-weight:600;color:var(--bleu)}
+.fil-ariane a:hover{text-decoration:underline}
+.fil-ariane svg{color:#98A6C3}
+.entete-page{text-align:center;max-width:720px;margin:0 auto 48px}
+.entete-page h1{font-size:clamp(30px,4vw,44px);font-weight:800;letter-spacing:-.025em;color:var(--encre);line-height:1.12}
+.entete-page h1 span{color:var(--bleu)}
+.entete-page .accroche{font-family:var(--display);font-size:19px;font-weight:700;color:var(--bleu);margin-top:10px}
+.entete-page p{color:var(--texte-doux);font-size:16px;margin-top:14px}
+.groupe-champ{margin-bottom:16px}
+.groupe-champ label{display:block;font-size:13.5px;font-weight:700;color:var(--encre);margin-bottom:7px}
+.groupe-champ label small{font-weight:500;color:var(--texte-doux)}
+.groupe-champ .aide{font-size:12.5px;color:var(--texte-doux);margin-top:6px}
+.champ-saisie{display:flex;align-items:center;gap:10px;border:1.5px solid var(--bordure);border-radius:12px;padding:12px 14px;transition:border-color .15s,box-shadow .15s;background:#fff}
+.champ-saisie:focus-within{border-color:var(--bleu);box-shadow:0 0 0 4px var(--bleu-clair)}
+.champ-saisie > svg{color:var(--texte-doux);flex-shrink:0}
+.champ-saisie input,.champ-saisie select,.champ-saisie textarea{border:none;background:none;font:inherit;font-size:14.5px;color:var(--encre);width:100%;padding:0;appearance:none;-webkit-appearance:none}
+.champ-saisie input::placeholder,.champ-saisie textarea::placeholder{color:#98A6C3}
+.champ-saisie select{cursor:pointer}
+.champ-saisie.zone-texte{align-items:flex-start}
+.champ-saisie textarea{resize:vertical;min-height:110px;line-height:1.55}
+.bande-infos{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:26px 24px;margin-top:40px}
+.bande-infos .item{display:flex;gap:13px;align-items:flex-start}
+.bande-infos .rond{width:44px;height:44px;border-radius:13px;background:var(--bleu-clair);color:var(--bleu);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bande-infos h3{font-family:var(--body);font-size:14.5px;font-weight:700;color:var(--encre)}
+.bande-infos p{font-size:12.5px;color:var(--texte-doux);margin-top:2px}
+@media (max-width:1024px){.bande-infos{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.bande-infos{grid-template-columns:1fr}}
+
 /* ============================================================
-   PAGE CATÉGORIES — styles spécifiques
+   PAGE RESSOURCES — styles spécifiques
    ============================================================ */
-.grille-cat-page{display:grid;grid-template-columns:repeat(5,1fr);gap:18px}
-.cat-page{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .2s,border-color .2s}
-.cat-page:hover{border-color:var(--bleu);box-shadow:0 14px 36px rgba(30,73,199,.18),0 4px 14px rgba(255,138,30,.12)}
-.cat-page .visuel{position:relative;aspect-ratio:8/5;overflow:hidden}
-.cat-page .visuel img{width:100%;height:100%;object-fit:cover}
-.cat-page .icone-cat{position:absolute;bottom:-19px;left:14px}
-.cat-page .corps{padding:28px 16px 16px;display:flex;flex-direction:column;flex-grow:1;text-align:left}
-.cat-page h3{font-size:17px;color:var(--encre)}
-.cat-page .corps p{font-size:13px;color:var(--texte-doux);margin-top:4px;flex-grow:1}
-.cat-page .compteur{display:inline-flex;align-items:center;justify-content:space-between;gap:8px;margin-top:14px;background:var(--bleu-clair);color:var(--bleu);font-size:13px;font-weight:700;border-radius:999px;padding:9px 15px;transition:background .15s,color .15s}
-.cat-page:hover .compteur{background:var(--bleu);color:#fff}
-.filtre-recherche{flex-grow:1;min-width:220px;cursor:text}
-.filtre-recherche input{border:none;background:none;font:inherit;color:var(--encre);width:100%;font-weight:600}
-.filtre-recherche input::placeholder{color:#98A6C3;font-weight:500}
-@media (max-width:1200px){.grille-cat-page{grid-template-columns:repeat(4,1fr)}}
-@media (max-width:1024px){.grille-cat-page{grid-template-columns:repeat(3,1fr)}}
-@media (max-width:640px){.grille-cat-page{grid-template-columns:1fr}}
+.nav-tabs{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);display:flex;align-items:stretch;box-shadow:var(--ombre);margin-bottom:36px;overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:19px 18px;font-size:14.5px;font-weight:600;color:var(--texte-doux);border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s,background .15s;cursor:pointer;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.nav-tab + .nav-tab{border-left:1px solid var(--bordure)}
+.nav-tab svg{flex-shrink:0;color:var(--texte-doux);transition:color .15s}
+.nav-tab:hover{color:var(--encre)}
+.nav-tab:hover svg{color:var(--bleu)}
+.nav-tab.actif{color:var(--bleu);font-weight:700;border-bottom-color:var(--bleu);background:linear-gradient(180deg,transparent 70%,var(--bleu-clair) 100%)}
+.nav-tab.actif svg{color:var(--bleu)}
+
+.grille-ressources{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.ressource{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);padding:24px 22px;display:flex;flex-direction:column;transition:box-shadow .2s,border-color .2s}
+.ressource:hover{border-color:var(--bleu);box-shadow:0 14px 36px rgba(30,73,199,.18),0 4px 14px rgba(255,138,30,.12)}
+.ressource.masquee{display:none}
+.ressource .tuile{width:78px;height:78px;border-radius:18px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.t-bleu{background:var(--bleu-clair);color:var(--bleu)}
+.t-vert{background:var(--vert-clair);color:var(--vert)}
+.t-violet{background:#F1EBFD;color:#7C3AED}
+.t-safran{background:#FFF2DB;color:#D98A00}
+.t-corail{background:#FFEDE5;color:#E85D3A}
+.pastille-cat{align-self:flex-start;font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;border-radius:999px;padding:5px 12px;margin-bottom:11px}
+.p-bleu{background:var(--bleu-clair);color:var(--bleu)}
+.p-vert{background:var(--vert-clair);color:var(--vert)}
+.p-violet{background:#F1EBFD;color:#7C3AED}
+.p-safran{background:#FFF2DB;color:#D98A00}
+.p-corail{background:#FFEDE5;color:#E85D3A}
+.ressource h3{font-size:16.5px;color:var(--encre);line-height:1.3}
+.ressource p{font-size:13.5px;color:var(--texte-doux);margin-top:8px;flex-grow:1}
+.ressource .lien-fleche{margin-top:16px;font-size:14px}
+
+.bandeau-aide{background:var(--bleu-clair);border-radius:var(--radius);padding:26px 30px;display:flex;align-items:center;gap:20px;margin-top:40px;flex-wrap:wrap}
+.bandeau-aide .rond{width:58px;height:58px;border-radius:50%;background:#fff;color:var(--bleu);display:flex;align-items:center;justify-content:center;box-shadow:var(--ombre);flex-shrink:0}
+.bandeau-aide h2{font-size:17px;color:var(--encre)}
+.bandeau-aide p{font-size:13.5px;color:var(--texte-doux);margin-top:3px}
+.btn-contour-bleu{display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:14.5px;color:var(--bleu);background:#fff;border:1.5px solid var(--bleu);border-radius:12px;padding:13px 24px;transition:background .15s,color .15s;margin-left:auto}
+.btn-contour-bleu:hover{background:var(--bleu);color:#fff}
+
+@media (max-width:1200px){.grille-ressources{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:1024px){.grille-ressources{grid-template-columns:repeat(2,1fr)};.nav-tab{flex:0 0 auto}}
+@media (max-width:640px){.grille-ressources{grid-template-columns:1fr}.bandeau-aide .btn-contour-bleu{margin-left:0;width:100%}}
 
 </style>
 </head>
@@ -472,239 +525,104 @@ h1,h2,h3,.display{font-family:var(--display)}
   <div class="nav-bas">
     <nav class="conteneur nav-liens" aria-label="Navigation principale">
       <a href="#">Prestataires</a>
-      <a href="#" class="actif" aria-current="page">Catégories</a>
+      <a href="#categories">Catégories</a>
       <a href="#marche">Comment ça marche</a>
       <a href="#">Bons plans</a>
     </nav>
   </div>
 </header>
 
-<!-- ============ HERO CATÉGORIES ============ -->
-<section class="hero-liste">
-  <div class="fond" role="img" aria-label="Professionnels au travail" style="background-image:url('https://picsum.photos/seed/categories-tm/1600/600')"></div>
-  <div class="voile"></div>
+<div class="fil-ariane"><div class="conteneur"><a href="#">Accueil</a><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg><span>Ressources</span></div></div>
+
+<!-- ============ RESSOURCES ============ -->
+<main class="section resultats" style="padding-top:44px">
   <div class="conteneur">
-    <div class="hero-liste-inner">
-      <h1>Toutes les catégories<br><span>pour tous vos besoins</span></h1>
-      <p>Trouvez facilement le professionnel qu'il vous faut, <strong>près de chez vous</strong>.</p>
-    </div>
-  </div>
-</section>
-
-
-<!-- ============ FILTRES ============ -->
-<div class="filtres">
-  <div class="conteneur filtres-inner">
-    <label class="filtre filtre-recherche">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-      <input type="text" placeholder="Rechercher une catégorie…" aria-label="Rechercher une catégorie">
-    </label>
-    <label class="filtre">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
-      <select aria-label="Localisation">
-        <option>Ville, département…</option><option>Paris (75)</option><option>Lyon (69)</option><option>Marseille (13)</option><option>Toulouse (31)</option><option>Bordeaux (33)</option><option>Nantes (44)</option><option>Lille (59)</option>
-      </select>
-      <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-    </label>
-    <label class="filtre">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-      <select aria-label="Type de besoin">
-        <option>Type de besoin</option><option>À domicile</option><option>En atelier / boutique</option><option>À distance</option><option>Urgence</option>
-      </select>
-      <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-    </label>
-    <label class="filtre filtre-tri">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg>
-      <select aria-label="Trier par">
-        <option>Trier par</option><option>Popularité</option><option>Nombre de prestataires</option><option>Ordre alphabétique</option>
-      </select>
-      <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-    </label>
-  </div>
-</div>
-
-<!-- ============ GRILLE CATÉGORIES ============ -->
-<section class="section resultats" style="padding-top:56px">
-  <div class="conteneur">
-    <div class="resultats-entete">
-      <strong>24 catégories disponibles</strong>
-      <span>Page 1 sur 3</span>
-    </div>
-    <div class="grille-cat-page">
-
-      <a href="#" class="cat-page">
-        <div class="visuel">
-          <img src="https://picsum.photos/seed/maison-travaux-tm/480/300" alt="Maison et travaux" loading="lazy">
-          <span class="icone-cat c-bleu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span>
-        </div>
-        <div class="corps">
-          <h3>Maison &amp; Travaux</h3>
-          <p>Rénovation, bricolage, aménagement…</p>
-          <span class="compteur">+12 000 prestataires <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </div>
-      </a>
-
-      <a href="#" class="cat-page">
-        <div class="visuel">
-          <img src="https://picsum.photos/seed/demenagement-cat-tm/480/300" alt="Déménagement" loading="lazy">
-          <span class="icone-cat c-safran"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 8h13v9H1zM14 11h5l3 3v3h-8z"/><circle cx="6" cy="19" r="1.8"/><circle cx="18" cy="19" r="1.8"/></svg></span>
-        </div>
-        <div class="corps">
-          <h3>Déménagement</h3>
-          <p>Aide au déménagement, transport, manutention…</p>
-          <span class="compteur">+6 800 prestataires <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </div>
-      </a>
-
-      <a href="#" class="cat-page">
-        <div class="visuel">
-          <img src="https://picsum.photos/seed/nettoyage-cat-tm/480/300" alt="Nettoyage" loading="lazy">
-          <span class="icone-cat c-vert"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21c2-6 3-11 3-15l5 2 5-2c0 4 1 9 3 15"/><path d="M7 8c2.5 1.5 7.5 1.5 10 0"/></svg></span>
-        </div>
-        <div class="corps">
-          <h3>Nettoyage</h3>
-          <p>Ménage, nettoyage à domicile, vitres, fin de chantier…</p>
-          <span class="compteur">+9 500 prestataires <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </div>
-      </a>
-
-      <a href="#" class="cat-page">
-        <div class="visuel">
-          <img src="https://picsum.photos/seed/jardinage-cat-tm/480/300" alt="Jardinage" loading="lazy">
-          <span class="icone-cat c-vert"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="M12 9C12 5 9 3 5 3c0 4 3 6 7 6zM12 13c0-3.5 2.5-5 6-5 0 3.5-2.5 5-6 5z"/></svg></span>
-        </div>
-        <div class="corps">
-          <h3>Jardinage</h3>
-          <p>Entretien de jardins, tonte, taille, plantations, débroussaillage…</p>
-          <span class="compteur">+8 200 prestataires <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </div>
-      </a>
-
-      <a href="#" class="cat-page">
-        <div class="visuel">
-          <img src="https://picsum.photos/seed/informatique-cat-tm/480/300" alt="Informatique" loading="lazy">
-          <span class="icone-cat c-bleu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></span>
-        </div>
-        <div class="corps">
-          <h3>Informatique</h3>
-          <p>Dépannage, installation, assistance, formation…</p>
-          <span class="compteur">+4 200 prestataires <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </div>
-      </a>
-
-      <a href="#" class="cat-page">
-        <div class="visuel">
-          <img src="https://picsum.photos/seed/evenementiel-cat-tm/480/300" alt="Événementiel" loading="lazy">
-          <span class="icone-cat c-violet"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v2M5.6 5.6l1.4 1.4M18.4 5.6 17 7"/><path d="M9 16a5 5 0 1 1 6 0c-.8.6-1 1.6-1 2.5h-4c0-.9-.2-1.9-1-2.5z"/><path d="M10 21h4"/></svg></span>
-        </div>
-        <div class="corps">
-          <h3>Événementiel</h3>
-          <p>Mariage, anniversaire, réception, animation…</p>
-          <span class="compteur">+3 100 prestataires <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </div>
-      </a>
-
-      <a href="#" class="cat-page">
-        <div class="visuel">
-          <img src="https://picsum.photos/seed/bienetre-cat-tm/480/300" alt="Bien-être" loading="lazy">
-          <span class="icone-cat c-safran"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C7 17 4 13.5 4 9.5A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 8 3.5c0 4-3 7.5-8 11.5z"/></svg></span>
-        </div>
-        <div class="corps">
-          <h3>Bien-être</h3>
-          <p>Massage, beauté, coaching, sport à domicile…</p>
-          <span class="compteur">+5 700 prestataires <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </div>
-      </a>
-
-      <a href="#" class="cat-page">
-        <div class="visuel">
-          <img src="https://picsum.photos/seed/cours-cat-tm/480/300" alt="Cours et soutien" loading="lazy">
-          <span class="icone-cat c-violet"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6s2-1.5 5-1.5S12 6 12 6v13s-2-1.5-5-1.5S2 19 2 19zM22 6s-2-1.5-5-1.5S12 6 12 6v13s2-1.5 5-1.5 5 1.5 5 1.5z"/></svg></span>
-        </div>
-        <div class="corps">
-          <h3>Cours &amp; Soutien</h3>
-          <p>Soutien scolaire, cours à domicile, langues, musique…</p>
-          <span class="compteur">+6 300 prestataires <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </div>
-      </a>
-
-      <a href="#" class="cat-page">
-        <div class="visuel">
-          <img src="https://picsum.photos/seed/auto-cat-tm/480/300" alt="Réparation auto" loading="lazy">
-          <span class="icone-cat c-bleu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16 3 9l4.5 2L12 5l4.5 6L21 9l-2 7z"/><path d="M5 16h14v3H5z"/></svg></span>
-        </div>
-        <div class="corps">
-          <h3>Réparation auto</h3>
-          <p>Mécanique, entretien, diagnostic, pneus, carrosserie…</p>
-          <span class="compteur">+7 900 prestataires <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </div>
-      </a>
-
-      <a href="#" class="cat-page">
-        <div class="visuel">
-          <img src="https://picsum.photos/seed/petits-travaux-cat-tm/480/300" alt="Petits travaux" loading="lazy">
-          <span class="icone-cat c-safran"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5 5L3 18v3h3l6.7-6.7a4 4 0 0 0 5-5L15 12l-3-3z"/></svg></span>
-        </div>
-        <div class="corps">
-          <h3>Petits travaux</h3>
-          <p>Petits bricolages, montage, réparations, peinture…</p>
-          <span class="compteur">+10 400 prestataires <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </div>
-      </a>
-
+    <div class="entete-page" style="margin-bottom:36px">
+      <h1><span>Ressources</span> pour réussir</h1>
+      <p>Conseils, guides et outils pour développer votre activité et tirer le meilleur de TrouveMoi.com.</p>
     </div>
 
-    <nav class="pagination" aria-label="Pagination des catégories">
-      <button class="page-btn" aria-label="Page précédente"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-      <button class="page-btn actif">1</button>
-      <button class="page-btn">2</button>
-      <button class="page-btn">3</button>
-      <button class="page-btn" aria-label="Page suivante"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
-    </nav>
-  </div>
-</section>
+    <!-- Nav tabs -->
+    <div class="nav-tabs" role="tablist" aria-label="Filtrer les ressources">
+      <button class="nav-tab actif" type="button" data-filtre="tout"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Tout</button>
+      <button class="nav-tab" type="button" data-filtre="guides"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6s2-1.5 5-1.5S12 6 12 6v13s-2-1.5-5-1.5S2 19 2 19zM22 6s-2-1.5-5-1.5S12 6 12 6v13s2-1.5 5-1.5 5 1.5 5 1.5z"/></svg>Guides pratiques</button>
+      <button class="nav-tab" type="button" data-filtre="developper"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20v-6M9 20V9M14 20v-9M19 20V5"/></svg>Développer son activité</button>
+      <button class="nav-tab" type="button" data-filtre="gestion"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Gestion et outils</button>
+      <button class="nav-tab" type="button" data-filtre="actualites"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v3l9 4V7z"/><path d="M12 7c4-1 7-3 7-3v16s-3-2-7-3M6 14v5h3v-4"/></svg>Actualités</button>
+      <button class="nav-tab" type="button" data-filtre="webinaires"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none"/></svg>Webinaires</button>
+    </div>
 
+    <!-- Grille de ressources -->
+    <div class="grille-ressources" id="grille-ressources">
+      <article class="ressource" data-categorie="guides">
+        <span class="tuile t-bleu"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5"/><path d="m9 13 2 2 4-4"/></svg></span>
+        <span class="pastille-cat p-bleu">Guide pratique</span>
+        <h3>Bien créer son profil prestataire</h3>
+        <p>Nos conseils pour créer un profil attractif et rassurer vos futurs clients.</p>
+        <a href="#" class="lien-fleche">Lire le guide <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+      <article class="ressource" data-categorie="developper">
+        <span class="tuile t-vert"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg></span>
+        <span class="pastille-cat p-vert">Développer son activité</span>
+        <h3>5 astuces pour recevoir plus de demandes</h3>
+        <p>Des conseils concrets pour augmenter votre visibilité et obtenir plus de clients.</p>
+        <a href="#" class="lien-fleche">Lire l'article <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+      <article class="ressource" data-categorie="gestion">
+        <span class="tuile t-violet"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg></span>
+        <span class="pastille-cat p-violet">Gestion et outils</span>
+        <h3>Gérer vos devis comme un pro</h3>
+        <p>Modèles, bonnes pratiques et outils pour gagner du temps au quotidien.</p>
+        <a href="#" class="lien-fleche">Lire le guide <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+      <article class="ressource" data-categorie="guides">
+        <span class="tuile t-safran"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+        <span class="pastille-cat p-safran">Guide pratique</span>
+        <h3>Profils vérifiés : nos engagements</h3>
+        <p>Tout savoir sur la vérification des prestataires et nos garanties de confiance.</p>
+        <a href="#" class="lien-fleche">En savoir plus <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+      <article class="ressource" data-categorie="actualites">
+        <span class="tuile t-corail"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v3l9 4V7z"/><path d="M12 7c4-1 7-3 7-3v16s-3-2-7-3M6 14v5h3v-4"/></svg></span>
+        <span class="pastille-cat p-corail">Actualités</span>
+        <h3>Nouveautés TrouveMoi.com</h3>
+        <p>Découvrez les dernières fonctionnalités et améliorations de la plateforme.</p>
+        <a href="#" class="lien-fleche">Voir les nouveautés <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+      <article class="ressource" data-categorie="webinaires">
+        <span class="tuile t-bleu"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none"/></svg></span>
+        <span class="pastille-cat p-bleu">Webinaire</span>
+        <h3>Webinaire : Développer son activité en ligne</h3>
+        <p>Replay de notre webinaire avec des experts pour booster votre activité.</p>
+        <a href="#" class="lien-fleche">Voir le replay <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+      <article class="ressource" data-categorie="gestion">
+        <span class="tuile t-vert"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M8 6h8"/><circle cx="9" cy="11" r=".8" fill="currentColor"/><circle cx="12" cy="11" r=".8" fill="currentColor"/><circle cx="15" cy="11" r=".8" fill="currentColor"/><circle cx="9" cy="14.5" r=".8" fill="currentColor"/><circle cx="12" cy="14.5" r=".8" fill="currentColor"/><circle cx="15" cy="14.5" r=".8" fill="currentColor"/><circle cx="9" cy="18" r=".8" fill="currentColor"/><circle cx="12" cy="18" r=".8" fill="currentColor"/><circle cx="15" cy="18" r=".8" fill="currentColor"/></svg></span>
+        <span class="pastille-cat p-vert">Outil</span>
+        <h3>Calculateur de tarifs et marges</h3>
+        <p>Un outil simple pour estimer vos tarifs et votre rentabilité.</p>
+        <a href="#" class="lien-fleche">Utiliser l'outil <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+      <article class="ressource" data-categorie="developper">
+        <span class="tuile t-violet"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 1 4 10.5c-.8.7-1 1.6-1 2.5h-6c0-.9-.2-1.8-1-2.5A6 6 0 0 1 12 3z"/><path d="M10 20h4"/></svg></span>
+        <span class="pastille-cat p-violet">Conseils</span>
+        <h3>Bien communiquer avec vos clients</h3>
+        <p>Nos conseils pour instaurer une relation de confiance durable.</p>
+        <a href="#" class="lien-fleche">Lire les conseils <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+    </div>
 
-<!-- ============ RÉASSURANCE ============ -->
-<section class="reassurance">
-  <div class="conteneur reassurance-inner">
-    <div class="assur">
-      <span class="rond"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
-      <div><h3>Prestataires vérifiés</h3><p>Des professionnels de confiance</p></div>
-    </div>
-    <div class="assur">
-      <span class="rond"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg></span>
-      <div><h3>Avis clients authentiques</h3><p>Des retours d'expérience fiables</p></div>
-    </div>
-    <div class="assur">
-      <span class="rond"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11h6M9 15h4"/><path d="M6 3h9l4 4v14H6z"/></svg></span>
-      <div><h3>Devis gratuits et sans engagement</h3><p>Comparez et choisissez sereinement</p></div>
-    </div>
-    <div class="assur">
-      <span class="rond"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg></span>
-      <div><h3>Support 7 j/7</h3><p>Une équipe à votre écoute</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ NEWSLETTER ============ -->
-<section class="section newsletter" style="padding-top:0">
-  <div class="conteneur">
-    <div class="newsletter-boite">
-      <div class="newsletter-texte">
-        <h2>Les bons plans, directement dans votre boîte mail</h2>
-        <p>Conseils travaux, promotions locales et nouveautés — une fois par mois, jamais plus.</p>
+    <!-- Bandeau aide -->
+    <div class="bandeau-aide">
+      <span class="rond"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 10 5-10 5L2 8z"/><path d="M6 10.5V15c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5"/></svg></span>
+      <div>
+        <h2>Besoin d'aide ? Notre centre d'aide est là pour vous.</h2>
+        <p>Retrouvez des réponses à vos questions et des tutoriels pas à pas.</p>
       </div>
-      <form class="newsletter-form">
-        <div class="newsletter-ligne">
-          <input type="email" placeholder="Votre adresse e-mail" aria-label="Votre adresse e-mail" required>
-          <button class="btn btn-safran" type="submit">S'inscrire</button>
-        </div>
-        <small>Désinscription en un clic. Vos données restent chez nous.</small>
-      </form>
+      <a href="#" class="btn-contour-bleu">Accéder à l'aide &amp; FAQ</a>
     </div>
   </div>
-</section>
+</main>
 
 <!-- ============ FOOTER ============ -->
 <footer class="footer">
@@ -773,28 +691,24 @@ h1,h2,h3,.display{font-family:var(--display)}
 </footer>
 
 <script>
+
 // Ombre de la navbar au scroll
 const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 8);
-}, { passive: true });
+window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 8); }, { passive: true });
 
-// Reveal au scroll
-const cibles = document.querySelectorAll('.cat-page, .assur, .newsletter-boite');
-cibles.forEach(el => el.classList.add('reveal'));
-const observer = new IntersectionObserver(entries => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) {
-      e.target.style.transitionDelay = `${(i % 5) * 60}ms`;
-      e.target.classList.add('visible');
-      observer.unobserve(e.target);
-    }
+// ---- Nav tabs : filtrage des ressources ----
+const onglets = document.querySelectorAll('.nav-tab');
+const cartes = document.querySelectorAll('.ressource');
+onglets.forEach(tab => {
+  tab.addEventListener('click', () => {
+    onglets.forEach(t => t.classList.toggle('actif', t === tab));
+    const filtre = tab.dataset.filtre;
+    cartes.forEach(c => {
+      c.classList.toggle('masquee', filtre !== 'tout' && c.dataset.categorie !== filtre);
+    });
   });
-}, { threshold: 0.1 });
-cibles.forEach(el => observer.observe(el));
+});
 
-// Démo : empêcher le rechargement au submit
-document.querySelector('.newsletter-form').addEventListener('submit', e => e.preventDefault());
 </script>
 </body>
 </html>

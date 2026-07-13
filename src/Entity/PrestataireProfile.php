@@ -272,6 +272,22 @@ class PrestataireProfile
         $this->subscriptionCreditMovements = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        $companyName = trim((string) ($this->companyName ?? ''));
+        $slug = trim((string) ($this->slug ?? ''));
+
+        if ('' !== $companyName && '' !== $slug) {
+            return sprintf('%s (%s)', $companyName, $slug);
+        }
+
+        if ('' !== $companyName) {
+            return $companyName;
+        }
+
+        return sprintf('Prestataire #%s', $this->id ?? 'n/a');
+    }
+
     // --- AVAILABILITY ---
     #[ORM\OneToMany(mappedBy: 'prestataireProfile', targetEntity: PrestataireAvailability::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['dayOfWeek' => 'ASC'])]

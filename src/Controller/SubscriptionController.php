@@ -15,17 +15,27 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Throwable;
 
 #[Route('/prestataire/abonnements', name: 'app_subscription_')]
 final class SubscriptionController extends AbstractController
 {
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(
+        Request $request,
         SubscriptionPlanRepository $subscriptionPlanRepository,
         SubscriptionAccessManager $subscriptionAccessManager,
         StripeApiClient $stripeApiClient,
     ): Response {
         $prestataireProfile = $this->getPrestataireProfile();
+
+        if ('success' === $request->query->get('checkout')) {
+            $this->addFlash('success', 'Le paiement a bien ete initialise. Votre abonnement sera synchronise apres confirmation Stripe.');
+        }
+
+        if ('cancel' === $request->query->get('checkout')) {
+            $this->addFlash('warning', 'Le paiement a ete annule.');
+        }
 
         return $this->render('subscription/index.html.twig', [
             'plans' => $subscriptionPlanRepository->findActiveOrdered(),
@@ -77,8 +87,12 @@ final class SubscriptionController extends AbstractController
                 && $currentSubscription->getStripeSubscriptionId()
                 && $currentSubscription->getStripeSubscriptionItemId()
             ) {
-                $stripeApiClient->updateSubscriptionPlan($currentSubscription, $plan, $billingPeriod);
-                $this->addFlash('success', 'La montée en gamme a été demandée à Stripe. Le prorata sera géré automatiquement.');
+                try {
+                    $stripeApiClient->updateSubscriptionPlan($currentSubscription, $plan, $billingPeriod);
+                    $this->addFlash('success', 'La montée en gamme a été demandée à Stripe. Le prorata sera géré automatiquement.');
+                } catch (Throwable $exception) {
+                    $this->addFlash('danger', 'Impossible de mettre à jour l’abonnement Stripe : ' . $exception->getMessage());
+                }
 
                 return $this->redirectToRoute('app_subscription_index');
             }
@@ -88,27 +102,27 @@ final class SubscriptionController extends AbstractController
             return $this->redirectToRoute('app_subscription_portal');
         }
 
-        $customer = $subscriptionCustomerRepository->findOneByPrestataire($prestataireProfile);
-        if (null === $customer) {
-            $stripeCustomer = $stripeApiClient->createCustomer($prestataireProfile);
+        try {
+            $customer = $this->resolveStripeCustomer(
+                $prestataireProfile,
+                $subscriptionCustomerRepository,
+                $stripeApiClient,
+                $entityManager,
+            );
 
-            $customer = (new \App\Entity\Subscription\SubscriptionCustomer())
-                ->setPrestataireProfile($prestataireProfile)
-                ->setStripeCustomerId((string) ($stripeCustomer['id'] ?? ''))
-                ->setBillingEmail($prestataireProfile->getAccount()?->getEmail());
+            $checkoutSession = $stripeApiClient->createCheckoutSession(
+                $prestataireProfile,
+                $plan,
+                $billingPeriod,
+                $this->generateUrl('app_subscription_index', [], UrlGeneratorInterface::ABSOLUTE_URL) . '?checkout=success',
+                $this->generateUrl('app_subscription_index', [], UrlGeneratorInterface::ABSOLUTE_URL) . '?checkout=cancel',
+                $customer,
+            );
+        } catch (Throwable $exception) {
+            $this->addFlash('danger', 'Impossible de créer la session Stripe : ' . $exception->getMessage());
 
-            $entityManager->persist($customer);
-            $entityManager->flush();
+            return $this->redirectToRoute('app_subscription_index');
         }
-
-        $checkoutSession = $stripeApiClient->createCheckoutSession(
-            $prestataireProfile,
-            $plan,
-            $billingPeriod,
-            $this->generateUrl('app_subscription_index', [], UrlGeneratorInterface::ABSOLUTE_URL) . '?checkout=success',
-            $this->generateUrl('app_subscription_index', [], UrlGeneratorInterface::ABSOLUTE_URL) . '?checkout=cancel',
-            $customer,
-        );
 
         $checkoutUrl = $checkoutSession['url'] ?? null;
         if (!is_string($checkoutUrl) || '' === $checkoutUrl) {
@@ -134,16 +148,25 @@ final class SubscriptionController extends AbstractController
         }
 
         $customer = $subscriptionCustomerRepository->findOneByPrestataire($prestataireProfile);
-        if (!$customer instanceof \App\Entity\Subscription\SubscriptionCustomer) {
+        if (
+            !$customer instanceof \App\Entity\Subscription\SubscriptionCustomer
+            || '' === trim((string) $customer->getStripeCustomerId())
+        ) {
             $this->addFlash('warning', 'Aucun compte de facturation Stripe n’est encore associé à votre profil.');
 
             return $this->redirectToRoute('app_subscription_index');
         }
 
-        $portalSession = $stripeApiClient->createBillingPortalSession(
-            $customer,
-            $this->generateUrl('app_subscription_index', [], UrlGeneratorInterface::ABSOLUTE_URL)
-        );
+        try {
+            $portalSession = $stripeApiClient->createBillingPortalSession(
+                $customer,
+                $this->generateUrl('app_subscription_index', [], UrlGeneratorInterface::ABSOLUTE_URL)
+            );
+        } catch (Throwable $exception) {
+            $this->addFlash('danger', 'Impossible d’ouvrir le portail de facturation Stripe : ' . $exception->getMessage());
+
+            return $this->redirectToRoute('app_subscription_index');
+        }
 
         $portalUrl = $portalSession['url'] ?? null;
         if (!is_string($portalUrl) || '' === $portalUrl) {
@@ -164,5 +187,41 @@ final class SubscriptionController extends AbstractController
         }
 
         return $user->getPrestataireProfile();
+    }
+
+    private function resolveStripeCustomer(
+        \App\Entity\PrestataireProfile $prestataireProfile,
+        SubscriptionCustomerRepository $subscriptionCustomerRepository,
+        StripeApiClient $stripeApiClient,
+        EntityManagerInterface $entityManager,
+    ): \App\Entity\Subscription\SubscriptionCustomer {
+        $customer = $subscriptionCustomerRepository->findOneByPrestataire($prestataireProfile);
+
+        if (
+            $customer instanceof \App\Entity\Subscription\SubscriptionCustomer
+            && '' !== trim((string) $customer->getStripeCustomerId())
+        ) {
+            return $customer;
+        }
+
+        $stripeCustomer = $stripeApiClient->createCustomer($prestataireProfile);
+        $stripeCustomerId = trim((string) ($stripeCustomer['id'] ?? ''));
+
+        if ('' === $stripeCustomerId) {
+            throw new \RuntimeException('Stripe n’a pas retourné d’identifiant client.');
+        }
+
+        $customer ??= (new \App\Entity\Subscription\SubscriptionCustomer())
+            ->setPrestataireProfile($prestataireProfile);
+
+        $customer
+            ->setStripeCustomerId($stripeCustomerId)
+            ->setBillingEmail($prestataireProfile->getAccount()?->getEmail())
+            ->setUpdatedAt(new \DateTimeImmutable());
+
+        $entityManager->persist($customer);
+        $entityManager->flush();
+
+        return $customer;
     }
 }

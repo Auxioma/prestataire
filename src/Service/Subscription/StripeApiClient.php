@@ -85,7 +85,7 @@ class StripeApiClient
             'subscription_data[metadata][billing_period]' => $billingPeriod->value,
         ];
 
-        if ($customer instanceof SubscriptionCustomer) {
+        if ($customer instanceof SubscriptionCustomer && '' !== trim((string) $customer->getStripeCustomerId())) {
             $payload['customer'] = $customer->getStripeCustomerId();
         } else {
             $payload['customer_email'] = $prestataireProfile->getAccount()?->getEmail();
@@ -104,7 +104,7 @@ class StripeApiClient
     public function createBillingPortalSession(SubscriptionCustomer $customer, string $returnUrl): array
     {
         return $this->request('POST', '/billing_portal/sessions', [
-            'customer' => $customer->getStripeCustomerId(),
+            'customer' => trim((string) $customer->getStripeCustomerId()),
             'return_url' => $returnUrl,
         ]);
     }
@@ -187,6 +187,47 @@ class StripeApiClient
 
         $response = $this->httpClient->request($method, self::API_BASE_URI . $path, $options);
 
-        return $response->toArray(false);
+        $data = $response->toArray(false);
+
+        if ($response->getStatusCode() >= 400) {
+            throw new \RuntimeException($this->extractErrorMessage($data));
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function extractErrorMessage(array $data): string
+    {
+        $error = $data['error'] ?? null;
+        if (!is_array($error)) {
+            return 'Stripe a refusé la requête.';
+        }
+
+        $message = trim((string) ($error['message'] ?? ''));
+        $code = trim((string) ($error['code'] ?? ''));
+        $param = trim((string) ($error['param'] ?? ''));
+
+        $parts = [];
+
+        if ('' !== $message) {
+            $parts[] = $message;
+        }
+
+        if ('' !== $code) {
+            $parts[] = sprintf('code Stripe : %s', $code);
+        }
+
+        if ('' !== $param) {
+            $parts[] = sprintf('champ : %s', $param);
+        }
+
+        if ([] === $parts) {
+            return 'Stripe a refusé la requête.';
+        }
+
+        return implode(' | ', $parts);
     }
 }

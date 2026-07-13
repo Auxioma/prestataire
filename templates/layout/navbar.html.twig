@@ -12,6 +12,14 @@
 					<img src="{{ asset('images/logo_trouvemoipresta.png') }}" alt="Logo TrouveMoi" class="tm-navbar__brand-logo">
 				</a>
 
+                {% if app.user %}
+                    {% set accountBadgeLabel = is_granted('ROLE_PRESTATAIRE') ? 'Compte prestataire' : (is_granted('ROLE_CLIENT') ? 'Compte client' : 'Compte utilisateur') %}
+                    {% set accountBadgeClass = is_granted('ROLE_PRESTATAIRE') ? 'text-bg-warning' : (is_granted('ROLE_CLIENT') ? 'text-bg-primary' : 'text-bg-secondary') %}
+                    <span class="badge {{ accountBadgeClass }} align-self-center ms-2">
+                        {{ accountBadgeLabel }}
+                    </span>
+                {% endif %}
+
 				{# Barre de recherche NAVBAR #}
 				{# <div class="tm-navbar__search tm-navbar__search--desktop">
 				                    <div class="tm-navbar__search-wrap">
@@ -59,6 +67,11 @@
 										<i class="fa-solid fa-gauge me-2"></i>Espace Pro
 									</a>
 								</li>
+                                <li>
+                                    <a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_subscription_index') }}">
+                                        <i class="fa-solid fa-credit-card me-2"></i>Mes abonnements
+                                    </a>
+                                </li>
 							{% elseif is_granted('ROLE_CLIENT') %}
 								<li>
 									<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_quote_request_index') }}">
@@ -258,6 +271,15 @@
 						</a>
 					</li>
 
+                    {% if app.user and is_granted('ROLE_PRESTATAIRE') %}
+                        <li class="nav-item">
+                            <a class="nav-link tm-navbar__link tm-navbar__link--icon" href="{{ path('app_subscription_index') }}">
+                                <i class="fa-solid fa-credit-card"></i>
+                                <span>Abonnements</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
 					{% if app.user and is_granted('ROLE_CLIENT') %}
 						<li class="nav-item">
 							<a class="nav-link tm-navbar__link tm-navbar__link--icon" href="{{ path('app_client_settings_favorites') }}">
@@ -310,6 +332,11 @@
 											<i class="fa-solid fa-gauge me-2"></i>Espace Pro
 										</a>
 									</li>
+                                    <li>
+                                        <a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_subscription_index') }}">
+                                            <i class="fa-solid fa-credit-card me-2"></i>Mes abonnements
+                                        </a>
+                                    </li>
 								{% elseif is_granted('ROLE_CLIENT') %}
 									<li>
 										<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_quote_request_index') }}">

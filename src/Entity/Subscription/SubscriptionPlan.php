@@ -81,6 +81,22 @@ class SubscriptionPlan
         $this->subscriptions = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        $name = trim((string) ($this->name ?? ''));
+        $code = trim((string) ($this->code ?? ''));
+
+        if ('' !== $name && '' !== $code) {
+            return sprintf('%s (%s)', $name, $code);
+        }
+
+        if ('' !== $name) {
+            return $name;
+        }
+
+        return sprintf('Plan #%s', $this->id ?? 'n/a');
+    }
+
     public function getId(): ?string
     {
         return $this->id;

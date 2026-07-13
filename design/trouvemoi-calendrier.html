@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendrier — Espace prestataire — TrouveMoi.com</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* ============================================================
+   TROUVEMOI — Espace prestataire · Paramètres
+   Design system : Encre #0A1633 · Bleu #1E49C7 · Safran #FF8A1E
+   ============================================================ */
+:root{
+  --encre:#0A1633;--encre-2:#101F45;--bleu:#1E49C7;--bleu-clair:#E6ECFC;
+  --safran:#FF8A1E;--safran-fonce:#E8760A;--papier:#F4F6FA;--blanc:#FFFFFF;
+  --vert:#0E9F6E;--vert-clair:#E2F5EE;--texte:#233047;--texte-doux:#5B6B85;
+  --bordure:#E3E8F1;--radius:16px;--ombre:0 8px 30px rgba(10,22,51,.08);
+  --display:"Bricolage Grotesque",sans-serif;--body:"Inter",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);color:var(--texte);background:var(--papier);line-height:1.6;font-size:15px}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,textarea{font-family:inherit}
+:focus-visible{outline:3px solid var(--safran);outline-offset:2px;border-radius:6px}
+
+.app{display:grid;grid-template-columns:282px 1fr;min-height:100vh}
+
+/* ============ SIDEBAR ============ */
+.sidebar{background:var(--encre);color:#C9D3E8;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:thin}
+.sidebar-logo{display:flex;align-items:center;gap:11px;padding:22px 22px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.logo-mark{width:40px;height:40px;flex-shrink:0}
+.logo-nom{font-family:var(--display);font-weight:800;font-size:20px;color:#fff;letter-spacing:-.01em;line-height:1.1}
+.logo-nom span{color:var(--safran)}
+.logo-slogan{font-size:10.5px;color:#8FA0C2;margin-top:2px}
+.sidebar-profil{display:flex;align-items:center;gap:13px;padding:20px 22px 6px}
+.sidebar-profil img{width:54px;height:54px;border-radius:50%;object-fit:cover;border:2.5px solid var(--safran)}
+.sidebar-profil h2{font-family:var(--display);font-size:16px;font-weight:700;color:#fff}
+.sidebar-profil p{font-size:12px;color:#8FA0C2}
+.sidebar-profil .note{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#fff;margin-top:3px}
+.sidebar-profil .note svg{color:var(--safran)}
+.sidebar-profil .note span{font-weight:500;color:#8FA0C2}
+.btn-profil-public{display:flex;align-items:center;justify-content:center;gap:9px;background:var(--bleu);color:#fff;font-weight:700;font-size:13.5px;border-radius:11px;padding:12px;margin:14px 22px 8px;transition:background .15s,box-shadow .15s}
+.btn-profil-public:hover{background:#2A56D8;box-shadow:0 8px 20px rgba(30,73,199,.4)}
+.sidebar nav{padding:10px 12px;flex:1}
+.sidebar nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;font-size:14px;font-weight:500;color:#C9D3E8;transition:background .15s,color .15s;margin-bottom:2px}
+.sidebar nav a:hover{background:rgba(255,255,255,.07);color:#fff}
+.sidebar nav a.actif{background:rgba(255,255,255,.1);color:#fff;font-weight:700;box-shadow:inset 3px 0 0 var(--safran)}
+.sidebar nav a svg{flex-shrink:0;color:#8FA0C2}
+.sidebar nav a.actif svg,.sidebar nav a:hover svg{color:var(--safran)}
+.sidebar nav .nb{margin-left:auto;background:var(--bleu);color:#fff;font-size:11px;font-weight:800;border-radius:999px;min-width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px}
+.groupe-titre{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#5B6B85;padding:18px 12px 8px}
+.deconnexion{padding:14px 12px;border-top:1px solid rgba(255,255,255,.08)}
+.deconnexion a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;font-size:14px;color:#C9D3E8;transition:background .15s,color .15s}
+.deconnexion a:hover{background:rgba(224,36,94,.15);color:#FF7A9C}
+
+/* ============ MAIN ============ */
+.principal{display:flex;flex-direction:column;min-width:0}
+.barre-haute{background:#fff;border-bottom:1px solid var(--bordure);display:flex;align-items:center;gap:18px;padding:16px 30px;position:sticky;top:0;z-index:20}
+.barre-haute .burger{color:var(--encre);padding:6px;display:flex}
+.barre-haute h1{font-family:var(--display);font-size:21px;font-weight:800;letter-spacing:-.01em;color:var(--encre)}
+.barre-haute .sous{font-size:13px;color:var(--texte-doux)}
+.barre-droite{margin-left:auto;display:flex;align-items:center;gap:16px}
+.lien-aide{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--bleu)}
+.lien-aide:hover{text-decoration:underline}
+.btn-cloche{position:relative;color:var(--encre);display:flex;padding:6px}
+.btn-cloche .pastille{position:absolute;top:0;right:0;background:#E0245E;color:#fff;font-size:10px;font-weight:800;border-radius:999px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.avatar-haut{display:flex;align-items:center;gap:8px;color:var(--texte-doux)}
+.avatar-haut img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+
+.contenu{padding:26px 30px 46px;max-width:1400px;width:100%}
+
+/* Onglets */
+.onglets{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);display:flex;box-shadow:var(--ombre);overflow-x:auto;scrollbar-width:none;margin-bottom:24px}
+.onglets::-webkit-scrollbar{display:none}
+.onglet{padding:17px 22px;font-size:14px;font-weight:600;color:var(--texte-doux);border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s}
+.onglet:hover{color:var(--encre)}
+.onglet.actif{color:var(--bleu);font-weight:700;border-bottom-color:var(--bleu)}
+
+/* Layout paramètres */
+.parametres-layout{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start}
+.bloc{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);box-shadow:var(--ombre)}
+.bloc-corps{padding:26px 28px}
+.bloc h2{font-family:var(--display);font-size:17px;font-weight:700;color:var(--encre)}
+.bloc .desc{font-size:13px;color:var(--texte-doux);margin-top:3px}
+
+/* Formulaire */
+.forme{margin-top:22px}
+.rangee{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.champ{margin-bottom:16px;min-width:0}
+.champ label{display:block;font-size:13px;font-weight:700;color:var(--encre);margin-bottom:7px}
+.champ label small{font-weight:500;color:var(--texte-doux)}
+.champ .enveloppe{position:relative}
+.champ input,.champ textarea{width:100%;border:1.5px solid var(--bordure);border-radius:11px;padding:11px 14px;font-size:14px;color:var(--encre);background:#fff;transition:border-color .15s,box-shadow .15s}
+.champ input:focus,.champ textarea:focus{outline:none;border-color:var(--bleu);box-shadow:0 0 0 4px var(--bleu-clair)}
+.champ textarea{resize:vertical;min-height:104px;line-height:1.6}
+.compteur{position:absolute;right:12px;bottom:9px;font-size:11.5px;color:var(--texte-doux);background:#fff;padding:0 4px}
+.photo-ligne{display:flex;align-items:center;gap:16px}
+.photo-ligne img{width:78px;height:78px;border-radius:50%;object-fit:cover;border:1px solid var(--bordure)}
+.btn-contour{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:13.5px;color:var(--bleu);background:#fff;border:1.5px solid var(--bleu);border-radius:11px;padding:11px 18px;transition:background .15s,color .15s}
+.btn-contour:hover{background:var(--bleu);color:#fff}
+.photo-ligne small{display:block;font-size:12px;color:var(--texte-doux);margin-top:7px}
+.actions-forme{display:flex;justify-content:flex-end;margin-top:6px}
+.btn-bleu{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--bleu);color:#fff;font-weight:700;font-size:14px;border-radius:11px;padding:13px 24px;transition:background .15s,box-shadow .15s}
+.btn-bleu:hover{background:#2A56D8;box-shadow:0 10px 24px rgba(30,73,199,.35)}
+
+/* Services aperçu */
+.bloc-services{margin-top:20px}
+.bloc-services .entete{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.bloc-services .entete a{font-size:13.5px;font-weight:700;color:var(--bleu)}
+.bloc-services .entete a:hover{text-decoration:underline}
+.chips-services{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.chip-service{display:inline-flex;align-items:center;gap:8px;background:var(--papier);border:1px solid var(--bordure);border-radius:999px;padding:8px 16px;font-size:13.5px;font-weight:600;color:var(--encre)}
+.chip-service i{width:8px;height:8px;border-radius:50%;background:var(--vert)}
+
+/* Bandeau aide */
+.bandeau-aide{background:var(--bleu-clair);border-radius:var(--radius);padding:20px 24px;display:flex;align-items:center;gap:16px;margin-top:20px;flex-wrap:wrap}
+.bandeau-aide .rond{width:48px;height:48px;border-radius:50%;background:var(--bleu);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bandeau-aide h3{font-size:14.5px;font-weight:700;color:var(--encre)}
+.bandeau-aide p{font-size:13px;color:var(--texte-doux);margin-top:2px}
+.bandeau-aide .btn-contour{margin-left:auto;background:#fff}
+
+/* Colonne droite */
+.colonne-droite{display:grid;gap:20px}
+.apercu-profil .cover{position:relative;height:140px;border-radius:var(--radius) var(--radius) 0 0;overflow:hidden}
+.apercu-profil .cover img{width:100%;height:100%;object-fit:cover}
+.apercu-profil .avatar{position:absolute;left:22px;bottom:-34px;width:86px;height:86px;border-radius:50%;object-fit:cover;border:4px solid #fff;box-shadow:var(--ombre);z-index:2}
+.apercu-corps{padding:46px 24px 24px;position:relative}
+.apercu-corps h3{font-family:var(--display);font-size:19px;font-weight:800;color:var(--encre);display:flex;align-items:center;gap:8px}
+.apercu-corps h3 svg{color:var(--bleu)}
+.apercu-corps .slogan{font-size:13.5px;color:var(--texte-doux);margin-top:3px}
+.apercu-corps .infos{display:flex;align-items:center;gap:16px;margin-top:12px;font-size:13px;color:var(--texte-doux);flex-wrap:wrap}
+.apercu-corps .infos .note{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--encre)}
+.apercu-corps .infos .note svg{color:var(--safran)}
+.apercu-corps .infos .lieu{display:inline-flex;align-items:center;gap:6px}
+.apercu-corps .infos .lieu svg{color:var(--bleu)}
+.apercu-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.apercu-actions .btn-contour,.apercu-actions .btn-bleu{padding:12px 10px;font-size:13px}
+
+/* Statut du profil */
+.statut-corps{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;padding:22px 24px}
+.statut-liste li{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--texte);padding:5px 0;list-style:none}
+.statut-liste .ok{width:20px;height:20px;border-radius:50%;background:var(--vert-clair);color:var(--vert);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.statut-liste .attention{width:20px;height:20px;border-radius:50%;background:#FFF2DB;color:#D98A00;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.anneau{position:relative;width:96px;height:96px;text-align:center}
+.anneau svg{transform:rotate(-90deg)}
+.anneau .fond-a{stroke:var(--papier)}
+.anneau .val-a{stroke:var(--vert);stroke-linecap:round}
+.anneau .pct{position:absolute;inset:0 0 18px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:20px;color:var(--encre)}
+.anneau .lab{font-size:11px;color:var(--texte-doux);font-weight:600}
+.statut-note{font-size:12.5px;color:var(--texte-doux);padding:0 24px 20px}
+
+/* Raccourcis */
+.raccourcis-grille{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:18px 20px 20px}
+.raccourci{border:1px solid var(--bordure);border-radius:12px;padding:14px 12px;text-align:center;transition:border-color .15s,box-shadow .15s;display:block}
+.raccourci:hover{border-color:var(--bleu);box-shadow:0 10px 24px rgba(30,73,199,.14)}
+.raccourci svg{color:var(--bleu);margin:0 auto 8px;display:block}
+.raccourci h4{font-size:12px;font-weight:700;color:var(--encre);line-height:1.3}
+.raccourci p{font-size:10.5px;color:var(--texte-doux);margin-top:4px;line-height:1.4}
+.bloc > h2.titre-bloc{padding:20px 24px 0}
+
+/* Responsive */
+@media (max-width:1280px){.parametres-layout{grid-template-columns:1fr}}
+@media (max-width:1024px){.app{grid-template-columns:1fr}.sidebar{position:static;height:auto}.sidebar nav{display:grid;grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.rangee{grid-template-columns:1fr}.contenu{padding:18px 16px 36px}.barre-haute{padding:14px 16px}.barre-haute .sous{display:none}.raccourcis-grille{grid-template-columns:1fr}.statut-corps{grid-template-columns:1fr}.apercu-actions{grid-template-columns:1fr}}
+
+
+/* ============================================================
+   PAGE CALENDRIER — styles spécifiques
+   ============================================================ */
+.barre-calendrier{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);box-shadow:var(--ombre);display:flex;align-items:center;gap:12px;padding:14px 18px;flex-wrap:wrap}
+.btn-aujourdhui{border:1.5px solid var(--bordure);border-radius:11px;padding:10px 18px;font-size:13.5px;font-weight:700;color:var(--encre);transition:border-color .15s}
+.btn-aujourdhui:hover{border-color:var(--bleu);color:var(--bleu)}
+.btn-nav{width:38px;height:38px;border:1.5px solid var(--bordure);border-radius:11px;display:flex;align-items:center;justify-content:center;color:var(--texte-doux);transition:border-color .15s,color .15s}
+.btn-nav:hover{border-color:var(--bleu);color:var(--bleu)}
+.titre-mois{display:flex;align-items:center;gap:9px;font-family:var(--display);font-weight:800;font-size:20px;color:var(--encre);padding:0 6px;cursor:pointer}
+.titre-mois svg{color:var(--texte-doux)}
+.bascule-vues{margin-left:auto;display:flex;border:1.5px solid var(--bordure);border-radius:12px;overflow:hidden}
+.vue{padding:10px 20px;font-size:13.5px;font-weight:600;color:var(--texte-doux);transition:background .15s,color .15s}
+.vue + .vue{border-left:1.5px solid var(--bordure)}
+.vue:hover{color:var(--encre)}
+.vue.actif{background:var(--bleu-clair);color:var(--bleu);font-weight:700}
+.btn-ajouter-rdv{display:flex;border-radius:12px;overflow:hidden}
+.btn-ajouter-rdv > button{background:var(--bleu);color:#fff;font-size:13.5px;font-weight:700;display:inline-flex;align-items:center;gap:9px;padding:11px 20px;transition:background .15s}
+.btn-ajouter-rdv > button:hover{background:#2A56D8}
+.btn-ajouter-rdv .fleche-menu{padding:11px 13px;border-left:1px solid rgba(255,255,255,.25)}
+
+.calendrier-layout{display:grid;grid-template-columns:236px 1fr;gap:18px;margin-top:18px;align-items:start}
+.colonne-outils{display:grid;gap:18px}
+.bloc-outil{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);box-shadow:var(--ombre);padding:18px}
+
+/* Mini calendrier */
+.mini-entete{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mini-entete h2{font-family:var(--display);font-size:14.5px;font-weight:700;color:var(--encre)}
+.mini-entete .navs{display:flex;gap:4px}
+.mini-entete button{color:var(--texte-doux);padding:3px;border-radius:6px;display:flex}
+.mini-entete button:hover{background:var(--papier);color:var(--encre)}
+.mini-grille{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;font-size:12px}
+.mini-grille .jour-sem{font-weight:700;color:var(--texte-doux);font-size:10.5px;padding:4px 0}
+.mini-grille .jour{width:26px;height:26px;margin:0 auto;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--encre);font-weight:600;cursor:pointer;transition:background .15s}
+.mini-grille .jour:hover{background:var(--papier)}
+.mini-grille .jour.mut{color:#B4C0D6;font-weight:500}
+.mini-grille .jour.auj{background:var(--papier);font-weight:700}
+.mini-grille .jour.actif{background:var(--bleu);color:#fff;font-weight:800}
+
+/* Filtres */
+.bloc-outil h3{font-family:var(--display);font-size:14.5px;font-weight:700;color:var(--encre);margin-bottom:12px}
+.filtre-cal{margin-bottom:13px}
+.filtre-cal label{display:block;font-size:11.5px;font-weight:700;color:var(--texte-doux);margin-bottom:6px}
+.filtre-cal .enveloppe{display:flex;align-items:center;gap:8px;border:1.5px solid var(--bordure);border-radius:10px;padding:9px 12px}
+.filtre-cal select{border:none;background:none;font:inherit;font-size:13px;font-weight:600;color:var(--encre);cursor:pointer;appearance:none;-webkit-appearance:none;flex:1}
+.filtre-cal .enveloppe svg{color:var(--texte-doux)}
+.cases-statuts{display:grid;gap:4px;margin-top:4px}
+.case-statut{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--encre);padding:4px 0;cursor:pointer}
+.case-statut input{width:17px;height:17px;accent-color:var(--bleu);cursor:pointer}
+.case-statut .point{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.p-bleu{background:var(--bleu)}.p-safran{background:#F0A020}.p-vert{background:var(--vert)}.p-violet{background:#7C3AED}.p-rouge{background:#D93025}
+
+/* Disponibilités */
+.dispo-entete{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.dispo-entete a{font-size:12.5px;font-weight:700;color:var(--bleu)}
+.dispo-entete a:hover{text-decoration:underline}
+.dispo-ligne{padding:7px 0;border-bottom:1px solid var(--bordure)}
+.dispo-ligne:last-of-type{border-bottom:none}
+.dispo-ligne small{display:block;font-size:11.5px;color:var(--texte-doux);font-weight:600}
+.dispo-ligne strong{font-size:13px;color:var(--encre);font-weight:700}
+.bascule-ligne{display:flex;align-items:center;gap:10px;margin-top:12px;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--texte-doux)}
+.interrupteur{position:relative;width:38px;height:22px;flex-shrink:0}
+.interrupteur input{opacity:0;width:0;height:0}
+.glisseur{position:absolute;inset:0;background:#C9D3E8;border-radius:999px;transition:background .2s}
+.glisseur::before{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(10,22,51,.3)}
+.interrupteur input:checked + .glisseur{background:var(--bleu)}
+.interrupteur input:checked + .glisseur::before{transform:translateX(16px)}
+
+/* Semaine */
+.bloc-semaine{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);box-shadow:var(--ombre);overflow:hidden}
+.entetes-jours{display:grid;grid-template-columns:56px repeat(7,1fr);border-bottom:1px solid var(--bordure)}
+.entete-jour{text-align:center;padding:13px 4px;font-size:12.5px;font-weight:700;color:var(--texte-doux);border-left:1px solid var(--bordure);position:relative}
+.entete-jour.actif{color:var(--bleu)}
+.entete-jour.actif::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;background:var(--bleu)}
+.entete-jour .badge-jour{display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;border-radius:50%;background:var(--bleu);color:#fff;font-size:11px;font-weight:800;margin-left:5px}
+.corps-semaine{display:grid;grid-template-columns:56px repeat(7,1fr);position:relative}
+.colonne-heures{position:relative;height:620px}
+.colonne-heures span{position:absolute;right:8px;transform:translateY(-6px);font-size:11px;color:var(--texte-doux)}
+.colonne-jour{position:relative;height:620px;border-left:1px solid var(--bordure);background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 61px,var(--bordure) 61px,var(--bordure) 62px)}
+.evenement{position:absolute;left:5px;right:5px;border-radius:11px;border:1px solid;padding:9px 11px;font-size:11.5px;line-height:1.35;overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.evenement:hover{box-shadow:0 10px 24px rgba(10,22,51,.16);z-index:3}
+.evenement.masque{display:none}
+.evenement strong{display:block;font-weight:700;color:var(--encre);font-size:11.5px}
+.evenement .titre-ev{display:block;font-weight:700;color:var(--encre);margin-top:2px}
+.evenement .detail-ev{display:block;color:var(--texte-doux);margin-top:1px}
+.ev-bleu{background:var(--bleu-clair);border-color:#C7D6F8}
+.ev-vert{background:var(--vert-clair);border-color:#BFE8D6}
+.ev-safran{background:#FFF4DE;border-color:#F5DFAF}
+.ev-violet{background:#F1EBFD;border-color:#E0D2FA}
+.jour-indispo{position:absolute;inset:6px 5px;border:1.5px dashed #C9D3E8;border-radius:12px;background:repeating-linear-gradient(45deg,transparent 0 7px,#F0F3F9 7px 9px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;color:var(--texte-doux);font-size:12.5px;font-weight:600}
+.jour-indispo svg{color:#98A6C3}
+
+/* Rangée basse */
+.rangee-basse{display:grid;grid-template-columns:1fr 1.15fr;gap:18px;margin-top:18px;align-items:start}
+.rangee-basse h3{font-family:var(--display);font-size:14.5px;font-weight:700;color:var(--encre);margin-bottom:11px}
+.carte-prochain{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);box-shadow:var(--ombre);padding:16px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.carte-prochain .rond{width:42px;height:42px;border-radius:11px;background:var(--vert-clair);color:var(--vert);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.carte-prochain small{display:block;font-size:12px;color:var(--texte-doux);font-weight:600}
+.carte-prochain strong{display:block;font-size:14px;color:var(--encre);font-weight:700;margin-top:1px}
+.carte-prochain p{font-size:12.5px;color:var(--texte-doux);margin-top:1px}
+.carte-prochain .btn-details{margin-left:auto;border:1.5px solid var(--bordure);border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;color:var(--encre);transition:border-color .15s,color .15s}
+.carte-prochain .btn-details:hover{border-color:var(--bleu);color:var(--bleu)}
+.recap-grille{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.recap-carte{border-radius:14px;padding:16px}
+.recap-carte .val{font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:-.02em}
+.recap-carte p{font-size:12px;font-weight:700;margin-top:3px;line-height:1.35}
+.rc-bleu{background:var(--bleu-clair)}.rc-bleu .val,.rc-bleu p{color:var(--bleu)}
+.rc-vert{background:var(--vert-clair)}.rc-vert .val,.rc-vert p{color:var(--vert)}
+.rc-safran{background:#FFF2DB}.rc-safran .val,.rc-safran p{color:#D98A00}
+.rc-rouge{background:#FDECEA}.rc-rouge .val,.rc-rouge p{color:#D93025}
+
+@media (max-width:1280px){.calendrier-layout{grid-template-columns:1fr}.colonne-outils{grid-template-columns:repeat(3,1fr)}.rangee-basse{grid-template-columns:1fr}}
+@media (max-width:1024px){.colonne-outils{grid-template-columns:1fr}.bascule-vues{margin-left:0}}
+@media (max-width:640px){.recap-grille{grid-template-columns:repeat(2,1fr)}.carte-prochain .btn-details{margin-left:0;width:100%}}
+
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <svg class="logo-mark" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+        <rect x="2" y="10" width="24" height="24" rx="7" fill="#1E49C7" transform="rotate(-8 14 22)"/>
+        <rect x="18" y="10" width="24" height="24" rx="7" fill="#FF8A1E" transform="rotate(8 30 22)"/>
+        <circle cx="22" cy="22" r="5.5" fill="#fff"/>
+      </svg>
+      <div>
+        <div class="logo-nom">TrouveMoi<span>.com</span></div>
+        <div class="logo-slogan">Trouvez. Réservez. Réalisez.</div>
+      </div>
+    </div>
+
+    <div class="sidebar-profil">
+      <img src="https://picsum.photos/seed/thomas-tm/108/108" alt="Photo de Thomas Martin">
+      <div>
+        <h2>Thomas Martin</h2>
+        <p>Plombier chauffagiste</p>
+        <p class="note"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>4,8/5 <span>(128 avis)</span></p>
+      </div>
+    </div>
+    <a href="#" class="btn-profil-public">Voir mon profil public <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"/></svg></a>
+
+    <nav aria-label="Navigation de l'espace prestataire">
+      <a href="#" class="actif" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span>Tableau de bord</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11h6M9 15h4"/><path d="M6 3h9l4 4v14H6z"/></svg><span>Demandes</span><span class="nb">8</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5 5L3 18v3h3l6.7-6.7a4 4 0 0 0 5-5L15 12l-3-3z"/></svg><span>Mes prestations</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg><span>Messages</span><span class="nb">3</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg><span>Avis clients</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span>Calendrier</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Mes documents</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20v-6M9 20V9M14 20v-9M19 20V5"/></svg><span>Statistiques</span></a>
+      <p class="groupe-titre">Paramètres</p>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg><span>Paramètres</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg><span>Mon compte</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span>Notifications</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="11" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg><span>Sécurité</span></a>
+    </nav>
+
+    <div class="deconnexion">
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg><span>Déconnexion</span></a>
+    </div>
+  </aside>
+
+  <!-- ============ PRINCIPAL ============ -->
+  <div class="principal">
+
+    <header class="barre-haute">
+      <button class="burger" aria-label="Ouvrir le menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <div>
+        <h1>Calendrier</h1>
+        <p class="sous">Gérez vos rendez-vous et interventions</p>
+      </div>
+      <div class="barre-droite">
+        <a href="#" class="lien-aide"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4.9.8c0 1.6-2.4 2.2-2.4 3.7M12 17h.01"/></svg>Besoin d'aide ?</a>
+        <button class="btn-cloche" aria-label="Notifications"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="pastille">2</span></button>
+        <a href="#" class="avatar-haut"><img src="https://picsum.photos/seed/thomas-tm/80/80" alt=""><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></a>
+      </div>
+    </header>
+
+    <main class="contenu">
+
+      <!-- Barre du calendrier -->
+      <div class="barre-calendrier">
+        <button class="btn-aujourdhui" type="button">Aujourd'hui</button>
+        <button class="btn-nav" type="button" aria-label="Semaine précédente"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button>
+        <button class="btn-nav" type="button" aria-label="Semaine suivante"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
+        <button class="titre-mois" type="button">Mai 2024 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="bascule-vues" role="tablist" aria-label="Vue du calendrier">
+          <button class="vue" type="button">Jour</button>
+          <button class="vue actif" type="button">Semaine</button>
+          <button class="vue" type="button">Mois</button>
+        </div>
+        <div class="btn-ajouter-rdv">
+          <button type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Ajouter un rendez-vous</button>
+          <button class="fleche-menu" type="button" aria-label="Options d'ajout" style="background:var(--bleu);color:#fff"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+        </div>
+      </div>
+
+      <div class="calendrier-layout">
+
+        <!-- Colonne outils -->
+        <div class="colonne-outils">
+
+          <div class="bloc-outil">
+            <div class="mini-entete">
+              <h2>Mai 2024</h2>
+              <div class="navs">
+                <button type="button" aria-label="Mois précédent"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button>
+                <button type="button" aria-label="Mois suivant"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
+              </div>
+            </div>
+            <div class="mini-grille">
+        <span class="jour-sem">Lu</span><span class="jour-sem">Ma</span><span class="jour-sem">Me</span><span class="jour-sem">Je</span><span class="jour-sem">Ve</span><span class="jour-sem">Sa</span><span class="jour-sem">Di</span>
+        <span class="jour mut">29</span>
+        <span class="jour mut">30</span>
+        <span class="jour">1</span>
+        <span class="jour">2</span>
+        <span class="jour">3</span>
+        <span class="jour">4</span>
+        <span class="jour">5</span>
+        <span class="jour">6</span>
+        <span class="jour auj">7</span>
+        <span class="jour">8</span>
+        <span class="jour">9</span>
+        <span class="jour">10</span>
+        <span class="jour">11</span>
+        <span class="jour">12</span>
+        <span class="jour">13</span>
+        <span class="jour actif">14</span>
+        <span class="jour">15</span>
+        <span class="jour">16</span>
+        <span class="jour">17</span>
+        <span class="jour">18</span>
+        <span class="jour">19</span>
+        <span class="jour">20</span>
+        <span class="jour">21</span>
+        <span class="jour">22</span>
+        <span class="jour">23</span>
+        <span class="jour">24</span>
+        <span class="jour">25</span>
+        <span class="jour">26</span>
+        <span class="jour">27</span>
+        <span class="jour">28</span>
+        <span class="jour">29</span>
+        <span class="jour">30</span>
+        <span class="jour">31</span>
+        <span class="jour mut">1</span>
+        <span class="jour mut">2</span>
+            </div>
+          </div>
+
+          <div class="bloc-outil">
+            <h3>Filtres</h3>
+            <div class="filtre-cal">
+              <label for="f-type">Afficher</label>
+              <div class="enveloppe"><select id="f-type"><option>Tous les types</option><option>Installations</option><option>Dépannages</option><option>Entretiens</option></select><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+            </div>
+            <div class="filtre-cal">
+              <label for="f-statut">Statut</label>
+              <div class="enveloppe"><select id="f-statut"><option>Tous les statuts</option><option>Confirmé</option><option>En attente</option><option>En cours</option><option>Terminé</option><option>Annulé</option></select><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+            </div>
+            <div class="cases-statuts">
+              <label class="case-statut"><input type="checkbox" checked data-statut="bleu"><span class="point p-bleu"></span>Confirmé</label>
+              <label class="case-statut"><input type="checkbox" checked data-statut="safran"><span class="point p-safran"></span>En attente</label>
+              <label class="case-statut"><input type="checkbox" checked data-statut="vert"><span class="point p-vert"></span>En cours</label>
+              <label class="case-statut"><input type="checkbox" checked data-statut="violet"><span class="point p-violet"></span>Terminé</label>
+              <label class="case-statut"><input type="checkbox" checked data-statut="rouge"><span class="point p-rouge"></span>Annulé</label>
+            </div>
+          </div>
+
+          <div class="bloc-outil">
+            <div class="dispo-entete"><h3 style="margin:0">Mes disponibilités</h3><a href="#">Modifier</a></div>
+            <div class="dispo-ligne"><small>Lundi - Vendredi</small><strong>08:00 - 18:00</strong></div>
+            <div class="dispo-ligne"><small>Samedi</small><strong>09:00 - 13:00</strong></div>
+            <div class="dispo-ligne"><small>Dimanche</small><strong>Fermé</strong></div>
+            <label class="bascule-ligne">
+              <span class="interrupteur"><input type="checkbox" id="bascule-indispo" checked><span class="glisseur"></span></span>
+              Afficher les indisponibilités
+            </label>
+          </div>
+        </div>
+
+        <!-- Grille semaine -->
+        <section class="bloc-semaine">
+          <div class="entetes-jours">
+<div></div><div class="entete-jour">Lun. 13/05</div><div class="entete-jour actif">Mar. 14<span class='badge-jour'>14</span></div><div class="entete-jour">Mer. 15/05</div><div class="entete-jour">Jeu. 16/05</div><div class="entete-jour">Ven. 17/05</div><div class="entete-jour">Sam. 18/05</div><div class="entete-jour">Dim. 19/05</div>
+          </div>
+          <div class="corps-semaine">
+            <div class="colonne-heures"><span style="top:0px">08:00</span><span style="top:62px">09:00</span><span style="top:124px">10:00</span><span style="top:186px">11:00</span><span style="top:248px">12:00</span><span style="top:310px">13:00</span><span style="top:372px">14:00</span><span style="top:434px">15:00</span><span style="top:496px">16:00</span><span style="top:558px">17:00</span><span style="top:620px">18:00</span></div>
+      <div class="colonne-jour">
+        <div class="evenement ev-vert" data-statut="vert" style="top:62px;height:87px" tabindex="0">
+          <strong>09:00 - 10:30</strong>
+          <span class="titre-ev">Entretien chaudière</span>
+          <span class="detail-ev">Laura Chevalier</span>
+          <span class="detail-ev">Tassin-la-Demi-Lune</span>
+        </div>
+        <div class="evenement ev-bleu" data-statut="bleu" style="top:372px;height:87px" tabindex="0">
+          <strong>14:00 - 15:30</strong>
+          <span class="titre-ev">Installation chauffe-eau</span>
+          <span class="detail-ev">Sophie Durand</span>
+          <span class="detail-ev">Lyon 3e</span>
+        </div>
+        <div class="evenement ev-violet" data-statut="violet" style="top:496px;height:87px" tabindex="0">
+          <strong>16:00 - 17:30</strong>
+          <span class="titre-ev">Dépannage fuite d'eau</span>
+          <span class="detail-ev">Marc Bernard</span>
+          <span class="detail-ev">Villeurbanne</span>
+        </div>
+      </div>
+      <div class="colonne-jour">
+        <div class="evenement ev-bleu" data-statut="bleu" style="top:31px;height:87px" tabindex="0">
+          <strong>08:30 - 10:00</strong>
+          <span class="titre-ev">Installation salle de bain</span>
+          <span class="detail-ev">Pauline Chevret</span>
+          <span class="detail-ev">Lyon 7e</span>
+        </div>
+        <div class="evenement ev-safran" data-statut="safran" style="top:155px;height:56px" tabindex="0">
+          <strong>10:30 - 11:30</strong>
+          <span class="titre-ev">Remplacement radiateur</span>
+          <span class="detail-ev">Nicolas Petit</span>
+          <span class="detail-ev">Caluire-et-Cuire</span>
+        </div>
+        <div class="evenement ev-vert" data-statut="vert" style="top:372px;height:56px" tabindex="0">
+          <strong>14:00 - 15:00</strong>
+          <span class="titre-ev">Contrôle installation gaz</span>
+          <span class="detail-ev">Romain Testud</span>
+          <span class="detail-ev">Sainte-Foy-lès-Lyon</span>
+        </div>
+        <div class="evenement ev-bleu" data-statut="bleu" style="top:496px;height:87px" tabindex="0">
+          <strong>16:00 - 17:30</strong>
+          <span class="titre-ev">Débouchage canalisations</span>
+          <span class="detail-ev">Jean Martin</span>
+          <span class="detail-ev">Lyon 8e</span>
+        </div>
+      </div>
+      <div class="colonne-jour">
+        <div class="evenement ev-bleu" data-statut="bleu" style="top:62px;height:87px" tabindex="0">
+          <strong>09:00 - 10:30</strong>
+          <span class="titre-ev">Installation chauffe-eau</span>
+          <span class="detail-ev">Sophie Durand</span>
+          <span class="detail-ev">Lyon 3e</span>
+        </div>
+        <div class="evenement ev-vert" data-statut="vert" style="top:186px;height:87px" tabindex="0">
+          <strong>11:00 - 12:30</strong>
+          <span class="titre-ev">Entretien chaudière</span>
+          <span class="detail-ev">Laura Chevalier</span>
+          <span class="detail-ev">Tassin-la-Demi-Lune</span>
+        </div>
+        <div class="evenement ev-safran" data-statut="safran" style="top:372px;height:87px" tabindex="0">
+          <strong>14:00 - 15:30</strong>
+          <span class="titre-ev">Dépannage fuite d'eau</span>
+          <span class="detail-ev">Marc Bernard</span>
+          <span class="detail-ev">Villeurbanne</span>
+        </div>
+      </div>
+      <div class="colonne-jour">
+        <div class="evenement ev-bleu" data-statut="bleu" style="top:31px;height:87px" tabindex="0">
+          <strong>08:30 - 10:00</strong>
+          <span class="titre-ev">Installation salle de bain</span>
+          <span class="detail-ev">Pauline Chevret</span>
+          <span class="detail-ev">Lyon 7e</span>
+        </div>
+        <div class="evenement ev-violet" data-statut="violet" style="top:155px;height:87px" tabindex="0">
+          <strong>10:30 - 12:00</strong>
+          <span class="titre-ev">Débouchage canalisation<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#7C3AED;margin-left:4px"></span></span>
+          <span class="detail-ev">Jean Martin</span>
+          <span class="detail-ev">Lyon 8e</span>
+        </div>
+        <div class="evenement ev-bleu" data-statut="bleu" style="top:372px;height:87px" tabindex="0">
+          <strong>14:00 - 15:30</strong>
+          <span class="titre-ev">Installation chauffe-eau</span>
+          <span class="detail-ev">Sophie Durand</span>
+          <span class="detail-ev">Lyon 3e</span>
+        </div>
+      </div>
+      <div class="colonne-jour">
+        <div class="evenement ev-safran" data-statut="safran" style="top:93px;height:87px" tabindex="0">
+          <strong>09:30 - 11:00</strong>
+          <span class="titre-ev">Remplacement radiateur<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#B8A000;margin-left:4px"></span></span>
+          <span class="detail-ev">Nicolas Petit</span>
+          <span class="detail-ev">Caluire-et-Cuire</span>
+        </div>
+        <div class="evenement ev-vert" data-statut="vert" style="top:341px;height:87px" tabindex="0">
+          <strong>13:30 - 15:00</strong>
+          <span class="titre-ev">Contrôle installation gaz</span>
+          <span class="detail-ev">Romain Testud</span>
+          <span class="detail-ev">Sainte-Foy-lès-Lyon</span>
+        </div>
+        <div class="evenement ev-violet" data-statut="violet" style="top:496px;height:87px" tabindex="0">
+          <strong>16:00 - 17:30</strong>
+          <span class="titre-ev">Dépannage fuite d'eau</span>
+          <span class="detail-ev">Marc Bernard</span>
+          <span class="detail-ev">Villeurbanne</span>
+        </div>
+      </div>
+      <div class="colonne-jour">
+        <div class="evenement ev-bleu" data-statut="bleu" style="top:62px;height:87px" tabindex="0">
+          <strong>09:00 - 10:30</strong>
+          <span class="titre-ev">Installation chauffe-eau</span>
+          <span class="detail-ev">Sophie Durand</span>
+          <span class="detail-ev">Lyon 3e</span>
+        </div>
+      </div>
+      <div class="colonne-jour">
+        <div class="jour-indispo" id="dim-indispo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Indisponible</div>
+      </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Rangée basse -->
+      <div class="rangee-basse">
+        <div>
+          <h3>Prochain rendez-vous</h3>
+          <div class="carte-prochain">
+            <span class="rond"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg></span>
+            <div>
+              <small>Aujourd'hui à 14:00</small>
+              <strong>Contrôle installation gaz</strong>
+              <p>Romain Testud · Sainte-Foy-lès-Lyon</p>
+            </div>
+            <button class="btn-details" type="button">Voir les détails</button>
+          </div>
+        </div>
+        <div>
+          <h3>Récapitulatif</h3>
+          <div class="recap-grille">
+            <div class="recap-carte rc-bleu"><div class="val">12</div><p>Rendez-vous<br>cette semaine</p></div>
+            <div class="recap-carte rc-vert"><div class="val">8</div><p>Confirmés</p></div>
+            <div class="recap-carte rc-safran"><div class="val">3</div><p>En attente</p></div>
+            <div class="recap-carte rc-rouge"><div class="val">1</div><p>Annulé</p></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+
+// Bascule Jour / Semaine / Mois
+document.querySelectorAll('.vue').forEach(v => {
+  v.addEventListener('click', () => {
+    document.querySelectorAll('.vue').forEach(a => a.classList.toggle('actif', a === v));
+  });
+});
+
+// Filtres de statut : affichage des événements par couleur
+document.querySelectorAll('.case-statut input').forEach(case_ => {
+  case_.addEventListener('change', () => {
+    const statut = case_.dataset.statut;
+    document.querySelectorAll('.evenement[data-statut="' + statut + '"]')
+      .forEach(ev => ev.classList.toggle('masque', !case_.checked));
+  });
+});
+
+// Interrupteur : afficher / masquer les indisponibilités
+document.getElementById('bascule-indispo').addEventListener('change', e => {
+  const bloc = document.getElementById('dim-indispo');
+  if (bloc) bloc.style.display = e.target.checked ? '' : 'none';
+});
+
+</script>
+</body>
+</html>

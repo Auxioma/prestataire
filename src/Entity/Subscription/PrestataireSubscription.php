@@ -112,6 +112,22 @@ class PrestataireSubscription
         $this->creditMovements = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        $prestataire = $this->prestataireProfile?->__toString();
+        $plan = $this->plan?->__toString();
+
+        if (null !== $prestataire && null !== $plan) {
+            return sprintf('%s - %s', $prestataire, $plan);
+        }
+
+        if (null !== $prestataire) {
+            return $prestataire;
+        }
+
+        return sprintf('Souscription #%s', $this->id ?? 'n/a');
+    }
+
     public function getId(): ?string
     {
         return $this->id;

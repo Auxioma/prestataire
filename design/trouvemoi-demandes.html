@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demandes — Espace prestataire — TrouveMoi.com</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* ============================================================
+   TROUVEMOI — Espace prestataire · Paramètres
+   Design system : Encre #0A1633 · Bleu #1E49C7 · Safran #FF8A1E
+   ============================================================ */
+:root{
+  --encre:#0A1633;--encre-2:#101F45;--bleu:#1E49C7;--bleu-clair:#E6ECFC;
+  --safran:#FF8A1E;--safran-fonce:#E8760A;--papier:#F4F6FA;--blanc:#FFFFFF;
+  --vert:#0E9F6E;--vert-clair:#E2F5EE;--texte:#233047;--texte-doux:#5B6B85;
+  --bordure:#E3E8F1;--radius:16px;--ombre:0 8px 30px rgba(10,22,51,.08);
+  --display:"Bricolage Grotesque",sans-serif;--body:"Inter",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);color:var(--texte);background:var(--papier);line-height:1.6;font-size:15px}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,textarea{font-family:inherit}
+:focus-visible{outline:3px solid var(--safran);outline-offset:2px;border-radius:6px}
+
+.app{display:grid;grid-template-columns:282px 1fr;min-height:100vh}
+
+/* ============ SIDEBAR ============ */
+.sidebar{background:var(--encre);color:#C9D3E8;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:thin}
+.sidebar-logo{display:flex;align-items:center;gap:11px;padding:22px 22px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.logo-mark{width:40px;height:40px;flex-shrink:0}
+.logo-nom{font-family:var(--display);font-weight:800;font-size:20px;color:#fff;letter-spacing:-.01em;line-height:1.1}
+.logo-nom span{color:var(--safran)}
+.logo-slogan{font-size:10.5px;color:#8FA0C2;margin-top:2px}
+.sidebar-profil{display:flex;align-items:center;gap:13px;padding:20px 22px 6px}
+.sidebar-profil img{width:54px;height:54px;border-radius:50%;object-fit:cover;border:2.5px solid var(--safran)}
+.sidebar-profil h2{font-family:var(--display);font-size:16px;font-weight:700;color:#fff}
+.sidebar-profil p{font-size:12px;color:#8FA0C2}
+.sidebar-profil .note{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#fff;margin-top:3px}
+.sidebar-profil .note svg{color:var(--safran)}
+.sidebar-profil .note span{font-weight:500;color:#8FA0C2}
+.btn-profil-public{display:flex;align-items:center;justify-content:center;gap:9px;background:var(--bleu);color:#fff;font-weight:700;font-size:13.5px;border-radius:11px;padding:12px;margin:14px 22px 8px;transition:background .15s,box-shadow .15s}
+.btn-profil-public:hover{background:#2A56D8;box-shadow:0 8px 20px rgba(30,73,199,.4)}
+.sidebar nav{padding:10px 12px;flex:1}
+.sidebar nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;font-size:14px;font-weight:500;color:#C9D3E8;transition:background .15s,color .15s;margin-bottom:2px}
+.sidebar nav a:hover{background:rgba(255,255,255,.07);color:#fff}
+.sidebar nav a.actif{background:rgba(255,255,255,.1);color:#fff;font-weight:700;box-shadow:inset 3px 0 0 var(--safran)}
+.sidebar nav a svg{flex-shrink:0;color:#8FA0C2}
+.sidebar nav a.actif svg,.sidebar nav a:hover svg{color:var(--safran)}
+.sidebar nav .nb{margin-left:auto;background:var(--bleu);color:#fff;font-size:11px;font-weight:800;border-radius:999px;min-width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px}
+.groupe-titre{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#5B6B85;padding:18px 12px 8px}
+.deconnexion{padding:14px 12px;border-top:1px solid rgba(255,255,255,.08)}
+.deconnexion a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;font-size:14px;color:#C9D3E8;transition:background .15s,color .15s}
+.deconnexion a:hover{background:rgba(224,36,94,.15);color:#FF7A9C}
+
+/* ============ MAIN ============ */
+.principal{display:flex;flex-direction:column;min-width:0}
+.barre-haute{background:#fff;border-bottom:1px solid var(--bordure);display:flex;align-items:center;gap:18px;padding:16px 30px;position:sticky;top:0;z-index:20}
+.barre-haute .burger{color:var(--encre);padding:6px;display:flex}
+.barre-haute h1{font-family:var(--display);font-size:21px;font-weight:800;letter-spacing:-.01em;color:var(--encre)}
+.barre-haute .sous{font-size:13px;color:var(--texte-doux)}
+.barre-droite{margin-left:auto;display:flex;align-items:center;gap:16px}
+.lien-aide{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--bleu)}
+.lien-aide:hover{text-decoration:underline}
+.btn-cloche{position:relative;color:var(--encre);display:flex;padding:6px}
+.btn-cloche .pastille{position:absolute;top:0;right:0;background:#E0245E;color:#fff;font-size:10px;font-weight:800;border-radius:999px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.avatar-haut{display:flex;align-items:center;gap:8px;color:var(--texte-doux)}
+.avatar-haut img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+
+.contenu{padding:26px 30px 46px;max-width:1400px;width:100%}
+
+/* Onglets */
+.onglets{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);display:flex;box-shadow:var(--ombre);overflow-x:auto;scrollbar-width:none;margin-bottom:24px}
+.onglets::-webkit-scrollbar{display:none}
+.onglet{padding:17px 22px;font-size:14px;font-weight:600;color:var(--texte-doux);border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s}
+.onglet:hover{color:var(--encre)}
+.onglet.actif{color:var(--bleu);font-weight:700;border-bottom-color:var(--bleu)}
+
+/* Layout paramètres */
+.parametres-layout{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start}
+.bloc{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);box-shadow:var(--ombre)}
+.bloc-corps{padding:26px 28px}
+.bloc h2{font-family:var(--display);font-size:17px;font-weight:700;color:var(--encre)}
+.bloc .desc{font-size:13px;color:var(--texte-doux);margin-top:3px}
+
+/* Formulaire */
+.forme{margin-top:22px}
+.rangee{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.champ{margin-bottom:16px;min-width:0}
+.champ label{display:block;font-size:13px;font-weight:700;color:var(--encre);margin-bottom:7px}
+.champ label small{font-weight:500;color:var(--texte-doux)}
+.champ .enveloppe{position:relative}
+.champ input,.champ textarea{width:100%;border:1.5px solid var(--bordure);border-radius:11px;padding:11px 14px;font-size:14px;color:var(--encre);background:#fff;transition:border-color .15s,box-shadow .15s}
+.champ input:focus,.champ textarea:focus{outline:none;border-color:var(--bleu);box-shadow:0 0 0 4px var(--bleu-clair)}
+.champ textarea{resize:vertical;min-height:104px;line-height:1.6}
+.compteur{position:absolute;right:12px;bottom:9px;font-size:11.5px;color:var(--texte-doux);background:#fff;padding:0 4px}
+.photo-ligne{display:flex;align-items:center;gap:16px}
+.photo-ligne img{width:78px;height:78px;border-radius:50%;object-fit:cover;border:1px solid var(--bordure)}
+.btn-contour{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:13.5px;color:var(--bleu);background:#fff;border:1.5px solid var(--bleu);border-radius:11px;padding:11px 18px;transition:background .15s,color .15s}
+.btn-contour:hover{background:var(--bleu);color:#fff}
+.photo-ligne small{display:block;font-size:12px;color:var(--texte-doux);margin-top:7px}
+.actions-forme{display:flex;justify-content:flex-end;margin-top:6px}
+.btn-bleu{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--bleu);color:#fff;font-weight:700;font-size:14px;border-radius:11px;padding:13px 24px;transition:background .15s,box-shadow .15s}
+.btn-bleu:hover{background:#2A56D8;box-shadow:0 10px 24px rgba(30,73,199,.35)}
+
+/* Services aperçu */
+.bloc-services{margin-top:20px}
+.bloc-services .entete{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.bloc-services .entete a{font-size:13.5px;font-weight:700;color:var(--bleu)}
+.bloc-services .entete a:hover{text-decoration:underline}
+.chips-services{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.chip-service{display:inline-flex;align-items:center;gap:8px;background:var(--papier);border:1px solid var(--bordure);border-radius:999px;padding:8px 16px;font-size:13.5px;font-weight:600;color:var(--encre)}
+.chip-service i{width:8px;height:8px;border-radius:50%;background:var(--vert)}
+
+/* Bandeau aide */
+.bandeau-aide{background:var(--bleu-clair);border-radius:var(--radius);padding:20px 24px;display:flex;align-items:center;gap:16px;margin-top:20px;flex-wrap:wrap}
+.bandeau-aide .rond{width:48px;height:48px;border-radius:50%;background:var(--bleu);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bandeau-aide h3{font-size:14.5px;font-weight:700;color:var(--encre)}
+.bandeau-aide p{font-size:13px;color:var(--texte-doux);margin-top:2px}
+.bandeau-aide .btn-contour{margin-left:auto;background:#fff}
+
+/* Colonne droite */
+.colonne-droite{display:grid;gap:20px}
+.apercu-profil .cover{position:relative;height:140px;border-radius:var(--radius) var(--radius) 0 0;overflow:hidden}
+.apercu-profil .cover img{width:100%;height:100%;object-fit:cover}
+.apercu-profil .avatar{position:absolute;left:22px;bottom:-34px;width:86px;height:86px;border-radius:50%;object-fit:cover;border:4px solid #fff;box-shadow:var(--ombre);z-index:2}
+.apercu-corps{padding:46px 24px 24px;position:relative}
+.apercu-corps h3{font-family:var(--display);font-size:19px;font-weight:800;color:var(--encre);display:flex;align-items:center;gap:8px}
+.apercu-corps h3 svg{color:var(--bleu)}
+.apercu-corps .slogan{font-size:13.5px;color:var(--texte-doux);margin-top:3px}
+.apercu-corps .infos{display:flex;align-items:center;gap:16px;margin-top:12px;font-size:13px;color:var(--texte-doux);flex-wrap:wrap}
+.apercu-corps .infos .note{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--encre)}
+.apercu-corps .infos .note svg{color:var(--safran)}
+.apercu-corps .infos .lieu{display:inline-flex;align-items:center;gap:6px}
+.apercu-corps .infos .lieu svg{color:var(--bleu)}
+.apercu-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.apercu-actions .btn-contour,.apercu-actions .btn-bleu{padding:12px 10px;font-size:13px}
+
+/* Statut du profil */
+.statut-corps{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;padding:22px 24px}
+.statut-liste li{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--texte);padding:5px 0;list-style:none}
+.statut-liste .ok{width:20px;height:20px;border-radius:50%;background:var(--vert-clair);color:var(--vert);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.statut-liste .attention{width:20px;height:20px;border-radius:50%;background:#FFF2DB;color:#D98A00;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.anneau{position:relative;width:96px;height:96px;text-align:center}
+.anneau svg{transform:rotate(-90deg)}
+.anneau .fond-a{stroke:var(--papier)}
+.anneau .val-a{stroke:var(--vert);stroke-linecap:round}
+.anneau .pct{position:absolute;inset:0 0 18px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:20px;color:var(--encre)}
+.anneau .lab{font-size:11px;color:var(--texte-doux);font-weight:600}
+.statut-note{font-size:12.5px;color:var(--texte-doux);padding:0 24px 20px}
+
+/* Raccourcis */
+.raccourcis-grille{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:18px 20px 20px}
+.raccourci{border:1px solid var(--bordure);border-radius:12px;padding:14px 12px;text-align:center;transition:border-color .15s,box-shadow .15s;display:block}
+.raccourci:hover{border-color:var(--bleu);box-shadow:0 10px 24px rgba(30,73,199,.14)}
+.raccourci svg{color:var(--bleu);margin:0 auto 8px;display:block}
+.raccourci h4{font-size:12px;font-weight:700;color:var(--encre);line-height:1.3}
+.raccourci p{font-size:10.5px;color:var(--texte-doux);margin-top:4px;line-height:1.4}
+.bloc > h2.titre-bloc{padding:20px 24px 0}
+
+/* Responsive */
+@media (max-width:1280px){.parametres-layout{grid-template-columns:1fr}}
+@media (max-width:1024px){.app{grid-template-columns:1fr}.sidebar{position:static;height:auto}.sidebar nav{display:grid;grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.rangee{grid-template-columns:1fr}.contenu{padding:18px 16px 36px}.barre-haute{padding:14px 16px}.barre-haute .sous{display:none}.raccourcis-grille{grid-template-columns:1fr}.statut-corps{grid-template-columns:1fr}.apercu-actions{grid-template-columns:1fr}}
+
+
+/* ============================================================
+   PAGE DEMANDES — styles spécifiques
+   ============================================================ */
+.stats-ligne{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.stat-carte{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--ombre)}
+.stat-carte .haut{display:flex;align-items:flex-start;gap:14px}
+.stat-carte .rond{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.r-bleu{background:var(--bleu-clair);color:var(--bleu)}
+.r-safran{background:#FFF2DB;color:#D98A00}
+.r-vert{background:var(--vert-clair);color:var(--vert)}
+.r-rouge{background:#FDECEA;color:#D93025}
+.stat-carte h3{font-size:13px;font-weight:700;color:var(--texte-doux)}
+.stat-carte .val{font-family:var(--display);font-weight:800;font-size:29px;color:var(--encre);letter-spacing:-.02em;line-height:1.15}
+.stat-carte .evo{font-size:12.5px;font-weight:700;color:var(--vert);margin-top:2px}
+.stat-carte .neutre{font-size:12.5px;color:var(--texte-doux);margin-top:2px}
+.stat-carte .lien{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--bleu);margin-top:14px;padding-top:12px;border-top:1px solid var(--bordure);width:100%}
+.stat-carte .lien:hover{text-decoration:underline}
+
+.bloc-demandes{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);box-shadow:var(--ombre);margin-top:20px}
+.barre-onglets-dem{display:flex;align-items:center;gap:4px;padding:8px 22px 0;border-bottom:1px solid var(--bordure);flex-wrap:wrap}
+.onglet-dem{padding:15px 16px;font-size:14px;font-weight:600;color:var(--texte-doux);border-bottom:3px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap}
+.onglet-dem:hover{color:var(--encre)}
+.onglet-dem.actif{color:var(--bleu);font-weight:700;border-bottom-color:var(--bleu)}
+.btn-exporter{margin-left:auto;display:inline-flex;align-items:center;gap:9px;border:1.5px solid var(--bordure);border-radius:11px;padding:10px 20px;font-size:13.5px;font-weight:700;color:var(--bleu);margin-bottom:8px;transition:border-color .15s}
+.btn-exporter:hover{border-color:var(--bleu)}
+
+.barre-filtres{display:flex;align-items:flex-end;gap:14px;padding:18px 22px;border-bottom:1px solid var(--bordure);flex-wrap:wrap}
+.filtre-dem label{display:block;font-size:11.5px;font-weight:700;color:var(--texte-doux);margin-bottom:6px}
+.filtre-dem .enveloppe{display:flex;align-items:center;gap:8px;border:1.5px solid var(--bordure);border-radius:11px;padding:10px 14px;min-width:150px}
+.filtre-dem select{border:none;background:none;font:inherit;font-size:13.5px;font-weight:600;color:var(--encre);cursor:pointer;appearance:none;-webkit-appearance:none;flex:1}
+.filtre-dem .enveloppe svg{color:var(--texte-doux)}
+.btn-reinit{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:var(--bleu);padding:11px 6px;margin-left:auto}
+.btn-reinit:hover{text-decoration:underline}
+
+.table-scroll{overflow-x:auto}
+.table-dem{width:100%;border-collapse:collapse;min-width:1080px}
+.table-dem th{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--texte-doux);text-align:left;padding:13px 16px;background:var(--papier);border-bottom:1px solid var(--bordure)}
+.table-dem td{padding:15px 16px;border-bottom:1px solid var(--bordure);font-size:13.5px;color:var(--texte);vertical-align:middle}
+.table-dem tr:last-child td{border-bottom:none}
+.table-dem tr.masquee{display:none}
+.demande-cellule{display:flex;align-items:center;gap:13px;min-width:230px}
+.tuile-dem{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.demande-cellule h3{font-size:14px;font-weight:700;color:var(--encre);white-space:nowrap}
+.demande-cellule p{font-size:12px;color:var(--texte-doux);margin-top:1px;white-space:nowrap}
+.chip-nouveau{display:inline-block;font-size:10.5px;font-weight:700;background:var(--bleu-clair);color:var(--bleu);border-radius:999px;padding:2px 9px;margin-top:4px}
+.client-cellule{display:flex;align-items:center;gap:11px;white-space:nowrap}
+.avatar-ini{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:12px;color:#fff;flex-shrink:0}
+.client-cellule strong{display:block;font-weight:700;color:var(--encre);font-size:13.5px}
+.client-cellule small{color:var(--texte-doux);font-size:12px}
+.presta-cellule strong{display:block;font-weight:700;color:var(--encre)}
+.presta-cellule small{color:var(--texte-doux);font-size:12.5px}
+.lieu-cellule{display:flex;align-items:flex-start;gap:7px;white-space:nowrap}
+.lieu-cellule svg{color:var(--bleu);margin-top:2px;flex-shrink:0}
+.lieu-cellule strong{display:block;font-weight:600;color:var(--encre)}
+.lieu-cellule small{color:var(--texte-doux);font-size:12.5px}
+.date-cellule strong{display:block;font-weight:600;color:var(--encre);white-space:nowrap}
+.date-cellule small{color:var(--texte-doux);font-size:12.5px}
+.tag-statut{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:5px 13px;white-space:nowrap}
+.t-attente{background:#FFF2DB;color:#D98A00}
+.t-acceptee{background:var(--vert-clair);color:var(--vert)}
+.t-refusee{background:#FDECEA;color:#D93025}
+.statut-cellule small{display:block;color:var(--texte-doux);font-size:11.5px;margin-top:4px}
+.montant-cellule strong{display:block;font-weight:700;color:var(--encre);white-space:nowrap}
+.montant-cellule small{color:var(--texte-doux);font-size:12px}
+.actions-cellule{display:flex;align-items:center;gap:8px}
+.btn-voir{border:1.5px solid var(--bleu);color:var(--bleu);font-weight:700;font-size:13px;border-radius:10px;padding:7px 20px;transition:background .15s,color .15s}
+.btn-voir:hover{background:var(--bleu);color:#fff}
+.btn-kebab{color:var(--texte-doux);padding:6px;border-radius:8px;display:flex}
+.btn-kebab:hover{background:var(--papier);color:var(--encre)}
+
+.pied-table{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 22px;flex-wrap:wrap}
+.pied-table p{font-size:13px;color:var(--texte-doux)}
+.pagination-dem{display:flex;gap:8px}
+.page-btn{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--bordure);background:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13.5px;color:var(--encre);transition:border-color .15s,color .15s}
+.page-btn:hover{border-color:var(--bleu);color:var(--bleu)}
+.page-btn.actif{background:var(--bleu);border-color:var(--bleu);color:#fff}
+
+@media (max-width:1280px){.stats-ligne{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.stats-ligne{grid-template-columns:1fr}.btn-exporter{margin-left:0}.btn-reinit{margin-left:0}}
+
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <svg class="logo-mark" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+        <rect x="2" y="10" width="24" height="24" rx="7" fill="#1E49C7" transform="rotate(-8 14 22)"/>
+        <rect x="18" y="10" width="24" height="24" rx="7" fill="#FF8A1E" transform="rotate(8 30 22)"/>
+        <circle cx="22" cy="22" r="5.5" fill="#fff"/>
+      </svg>
+      <div>
+        <div class="logo-nom">TrouveMoi<span>.com</span></div>
+        <div class="logo-slogan">Trouvez. Réservez. Réalisez.</div>
+      </div>
+    </div>
+
+    <div class="sidebar-profil">
+      <img src="https://picsum.photos/seed/thomas-tm/108/108" alt="Photo de Thomas Martin">
+      <div>
+        <h2>Thomas Martin</h2>
+        <p>Plombier chauffagiste</p>
+        <p class="note"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>4,8/5 <span>(128 avis)</span></p>
+      </div>
+    </div>
+    <a href="#" class="btn-profil-public">Voir mon profil public <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"/></svg></a>
+
+    <nav aria-label="Navigation de l'espace prestataire">
+      <a href="#" class="actif" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span>Tableau de bord</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11h6M9 15h4"/><path d="M6 3h9l4 4v14H6z"/></svg><span>Demandes</span><span class="nb">8</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5 5L3 18v3h3l6.7-6.7a4 4 0 0 0 5-5L15 12l-3-3z"/></svg><span>Mes prestations</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg><span>Messages</span><span class="nb">3</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg><span>Avis clients</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span>Calendrier</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Mes documents</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20v-6M9 20V9M14 20v-9M19 20V5"/></svg><span>Statistiques</span></a>
+      <p class="groupe-titre">Paramètres</p>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg><span>Paramètres</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg><span>Mon compte</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span>Notifications</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="11" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg><span>Sécurité</span></a>
+    </nav>
+
+    <div class="deconnexion">
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg><span>Déconnexion</span></a>
+    </div>
+  </aside>
+
+  <!-- ============ PRINCIPAL ============ -->
+  <div class="principal">
+
+    <header class="barre-haute">
+      <button class="burger" aria-label="Ouvrir le menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <div>
+        <h1>Demandes</h1>
+        <p class="sous">Consultez et gérez toutes les demandes de vos clients</p>
+      </div>
+      <div class="barre-droite">
+        <a href="#" class="lien-aide"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4.9.8c0 1.6-2.4 2.2-2.4 3.7M12 17h.01"/></svg>Besoin d'aide ?</a>
+        <button class="btn-cloche" aria-label="Notifications"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="pastille">2</span></button>
+        <a href="#" class="avatar-haut"><img src="https://picsum.photos/seed/thomas-tm/80/80" alt=""><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></a>
+      </div>
+    </header>
+
+    <main class="contenu">
+
+      <!-- Cartes statistiques -->
+      <div class="stats-ligne">
+        <div class="stat-carte">
+          <div class="haut"><span class="rond r-bleu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></span><div><h3>Toutes les demandes</h3><div class="val">8</div><div class="evo">+2 depuis hier</div></div></div>
+          <a href="#" class="lien">Voir toutes les demandes <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+        <div class="stat-carte">
+          <div class="haut"><span class="rond r-safran"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10M8 3c0 5 3 5.5 3 9s-3 4-3 9M16 3c0 5-3 5.5-3 9s3 4 3 9"/></svg></span><div><h3>En attente</h3><div class="val">3</div><div class="neutre">37 % du total</div></div></div>
+          <a href="#" class="lien">Voir en attente <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+        <div class="stat-carte">
+          <div class="haut"><span class="rond r-vert"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg></span><div><h3>Acceptées</h3><div class="val">5</div><div class="neutre">62 % du total</div></div></div>
+          <a href="#" class="lien">Voir acceptées <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+        <div class="stat-carte">
+          <div class="haut"><span class="rond r-rouge"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></svg></span><div><h3>Refusées</h3><div class="val">0</div><div class="neutre">0 % du total</div></div></div>
+          <a href="#" class="lien">Voir refusées <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
+
+      <!-- Bloc demandes -->
+      <section class="bloc-demandes">
+
+        <!-- Onglets -->
+        <div class="barre-onglets-dem" role="tablist" aria-label="Filtrer par statut">
+          <button class="onglet-dem actif" type="button" data-filtre="toutes">Toutes (8)</button>
+          <button class="onglet-dem" type="button" data-filtre="attente">En attente (3)</button>
+          <button class="onglet-dem" type="button" data-filtre="acceptee">Acceptées (5)</button>
+          <button class="onglet-dem" type="button" data-filtre="refusee">Refusées (1)</button>
+          <button class="onglet-dem" type="button" data-filtre="archivee">Archivées (0)</button>
+          <button class="btn-exporter" type="button">Exporter <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></button>
+        </div>
+
+        <!-- Filtres -->
+        <div class="barre-filtres">
+          <div class="filtre-dem"><label for="f-tri">Trier par</label><div class="enveloppe"><select id="f-tri"><option>Plus récent</option><option>Plus ancien</option><option>Montant croissant</option><option>Montant décroissant</option></select><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div></div>
+          <div class="filtre-dem"><label for="f-statut">Statut</label><div class="enveloppe"><select id="f-statut"><option>Tous</option><option>En attente</option><option>Acceptée</option><option>Refusée</option></select><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div></div>
+          <div class="filtre-dem"><label for="f-type">Type de prestation</label><div class="enveloppe"><select id="f-type"><option>Tous</option><option>Plomberie</option><option>Chauffage</option></select><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div></div>
+          <div class="filtre-dem"><label for="f-lieu">Localisation</label><div class="enveloppe"><select id="f-lieu"><option>Toutes</option><option>Lyon</option><option>Villeurbanne</option><option>Bron</option></select><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div></div>
+          <div class="filtre-dem"><label for="f-periode">Période</label><div class="enveloppe"><select id="f-periode"><option>Toutes</option><option>Aujourd'hui</option><option>7 derniers jours</option><option>30 derniers jours</option></select><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div></div>
+          <button class="btn-reinit" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Réinitialiser</button>
+        </div>
+
+        <!-- Table -->
+        <div class="table-scroll">
+          <table class="table-dem">
+            <thead>
+              <tr><th>Demande</th><th>Client</th><th>Prestation</th><th>Localisation</th><th>Date</th><th>Statut</th><th>Montant</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="corps-table">
+            <tr data-statut="attente">
+              <td><div class="demande-cellule"><span class="tuile-dem" style="background:#FFF2DB;color:#D98A00"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7c3 3.6 5 6.6 5 9.3a5 5 0 0 1-10 0c0-2.7 2-5.7 5-9.3z"/></svg></span><div><h3>Installation chauffe-eau</h3><p>Demande n°DMD-2024-0012</p><span class="chip-nouveau">Nouveau</span></div></div></td>
+              <td><div class="client-cellule"><span class="avatar-ini" style="background:var(--bleu)">SD</span><div><strong>Sophie Durand</strong><small>06 12 34 56 78</small></div></div></td>
+              <td class="presta-cellule"><strong>Plomberie</strong><small>Installation</small></td>
+              <td><div class="lieu-cellule"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><div><strong>Lyon 3e</strong><small>69003 Lyon</small></div></div></td>
+              <td class="date-cellule"><strong>14/05/2024</strong><small>11:30</small></td>
+              <td class="statut-cellule"><span class="tag-statut t-attente">En attente</span></td>
+              <td class="montant-cellule"><strong>120 € - 180 €</strong><small>Estimation</small></td>
+              <td><span class="actions-cellule"><button class="btn-voir" type="button">Voir</button><button class="btn-kebab" type="button" aria-label="Plus d'actions"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="19" r="1.6" fill="currentColor"/></svg></button></span></td>
+            </tr>
+            <tr data-statut="acceptee">
+              <td><div class="demande-cellule"><span class="tuile-dem" style="background:#F1EBFD;color:#7C3AED"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5 5L3 18v3h3l6.7-6.7a4 4 0 0 0 5-5L15 12l-3-3z"/></svg></span><div><h3>Dépannage fuite d'eau</h3><p>Demande n°DMD-2024-0011</p></div></div></td>
+              <td><div class="client-cellule"><span class="avatar-ini" style="background:var(--vert)">MB</span><div><strong>Marc Bernard</strong><small>07 87 65 43 21</small></div></div></td>
+              <td class="presta-cellule"><strong>Plomberie</strong><small>Dépannage</small></td>
+              <td><div class="lieu-cellule"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><div><strong>Villeurbanne</strong><small>69100</small></div></div></td>
+              <td class="date-cellule"><strong>14/05/2024</strong><small>10:15</small></td>
+              <td class="statut-cellule"><span class="tag-statut t-acceptee">Acceptée</span><small>le 14/05/2024</small></td>
+              <td class="montant-cellule"><strong>80 € - 120 €</strong><small>Estimation</small></td>
+              <td><span class="actions-cellule"><button class="btn-voir" type="button">Voir</button><button class="btn-kebab" type="button" aria-label="Plus d'actions"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="19" r="1.6" fill="currentColor"/></svg></button></span></td>
+            </tr>
+            <tr data-statut="acceptee">
+              <td><div class="demande-cellule"><span class="tuile-dem" style="background:var(--bleu-clair);color:var(--bleu)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c4 0 7-2.7 7-7 0-3-2-5.5-3.5-7C15 10 13 10 13 7c0-2 .5-3.5-1-5-1 3-3 4.5-4.5 6.5S5 12.5 5 15c0 4.3 3 7 7 7z"/></svg></span><div><h3>Entretien chaudière</h3><p>Demande n°DMD-2024-0010</p></div></div></td>
+              <td><div class="client-cellule"><span class="avatar-ini" style="background:#7C3AED">LC</span><div><strong>Laura Chevalier</strong><small>06 45 23 11 98</small></div></div></td>
+              <td class="presta-cellule"><strong>Chauffage</strong><small>Entretien</small></td>
+              <td><div class="lieu-cellule"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><div><strong>Tassin-la-Demi-Lune</strong><small>69160</small></div></div></td>
+              <td class="date-cellule"><strong>13/05/2024</strong><small>16:45</small></td>
+              <td class="statut-cellule"><span class="tag-statut t-acceptee">Acceptée</span><small>le 13/05/2024</small></td>
+              <td class="montant-cellule"><strong>90 € - 130 €</strong><small>Estimation</small></td>
+              <td><span class="actions-cellule"><button class="btn-voir" type="button">Voir</button><button class="btn-kebab" type="button" aria-label="Plus d'actions"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="19" r="1.6" fill="currentColor"/></svg></button></span></td>
+            </tr>
+            <tr data-statut="attente">
+              <td><div class="demande-cellule"><span class="tuile-dem" style="background:#FFF2DB;color:#D98A00"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/><path d="M5 12V5a2 2 0 0 1 4 0M7 21v1M17 21v1"/></svg></span><div><h3>Installation salle de bain</h3><p>Demande n°DMD-2024-0009</p></div></div></td>
+              <td><div class="client-cellule"><span class="avatar-ini" style="background:#D98A00">PC</span><div><strong>Pauline Chevret</strong><small>06 33 44 55 66</small></div></div></td>
+              <td class="presta-cellule"><strong>Plomberie</strong><small>Installation</small></td>
+              <td><div class="lieu-cellule"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><div><strong>Lyon 7e</strong><small>69007 Lyon</small></div></div></td>
+              <td class="date-cellule"><strong>13/05/2024</strong><small>09:20</small></td>
+              <td class="statut-cellule"><span class="tag-statut t-attente">En attente</span></td>
+              <td class="montant-cellule"><strong>1 200 € - 1 800 €</strong><small>Estimation</small></td>
+              <td><span class="actions-cellule"><button class="btn-voir" type="button">Voir</button><button class="btn-kebab" type="button" aria-label="Plus d'actions"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="19" r="1.6" fill="currentColor"/></svg></button></span></td>
+            </tr>
+            <tr data-statut="refusee">
+              <td><div class="demande-cellule"><span class="tuile-dem" style="background:#FDECEA;color:#D93025"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V10a6 6 0 0 1 12 0M4 21h16M10 6l1.5-3h1L14 6"/></svg></span><div><h3>Débouchage canalisation</h3><p>Demande n°DMD-2024-0008</p></div></div></td>
+              <td><div class="client-cellule"><span class="avatar-ini" style="background:#101F45">JM</span><div><strong>Jean Martin</strong><small>06 98 76 54 32</small></div></div></td>
+              <td class="presta-cellule"><strong>Plomberie</strong><small>Dépannage</small></td>
+              <td><div class="lieu-cellule"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><div><strong>Lyon 8e</strong><small>69008 Lyon</small></div></div></td>
+              <td class="date-cellule"><strong>12/05/2024</strong><small>14:10</small></td>
+              <td class="statut-cellule"><span class="tag-statut t-refusee">Refusée</span><small>le 12/05/2024</small></td>
+              <td class="montant-cellule"><strong>70 € - 100 €</strong><small>Estimation</small></td>
+              <td><span class="actions-cellule"><button class="btn-voir" type="button">Voir</button><button class="btn-kebab" type="button" aria-label="Plus d'actions"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="19" r="1.6" fill="currentColor"/></svg></button></span></td>
+            </tr>
+            <tr data-statut="acceptee">
+              <td><div class="demande-cellule"><span class="tuile-dem" style="background:#F1EBFD;color:#7C3AED"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="2"/><path d="M8 7v12M12 7v12M16 7v12"/></svg></span><div><h3>Remplacement radiateur</h3><p>Demande n°DMD-2024-0007</p></div></div></td>
+              <td><div class="client-cellule"><span class="avatar-ini" style="background:var(--bleu)">NP</span><div><strong>Nicolas Petit</strong><small>06 11 22 33 44</small></div></div></td>
+              <td class="presta-cellule"><strong>Chauffage</strong><small>Installation</small></td>
+              <td><div class="lieu-cellule"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><div><strong>Caluire-et-Cuire</strong><small>69300</small></div></div></td>
+              <td class="date-cellule"><strong>12/05/2024</strong><small>11:05</small></td>
+              <td class="statut-cellule"><span class="tag-statut t-acceptee">Acceptée</span><small>le 12/05/2024</small></td>
+              <td class="montant-cellule"><strong>150 € - 250 €</strong><small>Estimation</small></td>
+              <td><span class="actions-cellule"><button class="btn-voir" type="button">Voir</button><button class="btn-kebab" type="button" aria-label="Plus d'actions"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="19" r="1.6" fill="currentColor"/></svg></button></span></td>
+            </tr>
+            <tr data-statut="attente">
+              <td><div class="demande-cellule"><span class="tuile-dem" style="background:var(--bleu-clair);color:var(--bleu)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span><div><h3>Recherche fuite</h3><p>Demande n°DMD-2024-0006</p></div></div></td>
+              <td><div class="client-cellule"><span class="avatar-ini" style="background:#0E96A8">AM</span><div><strong>Alice Moreau</strong><small>07 66 55 44 33</small></div></div></td>
+              <td class="presta-cellule"><strong>Plomberie</strong><small>Diagnostic</small></td>
+              <td><div class="lieu-cellule"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><div><strong>Bron</strong><small>69500</small></div></div></td>
+              <td class="date-cellule"><strong>11/05/2024</strong><small>17:30</small></td>
+              <td class="statut-cellule"><span class="tag-statut t-attente">En attente</span></td>
+              <td class="montant-cellule"><strong>60 € - 90 €</strong><small>Estimation</small></td>
+              <td><span class="actions-cellule"><button class="btn-voir" type="button">Voir</button><button class="btn-kebab" type="button" aria-label="Plus d'actions"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="19" r="1.6" fill="currentColor"/></svg></button></span></td>
+            </tr>
+            <tr data-statut="acceptee">
+              <td><div class="demande-cellule"><span class="tuile-dem" style="background:var(--vert-clair);color:var(--vert)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 14h6M9 17h4"/></svg></span><div><h3>Contrôle installation gaz</h3><p>Demande n°DMD-2024-0005</p></div></div></td>
+              <td><div class="client-cellule"><span class="avatar-ini" style="background:var(--vert)">RT</span><div><strong>Romain Testud</strong><small>06 77 88 99 00</small></div></div></td>
+              <td class="presta-cellule"><strong>Chauffage</strong><small>Contrôle</small></td>
+              <td><div class="lieu-cellule"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><div><strong>Sainte-Foy-lès-Lyon</strong><small>69110</small></div></div></td>
+              <td class="date-cellule"><strong>11/05/2024</strong><small>09:00</small></td>
+              <td class="statut-cellule"><span class="tag-statut t-acceptee">Acceptée</span><small>le 11/05/2024</small></td>
+              <td class="montant-cellule"><strong>100 € - 150 €</strong><small>Estimation</small></td>
+              <td><span class="actions-cellule"><button class="btn-voir" type="button">Voir</button><button class="btn-kebab" type="button" aria-label="Plus d'actions"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="19" r="1.6" fill="currentColor"/></svg></button></span></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pied -->
+        <div class="pied-table">
+          <p id="compteur-affichage">Affichage de 1 à 8 sur 8 demandes</p>
+          <div class="pagination-dem">
+            <button class="page-btn" aria-label="Page précédente"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+            <button class="page-btn actif">1</button>
+            <button class="page-btn" aria-label="Page suivante"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script>
+
+// Onglets : filtrage des lignes par statut
+const onglets = document.querySelectorAll('.onglet-dem');
+const lignes = document.querySelectorAll('#corps-table tr');
+const compteur = document.getElementById('compteur-affichage');
+onglets.forEach(tab => {
+  tab.addEventListener('click', () => {
+    onglets.forEach(t => t.classList.toggle('actif', t === tab));
+    const filtre = tab.dataset.filtre;
+    let visibles = 0;
+    lignes.forEach(l => {
+      const visible = filtre === 'toutes' || l.dataset.statut === filtre;
+      l.classList.toggle('masquee', !visible);
+      if (visible) visibles++;
+    });
+    compteur.textContent = visibles > 0
+      ? `Affichage de 1 à ${visibles} sur ${visibles} demande${visibles > 1 ? 's' : ''}`
+      : 'Aucune demande dans cette catégorie';
+  });
+});
+
+</script>
+</body>
+</html>

@@ -54,6 +54,22 @@ class SubscriptionCustomer
         $this->subscriptions = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        $prestataire = $this->prestataireProfile?->__toString();
+        $stripeCustomerId = trim((string) ($this->stripeCustomerId ?? ''));
+
+        if (null !== $prestataire && '' !== $stripeCustomerId) {
+            return sprintf('%s [%s]', $prestataire, $stripeCustomerId);
+        }
+
+        if (null !== $prestataire) {
+            return $prestataire;
+        }
+
+        return sprintf('Client Stripe #%s', $this->id ?? 'n/a');
+    }
+
     public function getId(): ?string
     {
         return $this->id;

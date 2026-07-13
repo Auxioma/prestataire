@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statistiques — Espace prestataire — TrouveMoi.com</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* ============================================================
+   TROUVEMOI — Espace prestataire · Paramètres
+   Design system : Encre #0A1633 · Bleu #1E49C7 · Safran #FF8A1E
+   ============================================================ */
+:root{
+  --encre:#0A1633;--encre-2:#101F45;--bleu:#1E49C7;--bleu-clair:#E6ECFC;
+  --safran:#FF8A1E;--safran-fonce:#E8760A;--papier:#F4F6FA;--blanc:#FFFFFF;
+  --vert:#0E9F6E;--vert-clair:#E2F5EE;--texte:#233047;--texte-doux:#5B6B85;
+  --bordure:#E3E8F1;--radius:16px;--ombre:0 8px 30px rgba(10,22,51,.08);
+  --display:"Bricolage Grotesque",sans-serif;--body:"Inter",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);color:var(--texte);background:var(--papier);line-height:1.6;font-size:15px}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,textarea{font-family:inherit}
+:focus-visible{outline:3px solid var(--safran);outline-offset:2px;border-radius:6px}
+
+.app{display:grid;grid-template-columns:282px 1fr;min-height:100vh}
+
+/* ============ SIDEBAR ============ */
+.sidebar{background:var(--encre);color:#C9D3E8;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:thin}
+.sidebar-logo{display:flex;align-items:center;gap:11px;padding:22px 22px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.logo-mark{width:40px;height:40px;flex-shrink:0}
+.logo-nom{font-family:var(--display);font-weight:800;font-size:20px;color:#fff;letter-spacing:-.01em;line-height:1.1}
+.logo-nom span{color:var(--safran)}
+.logo-slogan{font-size:10.5px;color:#8FA0C2;margin-top:2px}
+.sidebar-profil{display:flex;align-items:center;gap:13px;padding:20px 22px 6px}
+.sidebar-profil img{width:54px;height:54px;border-radius:50%;object-fit:cover;border:2.5px solid var(--safran)}
+.sidebar-profil h2{font-family:var(--display);font-size:16px;font-weight:700;color:#fff}
+.sidebar-profil p{font-size:12px;color:#8FA0C2}
+.sidebar-profil .note{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#fff;margin-top:3px}
+.sidebar-profil .note svg{color:var(--safran)}
+.sidebar-profil .note span{font-weight:500;color:#8FA0C2}
+.btn-profil-public{display:flex;align-items:center;justify-content:center;gap:9px;background:var(--bleu);color:#fff;font-weight:700;font-size:13.5px;border-radius:11px;padding:12px;margin:14px 22px 8px;transition:background .15s,box-shadow .15s}
+.btn-profil-public:hover{background:#2A56D8;box-shadow:0 8px 20px rgba(30,73,199,.4)}
+.sidebar nav{padding:10px 12px;flex:1}
+.sidebar nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;font-size:14px;font-weight:500;color:#C9D3E8;transition:background .15s,color .15s;margin-bottom:2px}
+.sidebar nav a:hover{background:rgba(255,255,255,.07);color:#fff}
+.sidebar nav a.actif{background:rgba(255,255,255,.1);color:#fff;font-weight:700;box-shadow:inset 3px 0 0 var(--safran)}
+.sidebar nav a svg{flex-shrink:0;color:#8FA0C2}
+.sidebar nav a.actif svg,.sidebar nav a:hover svg{color:var(--safran)}
+.sidebar nav .nb{margin-left:auto;background:var(--bleu);color:#fff;font-size:11px;font-weight:800;border-radius:999px;min-width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px}
+.groupe-titre{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#5B6B85;padding:18px 12px 8px}
+.deconnexion{padding:14px 12px;border-top:1px solid rgba(255,255,255,.08)}
+.deconnexion a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;font-size:14px;color:#C9D3E8;transition:background .15s,color .15s}
+.deconnexion a:hover{background:rgba(224,36,94,.15);color:#FF7A9C}
+
+/* ============ MAIN ============ */
+.principal{display:flex;flex-direction:column;min-width:0}
+.barre-haute{background:#fff;border-bottom:1px solid var(--bordure);display:flex;align-items:center;gap:18px;padding:16px 30px;position:sticky;top:0;z-index:20}
+.barre-haute .burger{color:var(--encre);padding:6px;display:flex}
+.barre-haute h1{font-family:var(--display);font-size:21px;font-weight:800;letter-spacing:-.01em;color:var(--encre)}
+.barre-haute .sous{font-size:13px;color:var(--texte-doux)}
+.barre-droite{margin-left:auto;display:flex;align-items:center;gap:16px}
+.lien-aide{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--bleu)}
+.lien-aide:hover{text-decoration:underline}
+.btn-cloche{position:relative;color:var(--encre);display:flex;padding:6px}
+.btn-cloche .pastille{position:absolute;top:0;right:0;background:#E0245E;color:#fff;font-size:10px;font-weight:800;border-radius:999px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.avatar-haut{display:flex;align-items:center;gap:8px;color:var(--texte-doux)}
+.avatar-haut img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+
+.contenu{padding:26px 30px 46px;max-width:1400px;width:100%}
+
+/* Onglets */
+.onglets{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);display:flex;box-shadow:var(--ombre);overflow-x:auto;scrollbar-width:none;margin-bottom:24px}
+.onglets::-webkit-scrollbar{display:none}
+.onglet{padding:17px 22px;font-size:14px;font-weight:600;color:var(--texte-doux);border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s}
+.onglet:hover{color:var(--encre)}
+.onglet.actif{color:var(--bleu);font-weight:700;border-bottom-color:var(--bleu)}
+
+/* Layout paramètres */
+.parametres-layout{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start}
+.bloc{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);box-shadow:var(--ombre)}
+.bloc-corps{padding:26px 28px}
+.bloc h2{font-family:var(--display);font-size:17px;font-weight:700;color:var(--encre)}
+.bloc .desc{font-size:13px;color:var(--texte-doux);margin-top:3px}
+
+/* Formulaire */
+.forme{margin-top:22px}
+.rangee{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.champ{margin-bottom:16px;min-width:0}
+.champ label{display:block;font-size:13px;font-weight:700;color:var(--encre);margin-bottom:7px}
+.champ label small{font-weight:500;color:var(--texte-doux)}
+.champ .enveloppe{position:relative}
+.champ input,.champ textarea{width:100%;border:1.5px solid var(--bordure);border-radius:11px;padding:11px 14px;font-size:14px;color:var(--encre);background:#fff;transition:border-color .15s,box-shadow .15s}
+.champ input:focus,.champ textarea:focus{outline:none;border-color:var(--bleu);box-shadow:0 0 0 4px var(--bleu-clair)}
+.champ textarea{resize:vertical;min-height:104px;line-height:1.6}
+.compteur{position:absolute;right:12px;bottom:9px;font-size:11.5px;color:var(--texte-doux);background:#fff;padding:0 4px}
+.photo-ligne{display:flex;align-items:center;gap:16px}
+.photo-ligne img{width:78px;height:78px;border-radius:50%;object-fit:cover;border:1px solid var(--bordure)}
+.btn-contour{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:13.5px;color:var(--bleu);background:#fff;border:1.5px solid var(--bleu);border-radius:11px;padding:11px 18px;transition:background .15s,color .15s}
+.btn-contour:hover{background:var(--bleu);color:#fff}
+.photo-ligne small{display:block;font-size:12px;color:var(--texte-doux);margin-top:7px}
+.actions-forme{display:flex;justify-content:flex-end;margin-top:6px}
+.btn-bleu{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--bleu);color:#fff;font-weight:700;font-size:14px;border-radius:11px;padding:13px 24px;transition:background .15s,box-shadow .15s}
+.btn-bleu:hover{background:#2A56D8;box-shadow:0 10px 24px rgba(30,73,199,.35)}
+
+/* Services aperçu */
+.bloc-services{margin-top:20px}
+.bloc-services .entete{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.bloc-services .entete a{font-size:13.5px;font-weight:700;color:var(--bleu)}
+.bloc-services .entete a:hover{text-decoration:underline}
+.chips-services{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.chip-service{display:inline-flex;align-items:center;gap:8px;background:var(--papier);border:1px solid var(--bordure);border-radius:999px;padding:8px 16px;font-size:13.5px;font-weight:600;color:var(--encre)}
+.chip-service i{width:8px;height:8px;border-radius:50%;background:var(--vert)}
+
+/* Bandeau aide */
+.bandeau-aide{background:var(--bleu-clair);border-radius:var(--radius);padding:20px 24px;display:flex;align-items:center;gap:16px;margin-top:20px;flex-wrap:wrap}
+.bandeau-aide .rond{width:48px;height:48px;border-radius:50%;background:var(--bleu);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bandeau-aide h3{font-size:14.5px;font-weight:700;color:var(--encre)}
+.bandeau-aide p{font-size:13px;color:var(--texte-doux);margin-top:2px}
+.bandeau-aide .btn-contour{margin-left:auto;background:#fff}
+
+/* Colonne droite */
+.colonne-droite{display:grid;gap:20px}
+.apercu-profil .cover{position:relative;height:140px;border-radius:var(--radius) var(--radius) 0 0;overflow:hidden}
+.apercu-profil .cover img{width:100%;height:100%;object-fit:cover}
+.apercu-profil .avatar{position:absolute;left:22px;bottom:-34px;width:86px;height:86px;border-radius:50%;object-fit:cover;border:4px solid #fff;box-shadow:var(--ombre);z-index:2}
+.apercu-corps{padding:46px 24px 24px;position:relative}
+.apercu-corps h3{font-family:var(--display);font-size:19px;font-weight:800;color:var(--encre);display:flex;align-items:center;gap:8px}
+.apercu-corps h3 svg{color:var(--bleu)}
+.apercu-corps .slogan{font-size:13.5px;color:var(--texte-doux);margin-top:3px}
+.apercu-corps .infos{display:flex;align-items:center;gap:16px;margin-top:12px;font-size:13px;color:var(--texte-doux);flex-wrap:wrap}
+.apercu-corps .infos .note{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--encre)}
+.apercu-corps .infos .note svg{color:var(--safran)}
+.apercu-corps .infos .lieu{display:inline-flex;align-items:center;gap:6px}
+.apercu-corps .infos .lieu svg{color:var(--bleu)}
+.apercu-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.apercu-actions .btn-contour,.apercu-actions .btn-bleu{padding:12px 10px;font-size:13px}
+
+/* Statut du profil */
+.statut-corps{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;padding:22px 24px}
+.statut-liste li{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--texte);padding:5px 0;list-style:none}
+.statut-liste .ok{width:20px;height:20px;border-radius:50%;background:var(--vert-clair);color:var(--vert);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.statut-liste .attention{width:20px;height:20px;border-radius:50%;background:#FFF2DB;color:#D98A00;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.anneau{position:relative;width:96px;height:96px;text-align:center}
+.anneau svg{transform:rotate(-90deg)}
+.anneau .fond-a{stroke:var(--papier)}
+.anneau .val-a{stroke:var(--vert);stroke-linecap:round}
+.anneau .pct{position:absolute;inset:0 0 18px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:20px;color:var(--encre)}
+.anneau .lab{font-size:11px;color:var(--texte-doux);font-weight:600}
+.statut-note{font-size:12.5px;color:var(--texte-doux);padding:0 24px 20px}
+
+/* Raccourcis */
+.raccourcis-grille{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:18px 20px 20px}
+.raccourci{border:1px solid var(--bordure);border-radius:12px;padding:14px 12px;text-align:center;transition:border-color .15s,box-shadow .15s;display:block}
+.raccourci:hover{border-color:var(--bleu);box-shadow:0 10px 24px rgba(30,73,199,.14)}
+.raccourci svg{color:var(--bleu);margin:0 auto 8px;display:block}
+.raccourci h4{font-size:12px;font-weight:700;color:var(--encre);line-height:1.3}
+.raccourci p{font-size:10.5px;color:var(--texte-doux);margin-top:4px;line-height:1.4}
+.bloc > h2.titre-bloc{padding:20px 24px 0}
+
+/* Responsive */
+@media (max-width:1280px){.parametres-layout{grid-template-columns:1fr}}
+@media (max-width:1024px){.app{grid-template-columns:1fr}.sidebar{position:static;height:auto}.sidebar nav{display:grid;grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.rangee{grid-template-columns:1fr}.contenu{padding:18px 16px 36px}.barre-haute{padding:14px 16px}.barre-haute .sous{display:none}.raccourcis-grille{grid-template-columns:1fr}.statut-corps{grid-template-columns:1fr}.apercu-actions{grid-template-columns:1fr}}
+
+
+/* ============================================================
+   PAGE STATISTIQUES — styles spécifiques
+   ============================================================ */
+.stats-ligne{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.stat-carte{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);padding:20px;box-shadow:var(--ombre);display:flex;gap:13px;align-items:flex-start}
+.stat-carte .rond{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.r-bleu{background:var(--bleu-clair);color:var(--bleu)}
+.r-vert{background:var(--vert-clair);color:var(--vert)}
+.r-violet{background:#F1EBFD;color:#7C3AED}
+.r-safran{background:#FFF2DB;color:#F0A020}
+.stat-carte h3{font-size:12.5px;font-weight:700;color:var(--texte-doux)}
+.stat-carte .val{font-family:var(--display);font-weight:800;font-size:23px;color:var(--encre);letter-spacing:-.02em;line-height:1.25}
+.stat-carte .evo{font-size:12px;font-weight:700;color:var(--vert);margin-top:3px}
+.stat-carte .evo small{font-weight:500;color:var(--texte-doux)}
+.stat-carte .neutre{font-size:12px;color:var(--texte-doux);margin-top:3px}
+
+/* Barre de période */
+.barre-periode{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);box-shadow:var(--ombre);display:flex;align-items:flex-end;gap:16px;padding:14px 18px;margin-top:18px;flex-wrap:wrap}
+.champ-periode label{display:block;font-size:11.5px;font-weight:700;color:var(--texte-doux);margin-bottom:6px}
+.champ-periode .enveloppe{display:flex;align-items:center;gap:10px;border:1.5px solid var(--bordure);border-radius:11px;padding:10px 14px;font-size:13.5px;font-weight:600;color:var(--encre)}
+.champ-periode .enveloppe svg{color:var(--texte-doux)}
+.raccourcis-periode{display:flex;gap:8px;flex-wrap:wrap}
+.rp{border:1.5px solid var(--bordure);border-radius:11px;padding:10px 16px;font-size:13px;font-weight:600;color:var(--texte-doux);transition:border-color .15s,color .15s,background .15s}
+.rp:hover{color:var(--encre)}
+.rp.actif{border-color:var(--bleu);color:var(--bleu);font-weight:700;background:var(--bleu-clair)}
+.btn-export-rapport{margin-left:auto;display:inline-flex;align-items:center;gap:9px;border:1.5px solid var(--bleu);color:var(--bleu);border-radius:11px;padding:11px 20px;font-size:13.5px;font-weight:700;transition:background .15s,color .15s}
+.btn-export-rapport:hover{background:var(--bleu);color:#fff}
+
+/* Blocs graphiques */
+.bloc-stat{background:#fff;border:1px solid var(--bordure);border-radius:var(--radius);box-shadow:var(--ombre);padding:20px 22px;min-width:0}
+.bloc-stat .entete{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.bloc-stat h2{font-family:var(--display);font-size:15.5px;font-weight:700;color:var(--encre)}
+.select-periode{display:flex;align-items:center;gap:8px;border:1.5px solid var(--bordure);border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:600;color:var(--encre)}
+.select-periode select{border:none;background:none;font:inherit;color:inherit;cursor:pointer;appearance:none;-webkit-appearance:none}
+.grande-valeur{display:flex;align-items:baseline;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.grande-valeur strong{font-family:var(--display);font-weight:800;font-size:24px;color:var(--encre);letter-spacing:-.02em}
+.grande-valeur .evo{font-size:12.5px;font-weight:700;color:var(--vert)}
+.grande-valeur .evo small{font-weight:500;color:var(--texte-doux)}
+.graphique svg{width:100%;height:auto;display:block}
+.legende{display:flex;gap:16px;font-size:12px;font-weight:600;color:var(--texte-doux);margin-bottom:8px;flex-wrap:wrap}
+.legende span{display:inline-flex;align-items:center;gap:7px}
+.legende i{width:9px;height:9px;border-radius:50%}
+
+.rangee-2{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;margin-top:18px;align-items:stretch}
+.rangee-3{display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:18px;margin-top:18px;align-items:stretch}
+.rangee-fin{display:grid;grid-template-columns:1.6fr 1fr;gap:18px;margin-top:18px;align-items:stretch}
+
+/* Donuts */
+.donut-flex{display:flex;align-items:center;gap:18px}
+.donut{position:relative;width:138px;height:138px;flex-shrink:0}
+.donut svg{transform:rotate(-90deg)}
+.donut .centre{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.donut .centre strong{font-family:var(--display);font-weight:800;font-size:17px;color:var(--encre);line-height:1.1}
+.donut .centre small{font-size:10.5px;color:var(--texte-doux);font-weight:600;margin-top:2px}
+.donut-legende{flex:1;min-width:0}
+.donut-legende li{display:grid;grid-template-columns:9px 1fr 38px 52px;align-items:center;gap:9px;font-size:12px;color:var(--texte);padding:4px 0;list-style:none}
+.donut-legende li.geo{grid-template-columns:9px 1fr 38px 24px}
+.donut-legende i{width:9px;height:9px;border-radius:50%}
+.donut-legende .pct{color:var(--texte-doux);text-align:right}
+.donut-legende .mnt{color:var(--encre);font-weight:700;text-align:right;white-space:nowrap}
+
+/* Taux de satisfaction */
+.note-satisfaction{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+.note-satisfaction strong{font-family:var(--display);font-weight:800;font-size:24px;color:var(--encre)}
+.etoiles-ligne{display:inline-flex;gap:2px}
+.sous-avis{font-size:12px;color:var(--texte-doux);margin-bottom:14px}
+.barres-notes li{display:grid;grid-template-columns:56px 1fr 76px;align-items:center;gap:12px;padding:6px 0;list-style:none;font-size:12px}
+.barres-notes .lab{color:var(--texte);font-weight:600;white-space:nowrap}
+.barre-note{height:8px;border-radius:999px;background:var(--papier);overflow:hidden}
+.barre-note i{display:block;height:100%;border-radius:999px;background:var(--bleu)}
+.barre-note i.rouge{background:#D93025}
+.barres-notes .nb{color:var(--texte-doux);white-space:nowrap;text-align:right}
+.barres-notes .nb strong{color:var(--encre);font-weight:700}
+
+/* Performances */
+.perf-ligne{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--bordure);font-size:13.5px;font-weight:600;color:var(--encre)}
+.perf-ligne:last-of-type{border-bottom:none}
+.perf-ligne svg{color:var(--texte-doux);flex-shrink:0}
+.perf-ligne .fin{margin-left:auto;display:flex;align-items:center;gap:10px}
+.perf-ligne .valeur{font-weight:800;white-space:nowrap}
+.chip-evo{font-size:11px;font-weight:700;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.ce-vert{background:var(--vert-clair);color:var(--vert)}
+.ce-rouge{background:#FDECEA;color:#D93025}
+.note-maj{font-size:12px;color:var(--texte-doux);margin-top:16px}
+
+@media (max-width:1400px){.stats-ligne{grid-template-columns:repeat(3,1fr)}.rangee-3{grid-template-columns:1fr 1fr}.rangee-3 .bloc-satisfaction{grid-column:1 / -1}}
+@media (max-width:1280px){.rangee-2,.rangee-fin{grid-template-columns:1fr}}
+@media (max-width:1024px){.stats-ligne{grid-template-columns:repeat(2,1fr)}.rangee-3{grid-template-columns:1fr}.btn-export-rapport{margin-left:0}}
+@media (max-width:640px){.stats-ligne{grid-template-columns:1fr}.donut-flex{flex-direction:column;align-items:flex-start}}
+
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <svg class="logo-mark" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+        <rect x="2" y="10" width="24" height="24" rx="7" fill="#1E49C7" transform="rotate(-8 14 22)"/>
+        <rect x="18" y="10" width="24" height="24" rx="7" fill="#FF8A1E" transform="rotate(8 30 22)"/>
+        <circle cx="22" cy="22" r="5.5" fill="#fff"/>
+      </svg>
+      <div>
+        <div class="logo-nom">TrouveMoi<span>.com</span></div>
+        <div class="logo-slogan">Trouvez. Réservez. Réalisez.</div>
+      </div>
+    </div>
+
+    <div class="sidebar-profil">
+      <img src="https://picsum.photos/seed/thomas-tm/108/108" alt="Photo de Thomas Martin">
+      <div>
+        <h2>Thomas Martin</h2>
+        <p>Plombier chauffagiste</p>
+        <p class="note"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>4,8/5 <span>(128 avis)</span></p>
+      </div>
+    </div>
+    <a href="#" class="btn-profil-public">Voir mon profil public <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"/></svg></a>
+
+    <nav aria-label="Navigation de l'espace prestataire">
+      <a href="#" class="actif" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span>Tableau de bord</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11h6M9 15h4"/><path d="M6 3h9l4 4v14H6z"/></svg><span>Demandes</span><span class="nb">8</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5 5L3 18v3h3l6.7-6.7a4 4 0 0 0 5-5L15 12l-3-3z"/></svg><span>Mes prestations</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg><span>Messages</span><span class="nb">3</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg><span>Avis clients</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span>Calendrier</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Facturation</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20v-6M9 20V9M14 20v-9M19 20V5"/></svg><span>Statistiques</span></a>
+      <p class="groupe-titre">Paramètres</p>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg><span>Paramètres</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg><span>Mon compte</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span>Notifications</span></a>
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="11" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg><span>Sécurité</span></a>
+    </nav>
+
+    <div class="deconnexion">
+      <a href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg><span>Déconnexion</span></a>
+    </div>
+  </aside>
+
+  <!-- ============ PRINCIPAL ============ -->
+  <div class="principal">
+
+    <header class="barre-haute">
+      <button class="burger" aria-label="Ouvrir le menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg></button>
+      <div>
+        <h1>Statistiques</h1>
+        <p class="sous">Suivez votre activité et analysez vos performances</p>
+      </div>
+      <div class="barre-droite">
+        <a href="#" class="lien-aide"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4.9.8c0 1.6-2.4 2.2-2.4 3.7M12 17h.01"/></svg>Besoin d'aide ?</a>
+        <button class="btn-cloche" aria-label="Notifications"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="pastille">2</span></button>
+        <a href="#" class="avatar-haut"><img src="https://picsum.photos/seed/thomas-tm/80/80" alt=""><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></a>
+      </div>
+    </header>
+
+    <main class="contenu">
+
+      <!-- Cartes statistiques -->
+      <div class="stats-ligne">
+        <div class="stat-carte"><span class="rond r-bleu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 8.5A4.5 4.5 0 0 0 8 12a4.5 4.5 0 0 0 7 3.5M6 10.8h5M6 13.2h5"/></svg></span><div><h3>Chiffre d'affaires (mois)</h3><div class="val">3 850 €</div><div class="evo">↑ 12 % <small>vs mois dernier</small></div></div></div>
+        <div class="stat-carte"><span class="rond r-bleu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg></span><div><h3>Demandes reçues</h3><div class="val">28</div><div class="evo">↑ 27 % <small>vs mois dernier</small></div></div></div>
+        <div class="stat-carte"><span class="rond r-vert"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg></span><div><h3>Interventions réalisées</h3><div class="val">18</div><div class="evo">↑ 20 % <small>vs mois dernier</small></div></div></div>
+        <div class="stat-carte"><span class="rond r-violet"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 3 6-7"/><path d="M14 8h4v4"/><path d="M3 21h18"/></svg></span><div><h3>Taux de conversion</h3><div class="val">64 %</div><div class="evo">↑ 8 pts <small>vs mois dernier</small></div></div></div>
+        <div class="stat-carte"><span class="rond r-safran"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></span><div><h3>Avis moyens</h3><div class="val">4,8 / 5</div><div class="neutre">128 avis</div></div></div>
+      </div>
+
+      <!-- Barre de période -->
+      <div class="barre-periode">
+        <div class="champ-periode">
+          <label>Période</label>
+          <div class="enveloppe">01/05/2024 – 31/05/2024 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div>
+        </div>
+        <div class="raccourcis-periode" role="tablist" aria-label="Périodes rapides">
+          <button class="rp" type="button">7 derniers jours</button>
+          <button class="rp actif" type="button">30 derniers jours</button>
+          <button class="rp" type="button">3 derniers mois</button>
+          <button class="rp" type="button">12 derniers mois</button>
+        </div>
+        <button class="btn-export-rapport" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Exporter le rapport</button>
+      </div>
+
+      <!-- CA + Demandes -->
+      <div class="rangee-2">
+        <section class="bloc-stat">
+          <div class="entete">
+            <h2>Évolution du chiffre d'affaires</h2>
+            <label class="select-periode"><select aria-label="Granularité"><option>Par jour</option><option>Par semaine</option></select><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></label>
+          </div>
+          <div class="grande-valeur"><strong>3 850 €</strong><span class="evo">↑ 12 % <small>vs 01/04/2024 – 30/04/2024</small></span></div>
+          <div class="graphique"><svg viewBox="0 0 620 230" role="img" aria-label="Évolution du chiffre d'affaires en mai 2024" font-family="Inter,sans-serif">
+<line x1="42" y1="202.0" x2="606" y2="202.0" stroke="#E3E8F1"/><text x="34" y="206.0" text-anchor="end" font-size="10.5" fill="#5B6B85">0 €</text><line x1="42" y1="163.6" x2="606" y2="163.6" stroke="#E3E8F1"/><text x="34" y="167.6" text-anchor="end" font-size="10.5" fill="#5B6B85">1K €</text><line x1="42" y1="125.2" x2="606" y2="125.2" stroke="#E3E8F1"/><text x="34" y="129.2" text-anchor="end" font-size="10.5" fill="#5B6B85">2K €</text><line x1="42" y1="86.8" x2="606" y2="86.8" stroke="#E3E8F1"/><text x="34" y="90.8" text-anchor="end" font-size="10.5" fill="#5B6B85">3K €</text><line x1="42" y1="48.4" x2="606" y2="48.4" stroke="#E3E8F1"/><text x="34" y="52.4" text-anchor="end" font-size="10.5" fill="#5B6B85">4K €</text><line x1="42" y1="10.0" x2="606" y2="10.0" stroke="#E3E8F1"/><text x="34" y="14.0" text-anchor="end" font-size="10.5" fill="#5B6B85">5K €</text><text x="42.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">01/05</text><text x="136.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">06/05</text><text x="230.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">11/05</text><text x="324.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">16/05</text><text x="418.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">21/05</text><text x="512.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">26/05</text><text x="606.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">31/05</text>
+<polygon points="42.0,202 42.0,171.0 60.8,179.2 79.6,191.4 98.4,175.5 117.2,161.9 136.0,173.9 154.8,174.5 173.6,149.6 192.4,140.2 211.2,150.6 230.0,139.6 248.8,115.0 267.6,116.8 286.4,127.9 305.2,112.9 324.0,98.0 342.8,111.2 361.6,118.0 380.4,98.3 399.2,90.4 418.0,103.9 436.8,97.3 455.6,71.7 474.4,68.9 493.2,77.8 512.0,60.8 530.8,39.7 549.6,47.5 568.4,54.6 587.2,35.7 606.0,26.7 606.0,202" fill="#1E49C7" opacity=".09"/>
+<polyline points="42.0,171.0 60.8,179.2 79.6,191.4 98.4,175.5 117.2,161.9 136.0,173.9 154.8,174.5 173.6,149.6 192.4,140.2 211.2,150.6 230.0,139.6 248.8,115.0 267.6,116.8 286.4,127.9 305.2,112.9 324.0,98.0 342.8,111.2 361.6,118.0 380.4,98.3 399.2,90.4 418.0,103.9 436.8,97.3 455.6,71.7 474.4,68.9 493.2,77.8 512.0,60.8 530.8,39.7 549.6,47.5 568.4,54.6 587.2,35.7 606.0,26.7" fill="none" stroke="#1E49C7" stroke-width="2.2" stroke-linejoin="round"/>
+<circle cx="42.0" cy="171.0" r="2.6" fill="#1E49C7"/><circle cx="60.8" cy="179.2" r="2.6" fill="#1E49C7"/><circle cx="79.6" cy="191.4" r="2.6" fill="#1E49C7"/><circle cx="98.4" cy="175.5" r="2.6" fill="#1E49C7"/><circle cx="117.2" cy="161.9" r="2.6" fill="#1E49C7"/><circle cx="136.0" cy="173.9" r="2.6" fill="#1E49C7"/><circle cx="154.8" cy="174.5" r="2.6" fill="#1E49C7"/><circle cx="173.6" cy="149.6" r="2.6" fill="#1E49C7"/><circle cx="192.4" cy="140.2" r="2.6" fill="#1E49C7"/><circle cx="211.2" cy="150.6" r="2.6" fill="#1E49C7"/><circle cx="230.0" cy="139.6" r="2.6" fill="#1E49C7"/><circle cx="248.8" cy="115.0" r="2.6" fill="#1E49C7"/><circle cx="267.6" cy="116.8" r="2.6" fill="#1E49C7"/><circle cx="286.4" cy="127.9" r="2.6" fill="#1E49C7"/><circle cx="305.2" cy="112.9" r="2.6" fill="#1E49C7"/><circle cx="324.0" cy="98.0" r="2.6" fill="#1E49C7"/><circle cx="342.8" cy="111.2" r="2.6" fill="#1E49C7"/><circle cx="361.6" cy="118.0" r="2.6" fill="#1E49C7"/><circle cx="380.4" cy="98.3" r="2.6" fill="#1E49C7"/><circle cx="399.2" cy="90.4" r="2.6" fill="#1E49C7"/><circle cx="418.0" cy="103.9" r="2.6" fill="#1E49C7"/><circle cx="436.8" cy="97.3" r="2.6" fill="#1E49C7"/><circle cx="455.6" cy="71.7" r="2.6" fill="#1E49C7"/><circle cx="474.4" cy="68.9" r="2.6" fill="#1E49C7"/><circle cx="493.2" cy="77.8" r="2.6" fill="#1E49C7"/><circle cx="512.0" cy="60.8" r="2.6" fill="#1E49C7"/><circle cx="530.8" cy="39.7" r="2.6" fill="#1E49C7"/><circle cx="549.6" cy="47.5" r="2.6" fill="#1E49C7"/><circle cx="568.4" cy="54.6" r="2.6" fill="#1E49C7"/><circle cx="587.2" cy="35.7" r="2.6" fill="#1E49C7"/><circle cx="606.0" cy="26.7" r="2.6" fill="#1E49C7"/>
+</svg></div>
+        </section>
+
+        <section class="bloc-stat">
+          <div class="entete">
+            <h2>Demandes reçues</h2>
+            <label class="select-periode"><select aria-label="Granularité"><option>Par jour</option><option>Par semaine</option></select><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></label>
+          </div>
+          <div class="grande-valeur"><strong>28</strong><span class="evo">↑ 27 % <small>vs période précédente</small></span></div>
+          <div class="graphique"><svg viewBox="0 0 470 230" role="img" aria-label="Demandes reçues par jour en mai 2024" font-family="Inter,sans-serif">
+<line x1="42" y1="202.0" x2="456" y2="202.0" stroke="#E3E8F1"/><text x="34" y="206.0" text-anchor="end" font-size="10.5" fill="#5B6B85">0</text><line x1="42" y1="154.0" x2="456" y2="154.0" stroke="#E3E8F1"/><text x="34" y="158.0" text-anchor="end" font-size="10.5" fill="#5B6B85">2</text><line x1="42" y1="106.0" x2="456" y2="106.0" stroke="#E3E8F1"/><text x="34" y="110.0" text-anchor="end" font-size="10.5" fill="#5B6B85">4</text><line x1="42" y1="58.0" x2="456" y2="58.0" stroke="#E3E8F1"/><text x="34" y="62.0" text-anchor="end" font-size="10.5" fill="#5B6B85">6</text><line x1="42" y1="10.0" x2="456" y2="10.0" stroke="#E3E8F1"/><text x="34" y="14.0" text-anchor="end" font-size="10.5" fill="#5B6B85">8</text><text x="42.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">01/05</text><text x="111.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">06/05</text><text x="180.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">11/05</text><text x="249.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">16/05</text><text x="318.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">21/05</text><text x="387.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">26/05</text><text x="456.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">31/05</text><rect x="38.3" y="154.0" width="7.3" height="48.0" rx="2" fill="#2E63E7"/><rect x="52.1" y="178.0" width="7.3" height="24.0" rx="2" fill="#2E63E7"/><rect x="65.9" y="130.0" width="7.3" height="72.0" rx="2" fill="#2E63E7"/><rect x="79.7" y="154.0" width="7.3" height="48.0" rx="2" fill="#2E63E7"/><rect x="93.5" y="106.0" width="7.3" height="96.0" rx="2" fill="#2E63E7"/><rect x="107.3" y="58.0" width="7.3" height="144.0" rx="2" fill="#2E63E7"/><rect x="121.1" y="130.0" width="7.3" height="72.0" rx="2" fill="#2E63E7"/><rect x="134.9" y="154.0" width="7.3" height="48.0" rx="2" fill="#2E63E7"/><rect x="148.7" y="82.0" width="7.3" height="120.0" rx="2" fill="#2E63E7"/><rect x="162.5" y="130.0" width="7.3" height="72.0" rx="2" fill="#2E63E7"/><rect x="176.3" y="178.0" width="7.3" height="24.0" rx="2" fill="#2E63E7"/><rect x="190.1" y="106.0" width="7.3" height="96.0" rx="2" fill="#2E63E7"/><rect x="203.9" y="154.0" width="7.3" height="48.0" rx="2" fill="#2E63E7"/><rect x="217.7" y="58.0" width="7.3" height="144.0" rx="2" fill="#2E63E7"/><rect x="231.5" y="106.0" width="7.3" height="96.0" rx="2" fill="#2E63E7"/><rect x="245.3" y="130.0" width="7.3" height="72.0" rx="2" fill="#2E63E7"/><rect x="259.1" y="154.0" width="7.3" height="48.0" rx="2" fill="#2E63E7"/><rect x="272.9" y="178.0" width="7.3" height="24.0" rx="2" fill="#2E63E7"/><rect x="286.7" y="130.0" width="7.3" height="72.0" rx="2" fill="#2E63E7"/><rect x="300.5" y="82.0" width="7.3" height="120.0" rx="2" fill="#2E63E7"/><rect x="314.3" y="154.0" width="7.3" height="48.0" rx="2" fill="#2E63E7"/><rect x="328.1" y="106.0" width="7.3" height="96.0" rx="2" fill="#2E63E7"/><rect x="341.9" y="178.0" width="7.3" height="24.0" rx="2" fill="#2E63E7"/><rect x="355.7" y="130.0" width="7.3" height="72.0" rx="2" fill="#2E63E7"/><rect x="369.5" y="154.0" width="7.3" height="48.0" rx="2" fill="#2E63E7"/><rect x="383.3" y="82.0" width="7.3" height="120.0" rx="2" fill="#2E63E7"/><rect x="397.1" y="130.0" width="7.3" height="72.0" rx="2" fill="#2E63E7"/><rect x="410.9" y="106.0" width="7.3" height="96.0" rx="2" fill="#2E63E7"/><rect x="424.7" y="154.0" width="7.3" height="48.0" rx="2" fill="#2E63E7"/><rect x="438.5" y="82.0" width="7.3" height="120.0" rx="2" fill="#2E63E7"/><rect x="452.3" y="106.0" width="7.3" height="96.0" rx="2" fill="#2E63E7"/>
+</svg></div>
+        </section>
+      </div>
+
+      <!-- Répartitions + satisfaction -->
+      <div class="rangee-3">
+        <section class="bloc-stat">
+          <div class="entete"><h2>Répartition par type de prestation</h2></div>
+          <div class="donut-flex">
+            <div class="donut"><svg width="138" height="138" viewBox="0 0 138 138"><circle cx="69" cy="69" r="55" fill="none" stroke="#1E49C7" stroke-width="17" stroke-dasharray="138.2 207.3" stroke-dashoffset="0.0"/><circle cx="69" cy="69" r="55" fill="none" stroke="#0E9F6E" stroke-width="17" stroke-dasharray="103.7 241.9" stroke-dashoffset="-138.2"/><circle cx="69" cy="69" r="55" fill="none" stroke="#F0A020" stroke-width="17" stroke-dasharray="51.8 293.7" stroke-dashoffset="-241.9"/><circle cx="69" cy="69" r="55" fill="none" stroke="#E5484D" stroke-width="17" stroke-dasharray="34.6 311.0" stroke-dashoffset="-293.7"/><circle cx="69" cy="69" r="55" fill="none" stroke="#B4C0D6" stroke-width="17" stroke-dasharray="17.3 328.3" stroke-dashoffset="-328.3"/></svg>
+            <div class="centre"><strong>3 850 €</strong><small>Total</small></div></div>
+            <ul class="donut-legende">
+              <li><i style="background:#1E49C7"></i>Installation chauffage<span class="pct">40 %</span><span class="mnt">1 540 €</span></li>
+              <li><i style="background:#0E9F6E"></i>Dépannage<span class="pct">30 %</span><span class="mnt">1 155 €</span></li>
+              <li><i style="background:#F0A020"></i>Entretien<span class="pct">15 %</span><span class="mnt">578 €</span></li>
+              <li><i style="background:#E5484D"></i>Remplacement<span class="pct">10 %</span><span class="mnt">385 €</span></li>
+              <li><i style="background:#B4C0D6"></i>Autres<span class="pct">5 %</span><span class="mnt">192 €</span></li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="bloc-stat">
+          <div class="entete"><h2>Répartition géographique</h2></div>
+          <div class="donut-flex">
+            <div class="donut"><svg width="138" height="138" viewBox="0 0 138 138"><circle cx="69" cy="69" r="55" fill="none" stroke="#1E49C7" stroke-width="17" stroke-dasharray="114.0 231.5" stroke-dashoffset="0.0"/><circle cx="69" cy="69" r="55" fill="none" stroke="#0E9F6E" stroke-width="17" stroke-dasharray="76.0 269.5" stroke-dashoffset="-114.0"/><circle cx="69" cy="69" r="55" fill="none" stroke="#F0A020" stroke-width="17" stroke-dasharray="58.7 286.8" stroke-dashoffset="-190.1"/><circle cx="69" cy="69" r="55" fill="none" stroke="#E5484D" stroke-width="17" stroke-dasharray="38.0 307.6" stroke-dashoffset="-248.8"/><circle cx="69" cy="69" r="55" fill="none" stroke="#B4C0D6" stroke-width="17" stroke-dasharray="58.7 286.8" stroke-dashoffset="-286.8"/></svg>
+            <div class="centre"><strong>18</strong><small>Interventions</small></div></div>
+            <ul class="donut-legende">
+              <li class="geo"><i style="background:#1E49C7"></i>Lyon 3e<span class="pct">33 %</span><span class="mnt">6</span></li>
+              <li class="geo"><i style="background:#0E9F6E"></i>Lyon 7e<span class="pct">22 %</span><span class="mnt">4</span></li>
+              <li class="geo"><i style="background:#F0A020"></i>Villeurbanne<span class="pct">17 %</span><span class="mnt">3</span></li>
+              <li class="geo"><i style="background:#E5484D"></i>Sainte-Foy-lès-Lyon<span class="pct">11 %</span><span class="mnt">2</span></li>
+              <li class="geo"><i style="background:#B4C0D6"></i>Autres<span class="pct">17 %</span><span class="mnt">3</span></li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="bloc-stat bloc-satisfaction">
+          <div class="entete"><h2>Taux de satisfaction</h2></div>
+          <div class="note-satisfaction"><strong>4,8 / 5</strong><span class="etoiles-ligne"><span style="color:var(--safran);display:flex"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></span><span style="color:var(--safran);display:flex"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></span><span style="color:var(--safran);display:flex"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></span><span style="color:var(--safran);display:flex"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></span><span style="color:var(--safran);display:flex"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></span></span></div>
+          <p class="sous-avis">128 avis</p>
+          <ul class="barres-notes">
+            <li><span class="lab">5 étoiles</span><span class="barre-note"><i class="" style="width:82%"></i></span><span class="nb"><strong>82 %</strong> (105)</span></li>
+            <li><span class="lab">4 étoiles</span><span class="barre-note"><i class="" style="width:12%"></i></span><span class="nb"><strong>12 %</strong> (15)</span></li>
+            <li><span class="lab">3 étoiles</span><span class="barre-note"><i class="" style="width:4%"></i></span><span class="nb"><strong>4 %</strong> (5)</span></li>
+            <li><span class="lab">2 étoiles</span><span class="barre-note"><i class="" style="width:1.5%"></i></span><span class="nb"><strong>1,5 %</strong> (2)</span></li>
+            <li><span class="lab">1 étoile</span><span class="barre-note"><i class="rouge" style="width:1.2%"></i></span><span class="nb"><strong>0,5 %</strong> (1)</span></li>
+          </ul>
+        </section>
+      </div>
+
+      <!-- Indicateurs clés + performances -->
+      <div class="rangee-fin">
+        <section class="bloc-stat">
+          <div class="entete">
+            <h2>Évolution des indicateurs clés</h2>
+            <label class="select-periode"><select aria-label="Granularité"><option>Par jour</option><option>Par semaine</option></select><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></label>
+          </div>
+          <div class="legende">
+            <span><i style="background:#1E49C7"></i>Demandes reçues</span>
+            <span><i style="background:#0E9F6E"></i>Interventions réalisées</span>
+            <span><i style="background:#7C3AED"></i>Chiffre d'affaires (€)</span>
+          </div>
+          <div class="graphique"><svg viewBox="0 0 660 230" role="img" aria-label="Évolution des indicateurs clés" font-family="Inter,sans-serif">
+<line x1="42" y1="202.0" x2="614" y2="202.0" stroke="#E3E8F1"/><text x="34" y="206.0" text-anchor="end" font-size="10.5" fill="#5B6B85">0</text><text x="620" y="206.0" font-size="10.5" fill="#5B6B85">0K €</text><line x1="42" y1="154.0" x2="614" y2="154.0" stroke="#E3E8F1"/><text x="34" y="158.0" text-anchor="end" font-size="10.5" fill="#5B6B85">10</text><text x="620" y="158.0" font-size="10.5" fill="#5B6B85">1K €</text><line x1="42" y1="106.0" x2="614" y2="106.0" stroke="#E3E8F1"/><text x="34" y="110.0" text-anchor="end" font-size="10.5" fill="#5B6B85">20</text><text x="620" y="110.0" font-size="10.5" fill="#5B6B85">2K €</text><line x1="42" y1="58.0" x2="614" y2="58.0" stroke="#E3E8F1"/><text x="34" y="62.0" text-anchor="end" font-size="10.5" fill="#5B6B85">30</text><text x="620" y="62.0" font-size="10.5" fill="#5B6B85">3K €</text><line x1="42" y1="10.0" x2="614" y2="10.0" stroke="#E3E8F1"/><text x="34" y="14.0" text-anchor="end" font-size="10.5" fill="#5B6B85">40</text><text x="620" y="14.0" font-size="10.5" fill="#5B6B85">4K €</text><text x="42.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">01/05</text><text x="142.7" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">06/05</text><text x="243.3" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">11/05</text><text x="344.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">16/05</text><text x="444.7" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">21/05</text><text x="545.3" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">26/05</text><text x="646.0" y="222" text-anchor="middle" font-size="10.5" fill="#5B6B85">31/05</text>
+<polyline points="42.0,168.5 62.1,167.6 82.3,179.2 102.4,177.3 122.5,167.6 142.7,174.3 162.8,184.5 182.9,176.8 203.1,168.8 223.2,177.2 243.3,179.9 263.5,166.2 283.6,161.6 303.7,170.6 323.9,167.6 344.0,155.1 364.1,158.7 384.3,169.4 404.4,163.8 424.5,156.4 444.7,166.2 464.8,173.2 484.9,162.7 505.1,158.1 525.2,167.7 545.3,166.1 565.5,151.9 585.6,151.4 605.7,160.1 625.9,153.3 646.0,142.8" fill="none" stroke="#1E49C7" stroke-width="2" stroke-linejoin="round"/>
+<polyline points="42.0,155.2 62.1,169.6 82.3,168.2 102.4,148.9 122.5,147.7 142.7,158.0 162.8,146.5 182.9,129.2 203.1,136.4 223.2,144.9 243.3,131.0 263.5,123.8 283.6,139.3 303.7,143.3 323.9,127.8 344.0,127.9 364.1,141.9 384.3,134.3 404.4,116.1 424.5,120.1 444.7,127.6 464.8,111.5 484.9,98.5 505.1,109.8 525.2,113.9 545.3,97.9 565.5,96.6 585.6,113.1 605.7,111.2 625.9,96.0 646.0,101.4" fill="none" stroke="#0E9F6E" stroke-width="2" stroke-linejoin="round"/>
+<polyline points="42.0,164.5 62.1,174.1 82.3,188.6 102.4,170.0 122.5,154.2 142.7,168.4 162.8,169.1 182.9,140.0 203.1,129.2 223.2,141.4 243.3,128.7 263.5,99.9 283.6,102.1 303.7,115.2 323.9,97.7 344.0,80.3 364.1,95.9 384.3,104.0 404.4,81.0 424.5,71.8 444.7,87.7 464.8,80.1 484.9,50.3 505.1,47.0 525.2,57.6 545.3,37.7 565.5,13.1 585.6,22.3 605.7,30.7 625.9,10.0 646.0,10.0" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="42.0" cy="168.5" r="2.4" fill="#1E49C7"/><circle cx="62.1" cy="167.6" r="2.4" fill="#1E49C7"/><circle cx="82.3" cy="179.2" r="2.4" fill="#1E49C7"/><circle cx="102.4" cy="177.3" r="2.4" fill="#1E49C7"/><circle cx="122.5" cy="167.6" r="2.4" fill="#1E49C7"/><circle cx="142.7" cy="174.3" r="2.4" fill="#1E49C7"/><circle cx="162.8" cy="184.5" r="2.4" fill="#1E49C7"/><circle cx="182.9" cy="176.8" r="2.4" fill="#1E49C7"/><circle cx="203.1" cy="168.8" r="2.4" fill="#1E49C7"/><circle cx="223.2" cy="177.2" r="2.4" fill="#1E49C7"/><circle cx="243.3" cy="179.9" r="2.4" fill="#1E49C7"/><circle cx="263.5" cy="166.2" r="2.4" fill="#1E49C7"/><circle cx="283.6" cy="161.6" r="2.4" fill="#1E49C7"/><circle cx="303.7" cy="170.6" r="2.4" fill="#1E49C7"/><circle cx="323.9" cy="167.6" r="2.4" fill="#1E49C7"/><circle cx="344.0" cy="155.1" r="2.4" fill="#1E49C7"/><circle cx="364.1" cy="158.7" r="2.4" fill="#1E49C7"/><circle cx="384.3" cy="169.4" r="2.4" fill="#1E49C7"/><circle cx="404.4" cy="163.8" r="2.4" fill="#1E49C7"/><circle cx="424.5" cy="156.4" r="2.4" fill="#1E49C7"/><circle cx="444.7" cy="166.2" r="2.4" fill="#1E49C7"/><circle cx="464.8" cy="173.2" r="2.4" fill="#1E49C7"/><circle cx="484.9" cy="162.7" r="2.4" fill="#1E49C7"/><circle cx="505.1" cy="158.1" r="2.4" fill="#1E49C7"/><circle cx="525.2" cy="167.7" r="2.4" fill="#1E49C7"/><circle cx="545.3" cy="166.1" r="2.4" fill="#1E49C7"/><circle cx="565.5" cy="151.9" r="2.4" fill="#1E49C7"/><circle cx="585.6" cy="151.4" r="2.4" fill="#1E49C7"/><circle cx="605.7" cy="160.1" r="2.4" fill="#1E49C7"/><circle cx="625.9" cy="153.3" r="2.4" fill="#1E49C7"/><circle cx="646.0" cy="142.8" r="2.4" fill="#1E49C7"/><circle cx="42.0" cy="155.2" r="2.4" fill="#0E9F6E"/><circle cx="62.1" cy="169.6" r="2.4" fill="#0E9F6E"/><circle cx="82.3" cy="168.2" r="2.4" fill="#0E9F6E"/><circle cx="102.4" cy="148.9" r="2.4" fill="#0E9F6E"/><circle cx="122.5" cy="147.7" r="2.4" fill="#0E9F6E"/><circle cx="142.7" cy="158.0" r="2.4" fill="#0E9F6E"/><circle cx="162.8" cy="146.5" r="2.4" fill="#0E9F6E"/><circle cx="182.9" cy="129.2" r="2.4" fill="#0E9F6E"/><circle cx="203.1" cy="136.4" r="2.4" fill="#0E9F6E"/><circle cx="223.2" cy="144.9" r="2.4" fill="#0E9F6E"/><circle cx="243.3" cy="131.0" r="2.4" fill="#0E9F6E"/><circle cx="263.5" cy="123.8" r="2.4" fill="#0E9F6E"/><circle cx="283.6" cy="139.3" r="2.4" fill="#0E9F6E"/><circle cx="303.7" cy="143.3" r="2.4" fill="#0E9F6E"/><circle cx="323.9" cy="127.8" r="2.4" fill="#0E9F6E"/><circle cx="344.0" cy="127.9" r="2.4" fill="#0E9F6E"/><circle cx="364.1" cy="141.9" r="2.4" fill="#0E9F6E"/><circle cx="384.3" cy="134.3" r="2.4" fill="#0E9F6E"/><circle cx="404.4" cy="116.1" r="2.4" fill="#0E9F6E"/><circle cx="424.5" cy="120.1" r="2.4" fill="#0E9F6E"/><circle cx="444.7" cy="127.6" r="2.4" fill="#0E9F6E"/><circle cx="464.8" cy="111.5" r="2.4" fill="#0E9F6E"/><circle cx="484.9" cy="98.5" r="2.4" fill="#0E9F6E"/><circle cx="505.1" cy="109.8" r="2.4" fill="#0E9F6E"/><circle cx="525.2" cy="113.9" r="2.4" fill="#0E9F6E"/><circle cx="545.3" cy="97.9" r="2.4" fill="#0E9F6E"/><circle cx="565.5" cy="96.6" r="2.4" fill="#0E9F6E"/><circle cx="585.6" cy="113.1" r="2.4" fill="#0E9F6E"/><circle cx="605.7" cy="111.2" r="2.4" fill="#0E9F6E"/><circle cx="625.9" cy="96.0" r="2.4" fill="#0E9F6E"/><circle cx="646.0" cy="101.4" r="2.4" fill="#0E9F6E"/><circle cx="42.0" cy="164.5" r="2.4" fill="#7C3AED"/><circle cx="62.1" cy="174.1" r="2.4" fill="#7C3AED"/><circle cx="82.3" cy="188.6" r="2.4" fill="#7C3AED"/><circle cx="102.4" cy="170.0" r="2.4" fill="#7C3AED"/><circle cx="122.5" cy="154.2" r="2.4" fill="#7C3AED"/><circle cx="142.7" cy="168.4" r="2.4" fill="#7C3AED"/><circle cx="162.8" cy="169.1" r="2.4" fill="#7C3AED"/><circle cx="182.9" cy="140.0" r="2.4" fill="#7C3AED"/><circle cx="203.1" cy="129.2" r="2.4" fill="#7C3AED"/><circle cx="223.2" cy="141.4" r="2.4" fill="#7C3AED"/><circle cx="243.3" cy="128.7" r="2.4" fill="#7C3AED"/><circle cx="263.5" cy="99.9" r="2.4" fill="#7C3AED"/><circle cx="283.6" cy="102.1" r="2.4" fill="#7C3AED"/><circle cx="303.7" cy="115.2" r="2.4" fill="#7C3AED"/><circle cx="323.9" cy="97.7" r="2.4" fill="#7C3AED"/><circle cx="344.0" cy="80.3" r="2.4" fill="#7C3AED"/><circle cx="364.1" cy="95.9" r="2.4" fill="#7C3AED"/><circle cx="384.3" cy="104.0" r="2.4" fill="#7C3AED"/><circle cx="404.4" cy="81.0" r="2.4" fill="#7C3AED"/><circle cx="424.5" cy="71.8" r="2.4" fill="#7C3AED"/><circle cx="444.7" cy="87.7" r="2.4" fill="#7C3AED"/><circle cx="464.8" cy="80.1" r="2.4" fill="#7C3AED"/><circle cx="484.9" cy="50.3" r="2.4" fill="#7C3AED"/><circle cx="505.1" cy="47.0" r="2.4" fill="#7C3AED"/><circle cx="525.2" cy="57.6" r="2.4" fill="#7C3AED"/><circle cx="545.3" cy="37.7" r="2.4" fill="#7C3AED"/><circle cx="565.5" cy="13.1" r="2.4" fill="#7C3AED"/><circle cx="585.6" cy="22.3" r="2.4" fill="#7C3AED"/><circle cx="605.7" cy="30.7" r="2.4" fill="#7C3AED"/><circle cx="625.9" cy="10.0" r="2.4" fill="#7C3AED"/><circle cx="646.0" cy="10.0" r="2.4" fill="#7C3AED"/>
+</svg></div>
+        </section>
+
+        <section class="bloc-stat">
+          <div class="entete"><h2>Performances</h2></div>
+          <div class="perf-ligne"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Délai moyen de réponse<span class="fin"><span class="valeur">1 h 24 min</span><span class="chip-evo ce-vert">− 15 %</span></span></div>
+          <div class="perf-ligne"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Taux d'acceptation<span class="fin"><span class="valeur">78 %</span><span class="chip-evo ce-vert">+ 6 pts</span></span></div>
+          <div class="perf-ligne"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Taux d'annulation<span class="fin"><span class="valeur">6 %</span><span class="chip-evo ce-rouge">+ 2 pts</span></span></div>
+          <div class="perf-ligne"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/><path d="M16 4a3.5 3.5 0 0 1 0 7M18 14.7c2.4.7 4 2.3 4 5.3"/></svg>Clients réguliers<span class="fin"><span class="valeur">12</span><span class="chip-evo ce-vert">+ 3</span></span></div>
+          <div class="perf-ligne"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/><path d="M18 8v6M15 11h6"/></svg>Nouveaux clients<span class="fin"><span class="valeur">9</span><span class="chip-evo ce-vert">+ 2</span></span></div>
+        </section>
+      </div>
+
+      <p class="note-maj">Les données sont mises à jour en temps réel.</p>
+
+    </main>
+  </div>
+</div>
+
+<script>
+
+// Raccourcis de période : état actif
+document.querySelectorAll('.rp').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.rp').forEach(b => b.classList.toggle('actif', b === btn));
+  });
+});
+
+</script>
+</body>
+</html>
