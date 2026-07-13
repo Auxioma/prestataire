@@ -21,10 +21,10 @@ class QuoteProposalType extends AbstractType
     {
         $builder
             ->add('documentMode', ChoiceType::class, [
-                'label' => 'Mode de document',
+                'label' => 'Choisissez la manière dont vous voulez ajouter le devis:',
                 'choices' => [
-                    'Devis généré par la plateforme' => QuoteProposalDocumentModeEnum::PLATFORM,
-                    'PDF externe fourni par le prestataire' => QuoteProposalDocumentModeEnum::EXTERNAL_PDF,
+                    'Devis généré grâce à la plateforme' => QuoteProposalDocumentModeEnum::PLATFORM,
+                    'Devis PDF externe fourni par le prestataire' => QuoteProposalDocumentModeEnum::EXTERNAL_PDF,
                 ],
                 'choice_attr' => static function (?QuoteProposalDocumentModeEnum $choice): array {
                     return [
