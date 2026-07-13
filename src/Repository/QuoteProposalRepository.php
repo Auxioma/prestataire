@@ -58,13 +58,13 @@ class QuoteProposalRepository extends ServiceEntityRepository
             ->andWhere('qp.publicReference = :publicReference')
             ->andWhere('qp.client = :client')
             ->andWhere('qp.deletedAt IS NULL')
-            ->andWhere('qp.archivedByPrestataireAt IS NULL')
             ->andWhere('qp.status IN (:statuses)')
             ->setParameter('publicReference', $publicReference)
             ->setParameter('client', $client)
             ->setParameter('statuses', [
                 QuoteProposalStatusEnum::FINALIZED,
                 QuoteProposalStatusEnum::ACCEPTED,
+                QuoteProposalStatusEnum::ARCHIVED,
             ])
             ->setMaxResults(1)
             ->getQuery()
@@ -116,6 +116,20 @@ class QuoteProposalRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function findOneForPrestataireByPublicReferenceIncludingArchived(
+        string $publicReference,
+        PrestataireProfile $prestataire
+    ): ?QuoteProposal {
+        return $this->createQueryBuilder('qp')
+            ->andWhere('qp.publicReference = :publicReference')
+            ->andWhere('qp.prestataire = :prestataire')
+            ->andWhere('qp.deletedAt IS NULL')
+            ->setParameter('publicReference', $publicReference)
+            ->setParameter('prestataire', $prestataire)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function findOneForClientById(string|int $id, ClientProfile $client): ?QuoteProposal
     {
         return $this->createQueryBuilder('qp')
@@ -129,6 +143,7 @@ class QuoteProposalRepository extends ServiceEntityRepository
             ->setParameter('statuses', [
                 QuoteProposalStatusEnum::FINALIZED,
                 QuoteProposalStatusEnum::ACCEPTED,
+                QuoteProposalStatusEnum::ARCHIVED,
             ])
             ->setMaxResults(1)
             ->getQuery()

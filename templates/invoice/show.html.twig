@@ -9,8 +9,8 @@
 		? path('app_prestataire_invoice_pdf', { publicReference: proposal.publicReference })
 		: path('app_quote_request_invoice_pdf', { publicReference: proposal.publicReference }) %}
 	{% set backPath = isPrestataireView
-		? path('app_prestataire_quote_proposal_show', { publicReference: proposal.publicReference })
-		: path('app_quote_request_show', { slug: proposal.quoteRequest.slug }) %}
+		? path(proposal.archivedByPrestataireAt ? 'app_prestataire_quote_proposal_archived_show' : 'app_prestataire_quote_proposal_show', { publicReference: proposal.publicReference })
+		: path(proposal.quoteRequest.archivedByClientAt ? 'app_quote_request_history_show' : 'app_quote_request_show', { slug: proposal.quoteRequest.slug }) %}
 
 	<div class="qp-page">
 		<div class="qp-shell">

@@ -710,6 +710,24 @@
 									Retour à mes demandes
 								</a>
 
+								{% set hasIssuedInvoice = false %}
+								{% for quoteResponse in quoteResponses|default([]) %}
+									{% if quoteResponse.invoice and quoteResponse.invoice.isIssued %}
+										{% set hasIssuedInvoice = true %}
+									{% endif %}
+								{% endfor %}
+
+								{% if hasIssuedInvoice and not isArchivedView %}
+									<form method="post"
+									      action="{{ path('app_quote_request_mark_as_archived', { slug: quoteRequest.slug }) }}"
+									      onsubmit="return confirm('Archiver cette demande ? Vous pourrez toujours consulter le devis et la facture dans vos archives.');">
+										<input type="hidden" name="_token" value="{{ csrf_token('archive-quote-request-' ~ quoteRequest.id) }}">
+										<button type="submit" class="btn tm-client-quotes-btn tm-client-quotes-btn--ghost w-100">
+											Archiver
+										</button>
+									</form>
+								{% endif %}
+
 								{% if quoteRequest.prestation %}
 									<a href="{{ path('app_quote_request_new', { slug: quoteRequest.prestation.slug }) }}" class="btn tm-client-quotes-btn tm-client-quotes-btn--primary">
 										Faire une nouvelle demande similaire

@@ -85,7 +85,7 @@ class QuoteProposalController extends AbstractController
 
         $prestataire = $this->getCurrentPrestataire($prestataireProfileRepository);
 
-        $proposal = $quoteProposalRepository->findOneForPrestataireByPublicReference($publicReference, $prestataire);
+        $proposal = $quoteProposalRepository->findOneForPrestataireByPublicReferenceIncludingArchived($publicReference, $prestataire);
 
         if (!$proposal instanceof QuoteProposal) {
             throw $this->createNotFoundException('Devis introuvable.');
@@ -144,10 +144,16 @@ class QuoteProposalController extends AbstractController
 
         $prestataire = $this->getCurrentPrestataire($prestataireProfileRepository);
 
-        $proposal = $quoteProposalRepository->findOneForPrestataireByPublicReference($publicReference, $prestataire);
+        $proposal = $quoteProposalRepository->findOneForPrestataireByPublicReferenceIncludingArchived($publicReference, $prestataire);
 
         if (!$proposal instanceof QuoteProposal) {
             throw $this->createNotFoundException('Devis introuvable.');
+        }
+
+        if ($proposal->isArchivedByPrestataire()) {
+            return $this->redirectToRoute('app_prestataire_quote_proposal_archived_show', [
+                'publicReference' => $proposal->getPublicReference(),
+            ], 303);
         }
 
         return $this->render('quote_proposal/show.html.twig', [
@@ -286,7 +292,7 @@ class QuoteProposalController extends AbstractController
 
         $prestataire = $this->getCurrentPrestataire($prestataireProfileRepository);
 
-        $proposal = $quoteProposalRepository->findOneForPrestataireByPublicReference($publicReference, $prestataire);
+        $proposal = $quoteProposalRepository->findOneForPrestataireByPublicReferenceIncludingArchived($publicReference, $prestataire);
 
         if (!$proposal instanceof QuoteProposal) {
             throw $this->createNotFoundException('Devis introuvable.');
@@ -331,7 +337,7 @@ class QuoteProposalController extends AbstractController
 
         $prestataire = $this->getCurrentPrestataire($prestataireProfileRepository);
 
-        $proposal = $quoteProposalRepository->findOneForPrestataireByPublicReference($publicReference, $prestataire);
+        $proposal = $quoteProposalRepository->findOneForPrestataireByPublicReferenceIncludingArchived($publicReference, $prestataire);
 
         if (!$proposal instanceof QuoteProposal) {
             throw $this->createNotFoundException('Devis introuvable.');
@@ -358,14 +364,18 @@ class QuoteProposalController extends AbstractController
             ]);
         }
 
+        $proposalUpdatedAt = new \DateTime();
+        $requestUpdatedAt = new \DateTimeImmutable();
+        $archivedAt = $requestUpdatedAt;
+
         $proposal
-            ->setArchivedByPrestataireAt(new \DateTimeImmutable())
-            ->setUpdatedAt(new \DateTimeImmutable());
+            ->setArchivedByPrestataireAt($archivedAt)
+            ->setUpdatedAt($proposalUpdatedAt);
 
         if ($quoteRequest instanceof QuoteRequest) {
             $quoteRequest
-                ->setArchivedByPrestataireAt(new \DateTimeImmutable())
-                ->setUpdatedAt(new \DateTimeImmutable());
+                ->setArchivedByPrestataireAt($archivedAt)
+                ->setUpdatedAt($requestUpdatedAt);
 
             foreach ($linkedProposals as $linkedProposal) {
                 if (\in_array($linkedProposal->getStatus(), [
@@ -373,7 +383,7 @@ class QuoteProposalController extends AbstractController
                     QuoteProposalStatusEnum::ACCEPTED,
                 ], true)) {
                     $linkedProposal->setStatus(QuoteProposalStatusEnum::ARCHIVED);
-                    $linkedProposal->setUpdatedAt(new \DateTimeImmutable());
+                    $linkedProposal->setUpdatedAt($proposalUpdatedAt);
                 }
             }
         }
@@ -454,7 +464,7 @@ class QuoteProposalController extends AbstractController
 
         $prestataire = $this->getCurrentPrestataire($prestataireProfileRepository);
 
-        $proposal = $quoteProposalRepository->findOneForPrestataireByPublicReference($publicReference, $prestataire);
+        $proposal = $quoteProposalRepository->findOneForPrestataireByPublicReferenceIncludingArchived($publicReference, $prestataire);
 
         if (!$proposal instanceof QuoteProposal) {
             throw $this->createNotFoundException('Devis introuvable.');

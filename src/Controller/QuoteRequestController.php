@@ -277,7 +277,6 @@ final class QuoteRequestController extends AbstractController
             [
                 'quoteRequest' => $quoteRequest,
                 'deletedAt' => null,
-                'archivedByPrestataireAt' => null,
             ],
             [
                 'finalizedAt' => 'DESC',
@@ -287,7 +286,7 @@ final class QuoteRequestController extends AbstractController
 
         $quoteResponses = array_values(array_filter(
             $quoteResponses,
-            static fn(QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted()
+            static fn(QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted() || $proposal->getStatus()->isArchived()
         ));
 
         $existingReview = $reviewRepository->findOneByQuoteRequest($quoteRequest);
@@ -761,7 +760,7 @@ final class QuoteRequestController extends AbstractController
 
         $quoteResponses = array_values(array_filter(
             $quoteResponses,
-            static fn(QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted()
+            static fn(QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted() || $proposal->getStatus()->isArchived()
         ));
 
         if ($quoteResponses === []) {
@@ -869,7 +868,7 @@ $quoteResponses = $quoteProposalRepository->findBy(
 
 $quoteResponses = array_values(array_filter(
     $quoteResponses,
-    static fn(QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted()
+    static fn(QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted() || $proposal->getStatus()->isArchived()
 ));
         $visiblePrestataireDocuments = $this->getVisiblePrestataireDocumentsForClient(
             $quoteRequest,

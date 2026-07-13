@@ -135,6 +135,15 @@
 							{{ proposal.invoice ? (proposal.invoice.isIssued ? 'Voir la facture' : 'Créer / modifier la facture') : 'Créer la facture' }}
 						</a>
 					{% endif %}
+
+					{% if isPrestataireView and not isReadOnlyView and proposal.invoice and proposal.invoice.isIssued and proposal.archivedByPrestataireAt is null %}
+						<form method="post" action="{{ path('app_prestataire_quote_proposal_archive', { publicReference: proposal.publicReference }) }}" class="qp-inline-form" onsubmit="return confirm('Archiver ce devis ? La facture restera consultable depuis les archives.');">
+							<input type="hidden" name="_token" value="{{ csrf_token('archive_quote_proposal_' ~ proposal.id) }}">
+							<button type="submit" class="qp-btn qp-btn--ghost">
+								Archiver
+							</button>
+						</form>
+					{% endif %}
 				</div>
 			</header>
 
