@@ -129,6 +129,12 @@
 							Modifier le devis
 						</a>
 					{% endif %}
+
+					{% if isPrestataireView and proposal.acceptedAt %}
+						<a href="{{ path('app_prestataire_invoice_manage', { publicReference: proposal.publicReference }) }}" class="qp-btn qp-btn--secondary">
+							{{ proposal.invoice ? (proposal.invoice.isIssued ? 'Voir la facture' : 'Créer / modifier la facture') : 'Créer la facture' }}
+						</a>
+					{% endif %}
 				</div>
 			</header>
 

@@ -153,6 +153,12 @@
 										Voir le devis
 									{% endif %}
 								</a>
+
+								{% if linkedProposal.acceptedAt %}
+									<a href="{{ path('app_prestataire_invoice_manage', { publicReference: linkedProposal.publicReference }) }}" class="btn btn-outline-success w-100 mt-3">
+										{{ linkedProposal.invoice ? (linkedProposal.invoice.isIssued ? 'Voir la facture' : 'Créer / modifier la facture') : 'Créer la facture' }}
+									</a>
+								{% endif %}
 							{% else %}
 								<a href="{{ path('app_prestataire_quote_proposal_new', { id: quoteRequest.id, origin: 'quote_request' }) }}" class="btn btn-success w-100 mt-3">
 									Créer / ouvrir le devis

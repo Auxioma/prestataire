@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\PrestataireProfile;
 use App\Repository\QuoteProposalRepository;
 
 class QuoteProposalNumberGenerator
@@ -13,23 +14,18 @@ class QuoteProposalNumberGenerator
     ) {
     }
 
-    public function generate(): string
+    public function generate(PrestataireProfile $prestataire): array
     {
-        $year = (new \DateTimeImmutable())->format('Y');
-
-        $lastNumber = $this->quoteProposalRepository->findLastProposalNumberForYear($year);
-
-        $sequence = 1;
-
-        if ($lastNumber !== null && preg_match('/^DEV-' . preg_quote($year, '/') . '-(\d{4,5})$/', $lastNumber, $matches)) {
-            $sequence = ((int) $matches[1]) + 1;
-        }
+        $sequence = max(1, $this->quoteProposalRepository->findNextSequenceForPrestataire($prestataire));
 
         do {
-            $proposalNumber = sprintf('DEV-%s-%05d', $year, $sequence);
+            $proposalNumber = sprintf('DEV-%05d', $sequence);
             ++$sequence;
         } while ($this->quoteProposalRepository->findOneBy(['proposalNumber' => $proposalNumber]) !== null);
 
-        return $proposalNumber;
+        return [
+            'number' => $proposalNumber,
+            'sequence' => $sequence - 1,
+        ];
     }
 }

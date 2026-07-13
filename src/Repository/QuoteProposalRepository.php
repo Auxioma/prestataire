@@ -36,6 +36,20 @@ class QuoteProposalRepository extends ServiceEntityRepository
         return null;
     }
 
+    public function findNextSequenceForPrestataire(PrestataireProfile $prestataire): int
+    {
+        $result = $this->createQueryBuilder('qp')
+            ->select('MAX(qp.proposalSequenceNumber) AS maxSequence')
+            ->andWhere('qp.prestataire = :prestataire')
+            ->setParameter('prestataire', $prestataire)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        $maxSequence = is_array($result) ? (int) ($result['maxSequence'] ?? 0) : 0;
+
+        return $maxSequence + 1;
+    }
+
     public function findOneVisibleForClientByPublicReference(
         string $publicReference,
         ClientProfile $client

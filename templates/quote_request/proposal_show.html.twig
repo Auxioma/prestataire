@@ -54,6 +54,12 @@
 						Voir le PDF
 					</a>
 
+					{% if proposal.invoice and proposal.invoice.isIssued %}
+						<a href="{{ path('app_quote_request_invoice_show', { publicReference: proposal.publicReference }) }}" class="qp-btn qp-btn--secondary">
+							Voir la facture
+						</a>
+					{% endif %}
+
 					{% if viewerContext is defined and viewerContext == 'client' %}
 						{% if proposal.acceptedAt %}
 							<div class="qp-btn qp-btn--accepted-static" aria-disabled="true">

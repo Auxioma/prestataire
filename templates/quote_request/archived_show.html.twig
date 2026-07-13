@@ -119,6 +119,12 @@
                                            class="tm-qad-btn tm-qad-btn--primary">
                                             Voir le devis
                                         </a>
+                                        {% if proposal.invoice and proposal.invoice.isIssued %}
+                                            <a href="{{ path('app_quote_request_invoice_show', { publicReference: proposal.publicReference }) }}"
+                                               class="tm-qad-btn tm-qad-btn--primary">
+                                                Voir la facture
+                                            </a>
+                                        {% endif %}
                                     </aside>
                                 {% endif %}
                             </article>

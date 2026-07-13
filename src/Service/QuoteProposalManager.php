@@ -110,7 +110,10 @@ class QuoteProposalManager
         $this->recalculateTotals($proposal);
 
         if ($this->isBlank($proposal->getProposalNumber())) {
-            $proposal->setProposalNumber($this->numberGenerator->generate());
+            $generatedNumber = $this->numberGenerator->generate($proposal->getPrestataire());
+            $proposal
+                ->setProposalNumber($generatedNumber['number'])
+                ->setProposalSequenceNumber($generatedNumber['sequence']);
         }
 
         $proposal->setStatus(QuoteProposalStatusEnum::FINALIZED);

@@ -16,6 +16,7 @@ use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: QuoteProposalRepository::class)]
 #[ORM\Table(name: 'quote_proposal')]
+#[ORM\UniqueConstraint(name: 'uniq_quote_proposal_prestataire_sequence', columns: ['prestataire_id', 'proposal_sequence_number'])]
 #[ORM\Index(name: 'idx_quote_proposal_status', columns: ['status'])]
 #[ORM\Index(name: 'idx_quote_proposal_created_at', columns: ['created_at'])]
 #[ORM\Index(name: 'idx_quote_proposal_deleted_at', columns: ['deleted_at'])]
@@ -48,6 +49,9 @@ class QuoteProposal
 
     #[ORM\Column(type: Types::STRING, length: 50, unique: true, nullable: true)]
     private ?string $proposalNumber = null;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $proposalSequenceNumber = null;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     private ?string $title = null;
@@ -177,6 +181,9 @@ class QuoteProposal
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $archivedByPrestataireAt = null;
+
+    #[ORM\OneToOne(mappedBy: 'quoteProposal', targetEntity: Invoice::class, cascade: ['persist', 'remove'])]
+    private ?Invoice $invoice = null;
 
     #[ORM\Column(type: Types::STRING, length: 30, enumType: QuoteProposalDocumentModeEnum::class, options: ['default' => 'platform'])]
     private QuoteProposalDocumentModeEnum $documentMode = QuoteProposalDocumentModeEnum::PLATFORM;
@@ -324,6 +331,18 @@ class QuoteProposal
     {
         $this->proposalNumber = $proposalNumber;
         $this->touch();
+
+        return $this;
+    }
+
+    public function getProposalSequenceNumber(): ?int
+    {
+        return $this->proposalSequenceNumber;
+    }
+
+    public function setProposalSequenceNumber(?int $proposalSequenceNumber): self
+    {
+        $this->proposalSequenceNumber = $proposalSequenceNumber;
 
         return $this;
     }
@@ -958,6 +977,22 @@ class QuoteProposal
     public function isArchivedByPrestataire(): bool
     {
         return null !== $this->archivedByPrestataireAt;
+    }
+
+    public function getInvoice(): ?Invoice
+    {
+        return $this->invoice;
+    }
+
+    public function setInvoice(?Invoice $invoice): self
+    {
+        $this->invoice = $invoice;
+
+        if ($invoice instanceof Invoice && $invoice->getQuoteProposal() !== $this) {
+            $invoice->setQuoteProposal($this);
+        }
+
+        return $this;
     }
 
     public function getDocumentMode(): QuoteProposalDocumentModeEnum

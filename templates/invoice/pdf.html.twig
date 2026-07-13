@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>{{ invoice.invoiceNumber ?: 'Facture' }}</title>
+		<style>
+			body { font-family: DejaVu Sans, sans-serif; font-size: 12px; color: #1f2937; margin: 24px; }
+			.header { display: table; width: 100%; margin-bottom: 24px; }
+			.header__left, .header__right { display: table-cell; vertical-align: top; }
+			.header__right { text-align: right; }
+			.logo { max-width: 160px; max-height: 80px; margin-bottom: 12px; }
+			.title { font-size: 24px; font-weight: bold; margin: 0 0 8px; }
+			.muted { color: #6b7280; }
+			.box { border: 1px solid #d1d5db; border-radius: 8px; padding: 12px; margin-bottom: 18px; }
+			.grid { display: table; width: 100%; margin-bottom: 18px; }
+			.grid__col { display: table-cell; width: 50%; vertical-align: top; padding-right: 12px; }
+			table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+			th, td { border: 1px solid #d1d5db; padding: 8px; }
+			th { background: #f3f4f6; text-align: left; }
+			.right { text-align: right; }
+			.totals { margin-top: 18px; width: 40%; margin-left: auto; }
+			.totals td { border: none; padding: 4px 0; }
+			.notice { margin-top: 18px; padding: 12px; background: #ecfdf5; border: 1px solid #86efac; color: #166534; }
+			.signature { margin-top: 28px; }
+			.signature img { max-width: 180px; max-height: 80px; display: block; margin-top: 8px; }
+		</style>
+	</head>
+	<body>
+		<div class="header">
+			<div class="header__left">
+				{% if prestataireLogoUrl %}
+					<img src="{{ prestataireLogoUrl }}" alt="Logo" class="logo">
+				{% endif %}
+				<div><strong>{{ quote.prestataireCompanyName ?: quote.prestataireLegalName ?: 'Prestataire' }}</strong></div>
+				<div>{{ quote.prestataireAddress ?: '' }}</div>
+				<div>{{ quote.prestatairePostalCode ?: '' }} {{ quote.prestataireCity ?: '' }}</div>
+				<div>{{ quote.prestataireCountry ?: '' }}</div>
+				{% if quote.prestataireSiret %}<div>SIRET : {{ quote.prestataireSiret }}</div>{% endif %}
+				{% if quote.prestataireVatNumber %}<div>TVA : {{ quote.prestataireVatNumber }}</div>{% endif %}
+			</div>
+			<div class="header__right">
+				<p class="title">Facture {{ invoice.invoiceNumber ?: 'Brouillon' }}</p>
+				<p class="muted">Devis source : {{ quote.proposalNumber ?: quote.publicReference ?: '—' }}</p>
+				<p>Date d’émission : {{ invoice.issuedAt ? invoice.issuedAt|date('d/m/Y à H:i') : 'Brouillon' }}</p>
+				<p>Échéance : {{ invoice.dueAt ? invoice.dueAt|date('d/m/Y') : '—' }}</p>
+			</div>
+		</div>
+
+		<div class="grid">
+			<div class="grid__col">
+				<div class="box">
+					<strong>Facturé à</strong><br>
+					{{ quote.clientCompanyName ?: quote.clientFullName ?: 'Client' }}<br>
+					{% if quote.clientFullName and quote.clientCompanyName %}{{ quote.clientFullName }}<br>{% endif %}
+					{{ quote.clientBillingAddress ?: quote.clientInterventionAddress ?: '' }}<br>
+					{{ quote.clientBillingPostalCode ?: quote.clientInterventionPostalCode ?: '' }} {{ quote.clientBillingCity ?: quote.clientInterventionCity ?: '' }}<br>
+					{{ quote.clientBillingCountry ?: quote.clientInterventionCountry ?: '' }}
+				</div>
+			</div>
+			<div class="grid__col">
+				<div class="box">
+					<strong>Informations</strong><br>
+					Statut : {{ invoice.status.label }}<br>
+					Mode : {{ invoice.sourceType.label }}<br>
+					Référence plateforme : {{ quote.publicReference ?: '—' }}
+				</div>
+			</div>
+		</div>
+
+		{% if invoice.isExternalImport %}
+			<div class="notice">
+				Cette facture a été importée depuis un logiciel externe. Le PDF d’origine constitue le document de référence partagé par le prestataire.
+			</div>
+		{% else %}
+			<table>
+				<thead>
+					<tr>
+						<th>Prestation</th>
+						<th class="right">Qté</th>
+						<th class="right">PU HT</th>
+						<th class="right">TVA</th>
+						<th class="right">Total HT</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for item in invoice.items %}
+						<tr>
+							<td>
+								{{ item.label ?: 'Ligne' }}
+								{% if item.description %}<br><span class="muted">{{ item.description }}</span>{% endif %}
+							</td>
+							<td class="right">{{ item.quantity|number_format(2, ',', ' ') }}</td>
+							<td class="right">{{ item.unitPriceHt|number_format(2, ',', ' ') }} €</td>
+							<td class="right">{{ item.vatRate|number_format(2, ',', ' ') }} %</td>
+							<td class="right">{{ item.totalHt|number_format(2, ',', ' ') }} €</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+
+			<table class="totals">
+				<tr><td>Sous-total HT</td><td class="right">{{ invoice.subtotalHt|number_format(2, ',', ' ') }} €</td></tr>
+				<tr><td>TVA</td><td class="right">{{ invoice.taxAmount|number_format(2, ',', ' ') }} €</td></tr>
+				<tr><td><strong>Total TTC</strong></td><td class="right"><strong>{{ invoice.totalTtc|number_format(2, ',', ' ') }} €</strong></td></tr>
+			</table>
+		{% endif %}
+
+		{% if invoice.terms %}
+			<div class="box"><strong>Conditions</strong><br>{{ invoice.terms|nl2br }}</div>
+		{% endif %}
+
+		{% if invoice.notes %}
+			<div class="box"><strong>Notes</strong><br>{{ invoice.notes|nl2br }}</div>
+		{% endif %}
+
+		<div class="notice">
+			Ce document est fourni par TrouveMoi comme facture lisible et, pour les factures generees dans la plateforme, comme base de preparation Factur-X. TrouveMoi n’assure pas la transmission reglementaire officielle.
+		</div>
+
+		<div class="signature">
+			<div>Fait le {{ (invoice.updatedAt ?: invoice.createdAt)|date('d/m/Y à H:i') }}</div>
+			{% if prestataireSignatureUrl and not invoice.isExternalImport %}
+				<img src="{{ prestataireSignatureUrl }}" alt="Signature du prestataire">
+			{% endif %}
+		</div>
+	</body>
+</html>

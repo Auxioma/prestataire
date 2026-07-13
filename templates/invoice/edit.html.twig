@@ -1,0 +1,300 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Facture{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		#invoice-draft-form #invoice-external-panel {
+			display: none;
+		}
+
+		#invoice-draft-form:has(input[data-invoice-source-type-value="external_import"]:checked) #invoice-external-panel {
+			display: block;
+		}
+
+		#invoice-draft-form:has(input[data-invoice-source-type-value="external_import"]:checked) #invoice-items-panel {
+			display: none;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	{% set itemPrototype %}
+	<article class="tm-quote-item-card tm-quote-item-card--line" data-collection-item>
+		<div class="tm-quote-item-card__top">
+			<div class="tm-quote-item-card__title-wrap">
+				<span class="tm-quote-item-card__eyebrow">Ligne</span>
+				<h4 class="tm-quote-item-card__title">Nouvelle ligne</h4>
+			</div>
+
+			<button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="collection#remove">
+				Supprimer la ligne
+			</button>
+		</div>
+
+		<div class="tm-quote-item-card__body tm-quote-item-card__body--compact">
+			<div class="tm-quote-grid tm-quote-grid--1">
+				<div class="tm-quote-field">{{ form_row(form.items.vars.prototype.label) }}</div>
+				<div class="tm-quote-field">{{ form_row(form.items.vars.prototype.description) }}</div>
+			</div>
+
+			<div class="tm-quote-grid tm-quote-grid--3">
+				<div class="tm-quote-field">{{ form_row(form.items.vars.prototype.quantity) }}</div>
+				<div class="tm-quote-field">{{ form_row(form.items.vars.prototype.unitPriceHt) }}</div>
+				<div class="tm-quote-field">{{ form_row(form.items.vars.prototype.vatRate) }}</div>
+			</div>
+		</div>
+	</article>
+	{% endset %}
+
+	<div class="tm-quote-edit">
+		<div class="container tm-quote-edit__container">
+			<section class="tm-quote-edit__hero">
+				<div class="tm-quote-edit__hero-main">
+					<span class="tm-quote-edit__eyebrow">Facturation</span>
+					<h1 class="tm-quote-edit__title">
+						{{ invoice.isIssued ? 'Facture émise' : 'Préparer la facture' }}
+					</h1>
+					<p class="tm-quote-edit__subtitle">
+						Facture unique liée au devis accepté {{ proposal.proposalNumber ?: proposal.publicReference }}.
+					</p>
+
+					<div class="tm-quote-edit__meta-grid">
+						<article class="tm-quote-edit__meta-card">
+							<span class="tm-quote-edit__meta-label">Devis source</span>
+							<strong class="tm-quote-edit__meta-value">{{ proposal.proposalNumber ?: proposal.publicReference }}</strong>
+						</article>
+						<article class="tm-quote-edit__meta-card">
+							<span class="tm-quote-edit__meta-label">Numéro facture</span>
+							<strong class="tm-quote-edit__meta-value">{{ invoice.invoiceNumber ?: 'Brouillon' }}</strong>
+						</article>
+						<article class="tm-quote-edit__meta-card">
+							<span class="tm-quote-edit__meta-label">Statut</span>
+							<strong class="tm-quote-edit__meta-value">{{ invoice.status.label }}</strong>
+						</article>
+						<article class="tm-quote-edit__meta-card">
+							<span class="tm-quote-edit__meta-label">Mode</span>
+							<strong class="tm-quote-edit__meta-value">{{ invoice.sourceType.label }}</strong>
+						</article>
+					</div>
+				</div>
+
+				<div class="tm-quote-edit__hero-actions">
+					<a href="{{ path('app_prestataire_quote_proposal_show', { publicReference: proposal.publicReference }) }}" class="tm-quote-btn tm-quote-btn--secondary">
+						Retour au devis
+					</a>
+					<a href="{{ path('app_prestataire_invoice_show', { publicReference: proposal.publicReference }) }}" class="tm-quote-btn tm-quote-btn--primary">
+						Aperçu facture
+					</a>
+					<a href="{{ path('app_prestataire_invoice_pdf', { publicReference: proposal.publicReference }) }}" class="tm-quote-btn tm-quote-btn--secondary" target="_blank" rel="noopener">
+						Voir le PDF
+					</a>
+				</div>
+			</section>
+
+			{% if invoice.isIssued %}
+				<div class="tm-quote-edit__alert tm-quote-edit__alert--success">
+					<span class="tm-quote-edit__alert-dot"></span>
+					<div>
+						<strong>Facture émise.</strong>
+						La facture est verrouillée. Vous pouvez la consulter et télécharger son PDF ou son XML de préparation Factur-X.
+					</div>
+				</div>
+			{% else %}
+				<div class="tm-quote-edit__alert tm-quote-edit__alert--info">
+					<span class="tm-quote-edit__alert-dot"></span>
+					<div>
+						<strong>Brouillon de facture.</strong>
+						L’émission reste manuelle. TrouveMoi génère un PDF et un XML de préparation Factur-X, sans prétendre réaliser la transmission réglementaire officielle.
+					</div>
+				</div>
+			{% endif %}
+
+			<div class="tm-quote-edit__layout">
+				<main class="tm-quote-edit__main">
+					<section class="tm-quote-panel tm-quote-panel--main">
+						<div class="tm-quote-panel__head tm-quote-panel__head--split">
+							<div>
+								<span class="tm-quote-panel__eyebrow">Document de facture</span>
+								<h2 class="tm-quote-panel__title">Contenu</h2>
+							</div>
+						</div>
+
+						<div class="tm-quote-panel__body">
+							{{ form_start(form, { attr: { id: 'invoice-draft-form', class: 'tm-quote-form', 'data-invoice-form': '' } }) }}
+
+							{% if form.vars.errors|length > 0 %}
+								<div class="tm-quote-form__global-errors">{{ form_errors(form) }}</div>
+							{% endif %}
+
+							<section class="tm-quote-form-section">
+								<div class="tm-quote-form-section__head">
+									<h3 class="tm-quote-form-section__title">Mode de facturation</h3>
+									<p class="tm-quote-form-section__text">Choisissez entre la facture générée dans TrouveMoi et un PDF de facture externe.</p>
+								</div>
+
+								<div class="tm-quote-grid tm-quote-grid--1">
+									<div class="tm-quote-field">{{ form_row(form.sourceType) }}</div>
+								</div>
+
+								<div class="alert alert-info border-0 shadow-sm mb-0">
+									La génération Factur-X proposée ici correspond à une préparation documentaire. Elle ne remplace pas une plateforme agréée de transmission réglementaire.
+								</div>
+
+								<div id="invoice-external-panel" class="tm-quote-grid tm-quote-grid--1 mt-3">
+									<div class="tm-quote-field">
+										<p class="small text-muted">
+											Champ utilisable pour joindre une facture PDF externe. Il n’est pris en compte que si vous choisissez le mode d’import PDF.
+										</p>
+										{{ form_label(form.externalPdfFile) }}
+										{{ form_errors(form.externalPdfFile) }}
+										<div class="tm-vich-custom-container">
+											{{ form_widget(form.externalPdfFile.file, { attr: { class: 'form-control' } }) }}
+
+											{% if form.externalPdfFile.delete is defined %}
+												<div class="form-check">
+													{{ form_widget(form.externalPdfFile.delete) }}
+													{{ form_label(form.externalPdfFile.delete) }}
+												</div>
+											{% endif %}
+										</div>
+										{{ form_help(form.externalPdfFile) }}
+
+										{% if invoice.externalPdfOriginalName %}
+											<p class="small text-muted mb-0">
+												Fichier actuel :
+												<strong>{{ invoice.externalPdfOriginalName }}</strong>
+												{% if invoice.externalPdfUploadedAt %}
+													, importé le {{ invoice.externalPdfUploadedAt|date('d/m/Y à H:i') }}
+												{% endif %}
+											</p>
+										{% endif %}
+									</div>
+								</div>
+							</section>
+
+							<section class="tm-quote-form-section">
+								<div class="tm-quote-form-section__head">
+									<h3 class="tm-quote-form-section__title">Dates et mentions</h3>
+								</div>
+								<div class="tm-quote-grid tm-quote-grid--2">
+									<div class="tm-quote-field">{{ form_row(form.dueAt) }}</div>
+									<div class="tm-quote-field">{{ form_row(form.notes) }}</div>
+								</div>
+								<div class="tm-quote-grid tm-quote-grid--1">
+									<div class="tm-quote-field">{{ form_row(form.terms) }}</div>
+								</div>
+							</section>
+
+							<section id="invoice-items-panel" data-invoice-items-panel class="tm-quote-form-section tm-quote-form-section--items">
+								<div data-controller="collection" data-collection-index-value="{{ form.items|length }}" data-collection-prototype-value="{{ itemPrototype|e('html_attr') }}">
+									<div class="tm-quote-form-section__head tm-quote-form-section__head--items">
+										<div>
+											<h3 class="tm-quote-form-section__title">Lignes de facture</h3>
+											<p class="tm-quote-form-section__text">
+												{% if proposal.documentMode.value == 'external_pdf' %}
+													Le devis source étant un PDF importé, les lignes doivent être saisies manuellement.
+												{% else %}
+													Les lignes ont été préremplies depuis le devis accepté et restent modifiables tant que la facture n’est pas émise.
+												{% endif %}
+											</p>
+										</div>
+									</div>
+
+									<div class="tm-quote-items" data-collection-target="items">
+										{% for itemForm in form.items %}
+											<article class="tm-quote-item-card tm-quote-item-card--line" data-collection-item>
+												<div class="tm-quote-item-card__top">
+													<div class="tm-quote-item-card__title-wrap">
+														<span class="tm-quote-item-card__eyebrow">Ligne</span>
+														<h4 class="tm-quote-item-card__title">Ligne {{ loop.index }}</h4>
+													</div>
+													<button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="collection#remove">Supprimer la ligne</button>
+												</div>
+
+												<div class="tm-quote-item-card__body tm-quote-item-card__body--compact">
+													<div class="tm-quote-grid tm-quote-grid--1">
+														<div class="tm-quote-field">{{ form_row(itemForm.label) }}</div>
+														<div class="tm-quote-field">{{ form_row(itemForm.description) }}</div>
+													</div>
+													<div class="tm-quote-grid tm-quote-grid--3">
+														<div class="tm-quote-field">{{ form_row(itemForm.quantity) }}</div>
+														<div class="tm-quote-field">{{ form_row(itemForm.unitPriceHt) }}</div>
+														<div class="tm-quote-field">{{ form_row(itemForm.vatRate) }}</div>
+													</div>
+												</div>
+											</article>
+										{% endfor %}
+									</div>
+
+									<div class="tm-quote-add-line-wrap">
+										<button type="button" class="tm-quote-btn tm-quote-btn--mini-primary" data-action="collection#add">
+											Ajouter une ligne
+										</button>
+									</div>
+								</div>
+							</section>
+
+							{{ form_end(form) }}
+
+							{% if not invoice.isIssued %}
+								<div class="tm-quote-form__actions">
+									<button type="submit" form="invoice-draft-form" class="tm-quote-btn tm-quote-btn--success">Enregistrer la facture</button>
+									<button
+										type="submit"
+										form="invoice-issue-form"
+										class="tm-quote-btn tm-quote-btn--primary"
+										onclick="return confirm('Émettre définitivement cette facture ? Elle sera ensuite visible par le client et ne pourra plus être modifiée.');"
+									>
+										Émettre la facture
+									</button>
+								</div>
+
+								<form id="invoice-issue-form" method="post" action="{{ path('app_prestataire_invoice_issue', { publicReference: proposal.publicReference }) }}">
+									<input type="hidden" name="_token" value="{{ csrf_token('issue_invoice_' ~ proposal.id) }}">
+								</form>
+							{% endif %}
+						</div>
+					</section>
+				</main>
+
+				<aside class="tm-quote-edit__aside">
+					<section class="tm-quote-panel tm-quote-panel--aside">
+						<div class="tm-quote-panel__head tm-quote-panel__head--aside">
+							<span class="tm-quote-panel__eyebrow">Résumé</span>
+							<h2 class="tm-quote-panel__title tm-quote-panel__title--aside">Montants</h2>
+						</div>
+						<div class="tm-quote-panel__content">
+							{% if invoice.sourceType.value == 'external_import' %}
+								<p class="small text-muted mb-0">Les montants ne sont pas reconstitués automatiquement pour une facture PDF importée. Le document source fait foi.</p>
+							{% else %}
+								<div class="tm-quote-totals">
+									<div class="tm-quote-totals__row"><span>HT</span><strong>{{ invoice.subtotalHt|number_format(2, ',', ' ') }} €</strong></div>
+									<div class="tm-quote-totals__row"><span>TVA</span><strong>{{ invoice.taxAmount|number_format(2, ',', ' ') }} €</strong></div>
+									<div class="tm-quote-totals__row tm-quote-totals__row--accent"><span>Total TTC</span><strong>{{ invoice.totalTtc|number_format(2, ',', ' ') }} €</strong></div>
+								</div>
+							{% endif %}
+						</div>
+					</section>
+
+					{% if invoice.isIssued %}
+						<section class="tm-quote-panel tm-quote-panel--aside">
+							<div class="tm-quote-panel__head tm-quote-panel__head--aside">
+								<span class="tm-quote-panel__eyebrow">Documents</span>
+								<h2 class="tm-quote-panel__title tm-quote-panel__title--aside">Exports</h2>
+							</div>
+							<div class="tm-quote-panel__content d-grid gap-2">
+								<a href="{{ path('app_prestataire_invoice_pdf', { publicReference: proposal.publicReference }) }}" class="tm-quote-btn tm-quote-btn--primary" target="_blank" rel="noopener">Voir le PDF</a>
+								{% if not invoice.isExternalImport %}
+									<a href="{{ path('app_prestataire_invoice_xml', { publicReference: proposal.publicReference }) }}" class="tm-quote-btn tm-quote-btn--secondary">Télécharger le XML</a>
+								{% endif %}
+							</div>
+						</section>
+					{% endif %}
+				</aside>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

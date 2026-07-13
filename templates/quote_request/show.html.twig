@@ -264,6 +264,13 @@
 														<span>PDF</span>
 													</a>
 
+													{% if quoteResponse.invoice and quoteResponse.invoice.isIssued %}
+														<a href="{{ path('app_quote_request_invoice_show', { publicReference: quoteResponse.publicReference }) }}" class="tm-client-quote-icon-btn tm-client-quote-icon-btn--doc" aria-label="Consulter la facture" title="Voir la facture">
+															<i class="fas fa-file-invoice" aria-hidden="true"></i>
+															<span>Facture</span>
+														</a>
+													{% endif %}
+
 													{% if not quoteResponse.acceptedAt and quoteResponse.status.value == 'finalized' and not isArchivedView %}
 														<form method="post" action="{{ path('app_quote_request_quote_proposal_accept', { publicReference: quoteResponse.publicReference }) }}" class="d-inline-flex" onsubmit="return confirm('Confirmer l’acceptation définitive de ce devis ? Cette action est irréversible et aucune modification ne pourra ensuite être effectuée par le prestataire ou par vous-même.');">
 															<input type="hidden" name="_token" value="{{ csrf_token('accept_quote_proposal_' ~ quoteResponse.id) }}">
@@ -311,6 +318,51 @@
 														   class="tm-client-quote-icon-btn tm-client-quote-icon-btn--doc">
 															<i class="fas fa-file-lines" aria-hidden="true"></i>
 															<span>Ouvrir</span>
+														</a>
+													</div>
+												</article>
+											{% endfor %}
+										</div>
+									</div>
+								{% endif %}
+
+								{% set issuedInvoices = [] %}
+								{% for proposalWithPotentialInvoice in quoteResponses %}
+									{% if proposalWithPotentialInvoice.invoice and proposalWithPotentialInvoice.invoice.isIssued %}
+										{% set issuedInvoices = issuedInvoices|merge([proposalWithPotentialInvoice]) %}
+									{% endif %}
+								{% endfor %}
+								{% if issuedInvoices is not empty %}
+									<div class="tm-client-quotes-documents-box mt-4">
+										<div class="tm-client-quotes-documents-box__head">
+											<div>
+												<h3 class="tm-client-quotes-documents-box__title mb-1">Facture liée au devis accepté</h3>
+												<p class="tm-client-quotes-documents-box__text mb-0">
+													La facture reste un document comptable distinct du devis. TrouveMoi l’affiche ici comme document partagé par le prestataire.
+												</p>
+											</div>
+										</div>
+
+										<div class="tm-client-quotes-documents-list">
+											{% for proposalWithInvoice in issuedInvoices %}
+												{% set invoice = proposalWithInvoice.invoice %}
+												<article class="tm-client-quotes-document-card">
+													<div>
+														<div class="tm-client-quotes-document-card__title">{{ invoice.invoiceNumber ?: 'Facture' }}</div>
+														<div class="tm-client-quotes-document-card__meta">
+															<span>Mode : {{ invoice.sourceType.label }}</span>
+															{% if invoice.issuedAt %}<span>Émise le {{ invoice.issuedAt|date('d/m/Y à H:i') }}</span>{% endif %}
+														</div>
+													</div>
+
+													<div class="tm-client-quotes-document-card__actions">
+														<span class="badge bg-success-subtle text-success">{{ invoice.status.label }}</span>
+														<a href="{{ path('app_quote_request_invoice_pdf', { publicReference: proposalWithInvoice.publicReference }) }}"
+														   target="_blank"
+														   rel="noopener"
+														   class="tm-client-quote-icon-btn tm-client-quote-icon-btn--doc">
+															<i class="fas fa-file-invoice" aria-hidden="true"></i>
+															<span>PDF</span>
 														</a>
 													</div>
 												</article>
