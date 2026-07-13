@@ -27,6 +27,7 @@ final class QuoteProposalNativePdfGenerator
             'proposal' => $proposal,
             'quoteRequest' => $proposal->getQuoteRequest(),
             'prestataireLogoUrl' => $this->resolvePrestataireLogoUrl($proposal),
+            'prestataireSignatureUrl' => $this->resolvePrestataireSignatureUrl($proposal),
         ]);
 
         $options = new Options();
@@ -50,6 +51,24 @@ final class QuoteProposalNativePdfGenerator
         }
 
         $relativePath = $this->uploaderHelper->asset($prestataire, 'logoFile');
+        $request = $this->requestStack->getCurrentRequest();
+
+        if ($relativePath === null || !$request instanceof Request) {
+            return null;
+        }
+
+        return $request->getSchemeAndHttpHost() . $relativePath;
+    }
+
+    private function resolvePrestataireSignatureUrl(QuoteProposal $proposal): ?string
+    {
+        $prestataire = $proposal->getQuoteRequest()?->getPrestataire();
+
+        if (!$prestataire instanceof PrestataireProfile || !$prestataire->getSignatureImage()) {
+            return null;
+        }
+
+        $relativePath = $this->uploaderHelper->asset($prestataire, 'signatureImageFile');
         $request = $this->requestStack->getCurrentRequest();
 
         if ($relativePath === null || !$request instanceof Request) {

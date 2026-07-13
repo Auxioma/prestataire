@@ -88,6 +88,20 @@ class PrestataireCompanyTabType extends AbstractType
                     ),
                 ],
             ])
+            ->add('signatureImageFile', VichImageType::class, [
+                'label' => 'Image de signature',
+                'required' => false,
+                'allow_delete' => true,
+                'download_uri' => false,
+                'image_uri' => false,
+                'constraints' => [
+                    new Image(
+                        maxSize: '2M',
+                        mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+                        mimeTypesMessage: 'Veuillez téléverser un format d\'image valide (JPEG, PNG, WEBP).'
+                    ),
+                ],
+            ])
             ->add('address', TextType::class, [
                 'label' => 'Adresse',
                 'required' => false,

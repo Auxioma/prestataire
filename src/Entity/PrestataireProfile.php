@@ -141,6 +141,12 @@ class PrestataireProfile
     #[Vich\UploadableField(mapping: 'company_cover', fileNameProperty: 'coverImage')]
     private ?File $coverImageFile = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $signatureImage = null;
+
+    #[Vich\UploadableField(mapping: 'company_signature', fileNameProperty: 'signatureImage')]
+    private ?File $signatureImageFile = null;
+
     #[ORM\Column(type: 'string', length: 50, enumType: PrestataireProfileStatusEnum::class)]
     private ?PrestataireProfileStatusEnum $profileStatus = PrestataireProfileStatusEnum::DRAFT;
 
@@ -645,6 +651,34 @@ class PrestataireProfile
     public function getProfileStatus(): ?PrestataireProfileStatusEnum
     {
         return $this->profileStatus;
+    }
+
+    public function getSignatureImage(): ?string
+    {
+        return $this->signatureImage;
+    }
+
+    public function setSignatureImage(?string $signatureImage): static
+    {
+        $this->signatureImage = $signatureImage;
+
+        return $this;
+    }
+
+    public function getSignatureImageFile(): ?File
+    {
+        return $this->signatureImageFile;
+    }
+
+    public function setSignatureImageFile(?File $signatureImageFile = null): static
+    {
+        $this->signatureImageFile = $signatureImageFile;
+
+        if (null !== $signatureImageFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+
+        return $this;
     }
 
     public function setProfileStatus(PrestataireProfileStatusEnum $profileStatus): static

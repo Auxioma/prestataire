@@ -77,6 +77,15 @@
 							</span>
 						</div>
 
+						{% if proposal.updatedAt and proposal.createdAt and proposal.updatedAt|date('U') != proposal.createdAt|date('U') %}
+							<div class="qp-meta-pill">
+								<span class="qp-meta-pill__label">Modifié le</span>
+								<span class="qp-meta-pill__value">
+									{{ proposal.updatedAt|date('d/m/Y à H:i') }}
+								</span>
+							</div>
+						{% endif %}
+
 						{% if isAcceptedProposal %}
 							<div class="qp-meta-pill">
 								<span class="qp-meta-pill__label">Accepté le</span>
