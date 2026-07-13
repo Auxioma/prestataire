@@ -39,8 +39,9 @@ final class InvoicePdfGeneratorTest extends TestCase
         $invoice = $this->createInvoiceFixture();
         $xmlContent = $xmlBuilder->build($invoice);
 
-        self::assertStringContainsString('<CrossIndustryInvoice', $xmlContent);
-        self::assertStringContainsString('<InvoiceNumber>FAC-TEST-001</InvoiceNumber>', $xmlContent);
+        self::assertStringContainsString('<rsm:CrossIndustryInvoice', $xmlContent);
+        self::assertStringContainsString('FAC-TEST-001', $xmlContent);
+        self::assertStringContainsString('urn:factur-x.eu:1p0:minimum', $xmlContent);
 
         $xmlPath = tempnam(sys_get_temp_dir(), 'facturx-test-');
         if ($xmlPath === false) {
