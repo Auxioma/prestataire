@@ -363,7 +363,7 @@
 												{% set isClientMessage = not isSystemMessage and message.author is defined and message.author and app.user and message.author.id == app.user.id %}
 												{% set authorLabel = isSystemMessage
                                                     ? 'Système'
-                                                    : (isClientMessage ? 'Vous' : (quoteRequest.prestataire.companyName ?? 'Prestataire'))
+                                                    : (isClientMessage ? 'Vous' : (quoteRequest.prestataire.companyName ?: quoteRequest.prestataire.legalName ?: 'Prestataire'))
                                                 %}
 
 												<article class="tm-client-quotes-message

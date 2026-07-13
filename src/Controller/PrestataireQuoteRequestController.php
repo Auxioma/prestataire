@@ -95,11 +95,24 @@ final class PrestataireQuoteRequestController extends AbstractController
             $quoteRequest,
             $prestataire
         );
+        $hasConversationPhotos = false;
+
+        if (null !== $quoteRequest->getConversation()) {
+            foreach ($quoteRequest->getConversation()->getMessages() as $message) {
+                foreach ($message->getAttachments() as $attachment) {
+                    if ($attachment->getFileName()) {
+                        $hasConversationPhotos = true;
+                        break 2;
+                    }
+                }
+            }
+        }
 
         return $this->render('prestataire_quote_request/show.html.twig', [
             'quoteRequest' => $quoteRequest,
             'isArchivedView' => $quoteRequest->isArchivedByPrestataire(),
             'linkedProposal' => $linkedProposal,
+            'hasConversationPhotos' => $hasConversationPhotos,
         ]);
     }
 

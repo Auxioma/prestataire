@@ -170,6 +170,12 @@
 							<a href="{{ path('app_prestataire_dashboard', { tab: 'messages', conversation: quoteRequest.conversation.id }) ~ '#messages-main-panel' }}" class="btn btn-primary w-100 mt-3">
 								Ouvrir la discussion
 							</a>
+
+							{% if hasConversationPhotos %}
+								<a href="{{ path('app_prestataire_conversation_photos', { id: quoteRequest.conversation.id }) }}" class="btn btn-outline-secondary w-100 mt-3">
+									Accès photos conversation
+								</a>
+							{% endif %}
 						{% endif %}
 					{% endif %}
 
