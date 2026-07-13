@@ -25,14 +25,7 @@ class PrestataireDocumentType extends AbstractType
                 'class' => PrestataireDocumentTypeEnum::class,
                 'required' => true,
                 'label' => 'Type de document',
-                'choice_label' => static fn(PrestataireDocumentTypeEnum $choice): string => match ($choice) {
-                    PrestataireDocumentTypeEnum::KBIS => 'Extrait Kbis / Justificatif d’entreprise',
-                    PrestataireDocumentTypeEnum::RC_PRO => 'Assurance RC Pro',
-                    PrestataireDocumentTypeEnum::DECENNALE => 'Attestation décennale',
-                    PrestataireDocumentTypeEnum::VIGILANCE => 'Attestation de vigilance',
-                    PrestataireDocumentTypeEnum::IDENTITE => 'Pièce d’identité',
-                    PrestataireDocumentTypeEnum::AUTRE => 'Autre document',
-                },
+                'choice_label' => static fn(PrestataireDocumentTypeEnum $choice): string => $choice->getLabel(),
                 'placeholder' => 'Choisir un type',
                 'constraints' => [
                     new NotNull(

@@ -278,6 +278,46 @@
 										</article>
 									{% endfor %}
 								</div>
+
+								{% if visiblePrestataireDocuments is defined and visiblePrestataireDocuments is not empty %}
+									<div class="tm-client-quotes-documents-box mt-4">
+										<div class="tm-client-quotes-documents-box__head">
+											<div>
+												<h3 class="tm-client-quotes-documents-box__title mb-1">Documents annexes du prestataire</h3>
+												<p class="tm-client-quotes-documents-box__text mb-0">
+													Documents administratifs rendus visibles par le prestataire pour accompagner ce devis.
+												</p>
+											</div>
+										</div>
+
+										<div class="tm-client-quotes-documents-list">
+											{% for document in visiblePrestataireDocuments %}
+												<article class="tm-client-quotes-document-card">
+													<div>
+														<div class="tm-client-quotes-document-card__title">{{ document.type.label }}</div>
+														<div class="tm-client-quotes-document-card__meta">
+															{% if document.originalName %}<span>{{ document.originalName }}</span>{% endif %}
+															{% if document.expiresAt %}<span>Expire le {{ document.expiresAt|date('d/m/Y') }}</span>{% endif %}
+														</div>
+													</div>
+
+													<div class="tm-client-quotes-document-card__actions">
+														<span class="badge bg-{{ document.status.badgeClass }}-subtle text-{{ document.status.badgeClass }}">
+															{{ document.status.label }}
+														</span>
+														<a href="{{ path('app_quote_request_prestataire_document_view', { slug: quoteRequest.slug, id: document.id }) }}"
+														   target="_blank"
+														   rel="noopener"
+														   class="tm-client-quote-icon-btn tm-client-quote-icon-btn--doc">
+															<i class="fas fa-file-lines" aria-hidden="true"></i>
+															<span>Ouvrir</span>
+														</a>
+													</div>
+												</article>
+											{% endfor %}
+										</div>
+									</div>
+								{% endif %}
 							{% else %}
 								<div class="tm-client-quotes-empty-state">
 									<i class="fas fa-file-invoice" aria-hidden="true"></i>

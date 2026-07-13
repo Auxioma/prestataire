@@ -454,7 +454,7 @@
                                     <div class="d-flex justify-content-between align-items-start gap-2">
                                         <div class="min-w-0">
                                             <div class="fw-semibold small mb-1">
-                                                {{ document.type.value }}
+                                                {{ document.type.label }}
                                             </div>
 
                                             {% if document.originalName %}
@@ -480,6 +480,10 @@
                                                     Masqué
                                                 </span>
                                             {% endif %}
+
+                                            <span class="badge bg-{{ document.status.badgeClass }}-subtle text-{{ document.status.badgeClass }}">
+                                                {{ document.status.label }}
+                                            </span>
 
                                             <div class="d-flex align-items-center gap-1">
                                                 {% if document.fileName %}

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Conversation;
 use App\Entity\Message;
 use App\Entity\PrestataireProfile;
+use App\Entity\PrestataireDocument;
 use App\Entity\PrestataireService;
 use App\Entity\QuoteProposal;
 use App\Entity\QuoteRequest;
@@ -17,6 +18,7 @@ use App\Form\MessageType;
 use App\Form\QuoteRequestType;
 use App\Repository\ConversationRepository;
 use App\Repository\MessageRepository;
+use App\Repository\PrestataireDocumentRepository;
 use App\Repository\QuoteProposalRepository;
 use App\Repository\QuoteRequestRepository;
 use App\Repository\ReviewRepository;
@@ -35,8 +37,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Vich\UploaderBundle\Storage\StorageInterface;
 
 
 #[Route('/demandes-de-devis', name: 'app_quote_request')]
@@ -232,6 +237,7 @@ final class QuoteRequestController extends AbstractController
         ConversationRepository $conversationRepository,
         MessageRepository $messageRepository,
         QuoteProposalRepository $quoteProposalRepository,
+        PrestataireDocumentRepository $prestataireDocumentRepository,
         ReviewRepository $reviewRepository,
         EntityManagerInterface $entityManager,
         RealtimeNotifier $realtimeNotifier,
@@ -286,6 +292,11 @@ final class QuoteRequestController extends AbstractController
 
         $existingReview = $reviewRepository->findOneByQuoteRequest($quoteRequest);
         $canLeaveReview = $reviewManager->canClientReviewQuoteRequest($user->getClientProfile(), $quoteRequest);
+        $visiblePrestataireDocuments = $this->getVisiblePrestataireDocumentsForClient(
+            $quoteRequest,
+            $quoteResponses,
+            $prestataireDocumentRepository
+        );
 
         // =========================
         // Présence de photos
@@ -392,6 +403,7 @@ final class QuoteRequestController extends AbstractController
             'messageForm' => $messageForm?->createView(),
             'hasConversationPhotos' => $hasConversationPhotos,
             'quoteResponses' => $quoteResponses,
+            'visiblePrestataireDocuments' => $visiblePrestataireDocuments,
             'existingReview' => $existingReview,
             'canLeaveReview' => $canLeaveReview,
             'isArchivedView' => false,
@@ -714,6 +726,74 @@ final class QuoteRequestController extends AbstractController
         ], 303);
     }
 
+    #[Route('/{slug}/documents-prestataire/{id}', name: '_prestataire_document_view', methods: ['GET'])]
+    public function viewPrestataireDocument(
+        string $slug,
+        int $id,
+        QuoteRequestRepository $quoteRequestRepository,
+        QuoteProposalRepository $quoteProposalRepository,
+        PrestataireDocumentRepository $prestataireDocumentRepository,
+        StorageInterface $storage,
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
+            throw $this->createAccessDeniedException('Accès réservé aux clients.');
+        }
+
+        $quoteRequest = $quoteRequestRepository->findOneActiveForClientBySlug($slug, $user->getClientProfile())
+            ?? $quoteRequestRepository->findOneArchivedForClientBySlug($slug, $user->getClientProfile());
+
+        if (!$quoteRequest instanceof QuoteRequest) {
+            throw $this->createNotFoundException('Cette demande n’est pas disponible.');
+        }
+
+        $quoteResponses = $quoteProposalRepository->findBy(
+            [
+                'quoteRequest' => $quoteRequest,
+                'deletedAt' => null,
+            ],
+            [
+                'finalizedAt' => 'DESC',
+                'createdAt' => 'DESC',
+            ]
+        );
+
+        $quoteResponses = array_values(array_filter(
+            $quoteResponses,
+            static fn(QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted()
+        ));
+
+        if ($quoteResponses === []) {
+            throw $this->createNotFoundException('Aucun devis finalisé n’est disponible pour cette demande.');
+        }
+
+        $document = $prestataireDocumentRepository->find($id);
+
+        if (!$document instanceof PrestataireDocument || !$document->isVisibleToClient()) {
+            throw $this->createNotFoundException('Document introuvable.');
+        }
+
+        if ($document->getPrestataireProfile()?->getId() !== $quoteRequest->getPrestataire()?->getId()) {
+            throw $this->createAccessDeniedException('Accès non autorisé à ce document.');
+        }
+
+        $path = $storage->resolvePath($document, 'documentFile');
+
+        if ($path === null || !is_file($path)) {
+            throw $this->createNotFoundException('Le fichier du document est introuvable.');
+        }
+
+        $response = new BinaryFileResponse($path);
+        $response->headers->set('Content-Type', $document->getMimeType() ?: 'application/octet-stream');
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_INLINE,
+            $document->getOriginalName() ?: $document->getFileName() ?: 'document'
+        );
+
+        return $response;
+    }
+
     #[Route('/historique', name: '_history', methods: ['GET'])]
     /**
      * Traite l’action "history" du contrôleur Quote Request.
@@ -756,6 +836,7 @@ final class QuoteRequestController extends AbstractController
         ConversationRepository $conversationRepository,
         MessageRepository $messageRepository,
         QuoteProposalRepository $quoteProposalRepository,
+        PrestataireDocumentRepository $prestataireDocumentRepository,
         ReviewRepository $reviewRepository,
         ReviewManager $reviewManager,
     ): Response {
@@ -790,6 +871,11 @@ $quoteResponses = array_values(array_filter(
     $quoteResponses,
     static fn(QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted()
 ));
+        $visiblePrestataireDocuments = $this->getVisiblePrestataireDocumentsForClient(
+            $quoteRequest,
+            $quoteResponses,
+            $prestataireDocumentRepository
+        );
 
         $existingReview = $reviewRepository->findOneByQuoteRequest($quoteRequest);
         $canLeaveReview = $reviewManager->canClientReviewQuoteRequest($user->getClientProfile(), $quoteRequest);
@@ -799,6 +885,7 @@ $quoteResponses = array_values(array_filter(
             'conversation' => $conversation,
             'messages' => $messages,
             'quoteResponses' => $quoteResponses,
+            'visiblePrestataireDocuments' => $visiblePrestataireDocuments,
             'existingReview' => $existingReview,
             'canLeaveReview' => $canLeaveReview,
         ]);
@@ -854,5 +941,24 @@ $quoteResponses = array_values(array_filter(
         $this->addFlash('success', 'La demande de devis a bien été archivée.');
 
         return $this->redirectToRoute('app_quote_request_history');
+    }
+
+    /**
+     * @param array<int, QuoteProposal> $quoteResponses
+     * @return array<int, PrestataireDocument>
+     */
+    private function getVisiblePrestataireDocumentsForClient(
+        QuoteRequest $quoteRequest,
+        array $quoteResponses,
+        PrestataireDocumentRepository $prestataireDocumentRepository,
+    ): array {
+        if ($quoteResponses === [] || !$quoteRequest->getPrestataire()) {
+            return [];
+        }
+
+        return array_values(array_filter(
+            $prestataireDocumentRepository->findVisibleToClientByPrestataire((int) $quoteRequest->getPrestataire()->getId()),
+            static fn(PrestataireDocument $document): bool => $document->getFileName() !== null
+        ));
     }
 }

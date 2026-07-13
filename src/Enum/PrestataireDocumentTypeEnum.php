@@ -10,4 +10,16 @@ enum PrestataireDocumentTypeEnum: string
     case VIGILANCE = 'VIGILANCE';
     case IDENTITE = 'IDENTITE';
     case AUTRE = 'AUTRE';
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::KBIS => 'Extrait Kbis / Justificatif d’entreprise',
+            self::RC_PRO => 'Assurance RC Pro',
+            self::DECENNALE => 'Attestation décennale',
+            self::VIGILANCE => 'Attestation de vigilance',
+            self::IDENTITE => 'Pièce d’identité',
+            self::AUTRE => 'Autre document',
+        };
+    }
 }
