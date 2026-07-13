@@ -16,18 +16,17 @@ use App\Repository\PrestataireProfileRepository;
 use App\Repository\QuoteProposalRepository;
 use App\Repository\QuoteRequestRepository;
 use App\Service\NotificationManager;
+use App\Service\QuoteProposalDocumentResolver;
 use App\Service\QuoteProposalManager;
+use App\Service\QuoteProposalNativePdfGenerator;
+use App\Service\QuoteProposalPdfResponseFactory;
 use App\Service\Subscription\SubscriptionAccessManager;
 use App\Service\Subscription\SubscriptionCreditManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Dompdf\Dompdf;
-use Dompdf\Options;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 #[Route('/prestataire/devis', name: 'app_prestataire_quote_proposal_')]
 /**
@@ -139,6 +138,7 @@ class QuoteProposalController extends AbstractController
         string $publicReference,
         PrestataireProfileRepository $prestataireProfileRepository,
         QuoteProposalRepository $quoteProposalRepository,
+        QuoteProposalDocumentResolver $documentResolver,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_PRESTATAIRE');
 
@@ -154,6 +154,8 @@ class QuoteProposalController extends AbstractController
             'proposal' => $proposal,
             'isReadOnlyView' => false,
             'viewerContext' => 'prestataire',
+            'resolvedDocument' => $documentResolver->resolve($proposal),
+            'renderNativeDetails' => $documentResolver->shouldRenderNativeDetails($proposal),
         ]);
     }
 
@@ -203,14 +205,6 @@ class QuoteProposalController extends AbstractController
             ], 303);
         }
 
-        if ($securedProposal->getItems()->isEmpty()) {
-            $this->addFlash('warning', 'Ajoutez au moins une ligne avant de finaliser le devis.');
-
-            return $this->redirectToRoute('app_prestataire_quote_proposal_edit', [
-                'publicReference' => $securedProposal->getPublicReference(),
-            ], 303);
-        }
-
         $activeSubscription = $subscriptionAccessManager->getCurrentUsableSubscription($prestataire);
         if (!$activeSubscription || !$activeSubscription->canRespondToQuoteRequests()) {
             $this->addFlash('warning', 'Un abonnement actif avec au moins un crédit est requis pour envoyer un devis.');
@@ -218,7 +212,15 @@ class QuoteProposalController extends AbstractController
             return $this->redirectToRoute('app_subscription_index');
         }
 
-        $quoteProposalManager->finalize($securedProposal);
+        try {
+            $quoteProposalManager->finalize($securedProposal);
+        } catch (\DomainException $exception) {
+            $this->addFlash('warning', $exception->getMessage());
+
+            return $this->redirectToRoute('app_prestataire_quote_proposal_edit', [
+                'publicReference' => $securedProposal->getPublicReference(),
+            ], 303);
+        }
 
         $quoteRequest = $securedProposal->getQuoteRequest();
 
@@ -395,8 +397,9 @@ class QuoteProposalController extends AbstractController
         string $publicReference,
         QuoteProposalRepository $quoteProposalRepository,
         PrestataireProfileRepository $prestataireProfileRepository,
-        UploaderHelper $uploaderHelper,
-        RequestStack $requestStack,
+        QuoteProposalDocumentResolver $documentResolver,
+        QuoteProposalPdfResponseFactory $pdfResponseFactory,
+        QuoteProposalNativePdfGenerator $nativePdfGenerator,
     ): Response {
         $user = $this->getUser();
 
@@ -416,41 +419,14 @@ class QuoteProposalController extends AbstractController
             throw $this->createNotFoundException('Devis introuvable.');
         }
 
-        if (!$proposal->isFinalized() && !$proposal->isAccepted()) {
-            throw $this->createNotFoundException('Ce devis n’est pas disponible.');
+        $resolvedDocument = $documentResolver->resolve($proposal);
+
+        if ($resolvedDocument->isStoredFile()) {
+            return $pdfResponseFactory->createInlineResponse($resolvedDocument);
         }
-
-        $prestataireLogoUrl = null;
-
-        if ($prestataire->getLogo()) {
-            $relativePath = $uploaderHelper->asset($prestataire, 'logoFile');
-
-            if ($relativePath) {
-                $request = $requestStack->getCurrentRequest();
-
-                if ($request instanceof Request) {
-                    $prestataireLogoUrl = $request->getSchemeAndHttpHost() . $relativePath;
-                }
-            }
-        }
-
-        $html = $this->renderView('quote_proposal/proposal_pdf.html.twig', [
-            'proposal' => $proposal,
-            'quoteRequest' => $proposal->getQuoteRequest(),
-            'prestataireLogoUrl' => $prestataireLogoUrl,
-        ]);
-
-        $options = new Options();
-        $options->set('defaultFont', 'DejaVu Sans');
-        $options->set('isRemoteEnabled', true);
-
-        $dompdf = new Dompdf($options);
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
 
         return new Response(
-            $dompdf->output(),
+            $nativePdfGenerator->generatePdfOutput($proposal, 'quote_proposal/proposal_pdf.html.twig'),
             Response::HTTP_OK,
             [
                 'Content-Type' => 'application/pdf',
@@ -472,6 +448,7 @@ class QuoteProposalController extends AbstractController
         string $publicReference,
         PrestataireProfileRepository $prestataireProfileRepository,
         QuoteProposalRepository $quoteProposalRepository,
+        QuoteProposalDocumentResolver $documentResolver,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_PRESTATAIRE');
 
@@ -495,6 +472,8 @@ class QuoteProposalController extends AbstractController
             'proposal' => $proposal,
             'isReadOnlyView' => true,
             'viewerContext' => 'prestataire',
+            'resolvedDocument' => $documentResolver->resolve($proposal),
+            'renderNativeDetails' => $documentResolver->shouldRenderNativeDetails($proposal),
         ]);
     }
 

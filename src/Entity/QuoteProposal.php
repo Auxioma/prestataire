@@ -2,19 +2,24 @@
 
 namespace App\Entity;
 
+use App\Enum\QuoteProposalDocumentModeEnum;
 use App\Enum\QuoteProposalStatusEnum;
 use App\Repository\QuoteProposalRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: QuoteProposalRepository::class)]
 #[ORM\Table(name: 'quote_proposal')]
 #[ORM\Index(name: 'idx_quote_proposal_status', columns: ['status'])]
 #[ORM\Index(name: 'idx_quote_proposal_created_at', columns: ['created_at'])]
 #[ORM\Index(name: 'idx_quote_proposal_deleted_at', columns: ['deleted_at'])]
+#[Vich\Uploadable]
 class QuoteProposal
 {
     #[ORM\Id]
@@ -172,6 +177,48 @@ class QuoteProposal
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $archivedByPrestataireAt = null;
+
+    #[ORM\Column(type: Types::STRING, length: 30, enumType: QuoteProposalDocumentModeEnum::class, options: ['default' => 'platform'])]
+    private QuoteProposalDocumentModeEnum $documentMode = QuoteProposalDocumentModeEnum::PLATFORM;
+
+    #[Vich\UploadableField(
+        mapping: 'quote_proposal_pdfs',
+        fileNameProperty: 'externalPdfName',
+        size: 'externalPdfSize',
+        mimeType: 'externalPdfMimeType',
+        originalName: 'externalPdfOriginalName'
+    )]
+    private ?File $externalPdfFile = null;
+
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $externalPdfName = null;
+
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $externalPdfOriginalName = null;
+
+    #[ORM\Column(type: Types::STRING, length: 100, nullable: true)]
+    private ?string $externalPdfMimeType = null;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $externalPdfSize = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $externalPdfUploadedAt = null;
+
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $acceptedPdfName = null;
+
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $acceptedPdfOriginalName = null;
+
+    #[ORM\Column(type: Types::STRING, length: 100, nullable: true)]
+    private ?string $acceptedPdfMimeType = null;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $acceptedPdfSize = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $acceptedPdfGeneratedAt = null;
 
     /**
      * @var Collection<int, QuoteProposalItem>
@@ -911,6 +958,187 @@ class QuoteProposal
     public function isArchivedByPrestataire(): bool
     {
         return null !== $this->archivedByPrestataireAt;
+    }
+
+    public function getDocumentMode(): QuoteProposalDocumentModeEnum
+    {
+        return $this->documentMode;
+    }
+
+    public function setDocumentMode(QuoteProposalDocumentModeEnum $documentMode): self
+    {
+        $this->documentMode = $documentMode;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function usesPlatformDocument(): bool
+    {
+        return $this->documentMode->isPlatform();
+    }
+
+    public function usesExternalPdfDocument(): bool
+    {
+        return $this->documentMode->isExternalPdf() && $this->hasExternalPdf();
+    }
+
+    public function getExternalPdfFile(): ?File
+    {
+        return $this->externalPdfFile;
+    }
+
+    public function setExternalPdfFile(?File $externalPdfFile = null): self
+    {
+        $this->externalPdfFile = $externalPdfFile;
+
+        if ($externalPdfFile instanceof UploadedFile) {
+            $this->externalPdfUploadedAt = new \DateTimeImmutable();
+            $this->updatedAt = new \DateTime();
+        }
+
+        return $this;
+    }
+
+    public function getExternalPdfName(): ?string
+    {
+        return $this->externalPdfName;
+    }
+
+    public function setExternalPdfName(?string $externalPdfName): self
+    {
+        $this->externalPdfName = $externalPdfName;
+
+        return $this;
+    }
+
+    public function getExternalPdfOriginalName(): ?string
+    {
+        return $this->externalPdfOriginalName;
+    }
+
+    public function setExternalPdfOriginalName(?string $externalPdfOriginalName): self
+    {
+        $this->externalPdfOriginalName = $externalPdfOriginalName;
+
+        return $this;
+    }
+
+    public function getExternalPdfMimeType(): ?string
+    {
+        return $this->externalPdfMimeType;
+    }
+
+    public function setExternalPdfMimeType(?string $externalPdfMimeType): self
+    {
+        $this->externalPdfMimeType = $externalPdfMimeType;
+
+        return $this;
+    }
+
+    public function getExternalPdfSize(): ?int
+    {
+        return $this->externalPdfSize;
+    }
+
+    public function setExternalPdfSize(?int $externalPdfSize): self
+    {
+        $this->externalPdfSize = $externalPdfSize;
+
+        return $this;
+    }
+
+    public function getExternalPdfUploadedAt(): ?\DateTimeImmutable
+    {
+        return $this->externalPdfUploadedAt;
+    }
+
+    public function setExternalPdfUploadedAt(?\DateTimeImmutable $externalPdfUploadedAt): self
+    {
+        $this->externalPdfUploadedAt = $externalPdfUploadedAt;
+
+        return $this;
+    }
+
+    public function hasExternalPdf(): bool
+    {
+        return $this->externalPdfName !== null && $this->externalPdfName !== '';
+    }
+
+    public function getAcceptedPdfName(): ?string
+    {
+        return $this->acceptedPdfName;
+    }
+
+    public function setAcceptedPdfName(?string $acceptedPdfName): self
+    {
+        $this->acceptedPdfName = $acceptedPdfName;
+
+        return $this;
+    }
+
+    public function getAcceptedPdfOriginalName(): ?string
+    {
+        return $this->acceptedPdfOriginalName;
+    }
+
+    public function setAcceptedPdfOriginalName(?string $acceptedPdfOriginalName): self
+    {
+        $this->acceptedPdfOriginalName = $acceptedPdfOriginalName;
+
+        return $this;
+    }
+
+    public function getAcceptedPdfMimeType(): ?string
+    {
+        return $this->acceptedPdfMimeType;
+    }
+
+    public function setAcceptedPdfMimeType(?string $acceptedPdfMimeType): self
+    {
+        $this->acceptedPdfMimeType = $acceptedPdfMimeType;
+
+        return $this;
+    }
+
+    public function getAcceptedPdfSize(): ?int
+    {
+        return $this->acceptedPdfSize;
+    }
+
+    public function setAcceptedPdfSize(?int $acceptedPdfSize): self
+    {
+        $this->acceptedPdfSize = $acceptedPdfSize;
+
+        return $this;
+    }
+
+    public function getAcceptedPdfGeneratedAt(): ?\DateTimeImmutable
+    {
+        return $this->acceptedPdfGeneratedAt;
+    }
+
+    public function setAcceptedPdfGeneratedAt(?\DateTimeImmutable $acceptedPdfGeneratedAt): self
+    {
+        $this->acceptedPdfGeneratedAt = $acceptedPdfGeneratedAt;
+
+        return $this;
+    }
+
+    public function hasAcceptedPdf(): bool
+    {
+        return $this->acceptedPdfName !== null && $this->acceptedPdfName !== '';
+    }
+
+    public function clearAcceptedPdf(): self
+    {
+        $this->acceptedPdfName = null;
+        $this->acceptedPdfOriginalName = null;
+        $this->acceptedPdfMimeType = null;
+        $this->acceptedPdfSize = null;
+        $this->acceptedPdfGeneratedAt = null;
+
+        return $this;
     }
 
     public function touch(): self

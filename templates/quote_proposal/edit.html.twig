@@ -136,7 +136,7 @@
 						</div>
 
 						<div class="tm-quote-panel__body">
-							{{ form_start(form, { attr: { class: 'tm-quote-form' } }) }}
+							{{ form_start(form, { attr: { class: 'tm-quote-form' } } ) }}
 
 							{% if form.vars.errors|length > 0 %}
 								<div class="tm-quote-form__global-errors">
@@ -156,6 +156,39 @@
 									</div>
 									<div class="tm-quote-field">
 										{{ form_row(form.introMessage) }}
+									</div>
+								</div>
+							</section>
+
+							<section class="tm-quote-form-section">
+								<div class="tm-quote-form-section__head">
+									<h3 class="tm-quote-form-section__title">Document contractuel</h3>
+									<p class="tm-quote-form-section__text">Choisissez si cette proposition repose sur le devis natif de la plateforme ou sur un PDF externe transmis par vos soins.</p>
+								</div>
+
+								<div class="tm-quote-grid tm-quote-grid--1">
+									<div class="tm-quote-field">
+										{{ form_row(form.documentMode) }}
+									</div>
+								</div>
+
+								<div class="alert alert-info border-0 shadow-sm mb-0">
+									Si vous ajoutez un PDF de devis externe, il remplacera le devis généré par la plateforme pour cette proposition.
+								</div>
+
+								<div id="quote-proposal-external-panel" class="tm-quote-grid tm-quote-grid--1 mt-3" hidden>
+									<div class="tm-quote-field">
+										{{ form_row(form.externalPdfFile) }}
+
+										{% if proposal.externalPdfOriginalName %}
+											<p class="small text-muted mb-0">
+												Fichier actuel :
+												<strong>{{ proposal.externalPdfOriginalName }}</strong>
+												{% if proposal.externalPdfUploadedAt %}
+													, importé le {{ proposal.externalPdfUploadedAt|date('d/m/Y à H:i') }}
+												{% endif %}
+											</p>
+										{% endif %}
 									</div>
 								</div>
 							</section>
@@ -182,7 +215,7 @@
 								</div>
 							</section>
 
-							<section class="tm-quote-form-section tm-quote-form-section--items">
+							<section id="quote-proposal-native-items" class="tm-quote-form-section tm-quote-form-section--items">
 								<div data-controller="collection" data-collection-index-value="{{ form.items|length }}" data-collection-prototype-value="{{ itemPrototype|e('html_attr') }}">
 									<div class="tm-quote-form-section__head tm-quote-form-section__head--items">
 										<div>
@@ -335,4 +368,26 @@
 			</div>
 		</div>
 	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script>
+		window.toggleQuoteProposalDocumentMode = function () {
+			const externalPanel = document.getElementById('quote-proposal-external-panel');
+			const nativeItemsSection = document.getElementById('quote-proposal-native-items');
+			const checkedInput = document.querySelector('input[data-document-mode-value]:checked');
+
+			if (!externalPanel || !nativeItemsSection || !checkedInput) {
+				return;
+			}
+
+			const isExternalPdf = checkedInput.getAttribute('data-document-mode-value') === 'external_pdf';
+
+			externalPanel.hidden = !isExternalPdf;
+			nativeItemsSection.hidden = isExternalPdf;
+		};
+
+		window.toggleQuoteProposalDocumentMode();
+	</script>
 {% endblock %}

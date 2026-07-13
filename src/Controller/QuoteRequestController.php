@@ -22,21 +22,21 @@ use App\Repository\QuoteRequestRepository;
 use App\Repository\ReviewRepository;
 use App\Service\ConversationMessageManager;
 use App\Service\NotificationManager;
+use App\Service\QuoteProposalAcceptancePdfGenerator;
+use App\Service\QuoteProposalDocumentResolver;
+use App\Service\QuoteProposalNativePdfGenerator;
+use App\Service\QuoteProposalPdfResponseFactory;
 use App\Service\RealtimeNotifier;
 use App\Service\ReviewManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Dompdf\Dompdf;
-use Dompdf\Options;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 
 #[Route('/demandes-de-devis', name: 'app_quote_request')]
@@ -554,6 +554,7 @@ final class QuoteRequestController extends AbstractController
     public function showProposal(
         string $publicReference,
         QuoteProposalRepository $quoteProposalRepository,
+        QuoteProposalDocumentResolver $documentResolver,
     ): Response {
         $user = $this->getUser();
 
@@ -574,6 +575,8 @@ final class QuoteRequestController extends AbstractController
             'proposal' => $proposal,
             'quoteRequest' => $proposal->getQuoteRequest(),
             'viewerContext' => 'client',
+            'resolvedDocument' => $documentResolver->resolve($proposal),
+            'renderNativeDetails' => $documentResolver->shouldRenderNativeDetails($proposal),
         ]);
     }
 
@@ -586,8 +589,9 @@ final class QuoteRequestController extends AbstractController
     public function showProposalPdf(
         string $publicReference,
         QuoteProposalRepository $quoteProposalRepository,
-        UploaderHelper $uploaderHelper,
-        RequestStack $requestStack,
+        QuoteProposalDocumentResolver $documentResolver,
+        QuoteProposalPdfResponseFactory $pdfResponseFactory,
+        QuoteProposalNativePdfGenerator $nativePdfGenerator,
     ): Response {
         $user = $this->getUser();
 
@@ -604,38 +608,14 @@ final class QuoteRequestController extends AbstractController
             throw $this->createNotFoundException('Devis introuvable.');
         }
 
-        $prestataire = $proposal->getQuoteRequest()?->getPrestataire();
-        $prestataireLogoUrl = null;
+        $resolvedDocument = $documentResolver->resolve($proposal);
 
-        if ($prestataire instanceof PrestataireProfile && $prestataire->getLogo()) {
-            $relativePath = $uploaderHelper->asset($prestataire, 'logoFile');
-
-            if ($relativePath) {
-                $request = $requestStack->getCurrentRequest();
-
-                if ($request instanceof Request) {
-                    $prestataireLogoUrl = $request->getSchemeAndHttpHost() . $relativePath;
-                }
-            }
+        if ($resolvedDocument->isStoredFile()) {
+            return $pdfResponseFactory->createInlineResponse($resolvedDocument);
         }
 
-        $html = $this->renderView('quote_request/proposal_pdf.html.twig', [
-            'proposal' => $proposal,
-            'quoteRequest' => $proposal->getQuoteRequest(),
-            'prestataireLogoUrl' => $prestataireLogoUrl,
-        ]);
-
-        $options = new Options();
-        $options->set('defaultFont', 'DejaVu Sans');
-        $options->set('isRemoteEnabled', true);
-
-        $dompdf = new Dompdf($options);
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
-
         return new Response(
-            $dompdf->output(),
+            $nativePdfGenerator->generatePdfOutput($proposal, 'quote_request/proposal_pdf.html.twig'),
             Response::HTTP_OK,
             [
                 'Content-Type' => 'application/pdf',
@@ -659,6 +639,7 @@ final class QuoteRequestController extends AbstractController
         QuoteProposalRepository $quoteProposalRepository,
         EntityManagerInterface $entityManager,
         NotificationManager $notificationManager,
+        QuoteProposalAcceptancePdfGenerator $acceptancePdfGenerator,
     ): Response {
         $user = $this->getUser();
 
@@ -694,6 +675,10 @@ final class QuoteRequestController extends AbstractController
         $proposal->setAcceptedAt(new \DateTimeImmutable());
         $proposal->setUpdatedAt(new \DateTime());
 
+        if ($proposal->usesExternalPdfDocument()) {
+            $acceptancePdfGenerator->generateFromExternalPdf($proposal, $user);
+        }
+
         $quoteRequest = $proposal->getQuoteRequest();
         if ($quoteRequest instanceof QuoteRequest) {
             $quoteRequest->setStatus(QuoteRequestStatusEnum::CLOSED);
@@ -724,8 +709,8 @@ final class QuoteRequestController extends AbstractController
 
         $this->addFlash('success', 'Le devis a bien été accepté.');
 
-        return $this->redirectToRoute('app_quote_request_quote_proposal_show', [
-            'publicReference' => $proposal->getPublicReference(),
+        return $this->redirectToRoute('app_quote_request_show', [
+            'slug' => $quoteRequest?->getSlug(),
         ], 303);
     }
 

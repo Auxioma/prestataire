@@ -57,14 +57,10 @@
 								<span>Mes prestations</span>
 							</button>
 
-                            <a
-    href="{{ path('app_review_prestataire_reviews') }}"
-    class="tm-sidebar-link nav-link {{ app.request.attributes.get('_route') == 'app_review_prestataire_reviews' ? 'active' : '' }}"
-    aria-current="{{ app.request.attributes.get('_route') == 'app_review_prestataire_reviews' ? 'page' : 'false' }}"
->
-    <span class="tm-sidebar-link-icon">★</span>
-    <span>Mes avis reçus</span>
-</a>
+							<a href="{{ path('app_review_prestataire_reviews') }}" class="tm-sidebar-link nav-link {{ app.request.attributes.get('_route') == 'app_review_prestataire_reviews' ? 'active' : '' }}" aria-current="{{ app.request.attributes.get('_route') == 'app_review_prestataire_reviews' ? 'page' : 'false' }}">
+								<span class="tm-sidebar-link-icon">★</span>
+								<span>Mes avis reçus</span>
+							</a>
 
 							<button class="tm-sidebar-link nav-link {{ activeTab == 'revenus' ? 'active' : '' }}" id="revenus-main-tab" data-bs-toggle="tab" data-bs-target="#revenus-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="revenus-main-panel" aria-selected="{{ activeTab == 'revenus' ? 'true' : 'false' }}">
 								<span class="tm-sidebar-link-icon">💳</span>

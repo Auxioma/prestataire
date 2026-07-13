@@ -96,6 +96,9 @@ class QuoteProposalManager
 
     public function finalize(QuoteProposal $proposal): QuoteProposal
     {
+        $this->normalizeDocumentConfiguration($proposal);
+        $this->assertCanFinalize($proposal);
+
         $this->freezeSnapshot(
             $proposal,
             $proposal->getQuoteRequest(),
@@ -117,6 +120,28 @@ class QuoteProposalManager
         return $proposal;
     }
 
+    public function canFinalize(QuoteProposal $proposal): bool
+    {
+        if ($proposal->usesExternalPdfDocument()) {
+            return true;
+        }
+
+        return !$proposal->getItems()->isEmpty();
+    }
+
+    public function assertCanFinalize(QuoteProposal $proposal): void
+    {
+        if ($this->canFinalize($proposal)) {
+            return;
+        }
+
+        if ($proposal->getDocumentMode()->isExternalPdf()) {
+            throw new \DomainException('Ajoutez un PDF externe avant de finaliser le devis.');
+        }
+
+        throw new \DomainException('Ajoutez au moins une ligne avant de finaliser le devis.');
+    }
+
     public function softDelete(QuoteProposal $proposal): QuoteProposal
     {
         $proposal->setStatus(QuoteProposalStatusEnum::DELETED);
@@ -128,6 +153,7 @@ class QuoteProposalManager
 
     public function save(QuoteProposal $proposal, bool $flush = true): void
     {
+        $this->normalizeDocumentConfiguration($proposal);
         $this->removeEmptyItems($proposal);
         $this->normalizeItemPositions($proposal);
         $this->recalculateTotals($proposal);
@@ -165,6 +191,13 @@ class QuoteProposalManager
         $proposal->touch();
 
         return $proposal;
+    }
+
+    private function normalizeDocumentConfiguration(QuoteProposal $proposal): void
+    {
+        if (!$proposal->hasExternalPdf() && $proposal->getDocumentMode()->isExternalPdf()) {
+            $proposal->setDocumentMode(\App\Enum\QuoteProposalDocumentModeEnum::PLATFORM);
+        }
     }
 
     public function freezeSnapshot(

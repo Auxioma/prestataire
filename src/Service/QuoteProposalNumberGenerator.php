@@ -21,10 +21,15 @@ class QuoteProposalNumberGenerator
 
         $sequence = 1;
 
-        if ($lastNumber !== null && preg_match('/^DEV-' . preg_quote($year, '/') . '-(\d{5})$/', $lastNumber, $matches)) {
+        if ($lastNumber !== null && preg_match('/^DEV-' . preg_quote($year, '/') . '-(\d{4,5})$/', $lastNumber, $matches)) {
             $sequence = ((int) $matches[1]) + 1;
         }
 
-        return sprintf('DEV-%s-%05d', $year, $sequence);
+        do {
+            $proposalNumber = sprintf('DEV-%s-%05d', $year, $sequence);
+            ++$sequence;
+        } while ($this->quoteProposalRepository->findOneBy(['proposalNumber' => $proposalNumber]) !== null);
+
+        return $proposalNumber;
     }
 }

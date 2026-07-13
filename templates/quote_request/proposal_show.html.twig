@@ -7,6 +7,8 @@
 {% block body %}
 {% set quoteRequest = proposal.quoteRequest %}
 {% set isArchivedView = quoteRequest and quoteRequest.archivedByClientAt is not null %}
+{% set resolvedDocument = resolvedDocument|default(null) %}
+{% set renderNativeDetails = renderNativeDetails|default(true) %}
 {% set backToRequestUrl = isArchivedView
     ? path('app_quote_request_history_show', { slug: quoteRequest.slug })
     : path('app_quote_request_show', { slug: quoteRequest.slug }) %}
@@ -35,6 +37,10 @@
 							<span class="qp-meta-pill__value">
 								{{ proposal.validUntil ? proposal.validUntil|date('d/m/Y') : '—' }}
 							</span>
+						</div>
+						<div class="qp-meta-pill">
+							<span class="qp-meta-pill__label">Document</span>
+							<span class="qp-meta-pill__value">{{ proposal.documentMode.label }}</span>
 						</div>
 					</div>
 				</div>
@@ -117,9 +123,24 @@
 									{{ proposal.introMessage|nl2br }}
 								</div>
 							{% endif %}
+
+							{% if not renderNativeDetails %}
+								<div class="qp-highlight-box">
+									<p class="mb-2"><strong>Le prestataire a joint un PDF externe pour cette proposition.</strong></p>
+									<p class="mb-2">Ce PDF est l’unique devis contractuel à consulter et à télécharger.</p>
+									<p class="mb-0">
+										Fichier :
+										<strong>{{ proposal.externalPdfOriginalName ?: 'PDF externe' }}</strong>
+										{% if proposal.acceptedPdfGeneratedAt %}
+											. Après acceptation, la version horodatée enrichie devient la référence.
+										{% endif %}
+									</p>
+								</div>
+							{% endif %}
 						</div>
 					</section>
 
+					{% if renderNativeDetails %}
 					<section class="qp-card">
 						<div class="qp-card__body">
 							<div class="qp-section-head">
@@ -179,8 +200,9 @@
 							</div>
 						</div>
 					</section>
+					{% endif %}
 
-					{% if proposal.terms %}
+					{% if renderNativeDetails and proposal.terms %}
 						<section class="qp-card">
 							<div class="qp-card__body">
 								<div class="qp-section-head">
@@ -195,7 +217,7 @@
 						</section>
 					{% endif %}
 
-					{% if proposal.notes %}
+					{% if renderNativeDetails and proposal.notes %}
 						<section class="qp-card">
 							<div class="qp-card__body">
 								<div class="qp-section-head">
@@ -212,6 +234,7 @@
 				</main>
 
 				<aside class="qp-sidebar">
+					{% if renderNativeDetails %}
 					<section class="qp-card qp-card--accent">
 						<div class="qp-card__body">
 							<div class="qp-kicker qp-kicker--light">Montants</div>
@@ -236,6 +259,7 @@
 							</dl>
 						</div>
 					</section>
+					{% endif %}
 
 					<section class="qp-card">
 						<div class="qp-card__body">
