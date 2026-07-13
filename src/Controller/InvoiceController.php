@@ -8,6 +8,7 @@ use App\Entity\Invoice;
 use App\Entity\PrestataireProfile;
 use App\Entity\QuoteProposal;
 use App\Entity\User;
+use App\Enum\NotificationTypeEnum;
 use App\Form\InvoiceType;
 use App\Repository\InvoiceRepository;
 use App\Repository\PrestataireProfileRepository;
@@ -15,6 +16,7 @@ use App\Repository\QuoteProposalRepository;
 use App\Service\InvoiceDocumentResolver;
 use App\Service\InvoiceManager;
 use App\Service\InvoicePdfGenerator;
+use App\Service\NotificationManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,6 +33,7 @@ final class InvoiceController extends AbstractController
         QuoteProposalRepository $quoteProposalRepository,
         PrestataireProfileRepository $prestataireProfileRepository,
         InvoiceManager $invoiceManager,
+        NotificationManager $notificationManager,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_PRESTATAIRE');
 
@@ -63,6 +66,39 @@ final class InvoiceController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $invoiceManager->saveDraft($invoice, true);
+
+                if ($request->request->has('issue_invoice')) {
+                    $invoiceManager->issue($invoice);
+
+                    $clientUser = $proposal->getClient()?->getAccount();
+                    if ($clientUser instanceof User) {
+                        $notificationManager->notify(
+                            $clientUser,
+                            NotificationTypeEnum::INVOICE_RECEIVED,
+                            'Nouvelle facture disponible',
+                            'Une nouvelle facture liée à votre devis est disponible.',
+                            $this->generateUrl('app_quote_request_invoice_show', [
+                                'publicReference' => $proposal->getPublicReference(),
+                            ]),
+                            [
+                                'invoiceId' => $invoice->getId(),
+                                'invoiceNumber' => $invoice->getInvoiceNumber(),
+                                'quoteProposalId' => $proposal->getId(),
+                                'quoteProposalReference' => $proposal->getPublicReference(),
+                                'quoteProposalNumber' => $proposal->getProposalNumber(),
+                                'quoteRequestId' => $proposal->getQuoteRequest()?->getId(),
+                                'quoteRequestSlug' => $proposal->getQuoteRequest()?->getSlug(),
+                            ]
+                        );
+                    }
+
+                    $this->addFlash('success', 'La facture a bien été émise.');
+
+                    return $this->redirectToRoute('app_prestataire_invoice_show', [
+                        'publicReference' => $proposal->getPublicReference(),
+                    ], 303);
+                }
+
                 $this->addFlash('success', 'La facture a bien été enregistrée.');
 
                 return $this->redirectToRoute('app_prestataire_invoice_manage', [
@@ -91,6 +127,7 @@ final class InvoiceController extends AbstractController
         QuoteProposalRepository $quoteProposalRepository,
         PrestataireProfileRepository $prestataireProfileRepository,
         InvoiceManager $invoiceManager,
+        NotificationManager $notificationManager,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_PRESTATAIRE');
 
@@ -108,6 +145,29 @@ final class InvoiceController extends AbstractController
         try {
             $invoice = $invoiceManager->getOrCreateFromAcceptedQuote($proposal);
             $invoiceManager->issue($invoice);
+
+            $clientUser = $proposal->getClient()?->getAccount();
+            if ($clientUser instanceof User) {
+                $notificationManager->notify(
+                    $clientUser,
+                    NotificationTypeEnum::INVOICE_RECEIVED,
+                    'Nouvelle facture disponible',
+                    'Une nouvelle facture liée à votre devis est disponible.',
+                    $this->generateUrl('app_quote_request_invoice_show', [
+                        'publicReference' => $proposal->getPublicReference(),
+                    ]),
+                    [
+                        'invoiceId' => $invoice->getId(),
+                        'invoiceNumber' => $invoice->getInvoiceNumber(),
+                        'quoteProposalId' => $proposal->getId(),
+                        'quoteProposalReference' => $proposal->getPublicReference(),
+                        'quoteProposalNumber' => $proposal->getProposalNumber(),
+                        'quoteRequestId' => $proposal->getQuoteRequest()?->getId(),
+                        'quoteRequestSlug' => $proposal->getQuoteRequest()?->getSlug(),
+                    ]
+                );
+            }
+
             $this->addFlash('success', 'La facture a bien été émise.');
         } catch (\DomainException $exception) {
             $this->addFlash('warning', $exception->getMessage());

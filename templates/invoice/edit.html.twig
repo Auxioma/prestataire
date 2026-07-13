@@ -2,6 +2,15 @@
 
 {% block title %}Facture{% endblock %}
 
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		#invoice-draft-form #invoice-external-panel {
+			display: none;
+		}
+	</style>
+{% endblock %}
+
 {% block body %}
 	{% set itemPrototype %}
 	<article class="tm-quote-item-card tm-quote-item-card--line" data-collection-item>
@@ -226,17 +235,15 @@
 									<button type="submit" form="invoice-draft-form" class="tm-quote-btn tm-quote-btn--success">Enregistrer la facture</button>
 									<button
 										type="submit"
-										form="invoice-issue-form"
+										form="invoice-draft-form"
+										name="issue_invoice"
+										value="1"
 										class="tm-quote-btn tm-quote-btn--primary"
 										onclick="return confirm('Émettre définitivement cette facture ? Elle sera ensuite visible par le client et ne pourra plus être modifiée.');"
 									>
 										Émettre la facture
 									</button>
 								</div>
-
-								<form id="invoice-issue-form" method="post" action="{{ path('app_prestataire_invoice_issue', { publicReference: proposal.publicReference }) }}">
-									<input type="hidden" name="_token" value="{{ csrf_token('issue_invoice_' ~ proposal.id) }}">
-								</form>
 							{% endif %}
 						</div>
 					</section>
@@ -280,4 +287,26 @@
 		</div>
 	</div>
 
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script>
+		window.toggleInvoiceSourceMode = function () {
+			const externalPanel = document.getElementById('invoice-external-panel');
+			const itemsSection = document.getElementById('invoice-items-panel');
+			const checkedInput = document.querySelector('input[data-invoice-source-type-value]:checked');
+
+			if (!externalPanel || !itemsSection || !checkedInput) {
+				return;
+			}
+
+			const isExternalPdf = checkedInput.getAttribute('data-invoice-source-type-value') === 'external_import';
+
+			externalPanel.style.display = isExternalPdf ? 'grid' : 'none';
+			itemsSection.style.display = isExternalPdf ? 'none' : '';
+		};
+
+		window.toggleInvoiceSourceMode();
+	</script>
 {% endblock %}

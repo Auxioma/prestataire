@@ -3,6 +3,15 @@
 {% block title %}Édition du devis
 {% endblock %}
 
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		#quote-proposal-edit-form #quote-proposal-external-panel {
+			display: none;
+		}
+	</style>
+{% endblock %}
+
 {% block body %}
 	{% set itemPrototype %}
 	<article class="tm-quote-item-card tm-quote-item-card--line" data-collection-item>
@@ -178,7 +187,19 @@
 
 								<div id="quote-proposal-external-panel" class="tm-quote-grid tm-quote-grid--1 mt-3">
 									<div class="tm-quote-field">
-										{{ form_row(form.externalPdfFile) }}
+										{{ form_label(form.externalPdfFile) }}
+										{{ form_errors(form.externalPdfFile) }}
+										<div class="tm-vich-custom-container">
+											{{ form_widget(form.externalPdfFile.file, { attr: { class: 'form-control' } }) }}
+
+											{% if form.externalPdfFile.delete is defined %}
+												<div class="form-check">
+													{{ form_widget(form.externalPdfFile.delete) }}
+													{{ form_label(form.externalPdfFile.delete) }}
+												</div>
+											{% endif %}
+										</div>
+										{{ form_help(form.externalPdfFile) }}
 
 										{% if proposal.externalPdfOriginalName %}
 											<p class="small text-muted mb-0">
@@ -368,4 +389,26 @@
 			</div>
 		</div>
 	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script>
+		window.toggleQuoteProposalDocumentMode = function () {
+			const externalPanel = document.getElementById('quote-proposal-external-panel');
+			const nativeItemsSection = document.getElementById('quote-proposal-native-items');
+			const checkedInput = document.querySelector('input[data-document-mode-value]:checked');
+
+			if (!externalPanel || !nativeItemsSection || !checkedInput) {
+				return;
+			}
+
+			const isExternalPdf = checkedInput.getAttribute('data-document-mode-value') === 'external_pdf';
+
+			externalPanel.style.display = isExternalPdf ? 'grid' : 'none';
+			nativeItemsSection.style.display = isExternalPdf ? 'none' : '';
+		};
+
+		window.toggleQuoteProposalDocumentMode();
+	</script>
 {% endblock %}

@@ -26,6 +26,12 @@ class QuoteProposalType extends AbstractType
                     'Devis généré grâce à la plateforme' => QuoteProposalDocumentModeEnum::PLATFORM,
                     'Devis PDF externe fourni par le prestataire' => QuoteProposalDocumentModeEnum::EXTERNAL_PDF,
                 ],
+                'choice_attr' => static function (?QuoteProposalDocumentModeEnum $choice): array {
+                    return [
+                        'data-document-mode-value' => $choice?->value ?? '',
+                        'onchange' => 'toggleQuoteProposalDocumentMode()',
+                    ];
+                },
                 'expanded' => true,
                 'multiple' => false,
             ])

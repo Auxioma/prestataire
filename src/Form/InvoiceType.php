@@ -30,6 +30,12 @@ final class InvoiceType extends AbstractType
                     $internalSourceType->getLabel() => $internalSourceType,
                     'Facture PDF importée depuis votre logiciel' => InvoiceSourceTypeEnum::EXTERNAL_IMPORT,
                 ],
+                'choice_attr' => static function (?InvoiceSourceTypeEnum $choice): array {
+                    return [
+                        'data-invoice-source-type-value' => $choice?->value ?? '',
+                        'onchange' => 'toggleInvoiceSourceMode()',
+                    ];
+                },
                 'expanded' => true,
                 'multiple' => false,
             ])
