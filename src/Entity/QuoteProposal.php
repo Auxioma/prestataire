@@ -47,7 +47,7 @@ class QuoteProposal
     #[ORM\Column(type: Types::STRING, length: 30, enumType: QuoteProposalStatusEnum::class)]
     private QuoteProposalStatusEnum $status = QuoteProposalStatusEnum::DRAFT;
 
-    #[ORM\Column(type: Types::STRING, length: 50, unique: true, nullable: true)]
+    #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
     private ?string $proposalNumber = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]

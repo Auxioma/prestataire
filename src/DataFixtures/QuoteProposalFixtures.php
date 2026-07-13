@@ -38,7 +38,7 @@ class QuoteProposalFixtures extends BaseFixture implements DependentFixtureInter
                 ->setClient($client)
                 ->setConversation($conversation)
                 ->setStatus($status)
-                ->setProposalNumber(sprintf('DEV-2026-%04d', $i))
+                ->setProposalNumber(sprintf('DEV-2026-%05d', $i))
                 ->setPublicReference(strtoupper($this->faker->bothify('TMDEV###??')))
                 ->setTitle('Devis pour ' . $request->getTitle())
                 ->setIntroMessage('Merci pour votre demande. Voici une proposition adaptée à votre besoin.')

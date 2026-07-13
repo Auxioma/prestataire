@@ -64,7 +64,8 @@ final class InvoicePdfGeneratorTest extends TestCase
     {
         $quote = (new QuoteProposal())
             ->setPublicReference('DEV-TEST-001')
-            ->setProposalNumber('DEV-2026-TEST')
+            ->setProposalNumber('DEV-2026-00001')
+            ->setProposalSequenceNumber(1)
             ->setTitle('Devis de test')
             ->setPrestataireCompanyName('Acme Services')
             ->setPrestataireLegalName('Acme Services SARL')

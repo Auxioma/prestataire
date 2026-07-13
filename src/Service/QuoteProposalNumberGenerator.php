@@ -17,15 +17,12 @@ class QuoteProposalNumberGenerator
     public function generate(PrestataireProfile $prestataire): array
     {
         $sequence = max(1, $this->quoteProposalRepository->findNextSequenceForPrestataire($prestataire));
-
-        do {
-            $proposalNumber = sprintf('DEV-%05d', $sequence);
-            ++$sequence;
-        } while ($this->quoteProposalRepository->findOneBy(['proposalNumber' => $proposalNumber]) !== null);
+        $year = (new \DateTimeImmutable())->format('Y');
+        $proposalNumber = sprintf('DEV-%s-%05d', $year, $sequence);
 
         return [
             'number' => $proposalNumber,
-            'sequence' => $sequence - 1,
+            'sequence' => $sequence,
         ];
     }
 }
