@@ -2,23 +2,6 @@
 
 {% block title %}Facture{% endblock %}
 
-{% block stylesheets %}
-	{{ parent() }}
-	<style>
-		#invoice-draft-form #invoice-external-panel {
-			display: none;
-		}
-
-		#invoice-draft-form:has(input[data-invoice-source-type-value="external_import"]:checked) #invoice-external-panel {
-			display: block;
-		}
-
-		#invoice-draft-form:has(input[data-invoice-source-type-value="external_import"]:checked) #invoice-items-panel {
-			display: none;
-		}
-	</style>
-{% endblock %}
-
 {% block body %}
 	{% set itemPrototype %}
 	<article class="tm-quote-item-card tm-quote-item-card--line" data-collection-item>
@@ -122,7 +105,7 @@
 						</div>
 
 						<div class="tm-quote-panel__body">
-							{{ form_start(form, { attr: { id: 'invoice-draft-form', class: 'tm-quote-form', 'data-invoice-form': '' } }) }}
+							{{ form_start(form, { attr: { id: 'invoice-draft-form', class: 'tm-quote-form' } }) }}
 
 							{% if form.vars.errors|length > 0 %}
 								<div class="tm-quote-form__global-errors">{{ form_errors(form) }}</div>
@@ -187,7 +170,7 @@
 								</div>
 							</section>
 
-							<section id="invoice-items-panel" data-invoice-items-panel class="tm-quote-form-section tm-quote-form-section--items">
+							<section id="invoice-items-panel" class="tm-quote-form-section tm-quote-form-section--items">
 								<div data-controller="collection" data-collection-index-value="{{ form.items|length }}" data-collection-prototype-value="{{ itemPrototype|e('html_attr') }}">
 									<div class="tm-quote-form-section__head tm-quote-form-section__head--items">
 										<div>

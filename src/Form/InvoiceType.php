@@ -32,11 +32,6 @@ final class InvoiceType extends AbstractType
                 ],
                 'expanded' => true,
                 'multiple' => false,
-                'choice_attr' => static function (?InvoiceSourceTypeEnum $choice): array {
-                    return [
-                        'data-invoice-source-type-value' => $choice?->value ?? '',
-                    ];
-                },
             ])
             ->add('dueAt', DateType::class, [
                 'label' => 'Date d’échéance',
