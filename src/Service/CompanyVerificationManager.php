@@ -29,7 +29,13 @@ final class CompanyVerificationManager
 
         return [
             'siret' => $previewPayload['siret'],
+            'siren' => $previewPayload['siren'] ?? null,
             'fields' => [
+                [
+                    'label' => 'Numéro SIREN',
+                    'current' => $prestataireProfile->getSiren(),
+                    'incoming' => $previewPayload['fields']['siren'] ?? null,
+                ],
                 [
                     'label' => 'Nom de l’entreprise / Enseigne',
                     'current' => $prestataireProfile->getCompanyName(),
@@ -81,6 +87,10 @@ final class CompanyVerificationManager
         }
 
         $fields = $previewPayload['fields'];
+
+        if (!empty($fields['siren'])) {
+            $prestataireProfile->setSiren($fields['siren']);
+        }
 
         if (!empty($fields['companyName'])) {
             $prestataireProfile->setCompanyName($fields['companyName']);

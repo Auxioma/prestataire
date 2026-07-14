@@ -45,10 +45,14 @@ class SireneClient
     public function buildCompanyPreviewFromSiret(string $siret): array
     {
         $data = $this->getEtablissementBySiret($siret);
+        $normalizedSiret = preg_replace('/\D+/', '', $siret);
 
         $etablissement = $data['etablissement'] ?? [];
         $uniteLegale = $etablissement['uniteLegale'] ?? [];
         $adresse = $etablissement['adresseEtablissement'] ?? [];
+        $siren = $etablissement['siren']
+            ?? $uniteLegale['siren']
+            ?? (is_string($normalizedSiret) && strlen($normalizedSiret) >= 9 ? substr($normalizedSiret, 0, 9) : null);
 
         // période courante de l'établissement
         $currentPeriodeEtablissement = null;
@@ -94,6 +98,7 @@ class SireneClient
 
         return [
             'siret' => $etablissement['siret'] ?? $siret,
+            'siren' => $siren,
 
             // informations métier sur la vérification
             'etablissementStatus' => $etablissementStatus,
@@ -101,6 +106,7 @@ class SireneClient
             'isActive' => $isActive,
 
             'fields' => [
+                'siren' => $siren,
                 'companyName' => $companyName ?: null,
                 'legalName' => $legalName ?: null,
                 'structureType' => $uniteLegale['categorieJuridiqueUniteLegale'] ?? null,
@@ -110,6 +116,11 @@ class SireneClient
                 'country' => 'France',
             ],
             'display' => [
+                [
+                    'label' => 'Numéro SIREN',
+                    'current' => null,
+                    'incoming' => $siren,
+                ],
                 [
                     'label' => 'Nom de l’entreprise / Enseigne',
                     'current' => null,

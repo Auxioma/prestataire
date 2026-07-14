@@ -98,6 +98,9 @@
 							<div class="col-sm-6 tm-form-row">
 								{{ form_row(companyForm.vatNumber) }}
 							</div>
+							<div class="col-sm-6 tm-form-row">
+								{{ form_row(companyForm.siren) }}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -257,6 +260,12 @@
 								SIRET analysé :
 								{{ companyVerificationPreview.siret }}
 							</div>
+							{% if companyVerificationPreview.siren is defined and companyVerificationPreview.siren %}
+								<div class="text-muted small">
+									SIREN détecté :
+									{{ companyVerificationPreview.siren }}
+								</div>
+							{% endif %}
 						</div>
 
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>

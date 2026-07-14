@@ -368,9 +368,6 @@ final class PrestataireSearchService
                                 ],
                             ],
                         ],
-                        'should' => [
-                            ['isFeatured' => ['order' => 'desc']],
-                        ],
                     ],
                 ],
                 'sort' => [

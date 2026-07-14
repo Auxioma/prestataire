@@ -109,6 +109,15 @@
 			<div class="box"><strong>Conditions</strong><br>{{ invoice.terms|nl2br }}</div>
 		{% endif %}
 
+		{% if invoice.latePaymentPenaltyTerms or invoice.fixedRecoveryCompensationTerms or invoice.earlyPaymentDiscountTerms %}
+			<div class="box">
+				<strong>Mentions légales de paiement</strong><br>
+				{% if invoice.latePaymentPenaltyTerms %}<strong>Pénalités de retard</strong><br>{{ invoice.latePaymentPenaltyTerms|nl2br }}<br><br>{% endif %}
+				{% if invoice.fixedRecoveryCompensationTerms %}<strong>Indemnité forfaitaire de recouvrement</strong><br>{{ invoice.fixedRecoveryCompensationTerms|nl2br }}<br><br>{% endif %}
+				{% if invoice.earlyPaymentDiscountTerms %}<strong>Escompte</strong><br>{{ invoice.earlyPaymentDiscountTerms|nl2br }}{% endif %}
+			</div>
+		{% endif %}
+
 		{% if invoice.notes %}
 			<div class="box"><strong>Notes</strong><br>{{ invoice.notes|nl2br }}</div>
 		{% endif %}

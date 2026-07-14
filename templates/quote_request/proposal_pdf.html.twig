@@ -534,6 +534,17 @@
 				</div>
 			{% endif %}
 
+			{% if proposal.latePaymentPenaltyTerms or proposal.fixedRecoveryCompensationTerms or proposal.earlyPaymentDiscountTerms %}
+				<div class="section">
+					<h2 class="section-title">Mentions légales de paiement</h2>
+					<div class="box">
+						{% if proposal.latePaymentPenaltyTerms %}<strong>Pénalités de retard</strong><br>{{ proposal.latePaymentPenaltyTerms|nl2br }}<br><br>{% endif %}
+						{% if proposal.fixedRecoveryCompensationTerms %}<strong>Indemnité forfaitaire de recouvrement</strong><br>{{ proposal.fixedRecoveryCompensationTerms|nl2br }}<br><br>{% endif %}
+						{% if proposal.earlyPaymentDiscountTerms %}<strong>Escompte</strong><br>{{ proposal.earlyPaymentDiscountTerms|nl2br }}{% endif %}
+					</div>
+				</div>
+			{% endif %}
+
 			{% if proposal.notes %}
 				<div class="section">
 					<h2 class="section-title">Notes</h2>

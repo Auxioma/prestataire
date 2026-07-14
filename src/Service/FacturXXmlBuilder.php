@@ -14,7 +14,10 @@ final class FacturXXmlBuilder
     private const NS_RAM = 'urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100';
     private const NS_QDT = 'urn:un:unece:uncefact:data:standard:QualifiedDataType:100';
     private const NS_UDT = 'urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100';
-    private const FACTURX_GUIDELINE = 'urn:factur-x.eu:1p0:minimum';
+    private const FACTURX_GUIDELINE = 'urn:cen.eu:en16931:2017';
+    private const DEFAULT_BUSINESS_PROCESS = 'B1';
+    private const DEFAULT_UNIT_CODE = 'C62';
+    private const SIREN_SCHEME_ID = '0002';
 
     public function build(Invoice $invoice): string
     {
@@ -37,6 +40,11 @@ final class FacturXXmlBuilder
     private function appendDocumentContext(\DOMDocument $document, \DOMElement $root): void
     {
         $context = $document->createElementNS(self::NS_RSM, 'rsm:ExchangedDocumentContext');
+
+        $businessProcess = $document->createElementNS(self::NS_RAM, 'ram:BusinessProcessSpecifiedDocumentContextParameter');
+        $businessProcess->appendChild($document->createElementNS(self::NS_RAM, 'ram:ID', self::DEFAULT_BUSINESS_PROCESS));
+        $context->appendChild($businessProcess);
+
         $guideline = $document->createElementNS(self::NS_RAM, 'ram:GuidelineSpecifiedDocumentContextParameter');
         $guideline->appendChild($document->createElementNS(self::NS_RAM, 'ram:ID', self::FACTURX_GUIDELINE));
         $context->appendChild($guideline);
@@ -59,10 +67,12 @@ final class FacturXXmlBuilder
         }
 
         if ($invoice->getNotes() !== null && trim($invoice->getNotes()) !== '') {
-            $includedNote = $document->createElementNS(self::NS_RAM, 'ram:IncludedNote');
-            $includedNote->appendChild($document->createElementNS(self::NS_RAM, 'ram:Content', $invoice->getNotes()));
-            $header->appendChild($includedNote);
+            $header->appendChild($this->buildIncludedNote($document, $invoice->getNotes()));
         }
+
+        $this->appendFrenchPaymentNotice($document, $header, $invoice->getFixedRecoveryCompensationTerms(), 'PMT');
+        $this->appendFrenchPaymentNotice($document, $header, $invoice->getLatePaymentPenaltyTerms(), 'PMD');
+        $this->appendFrenchPaymentNotice($document, $header, $invoice->getEarlyPaymentDiscountTerms(), 'AAB');
 
         $root->appendChild($header);
     }
@@ -93,13 +103,15 @@ final class FacturXXmlBuilder
                 $line->appendChild($agreement);
 
                 $delivery = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedLineTradeDelivery');
-                $delivery->appendChild($document->createElementNS(self::NS_RAM, 'ram:BilledQuantity', $this->formatAmount($item->getQuantity())));
+                $quantity = $document->createElementNS(self::NS_RAM, 'ram:BilledQuantity', $this->formatAmount($item->getQuantity()));
+                $quantity->setAttribute('unitCode', self::DEFAULT_UNIT_CODE);
+                $delivery->appendChild($quantity);
                 $line->appendChild($delivery);
 
                 $settlement = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedLineTradeSettlement');
                 $tax = $document->createElementNS(self::NS_RAM, 'ram:ApplicableTradeTax');
                 $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:TypeCode', 'VAT'));
-                $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:CategoryCode', 'S'));
+                $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:CategoryCode', $this->resolveTaxCategoryCode($item->getVatRate())));
                 $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:RateApplicablePercent', $this->formatAmount($item->getVatRate())));
                 $settlement->appendChild($tax);
 
@@ -126,8 +138,10 @@ final class FacturXXmlBuilder
 
         $seller = $document->createElementNS(self::NS_RAM, 'ram:SellerTradeParty');
         $seller->appendChild($document->createElementNS(self::NS_RAM, 'ram:Name', $quote?->getPrestataireCompanyName() ?: $quote?->getPrestataireLegalName() ?: 'Prestataire'));
+        $this->appendLegalOrganization($document, $seller, $this->extractSiren($quote?->getPrestataireSiret()));
         $this->appendPostalAddress($document, $seller, [
             'ram:LineOne' => $quote?->getPrestataireAddress(),
+            'ram:LineTwo' => $quote?->getPrestataireAddressComplement(),
             'ram:PostcodeCode' => $quote?->getPrestatairePostalCode(),
             'ram:CityName' => $quote?->getPrestataireCity(),
             'ram:CountryID' => $this->normalizeCountryCode($quote?->getPrestataireCountry()),
@@ -137,6 +151,7 @@ final class FacturXXmlBuilder
 
         $buyer = $document->createElementNS(self::NS_RAM, 'ram:BuyerTradeParty');
         $buyer->appendChild($document->createElementNS(self::NS_RAM, 'ram:Name', $quote?->getClientCompanyName() ?: $quote?->getClientFullName() ?: 'Client'));
+        $this->appendLegalOrganization($document, $buyer, $this->extractSiren($quote?->getClientSiret()));
         $this->appendPostalAddress($document, $buyer, [
             'ram:LineOne' => $quote?->getClientBillingAddress() ?: $quote?->getClientInterventionAddress(),
             'ram:PostcodeCode' => $quote?->getClientBillingPostalCode() ?: $quote?->getClientInterventionPostalCode(),
@@ -157,6 +172,7 @@ final class FacturXXmlBuilder
     private function buildHeaderDelivery(\DOMDocument $document, Invoice $invoice): \DOMElement
     {
         $delivery = $document->createElementNS(self::NS_RAM, 'ram:ApplicableHeaderTradeDelivery');
+        $quote = $invoice->getQuoteProposal();
         $occurrence = $invoice->getIssuedAt() ?? $invoice->getCreatedAt();
 
         if ($occurrence instanceof \DateTimeInterface) {
@@ -169,6 +185,19 @@ final class FacturXXmlBuilder
             $delivery->appendChild($event);
         }
 
+        if ($this->hasDistinctDeliveryAddress($quote)) {
+            $shipTo = $document->createElementNS(self::NS_RAM, 'ram:ShipToTradeParty');
+            $shipTo->appendChild($document->createElementNS(self::NS_RAM, 'ram:Name', $quote?->getClientCompanyName() ?: $quote?->getClientFullName() ?: 'Client'));
+            $this->appendPostalAddress($document, $shipTo, [
+                'ram:LineOne' => $quote?->getClientInterventionAddress(),
+                'ram:LineTwo' => $quote?->getClientInterventionAddressComplement(),
+                'ram:PostcodeCode' => $quote?->getClientInterventionPostalCode(),
+                'ram:CityName' => $quote?->getClientInterventionCity(),
+                'ram:CountryID' => $this->normalizeCountryCode($quote?->getClientInterventionCountry()),
+            ]);
+            $delivery->appendChild($shipTo);
+        }
+
         return $delivery;
     }
 
@@ -177,15 +206,17 @@ final class FacturXXmlBuilder
         $settlement = $document->createElementNS(self::NS_RAM, 'ram:ApplicableHeaderTradeSettlement');
         $settlement->appendChild($document->createElementNS(self::NS_RAM, 'ram:InvoiceCurrencyCode', $invoice->getCurrency()));
 
-        $tax = $document->createElementNS(self::NS_RAM, 'ram:ApplicableTradeTax');
-        $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:CalculatedAmount', $this->formatAmount($invoice->getTaxAmount())));
-        $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:TypeCode', 'VAT'));
-        $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:BasisAmount', $this->formatAmount($invoice->getSubtotalHt())));
-        $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:CategoryCode', 'S'));
-        $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:RateApplicablePercent', $this->resolveVatRate($invoice)));
-        $settlement->appendChild($tax);
+        foreach ($this->buildTaxBreakdowns($invoice) as $taxBreakdown) {
+            $tax = $document->createElementNS(self::NS_RAM, 'ram:ApplicableTradeTax');
+            $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:CalculatedAmount', $taxBreakdown['taxAmount']));
+            $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:TypeCode', 'VAT'));
+            $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:BasisAmount', $taxBreakdown['basisAmount']));
+            $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:CategoryCode', $taxBreakdown['categoryCode']));
+            $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:RateApplicablePercent', $taxBreakdown['rate']));
+            $settlement->appendChild($tax);
+        }
 
-        if ($invoice->getDueAt() instanceof \DateTimeInterface || ($invoice->getTerms() !== null && trim($invoice->getTerms()) !== '')) {
+        if ($this->hasPaymentTerms($invoice)) {
             $terms = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedTradePaymentTerms');
 
             if ($invoice->getDueAt() instanceof \DateTimeInterface) {
@@ -212,6 +243,19 @@ final class FacturXXmlBuilder
         $settlement->appendChild($summation);
 
         return $settlement;
+    }
+
+    private function appendLegalOrganization(\DOMDocument $document, \DOMElement $parent, ?string $siren): void
+    {
+        if ($siren === null) {
+            return;
+        }
+
+        $organization = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedLegalOrganization');
+        $identifier = $document->createElementNS(self::NS_RAM, 'ram:ID', $siren);
+        $identifier->setAttribute('schemeID', self::SIREN_SCHEME_ID);
+        $organization->appendChild($identifier);
+        $parent->appendChild($organization);
     }
 
     private function appendPostalAddress(\DOMDocument $document, \DOMElement $parent, array $parts): void
@@ -242,15 +286,151 @@ final class FacturXXmlBuilder
         $parent->appendChild($taxRegistration);
     }
 
-    private function resolveVatRate(Invoice $invoice): string
+    private function hasPaymentTerms(Invoice $invoice): bool
     {
-        foreach ($invoice->getItems() as $item) {
-            if ($item->getVatRate() !== null) {
-                return $this->formatAmount($item->getVatRate());
-            }
+        return $invoice->getDueAt() instanceof \DateTimeInterface
+            || $this->hasTextContent($invoice->getTerms())
+            || $this->hasTextContent($invoice->getLatePaymentPenaltyTerms())
+            || $this->hasTextContent($invoice->getFixedRecoveryCompensationTerms())
+            || $this->hasTextContent($invoice->getEarlyPaymentDiscountTerms());
+    }
+
+    private function appendPaymentTermDescription(\DOMDocument $document, \DOMElement $terms, ?string $description): void
+    {
+        if (!$this->hasTextContent($description)) {
+            return;
         }
 
-        return '0.00';
+        $terms->appendChild($document->createElementNS(self::NS_RAM, 'ram:Description', $description));
+    }
+
+    private function appendFrenchPaymentNotice(\DOMDocument $document, \DOMElement $header, ?string $content, string $subjectCode): void
+    {
+        if (!$this->hasTextContent($content)) {
+            return;
+        }
+
+        $header->appendChild($this->buildIncludedNote($document, $content, $subjectCode));
+    }
+
+    private function buildIncludedNote(\DOMDocument $document, string $content, ?string $subjectCode = null): \DOMElement
+    {
+        $includedNote = $document->createElementNS(self::NS_RAM, 'ram:IncludedNote');
+        $includedNote->appendChild($document->createElementNS(self::NS_RAM, 'ram:Content', $content));
+
+        if ($subjectCode !== null) {
+            $includedNote->appendChild($document->createElementNS(self::NS_RAM, 'ram:SubjectCode', $subjectCode));
+        }
+
+        return $includedNote;
+    }
+
+    /**
+     * @return list<array{rate: string, basisAmount: string, taxAmount: string, categoryCode: string}>
+     */
+    private function buildTaxBreakdowns(Invoice $invoice): array
+    {
+        $breakdowns = [];
+
+        foreach ($invoice->getItems() as $item) {
+            $rate = $this->formatAmount($item->getVatRate());
+            $categoryCode = $this->resolveTaxCategoryCode($item->getVatRate());
+            $key = $categoryCode . '|' . $rate;
+            $basisAmount = $this->formatAmount($item->getTotalHt());
+            $taxAmount = $this->calculateLineTaxAmount($basisAmount, $rate);
+
+            if (!isset($breakdowns[$key])) {
+                $breakdowns[$key] = [
+                    'rate' => $rate,
+                    'basisAmount' => '0.00',
+                    'taxAmount' => '0.00',
+                    'categoryCode' => $categoryCode,
+                ];
+            }
+
+            $breakdowns[$key]['basisAmount'] = bcadd($breakdowns[$key]['basisAmount'], $basisAmount, 2);
+            $breakdowns[$key]['taxAmount'] = bcadd($breakdowns[$key]['taxAmount'], $taxAmount, 2);
+        }
+
+        if ($breakdowns === []) {
+            $rate = $invoice->getTaxAmount() === '0.00' ? '0.00' : $this->formatAmount(0);
+
+            return [[
+                'rate' => $rate,
+                'basisAmount' => $this->formatAmount($invoice->getSubtotalHt()),
+                'taxAmount' => $this->formatAmount($invoice->getTaxAmount()),
+                'categoryCode' => $this->resolveTaxCategoryCode($rate),
+            ]];
+        }
+
+        return array_values(array_map(fn (array $breakdown): array => [
+            'rate' => $breakdown['rate'],
+            'basisAmount' => $breakdown['basisAmount'],
+            'taxAmount' => $breakdown['taxAmount'],
+            'categoryCode' => $breakdown['categoryCode'],
+        ], $breakdowns));
+    }
+
+    private function calculateLineTaxAmount(string $basisAmount, string $rate): string
+    {
+        return bcmul($basisAmount, bcdiv($rate, '100', 4), 2);
+    }
+
+    private function resolveTaxCategoryCode(null|string|int|float $rate): string
+    {
+        return ((float) $rate) > 0 ? 'S' : 'Z';
+    }
+
+    private function extractSiren(?string $siret): ?string
+    {
+        if ($siret === null) {
+            return null;
+        }
+
+        $normalized = preg_replace('/\D+/', '', $siret);
+
+        if (!is_string($normalized) || strlen($normalized) < 9) {
+            return null;
+        }
+
+        return substr($normalized, 0, 9);
+    }
+
+    private function hasDistinctDeliveryAddress(?QuoteProposal $quote): bool
+    {
+        if (!$quote instanceof QuoteProposal) {
+            return false;
+        }
+
+        $deliveryAddress = $this->normalizeForComparison($quote->getClientInterventionAddress());
+        $deliveryPostalCode = $this->normalizeForComparison($quote->getClientInterventionPostalCode());
+        $deliveryCity = $this->normalizeForComparison($quote->getClientInterventionCity());
+        $deliveryCountry = $this->normalizeForComparison($quote->getClientInterventionCountry());
+
+        if ($deliveryAddress === null && $deliveryPostalCode === null && $deliveryCity === null && $deliveryCountry === null) {
+            return false;
+        }
+
+        return $deliveryAddress !== $this->normalizeForComparison($quote->getClientBillingAddress())
+            || $deliveryPostalCode !== $this->normalizeForComparison($quote->getClientBillingPostalCode())
+            || $deliveryCity !== $this->normalizeForComparison($quote->getClientBillingCity())
+            || $deliveryCountry !== $this->normalizeForComparison($quote->getClientBillingCountry());
+    }
+
+    private function normalizeForComparison(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $normalized = trim(mb_strtolower($value));
+
+        return $normalized === '' ? null : $normalized;
+    }
+
+    private function hasTextContent(?string $value): bool
+    {
+        return $value !== null && trim($value) !== '';
     }
 
     private function normalizeCountryCode(?string $country): ?string

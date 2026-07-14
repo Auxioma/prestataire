@@ -145,6 +145,10 @@
 						<section class="qp-card"><div class="qp-card__body"><div class="qp-section-head"><div class="qp-kicker">Conditions</div><h2 class="qp-section-title">Règlement</h2></div><div class="qp-richtext">{{ invoice.terms|nl2br }}</div></div></section>
 					{% endif %}
 
+					{% if invoice.latePaymentPenaltyTerms or invoice.fixedRecoveryCompensationTerms or invoice.earlyPaymentDiscountTerms %}
+						<section class="qp-card"><div class="qp-card__body"><div class="qp-section-head"><div class="qp-kicker">Règlement</div><h2 class="qp-section-title">Mentions légales de paiement</h2></div><div class="qp-richtext">{% if invoice.latePaymentPenaltyTerms %}<p><strong>Pénalités de retard</strong><br>{{ invoice.latePaymentPenaltyTerms|nl2br }}</p>{% endif %}{% if invoice.fixedRecoveryCompensationTerms %}<p><strong>Indemnité forfaitaire de recouvrement</strong><br>{{ invoice.fixedRecoveryCompensationTerms|nl2br }}</p>{% endif %}{% if invoice.earlyPaymentDiscountTerms %}<p><strong>Escompte</strong><br>{{ invoice.earlyPaymentDiscountTerms|nl2br }}</p>{% endif %}</div></div></section>
+					{% endif %}
+
 					{% if invoice.notes %}
 						<section class="qp-card"><div class="qp-card__body"><div class="qp-section-head"><div class="qp-kicker">Notes</div><h2 class="qp-section-title">Informations complémentaires</h2></div><div class="qp-richtext">{{ invoice.notes|nl2br }}</div></div></section>
 					{% endif %}

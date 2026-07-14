@@ -301,6 +301,23 @@
 						</section>
 					{% endif %}
 
+					{% if not isExternalPdfMode and (proposal.latePaymentPenaltyTerms or proposal.fixedRecoveryCompensationTerms or proposal.earlyPaymentDiscountTerms) %}
+						<section class="qp-card">
+							<div class="qp-card__body">
+								<div class="qp-section-head">
+									<div class="qp-kicker">Règlement</div>
+									<h2 class="qp-section-title">Mentions légales de paiement</h2>
+								</div>
+
+								<div class="qp-richtext">
+									{% if proposal.latePaymentPenaltyTerms %}<p><strong>Pénalités de retard</strong><br>{{ proposal.latePaymentPenaltyTerms|nl2br }}</p>{% endif %}
+									{% if proposal.fixedRecoveryCompensationTerms %}<p><strong>Indemnité forfaitaire de recouvrement</strong><br>{{ proposal.fixedRecoveryCompensationTerms|nl2br }}</p>{% endif %}
+									{% if proposal.earlyPaymentDiscountTerms %}<p><strong>Escompte</strong><br>{{ proposal.earlyPaymentDiscountTerms|nl2br }}</p>{% endif %}
+								</div>
+							</div>
+						</section>
+					{% endif %}
+
 					{% if not isExternalPdfMode and proposal.notes %}
 						<section class="qp-card">
 							<div class="qp-card__body">

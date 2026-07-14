@@ -41,7 +41,7 @@ final class InvoicePdfGeneratorTest extends TestCase
 
         self::assertStringContainsString('<rsm:CrossIndustryInvoice', $xmlContent);
         self::assertStringContainsString('FAC-TEST-001', $xmlContent);
-        self::assertStringContainsString('urn:factur-x.eu:1p0:minimum', $xmlContent);
+        self::assertStringContainsString('urn:cen.eu:en16931:2017', $xmlContent);
 
         $xmlPath = tempnam(sys_get_temp_dir(), 'facturx-test-');
         if ($xmlPath === false) {
@@ -56,6 +56,8 @@ final class InvoicePdfGeneratorTest extends TestCase
             self::assertStringContainsString('/EmbeddedFiles', $pdfOutput);
             self::assertStringContainsString('factur-x.xml', $pdfOutput);
             self::assertStringContainsString('/AFRelationship /Alternative', $pdfOutput);
+            self::assertStringContainsString('/Metadata', $pdfOutput);
+            self::assertStringContainsString('/OutputIntents', $pdfOutput);
         } finally {
             @unlink($xmlPath);
         }

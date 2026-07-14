@@ -27,6 +27,9 @@ final class InvoiceFactoryFromQuote
             ->setDueAt($this->resolveDefaultDueAt($proposal))
             ->setNotes($proposal->getNotes())
             ->setTerms($proposal->getTerms())
+            ->setLatePaymentPenaltyTerms($proposal->getLatePaymentPenaltyTerms())
+            ->setFixedRecoveryCompensationTerms($proposal->getFixedRecoveryCompensationTerms())
+            ->setEarlyPaymentDiscountTerms($proposal->getEarlyPaymentDiscountTerms())
             ->setSourceType(
                 $proposal->usesExternalPdfDocument()
                     ? InvoiceSourceTypeEnum::MANUAL_FROM_EXTERNAL_QUOTE

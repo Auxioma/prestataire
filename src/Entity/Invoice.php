@@ -80,6 +80,15 @@ class Invoice
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $terms = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $latePaymentPenaltyTerms = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $fixedRecoveryCompensationTerms = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $earlyPaymentDiscountTerms = null;
+
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $facturXPdfName = null;
 
@@ -338,6 +347,45 @@ class Invoice
     public function setTerms(?string $terms): self
     {
         $this->terms = $terms;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getLatePaymentPenaltyTerms(): ?string
+    {
+        return $this->latePaymentPenaltyTerms;
+    }
+
+    public function setLatePaymentPenaltyTerms(?string $latePaymentPenaltyTerms): self
+    {
+        $this->latePaymentPenaltyTerms = $latePaymentPenaltyTerms;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getFixedRecoveryCompensationTerms(): ?string
+    {
+        return $this->fixedRecoveryCompensationTerms;
+    }
+
+    public function setFixedRecoveryCompensationTerms(?string $fixedRecoveryCompensationTerms): self
+    {
+        $this->fixedRecoveryCompensationTerms = $fixedRecoveryCompensationTerms;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getEarlyPaymentDiscountTerms(): ?string
+    {
+        return $this->earlyPaymentDiscountTerms;
+    }
+
+    public function setEarlyPaymentDiscountTerms(?string $earlyPaymentDiscountTerms): self
+    {
+        $this->earlyPaymentDiscountTerms = $earlyPaymentDiscountTerms;
         $this->touch();
 
         return $this;

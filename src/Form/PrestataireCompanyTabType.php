@@ -55,6 +55,18 @@ class PrestataireCompanyTabType extends AbstractType
                     'autocomplete' => 'off',
                 ],
             ])
+            ->add('siren', TextType::class, [
+                'label' => 'Numéro SIREN',
+                'required' => false,
+                'attr' => [
+                    'maxlength' => 9,
+                    'minlength' => 9,
+                    'inputmode' => 'numeric',
+                    'pattern' => '[0-9]{9}',
+                    'placeholder' => 'Ex : 123456789',
+                    'autocomplete' => 'off',
+                ],
+            ])
             ->add('vatNumber', TextType::class, [
                 'label' => 'Numéro de TVA Intracommunautaire',
                 'required' => false,
@@ -154,6 +166,11 @@ class PrestataireCompanyTabType extends AbstractType
             if (isset($data['siret']) && is_string($data['siret'])) {
                 $data['siret'] = preg_replace('/\D+/', '', $data['siret']);
                 $data['siret'] = mb_substr($data['siret'], 0, 14);
+            }
+
+            if (isset($data['siren']) && is_string($data['siren'])) {
+                $data['siren'] = preg_replace('/\D+/', '', $data['siren']);
+                $data['siren'] = mb_substr($data['siren'], 0, 9);
             }
 
             $event->setData($data);
