@@ -115,17 +115,17 @@
 				<div class="tm-cp-tabs-wrapper mb-4 mb-md-5">
 					<ul class="nav nav-tabs border-bottom gap-3 gap-md-4 tm-cp-custom-tabs flex-nowrap" id="clientTabs" role="tablist">
 						<li class="nav-item">
-							<button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal-panel" type="button" role="tab">
+							<button class="nav-link {{ activeTab == 'personal' ? 'active' : '' }}" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal-panel" type="button" role="tab" aria-selected="{{ activeTab == 'personal' ? 'true' : 'false' }}">
 								<i class="fa-regular fa-user me-2"></i>Informations
 							</button>
 						</li>
 						<li class="nav-item">
-							<button class="nav-link" id="addresses-tab" data-bs-toggle="tab" data-bs-target="#addresses-panel" type="button" role="tab">
+							<button class="nav-link {{ activeTab == 'addresses' ? 'active' : '' }}" id="addresses-tab" data-bs-toggle="tab" data-bs-target="#addresses-panel" type="button" role="tab" aria-selected="{{ activeTab == 'addresses' ? 'true' : 'false' }}">
 								<i class="fa-solid fa-location-dot me-2"></i>Mes Adresses
 							</button>
 						</li>
 						<li class="nav-item">
-							<button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-panel" type="button" role="tab">
+							<button class="nav-link {{ activeTab == 'security' ? 'active' : '' }}" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-panel" type="button" role="tab" aria-selected="{{ activeTab == 'security' ? 'true' : 'false' }}">
 								<i class="fa-solid fa-shield-halved me-2"></i>Sécurité
 							</button>
 						</li>
@@ -138,7 +138,7 @@
 					class="tab-content" id="clientTabsContent">
 
 					{# Panel Informations #}
-					<div class="tab-pane fade show active" id="personal-panel" role="tabpanel">
+					<div class="tab-pane fade {{ activeTab == 'personal' ? 'show active' : '' }}" id="personal-panel" role="tabpanel">
 						<div class="row g-4">
 							<div class="col-lg-8">
 								<div class="card tm-cp-card p-4 h-100 d-flex flex-column justify-content-between">
@@ -194,7 +194,7 @@
 					</div>
 
 					{# Panel Adresses #}
-					<div class="tab-pane fade" id="addresses-panel" role="tabpanel">
+					<div class="tab-pane fade {{ activeTab == 'addresses' ? 'show active' : '' }}" id="addresses-panel" role="tabpanel">
 						<div class="row g-4">
 							<div class="col-12">
 								<div class="card tm-cp-card p-4">
@@ -245,22 +245,58 @@
 						</div>
 					</div>
 
-					{# Panel Sécurité #}
-					<div class="tab-pane fade" id="security-panel" role="tabpanel">
-						<div class="card tm-cp-card p-4">
-							<h4 class="tm-cp-card-title mb-4">Sécurité du compte</h4>
-							<p class="text-muted mb-4">Pour modifier votre mot de passe, veuillez passer par le module de réinitialisation sécurisé.</p>
-							<div class="d-flex justify-content-md-start justify-content-center">
-								<button type="button" class="btn btn-outline-danger px-4 py-2 rounded-3 fw-semibold text-nowrap">
-									Demander un lien de modification
-								</button>
+					{{ form_end(settingsForm) }}
+
+					<div class="tab-pane fade {{ activeTab == 'security' ? 'show active' : '' }}" id="security-panel" role="tabpanel">
+						<div class="row g-4">
+							<div class="col-xl-7">
+								<div class="card tm-cp-card p-4 h-100">
+									<h4 class="tm-cp-card-title mb-4">Changer le mot de passe</h4>
+									{{ form_start(passwordForm, {attr: {novalidate: 'novalidate'}}) }}
+										<div class="row g-3">
+											<div class="col-12 tm-cp-form-row">
+												{{ form_row(passwordForm.currentPassword) }}
+											</div>
+											<div class="col-md-6 tm-cp-form-row">
+												{{ form_row(passwordForm.plainPassword.first) }}
+											</div>
+											<div class="col-md-6 tm-cp-form-row">
+												{{ form_row(passwordForm.plainPassword.second) }}
+											</div>
+										</div>
+										<div class="mt-4 d-flex justify-content-md-start justify-content-center">
+											<button type="submit" class="btn tm-cp-btn-service px-4 py-2.5 fw-bold text-nowrap">
+												Mettre à jour le mot de passe
+											</button>
+										</div>
+									{{ form_end(passwordForm) }}
+								</div>
+							</div>
+
+							<div class="col-xl-5">
+								<div class="card tm-cp-card p-4 border-danger-subtle">
+									<h4 class="tm-cp-card-title mb-3 text-danger">Désinscription</h4>
+									<p class="text-muted mb-4">Votre compte sera désactivé par soft delete et vous serez immédiatement déconnecté.</p>
+									{{ form_start(deletionForm, {attr: {novalidate: 'novalidate'}}) }}
+										<div class="row g-3">
+											<div class="col-12 tm-cp-form-row">
+												{{ form_row(deletionForm.currentPassword) }}
+											</div>
+											<div class="col-12 tm-cp-form-row">
+												{{ form_row(deletionForm.confirmation) }}
+											</div>
+										</div>
+										<div class="mt-4 d-flex justify-content-md-start justify-content-center">
+											<button type="submit" class="btn btn-outline-danger px-4 py-2 rounded-3 fw-semibold text-nowrap">
+												Se désinscrire
+											</button>
+										</div>
+									{{ form_end(deletionForm) }}
+								</div>
 							</div>
 						</div>
 					</div>
-
 				</div>
-
-				{{ form_end(settingsForm) }}
 			</div>
 		</div>
 	</div>

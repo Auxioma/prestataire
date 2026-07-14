@@ -100,43 +100,43 @@
 				{# Tabs top nav #}
 				<ul class="nav nav-tabs border-bottom gap-2 mb-4" id="settingsTabs" role="tablist">
 					<li class="nav-item" role="presentation">
-						<button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-panel" type="button" role="tab" aria-controls="profile-panel" aria-selected="true">
+						<button class="nav-link {{ activeTab == 'profile' ? 'active' : '' }}" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-panel" type="button" role="tab" aria-controls="profile-panel" aria-selected="{{ activeTab == 'profile' ? 'true' : 'false' }}">
 							<i class="fa-solid fa-user me-2" aria-hidden="true"></i>Mon profil
 						</button>
 					</li>
 
 					<li class="nav-item" role="presentation">
-						<button class="nav-link" id="company-tab" data-bs-toggle="tab" data-bs-target="#company-panel" type="button" role="tab" aria-controls="company-panel" aria-selected="false">
+						<button class="nav-link {{ activeTab == 'company' ? 'active' : '' }}" id="company-tab" data-bs-toggle="tab" data-bs-target="#company-panel" type="button" role="tab" aria-controls="company-panel" aria-selected="{{ activeTab == 'company' ? 'true' : 'false' }}">
 							<i class="fa-solid fa-building me-2" aria-hidden="true"></i>Mon entreprise
 						</button>
 					</li>
 
 					<li class="nav-item" role="presentation">
-						<button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services-panel" type="button" role="tab" aria-controls="services-panel" aria-selected="false">
+						<button class="nav-link {{ activeTab == 'services' ? 'active' : '' }}" id="services-tab" data-bs-toggle="tab" data-bs-target="#services-panel" type="button" role="tab" aria-controls="services-panel" aria-selected="{{ activeTab == 'services' ? 'true' : 'false' }}">
 							<i class="fa-solid fa-screwdriver-wrench me-2" aria-hidden="true"></i>Services
 						</button>
 					</li>
 
 					<li class="nav-item" role="presentation">
-						<button class="nav-link" id="zones-tab" data-bs-toggle="tab" data-bs-target="#zones-panel" type="button" role="tab" aria-controls="zones-panel" aria-selected="false">
+						<button class="nav-link {{ activeTab == 'zones' ? 'active' : '' }}" id="zones-tab" data-bs-toggle="tab" data-bs-target="#zones-panel" type="button" role="tab" aria-controls="zones-panel" aria-selected="{{ activeTab == 'zones' ? 'true' : 'false' }}">
 							<i class="fa-solid fa-location-dot me-2" aria-hidden="true"></i>Zones
 						</button>
 					</li>
 
 					<li class="nav-item" role="presentation">
-						<button class="nav-link" id="dispo-tab" data-bs-toggle="tab" data-bs-target="#dispo-panel" type="button" role="tab" aria-controls="dispo-panel" aria-selected="false">
+						<button class="nav-link {{ activeTab == 'dispo' ? 'active' : '' }}" id="dispo-tab" data-bs-toggle="tab" data-bs-target="#dispo-panel" type="button" role="tab" aria-controls="dispo-panel" aria-selected="{{ activeTab == 'dispo' ? 'true' : 'false' }}">
 							<i class="fa-solid fa-calendar-days me-2" aria-hidden="true"></i>Disponibilités
 						</button>
 					</li>
 
 					<li class="nav-item" role="presentation">
-						<button class="nav-link" id="notif-tab" data-bs-toggle="tab" data-bs-target="#notif-panel" type="button" role="tab" aria-controls="notif-panel" aria-selected="false">
+						<button class="nav-link {{ activeTab == 'notif' ? 'active' : '' }}" id="notif-tab" data-bs-toggle="tab" data-bs-target="#notif-panel" type="button" role="tab" aria-controls="notif-panel" aria-selected="{{ activeTab == 'notif' ? 'true' : 'false' }}">
 							<i class="fa-solid fa-bell me-2" aria-hidden="true"></i>Notifications
 						</button>
 					</li>
 
 					<li class="nav-item" role="presentation">
-						<button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-panel" type="button" role="tab" aria-controls="security-panel" aria-selected="false">
+						<button class="nav-link {{ activeTab == 'security' ? 'active' : '' }}" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-panel" type="button" role="tab" aria-controls="security-panel" aria-selected="{{ activeTab == 'security' ? 'true' : 'false' }}">
 							<i class="fa-solid fa-shield-halved me-2" aria-hidden="true"></i>Sécurité
 						</button>
 					</li>
@@ -144,7 +144,7 @@
 				<div
 					class="tab-content" id="settingsTabsContent">
 					{# ================= PROFILE PANEL ================= #}
-					<div class="tab-pane fade show active" id="profile-panel" role="tabpanel" aria-labelledby="profile-tab">
+					<div class="tab-pane fade {{ activeTab == 'profile' ? 'show active' : '' }}" id="profile-panel" role="tabpanel" aria-labelledby="profile-tab">
 						<div
 							class="row g-4 align-items-start">
 							{# ================= COLONNE GAUCHE ================= #}
@@ -365,7 +365,7 @@
 					</div>
 
 					{# ================= ENTREPRISE ================= #}
-					<div class="tab-pane fade" id="company-panel" role="tabpanel" aria-labelledby="company-tab">
+					<div class="tab-pane fade {{ activeTab == 'company' ? 'show active' : '' }}" id="company-panel" role="tabpanel" aria-labelledby="company-tab">
 						{{ include('settings/_prestataire_company_tab.html.twig', {
                         companyForm: companyForm,
                         user: user,
@@ -373,12 +373,12 @@
 					</div>
 
 					{# ================= SERVICES ================= #}
-					<div class="tab-pane fade" id="services-panel" role="tabpanel" aria-labelledby="services-tab">
+					<div class="tab-pane fade {{ activeTab == 'services' ? 'show active' : '' }}" id="services-panel" role="tabpanel" aria-labelledby="services-tab">
 						{{ include('settings/_prestataire_services_tab.html.twig') }}
 					</div>
 
 					{# ================= ZONES ================= #}
-					<div class="tab-pane fade" id="zones-panel" role="tabpanel" aria-labelledby="zones-tab">
+					<div class="tab-pane fade {{ activeTab == 'zones' ? 'show active' : '' }}" id="zones-panel" role="tabpanel" aria-labelledby="zones-tab">
 						{{ include('settings/_prestataire_zone_tab.html.twig', {
                         zoneForm: zoneForm,
                         zones: zones,
@@ -387,7 +387,7 @@
 					</div>
 
 					{# ================= DISPONIBILITES ================= #}
-					<div class="tab-pane fade" id="dispo-panel" role="tabpanel" aria-labelledby="dispo-tab">
+					<div class="tab-pane fade {{ activeTab == 'dispo' ? 'show active' : '' }}" id="dispo-panel" role="tabpanel" aria-labelledby="dispo-tab">
 						{{ include ('settings/_prestataire_availability_tab.html.twig', {
                             availabilityForm: availabilityForm,
                             availabilities: availabilities,
@@ -395,17 +395,76 @@
 					</div>
 
 					{# ================= AUTRES TABS ================= #}
-					<div class="tab-pane fade" id="notif-panel" role="tabpanel" aria-labelledby="notif-tab">
+					<div class="tab-pane fade {{ activeTab == 'notif' ? 'show active' : '' }}" id="notif-panel" role="tabpanel" aria-labelledby="notif-tab">
 						<div class="card tm-card p-4">
 							<h4>🔔 Notifications</h4>
 							<p class="text-muted mb-0">Contenu à venir.</p>
 						</div>
 					</div>
 
-					<div class="tab-pane fade" id="security-panel" role="tabpanel" aria-labelledby="security-tab">
-						<div class="card tm-card p-4">
-							<h4>🛡️ Sécurité</h4>
-							<p class="text-muted mb-0">Contenu à venir.</p>
+					<div class="tab-pane fade {{ activeTab == 'security' ? 'show active' : '' }}" id="security-panel" role="tabpanel" aria-labelledby="security-tab">
+						<div class="row g-4">
+							<div class="col-xl-7">
+								<div class="card tm-card p-4 h-100">
+									<h4 class="tm-card-title mb-4">Changer le mot de passe</h4>
+									{{ form_start(passwordForm, {
+										attr: {
+											novalidate: 'novalidate',
+											class: 'tm-form-container',
+											'data-turbo': 'false',
+										},
+									}) }}
+										<div class="row g-3">
+											<div class="col-12 tm-form-row">
+												{{ form_row(passwordForm.currentPassword) }}
+											</div>
+											<div class="col-md-6 tm-form-row">
+												{{ form_row(passwordForm.plainPassword.first) }}
+											</div>
+											<div class="col-md-6 tm-form-row">
+												{{ form_row(passwordForm.plainPassword.second) }}
+											</div>
+										</div>
+										<div class="row mt-4">
+											<div class="col-12 d-flex justify-content-center">
+												<button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold col-12 col-md-auto">
+													Mettre à jour le mot de passe
+												</button>
+											</div>
+										</div>
+									{{ form_end(passwordForm) }}
+								</div>
+							</div>
+
+							<div class="col-xl-5">
+								<div class="card tm-card p-4 border-danger-subtle">
+									<h4 class="tm-card-title mb-3 text-danger">Désinscription</h4>
+									<p class="text-muted mb-4">Votre compte sera désactivé par soft delete et vous serez immédiatement déconnecté.</p>
+									{{ form_start(deletionForm, {
+										attr: {
+											novalidate: 'novalidate',
+											class: 'tm-form-container',
+											'data-turbo': 'false',
+										},
+									}) }}
+										<div class="row g-3">
+											<div class="col-12 tm-form-row">
+												{{ form_row(deletionForm.currentPassword) }}
+											</div>
+											<div class="col-12 tm-form-row">
+												{{ form_row(deletionForm.confirmation) }}
+											</div>
+										</div>
+										<div class="row mt-4">
+											<div class="col-12 d-flex justify-content-center">
+												<button type="submit" class="btn btn-outline-danger px-5 py-3 fw-bold col-12 col-md-auto">
+													Se désinscrire
+												</button>
+											</div>
+										</div>
+									{{ form_end(deletionForm) }}
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

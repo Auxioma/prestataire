@@ -7,6 +7,8 @@ use App\Entity\PrestataireDocument;
 use App\Entity\PrestataireInterventionZone;
 use App\Entity\PrestataireProfile;
 use App\Entity\User;
+use App\Form\AccountDeletionType;
+use App\Form\AccountPasswordChangeType;
 use App\Form\PrestataireAvailabilityCollectionType;
 use App\Form\PrestataireCompanyTabType;
 use App\Form\PrestataireInterventionZoneType;
@@ -48,6 +50,24 @@ final class PrestataireSettingsFormsFactory
             availabilityForm: $this->formFactory->create(
                 PrestataireAvailabilityCollectionType::class,
                 $prestataireProfile,
+                [
+                    'action' => $this->urlGenerator->generate('app_prestataire_settings'),
+                    'method' => 'POST',
+                ]
+            ),
+            passwordForm: $this->formFactory->createNamed(
+                'prestataire_password_form',
+                AccountPasswordChangeType::class,
+                null,
+                [
+                    'action' => $this->urlGenerator->generate('app_prestataire_settings'),
+                    'method' => 'POST',
+                ]
+            ),
+            deletionForm: $this->formFactory->createNamed(
+                'prestataire_deletion_form',
+                AccountDeletionType::class,
+                null,
                 [
                     'action' => $this->urlGenerator->generate('app_prestataire_settings'),
                     'method' => 'POST',

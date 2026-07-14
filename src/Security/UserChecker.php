@@ -26,6 +26,10 @@ class UserChecker implements UserCheckerInterface
             return;
         }
 
+        if (null !== $user->getDeletedAt()) {
+            throw new CustomUserMessageAccountStatusException('Ce compte a été désinscrit et n’est plus accessible.');
+        }
+
         if (!$user->isVerified()) {
             throw new CustomUserMessageAccountStatusException('Veuillez vérifier votre adresse email avant de vous connecter.');
         }

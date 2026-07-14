@@ -12,6 +12,8 @@ final class PrestataireSettingsForms
         public readonly FormInterface $companyForm,
         public readonly FormInterface $publicProfileForm,
         public readonly FormInterface $availabilityForm,
+        public readonly FormInterface $passwordForm,
+        public readonly FormInterface $deletionForm,
         public readonly FormInterface $zoneForm,
         public readonly FormInterface $documentForm,
         public readonly PrestataireDocument $documentEntity,

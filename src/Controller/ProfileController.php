@@ -20,12 +20,15 @@ use App\Entity\PrestataireService;
 use App\Entity\User;
 use App\Enum\FavoriteTypeEnum;
 use App\Form\AccountSettingsType;
+use App\Form\AccountDeletionType;
+use App\Form\AccountPasswordChangeType;
 use App\Form\PrestataireServiceType;
 use App\Repository\FavoriteRepository;
 use App\Repository\PrestataireProfileRepository;
 use App\Repository\PrestataireServiceRepository;
 use App\Repository\ServiceCategoryRepository;
 use App\Repository\ServiceRepository;
+use App\Service\AccountSecurityManager;
 use App\Service\CompanyVerificationManager;
 use App\Service\PrestataireProfileManager;
 use App\Service\PrestataireSettingsFormsFactory;
@@ -48,6 +51,7 @@ class ProfileController extends AbstractController
         private readonly PrestataireProfileManager $prestataireProfileManager,
         private readonly CompanyVerificationManager $companyVerificationManager,
         private readonly PrestataireSettingsFormsFactory $prestataireSettingsFormsFactory,
+        private readonly AccountSecurityManager $accountSecurityManager,
     ) {
     }
 
@@ -85,9 +89,12 @@ class ProfileController extends AbstractController
         $forms->companyForm->handleRequest($request);
         $forms->availabilityForm->handleRequest($request);
         $forms->documentForm->handleRequest($request);
+        $forms->passwordForm->handleRequest($request);
+        $forms->deletionForm->handleRequest($request);
 
         $companyVerificationPreview = null;
         $openCompanyVerificationModal = false;
+        $activeTab = $request->query->get('tab', 'profile');
 
         if ($response = $this->handleDocumentForm(
             request: $request,
@@ -138,6 +145,23 @@ class ProfileController extends AbstractController
             return $response;
         }
 
+        if ($response = $this->handlePasswordForm(
+            entityManager: $entityManager,
+            passwordForm: $forms->passwordForm,
+            user: $user,
+            redirectRoute: 'app_prestataire_settings',
+        )) {
+            return $response;
+        }
+
+        if ($response = $this->handleDeletionForm(
+            entityManager: $entityManager,
+            deletionForm: $forms->deletionForm,
+            user: $user,
+        )) {
+            return $response;
+        }
+
         $zoneMap = $this->prestataireProfileManager->buildZoneMap($zones);
 
         return $this->render('profile/prestataire_profile.html.twig', [
@@ -155,6 +179,13 @@ class ProfileController extends AbstractController
             'openCompanyVerificationModal' => $openCompanyVerificationModal,
             'documentForm' => $forms->documentForm->createView(),
             'documents' => $documents,
+            'passwordForm' => $forms->passwordForm->createView(),
+            'deletionForm' => $forms->deletionForm->createView(),
+            'activeTab' => $this->resolveActiveTab(
+                defaultTab: $activeTab,
+                passwordForm: $forms->passwordForm,
+                deletionForm: $forms->deletionForm,
+            ),
         ]);
     }
 
@@ -354,6 +385,64 @@ class ProfileController extends AbstractController
         return $this->redirectToRoute('app_prestataire_settings', [
             'tab' => 'dispo',
         ]);
+    }
+    // #endregion
+
+    // #region sécurité
+    private function handlePasswordForm(
+        EntityManagerInterface $entityManager,
+        FormInterface $passwordForm,
+        User $user,
+        string $redirectRoute,
+    ): ?Response {
+        if (!$passwordForm->isSubmitted() || !$passwordForm->isValid()) {
+            return null;
+        }
+
+        $plainPassword = $passwordForm->get('plainPassword')->getData();
+        \assert(\is_string($plainPassword));
+
+        $this->accountSecurityManager->changePassword($user, $plainPassword);
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Votre mot de passe a bien été mis à jour.');
+
+        return $this->redirectToRoute($redirectRoute, [
+            'tab' => 'security',
+        ]);
+    }
+
+    private function handleDeletionForm(
+        EntityManagerInterface $entityManager,
+        FormInterface $deletionForm,
+        User $user,
+    ): ?Response {
+        if (!$deletionForm->isSubmitted() || !$deletionForm->isValid()) {
+            return null;
+        }
+
+        $this->accountSecurityManager->softDelete($user);
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Votre compte a bien été désinscrit.');
+
+        return $this->redirectToRoute('app_logout');
+    }
+
+    private function resolveActiveTab(
+        string $defaultTab,
+        FormInterface $passwordForm,
+        FormInterface $deletionForm,
+    ): string {
+        if (($passwordForm->isSubmitted() && !$passwordForm->isValid()) || ($deletionForm->isSubmitted() && !$deletionForm->isValid())) {
+            return 'security';
+        }
+
+        return $defaultTab;
     }
     // #endregion
 
@@ -588,7 +677,19 @@ class ProfileController extends AbstractController
         $form = $this->createForm(AccountSettingsType::class, $user, [
             'profile_type' => \in_array('ROLE_PRESTATAIRE', $user->getRoles(), true) ? 'prestataire' : 'client',
         ]);
+        $passwordForm = $this->createForm(AccountPasswordChangeType::class, null, [
+            'action' => $this->generateUrl('app_client_settings'),
+            'method' => 'POST',
+        ]);
+        $deletionForm = $this->createForm(AccountDeletionType::class, null, [
+            'action' => $this->generateUrl('app_client_settings'),
+            'method' => 'POST',
+        ]);
+
         $form->handleRequest($request);
+        $passwordForm->handleRequest($request);
+        $deletionForm->handleRequest($request);
+        $activeTab = $request->query->get('tab', 'personal');
 
         // 3. Traitement de la soumission
         if ($form->isSubmitted() && $form->isValid()) {
@@ -600,10 +701,34 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_client_settings');
         }
 
+        if ($response = $this->handlePasswordForm(
+            entityManager: $entityManager,
+            passwordForm: $passwordForm,
+            user: $user,
+            redirectRoute: 'app_client_settings',
+        )) {
+            return $response;
+        }
+
+        if ($response = $this->handleDeletionForm(
+            entityManager: $entityManager,
+            deletionForm: $deletionForm,
+            user: $user,
+        )) {
+            return $response;
+        }
+
         // 4. Envoi à la vue client dédiée
         return $this->render('profile/client_profile.html.twig', [
             'settingsForm' => $form->createView(),
             'user' => $user,
+            'passwordForm' => $passwordForm->createView(),
+            'deletionForm' => $deletionForm->createView(),
+            'activeTab' => $this->resolveActiveTab(
+                defaultTab: $activeTab,
+                passwordForm: $passwordForm,
+                deletionForm: $deletionForm,
+            ),
         ]);
     }
     #endregion
