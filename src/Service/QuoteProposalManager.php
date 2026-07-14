@@ -198,9 +198,14 @@ class QuoteProposalManager
 
     private function normalizeDocumentConfiguration(QuoteProposal $proposal): void
     {
-        if (!$proposal->hasExternalPdf() && $proposal->getDocumentMode()->isExternalPdf()) {
+        if (!$this->hasExternalPdfAvailable($proposal) && $proposal->getDocumentMode()->isExternalPdf()) {
             $proposal->setDocumentMode(\App\Enum\QuoteProposalDocumentModeEnum::PLATFORM);
         }
+    }
+
+    private function hasExternalPdfAvailable(QuoteProposal $proposal): bool
+    {
+        return $proposal->hasExternalPdf() || $proposal->getExternalPdfFile() !== null;
     }
 
     public function freezeSnapshot(

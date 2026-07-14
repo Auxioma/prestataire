@@ -8,6 +8,8 @@ use App\Entity\Invoice;
 use App\Entity\InvoiceItem;
 use App\Entity\QuoteProposal;
 use App\Service\FacturXXmlBuilder;
+use horstoeko\stringmanagement\PathUtils;
+use horstoeko\zugferd\ZugferdSettings;
 use PHPUnit\Framework\TestCase;
 
 final class FacturXXmlBuilderTest extends TestCase
@@ -30,7 +32,7 @@ final class FacturXXmlBuilderTest extends TestCase
             $xpath->evaluate('string(/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID)')
         );
         self::assertSame(
-            'B1',
+            '',
             $xpath->evaluate('string(/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:BusinessProcessSpecifiedDocumentContextParameter/ram:ID)')
         );
 
@@ -60,6 +62,17 @@ final class FacturXXmlBuilderTest extends TestCase
             'PMT',
             $xpath->evaluate('string((/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote[ram:SubjectCode])[1]/ram:SubjectCode)')
         );
+
+        $xsd = PathUtils::combineAllPaths(ZugferdSettings::getSchemaDirectory(), 'FACTUR-X_EN16931.xsd');
+        libxml_use_internal_errors(true);
+
+        self::assertTrue($document->schemaValidate($xsd), implode("\n", array_map(
+            static fn (\LibXMLError $error): string => sprintf('[line %d] %s : %s', $error->line, $error->code, trim($error->message)),
+            libxml_get_errors()
+        )));
+
+        libxml_clear_errors();
+        libxml_use_internal_errors(false);
     }
 
     private function createInvoiceFixture(): Invoice

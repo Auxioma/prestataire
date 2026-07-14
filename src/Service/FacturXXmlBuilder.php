@@ -15,7 +15,6 @@ final class FacturXXmlBuilder
     private const NS_QDT = 'urn:un:unece:uncefact:data:standard:QualifiedDataType:100';
     private const NS_UDT = 'urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100';
     private const FACTURX_GUIDELINE = 'urn:cen.eu:en16931:2017';
-    private const DEFAULT_BUSINESS_PROCESS = 'B1';
     private const DEFAULT_UNIT_CODE = 'C62';
     private const SIREN_SCHEME_ID = '0002';
 
@@ -41,13 +40,10 @@ final class FacturXXmlBuilder
     {
         $context = $document->createElementNS(self::NS_RSM, 'rsm:ExchangedDocumentContext');
 
-        $businessProcess = $document->createElementNS(self::NS_RAM, 'ram:BusinessProcessSpecifiedDocumentContextParameter');
-        $businessProcess->appendChild($document->createElementNS(self::NS_RAM, 'ram:ID', self::DEFAULT_BUSINESS_PROCESS));
-        $context->appendChild($businessProcess);
-
         $guideline = $document->createElementNS(self::NS_RAM, 'ram:GuidelineSpecifiedDocumentContextParameter');
         $guideline->appendChild($document->createElementNS(self::NS_RAM, 'ram:ID', self::FACTURX_GUIDELINE));
         $context->appendChild($guideline);
+
         $root->appendChild($context);
     }
 
@@ -173,17 +169,6 @@ final class FacturXXmlBuilder
     {
         $delivery = $document->createElementNS(self::NS_RAM, 'ram:ApplicableHeaderTradeDelivery');
         $quote = $invoice->getQuoteProposal();
-        $occurrence = $invoice->getIssuedAt() ?? $invoice->getCreatedAt();
-
-        if ($occurrence instanceof \DateTimeInterface) {
-            $event = $document->createElementNS(self::NS_RAM, 'ram:ActualDeliverySupplyChainEvent');
-            $date = $document->createElementNS(self::NS_RAM, 'ram:OccurrenceDateTime');
-            $dateTimeString = $document->createElementNS(self::NS_UDT, 'udt:DateTimeString', $occurrence->format('Ymd'));
-            $dateTimeString->setAttribute('format', '102');
-            $date->appendChild($dateTimeString);
-            $event->appendChild($date);
-            $delivery->appendChild($event);
-        }
 
         if ($this->hasDistinctDeliveryAddress($quote)) {
             $shipTo = $document->createElementNS(self::NS_RAM, 'ram:ShipToTradeParty');
@@ -196,6 +181,18 @@ final class FacturXXmlBuilder
                 'ram:CountryID' => $this->normalizeCountryCode($quote?->getClientInterventionCountry()),
             ]);
             $delivery->appendChild($shipTo);
+        }
+
+        $occurrence = $invoice->getIssuedAt() ?? $invoice->getCreatedAt();
+
+        if ($occurrence instanceof \DateTimeInterface) {
+            $event = $document->createElementNS(self::NS_RAM, 'ram:ActualDeliverySupplyChainEvent');
+            $date = $document->createElementNS(self::NS_RAM, 'ram:OccurrenceDateTime');
+            $dateTimeString = $document->createElementNS(self::NS_UDT, 'udt:DateTimeString', $occurrence->format('Ymd'));
+            $dateTimeString->setAttribute('format', '102');
+            $date->appendChild($dateTimeString);
+            $event->appendChild($date);
+            $delivery->appendChild($event);
         }
 
         return $delivery;
@@ -219,16 +216,16 @@ final class FacturXXmlBuilder
         if ($this->hasPaymentTerms($invoice)) {
             $terms = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedTradePaymentTerms');
 
+            if ($invoice->getTerms() !== null && trim($invoice->getTerms()) !== '') {
+                $terms->appendChild($document->createElementNS(self::NS_RAM, 'ram:Description', $invoice->getTerms()));
+            }
+
             if ($invoice->getDueAt() instanceof \DateTimeInterface) {
                 $dueDate = $document->createElementNS(self::NS_RAM, 'ram:DueDateDateTime');
                 $dateTimeString = $document->createElementNS(self::NS_UDT, 'udt:DateTimeString', $invoice->getDueAt()->format('Ymd'));
                 $dateTimeString->setAttribute('format', '102');
                 $dueDate->appendChild($dateTimeString);
                 $terms->appendChild($dueDate);
-            }
-
-            if ($invoice->getTerms() !== null && trim($invoice->getTerms()) !== '') {
-                $terms->appendChild($document->createElementNS(self::NS_RAM, 'ram:Description', $invoice->getTerms()));
             }
 
             $settlement->appendChild($terms);
@@ -260,7 +257,24 @@ final class FacturXXmlBuilder
 
     private function appendPostalAddress(\DOMDocument $document, \DOMElement $parent, array $parts): void
     {
-        $values = array_filter($parts, static fn (?string $value): bool => $value !== null && trim($value) !== '');
+        $orderedTags = [
+            'ram:PostcodeCode',
+            'ram:LineOne',
+            'ram:LineTwo',
+            'ram:LineThree',
+            'ram:CityName',
+            'ram:CountryID',
+        ];
+
+        $values = [];
+        foreach ($orderedTags as $tag) {
+            $value = $parts[$tag] ?? null;
+
+            if ($value !== null && trim($value) !== '') {
+                $values[$tag] = $value;
+            }
+        }
+
         if ($values === []) {
             return;
         }
