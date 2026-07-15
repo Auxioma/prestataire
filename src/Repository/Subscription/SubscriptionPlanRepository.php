@@ -23,6 +23,8 @@ class SubscriptionPlanRepository extends ServiceEntityRepository
     public function findActiveOrdered(): array
     {
         return $this->createQueryBuilder('sp')
+            ->leftJoin('sp.prices', 'price')
+            ->addSelect('price')
             ->andWhere('sp.status = :status')
             ->setParameter('status', SubscriptionPlanStatusEnum::ACTIVE)
             ->orderBy('sp.sortOrder', 'ASC')
@@ -34,6 +36,8 @@ class SubscriptionPlanRepository extends ServiceEntityRepository
     public function findOneActiveByCode(string $code): ?SubscriptionPlan
     {
         return $this->createQueryBuilder('sp')
+            ->leftJoin('sp.prices', 'price')
+            ->addSelect('price')
             ->andWhere('sp.code = :code')
             ->andWhere('sp.status = :status')
             ->setParameter('code', $code)
@@ -45,7 +49,9 @@ class SubscriptionPlanRepository extends ServiceEntityRepository
     public function findOneByStripePriceId(string $stripePriceId): ?SubscriptionPlan
     {
         return $this->createQueryBuilder('sp')
-            ->andWhere('sp.monthlyStripePriceId = :stripePriceId OR sp.annualStripePriceId = :stripePriceId')
+            ->leftJoin('sp.prices', 'price')
+            ->addSelect('price')
+            ->andWhere('price.stripePriceId = :stripePriceId OR sp.monthlyStripePriceId = :stripePriceId OR sp.annualStripePriceId = :stripePriceId')
             ->setParameter('stripePriceId', $stripePriceId)
             ->getQuery()
             ->getOneOrNullResult();

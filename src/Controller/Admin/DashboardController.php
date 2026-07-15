@@ -136,6 +136,15 @@ class DashboardController extends AbstractDashboardController
     );
 
     yield MenuItem::linkToUrl(
+        'Tarifs d’abonnement',
+        'fas fa-tags',
+        $this->adminUrlGenerator->unsetAll()
+            ->setController(SubscriptionPlanPriceCrudController::class)
+            ->setAction(Action::INDEX)
+            ->generateUrl()
+    );
+
+    yield MenuItem::linkToUrl(
         'Souscriptions',
         'fas fa-repeat',
         $this->adminUrlGenerator->unsetAll()

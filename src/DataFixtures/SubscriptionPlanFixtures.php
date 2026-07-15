@@ -3,26 +3,74 @@
 namespace App\DataFixtures;
 
 use App\Entity\Subscription\SubscriptionPlan;
+use App\Entity\Subscription\SubscriptionPlanPrice;
+use App\Enum\SubscriptionBillingPeriodEnum;
 use App\Enum\SubscriptionPlanStatusEnum;
 use Doctrine\Persistence\ObjectManager;
 
 class SubscriptionPlanFixtures extends BaseFixture
 {
+    public const PLAN_FREE = 'plan_free';
+    public const PLAN_PRO = 'plan_pro';
+    public const PLAN_PREMIUM = 'plan_premium';
+
     /**
-     * @var list<array{code: string, name: string, monthly: string, annual: string, monthly_credits: int, annual_credits: int}>
+     * @var list<array{
+     *     reference: string,
+     *     code: string,
+     *     name: string,
+     *     description: string,
+     *     monthly: string,
+     *     annual: string,
+     *     monthly_credits: int,
+     *     annual_credits: int,
+     *     quote_responses_enabled: bool,
+     *     instant_messaging_enabled: bool
+     * }>
      */
     private const PLANS = [
-        ['code' => 'essentiel', 'name' => 'Essentiel', 'monthly' => '19.90', 'annual' => '199.00', 'monthly_credits' => 8, 'annual_credits' => 120],
-        ['code' => 'starter', 'name' => 'Starter', 'monthly' => '29.90', 'annual' => '299.00', 'monthly_credits' => 12, 'annual_credits' => 180],
-        ['code' => 'croissance', 'name' => 'Croissance', 'monthly' => '39.90', 'annual' => '399.00', 'monthly_credits' => 18, 'annual_credits' => 260],
-        ['code' => 'pro', 'name' => 'Pro', 'monthly' => '49.90', 'annual' => '499.00', 'monthly_credits' => 25, 'annual_credits' => 360],
-        ['code' => 'expert', 'name' => 'Expert', 'monthly' => '69.90', 'annual' => '699.00', 'monthly_credits' => 35, 'annual_credits' => 500],
-        ['code' => 'premium', 'name' => 'Premium', 'monthly' => '89.90', 'annual' => '899.00', 'monthly_credits' => 50, 'annual_credits' => 720],
-        ['code' => 'agence', 'name' => 'Agence', 'monthly' => '119.90', 'annual' => '1199.00', 'monthly_credits' => 70, 'annual_credits' => 980],
-        ['code' => 'reseau', 'name' => 'Réseau', 'monthly' => '149.90', 'annual' => '1499.00', 'monthly_credits' => 90, 'annual_credits' => 1260],
-        ['code' => 'elite', 'name' => 'Élite', 'monthly' => '199.90', 'annual' => '1999.00', 'monthly_credits' => 120, 'annual_credits' => 1680],
-        ['code' => 'sur-mesure', 'name' => 'Sur mesure', 'monthly' => '299.90', 'annual' => '2999.00', 'monthly_credits' => 200, 'annual_credits' => 2800],
+        [
+            'reference' => self::PLAN_FREE,
+            'code' => 'free',
+            'name' => 'Gratuit',
+            'description' => 'Consultation limitée des demandes de devis, sans réponse possible ni accès aux coordonnées visiteurs.',
+            'monthly' => '0.00',
+            'annual' => '0.00',
+            'monthly_credits' => 0,
+            'annual_credits' => 0,
+            'quote_responses_enabled' => false,
+            'instant_messaging_enabled' => false,
+        ],
+        [
+            'reference' => self::PLAN_PRO,
+            'code' => 'pro',
+            'name' => 'Pro',
+            'description' => 'Réponse aux demandes de devis, messagerie active et accès aux coordonnées visiteurs après réponse.',
+            'monthly' => '25.00',
+            'annual' => '299.00',
+            'monthly_credits' => 30,
+            'annual_credits' => 360,
+            'quote_responses_enabled' => true,
+            'instant_messaging_enabled' => true,
+        ],
+        [
+            'reference' => self::PLAN_PREMIUM,
+            'code' => 'premium',
+            'name' => 'Premium',
+            'description' => 'Réponses illimitées, accès complet aux coordonnées visiteurs, visibilité prioritaire et support prioritaire.',
+            'monthly' => '59.90',
+            'annual' => '599.00',
+            'monthly_credits' => 9999,
+            'annual_credits' => 99999,
+            'quote_responses_enabled' => true,
+            'instant_messaging_enabled' => true,
+        ],
     ];
+
+    public static function getReferenceNames(): array
+    {
+        return array_column(self::PLANS, 'reference');
+    }
 
     public function load(ObjectManager $manager): void
     {
@@ -30,22 +78,51 @@ class SubscriptionPlanFixtures extends BaseFixture
             $plan = (new SubscriptionPlan())
                 ->setCode($data['code'])
                 ->setName($data['name'])
-                ->setDescription(sprintf('Abonnement %s avec reconduction tacite, accès aux réponses aux devis et à la messagerie instantanée.', $data['name']))
+                ->setDescription($data['description'])
                 ->setMonthlyAmount($data['monthly'])
                 ->setAnnualAmount($data['annual'])
-                ->setMonthlyStripePriceId(sprintf('price_monthly_%02d_demo', $index + 1))
-                ->setAnnualStripePriceId(sprintf('price_annual_%02d_demo', $index + 1))
+                ->setMonthlyStripePriceId(null)
+                ->setAnnualStripePriceId(null)
+                ->setStripeProductId(null)
                 ->setMonthlyCredits($data['monthly_credits'])
                 ->setAnnualCredits($data['annual_credits'])
-                ->setQuoteResponsesEnabled(true)
-                ->setInstantMessagingEnabled(true)
+                ->setQuoteResponsesEnabled($data['quote_responses_enabled'])
+                ->setInstantMessagingEnabled($data['instant_messaging_enabled'])
                 ->setSortOrder($index + 1)
                 ->setStatus(SubscriptionPlanStatusEnum::ACTIVE)
                 ->setCreatedAt($this->randomDateTimeImmutable('-12 months', '-5 months'))
                 ->setUpdatedAt($this->randomDateTimeImmutable('-30 days'));
 
+            $monthlyPrice = (new SubscriptionPlanPrice())
+                ->setPlan($plan)
+                ->setBillingPeriod(SubscriptionBillingPeriodEnum::MONTHLY)
+                ->setLabel('Tarif standard')
+                ->setAmount($data['monthly'])
+                ->setStripePriceId(null)
+                ->setIsActive(true)
+                ->setIsPromotional(false)
+                ->setCreatedAt($plan->getCreatedAt())
+                ->setUpdatedAt($plan->getUpdatedAt());
+
+            $annualPrice = (new SubscriptionPlanPrice())
+                ->setPlan($plan)
+                ->setBillingPeriod(SubscriptionBillingPeriodEnum::ANNUAL)
+                ->setLabel('Tarif standard')
+                ->setAmount($data['annual'])
+                ->setStripePriceId(null)
+                ->setIsActive(true)
+                ->setIsPromotional(false)
+                ->setCreatedAt($plan->getCreatedAt())
+                ->setUpdatedAt($plan->getUpdatedAt());
+
+            $plan
+                ->addPrice($monthlyPrice)
+                ->addPrice($annualPrice);
+
             $manager->persist($plan);
-            $this->addReference(sprintf('subscription_plan_%d', $index + 1), $plan);
+            $manager->persist($monthlyPrice);
+            $manager->persist($annualPrice);
+            $this->addReference($data['reference'], $plan);
         }
 
         $manager->flush();

@@ -38,6 +38,8 @@ class PrestataireSubscriptionRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('ps')
             ->leftJoin('ps.plan', 'plan')
             ->addSelect('plan')
+            ->leftJoin('ps.planPrice', 'planPrice')
+            ->addSelect('planPrice')
             ->andWhere('ps.prestataireProfile = :prestataireProfile')
             ->andWhere('ps.status IN (:statuses)')
             ->andWhere('ps.endedAt IS NULL OR ps.endedAt > :at')

@@ -6,6 +6,7 @@ use App\Entity\PrestataireProfile;
 use App\Entity\Subscription\PrestataireSubscription;
 use App\Entity\Subscription\SubscriptionCustomer;
 use App\Entity\Subscription\SubscriptionPlan;
+use App\Entity\Subscription\SubscriptionPlanPrice;
 use App\Enum\SubscriptionBillingPeriodEnum;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -152,6 +153,99 @@ class StripeApiClient
             'expand[0]' => 'items.data.price',
             'expand[1]' => 'latest_invoice',
         ]);
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function retrieveCheckoutSession(string $checkoutSessionId): array
+    {
+        return $this->request('GET', sprintf('/checkout/sessions/%s', $checkoutSessionId), [
+            'expand[0]' => 'subscription',
+        ]);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     *
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function listSubscriptionsForCustomer(string $stripeCustomerId, int $limit = 5): array
+    {
+        $response = $this->request('GET', '/subscriptions', [
+            'customer' => $stripeCustomerId,
+            'status' => 'all',
+            'limit' => (string) max(1, min(100, $limit)),
+            'expand[0]' => 'data.latest_invoice',
+            'expand[1]' => 'data.items.data.price',
+        ]);
+
+        $data = $response['data'] ?? [];
+
+        return is_array($data) ? array_values(array_filter($data, 'is_array')) : [];
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function createProduct(SubscriptionPlan $plan): array
+    {
+        return $this->request('POST', '/products', [
+            'name' => (string) $plan->getName(),
+            'description' => $plan->getDescription(),
+            'metadata[plan_code]' => $plan->getCode(),
+        ]);
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function createPrice(SubscriptionPlan $plan, SubscriptionPlanPrice $planPrice, string $productId): array
+    {
+        $unitAmount = number_format((float) $planPrice->getAmount() * 100, 0, '.', '');
+        $interval = match ($planPrice->getBillingPeriod()) {
+            SubscriptionBillingPeriodEnum::MONTHLY => 'month',
+            SubscriptionBillingPeriodEnum::ANNUAL => 'year',
+        };
+
+        return $this->request('POST', '/prices', [
+            'product' => $productId,
+            'currency' => 'eur',
+            'unit_amount' => $unitAmount,
+            'recurring[interval]' => $interval,
+            'nickname' => $planPrice->getLabel() ?: sprintf('%s %s', $plan->getName(), $planPrice->getBillingPeriod()->getLabel()),
+            'metadata[plan_code]' => $plan->getCode(),
+            'metadata[billing_period]' => $planPrice->getBillingPeriod()->value,
+            'metadata[promotional]' => $planPrice->isPromotional() ? '1' : '0',
+        ]);
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function retrievePrice(string $stripePriceId): array
+    {
+        return $this->request('GET', sprintf('/prices/%s', $stripePriceId));
     }
 
     /**

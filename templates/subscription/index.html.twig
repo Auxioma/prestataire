@@ -89,14 +89,14 @@
                                     </ul>
 
                                     <div class="mt-auto d-grid gap-2">
-                                        <form method="post" action="{{ path('app_subscription_checkout', { code: plan.code, period: 'monthly' }) }}">
+                                        <form method="post" action="{{ path('app_subscription_checkout', { code: plan.code, period: 'monthly' }) }}" data-turbo="false">
                                             <input type="hidden" name="_token" value="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-monthly') }}">
                                             <button type="submit" class="btn btn-primary w-100" {{ not stripeConfigured or not plan.monthlyStripePriceId ? 'disabled' : '' }}>
                                                 Souscrire en mensuel
                                             </button>
                                         </form>
 
-                                        <form method="post" action="{{ path('app_subscription_checkout', { code: plan.code, period: 'annual' }) }}">
+                                        <form method="post" action="{{ path('app_subscription_checkout', { code: plan.code, period: 'annual' }) }}" data-turbo="false">
                                             <input type="hidden" name="_token" value="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-annual') }}">
                                             <button type="submit" class="btn btn-outline-primary w-100" {{ not stripeConfigured or not plan.annualStripePriceId ? 'disabled' : '' }}>
                                                 Souscrire en annuel

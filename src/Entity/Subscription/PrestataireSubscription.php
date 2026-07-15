@@ -36,6 +36,10 @@ class PrestataireSubscription
     #[ORM\JoinColumn(name: 'plan_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     private ?SubscriptionPlan $plan = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'plan_price_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?SubscriptionPlanPrice $planPrice = null;
+
     #[ORM\Column(type: 'string', length: 20, enumType: SubscriptionBillingPeriodEnum::class)]
     private SubscriptionBillingPeriodEnum $billingPeriod = SubscriptionBillingPeriodEnum::MONTHLY;
 
@@ -165,6 +169,24 @@ class PrestataireSubscription
     public function setPlan(?SubscriptionPlan $plan): static
     {
         $this->plan = $plan;
+
+        return $this;
+    }
+
+    public function getPlanPrice(): ?SubscriptionPlanPrice
+    {
+        return $this->planPrice;
+    }
+
+    public function setPlanPrice(?SubscriptionPlanPrice $planPrice): static
+    {
+        $this->planPrice = $planPrice;
+
+        if ($planPrice instanceof SubscriptionPlanPrice) {
+            $this->plan = $planPrice->getPlan();
+            $this->billingPeriod = $planPrice->getBillingPeriod();
+            $this->stripePriceId = $planPrice->getStripePriceId();
+        }
 
         return $this;
     }
@@ -459,12 +481,31 @@ class PrestataireSubscription
     public function syncCreditsWithPlan(): static
     {
         if ($this->plan instanceof SubscriptionPlan) {
+            $currentPrice = $this->planPrice;
+            if (
+                !$currentPrice instanceof SubscriptionPlanPrice
+                || $currentPrice->getPlan() !== $this->plan
+                || $currentPrice->getBillingPeriod() !== $this->billingPeriod
+            ) {
+                $currentPrice = $this->plan->getCurrentPriceForPeriod($this->billingPeriod);
+                $this->planPrice = $currentPrice;
+            }
+
             $this->creditsGrantedCurrentPeriod = $this->plan->getCreditsForPeriod($this->billingPeriod);
             $this->creditsConsumedCurrentPeriod = 0;
-            $this->stripePriceId = $this->plan->getStripePriceIdForPeriod($this->billingPeriod);
+            $this->stripePriceId = $currentPrice?->getStripePriceId() ?? $this->plan->getStripePriceIdForPeriod($this->billingPeriod);
         }
 
         return $this;
+    }
+
+    public function getBilledAmount(): ?string
+    {
+        if ($this->planPrice instanceof SubscriptionPlanPrice) {
+            return $this->planPrice->getAmount();
+        }
+
+        return $this->plan?->getAmountForPeriod($this->billingPeriod);
     }
 
     /**

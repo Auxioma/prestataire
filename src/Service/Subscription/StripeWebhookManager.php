@@ -7,6 +7,7 @@ use App\Entity\Subscription\PrestataireSubscription;
 use App\Entity\Subscription\SubscriptionCreditMovement;
 use App\Entity\Subscription\SubscriptionCustomer;
 use App\Entity\Subscription\SubscriptionInvoice;
+use App\Entity\Subscription\SubscriptionPlanPrice;
 use App\Enum\SubscriptionBillingPeriodEnum;
 use App\Enum\SubscriptionCreditMovementTypeEnum;
 use App\Enum\SubscriptionInvoiceStatusEnum;
@@ -17,6 +18,7 @@ use App\Repository\Subscription\SubscriptionCreditMovementRepository;
 use App\Repository\Subscription\SubscriptionCustomerRepository;
 use App\Repository\Subscription\SubscriptionInvoiceRepository;
 use App\Repository\Subscription\SubscriptionPlanRepository;
+use App\Repository\Subscription\SubscriptionPlanPriceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class StripeWebhookManager
@@ -29,6 +31,7 @@ class StripeWebhookManager
         private readonly PrestataireSubscriptionRepository $prestataireSubscriptionRepository,
         private readonly SubscriptionInvoiceRepository $subscriptionInvoiceRepository,
         private readonly SubscriptionCreditMovementRepository $subscriptionCreditMovementRepository,
+        private readonly SubscriptionPlanPriceRepository $subscriptionPlanPriceRepository,
     ) {
     }
 
@@ -62,6 +65,57 @@ class StripeWebhookManager
     /**
      * @param array<string, mixed> $payload
      */
+    public function syncSubscriptionPayload(array $payload, bool $flush = true): void
+    {
+        $this->syncSubscriptionFromStripePayload($payload);
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     */
+    public function syncInvoicePayload(string $eventType, array $payload, bool $flush = true): void
+    {
+        $this->syncInvoiceFromStripePayload($eventType, $payload);
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
+    }
+
+    public function cleanupDemoSubscriptionsForPrestataire(PrestataireProfile $prestataireProfile, bool $flush = true): void
+    {
+        $now = new \DateTimeImmutable();
+
+        foreach ($this->prestataireSubscriptionRepository->findBy(['prestataireProfile' => $prestataireProfile]) as $subscription) {
+            $stripeSubscriptionId = trim((string) ($subscription->getStripeSubscriptionId() ?? ''));
+
+            if (!str_starts_with($stripeSubscriptionId, 'sub_demo_')) {
+                continue;
+            }
+
+            $subscription
+                ->setStatus(SubscriptionStatusEnum::CANCELED)
+                ->setCancelAtPeriodEnd(false)
+                ->setCancellationRequestedAt($subscription->getCancellationRequestedAt() ?? $now)
+                ->setCanceledAt($subscription->getCanceledAt() ?? $now)
+                ->setEndedAt($subscription->getEndedAt() ?? $now)
+                ->setUpdatedAt($now);
+
+            $this->entityManager->persist($subscription);
+        }
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     */
     private function syncSubscriptionFromStripePayload(array $payload): void
     {
         $stripeSubscriptionId = (string) ($payload['id'] ?? '');
@@ -86,11 +140,13 @@ class StripeWebhookManager
         $priceId = is_array($item) ? (string) ($item['price']['id'] ?? '') : '';
         $stripeItemId = is_array($item) ? (string) ($item['id'] ?? '') : '';
         $plan = '' !== $priceId ? $this->subscriptionPlanRepository->findOneByStripePriceId($priceId) : null;
+        $planPrice = '' !== $priceId ? $this->subscriptionPlanPriceRepository->findOneByStripePriceId($priceId) : null;
 
         $subscription
             ->setPrestataireProfile($prestataireProfile)
             ->setCustomer($customer)
             ->setPlan($plan)
+            ->setPlanPrice($planPrice instanceof SubscriptionPlanPrice ? $planPrice : null)
             ->setStripeSubscriptionId($stripeSubscriptionId)
             ->setStripePriceId('' !== $priceId ? $priceId : null)
             ->setStripeSubscriptionItemId('' !== $stripeItemId ? $stripeItemId : null)
@@ -106,6 +162,14 @@ class StripeWebhookManager
             ->setCanceledAt($this->createDateTimeFromTimestamp($payload['canceled_at'] ?? null))
             ->setEndedAt($this->createDateTimeFromTimestamp($payload['ended_at'] ?? null))
             ->setUpdatedAt(new \DateTimeImmutable());
+
+        if (
+            $subscription->getPlan() instanceof \App\Entity\Subscription\SubscriptionPlan
+            && $subscription->getStatus()->isUsable()
+            && 0 === $subscription->getCreditsGrantedCurrentPeriod()
+        ) {
+            $subscription->syncCreditsWithPlan();
+        }
 
         $this->entityManager->persist($subscription);
     }

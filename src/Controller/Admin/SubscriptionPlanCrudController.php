@@ -10,7 +10,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -35,10 +34,7 @@ final class SubscriptionPlanCrudController extends AbstractCrudController
         yield TextField::new('code', 'Code interne');
         yield TextField::new('name', 'Nom');
         yield TextareaField::new('description', 'Description')->hideOnIndex();
-        yield MoneyField::new('monthlyAmount', 'Prix mensuel')->setCurrency('EUR')->setStoredAsCents(false);
-        yield MoneyField::new('annualAmount', 'Prix annuel')->setCurrency('EUR')->setStoredAsCents(false);
-        yield TextField::new('monthlyStripePriceId', 'Price ID Stripe mensuel')->hideOnIndex();
-        yield TextField::new('annualStripePriceId', 'Price ID Stripe annuel')->hideOnIndex();
+        yield TextField::new('stripeProductId', 'Product ID Stripe')->hideOnIndex();
         yield IntegerField::new('monthlyCredits', 'Crédits mensuels');
         yield IntegerField::new('annualCredits', 'Crédits annuels');
         yield BooleanField::new('quoteResponsesEnabled', 'Réponse aux devis active');

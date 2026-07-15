@@ -45,6 +45,9 @@ class SubscriptionPlan
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $annualStripePriceId = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $stripeProductId = null;
+
     #[ORM\Column]
     private int $monthlyCredits = 0;
 
@@ -75,10 +78,18 @@ class SubscriptionPlan
     #[ORM\OneToMany(mappedBy: 'plan', targetEntity: PrestataireSubscription::class)]
     private Collection $subscriptions;
 
+    /**
+     * @var Collection<int, SubscriptionPlanPrice>
+     */
+    #[ORM\OneToMany(mappedBy: 'plan', targetEntity: SubscriptionPlanPrice::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['billingPeriod' => 'ASC', 'isPromotional' => 'DESC', 'createdAt' => 'DESC'])]
+    private Collection $prices;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->subscriptions = new ArrayCollection();
+        $this->prices = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -140,7 +151,7 @@ class SubscriptionPlan
 
     public function getMonthlyAmount(): ?string
     {
-        return $this->monthlyAmount;
+        return $this->getAmountForPeriod(SubscriptionBillingPeriodEnum::MONTHLY);
     }
 
     public function setMonthlyAmount(?string $monthlyAmount): static
@@ -152,7 +163,7 @@ class SubscriptionPlan
 
     public function getAnnualAmount(): ?string
     {
-        return $this->annualAmount;
+        return $this->getAmountForPeriod(SubscriptionBillingPeriodEnum::ANNUAL);
     }
 
     public function setAnnualAmount(?string $annualAmount): static
@@ -164,7 +175,7 @@ class SubscriptionPlan
 
     public function getMonthlyStripePriceId(): ?string
     {
-        return $this->monthlyStripePriceId;
+        return $this->getStripePriceIdForPeriod(SubscriptionBillingPeriodEnum::MONTHLY);
     }
 
     public function setMonthlyStripePriceId(?string $monthlyStripePriceId): static
@@ -176,12 +187,24 @@ class SubscriptionPlan
 
     public function getAnnualStripePriceId(): ?string
     {
-        return $this->annualStripePriceId;
+        return $this->getStripePriceIdForPeriod(SubscriptionBillingPeriodEnum::ANNUAL);
     }
 
     public function setAnnualStripePriceId(?string $annualStripePriceId): static
     {
         $this->annualStripePriceId = $annualStripePriceId;
+
+        return $this;
+    }
+
+    public function getStripeProductId(): ?string
+    {
+        return $this->stripeProductId;
+    }
+
+    public function setStripeProductId(?string $stripeProductId): static
+    {
+        $this->stripeProductId = $stripeProductId;
 
         return $this;
     }
@@ -289,7 +312,15 @@ class SubscriptionPlan
 
     public function supportsBillingPeriod(SubscriptionBillingPeriodEnum $billingPeriod): bool
     {
-        return null !== $this->getStripePriceIdForPeriod($billingPeriod);
+        $price = $this->getCurrentPriceForPeriod($billingPeriod);
+        if ($price instanceof SubscriptionPlanPrice) {
+            return null !== $price->getStripePriceId();
+        }
+
+        return null !== match ($billingPeriod) {
+            SubscriptionBillingPeriodEnum::MONTHLY => $this->monthlyStripePriceId,
+            SubscriptionBillingPeriodEnum::ANNUAL => $this->annualStripePriceId,
+        };
     }
 
     public function getCreditsForPeriod(SubscriptionBillingPeriodEnum $billingPeriod): int
@@ -302,6 +333,11 @@ class SubscriptionPlan
 
     public function getStripePriceIdForPeriod(SubscriptionBillingPeriodEnum $billingPeriod): ?string
     {
+        $price = $this->getCurrentPriceForPeriod($billingPeriod);
+        if ($price instanceof SubscriptionPlanPrice) {
+            return $price->getStripePriceId();
+        }
+
         return match ($billingPeriod) {
             SubscriptionBillingPeriodEnum::MONTHLY => $this->monthlyStripePriceId,
             SubscriptionBillingPeriodEnum::ANNUAL => $this->annualStripePriceId,
@@ -310,10 +346,49 @@ class SubscriptionPlan
 
     public function getAmountForPeriod(SubscriptionBillingPeriodEnum $billingPeriod): ?string
     {
+        $price = $this->getCurrentPriceForPeriod($billingPeriod);
+        if ($price instanceof SubscriptionPlanPrice) {
+            return $price->getAmount();
+        }
+
         return match ($billingPeriod) {
             SubscriptionBillingPeriodEnum::MONTHLY => $this->monthlyAmount,
             SubscriptionBillingPeriodEnum::ANNUAL => $this->annualAmount,
         };
+    }
+
+    public function getCurrentPriceForPeriod(
+        SubscriptionBillingPeriodEnum $billingPeriod,
+        ?\DateTimeImmutable $at = null,
+    ): ?SubscriptionPlanPrice {
+        $at ??= new \DateTimeImmutable();
+        $candidates = array_filter(
+            $this->prices->toArray(),
+            static fn (SubscriptionPlanPrice $price): bool => $price->getBillingPeriod() === $billingPeriod && $price->isAvailableAt($at)
+        );
+
+        if ([] === $candidates) {
+            return null;
+        }
+
+        usort(
+            $candidates,
+            static function (SubscriptionPlanPrice $left, SubscriptionPlanPrice $right): int {
+                if ($left->isPromotional() !== $right->isPromotional()) {
+                    return $left->isPromotional() ? -1 : 1;
+                }
+
+                $leftValidFrom = $left->getValidFrom()?->getTimestamp() ?? 0;
+                $rightValidFrom = $right->getValidFrom()?->getTimestamp() ?? 0;
+                if ($leftValidFrom !== $rightValidFrom) {
+                    return $rightValidFrom <=> $leftValidFrom;
+                }
+
+                return $right->getCreatedAt()->getTimestamp() <=> $left->getCreatedAt()->getTimestamp();
+            }
+        );
+
+        return $candidates[0];
     }
 
     /**
@@ -338,6 +413,33 @@ class SubscriptionPlan
     {
         if ($this->subscriptions->removeElement($subscription) && $subscription->getPlan() === $this) {
             $subscription->setPlan(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SubscriptionPlanPrice>
+     */
+    public function getPrices(): Collection
+    {
+        return $this->prices;
+    }
+
+    public function addPrice(SubscriptionPlanPrice $price): static
+    {
+        if (!$this->prices->contains($price)) {
+            $this->prices->add($price);
+            $price->setPlan($this);
+        }
+
+        return $this;
+    }
+
+    public function removePrice(SubscriptionPlanPrice $price): static
+    {
+        if ($this->prices->removeElement($price) && $price->getPlan() === $this) {
+            $price->setPlan(null);
         }
 
         return $this;

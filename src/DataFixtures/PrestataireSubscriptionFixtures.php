@@ -15,24 +15,30 @@ class PrestataireSubscriptionFixtures extends BaseFixture implements DependentFi
 {
     public function load(ObjectManager $manager): void
     {
+        $planReferences = SubscriptionPlanFixtures::getReferenceNames();
+        $planCount = count($planReferences);
+
         for ($i = 1; $i <= UserFixtures::PRESTATAIRE_COUNT; ++$i) {
             /** @var PrestataireProfile $prestataire */
             $prestataire = $this->getReference(sprintf('prestataire_profile_%d', $i), PrestataireProfile::class);
             /** @var SubscriptionCustomer $customer */
             $customer = $this->getReference(sprintf('subscription_customer_%d', $i), SubscriptionCustomer::class);
             /** @var SubscriptionPlan $plan */
-            $plan = $this->getReference(sprintf('subscription_plan_%d', (($i - 1) % 10) + 1), SubscriptionPlan::class);
+            $plan = $this->getReference($planReferences[($i - 1) % $planCount], SubscriptionPlan::class);
 
             $billingPeriod = $i % 3 === 0 ? SubscriptionBillingPeriodEnum::ANNUAL : SubscriptionBillingPeriodEnum::MONTHLY;
             $periodStart = $this->randomDateTimeImmutable('-30 days', '-5 days');
             $periodEnd = $billingPeriod === SubscriptionBillingPeriodEnum::ANNUAL ? $periodStart->modify('+1 year') : $periodStart->modify('+1 month');
             $granted = $billingPeriod === SubscriptionBillingPeriodEnum::ANNUAL ? $plan->getAnnualCredits() : $plan->getMonthlyCredits();
-            $consumed = min($granted - 1, $this->faker->numberBetween(0, max(1, (int) floor($granted / 2))));
+            $consumed = $granted > 0
+                ? min($granted - 1, $this->faker->numberBetween(0, max(1, (int) floor($granted / 2))))
+                : 0;
 
             $subscription = (new PrestataireSubscription())
                 ->setPrestataireProfile($prestataire)
                 ->setCustomer($customer)
                 ->setPlan($plan)
+                ->setPlanPrice($plan->getCurrentPriceForPeriod($billingPeriod))
                 ->setBillingPeriod($billingPeriod)
                 ->setStatus(SubscriptionStatusEnum::ACTIVE)
                 ->setStripeSubscriptionId(sprintf('sub_demo_%04d', $i))

@@ -3,10 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Subscription\PrestataireSubscription;
+use App\Entity\Subscription\SubscriptionCustomer;
 use App\Enum\SubscriptionBillingPeriodEnum;
 use App\Repository\Subscription\SubscriptionCustomerRepository;
 use App\Repository\Subscription\SubscriptionPlanRepository;
 use App\Service\Subscription\StripeApiClient;
+use App\Service\Subscription\StripeCheckoutSessionSynchronizer;
 use App\Service\Subscription\SubscriptionAccessManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,20 +29,51 @@ final class SubscriptionController extends AbstractController
         SubscriptionPlanRepository $subscriptionPlanRepository,
         SubscriptionAccessManager $subscriptionAccessManager,
         StripeApiClient $stripeApiClient,
+        StripeCheckoutSessionSynchronizer $stripeCheckoutSessionSynchronizer,
     ): Response {
         $prestataireProfile = $this->getPrestataireProfile();
 
         if ('success' === $request->query->get('checkout')) {
-            $this->addFlash('success', 'Le paiement a bien ete initialise. Votre abonnement sera synchronise apres confirmation Stripe.');
+            $checkoutSessionId = trim((string) $request->query->get('session_id', ''));
+
+            if ('' !== $checkoutSessionId) {
+                try {
+                    $synchronized = $stripeCheckoutSessionSynchronizer->syncCompletedSession($checkoutSessionId, $prestataireProfile);
+                    $this->addFlash(
+                        $synchronized ? 'success' : 'warning',
+                        $synchronized
+                            ? 'Le paiement a bien ete confirme et votre abonnement a ete synchronise.'
+                            : 'Le paiement est revenu de Stripe, mais la synchronisation locale reste en attente.'
+                    );
+                } catch (Throwable $exception) {
+                    $this->addFlash('warning', 'Le paiement a ete finalise, mais la synchronisation locale a echoue : ' . $exception->getMessage());
+                }
+            } else {
+                $this->addFlash('success', 'Le paiement a bien ete initialise. Votre abonnement sera synchronise apres confirmation Stripe.');
+            }
         }
 
         if ('cancel' === $request->query->get('checkout')) {
             $this->addFlash('warning', 'Le paiement a ete annule.');
         }
 
+        $currentSubscription = $subscriptionAccessManager->getCurrentUsableSubscription($prestataireProfile);
+
+        if (
+            $stripeApiClient->isConfigured()
+            && !$this->isRealStripeSubscription($currentSubscription)
+        ) {
+            try {
+                if ($stripeCheckoutSessionSynchronizer->syncLatestSubscriptionForPrestataire($prestataireProfile)) {
+                    $currentSubscription = $subscriptionAccessManager->getCurrentUsableSubscription($prestataireProfile);
+                }
+            } catch (Throwable) {
+            }
+        }
+
         return $this->render('subscription/index.html.twig', [
             'plans' => $subscriptionPlanRepository->findActiveOrdered(),
-            'currentSubscription' => $subscriptionAccessManager->getCurrentUsableSubscription($prestataireProfile),
+            'currentSubscription' => $currentSubscription,
             'stripeConfigured' => $stripeApiClient->isConfigured(),
         ]);
     }
@@ -78,8 +112,8 @@ final class SubscriptionController extends AbstractController
         }
 
         $currentSubscription = $subscriptionAccessManager->getCurrentUsableSubscription($prestataireProfile);
-        if (null !== $currentSubscription && null !== $currentSubscription->getPlan()) {
-            $currentAmount = (float) ($currentSubscription->getPlan()->getAmountForPeriod($currentSubscription->getBillingPeriod()) ?? 0);
+        if ($this->isRealStripeSubscription($currentSubscription) && null !== $currentSubscription->getPlan()) {
+            $currentAmount = (float) ($currentSubscription->getBilledAmount() ?? 0);
             $selectedAmount = (float) ($plan->getAmountForPeriod($billingPeriod) ?? 0);
 
             if (
@@ -114,7 +148,7 @@ final class SubscriptionController extends AbstractController
                 $prestataireProfile,
                 $plan,
                 $billingPeriod,
-                $this->generateUrl('app_subscription_index', [], UrlGeneratorInterface::ABSOLUTE_URL) . '?checkout=success',
+                $this->generateUrl('app_subscription_index', [], UrlGeneratorInterface::ABSOLUTE_URL) . '?checkout=success&session_id={CHECKOUT_SESSION_ID}',
                 $this->generateUrl('app_subscription_index', [], UrlGeneratorInterface::ABSOLUTE_URL) . '?checkout=cancel',
                 $customer,
             );
@@ -148,10 +182,7 @@ final class SubscriptionController extends AbstractController
         }
 
         $customer = $subscriptionCustomerRepository->findOneByPrestataire($prestataireProfile);
-        if (
-            !$customer instanceof \App\Entity\Subscription\SubscriptionCustomer
-            || '' === trim((string) $customer->getStripeCustomerId())
-        ) {
+        if (!$customer instanceof SubscriptionCustomer || !$this->isRealStripeCustomer($customer)) {
             $this->addFlash('warning', 'Aucun compte de facturation Stripe n’est encore associé à votre profil.');
 
             return $this->redirectToRoute('app_subscription_index');
@@ -194,13 +225,10 @@ final class SubscriptionController extends AbstractController
         SubscriptionCustomerRepository $subscriptionCustomerRepository,
         StripeApiClient $stripeApiClient,
         EntityManagerInterface $entityManager,
-    ): \App\Entity\Subscription\SubscriptionCustomer {
+    ): SubscriptionCustomer {
         $customer = $subscriptionCustomerRepository->findOneByPrestataire($prestataireProfile);
 
-        if (
-            $customer instanceof \App\Entity\Subscription\SubscriptionCustomer
-            && '' !== trim((string) $customer->getStripeCustomerId())
-        ) {
+        if ($customer instanceof SubscriptionCustomer && $this->isRealStripeCustomer($customer)) {
             return $customer;
         }
 
@@ -211,7 +239,7 @@ final class SubscriptionController extends AbstractController
             throw new \RuntimeException('Stripe n’a pas retourné d’identifiant client.');
         }
 
-        $customer ??= (new \App\Entity\Subscription\SubscriptionCustomer())
+        $customer ??= (new SubscriptionCustomer())
             ->setPrestataireProfile($prestataireProfile);
 
         $customer
@@ -223,5 +251,31 @@ final class SubscriptionController extends AbstractController
         $entityManager->flush();
 
         return $customer;
+    }
+
+    private function isRealStripeSubscription(?PrestataireSubscription $subscription): bool
+    {
+        if (!$subscription instanceof PrestataireSubscription) {
+            return false;
+        }
+
+        $stripeSubscriptionId = trim((string) ($subscription->getStripeSubscriptionId() ?? ''));
+        $stripeSubscriptionItemId = trim((string) ($subscription->getStripeSubscriptionItemId() ?? ''));
+
+        return '' !== $stripeSubscriptionId
+            && '' !== $stripeSubscriptionItemId
+            && !str_starts_with($stripeSubscriptionId, 'sub_demo_')
+            && !str_starts_with($stripeSubscriptionItemId, 'si_demo_');
+    }
+
+    private function isRealStripeCustomer(?SubscriptionCustomer $customer): bool
+    {
+        if (!$customer instanceof SubscriptionCustomer) {
+            return false;
+        }
+
+        $stripeCustomerId = trim((string) ($customer->getStripeCustomerId() ?? ''));
+
+        return '' !== $stripeCustomerId && !str_starts_with($stripeCustomerId, 'cus_demo_');
     }
 }

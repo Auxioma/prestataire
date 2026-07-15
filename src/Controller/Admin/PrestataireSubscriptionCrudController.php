@@ -65,6 +65,7 @@ final class PrestataireSubscriptionCrudController extends AbstractCrudController
         yield AssociationField::new('prestataireProfile', 'Prestataire')->autocomplete();
         yield AssociationField::new('customer', 'Client Stripe')->hideOnIndex();
         yield AssociationField::new('plan', 'Plan')->autocomplete();
+        yield AssociationField::new('planPrice', 'Tarif appliqué')->autocomplete()->hideOnIndex();
         yield ChoiceField::new('billingPeriod', 'Période')
             ->setChoices([
                 'Mensuel' => SubscriptionBillingPeriodEnum::MONTHLY,
@@ -179,6 +180,17 @@ final class PrestataireSubscriptionCrudController extends AbstractCrudController
         $now = new \DateTimeImmutable();
 
         $subscription->setUpdatedAt($now);
+
+        if (
+            $subscription->getPlan()
+            && (
+                null === $subscription->getPlanPrice()
+                || $subscription->getPlanPrice()?->getPlan() !== $subscription->getPlan()
+                || $subscription->getPlanPrice()?->getBillingPeriod() !== $subscription->getBillingPeriod()
+            )
+        ) {
+            $subscription->setPlanPrice($subscription->getPlan()->getCurrentPriceForPeriod($subscription->getBillingPeriod()));
+        }
 
         if ($subscription->getPlan() && 0 === $subscription->getCreditsGrantedCurrentPeriod()) {
             $subscription->syncCreditsWithPlan();
