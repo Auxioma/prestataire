@@ -346,6 +346,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->status;
     }
 
+    public function getStatusLabel(): string
+    {
+        return $this->status?->getLabel() ?? 'Inconnu';
+    }
+
     public function setStatus(UserStatusEnum $status): static
     {
         $this->status = $status;

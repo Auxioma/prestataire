@@ -106,6 +106,15 @@ class DashboardController extends AbstractDashboardController
             ->generateUrl()
     );
 
+    yield MenuItem::linkToUrl(
+        'Signalements',
+        'fas fa-flag',
+        $this->adminUrlGenerator->unsetAll()
+            ->setController(ReportCrudController::class)
+            ->setAction(Action::INDEX)
+            ->generateUrl()
+    );
+
     yield MenuItem::section('Catalogue');
     yield MenuItem::linkToUrl(
         'Catégories / Sous-catégories',

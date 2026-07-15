@@ -167,6 +167,12 @@
 									</strong>
 								</article>
 							</div>
+
+                            <div class="mt-4">
+                                <a href="{{ path('app_report_quote_request', { id: quoteRequest.id }) }}" class="btn btn-outline-danger btn-sm">
+                                    Signaler cette demande
+                                </a>
+                            </div>
 						</div>
 					</section>
 
@@ -397,6 +403,12 @@
 												Accès photos conversation
 											</a>
 										{% endif %}
+
+                                        {% if conversation is defined and conversation %}
+                                            <a href="{{ path('app_report_conversation', { id: conversation.id }) }}" class="btn btn-outline-danger btn-sm">
+                                                Signaler la conversation
+                                            </a>
+                                        {% endif %}
 
 										{% if messages is defined and messages is not empty %}
 											<span class="tm-client-quotes-conversation-count">

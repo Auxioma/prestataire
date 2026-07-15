@@ -1,0 +1,17 @@
+<h1>Nouveau signalement</h1>
+
+<p>Un nouveau signalement vient d’etre créé sur la plateforme.</p>
+
+<ul>
+    <li><strong>Contexte :</strong> {{ report.contextLabel }}</li>
+    <li><strong>Motif :</strong> {{ report.reason.label }}</li>
+    <li><strong>Auteur :</strong> {{ reporterLabel }}</li>
+    <li><strong>Date :</strong> {{ report.createdAt|date('d/m/Y à H:i') }}</li>
+</ul>
+
+{% if report.message %}
+    <p><strong>Description :</strong></p>
+    <p>{{ report.message|nl2br }}</p>
+{% endif %}
+
+<p>Connectez-vous à l’administration EasyAdmin pour traiter ce signalement.</p>

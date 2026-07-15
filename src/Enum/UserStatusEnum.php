@@ -19,4 +19,15 @@ enum UserStatusEnum: string
     case SUSPENDED = 'SUSPENDED';
     case BANNED = 'BANNED';
     case DELETED = 'DELETED';
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::PENDING => 'En attente',
+            self::ACTIVE => 'Actif',
+            self::SUSPENDED => 'Suspendu',
+            self::BANNED => 'Banni',
+            self::DELETED => 'Supprimé',
+        };
+    }
 }

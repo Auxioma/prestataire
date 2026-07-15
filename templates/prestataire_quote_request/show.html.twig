@@ -104,6 +104,12 @@
 							</dd>
 						</div>
 					</dl>
+
+                    <div class="mt-4">
+                        <a href="{{ path('app_report_quote_request', { id: quoteRequest.id }) }}" class="btn btn-outline-danger btn-sm">
+                            Signaler cette demande
+                        </a>
+                    </div>
 				</div>
 
 				<div class="card tm-card tm-quote-detail-card p-4">
@@ -188,6 +194,10 @@
 							<a href="{{ path('app_prestataire_dashboard', { tab: 'messages', conversation: quoteRequest.conversation.id }) ~ '#messages-main-panel' }}" class="btn btn-primary w-100 mt-3">
 								Ouvrir la discussion
 							</a>
+
+                            <a href="{{ path('app_report_conversation', { id: quoteRequest.conversation.id }) }}" class="btn btn-outline-danger w-100 mt-3">
+                                Signaler la conversation
+                            </a>
 
 							{% if hasConversationPhotos %}
 								<a href="{{ path('app_prestataire_conversation_photos', { id: quoteRequest.conversation.id }) }}" class="btn btn-outline-secondary w-100 mt-3">

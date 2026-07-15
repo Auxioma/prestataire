@@ -19,6 +19,7 @@ parameters:
     app.stripe.secret_key: '%env(default::STRIPE_SECRET_KEY)%'
     app.stripe.public_key: '%env(default::STRIPE_PUBLIC_KEY)%'
     app.stripe.webhook_secret: '%env(default::STRIPE_WEBHOOK_SECRET)%'
+    app.admin_notification_email: '%env(default::ADMIN_NOTIFICATION_EMAIL)%'
 
 services:
     # default configuration for services in *this* file
@@ -37,6 +38,7 @@ services:
             string $sireneApiKey: '%app.insee_sirene.api_key%'
             string $stripeSecretKey: '%app.stripe.secret_key%'
             string $webhookSecret: '%app.stripe.webhook_secret%'
+            $adminNotificationEmail: '%app.admin_notification_email%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

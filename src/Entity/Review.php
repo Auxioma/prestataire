@@ -61,6 +61,17 @@ class Review
         $this->createdAt = new \DateTimeImmutable();
     }
 
+    public function __toString(): string
+    {
+        $quoteRequestTitle = trim((string) ($this->quoteRequest?->getTitle() ?? ''));
+
+        if ('' !== $quoteRequestTitle) {
+            return sprintf('Avis - %s', $quoteRequestTitle);
+        }
+
+        return sprintf('Avis #%s', $this->id ?? 'n/a');
+    }
+
     public function getId(): ?string
     {
         return $this->id;

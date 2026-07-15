@@ -50,6 +50,17 @@ class Conversation
         $this->messages = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        $quoteRequestTitle = trim((string) ($this->quoteRequest?->getTitle() ?? ''));
+
+        if ('' !== $quoteRequestTitle) {
+            return sprintf('Conversation - %s', $quoteRequestTitle);
+        }
+
+        return sprintf('Conversation #%s', $this->id ?? 'n/a');
+    }
+
     public function getId(): ?string
     {
         return $this->id;

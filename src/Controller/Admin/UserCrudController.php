@@ -141,14 +141,21 @@ class UserCrudController extends AbstractCrudController
         yield ArrayField::new('roles', 'Rôles')
             ->setHelp('Définit les droits d’accès de l’utilisateur dans l’application.');
 
+        yield TextField::new('statusLabel', 'Statut du compte')
+            ->formatValue(fn ($value, User $user): string => $this->renderStatusBadge($user->getStatus()))
+            ->renderAsHtml()
+            ->hideOnForm()
+            ->setHelp('État général du compte. Un compte banni ou suspendu ne doit plus être utilisé normalement.');
+
         yield ChoiceField::new('status', 'Statut du compte')
             ->setChoices([
-                'En attente' => UserStatusEnum::PENDING,
-                'Actif' => UserStatusEnum::ACTIVE,
-                'Suspendu' => UserStatusEnum::SUSPENDED,
-                'Banni' => UserStatusEnum::BANNED,
+                UserStatusEnum::PENDING->getLabel() => UserStatusEnum::PENDING,
+                UserStatusEnum::ACTIVE->getLabel() => UserStatusEnum::ACTIVE,
+                UserStatusEnum::SUSPENDED->getLabel() => UserStatusEnum::SUSPENDED,
+                UserStatusEnum::BANNED->getLabel() => UserStatusEnum::BANNED,
+                UserStatusEnum::DELETED->getLabel() => UserStatusEnum::DELETED,
             ])
-            ->renderAsBadges()
+            ->onlyOnForms()
             ->setHelp('État général du compte. Un compte banni ou suspendu ne doit plus être utilisé normalement.');
 
         yield BooleanField::new('isVerified', 'Compte vérifié')
@@ -164,5 +171,35 @@ class UserCrudController extends AbstractCrudController
         yield DateTimeField::new('createdAt', 'Créé le')
             ->hideOnForm()
             ->setHelp('Date de création du compte.');
+    }
+
+    private function renderStatusBadge(mixed $value): string
+    {
+        $status = $value instanceof UserStatusEnum ? $value : UserStatusEnum::tryFrom((string) $value);
+
+        if (!$status instanceof UserStatusEnum) {
+            return $this->renderBadge((string) $value, '#6c757d', 'rgba(108, 117, 125, 0.12)', '#495057');
+        }
+
+        [$borderColor, $backgroundColor, $textColor] = match ($status) {
+            UserStatusEnum::PENDING => ['#f0ad00', 'rgba(240, 173, 0, 0.12)', '#7a5a00'],
+            UserStatusEnum::ACTIVE => ['#198754', 'rgba(25, 135, 84, 0.12)', '#146c43'],
+            UserStatusEnum::SUSPENDED => ['#6c757d', 'rgba(108, 117, 125, 0.12)', '#495057'],
+            UserStatusEnum::BANNED => ['#dc3545', 'rgba(220, 53, 69, 0.10)', '#a61e2d'],
+            UserStatusEnum::DELETED => ['#212529', 'rgba(33, 37, 41, 0.08)', '#212529'],
+        };
+
+        return $this->renderBadge($status->getLabel(), $borderColor, $backgroundColor, $textColor);
+    }
+
+    private function renderBadge(string $label, string $borderColor, string $backgroundColor, string $textColor): string
+    {
+        return sprintf(
+            '<span class="badge rounded-pill" style="border:1px solid %s;background:%s;color:%s;font-weight:600;">%s</span>',
+            htmlspecialchars($borderColor, ENT_QUOTES),
+            htmlspecialchars($backgroundColor, ENT_QUOTES),
+            htmlspecialchars($textColor, ENT_QUOTES),
+            htmlspecialchars($label, ENT_QUOTES)
+        );
     }
 }

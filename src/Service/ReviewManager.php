@@ -6,6 +6,7 @@ use App\Entity\ClientProfile;
 use App\Entity\PrestataireProfile;
 use App\Entity\QuoteRequest;
 use App\Entity\Review;
+use App\Enum\NotificationTypeEnum;
 use App\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -14,6 +15,7 @@ final class ReviewManager
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ReviewRepository $reviewRepository,
+        private readonly NotificationManager $notificationManager,
     ) {
     }
 
@@ -60,6 +62,7 @@ final class ReviewManager
         $this->entityManager->flush();
 
         $this->refreshAverageRating($prestataire);
+        $this->notifyPrestataireOfNewReview($review);
 
         return $review;
     }
@@ -94,5 +97,40 @@ final class ReviewManager
         $comment = null !== $comment ? trim($comment) : null;
 
         return '' === $comment ? null : $comment;
+    }
+
+    private function notifyPrestataireOfNewReview(Review $review): void
+    {
+        $prestataireAccount = $review->getPrestataireProfile()?->getAccount();
+        $quoteRequest = $review->getQuoteRequest();
+
+        if (null === $prestataireAccount) {
+            return;
+        }
+
+        $clientFirstName = trim((string) ($review->getClientProfile()?->getAccount()?->getFirstName() ?? ''));
+        $rating = max(0, min(5, (int) ($review->getRating() ?? 0)));
+        $title = 'Vous avez reçu un nouvel avis';
+        $body = sprintf(
+            '%s vous a laissé une note de %d/5%s.',
+            '' !== $clientFirstName ? $clientFirstName : 'Un client',
+            $rating,
+            $quoteRequest?->getTitle() ? sprintf(' pour "%s"', $quoteRequest->getTitle()) : ''
+        );
+
+        $this->notificationManager->notify(
+            $prestataireAccount,
+            NotificationTypeEnum::REVIEW_RECEIVED,
+            $title,
+            $body,
+            '/avis/mes-avis-recus',
+            [
+                'reviewId' => $review->getId(),
+                'quoteRequestId' => $quoteRequest?->getId(),
+                'quoteRequestSlug' => $quoteRequest?->getSlug(),
+                'prestataireProfileId' => $review->getPrestataireProfile()?->getId(),
+                'rating' => $rating,
+            ]
+        );
     }
 }

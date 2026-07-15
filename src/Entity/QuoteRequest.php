@@ -70,6 +70,17 @@ class QuoteRequest
         $this->status = QuoteRequestStatusEnum::SUBMITTED;
     }
 
+    public function __toString(): string
+    {
+        $title = trim((string) ($this->title ?? ''));
+
+        if ('' !== $title) {
+            return $title;
+        }
+
+        return sprintf('Demande #%s', $this->id ?? 'n/a');
+    }
+
     public function getId(): ?string
     {
         return $this->id;
