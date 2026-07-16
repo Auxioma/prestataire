@@ -1,6 +1,27 @@
 {% set radius = 32 %}
 {% set circumference = 2 * 3.141592653589793 * radius %}
 {% set progressOffset = circumference - (completionReport.score / 100) * circumference %}
+{% set quoteStatusClasses = {
+    submitted: 'is-neutral',
+    accepted: 'is-info',
+    answered: 'is-warning',
+    closed: 'is-success'
+} %}
+
+{% if priorityAlerts is not empty %}
+    <section class="tm-dashboard-priority-band" aria-label="Priorités du moment">
+        {% for alert in priorityAlerts %}
+            <article class="tm-dashboard-priority-band__item is-{{ alert.tone }}">
+                <div class="tm-dashboard-priority-band__content">
+                    <span class="tm-dashboard-priority-band__eyebrow">Priorité</span>
+                    <h3>{{ alert.title }}</h3>
+                    <p>{{ alert.text }}</p>
+                </div>
+                <a href="{{ alert.href }}" class="tm-dashboard-priority-band__link">{{ alert.label }}</a>
+            </article>
+        {% endfor %}
+    </section>
+{% endif %}
 
 <div class="row g-3 tm-dashboard-widgets-grid">
     <div class="col-12 col-md-6 col-xl-4">
@@ -87,7 +108,7 @@
                                 </small>
                             </div>
                             <div class="tm-dashboard-widget__item-side">
-                                <span class="tm-dashboard-widget__status">{{ quoteRequest.status.label }}</span>
+                                <span class="tm-dashboard-widget__status {{ attribute(quoteStatusClasses, quoteRequest.status.value)|default('is-neutral') }}">{{ quoteRequest.status.label }}</span>
                                 <small>{{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m H:i') : '—' }}</small>
                             </div>
                         </div>
@@ -119,6 +140,41 @@
                 data-calendar-panel-compact-value="true"
                 data-calendar-panel-height-value="290"
             ></div>
+
+            <div class="tm-dashboard-widget__subsection">
+                <div class="tm-dashboard-widget__subsection-title">Prochains rendez-vous</div>
+                <div class="tm-dashboard-widget__list">
+                    {% if upcomingAppointments is empty %}
+                        <div class="tm-dashboard-widget__empty">Aucun rendez-vous programmé prochainement.</div>
+                    {% else %}
+                        {% for appointment in upcomingAppointments %}
+                            <div class="tm-dashboard-widget__item tm-dashboard-widget__item--stack">
+                                <div class="tm-dashboard-widget__item-main">
+                                    <strong>{{ appointment.title }}</strong>
+                                    <span class="tm-dashboard-widget__status tm-dashboard-widget__status--appointment is-{{ appointment.status.value }}">
+                                        {{ appointment.status.label }}
+                                    </span>
+                                </div>
+                                <div class="tm-dashboard-widget__message-preview">
+                                    {{ appointment.startsAt ? appointment.startsAt|date('d/m/Y \\à H:i') : '—' }}
+                                    {% if appointment.locationLabel %}
+                                        · {{ appointment.locationLabel }}
+                                    {% endif %}
+                                </div>
+                                <small>
+                                    {% if appointment.client and appointment.client.account %}
+                                        {{ appointment.client.account.firstName }} {{ appointment.client.account.lastName }}
+                                    {% elseif appointment.prestation and appointment.prestation.service %}
+                                        {{ appointment.prestation.service.name }}
+                                    {% else %}
+                                        Rendez-vous planifié
+                                    {% endif %}
+                                </small>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
 
             <div class="tm-dashboard-widget__footer">
                 <a href="{{ path('app_prestataire_dashboard', { tab: 'calendrier' }) ~ '#calendrier-main-panel' }}">Ouvrir le calendrier complet</a>
@@ -202,7 +258,12 @@
                                     Message sans texte.
                                 {% endif %}
                             </div>
-                            <small>{{ message.createdAt ? message.createdAt|date('d/m H:i') : '—' }}</small>
+                            <div class="tm-dashboard-widget__item-side tm-dashboard-widget__item-side--inline">
+                                <span class="tm-dashboard-widget__status {{ message.readAt ? 'is-success' : 'is-gold' }}">
+                                    {{ message.readAt ? 'Lu' : 'Non lu' }}
+                                </span>
+                                <small>{{ message.createdAt ? message.createdAt|date('d/m H:i') : '—' }}</small>
+                            </div>
                         </div>
                     {% endfor %}
                 {% endif %}

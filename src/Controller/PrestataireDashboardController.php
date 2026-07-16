@@ -13,6 +13,7 @@ use App\Enum\QuoteRequestStatusEnum;
 use App\Form\MessageType;
 use App\Repository\ConversationRepository;
 use App\Repository\MessageRepository;
+use App\Repository\PrestataireAppointmentRepository;
 use App\Repository\PrestataireProfileRepository;
 use App\Repository\PrestataireServiceRepository;
 use App\Repository\QuoteRequestRepository;
@@ -53,8 +54,10 @@ final class PrestataireDashboardController extends AbstractController
      */
     public function index(
         Request $request,
+        EntityManagerInterface $entityManager,
         PrestataireProfileRepository $prestataireProfileRepository,
         PrestataireServiceRepository $prestataireServiceRepository,
+        PrestataireAppointmentRepository $prestataireAppointmentRepository,
         QuoteRequestRepository $quoteRequestRepository,
         ConversationRepository $conversationRepository,
         MessageRepository $messageRepository,
@@ -73,9 +76,11 @@ final class PrestataireDashboardController extends AbstractController
 
         return $this->render('prestataire_dashboard/prestataire_dashboard.html.twig', $this->buildDashboardViewData(
             request: $request,
+            entityManager: $entityManager,
             user: $user,
             prestataireProfile: $prestataireProfile,
             prestataireServiceRepository: $prestataireServiceRepository,
+            prestataireAppointmentRepository: $prestataireAppointmentRepository,
             quoteRequestRepository: $quoteRequestRepository,
             conversationRepository: $conversationRepository,
             messageRepository: $messageRepository,
@@ -101,6 +106,7 @@ final class PrestataireDashboardController extends AbstractController
         ConversationRepository $conversationRepository,
         MessageRepository $messageRepository,
         PrestataireServiceRepository $prestataireServiceRepository,
+        PrestataireAppointmentRepository $prestataireAppointmentRepository,
         ReviewRepository $reviewRepository,
         ConversationMessageManager $conversationMessageManager,
         PaginatorInterface $paginator,
@@ -192,9 +198,11 @@ final class PrestataireDashboardController extends AbstractController
             'prestataire_dashboard/prestataire_dashboard.html.twig',
             $this->buildDashboardViewData(
                 request: $request,
+                entityManager: $entityManager,
                 user: $user,
                 prestataireProfile: $prestataireProfile,
                 prestataireServiceRepository: $prestataireServiceRepository,
+                prestataireAppointmentRepository: $prestataireAppointmentRepository,
                 quoteRequestRepository: $quoteRequestRepository,
                 conversationRepository: $conversationRepository,
                 messageRepository: $messageRepository,
@@ -356,9 +364,11 @@ final class PrestataireDashboardController extends AbstractController
 
     private function buildDashboardViewData(
         Request $request,
+        EntityManagerInterface $entityManager,
         User $user,
         PrestataireProfile $prestataireProfile,
         PrestataireServiceRepository $prestataireServiceRepository,
+        PrestataireAppointmentRepository $prestataireAppointmentRepository,
         QuoteRequestRepository $quoteRequestRepository,
         ConversationRepository $conversationRepository,
         MessageRepository $messageRepository,
@@ -371,6 +381,7 @@ final class PrestataireDashboardController extends AbstractController
     ): array {
         $quoteSort = $this->resolveQuoteSort($request);
         $quoteOrderBy = $this->resolveQuoteOrderBy($quoteSort);
+        $activeTab = $forcedActiveTab ?? (string) $request->query->get('tab', 'dashboard');
         $conversations = $this->loadConversations($conversationRepository, $prestataireProfile);
         $activeConversation = $forcedActiveConversation ?? $this->resolveActiveConversation(
             $conversations,
@@ -385,18 +396,38 @@ final class PrestataireDashboardController extends AbstractController
             $messageFormView = $this->createMessageForm($activeConversation, new Message())->createView();
         }
 
+        if ('messages' === $activeTab) {
+            $this->markActiveConversationMessagesAsRead($activeConversation, $user, $entityManager);
+        }
+
         $completionReport = $this->prestataireProfileCompletionService->buildReport($user, $prestataireProfile);
         $currentSubscription = $subscriptionAccessManager->getCurrentUsableSubscription($prestataireProfile);
+        $recentQuoteRequests = $quoteRequestRepository->findRecentForPrestataireDashboard($prestataireProfile, 5);
+        $recentMessages = $messageRepository->findLatestForPrestataire($prestataireProfile, 5);
+        $recentReviews = $reviewRepository->findRecentForPrestataireDashboard($prestataireProfile, 5);
+        $upcomingAppointments = $prestataireAppointmentRepository->findUpcomingForDashboard((int) $prestataireProfile->getId(), 3);
+        $remainingCredits = $subscriptionAccessManager->getRemainingCredits($prestataireProfile);
+        $priorityAlerts = $this->buildPriorityAlerts(
+            prestataireProfile: $prestataireProfile,
+            user: $user,
+            quoteRequestRepository: $quoteRequestRepository,
+            messageRepository: $messageRepository,
+            currentSubscription: $currentSubscription,
+            remainingCredits: $remainingCredits,
+            upcomingAppointments: $upcomingAppointments,
+        );
 
         return [
             'user' => $user,
             'prestataireProfile' => $prestataireProfile,
             'completionReport' => $completionReport,
-            'recentQuoteRequests' => $quoteRequestRepository->findRecentForPrestataireDashboard($prestataireProfile, 5),
-            'recentMessages' => $messageRepository->findLatestForPrestataire($prestataireProfile, 5),
-            'recentReviews' => $reviewRepository->findRecentForPrestataireDashboard($prestataireProfile, 5),
+            'priorityAlerts' => $priorityAlerts,
+            'recentQuoteRequests' => $recentQuoteRequests,
+            'recentMessages' => $recentMessages,
+            'recentReviews' => $recentReviews,
+            'upcomingAppointments' => $upcomingAppointments,
             'currentSubscription' => $currentSubscription,
-            'remainingCredits' => $subscriptionAccessManager->getRemainingCredits($prestataireProfile),
+            'remainingCredits' => $remainingCredits,
             'prestations' => $prestataireServiceRepository->findBy(
                 ['prestataire' => $prestataireProfile],
                 ['updatedAt' => 'DESC', 'createdAt' => 'DESC']
@@ -417,9 +448,156 @@ final class PrestataireDashboardController extends AbstractController
             'conversations' => $conversations,
             'activeConversation' => $activeConversation,
             'messageForm' => $messageFormView,
-            'activeTab' => $forcedActiveTab ?? (string) $request->query->get('tab', 'dashboard'),
+            'activeTab' => $activeTab,
             'hasConversationPhotos' => $this->conversationHasPhotos($activeConversation),
         ];
+    }
+
+    private function markActiveConversationMessagesAsRead(
+        ?Conversation $activeConversation,
+        User $prestataireUser,
+        EntityManagerInterface $entityManager,
+    ): void {
+        if (!$activeConversation instanceof Conversation) {
+            return;
+        }
+
+        $now = new \DateTimeImmutable();
+        $hasUpdates = false;
+
+        foreach ($activeConversation->getMessages() as $message) {
+            if ($message->isSystem()) {
+                continue;
+            }
+
+            $author = $message->getAuthor();
+
+            if (!$author instanceof User || $author->getId() === $prestataireUser->getId()) {
+                continue;
+            }
+
+            if (null !== $message->getReadAt()) {
+                continue;
+            }
+
+            $message->setReadAt($now);
+            $hasUpdates = true;
+        }
+
+        if ($hasUpdates) {
+            $entityManager->flush();
+        }
+    }
+
+    /**
+     * @param list<\App\Entity\PrestataireAppointment> $upcomingAppointments
+     *
+     * @return list<array{tone:string,title:string,text:string,href:string,label:string}>
+     */
+    private function buildPriorityAlerts(
+        PrestataireProfile $prestataireProfile,
+        User $user,
+        QuoteRequestRepository $quoteRequestRepository,
+        MessageRepository $messageRepository,
+        mixed $currentSubscription,
+        int $remainingCredits,
+        array $upcomingAppointments,
+    ): array {
+        $alerts = [];
+
+        $unreadMessagesCount = $messageRepository->countUnreadIncomingForPrestataire($prestataireProfile, $user);
+        if ($unreadMessagesCount > 0) {
+            $alerts[] = [
+                'tone' => 'gold',
+                'title' => 'Messages à lire',
+                'text' => sprintf(
+                    '%d message%s client attend%s votre lecture.',
+                    $unreadMessagesCount,
+                    $unreadMessagesCount > 1 ? 's' : '',
+                    $unreadMessagesCount > 1 ? 'ent' : ''
+                ),
+                'href' => $this->generateUrl('app_prestataire_dashboard', ['tab' => 'messages']) . '#messages-main-panel',
+                'label' => 'Ouvrir la messagerie',
+            ];
+        }
+
+        $submittedRequestsCount = $quoteRequestRepository->countForPrestataireByStatuses(
+            $prestataireProfile,
+            [QuoteRequestStatusEnum::SUBMITTED]
+        );
+        if ($submittedRequestsCount > 0) {
+            $alerts[] = [
+                'tone' => 'danger',
+                'title' => 'Demandes en attente',
+                'text' => sprintf(
+                    '%d demande%s de devis attend%s encore votre prise en charge.',
+                    $submittedRequestsCount,
+                    $submittedRequestsCount > 1 ? 's' : '',
+                    $submittedRequestsCount > 1 ? 'ent' : ''
+                ),
+                'href' => $this->generateUrl('app_prestataire_dashboard', ['tab' => 'demandes']) . '#demandes-main-panel',
+                'label' => 'Traiter les demandes',
+            ];
+        }
+
+        $acceptedRequestsCount = $quoteRequestRepository->countForPrestataireByStatuses(
+            $prestataireProfile,
+            [QuoteRequestStatusEnum::ACCEPTED]
+        );
+        if ($acceptedRequestsCount > 0) {
+            $alerts[] = [
+                'tone' => 'info',
+                'title' => 'Devis à préparer',
+                'text' => sprintf(
+                    '%d dossier%s accepté%s pour étude mérite%s maintenant un chiffrage.',
+                    $acceptedRequestsCount,
+                    $acceptedRequestsCount > 1 ? 's' : '',
+                    $acceptedRequestsCount > 1 ? 's' : '',
+                    $acceptedRequestsCount > 1 ? 'nt' : ''
+                ),
+                'href' => $this->generateUrl('app_prestataire_dashboard', ['tab' => 'demandes']) . '#demandes-main-panel',
+                'label' => 'Reprendre les dossiers',
+            ];
+        }
+
+        if ([] !== $upcomingAppointments) {
+            $nextAppointment = $upcomingAppointments[0];
+            $nextStartsAt = $nextAppointment->getStartsAt();
+
+            if ($nextStartsAt instanceof \DateTimeInterface) {
+                $hoursUntil = (int) floor(($nextStartsAt->getTimestamp() - time()) / 3600);
+
+                if ($hoursUntil <= 24) {
+                    $alerts[] = [
+                        'tone' => 'success',
+                        'title' => 'Rendez-vous imminent',
+                        'text' => sprintf(
+                            '"%s" commence le %s.',
+                            $nextAppointment->getTitle() ?? 'Votre prochain rendez-vous',
+                            $nextStartsAt->format('d/m à H:i')
+                        ),
+                        'href' => $this->generateUrl('app_prestataire_dashboard', ['tab' => 'calendrier']) . '#calendrier-main-panel',
+                        'label' => 'Voir l’agenda',
+                    ];
+                }
+            }
+        }
+
+        if ($currentSubscription && $remainingCredits <= 2) {
+            $alerts[] = [
+                'tone' => 'warning',
+                'title' => 'Crédits faibles',
+                'text' => sprintf(
+                    'Il ne vous reste plus que %d crédit%s sur votre abonnement actif.',
+                    $remainingCredits,
+                    $remainingCredits > 1 ? 's' : ''
+                ),
+                'href' => $this->generateUrl('app_subscription_index'),
+                'label' => 'Gérer l’abonnement',
+            ];
+        }
+
+        return array_slice($alerts, 0, 3);
     }
 
     private function resolveQuoteSort(Request $request): string

@@ -32,4 +32,26 @@ class PrestataireAppointmentRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return list<PrestataireAppointment>
+     */
+    public function findUpcomingForDashboard(int $prestataireId, int $limit = 3): array
+    {
+        return $this->createQueryBuilder('pa')
+            ->addSelect('client', 'clientAccount', 'prestation', 'service')
+            ->leftJoin('pa.client', 'client')
+            ->leftJoin('client.account', 'clientAccount')
+            ->leftJoin('pa.prestation', 'prestation')
+            ->leftJoin('prestation.service', 'service')
+            ->andWhere('pa.prestataire = :prestataireId')
+            ->andWhere('pa.endsAt >= :now')
+            ->setParameter('prestataireId', $prestataireId)
+            ->setParameter('now', new \DateTimeImmutable())
+            ->orderBy('pa.startsAt', 'ASC')
+            ->addOrderBy('pa.id', 'ASC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }

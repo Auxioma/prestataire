@@ -534,6 +534,96 @@
     align-items: stretch;
 }
 
+.tm-dashboard-priority-band {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.tm-dashboard-priority-band__item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.05rem;
+    border-radius: 20px;
+    border: 1px solid rgba(6, 27, 86, 0.08);
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: 0 12px 24px rgba(11, 44, 120, 0.07);
+}
+
+.tm-dashboard-priority-band__item.is-danger {
+    background: linear-gradient(180deg, #fff7f7 0%, #fff1f2 100%);
+    border-color: rgba(225, 29, 72, 0.12);
+}
+
+.tm-dashboard-priority-band__item.is-gold,
+.tm-dashboard-priority-band__item.is-warning {
+    background: linear-gradient(180deg, #fffaf0 0%, #fff6df 100%);
+    border-color: rgba(180, 83, 9, 0.12);
+}
+
+.tm-dashboard-priority-band__item.is-info {
+    background: linear-gradient(180deg, #f0f9ff 0%, #eaf6ff 100%);
+    border-color: rgba(14, 116, 144, 0.12);
+}
+
+.tm-dashboard-priority-band__item.is-success {
+    background: linear-gradient(180deg, #f3fff8 0%, #eafcf1 100%);
+    border-color: rgba(22, 163, 74, 0.12);
+}
+
+.tm-dashboard-priority-band__content {
+    min-width: 0;
+}
+
+.tm-dashboard-priority-band__eyebrow {
+    display: inline-block;
+    margin-bottom: 0.35rem;
+    color: #0c2f86;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.tm-dashboard-priority-band__content h3 {
+    margin: 0 0 0.25rem;
+    color: #081a47;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.tm-dashboard-priority-band__content p {
+    margin: 0;
+    color: #5b6475;
+    font-size: 0.84rem;
+    line-height: 1.45;
+}
+
+.tm-dashboard-priority-band__link {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0.55rem 0.9rem;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #0c2f86;
+    border: 1px solid rgba(12, 47, 134, 0.12);
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.tm-dashboard-priority-band__link:hover {
+    color: #1742a3;
+}
+
 .tm-dashboard-widget {
     position: relative;
     overflow: hidden;
@@ -738,6 +828,13 @@
     width: 100%;
 }
 
+.tm-dashboard-widget__item-side--inline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
 .tm-dashboard-widget__status {
     display: inline-flex;
     align-items: center;
@@ -748,6 +845,55 @@
     border: 1px solid rgba(180, 83, 9, 0.12);
     font-size: 0.68rem;
     font-weight: 800;
+}
+
+.tm-dashboard-widget__status.is-neutral {
+    background: linear-gradient(180deg, #f4f6fb 0%, #e8edf7 100%);
+    color: #4b5563;
+    border-color: rgba(100, 116, 139, 0.16);
+}
+
+.tm-dashboard-widget__status.is-info {
+    background: linear-gradient(180deg, #e7f6f5 0%, #d7f1ef 100%);
+    color: #0f766e;
+    border-color: rgba(15, 118, 110, 0.16);
+}
+
+.tm-dashboard-widget__status.is-warning,
+.tm-dashboard-widget__status.is-gold {
+    background: linear-gradient(180deg, #fff7e6 0%, #feefbf 100%);
+    color: #9a6700;
+    border-color: rgba(180, 83, 9, 0.16);
+}
+
+.tm-dashboard-widget__status.is-success {
+    background: linear-gradient(180deg, #ecfdf3 0%, #daf7e6 100%);
+    color: #15803d;
+    border-color: rgba(21, 128, 61, 0.16);
+}
+
+.tm-dashboard-widget__status--appointment.is-pending {
+    background: linear-gradient(180deg, #fff7e6 0%, #feefbf 100%);
+    color: #9a6700;
+    border-color: rgba(180, 83, 9, 0.16);
+}
+
+.tm-dashboard-widget__status--appointment.is-confirmed {
+    background: linear-gradient(180deg, #e7f6f5 0%, #d7f1ef 100%);
+    color: #0f766e;
+    border-color: rgba(15, 118, 110, 0.16);
+}
+
+.tm-dashboard-widget__status--appointment.is-completed {
+    background: linear-gradient(180deg, #ecf4ff 0%, #dce9ff 100%);
+    color: #1d4ed8;
+    border-color: rgba(29, 78, 216, 0.16);
+}
+
+.tm-dashboard-widget__status--appointment.is-cancelled {
+    background: linear-gradient(180deg, #fff0f1 0%, #ffd9de 100%);
+    color: #be123c;
+    border-color: rgba(190, 18, 60, 0.16);
 }
 
 .tm-dashboard-widget__subscription {
@@ -802,24 +948,46 @@
     letter-spacing: 0.08em;
 }
 
+.tm-dashboard-widget__subsection {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(6, 27, 86, 0.08);
+}
+
+.tm-dashboard-widget__subsection-title {
+    margin-bottom: 0.55rem;
+    color: #102554;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
 .tm-dashboard-widget__calendar {
     min-height: 290px;
     margin-bottom: 0.5rem;
     overflow: hidden;
     border-radius: 16px;
-    border: 1px solid rgba(6, 27, 86, 0.08);
-    background: #fff;
-    padding: 0.45rem;
+    border: 1px solid rgba(15, 118, 110, 0.10);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(240, 253, 250, 0.94) 100%);
+    padding: 0.55rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .tm-dashboard-widget__calendar .fc-theme-standard td,
 .tm-dashboard-widget__calendar .fc-theme-standard th,
 .tm-dashboard-widget__calendar .fc-theme-standard .fc-scrollgrid {
-    border-color: rgba(6, 27, 86, 0.08);
+    border-color: rgba(15, 118, 110, 0.08);
 }
 
 .tm-dashboard-widget__calendar .fc {
+    --fc-border-color: rgba(15, 118, 110, 0.10);
+    --fc-page-bg-color: transparent;
+    --fc-neutral-bg-color: rgba(240, 253, 250, 0.55);
+    --fc-list-event-hover-bg-color: rgba(15, 118, 110, 0.06);
+    --fc-today-bg-color: rgba(45, 212, 191, 0.12);
     font-size: 0.74rem;
+    font-family: "Plus Jakarta Sans", sans-serif;
 }
 
 .tm-dashboard-widget__calendar .fc-toolbar {
@@ -827,24 +995,32 @@
 }
 
 .tm-dashboard-widget__calendar .fc-toolbar-title {
-    font-size: 0.88rem !important;
+    color: #0f3b38;
+    font-size: 0.95rem !important;
     font-weight: 800;
+    letter-spacing: -0.02em;
 }
 
 .tm-dashboard-widget__calendar .fc-button {
-    padding: 0.18rem 0.4rem !important;
-    font-size: 0.64rem !important;
+    border-radius: 999px !important;
+    padding: 0.26rem 0.55rem !important;
+    font-size: 0.72rem !important;
+    font-weight: 800 !important;
+    text-transform: none !important;
 }
 
 .tm-dashboard-widget__calendar .fc .fc-button-primary {
-    background: #0b2c78;
-    border-color: #0b2c78;
+    background: #ffffff;
+    border-color: rgba(15, 118, 110, 0.14);
+    color: #0f3b38;
+    box-shadow: none;
 }
 
 .tm-dashboard-widget__calendar .fc .fc-button-primary:not(:disabled):hover,
 .tm-dashboard-widget__calendar .fc .fc-button-primary:not(:disabled):focus {
-    background: #1742a3;
-    border-color: #1742a3;
+    background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+    border-color: transparent;
+    color: #ffffff;
 }
 
 .tm-dashboard-widget__calendar .fc-view-harness {
@@ -852,17 +1028,33 @@
 }
 
 .tm-dashboard-widget__calendar .fc-daygrid-day-frame {
-    min-height: 2rem;
+    min-height: 2.5rem;
 }
 
 .tm-dashboard-widget__calendar .fc-col-header-cell-cushion,
 .tm-dashboard-widget__calendar .fc-daygrid-day-number {
     padding: 0.2rem !important;
+    color: #0f3b38;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.tm-dashboard-widget__calendar .fc-daygrid-day.fc-day-today {
+    border-radius: 12px;
 }
 
 .tm-dashboard-widget__calendar .fc-event {
-    font-size: 0.62rem;
-    padding: 0.05rem 0.15rem;
+    border: 0;
+    border-radius: 10px;
+    box-shadow: 0 6px 14px rgba(15, 118, 110, 0.16);
+    font-size: 0.67rem;
+    font-weight: 700;
+    padding: 0.08rem 0.2rem;
+}
+
+.tm-dashboard-widget__calendar .fc-daygrid-more-link {
+    color: #0f766e;
+    font-weight: 700;
 }
 
 .tm-dashboard-widget__footer {
@@ -891,6 +1083,14 @@
 }
 
 @media (max-width: 767.98px) {
+    .tm-dashboard-priority-band {
+        grid-template-columns: 1fr;
+    }
+
+    .tm-dashboard-priority-band__item {
+        flex-direction: column;
+    }
+
     .tm-dashboard-widget__completion,
     .tm-dashboard-widget__subscription {
         grid-template-columns: 1fr;

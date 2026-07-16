@@ -100,4 +100,23 @@ final class QuoteRequestRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @param list<QuoteRequestStatusEnum> $statuses
+     */
+    public function countForPrestataireByStatuses(
+        PrestataireProfile $prestataireProfile,
+        array $statuses,
+    ): int {
+        return (int) $this->createQueryBuilder('qr')
+            ->select('COUNT(qr.id)')
+            ->andWhere('qr.prestataire = :prestataire')
+            ->andWhere('qr.deletedAt IS NULL')
+            ->andWhere('qr.archivedByPrestataireAt IS NULL')
+            ->andWhere('qr.status IN (:statuses)')
+            ->setParameter('prestataire', $prestataireProfile)
+            ->setParameter('statuses', $statuses)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }
