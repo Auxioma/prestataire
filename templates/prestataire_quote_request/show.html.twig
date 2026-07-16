@@ -137,9 +137,18 @@
 										</button>
 									</form>
 
-									<form method="post" action="{{ path('app_prestataire_quote_request_deny', { slug: quoteRequest.slug }) }}">
+									<form
+										method="post"
+										action="{{ path('app_prestataire_quote_request_deny', { slug: quoteRequest.slug }) }}"
+										data-controller="confirm-dialog"
+										data-action="submit->confirm-dialog#confirm"
+										data-confirm-dialog-title-value="Refuser cette demande ?"
+										data-confirm-dialog-text-value="Le client sera informé de votre refus."
+										data-confirm-dialog-confirm-button-text-value="Oui, refuser"
+										data-confirm-dialog-cancel-button-text-value="Annuler"
+									>
 										<input type="hidden" name="_token" value="{{ csrf_token('deny-quote-request-' ~ quoteRequest.id) }}">
-										<button type="submit" class="btn btn-outline-danger" onclick="return confirm('Confirmez-vous le refus de cette demande ?');">
+										<button type="submit" class="btn btn-outline-danger">
 											Refuser la demande
 										</button>
 									</form>
@@ -168,8 +177,13 @@
 									{% if linkedProposal.invoice and linkedProposal.invoice.isIssued and linkedProposal.archivedByPrestataireAt is null and not isArchivedView %}
 										<form method="post"
 										      action="{{ path('app_prestataire_quote_proposal_archive', { publicReference: linkedProposal.publicReference }) }}"
-										      onsubmit="return confirm('Archiver ce devis et cette demande ? La facture restera consultable depuis les archives.');"
-										      class="mt-3">
+										      class="mt-3"
+										      data-controller="confirm-dialog"
+										      data-action="submit->confirm-dialog#confirm"
+										      data-confirm-dialog-title-value="Archiver ce dossier ?"
+										      data-confirm-dialog-text-value="Le devis et la demande passeront dans vos archives. La facture restera consultable."
+										      data-confirm-dialog-confirm-button-text-value="Archiver"
+										      data-confirm-dialog-cancel-button-text-value="Annuler">
 											<input type="hidden" name="_token" value="{{ csrf_token('archive_quote_proposal_' ~ linkedProposal.id) }}">
 											<button type="submit" class="btn btn-outline-secondary w-100">
 												Archiver

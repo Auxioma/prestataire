@@ -4,7 +4,7 @@
 
 <div class="row g-3 tm-dashboard-widgets-grid">
     <div class="col-12 col-md-6 col-xl-4">
-        <article class="card tm-card p-3 tm-dashboard-widget h-100">
+        <article class="card tm-card p-3 tm-dashboard-widget tm-dashboard-widget--profile h-100">
             <div class="tm-dashboard-widget__topline">
                 <span class="tm-dashboard-widget__eyebrow">Profil</span>
                 <span class="tm-dashboard-widget__meta">{{ completionReport.completedSections }}/{{ completionReport.totalSections }} sections</span>
@@ -65,7 +65,7 @@
     </div>
 
     <div class="col-12 col-md-6 col-xl-4">
-        <article class="card tm-card p-3 tm-dashboard-widget h-100">
+        <article class="card tm-card p-3 tm-dashboard-widget tm-dashboard-widget--quotes h-100">
             <div class="tm-dashboard-widget__topline">
                 <span class="tm-dashboard-widget__eyebrow">Devis</span>
                 <span class="tm-dashboard-widget__meta">{{ recentQuoteRequests|length }} / 5</span>
@@ -102,7 +102,7 @@
     </div>
 
     <div class="col-12 col-md-6 col-xl-4">
-        <article class="card tm-card p-3 tm-dashboard-widget h-100">
+        <article class="card tm-card p-3 tm-dashboard-widget tm-dashboard-widget--calendar h-100">
             <div class="tm-dashboard-widget__topline">
                 <span class="tm-dashboard-widget__eyebrow">Agenda</span>
                 <span class="tm-dashboard-widget__meta">{{ "now"|date('F Y')|capitalize }}</span>
@@ -127,7 +127,7 @@
     </div>
 
     <div class="col-12 col-md-6 col-xl-4">
-        <article class="card tm-card p-3 tm-dashboard-widget h-100">
+        <article class="card tm-card p-3 tm-dashboard-widget tm-dashboard-widget--subscription h-100">
             <div class="tm-dashboard-widget__topline">
                 <span class="tm-dashboard-widget__eyebrow">Abonnement</span>
                 <span class="tm-dashboard-widget__meta">{{ remainingCredits }} crédit{{ remainingCredits > 1 ? 's' : '' }}</span>
@@ -170,7 +170,7 @@
     </div>
 
     <div class="col-12 col-md-6 col-xl-4">
-        <article class="card tm-card p-3 tm-dashboard-widget h-100">
+        <article class="card tm-card p-3 tm-dashboard-widget tm-dashboard-widget--messages h-100">
             <div class="tm-dashboard-widget__topline">
                 <span class="tm-dashboard-widget__eyebrow">Messagerie</span>
                 <span class="tm-dashboard-widget__meta">{{ recentMessages|length }} / 5</span>
@@ -215,7 +215,7 @@
     </div>
 
     <div class="col-12 col-md-6 col-xl-4">
-        <article class="card tm-card p-3 tm-dashboard-widget h-100">
+        <article class="card tm-card p-3 tm-dashboard-widget tm-dashboard-widget--reviews h-100">
             <div class="tm-dashboard-widget__topline">
                 <span class="tm-dashboard-widget__eyebrow">Avis</span>
                 <span class="tm-dashboard-widget__meta">{{ prestataireProfile.reviewsCount|default(0) }} avis</span>

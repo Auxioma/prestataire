@@ -67,7 +67,7 @@
 								{{ proposal.acceptedAt|date('d/m/Y à H:i') }}
 							</div>
 						{% elseif proposal.status is defined and proposal.status.value == 'finalized' and not isArchivedView %}
-							<form method="post" action="{{ path('app_quote_request_quote_proposal_accept', { publicReference: proposal.publicReference }) }}" class="qp-inline-form" onsubmit="return confirm('Confirmer l’acceptation de ce devis ? Cette action est définitive et le devis ne pourra plus être modifié par le prestataire.');">
+							<form method="post" action="{{ path('app_quote_request_quote_proposal_accept', { publicReference: proposal.publicReference }) }}" class="qp-inline-form" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Accepter ce devis ?" data-confirm-dialog-text-value="Cette action est définitive et le devis ne pourra plus être modifié par le prestataire." data-confirm-dialog-confirm-button-text-value="Accepter" data-confirm-dialog-cancel-button-text-value="Annuler">
 								<input type="hidden" name="_token" value="{{ csrf_token('accept_quote_proposal_' ~ proposal.id) }}">
 
 								<button type="submit" class="qp-btn qp-btn-prop--success">

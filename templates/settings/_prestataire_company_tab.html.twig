@@ -510,7 +510,12 @@
                                                     method="post"
                                                     action="{{ path('app_prestataire_document_delete', { id: document.id }) }}"
                                                     class="m-0"
-                                                    onsubmit="return confirm('Supprimer ce document ?');"
+                                                    data-controller="confirm-dialog"
+                                                    data-action="submit->confirm-dialog#confirm"
+                                                    data-confirm-dialog-title-value="Supprimer ce document ?"
+                                                    data-confirm-dialog-text-value="Le document sera retiré de votre profil."
+                                                    data-confirm-dialog-confirm-button-text-value="Supprimer"
+                                                    data-confirm-dialog-cancel-button-text-value="Annuler"
                                                 >
                                                     <input
                                                         type="hidden"

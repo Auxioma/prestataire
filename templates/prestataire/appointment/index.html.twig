@@ -139,7 +139,7 @@
                                                     <a href="{{ path('app_prestataire_appointment_edit', { id: appointment.id }) }}" class="btn btn-sm btn-primary">
                                                         Modifier
                                                     </a>
-                                                    <form method="post" action="{{ path('app_prestataire_appointment_delete', { id: appointment.id }) }}" class="d-inline" data-turbo="false" onsubmit="return confirm('Confirmer la suppression de ce rendez-vous ?');">
+                                                    <form method="post" action="{{ path('app_prestataire_appointment_delete', { id: appointment.id }) }}" class="d-inline" data-turbo="false" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Supprimer ce rendez-vous ?" data-confirm-dialog-text-value="Cette suppression est définitive." data-confirm-dialog-confirm-button-text-value="Supprimer" data-confirm-dialog-cancel-button-text-value="Annuler">
                                                         <input type="hidden" name="_token" value="{{ csrf_token('delete_appointment_' ~ appointment.id) }}">
                                                         <button type="submit" class="btn btn-sm btn-outline-danger">
                                                             Supprimer

@@ -117,7 +117,7 @@
                                     Modifier le rendez-vous
                                 </a>
 
-                                <form method="post" action="{{ path('app_prestataire_appointment_delete', { id: appointment.id }) }}" data-turbo="false" onsubmit="return confirm('Confirmer la suppression de ce rendez-vous ?');">
+                                <form method="post" action="{{ path('app_prestataire_appointment_delete', { id: appointment.id }) }}" data-turbo="false" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Supprimer ce rendez-vous ?" data-confirm-dialog-text-value="Cette suppression est définitive." data-confirm-dialog-confirm-button-text-value="Supprimer" data-confirm-dialog-cancel-button-text-value="Annuler">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete_appointment_' ~ appointment.id) }}">
                                     <button type="submit" class="btn btn-danger w-100">
                                         Supprimer

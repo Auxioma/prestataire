@@ -123,8 +123,13 @@
                             {% if quoteRequest.canBeDeleted %}
                                 <form method="post"
                                       action="{{ path('app_prestataire_quote_request_delete', { slug: quoteRequest.slug }) }}"
-                                      onsubmit="return confirm('Supprimer cette demande de devis ?');"
-                                      class="w-100">
+                                      class="w-100"
+                                      data-controller="confirm-dialog"
+                                      data-action="submit->confirm-dialog#confirm"
+                                      data-confirm-dialog-title-value="Supprimer cette demande ?"
+                                      data-confirm-dialog-text-value="Cette suppression est définitive."
+                                      data-confirm-dialog-confirm-button-text-value="Supprimer"
+                                      data-confirm-dialog-cancel-button-text-value="Annuler">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete-quote-request-' ~ quoteRequest.id) }}">
                                     <button type="submit" class="btn tm-quote-index-btn tm-quote-index-btn--danger w-100">
                                         Supprimer
@@ -133,8 +138,13 @@
                             {% elseif quoteRequest.archivedByPrestataireAt is null %}
                                 <form method="post"
                                       action="{{ path('app_prestataire_quote_request_archive', { slug: quoteRequest.slug }) }}"
-                                      onsubmit="return confirm('Archiver cette demande de devis ?');"
-                                      class="w-100">
+                                      class="w-100"
+                                      data-controller="confirm-dialog"
+                                      data-action="submit->confirm-dialog#confirm"
+                                      data-confirm-dialog-title-value="Archiver cette demande ?"
+                                      data-confirm-dialog-text-value="Vous pourrez la retrouver ensuite dans vos archives."
+                                      data-confirm-dialog-confirm-button-text-value="Archiver"
+                                      data-confirm-dialog-cancel-button-text-value="Annuler">
                                     <input type="hidden" name="_token" value="{{ csrf_token('archive-quote-request-' ~ quoteRequest.id) }}">
                                     <button type="submit" class="btn tm-quote-index-btn tm-quote-index-btn--ghost w-100">
                                         Archiver

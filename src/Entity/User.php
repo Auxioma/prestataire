@@ -575,7 +575,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return match ($type) {
             NotificationTypeEnum::QUOTE_REQUEST_RECEIVED => $this->notifyOnQuoteRequestReceived,
             NotificationTypeEnum::MESSAGE_RECEIVED => $this->notifyOnMessageReceived,
-            NotificationTypeEnum::QUOTE_REQUEST_ACCEPTED => $this->notifyOnQuoteRequestAccepted,
+            NotificationTypeEnum::QUOTE_REQUEST_ACCEPTED,
+            NotificationTypeEnum::QUOTE_PROPOSAL_RECEIVED => $this->notifyOnQuoteRequestAccepted,
             NotificationTypeEnum::REVIEW_RECEIVED => $this->notifyOnReviewReceived,
             default => true,
         };

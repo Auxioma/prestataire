@@ -36,7 +36,12 @@
                         <form
                             method="post"
                             action="{{ path('app_notification_delete_all') }}"
-                            onsubmit="return confirm('Supprimer toutes les notifications ?');"
+                            data-controller="confirm-dialog"
+                            data-action="submit->confirm-dialog#confirm"
+                            data-confirm-dialog-title-value="Tout supprimer ?"
+                            data-confirm-dialog-text-value="Toutes vos notifications seront supprimées."
+                            data-confirm-dialog-confirm-button-text-value="Tout supprimer"
+                            data-confirm-dialog-cancel-button-text-value="Annuler"
                         >
                             <input type="hidden" name="_token" value="{{ csrf_token('delete-all-notifications') }}">
                             <button type="submit" class="c-notifications-btn c-notifications-btn--ghost-light">
@@ -95,7 +100,12 @@
                             <form
                                 method="post"
                                 action="{{ path('app_notification_delete', {id: notification.id}) }}"
-                                onsubmit="return confirm('Supprimer cette notification ?');"
+                                data-controller="confirm-dialog"
+                                data-action="submit->confirm-dialog#confirm"
+                                data-confirm-dialog-title-value="Supprimer cette notification ?"
+                                data-confirm-dialog-text-value="Elle sera retirée de votre liste."
+                                data-confirm-dialog-confirm-button-text-value="Supprimer"
+                                data-confirm-dialog-cancel-button-text-value="Annuler"
                             >
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete-notification-' ~ notification.id) }}">
                                 <button type="submit" class="c-notifications-btn c-notifications-btn--danger-ghost">

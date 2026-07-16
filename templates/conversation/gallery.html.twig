@@ -85,8 +85,13 @@
                                         <form
                                             method="post"
                                             action="{{ path(deleteRouteName, { id: mediaItems[0].attachment.id }) }}"
-                                            onsubmit="return confirm('Supprimer cette photo ?');"
                                             data-conversation-gallery-target="deleteForm"
+                                            data-controller="confirm-dialog"
+                                            data-action="submit->confirm-dialog#confirm"
+                                            data-confirm-dialog-title-value="Supprimer cette photo ?"
+                                            data-confirm-dialog-text-value="Cette photo sera retirée de la conversation."
+                                            data-confirm-dialog-confirm-button-text-value="Supprimer"
+                                            data-confirm-dialog-cancel-button-text-value="Annuler"
                                         >
                                             <input
                                                 type="hidden"

@@ -8,7 +8,7 @@
 	{% set isReadOnlyView = isReadOnlyView|default(false) %}
 	{% set viewerContext = viewerContext|default('client') %}
 	{% set isPrestataireView = viewerContext == 'prestataire' %}
-	{% set isAcceptedProposal = proposal.status.value == 'accepted' %}
+	{% set isAcceptedProposal = proposal.acceptedAt is not null %}
 	{% set canManageProposal = isPrestataireView and not isReadOnlyView and proposal.status.value != 'archived' and proposal.status.value != 'deleted' %}
 	{% set canEditProposal = canManageProposal and not isAcceptedProposal %}
 	{% set resolvedDocument = resolvedDocument|default(null) %}
@@ -137,7 +137,7 @@
 					{% endif %}
 
 					{% if isPrestataireView and not isReadOnlyView and proposal.invoice and proposal.invoice.isIssued and proposal.archivedByPrestataireAt is null %}
-						<form method="post" action="{{ path('app_prestataire_quote_proposal_archive', { publicReference: proposal.publicReference }) }}" class="qp-inline-form" onsubmit="return confirm('Archiver ce devis ? La facture restera consultable depuis les archives.');">
+						<form method="post" action="{{ path('app_prestataire_quote_proposal_archive', { publicReference: proposal.publicReference }) }}" class="qp-inline-form" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Archiver ce devis ?" data-confirm-dialog-text-value="La facture restera consultable depuis vos archives." data-confirm-dialog-confirm-button-text-value="Archiver" data-confirm-dialog-cancel-button-text-value="Annuler">
 							<input type="hidden" name="_token" value="{{ csrf_token('archive_quote_proposal_' ~ proposal.id) }}">
 							<button type="submit" class="qp-btn qp-btn--ghost">
 								Archiver
@@ -155,7 +155,7 @@
 					</div>
 
 					{% if not isReadOnlyView and proposal.status.value == 'draft' %}
-						<form method="post" action="{{ path('app_prestataire_quote_proposal_finalize', { publicReference: proposal.publicReference }) }}" onsubmit="return confirm('Finaliser ce devis et le rendre visible au client ?');" class="qp-inline-form qp-banner__action">
+						<form method="post" action="{{ path('app_prestataire_quote_proposal_finalize', { publicReference: proposal.publicReference }) }}" class="qp-inline-form qp-banner__action" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Finaliser ce devis ?" data-confirm-dialog-text-value="Le devis deviendra visible par le client." data-confirm-dialog-confirm-button-text-value="Finaliser" data-confirm-dialog-cancel-button-text-value="Annuler">
 							<input type="hidden" name="_token" value="{{ csrf_token('finalize-quote-proposal-' ~ proposal.id) }}">
 							<button type="submit" class="qp-btn qp-btn--success">
 								Finaliser

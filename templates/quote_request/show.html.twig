@@ -278,7 +278,7 @@
 													{% endif %}
 
 													{% if not quoteResponse.acceptedAt and quoteResponse.status.value == 'finalized' and not isArchivedView %}
-														<form method="post" action="{{ path('app_quote_request_quote_proposal_accept', { publicReference: quoteResponse.publicReference }) }}" class="d-inline-flex" onsubmit="return confirm('Confirmer l’acceptation définitive de ce devis ? Cette action est irréversible et aucune modification ne pourra ensuite être effectuée par le prestataire ou par vous-même.');">
+														<form method="post" action="{{ path('app_quote_request_quote_proposal_accept', { publicReference: quoteResponse.publicReference }) }}" class="d-inline-flex" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Accepter ce devis ?" data-confirm-dialog-text-value="Cette action est irréversible et aucune modification ne pourra ensuite être effectuée par le prestataire ou par vous-même." data-confirm-dialog-confirm-button-text-value="Accepter" data-confirm-dialog-cancel-button-text-value="Annuler">
 															<input type="hidden" name="_token" value="{{ csrf_token('accept_quote_proposal_' ~ quoteResponse.id) }}">
 															<button type="submit" class="tm-client-quote-icon-btn tm-client-quote-icon-btn--accept">
 																<i class="fas fa-circle-check" aria-hidden="true"></i>
@@ -732,7 +732,12 @@
 								{% if hasIssuedInvoice and not isArchivedView %}
 									<form method="post"
 									      action="{{ path('app_quote_request_mark_as_archived', { slug: quoteRequest.slug }) }}"
-									      onsubmit="return confirm('Archiver cette demande ? Vous pourrez toujours consulter le devis et la facture dans vos archives.');">
+									      data-controller="confirm-dialog"
+									      data-action="submit->confirm-dialog#confirm"
+									      data-confirm-dialog-title-value="Archiver cette demande ?"
+									      data-confirm-dialog-text-value="Vous pourrez toujours consulter le devis et la facture dans vos archives."
+									      data-confirm-dialog-confirm-button-text-value="Archiver"
+									      data-confirm-dialog-cancel-button-text-value="Annuler">
 										<input type="hidden" name="_token" value="{{ csrf_token('archive-quote-request-' ~ quoteRequest.id) }}">
 										<button type="submit" class="btn tm-client-quotes-btn tm-client-quotes-btn--ghost w-100">
 											Archiver

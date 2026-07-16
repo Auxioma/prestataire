@@ -114,7 +114,7 @@
 						</div>
 
 						<div class="tm-quote-panel__body">
-							{{ form_start(form, { attr: { id: 'invoice-draft-form', class: 'tm-quote-form' } }) }}
+							{{ form_start(form, { attr: { id: 'invoice-draft-form', class: 'tm-quote-form', 'data-controller': 'confirm-dialog', 'data-action': 'submit->confirm-dialog#confirm' } }) }}
 
 							{% if form.vars.errors|length > 0 %}
 								<div class="tm-quote-form__global-errors">{{ form_errors(form) }}</div>
@@ -244,7 +244,10 @@
 										name="issue_invoice"
 										value="1"
 										class="tm-quote-btn tm-quote-btn--primary"
-										onclick="return confirm('Émettre définitivement cette facture ? Elle sera ensuite visible par le client et ne pourra plus être modifiée.');"
+										data-confirm-dialog-title-value="Émettre cette facture ?"
+										data-confirm-dialog-text-value="Elle deviendra visible par le client et ne pourra plus être modifiée ensuite."
+										data-confirm-dialog-confirm-button-text-value="Émettre"
+										data-confirm-dialog-cancel-button-text-value="Annuler"
 									>
 										Émettre la facture
 									</button>

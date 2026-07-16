@@ -139,14 +139,14 @@
 
 
                                     {% if quoteRequest.canBeDeleted %}
-                                        <form method="post" action="{{ path('app_quote_request_delete', { slug: quoteRequest.slug }) }}" onsubmit="return confirm('Supprimer définitivement cette demande de devis ? Cette action est irréversible.');" class="c-client-quotes-card__form">
+                                        <form method="post" action="{{ path('app_quote_request_delete', { slug: quoteRequest.slug }) }}" class="c-client-quotes-card__form" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Supprimer cette demande ?" data-confirm-dialog-text-value="Cette action est irréversible." data-confirm-dialog-confirm-button-text-value="Supprimer" data-confirm-dialog-cancel-button-text-value="Annuler">
                                             <input type="hidden" name="_token" value="{{ csrf_token('delete-quote-request-' ~ quoteRequest.id) }}">
                                             <button type="submit" class="c-client-quotes-btn c-client-quotes-btn--danger">
                                                 Supprimer la demande
                                             </button>
                                         </form>
                                     {% elseif quoteRequest.archivedByClientAt is null %}
-                                        <form method="post" action="{{ path('app_quote_request_mark_as_archived', { slug: quoteRequest.slug }) }}" onsubmit="return confirm('Archiver cette demande ? Vous pourrez la consulter plus tard dans votre historique.');" class="c-client-quotes-card__form">
+                                        <form method="post" action="{{ path('app_quote_request_mark_as_archived', { slug: quoteRequest.slug }) }}" class="c-client-quotes-card__form" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Archiver cette demande ?" data-confirm-dialog-text-value="Vous pourrez la consulter plus tard dans votre historique." data-confirm-dialog-confirm-button-text-value="Archiver" data-confirm-dialog-cancel-button-text-value="Annuler">
                                             <input type="hidden" name="_token" value="{{ csrf_token('archive-quote-request-' ~ quoteRequest.id) }}">
                                             <button type="submit" class="c-client-quotes-btn c-client-quotes-btn--ghost">
                                                 Archiver la demande

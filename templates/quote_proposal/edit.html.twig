@@ -103,7 +103,7 @@
 						Aperçu
 					</a>
 
-					<form method="post" action="{{ path('app_prestataire_quote_proposal_delete', { publicReference: proposal.publicReference }) }}" onsubmit="return confirm('Supprimer définitivement ce devis ? Il ne sera plus visible par le client, mais vous pourrez créer un nouveau devis pour cette demande.');">
+					<form method="post" action="{{ path('app_prestataire_quote_proposal_delete', { publicReference: proposal.publicReference }) }}" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Supprimer ce devis ?" data-confirm-dialog-text-value="Il ne sera plus visible par le client, mais vous pourrez créer un nouveau devis pour cette demande." data-confirm-dialog-confirm-button-text-value="Supprimer" data-confirm-dialog-cancel-button-text-value="Annuler">
 						<input type="hidden" name="_token" value="{{ csrf_token('delete_quote_proposal_' ~ proposal.id) }}">
 						<button type="submit" class="tm-quote-btn tm-quote-btn--danger">
 							Supprimer
