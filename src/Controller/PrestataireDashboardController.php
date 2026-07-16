@@ -12,9 +12,11 @@ use App\Enum\NotificationTypeEnum;
 use App\Enum\QuoteRequestStatusEnum;
 use App\Form\MessageType;
 use App\Repository\ConversationRepository;
+use App\Repository\MessageRepository;
 use App\Repository\PrestataireProfileRepository;
 use App\Repository\PrestataireServiceRepository;
 use App\Repository\QuoteRequestRepository;
+use App\Repository\ReviewRepository;
 use App\Service\ConversationMessageManager;
 use App\Service\NotificationManager;
 use App\Service\PrestataireProfileCompletionService;
@@ -55,7 +57,10 @@ final class PrestataireDashboardController extends AbstractController
         PrestataireServiceRepository $prestataireServiceRepository,
         QuoteRequestRepository $quoteRequestRepository,
         ConversationRepository $conversationRepository,
+        MessageRepository $messageRepository,
+        ReviewRepository $reviewRepository,
         PaginatorInterface $paginator,
+        SubscriptionAccessManager $subscriptionAccessManager,
     ): Response {
         $user = $this->getUser();
 
@@ -73,7 +78,10 @@ final class PrestataireDashboardController extends AbstractController
             prestataireServiceRepository: $prestataireServiceRepository,
             quoteRequestRepository: $quoteRequestRepository,
             conversationRepository: $conversationRepository,
+            messageRepository: $messageRepository,
+            reviewRepository: $reviewRepository,
             paginator: $paginator,
+            subscriptionAccessManager: $subscriptionAccessManager,
         ));
     }
 
@@ -91,7 +99,9 @@ final class PrestataireDashboardController extends AbstractController
         NotificationManager $notificationManager,
         QuoteRequestRepository $quoteRequestRepository,
         ConversationRepository $conversationRepository,
+        MessageRepository $messageRepository,
         PrestataireServiceRepository $prestataireServiceRepository,
+        ReviewRepository $reviewRepository,
         ConversationMessageManager $conversationMessageManager,
         PaginatorInterface $paginator,
         SubscriptionAccessManager $subscriptionAccessManager,
@@ -187,7 +197,10 @@ final class PrestataireDashboardController extends AbstractController
                 prestataireServiceRepository: $prestataireServiceRepository,
                 quoteRequestRepository: $quoteRequestRepository,
                 conversationRepository: $conversationRepository,
+                messageRepository: $messageRepository,
+                reviewRepository: $reviewRepository,
                 paginator: $paginator,
+                subscriptionAccessManager: $subscriptionAccessManager,
                 messageFormView: $form->createView(),
                 forcedActiveConversation: $conversation,
                 forcedActiveTab: 'messages',
@@ -348,7 +361,10 @@ final class PrestataireDashboardController extends AbstractController
         PrestataireServiceRepository $prestataireServiceRepository,
         QuoteRequestRepository $quoteRequestRepository,
         ConversationRepository $conversationRepository,
+        MessageRepository $messageRepository,
+        ReviewRepository $reviewRepository,
         PaginatorInterface $paginator,
+        SubscriptionAccessManager $subscriptionAccessManager,
         ?FormView $messageFormView = null,
         ?Conversation $forcedActiveConversation = null,
         ?string $forcedActiveTab = null,
@@ -370,11 +386,17 @@ final class PrestataireDashboardController extends AbstractController
         }
 
         $completionReport = $this->prestataireProfileCompletionService->buildReport($user, $prestataireProfile);
+        $currentSubscription = $subscriptionAccessManager->getCurrentUsableSubscription($prestataireProfile);
 
         return [
             'user' => $user,
             'prestataireProfile' => $prestataireProfile,
             'completionReport' => $completionReport,
+            'recentQuoteRequests' => $quoteRequestRepository->findRecentForPrestataireDashboard($prestataireProfile, 5),
+            'recentMessages' => $messageRepository->findLatestForPrestataire($prestataireProfile, 5),
+            'recentReviews' => $reviewRepository->findRecentForPrestataireDashboard($prestataireProfile, 5),
+            'currentSubscription' => $currentSubscription,
+            'remainingCredits' => $subscriptionAccessManager->getRemainingCredits($prestataireProfile),
             'prestations' => $prestataireServiceRepository->findBy(
                 ['prestataire' => $prestataireProfile],
                 ['updatedAt' => 'DESC', 'createdAt' => 'DESC']

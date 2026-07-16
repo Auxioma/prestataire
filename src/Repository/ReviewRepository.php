@@ -92,6 +92,25 @@ final class ReviewRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    /**
+     * @return list<Review>
+     */
+    public function findRecentForPrestataireDashboard(PrestataireProfile $prestataire, int $limit = 5): array
+    {
+        return $this->createQueryBuilder('r')
+            ->addSelect('client', 'account', 'quoteRequest')
+            ->leftJoin('r.clientProfile', 'client')
+            ->leftJoin('client.account', 'account')
+            ->leftJoin('r.quoteRequest', 'quoteRequest')
+            ->andWhere('r.prestataireProfile = :prestataire')
+            ->setParameter('prestataire', $prestataire)
+            ->orderBy('r.createdAt', 'DESC')
+            ->addOrderBy('r.id', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function hasAcceptedProposalForQuoteRequest(QuoteRequest $quoteRequest): bool
     {
         $count = $this->getEntityManager()->createQueryBuilder()

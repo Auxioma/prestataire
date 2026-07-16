@@ -1,178 +1,269 @@
-<ul class="nav nav-tabs border-bottom gap-2 mb-4" id="dashboardSubTabs" role="tablist">
-    <li class="nav-item" role="presentation">
-        <button
-            class="nav-link active"
-            id="dashboard-overview-tab"
-            data-tab-level="sub"
-            data-bs-toggle="tab"
-            data-bs-target="#dashboard-overview-panel"
-            type="button"
-            role="tab"
-            aria-controls="dashboard-overview-panel"
-            aria-selected="true"
-        >
-            Vue d’ensemble
-        </button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button
-            class="nav-link"
-            id="dashboard-priority-tab"
-            data-tab-level="sub"
-            data-bs-toggle="tab"
-            data-bs-target="#dashboard-priority-panel"
-            type="button"
-            role="tab"
-            aria-controls="dashboard-priority-panel"
-            aria-selected="false"
-        >
-            Priorités
-        </button>
-    </li>
-</ul>
+{% set radius = 32 %}
+{% set circumference = 2 * 3.141592653589793 * radius %}
+{% set progressOffset = circumference - (completionReport.score / 100) * circumference %}
 
-<div class="tab-content" id="dashboardSubTabsContent">
-    <div
-        class="tab-pane fade show active"
-        id="dashboard-overview-panel"
-        role="tabpanel"
-        aria-labelledby="dashboard-overview-tab"
-        tabindex="0"
-    >
-        {% set radius = 32 %}
-        {% set circumference = 2 * 3.141592653589793 * radius %}
-        {% set progressOffset = circumference - (completionReport.score / 100) * circumference %}
-        <div class="row g-3 tm-dashboard-overview-grid">
-            <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card tm-card p-3 tm-dashboard-overview-card h-100">
-                    <div class="tm-dashboard-overview-card__topline">
-                        <span class="tm-dashboard-overview-card__eyebrow">Profil</span>
-                        <span class="tm-dashboard-overview-card__score-caption">{{ completionReport.completedSections }}/{{ completionReport.totalSections }} sections</span>
+<div class="row g-3 tm-dashboard-widgets-grid">
+    <div class="col-12 col-md-6 col-xl-4">
+        <article class="card tm-card p-3 tm-dashboard-widget h-100">
+            <div class="tm-dashboard-widget__topline">
+                <span class="tm-dashboard-widget__eyebrow">Profil</span>
+                <span class="tm-dashboard-widget__meta">{{ completionReport.completedSections }}/{{ completionReport.totalSections }} sections</span>
+            </div>
+
+            <div class="tm-dashboard-widget__completion">
+                <div class="tm-dashboard-widget__ring" aria-label="Profil complété à {{ completionReport.score }}%">
+                    <svg viewBox="0 0 84 84" width="84" height="84" aria-hidden="true">
+                        <circle cx="42" cy="42" r="{{ radius }}" fill="none" stroke="#e5ebf5" stroke-width="8"></circle>
+                        <circle
+                            cx="42"
+                            cy="42"
+                            r="{{ radius }}"
+                            fill="none"
+                            stroke="#0b2c78"
+                            stroke-width="8"
+                            stroke-linecap="round"
+                            transform="rotate(-90 42 42)"
+                            stroke-dasharray="{{ circumference }}"
+                            stroke-dashoffset="{{ progressOffset }}"
+                            style="transition: stroke-dashoffset .35s ease;"
+                        ></circle>
+                    </svg>
+                    <div class="tm-dashboard-widget__ring-center">
+                        <strong>{{ completionReport.score }}%</strong>
                     </div>
+                </div>
 
-                    <div class="tm-dashboard-overview-card__score-wrap">
-                        <div class="tm-dashboard-overview-card__score" aria-label="Profil complété à {{ completionReport.score }}%">
-                            <svg viewBox="0 0 84 84" width="84" height="84" aria-hidden="true">
-                                <circle cx="42" cy="42" r="{{ radius }}" fill="none" stroke="#e5ebf5" stroke-width="8"></circle>
-                                <circle
-                                    cx="42"
-                                    cy="42"
-                                    r="{{ radius }}"
-                                    fill="none"
-                                    stroke="#0b2c78"
-                                    stroke-width="8"
-                                    stroke-linecap="round"
-                                    transform="rotate(-90 42 42)"
-                                    stroke-dasharray="{{ circumference }}"
-                                    stroke-dashoffset="{{ progressOffset }}"
-                                    style="transition: stroke-dashoffset .35s ease;"
-                                ></circle>
-                            </svg>
-                            <div class="tm-dashboard-overview-card__score-center">
-                                <strong>{{ completionReport.score }}%</strong>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h4 class="tm-card-title mb-2">Complétion du profil</h4>
-                    <p class="text-muted small mb-3">
-                        Présence web facultative : un seul lien public suffit.
-                    </p>
-
-                    <div class="tm-dashboard-overview-card__meta">
+                <div class="tm-dashboard-widget__completion-copy">
+                    <h4 class="tm-card-title mb-1">Complétion du profil</h4>
+                    <p class="text-muted small mb-2">Un site web ou un seul réseau social suffit pour la présence publique.</p>
+                    <div class="tm-dashboard-widget__chips">
                         <span>{{ completionReport.completedChecks }}/{{ completionReport.totalChecks }} critères</span>
                     </div>
+                </div>
+            </div>
 
-                    {% if completionReport.nextSections is not empty %}
-                        <div class="tm-dashboard-overview-card__quicklinks">
-                            {% for section in completionReport.nextSections|slice(0, 2) %}
-                                <a href="{{ path('app_prestataire_settings', { tab: section.tab }) }}" class="tm-dashboard-overview-card__quicklink">
-                                    <i class="fa-solid {{ section.icon }}" aria-hidden="true"></i>
-                                    <span>{{ section.label }}</span>
-                                    <small>{{ section.completed }}/{{ section.total }}</small>
-                                </a>
-                            {% endfor %}
+            <div class="tm-dashboard-widget__list">
+                {% if completionReport.nextSections is not empty %}
+                    {% for section in completionReport.nextSections|slice(0, 3) %}
+                        <div class="tm-dashboard-widget__item">
+                            <div class="tm-dashboard-widget__item-main">
+                                <i class="fa-solid {{ section.icon }}" aria-hidden="true"></i>
+                                <span>{{ section.label }}</span>
+                            </div>
+                            <small>{{ section.completed }}/{{ section.total }}</small>
                         </div>
-                    {% else %}
-                        <div class="alert alert-success mb-0 mt-auto py-2 small" role="status">
-                            Profil complet.
-                        </div>
-                    {% endif %}
-                </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="tm-dashboard-widget__empty">Profil entièrement complété.</div>
+                {% endif %}
             </div>
 
-            <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card tm-card p-3 tm-dashboard-overview-slot h-100">
-                    <span class="tm-dashboard-overview-slot__eyebrow">Bloc 2</span>
-                    <h4 class="tm-card-title mb-2">À venir</h4>
-                    <p class="text-muted small mb-0">
-                        Emplacement réservé pour un futur indicateur dashboard.
-                    </p>
-                </div>
+            <div class="tm-dashboard-widget__footer">
+                <a href="{{ path('app_prestataire_settings', { tab: 'profile' }) }}">Ouvrir les paramètres</a>
             </div>
-
-            <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card tm-card p-3 tm-dashboard-overview-slot h-100">
-                    <span class="tm-dashboard-overview-slot__eyebrow">Bloc 3</span>
-                    <h4 class="tm-card-title mb-2">À venir</h4>
-                    <p class="text-muted small mb-0">
-                        Emplacement réservé pour un futur indicateur dashboard.
-                    </p>
-                </div>
-            </div>
-
-            <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card tm-card p-3 tm-dashboard-overview-slot h-100">
-                    <span class="tm-dashboard-overview-slot__eyebrow">Bloc 4</span>
-                    <h4 class="tm-card-title mb-2">À venir</h4>
-                    <p class="text-muted small mb-0">
-                        Emplacement réservé pour un futur indicateur dashboard.
-                    </p>
-                </div>
-            </div>
-        </div>
+        </article>
     </div>
 
-    <div
-        class="tab-pane fade"
-        id="dashboard-priority-panel"
-        role="tabpanel"
-        aria-labelledby="dashboard-priority-tab"
-        tabindex="0"
-    >
-        <div class="card tm-card p-4 tm-dashboard-priorities">
-            <h4 class="tm-card-title mb-3">Priorités</h4>
+    <div class="col-12 col-md-6 col-xl-4">
+        <article class="card tm-card p-3 tm-dashboard-widget h-100">
+            <div class="tm-dashboard-widget__topline">
+                <span class="tm-dashboard-widget__eyebrow">Devis</span>
+                <span class="tm-dashboard-widget__meta">{{ recentQuoteRequests|length }} / 5</span>
+            </div>
 
-            {% if completionReport.nextSections is empty %}
-                <p class="text-muted mb-0">
-                    Aucune priorité de paramétrage détectée pour le moment.
-                </p>
-            {% else %}
-                <div class="tm-dashboard-priorities__list">
-                    {% for section in completionReport.nextSections %}
-                        <article class="tm-dashboard-priorities__item">
-                            <div class="tm-dashboard-priorities__icon">
-                                <i class="fa-solid {{ section.icon }}" aria-hidden="true"></i>
+            <h4 class="tm-card-title mb-2">Demandes récentes</h4>
+            <div class="tm-dashboard-widget__list">
+                {% if recentQuoteRequests is empty %}
+                    <div class="tm-dashboard-widget__empty">Aucune demande reçue récemment.</div>
+                {% else %}
+                    {% for quoteRequest in recentQuoteRequests %}
+                        <div class="tm-dashboard-widget__item tm-dashboard-widget__item--stack">
+                            <div class="tm-dashboard-widget__item-main">
+                                <strong>{{ quoteRequest.title }}</strong>
+                                <small>
+                                    {{ quoteRequest.client and quoteRequest.client.account
+                                        ? quoteRequest.client.account.firstName ~ ' ' ~ quoteRequest.client.account.lastName
+                                        : 'Client non renseigné' }}
+                                </small>
                             </div>
-
-                            <div class="tm-dashboard-priorities__content">
-                                <div class="tm-dashboard-priorities__title-row">
-                                    <h5>{{ section.label }}</h5>
-                                    <span>{{ section.completed }}/{{ section.total }}</span>
-                                </div>
-
-                                <p class="mb-2">
-                                    Éléments à compléter : {{ section.missingItems|join(', ') }}.
-                                </p>
-
-                                <a href="{{ path('app_prestataire_settings', { tab: section.tab }) }}" class="tm-dashboard-priorities__link">
-                                    Aller dans {{ section.label|lower }}
-                                </a>
+                            <div class="tm-dashboard-widget__item-side">
+                                <span class="tm-dashboard-widget__status">{{ quoteRequest.status.label }}</span>
+                                <small>{{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m H:i') : '—' }}</small>
                             </div>
-                        </article>
+                        </div>
                     {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="tm-dashboard-widget__footer">
+                <a href="{{ path('app_prestataire_dashboard', { tab: 'demandes' }) ~ '#demandes-main-panel' }}">Voir toutes les demandes</a>
+            </div>
+        </article>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <article class="card tm-card p-3 tm-dashboard-widget h-100">
+            <div class="tm-dashboard-widget__topline">
+                <span class="tm-dashboard-widget__eyebrow">Agenda</span>
+                <span class="tm-dashboard-widget__meta">{{ "now"|date('F Y')|capitalize }}</span>
+            </div>
+
+            <h4 class="tm-card-title mb-2">Agenda</h4>
+            <div
+                class="tm-dashboard-widget__calendar"
+                data-controller="calendar-panel"
+                data-calendar-panel-events-url-value="{{ path('app_prestataire_appointment_events') }}"
+                data-calendar-panel-update-url-value="{{ path('app_prestataire_appointment_move') }}"
+                data-calendar-panel-csrf-token-value="{{ csrf_token('move_appointment') }}"
+                data-calendar-panel-script-url-value="{{ asset('vendor/fullcalendar/index.global.min.js') }}"
+                data-calendar-panel-compact-value="true"
+                data-calendar-panel-height-value="290"
+            ></div>
+
+            <div class="tm-dashboard-widget__footer">
+                <a href="{{ path('app_prestataire_dashboard', { tab: 'calendrier' }) ~ '#calendrier-main-panel' }}">Ouvrir le calendrier complet</a>
+            </div>
+        </article>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <article class="card tm-card p-3 tm-dashboard-widget h-100">
+            <div class="tm-dashboard-widget__topline">
+                <span class="tm-dashboard-widget__eyebrow">Abonnement</span>
+                <span class="tm-dashboard-widget__meta">{{ remainingCredits }} crédit{{ remainingCredits > 1 ? 's' : '' }}</span>
+            </div>
+
+            <h4 class="tm-card-title mb-2">Crédits et formule</h4>
+
+            <div class="tm-dashboard-widget__subscription">
+                <div class="tm-dashboard-widget__subscription-number">{{ remainingCredits }}</div>
+                <div class="tm-dashboard-widget__subscription-copy">
+                    <strong>
+                        {{ currentSubscription and currentSubscription.plan ? currentSubscription.plan.name : 'Aucun abonnement actif' }}
+                    </strong>
+                    <small>
+                        {% if currentSubscription %}
+                            {{ currentSubscription.billingPeriod.label }}
+                            {% if currentSubscription.currentPeriodEnd %}
+                                · jusqu’au {{ currentSubscription.currentPeriodEnd|date('d/m/Y') }}
+                            {% endif %}
+                        {% else %}
+                            Souscrivez une formule pour répondre aux demandes et activer la messagerie.
+                        {% endif %}
+                    </small>
                 </div>
-            {% endif %}
-        </div>
+            </div>
+
+            <div class="tm-dashboard-widget__chips">
+                {% if currentSubscription %}
+                    <span>{{ currentSubscription.creditsConsumedCurrentPeriod }} consommé{{ currentSubscription.creditsConsumedCurrentPeriod > 1 ? 's' : '' }}</span>
+                    <span>{{ currentSubscription.creditsGrantedCurrentPeriod }} accordé{{ currentSubscription.creditsGrantedCurrentPeriod > 1 ? 's' : '' }}</span>
+                {% else %}
+                    <span>0 crédit disponible</span>
+                {% endif %}
+            </div>
+
+            <div class="tm-dashboard-widget__footer">
+                <a href="{{ path('app_subscription_index') }}">Gérer l’abonnement</a>
+            </div>
+        </article>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <article class="card tm-card p-3 tm-dashboard-widget h-100">
+            <div class="tm-dashboard-widget__topline">
+                <span class="tm-dashboard-widget__eyebrow">Messagerie</span>
+                <span class="tm-dashboard-widget__meta">{{ recentMessages|length }} / 5</span>
+            </div>
+
+            <h4 class="tm-card-title mb-2">Messages récents</h4>
+            <div class="tm-dashboard-widget__list">
+                {% if recentMessages is empty %}
+                    <div class="tm-dashboard-widget__empty">Aucun message récent.</div>
+                {% else %}
+                    {% for message in recentMessages %}
+                        {% set conversation = message.conversation %}
+                        {% set quoteRequest = conversation ? conversation.quoteRequest : null %}
+                        <div class="tm-dashboard-widget__item tm-dashboard-widget__item--stack">
+                            <div class="tm-dashboard-widget__item-main">
+                                <strong>{{ quoteRequest ? quoteRequest.title : 'Conversation' }}</strong>
+                                <small>
+                                    {% if message.author %}
+                                        {{ message.author.firstName }} {{ message.author.lastName }}
+                                    {% else %}
+                                        Système
+                                    {% endif %}
+                                </small>
+                            </div>
+                            <div class="tm-dashboard-widget__message-preview">
+                                {% if message.content %}
+                                    {{ message.content|length > 72 ? message.content|slice(0, 72) ~ '…' : message.content }}
+                                {% else %}
+                                    Message sans texte.
+                                {% endif %}
+                            </div>
+                            <small>{{ message.createdAt ? message.createdAt|date('d/m H:i') : '—' }}</small>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="tm-dashboard-widget__footer">
+                <a href="{{ path('app_prestataire_dashboard', { tab: 'messages' }) ~ '#messages-main-panel' }}">Ouvrir la messagerie</a>
+            </div>
+        </article>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <article class="card tm-card p-3 tm-dashboard-widget h-100">
+            <div class="tm-dashboard-widget__topline">
+                <span class="tm-dashboard-widget__eyebrow">Avis</span>
+                <span class="tm-dashboard-widget__meta">{{ prestataireProfile.reviewsCount|default(0) }} avis</span>
+            </div>
+
+            <div class="tm-dashboard-widget__reviews-head">
+                <div>
+                    <h4 class="tm-card-title mb-1">Avis clients</h4>
+                    <p class="text-muted small mb-0">Note globale {{ prestataireProfile.averageRating|default('0')|number_format(1, ',', ' ') }}/5</p>
+                </div>
+                <div class="tm-dashboard-widget__rating-badge">
+                    {{ prestataireProfile.averageRating|default('0')|number_format(1, ',', ' ') }}
+                </div>
+            </div>
+
+            <div class="tm-dashboard-widget__list">
+                {% if recentReviews is empty %}
+                    <div class="tm-dashboard-widget__empty">Aucun avis reçu pour le moment.</div>
+                {% else %}
+                    {% for review in recentReviews %}
+                        <div class="tm-dashboard-widget__item tm-dashboard-widget__item--stack">
+                            <div class="tm-dashboard-widget__item-main">
+                                <strong>
+                                    {{ review.clientProfile and review.clientProfile.account
+                                        ? review.clientProfile.account.firstName ~ ' ' ~ review.clientProfile.account.lastName
+                                        : 'Client' }}
+                                </strong>
+                                <small>{{ review.createdAt ? review.createdAt|date('d/m/Y') : '—' }}</small>
+                            </div>
+                            <div class="tm-dashboard-widget__review-line">
+                                <span class="tm-dashboard-widget__stars">
+                                    {% for i in 1..5 %}{{ i <= review.rating ? '★' : '☆' }}{% endfor %}
+                                </span>
+                                <span>{{ review.rating }}/5</span>
+                            </div>
+                            <div class="tm-dashboard-widget__message-preview">
+                                {{ review.comment ? (review.comment|length > 88 ? review.comment|slice(0, 88) ~ '…' : review.comment) : 'Aucun commentaire rédigé.' }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="tm-dashboard-widget__footer">
+                <a href="{{ path('app_review_prestataire_reviews') }}">Voir tous les avis</a>
+            </div>
+        </article>
     </div>
 </div>
+
+<script src="{{ asset('vendor/fullcalendar/index.global.min.js') }}"></script>

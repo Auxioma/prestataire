@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\ClientProfile;
+use App\Entity\PrestataireProfile;
 use App\Entity\QuoteRequest;
+use App\Enum\QuoteRequestStatusEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
@@ -68,5 +70,34 @@ final class QuoteRequestRepository extends ServiceEntityRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @return list<QuoteRequest>
+     */
+    public function findRecentForPrestataireDashboard(PrestataireProfile $prestataireProfile, int $limit = 5): array
+    {
+        return $this->createQueryBuilder('qr')
+            ->addSelect('client', 'account', 'prestation', 'service')
+            ->leftJoin('qr.client', 'client')
+            ->leftJoin('client.account', 'account')
+            ->leftJoin('qr.prestation', 'prestation')
+            ->leftJoin('prestation.service', 'service')
+            ->andWhere('qr.prestataire = :prestataire')
+            ->andWhere('qr.deletedAt IS NULL')
+            ->andWhere('qr.archivedByPrestataireAt IS NULL')
+            ->andWhere('qr.status IN (:activeStatuses)')
+            ->setParameter('prestataire', $prestataireProfile)
+            ->setParameter('activeStatuses', [
+                QuoteRequestStatusEnum::SUBMITTED,
+                QuoteRequestStatusEnum::ACCEPTED,
+                QuoteRequestStatusEnum::ANSWERED,
+                QuoteRequestStatusEnum::CLOSED,
+            ])
+            ->orderBy('qr.createdAt', 'DESC')
+            ->addOrderBy('qr.id', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
     }
 }
