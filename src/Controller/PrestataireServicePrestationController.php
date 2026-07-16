@@ -32,6 +32,7 @@ use Symfony\UX\Map\Point;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Enum\FavoriteTypeEnum;
 use App\Repository\FavoriteRepository;
+use App\Service\PrestataireProfileCompletionService;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -52,6 +53,7 @@ final class PrestataireServicePrestationController extends AbstractController
         Request $request,
         #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireService $ps,
         EntityManagerInterface $em,
+        PrestataireProfileCompletionService $prestataireProfileCompletionService,
     ): Response {
         $user = $this->getUser();
 
@@ -95,6 +97,8 @@ final class PrestataireServicePrestationController extends AbstractController
                 }
             }
 
+            $prestataireProfileCompletionService->syncCompletionScore($user, $user->getPrestataireProfile());
+            $em->persist($user->getPrestataireProfile());
             $em->flush();
 
             $this->addFlash('success', 'Prestation détaillée enregistrée.');
@@ -183,6 +187,7 @@ final class PrestataireServicePrestationController extends AbstractController
         ServiceRepository $serviceRepository,
         ServiceCategoryRepository $categoryRepository,
         SluggerInterface $slugger,
+        PrestataireProfileCompletionService $prestataireProfileCompletionService,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -234,6 +239,8 @@ final class PrestataireServicePrestationController extends AbstractController
             $prestation->setSlug($uniqueSlug);
 
             $em->persist($prestation);
+            $prestataireProfileCompletionService->syncCompletionScore($user, $prestataire);
+            $em->persist($prestataire);
             $em->flush();
 
             $this->addFlash('success', 'Le service a bien été ajouté. Vous pouvez maintenant compléter la prestation.');
@@ -333,6 +340,7 @@ final class PrestataireServicePrestationController extends AbstractController
         Request $request,
         PrestataireService $ps,
         EntityManagerInterface $em,
+        PrestataireProfileCompletionService $prestataireProfileCompletionService,
     ): JsonResponse {
         $user = $this->getUser();
 
@@ -357,6 +365,8 @@ final class PrestataireServicePrestationController extends AbstractController
         }
 
         $ps->setIsActive(!$ps->isActive());
+        $prestataireProfileCompletionService->syncCompletionScore($user, $user->getPrestataireProfile());
+        $em->persist($user->getPrestataireProfile());
         $em->flush();
 
         return $this->json([

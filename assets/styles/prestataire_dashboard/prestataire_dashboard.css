@@ -345,4 +345,187 @@
     max-width: 100%;
 }
 
+.tm-dashboard-overview-card {
+    border: 1px solid rgba(6, 27, 86, 0.08);
+    border-radius: 20px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
 
+.tm-dashboard-overview-grid {
+    align-items: stretch;
+}
+
+.tm-dashboard-overview-card__topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.tm-dashboard-overview-card__eyebrow {
+    display: inline-block;
+    color: #0c2f86;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.tm-dashboard-overview-card__score-caption {
+    color: #64748b;
+    font-size: 0.74rem;
+    font-weight: 700;
+}
+
+.tm-dashboard-overview-card__score-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.85rem;
+}
+
+.tm-dashboard-overview-card__score {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 84px;
+    height: 84px;
+    flex-shrink: 0;
+}
+
+.tm-dashboard-overview-card__score-center {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 0.1rem;
+    color: #061B56;
+}
+
+.tm-dashboard-overview-card__score-center strong {
+    font-size: 1.25rem;
+    line-height: 1;
+    font-weight: 900;
+}
+
+.tm-dashboard-overview-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1rem;
+    margin-bottom: 0.9rem;
+    color: #64748b;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.tm-dashboard-overview-card__quicklinks {
+    display: grid;
+    gap: 0.55rem;
+    margin-top: auto;
+}
+
+.tm-dashboard-overview-card__quicklink {
+    display: grid;
+    grid-template-columns: 18px 1fr auto;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid rgba(6, 27, 86, 0.08);
+    border-radius: 14px;
+    background: #ffffff;
+    color: #0c2f86;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 800;
+}
+
+.tm-dashboard-overview-card__quicklink small {
+    color: #64748b;
+    font-size: 0.76rem;
+    font-weight: 800;
+}
+
+.tm-dashboard-overview-slot {
+    border: 1px solid rgba(6, 27, 86, 0.08);
+    border-radius: 20px;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
+}
+
+.tm-dashboard-overview-slot__eyebrow {
+    display: inline-block;
+    margin-bottom: 0.55rem;
+    color: #94a3b8;
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.tm-dashboard-completion__action-link,
+.tm-dashboard-completion-summary__link,
+.tm-dashboard-priorities__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: #0c2f86;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.tm-dashboard-completion-summary__list,
+.tm-dashboard-priorities__list {
+    display: grid;
+    gap: 1rem;
+}
+
+.tm-dashboard-completion-summary__item,
+.tm-dashboard-priorities__item {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: 0.9rem;
+    align-items: start;
+    padding: 0.95rem;
+    border: 1px solid rgba(6, 27, 86, 0.08);
+    border-radius: 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.tm-dashboard-completion-summary__icon,
+.tm-dashboard-priorities__icon {
+    width: 52px;
+    height: 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    background: rgba(6, 27, 86, 0.08);
+    color: #061B56;
+}
+
+.tm-dashboard-completion-summary__icon.is-complete {
+    background: rgba(22, 163, 74, 0.14);
+    color: #15803d;
+}
+
+.tm-dashboard-completion-summary__top,
+.tm-dashboard-priorities__title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.35rem;
+}
+
+.tm-dashboard-priorities__title-row h5 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+@media (max-width: 767.98px) {
+    .tm-dashboard-overview-card__score {
+        align-self: center;
+    }
+}

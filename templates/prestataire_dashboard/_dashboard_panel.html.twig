@@ -39,9 +39,97 @@
         aria-labelledby="dashboard-overview-tab"
         tabindex="0"
     >
-        <div class="card tm-card p-4">
-            <h4 class="tm-card-title mb-3">Vue d’ensemble</h4>
-            <p class="text-muted mb-0">Ce sous-onglet regroupera les indicateurs globaux, l’activité récente et les raccourcis utiles.</p>
+        {% set radius = 32 %}
+        {% set circumference = 2 * 3.141592653589793 * radius %}
+        {% set progressOffset = circumference - (completionReport.score / 100) * circumference %}
+        <div class="row g-3 tm-dashboard-overview-grid">
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card tm-card p-3 tm-dashboard-overview-card h-100">
+                    <div class="tm-dashboard-overview-card__topline">
+                        <span class="tm-dashboard-overview-card__eyebrow">Profil</span>
+                        <span class="tm-dashboard-overview-card__score-caption">{{ completionReport.completedSections }}/{{ completionReport.totalSections }} sections</span>
+                    </div>
+
+                    <div class="tm-dashboard-overview-card__score-wrap">
+                        <div class="tm-dashboard-overview-card__score" aria-label="Profil complété à {{ completionReport.score }}%">
+                            <svg viewBox="0 0 84 84" width="84" height="84" aria-hidden="true">
+                                <circle cx="42" cy="42" r="{{ radius }}" fill="none" stroke="#e5ebf5" stroke-width="8"></circle>
+                                <circle
+                                    cx="42"
+                                    cy="42"
+                                    r="{{ radius }}"
+                                    fill="none"
+                                    stroke="#0b2c78"
+                                    stroke-width="8"
+                                    stroke-linecap="round"
+                                    transform="rotate(-90 42 42)"
+                                    stroke-dasharray="{{ circumference }}"
+                                    stroke-dashoffset="{{ progressOffset }}"
+                                    style="transition: stroke-dashoffset .35s ease;"
+                                ></circle>
+                            </svg>
+                            <div class="tm-dashboard-overview-card__score-center">
+                                <strong>{{ completionReport.score }}%</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="tm-card-title mb-2">Complétion du profil</h4>
+                    <p class="text-muted small mb-3">
+                        Présence web facultative : un seul lien public suffit.
+                    </p>
+
+                    <div class="tm-dashboard-overview-card__meta">
+                        <span>{{ completionReport.completedChecks }}/{{ completionReport.totalChecks }} critères</span>
+                    </div>
+
+                    {% if completionReport.nextSections is not empty %}
+                        <div class="tm-dashboard-overview-card__quicklinks">
+                            {% for section in completionReport.nextSections|slice(0, 2) %}
+                                <a href="{{ path('app_prestataire_settings', { tab: section.tab }) }}" class="tm-dashboard-overview-card__quicklink">
+                                    <i class="fa-solid {{ section.icon }}" aria-hidden="true"></i>
+                                    <span>{{ section.label }}</span>
+                                    <small>{{ section.completed }}/{{ section.total }}</small>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success mb-0 mt-auto py-2 small" role="status">
+                            Profil complet.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card tm-card p-3 tm-dashboard-overview-slot h-100">
+                    <span class="tm-dashboard-overview-slot__eyebrow">Bloc 2</span>
+                    <h4 class="tm-card-title mb-2">À venir</h4>
+                    <p class="text-muted small mb-0">
+                        Emplacement réservé pour un futur indicateur dashboard.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card tm-card p-3 tm-dashboard-overview-slot h-100">
+                    <span class="tm-dashboard-overview-slot__eyebrow">Bloc 3</span>
+                    <h4 class="tm-card-title mb-2">À venir</h4>
+                    <p class="text-muted small mb-0">
+                        Emplacement réservé pour un futur indicateur dashboard.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card tm-card p-3 tm-dashboard-overview-slot h-100">
+                    <span class="tm-dashboard-overview-slot__eyebrow">Bloc 4</span>
+                    <h4 class="tm-card-title mb-2">À venir</h4>
+                    <p class="text-muted small mb-0">
+                        Emplacement réservé pour un futur indicateur dashboard.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -52,9 +140,39 @@
         aria-labelledby="dashboard-priority-tab"
         tabindex="0"
     >
-        <div class="card tm-card p-4">
+        <div class="card tm-card p-4 tm-dashboard-priorities">
             <h4 class="tm-card-title mb-3">Priorités</h4>
-            <p class="text-muted mb-0">Ce sous-onglet affichera les actions prioritaires à effectuer sur le compte prestataire.</p>
+
+            {% if completionReport.nextSections is empty %}
+                <p class="text-muted mb-0">
+                    Aucune priorité de paramétrage détectée pour le moment.
+                </p>
+            {% else %}
+                <div class="tm-dashboard-priorities__list">
+                    {% for section in completionReport.nextSections %}
+                        <article class="tm-dashboard-priorities__item">
+                            <div class="tm-dashboard-priorities__icon">
+                                <i class="fa-solid {{ section.icon }}" aria-hidden="true"></i>
+                            </div>
+
+                            <div class="tm-dashboard-priorities__content">
+                                <div class="tm-dashboard-priorities__title-row">
+                                    <h5>{{ section.label }}</h5>
+                                    <span>{{ section.completed }}/{{ section.total }}</span>
+                                </div>
+
+                                <p class="mb-2">
+                                    Éléments à compléter : {{ section.missingItems|join(', ') }}.
+                                </p>
+
+                                <a href="{{ path('app_prestataire_settings', { tab: section.tab }) }}" class="tm-dashboard-priorities__link">
+                                    Aller dans {{ section.label|lower }}
+                                </a>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>

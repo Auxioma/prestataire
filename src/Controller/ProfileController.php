@@ -31,6 +31,7 @@ use App\Repository\ServiceRepository;
 use App\Service\AccountSecurityManager;
 use App\Service\CompanyVerificationManager;
 use App\Service\PrestataireAvailabilityManager;
+use App\Service\PrestataireProfileCompletionService;
 use App\Service\PrestataireProfileManager;
 use App\Service\PrestataireSettingsFormsFactory;
 use App\Service\SireneClient;
@@ -51,6 +52,7 @@ class ProfileController extends AbstractController
     public function __construct(
         private readonly PrestataireProfileManager $prestataireProfileManager,
         private readonly PrestataireAvailabilityManager $prestataireAvailabilityManager,
+        private readonly PrestataireProfileCompletionService $prestataireProfileCompletionService,
         private readonly CompanyVerificationManager $companyVerificationManager,
         private readonly PrestataireSettingsFormsFactory $prestataireSettingsFormsFactory,
         private readonly AccountSecurityManager $accountSecurityManager,
@@ -90,6 +92,7 @@ class ProfileController extends AbstractController
         $forms->publicProfileForm->handleRequest($request);
         $forms->companyForm->handleRequest($request);
         $forms->availabilityForm->handleRequest($request);
+        $forms->notificationForm->handleRequest($request);
         $forms->documentForm->handleRequest($request);
         $forms->passwordForm->handleRequest($request);
         $forms->deletionForm->handleRequest($request);
@@ -112,6 +115,7 @@ class ProfileController extends AbstractController
             entityManager: $entityManager,
             userForm: $forms->userForm,
             user: $user,
+            prestataireProfile: $prestataireProfile,
         )) {
             return $response;
         }
@@ -147,6 +151,14 @@ class ProfileController extends AbstractController
             return $response;
         }
 
+        if ($response = $this->handleNotificationForm(
+            entityManager: $entityManager,
+            notificationForm: $forms->notificationForm,
+            user: $user,
+        )) {
+            return $response;
+        }
+
         if ($response = $this->handlePasswordForm(
             entityManager: $entityManager,
             passwordForm: $forms->passwordForm,
@@ -177,6 +189,7 @@ class ProfileController extends AbstractController
             'zoneMap' => $zoneMap,
             'availabilityForm' => $forms->availabilityForm->createView(),
             'availabilities' => $availabilities,
+            'notificationForm' => $forms->notificationForm->createView(),
             'companyVerificationPreview' => $companyVerificationPreview,
             'openCompanyVerificationModal' => $openCompanyVerificationModal,
             'documentForm' => $forms->documentForm->createView(),
@@ -186,6 +199,7 @@ class ProfileController extends AbstractController
             'activeTab' => $this->resolveActiveTab(
                 defaultTab: $activeTab,
                 availabilityForm: $forms->availabilityForm,
+                notificationForm: $forms->notificationForm,
                 passwordForm: $forms->passwordForm,
                 deletionForm: $forms->deletionForm,
             ),
@@ -208,6 +222,7 @@ class ProfileController extends AbstractController
         if ($documentForm->isValid()) {
             $document->setPrestataireProfile($prestataireProfile);
             $prestataireProfile->addDocument($document);
+            $this->prestataireProfileCompletionService->syncCompletionScore($prestataireProfile->getAccount(), $prestataireProfile);
 
             $entityManager->persist($document);
             $entityManager->persist($prestataireProfile);
@@ -231,12 +246,16 @@ class ProfileController extends AbstractController
         EntityManagerInterface $entityManager,
         FormInterface $userForm,
         User $user,
+        PrestataireProfile $prestataireProfile,
     ): ?Response {
         if (!$userForm->isSubmitted() || !$userForm->isValid()) {
             return null;
         }
 
+        $this->prestataireProfileCompletionService->syncCompletionScore($user, $prestataireProfile);
+
         $entityManager->persist($user);
+        $entityManager->persist($prestataireProfile);
         $entityManager->flush();
 
         $this->addFlash('success', 'Vos informations personnelles ont été enregistrées.');
@@ -258,6 +277,7 @@ class ProfileController extends AbstractController
         }
 
         $this->prestataireProfileManager->syncSlug($prestataireProfile);
+        $this->prestataireProfileCompletionService->syncCompletionScore($prestataireProfile->getAccount(), $prestataireProfile);
 
         $entityManager->persist($prestataireProfile);
         $entityManager->flush();
@@ -321,6 +341,7 @@ class ProfileController extends AbstractController
                 ];
             }
 
+            $this->prestataireProfileCompletionService->syncCompletionScore($prestataireProfile->getAccount(), $prestataireProfile);
             $entityManager->persist($prestataireProfile);
             $entityManager->flush();
 
@@ -357,6 +378,7 @@ class ProfileController extends AbstractController
             }
         }
 
+        $this->prestataireProfileCompletionService->syncCompletionScore($prestataireProfile->getAccount(), $prestataireProfile);
         $entityManager->persist($prestataireProfile);
         $entityManager->flush();
 
@@ -381,6 +403,7 @@ class ProfileController extends AbstractController
         }
 
         $this->prestataireAvailabilityManager->prepareForPersistence($prestataireProfile);
+        $this->prestataireProfileCompletionService->syncCompletionScore($prestataireProfile->getAccount(), $prestataireProfile);
 
         $entityManager->persist($prestataireProfile);
         $entityManager->flush();
@@ -394,6 +417,27 @@ class ProfileController extends AbstractController
 
         return $this->redirectToRoute('app_prestataire_settings', [
             'tab' => 'dispo',
+        ]);
+    }
+    // #endregion
+
+    // #region notifications
+    private function handleNotificationForm(
+        EntityManagerInterface $entityManager,
+        FormInterface $notificationForm,
+        User $user,
+    ): ?Response {
+        if (!$notificationForm->isSubmitted() || !$notificationForm->isValid()) {
+            return null;
+        }
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Vos préférences de notifications ont bien été enregistrées.');
+
+        return $this->redirectToRoute('app_prestataire_settings', [
+            'tab' => 'notif',
         ]);
     }
     // #endregion
@@ -446,11 +490,16 @@ class ProfileController extends AbstractController
     private function resolveActiveTab(
         string $defaultTab,
         ?FormInterface $availabilityForm,
+        ?FormInterface $notificationForm,
         FormInterface $passwordForm,
         FormInterface $deletionForm,
     ): string {
         if (null !== $availabilityForm && $availabilityForm->isSubmitted() && !$availabilityForm->isValid()) {
             return 'dispo';
+        }
+
+        if (null !== $notificationForm && $notificationForm->isSubmitted() && !$notificationForm->isValid()) {
+            return 'notif';
         }
 
         if (($passwordForm->isSubmitted() && !$passwordForm->isValid()) || ($deletionForm->isSubmitted() && !$deletionForm->isValid())) {
@@ -508,6 +557,8 @@ class ProfileController extends AbstractController
             $pService->setSlug($uniqueSlug);
 
             $em->persist($pService);
+            $this->prestataireProfileCompletionService->syncCompletionScore($user, $user->getPrestataireProfile());
+            $em->persist($user->getPrestataireProfile());
             $em->flush();
 
             $this->addFlash('success', 'Service ajouté !');
@@ -537,6 +588,8 @@ class ProfileController extends AbstractController
         }
         if ($this->isCsrfTokenValid('delete' . $ps->getId(), $request->request->get('_token'))) {
             $em->remove($ps);
+            $this->prestataireProfileCompletionService->syncCompletionScore($user, $user->getPrestataireProfile());
+            $em->persist($user->getPrestataireProfile());
             $em->flush();
             $this->addFlash('success', 'Le service a bien été retiré de votre profil.');
         }
@@ -590,6 +643,8 @@ class ProfileController extends AbstractController
                 }
             }
 
+            $this->prestataireProfileCompletionService->syncCompletionScore($user, $user->getPrestataireProfile());
+            $em->persist($user->getPrestataireProfile());
             $em->flush();
 
             $this->addFlash('success', 'Tarifs mis à jour !');
@@ -650,7 +705,10 @@ class ProfileController extends AbstractController
         }
 
         // suppression document
+        $prestataireProfile->removeDocument($document);
+        $this->prestataireProfileCompletionService->syncCompletionScore($user, $prestataireProfile);
         $entityManager->remove($document);
+        $entityManager->persist($prestataireProfile);
         $entityManager->flush();
 
         $this->addFlash('success', 'Le document a bien été supprimé.');

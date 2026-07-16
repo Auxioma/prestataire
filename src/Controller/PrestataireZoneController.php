@@ -15,6 +15,7 @@ namespace App\Controller;
 use App\Entity\PrestataireInterventionZone;
 use App\Entity\User;
 use App\Form\PrestataireInterventionZoneType;
+use App\Service\PrestataireProfileCompletionService;
 use App\Service\ZoneGeocoder;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,6 +40,7 @@ final class PrestataireZoneController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         FormFactoryInterface $formFactory,
+        PrestataireProfileCompletionService $prestataireProfileCompletionService,
         ZoneGeocoder $zoneGeocoder,
     ): Response {
         /** @var User|null $user */
@@ -75,6 +77,8 @@ final class PrestataireZoneController extends AbstractController
                 $zone->setRegion($geocoded['region']);
             }
 
+            $prestataireProfileCompletionService->syncCompletionScore($user, $user->getPrestataireProfile());
+            $em->persist($user->getPrestataireProfile());
             $em->persist($zone);
             $em->flush();
 
@@ -98,6 +102,7 @@ final class PrestataireZoneController extends AbstractController
         Request $request,
         PrestataireInterventionZone $zone,
         EntityManagerInterface $em,
+        PrestataireProfileCompletionService $prestataireProfileCompletionService,
     ): Response {
         /** @var User|null $user */
         $user = $this->getUser();
@@ -112,6 +117,8 @@ final class PrestataireZoneController extends AbstractController
 
         if ($this->isCsrfTokenValid('delete_zone_'.$zone->getId(), $request->request->get('_token'))) {
             $em->remove($zone);
+            $prestataireProfileCompletionService->syncCompletionScore($user, $user->getPrestataireProfile());
+            $em->persist($user->getPrestataireProfile());
             $em->flush();
 
             $this->addFlash('success', 'La zone a bien été supprimée.');

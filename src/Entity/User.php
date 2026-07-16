@@ -14,6 +14,7 @@ namespace App\Entity;
 
 
 use App\Enum\UserStatusEnum;
+use App\Enum\NotificationTypeEnum;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use App\Repository\UserRepository;
@@ -124,6 +125,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'recipient', targetEntity: Notification::class, orphanRemoval: false)]
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $notifications;
+
+    #[ORM\Column(options: ['default' => true])]
+    private bool $notifyOnQuoteRequestReceived = true;
+
+    #[ORM\Column(options: ['default' => true])]
+    private bool $notifyOnMessageReceived = true;
+
+    #[ORM\Column(options: ['default' => true])]
+    private bool $notifyOnQuoteRequestAccepted = true;
+
+    #[ORM\Column(options: ['default' => true])]
+    private bool $notifyOnReviewReceived = true;
 
     public function getId(): ?string
     {
@@ -553,6 +566,65 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $notification->setRecipient(null);
             }
         }
+
+        return $this;
+    }
+
+    public function shouldReceiveNotificationType(NotificationTypeEnum $type): bool
+    {
+        return match ($type) {
+            NotificationTypeEnum::QUOTE_REQUEST_RECEIVED => $this->notifyOnQuoteRequestReceived,
+            NotificationTypeEnum::MESSAGE_RECEIVED => $this->notifyOnMessageReceived,
+            NotificationTypeEnum::QUOTE_REQUEST_ACCEPTED => $this->notifyOnQuoteRequestAccepted,
+            NotificationTypeEnum::REVIEW_RECEIVED => $this->notifyOnReviewReceived,
+            default => true,
+        };
+    }
+
+    public function isNotifyOnQuoteRequestReceived(): bool
+    {
+        return $this->notifyOnQuoteRequestReceived;
+    }
+
+    public function setNotifyOnQuoteRequestReceived(bool $notifyOnQuoteRequestReceived): static
+    {
+        $this->notifyOnQuoteRequestReceived = $notifyOnQuoteRequestReceived;
+
+        return $this;
+    }
+
+    public function isNotifyOnMessageReceived(): bool
+    {
+        return $this->notifyOnMessageReceived;
+    }
+
+    public function setNotifyOnMessageReceived(bool $notifyOnMessageReceived): static
+    {
+        $this->notifyOnMessageReceived = $notifyOnMessageReceived;
+
+        return $this;
+    }
+
+    public function isNotifyOnQuoteRequestAccepted(): bool
+    {
+        return $this->notifyOnQuoteRequestAccepted;
+    }
+
+    public function setNotifyOnQuoteRequestAccepted(bool $notifyOnQuoteRequestAccepted): static
+    {
+        $this->notifyOnQuoteRequestAccepted = $notifyOnQuoteRequestAccepted;
+
+        return $this;
+    }
+
+    public function isNotifyOnReviewReceived(): bool
+    {
+        return $this->notifyOnReviewReceived;
+    }
+
+    public function setNotifyOnReviewReceived(bool $notifyOnReviewReceived): static
+    {
+        $this->notifyOnReviewReceived = $notifyOnReviewReceived;
 
         return $this;
     }

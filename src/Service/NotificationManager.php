@@ -24,6 +24,16 @@ class NotificationManager
         ?array $metadata = null,
         bool $flush = true,
     ): Notification {
+        if (!$recipient->shouldReceiveNotificationType($type)) {
+            return (new Notification())
+                ->setRecipient($recipient)
+                ->setType($type)
+                ->setTitle($title)
+                ->setBody($body)
+                ->setTargetUrl($targetUrl)
+                ->setMetadata($metadata);
+        }
+
         $notification = (new Notification())
             ->setRecipient($recipient)
             ->setType($type)
@@ -60,6 +70,10 @@ class NotificationManager
 
         foreach ($recipients as $recipient) {
             if (!$recipient instanceof User) {
+                continue;
+            }
+
+            if (!$recipient->shouldReceiveNotificationType($type)) {
                 continue;
             }
 

@@ -1,0 +1,134 @@
+<div class="row g-4">
+    <div class="col-xl-8">
+        <div class="card tm-card p-4 h-100">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-4">
+                <div>
+                    <h4 class="tm-card-title mb-1">Notifications</h4>
+                    <p class="text-muted mb-0">
+                        Choisissez les événements pour lesquels vous souhaitez rester alerté dans la plateforme.
+                    </p>
+                </div>
+                <span class="badge text-bg-light border">Préférences du compte</span>
+            </div>
+
+            {{ form_start(notificationForm, {
+                attr: {
+                    novalidate: 'novalidate',
+                    class: 'tm-form-container',
+                    'data-turbo': 'false',
+                },
+            }) }}
+
+                <div class="d-grid gap-3">
+                    <div class="border rounded-4 p-3 bg-white">
+                        <div class="form-check form-switch mb-0">
+                            {{ form_widget(notificationForm.notifyOnQuoteRequestReceived, {
+                                attr: {
+                                    class: 'form-check-input',
+                                    role: 'switch'
+                                }
+                            }) }}
+                            <div class="ms-2">
+                                {{ form_label(notificationForm.notifyOnQuoteRequestReceived, null, {
+                                    label_attr: {
+                                        class: 'form-check-label fw-semibold'
+                                    }
+                                }) }}
+                                <div class="text-muted small">{{ form_help(notificationForm.notifyOnQuoteRequestReceived) }}</div>
+                                {{ form_errors(notificationForm.notifyOnQuoteRequestReceived) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-4 p-3 bg-white">
+                        <div class="form-check form-switch mb-0">
+                            {{ form_widget(notificationForm.notifyOnMessageReceived, {
+                                attr: {
+                                    class: 'form-check-input',
+                                    role: 'switch'
+                                }
+                            }) }}
+                            <div class="ms-2">
+                                {{ form_label(notificationForm.notifyOnMessageReceived, null, {
+                                    label_attr: {
+                                        class: 'form-check-label fw-semibold'
+                                    }
+                                }) }}
+                                <div class="text-muted small">{{ form_help(notificationForm.notifyOnMessageReceived) }}</div>
+                                {{ form_errors(notificationForm.notifyOnMessageReceived) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-4 p-3 bg-white">
+                        <div class="form-check form-switch mb-0">
+                            {{ form_widget(notificationForm.notifyOnQuoteRequestAccepted, {
+                                attr: {
+                                    class: 'form-check-input',
+                                    role: 'switch'
+                                }
+                            }) }}
+                            <div class="ms-2">
+                                {{ form_label(notificationForm.notifyOnQuoteRequestAccepted, null, {
+                                    label_attr: {
+                                        class: 'form-check-label fw-semibold'
+                                    }
+                                }) }}
+                                <div class="text-muted small">{{ form_help(notificationForm.notifyOnQuoteRequestAccepted) }}</div>
+                                {{ form_errors(notificationForm.notifyOnQuoteRequestAccepted) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-4 p-3 bg-white">
+                        <div class="form-check form-switch mb-0">
+                            {{ form_widget(notificationForm.notifyOnReviewReceived, {
+                                attr: {
+                                    class: 'form-check-input',
+                                    role: 'switch'
+                                }
+                            }) }}
+                            <div class="ms-2">
+                                {{ form_label(notificationForm.notifyOnReviewReceived, null, {
+                                    label_attr: {
+                                        class: 'form-check-label fw-semibold'
+                                    }
+                                }) }}
+                                <div class="text-muted small">{{ form_help(notificationForm.notifyOnReviewReceived) }}</div>
+                                {{ form_errors(notificationForm.notifyOnReviewReceived) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12 d-flex justify-content-center justify-content-md-start">
+                        <button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold col-12 col-md-auto">
+                            Enregistrer mes préférences
+                        </button>
+                    </div>
+                </div>
+            {{ form_end(notificationForm) }}
+        </div>
+    </div>
+
+    <div class="col-xl-4">
+        <div class="card tm-card p-4 h-100">
+            <h5 class="fw-bold mb-3">Ce que cela change</h5>
+            <ul class="list-unstyled mb-0 d-grid gap-3 text-muted">
+                <li>
+                    <strong class="d-block text-dark mb-1">Centre de notifications</strong>
+                    Les événements décochés ne créeront plus de nouvelle notification dans votre espace.
+                </li>
+                <li>
+                    <strong class="d-block text-dark mb-1">Réglage non destructif</strong>
+                    Vous pouvez réactiver chaque type d’alerte à tout moment depuis cet onglet.
+                </li>
+                <li>
+                    <strong class="d-block text-dark mb-1">Événements futurs</strong>
+                    D’autres catégories pourront être ajoutées plus tard sans casser ce paramétrage.
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

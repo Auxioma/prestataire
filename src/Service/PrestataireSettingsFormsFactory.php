@@ -12,6 +12,7 @@ use App\Form\AccountPasswordChangeType;
 use App\Form\PrestataireAvailabilityCollectionType;
 use App\Form\PrestataireCompanyTabType;
 use App\Form\PrestataireInterventionZoneType;
+use App\Form\PrestataireNotificationPreferencesType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -50,6 +51,15 @@ final class PrestataireSettingsFormsFactory
             availabilityForm: $this->formFactory->create(
                 PrestataireAvailabilityCollectionType::class,
                 $prestataireProfile,
+                [
+                    'action' => $this->urlGenerator->generate('app_prestataire_settings'),
+                    'method' => 'POST',
+                ]
+            ),
+            notificationForm: $this->formFactory->createNamed(
+                'prestataire_notification_form',
+                PrestataireNotificationPreferencesType::class,
+                $user,
                 [
                     'action' => $this->urlGenerator->generate('app_prestataire_settings'),
                     'method' => 'POST',

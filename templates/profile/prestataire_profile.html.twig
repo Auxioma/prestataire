@@ -396,76 +396,16 @@
 
 					{# ================= AUTRES TABS ================= #}
 					<div class="tab-pane fade {{ activeTab == 'notif' ? 'show active' : '' }}" id="notif-panel" role="tabpanel" aria-labelledby="notif-tab">
-						<div class="card tm-card p-4">
-							<h4>🔔 Notifications</h4>
-							<p class="text-muted mb-0">Contenu à venir.</p>
-						</div>
+						{{ include('settings/_prestataire_notifications_tab.html.twig', {
+							notificationForm: notificationForm,
+						}) }}
 					</div>
 
 					<div class="tab-pane fade {{ activeTab == 'security' ? 'show active' : '' }}" id="security-panel" role="tabpanel" aria-labelledby="security-tab">
-						<div class="row g-4">
-							<div class="col-xl-7">
-								<div class="card tm-card p-4 h-100">
-									<h4 class="tm-card-title mb-4">Changer le mot de passe</h4>
-									{{ form_start(passwordForm, {
-										attr: {
-											novalidate: 'novalidate',
-											class: 'tm-form-container',
-											'data-turbo': 'false',
-										},
-									}) }}
-										<div class="row g-3">
-											<div class="col-12 tm-form-row">
-												{{ form_row(passwordForm.currentPassword) }}
-											</div>
-											<div class="col-md-6 tm-form-row">
-												{{ form_row(passwordForm.plainPassword.first) }}
-											</div>
-											<div class="col-md-6 tm-form-row">
-												{{ form_row(passwordForm.plainPassword.second) }}
-											</div>
-										</div>
-										<div class="row mt-4">
-											<div class="col-12 d-flex justify-content-center">
-												<button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold col-12 col-md-auto">
-													Mettre à jour le mot de passe
-												</button>
-											</div>
-										</div>
-									{{ form_end(passwordForm) }}
-								</div>
-							</div>
-
-							<div class="col-xl-5">
-								<div class="card tm-card p-4 border-danger-subtle">
-									<h4 class="tm-card-title mb-3 text-danger">Désinscription</h4>
-									<p class="text-muted mb-4">Votre compte sera désactivé par soft delete et vous serez immédiatement déconnecté.</p>
-									{{ form_start(deletionForm, {
-										attr: {
-											novalidate: 'novalidate',
-											class: 'tm-form-container',
-											'data-turbo': 'false',
-										},
-									}) }}
-										<div class="row g-3">
-											<div class="col-12 tm-form-row">
-												{{ form_row(deletionForm.currentPassword) }}
-											</div>
-											<div class="col-12 tm-form-row">
-												{{ form_row(deletionForm.confirmation) }}
-											</div>
-										</div>
-										<div class="row mt-4">
-											<div class="col-12 d-flex justify-content-center">
-												<button type="submit" class="btn btn-outline-danger px-5 py-3 fw-bold col-12 col-md-auto">
-													Se désinscrire
-												</button>
-											</div>
-										</div>
-									{{ form_end(deletionForm) }}
-								</div>
-							</div>
-						</div>
+						{{ include('settings/_prestataire_security_tab.html.twig', {
+							passwordForm: passwordForm,
+							deletionForm: deletionForm,
+						}) }}
 					</div>
 				</div>
 			</div>

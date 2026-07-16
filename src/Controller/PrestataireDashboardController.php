@@ -17,6 +17,7 @@ use App\Repository\PrestataireServiceRepository;
 use App\Repository\QuoteRequestRepository;
 use App\Service\ConversationMessageManager;
 use App\Service\NotificationManager;
+use App\Service\PrestataireProfileCompletionService;
 use App\Service\RealtimeNotifier;
 use App\Service\Subscription\SubscriptionAccessManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -36,6 +37,11 @@ use Symfony\Component\Routing\Attribute\Route;
 final class PrestataireDashboardController extends AbstractController
 {
     private const DASHBOARD_PAGE_SIZE = 10;
+
+    public function __construct(
+        private readonly PrestataireProfileCompletionService $prestataireProfileCompletionService,
+    ) {
+    }
 
     #[Route('/prestataire/espace-pro', name: 'app_prestataire_dashboard', methods: ['GET'])]
     /**
@@ -363,9 +369,12 @@ final class PrestataireDashboardController extends AbstractController
             $messageFormView = $this->createMessageForm($activeConversation, new Message())->createView();
         }
 
+        $completionReport = $this->prestataireProfileCompletionService->buildReport($user, $prestataireProfile);
+
         return [
             'user' => $user,
             'prestataireProfile' => $prestataireProfile,
+            'completionReport' => $completionReport,
             'prestations' => $prestataireServiceRepository->findBy(
                 ['prestataire' => $prestataireProfile],
                 ['updatedAt' => 'DESC', 'createdAt' => 'DESC']
