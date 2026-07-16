@@ -10,6 +10,8 @@ export default class extends Controller {
         csrfToken: String,
         isFavorite: Boolean,
         loginUrl: String,
+        removeOnUnfavorite: Boolean,
+        removeClosestSelector: String,
     };
 
     connect() {
@@ -60,6 +62,10 @@ export default class extends Controller {
 
             this.isFavoriteValue = !!data.isFavorite;
             this.render();
+
+            if (!this.isFavoriteValue && this.removeOnUnfavoriteValue) {
+                this.removeElementFromView();
+            }
         } catch (error) {
             window.alert(error.message || 'Impossible de mettre à jour les favoris.');
         } finally {
@@ -87,5 +93,18 @@ export default class extends Controller {
         } else {
             this.iconTarget.classList.add('fa-regular', 'text-muted');
         }
+    }
+
+    removeElementFromView() {
+        if (!this.hasRemoveClosestSelectorValue || !this.removeClosestSelectorValue) {
+            return;
+        }
+
+        const elementToRemove = this.element.closest(this.removeClosestSelectorValue);
+        if (!elementToRemove) {
+            return;
+        }
+
+        elementToRemove.remove();
     }
 }

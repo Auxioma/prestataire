@@ -110,6 +110,7 @@ class ShowPrestataireController extends AbstractController
         }
 
         $isFavoriteProvider = false;
+        $favoritePrestationIds = [];
         $user = $this->getUser();
 
         if ($user instanceof User && $this->isGranted('ROLE_CLIENT')) {
@@ -118,6 +119,8 @@ class ShowPrestataireController extends AbstractController
                 'type' => FavoriteTypeEnum::PRESTATAIRE,
                 'targetId' => $prestataire->getId(),
             ]);
+
+            $favoritePrestationIds = $favoriteRepository->findTargetIdsByUserAndType($user, FavoriteTypeEnum::PRESTATION);
         }
 
         return $this->render('show_prestataire/show.html.twig', [
@@ -125,6 +128,7 @@ class ShowPrestataireController extends AbstractController
             'zones' => $zones,
             'zoneMap' => $zoneMap,
             'isFavoriteProvider' => $isFavoriteProvider,
+            'favoritePrestationIds' => $favoritePrestationIds,
         ]);
     }
 }

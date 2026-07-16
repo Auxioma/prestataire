@@ -86,7 +86,14 @@ final class FavoriteController extends AbstractController
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $isFavorite = $favoriteManager->toggle($user, $type, (string) $targetId);
+        try {
+            $isFavorite = $favoriteManager->toggle($user, $type, (string) $targetId);
+        } catch (\InvalidArgumentException $exception) {
+            return $this->json([
+                'success' => false,
+                'message' => $exception->getMessage(),
+            ], Response::HTTP_NOT_FOUND);
+        }
 
         return $this->json([
             'success' => true,

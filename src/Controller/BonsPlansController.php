@@ -12,6 +12,9 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Enum\FavoriteTypeEnum;
+use App\Repository\FavoriteRepository;
 use App\Repository\PrestataireServiceRepository;
 use App\Repository\ServiceCategoryRepository;
 use Knp\Component\Pager\PaginatorInterface;
@@ -36,6 +39,7 @@ class BonsPlansController extends AbstractController
         PrestataireServiceRepository $prestataireServiceRepository,
         ServiceCategoryRepository $serviceCategoryRepository,
         PaginatorInterface $paginator,
+        FavoriteRepository $favoriteRepository,
     ): Response {
         $selectedCategorySlug = $request->query->get('category');
         $selectedSubCategorySlug = $request->query->get('subCategory');
@@ -74,12 +78,20 @@ class BonsPlansController extends AbstractController
             ]
         );
 
+        $favoriteBonPlanIds = [];
+        $user = $this->getUser();
+
+        if ($user instanceof User && $this->isGranted('ROLE_CLIENT')) {
+            $favoriteBonPlanIds = $favoriteRepository->findTargetIdsByUserAndType($user, FavoriteTypeEnum::BON_PLAN);
+        }
+
         return $this->render('bons_plans/bons_plans.html.twig', [
             'bonsPlans' => $bonsPlans,
             'categories' => $categories,
             'subCategories' => $subCategories,
             'selectedCategorySlug' => $selectedCategorySlug,
             'selectedSubCategorySlug' => $selectedSubCategorySlug,
+            'favoriteBonPlanIds' => $favoriteBonPlanIds,
         ]);
     }
 }

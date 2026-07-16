@@ -3,6 +3,13 @@ import { Controller } from '@hotwired/stimulus'
 export default class extends Controller {
     static targets = ['checkbox']
 
+    static values = {
+        morningStart: String,
+        morningEnd: String,
+        afternoonStart: String,
+        afternoonEnd: String,
+    }
+
     connect() {
         this.checkboxTargets.forEach((checkbox) => this.applyState(checkbox))
     }
@@ -33,9 +40,33 @@ export default class extends Controller {
         timeFields.forEach((field) => {
             field.disabled = !checkbox.checked
 
-            if (!checkbox.checked) {
-                field.value = ''
+            if (checkbox.checked && field.value === '') {
+                this.applyDefaultValue(field, selector)
             }
         })
+    }
+
+    applyDefaultValue(field, selector) {
+        const fieldName = field.name ?? ''
+
+        if (selector === '.js-morning-panel') {
+            if (fieldName.endsWith('[morningStart]') && this.hasMorningStartValue) {
+                field.value = this.morningStartValue
+            }
+
+            if (fieldName.endsWith('[morningEnd]') && this.hasMorningEndValue) {
+                field.value = this.morningEndValue
+            }
+        }
+
+        if (selector === '.js-afternoon-panel') {
+            if (fieldName.endsWith('[afternoonStart]') && this.hasAfternoonStartValue) {
+                field.value = this.afternoonStartValue
+            }
+
+            if (fieldName.endsWith('[afternoonEnd]') && this.hasAfternoonEndValue) {
+                field.value = this.afternoonEndValue
+            }
+        }
     }
 }

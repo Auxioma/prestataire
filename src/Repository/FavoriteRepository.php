@@ -47,4 +47,25 @@ class FavoriteRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    /**
+     * @return list<string>
+     */
+    public function findTargetIdsByUserAndType(User $user, FavoriteTypeEnum $type): array
+    {
+        $rows = $this->createQueryBuilder('f')
+            ->select('f.targetId')
+            ->andWhere('f.user = :user')
+            ->andWhere('f.type = :type')
+            ->setParameter('user', $user)
+            ->setParameter('type', $type)
+            ->orderBy('f.createdAt', 'DESC')
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_map(
+            static fn (array $row): string => (string) ($row['targetId'] ?? ''),
+            $rows
+        );
+    }
 }

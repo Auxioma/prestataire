@@ -151,18 +151,26 @@
                         <div class="row row-cols-1 row-cols-sm-2 g-3">
                             {% for ps in prestataire.prestataireServices %}
                                 <div class="col">
-                                    {% set cardTag = ps.isActive ? 'a' : 'div' %}
-                                    <{{cardTag}} {% if ps.isActive %} href="{{ path('app_prestataire_service_prestation_show', { slug: ps.slug }) }}" {% endif %} class="tm-profile-show__service-item{% if ps.isActive %} tm-profile-show__service-item--link{% else %} tm-profile-show__service-item--disabled{% endif %}">
+                                    {% set isFavoritePrestation = ps.id in (favoritePrestationIds|default([])) %}
+                                    <article class="tm-profile-show__service-item{% if ps.isActive %} tm-profile-show__service-item--link{% else %} tm-profile-show__service-item--disabled{% endif %}">
                                         <div class="tm-profile-show__service-top">
                                             <div class="tm-profile-show__service-icon">
                                                 <i class="fa-solid {{ ps.service.icon|default('fa-check') }}"></i>
                                             </div>
 
                                             {% if ps.isActive %}
-                                                <span class="tm-profile-show__service-cta-badge">
-                                                    Voir
-                                                    <i class="fa-solid fa-arrow-right"></i>
-                                                </span>
+                                                <div class="tm-profile-show__service-actions">
+                                                    {% if app.user and is_granted('ROLE_CLIENT') %}
+                                                        <button type="button" class="btn tm-profile-show__service-favorite-btn favorite-btn" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="prestation" data-favorite-toggle-target-id-value="{{ ps.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="{{ isFavoritePrestation ? 'true' : 'false' }}" data-favorite-toggle-login-url-value="{{ path('app_login') }}" aria-pressed="{{ isFavoritePrestation ? 'true' : 'false' }}" aria-label="{{ isFavoritePrestation ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
+                                                            <i data-favorite-toggle-target="icon" class="{{ isFavoritePrestation ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"></i>
+                                                        </button>
+                                                    {% endif %}
+
+                                                    <span class="tm-profile-show__service-cta-badge">
+                                                        Voir
+                                                        <i class="fa-solid fa-arrow-right"></i>
+                                                    </span>
+                                                </div>
                                             {% endif %}
                                         </div>
 
@@ -188,15 +196,17 @@
 
                                         {% if ps.isActive %}
                                             <div class="tm-profile-show__service-footer">
-                                                <span class="tm-profile-show__service-link-text">
-                                                    Découvrir cette prestation
-                                                </span>
-                                                <span class="tm-profile-show__service-link-icon">
-                                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                                                </span>
+                                                <a href="{{ path('app_prestataire_service_prestation_show', { slug: ps.slug }) }}" class="tm-profile-show__service-link">
+                                                    <span class="tm-profile-show__service-link-text">
+                                                        Découvrir cette prestation
+                                                    </span>
+                                                    <span class="tm-profile-show__service-link-icon">
+                                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                                    </span>
+                                                </a>
                                             </div>
                                         {% endif %}
-                                    </{{cardTag}}>
+                                    </article>
                                 </div>
                             {% else %}
                                 <div class="col-12">
@@ -367,45 +377,52 @@
                             </div>
                         </div>
 
-                        {% if prestataire.availabilities is defined and prestataire.availabilities|length > 0 %}
+                        {% if prestataire.isOnVacation or (prestataire.availabilities is defined and prestataire.availabilities|length > 0) %}
                             <div class="tm-profile-show__sidebar-availability">
                                 <div class="tm-profile-show__sidebar-availability-head">
                                     <h4 class="tm-profile-show__sidebar-availability-title">Disponibilités</h4>
-                                    <span class="tm-profile-show__sidebar-availability-badge">Semaine</span>
+                                    <span class="tm-profile-show__sidebar-availability-badge">{{ prestataire.isOnVacation ? 'Vacances' : 'Semaine' }}</span>
                                 </div>
 
-                                <div class="tm-profile-show__sidebar-availability-list">
-                                    {% for availability in prestataire.availabilities %}
-                                        {% set hasMorning = availability.morningEnabled and availability.morningStart and availability.morningEnd %}
-                                        {% set hasAfternoon = availability.afternoonEnabled and availability.afternoonStart and availability.afternoonEnd %}
+                                {% if prestataire.isOnVacation %}
+                                    <div class="tm-profile-show__sidebar-availability-vacation" role="status" aria-live="polite">
+                                        <i class="fa-solid fa-umbrella-beach" aria-hidden="true"></i>
+                                        <span>En vacances</span>
+                                    </div>
+                                {% else %}
+                                    <div class="tm-profile-show__sidebar-availability-list">
+                                        {% for availability in prestataire.availabilities %}
+                                            {% set hasMorning = availability.morningEnabled and availability.morningStart and availability.morningEnd %}
+                                            {% set hasAfternoon = availability.afternoonEnabled and availability.afternoonStart and availability.afternoonEnd %}
 
-                                        <div class="tm-profile-show__sidebar-availability-row tm-profile-show__sidebar-availability-row--{{ loop.index }}">
-                                            <div class="tm-profile-show__sidebar-availability-day">
-                                                {{ availability.dayLabel ?? availability.dayName ?? ('Jour ' ~ loop.index) }}
+                                            <div class="tm-profile-show__sidebar-availability-row tm-profile-show__sidebar-availability-row--{{ loop.index }}">
+                                                <div class="tm-profile-show__sidebar-availability-day">
+                                                    {{ availability.dayLabel ?? availability.dayName ?? ('Jour ' ~ loop.index) }}
+                                                </div>
+
+                                                <div class="tm-profile-show__sidebar-availability-values">
+                                                    {% if hasMorning %}
+                                                        <span class="tm-profile-show__sidebar-availability-chip">
+                                                            {{ availability.morningStart|date('H:i') }}-{{ availability.morningEnd|date('H:i') }}
+                                                        </span>
+                                                    {% endif %}
+
+                                                    {% if hasAfternoon %}
+                                                        <span class="tm-profile-show__sidebar-availability-chip">
+                                                            {{ availability.afternoonStart|date('H:i') }}-{{ availability.afternoonEnd|date('H:i') }}
+                                                        </span>
+                                                    {% endif %}
+
+                                                    {% if not hasMorning and not hasAfternoon %}
+                                                        <span class="tm-profile-show__sidebar-availability-chip tm-profile-show__sidebar-availability-chip--closed">
+                                                            Fermé
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
                                             </div>
-
-                                            <div class="tm-profile-show__sidebar-availability-values">
-                                                {% if hasMorning %}
-                                                    <span class="tm-profile-show__sidebar-availability-chip">
-                                                        {{ availability.morningStart|date('H:i') }}-{{ availability.morningEnd|date('H:i') }}
-                                                    </span>
-                                                {% endif %}
-
-                                                {% if hasAfternoon %}
-                                                    <span class="tm-profile-show__sidebar-availability-chip">
-                                                        {{ availability.afternoonStart|date('H:i') }}-{{ availability.afternoonEnd|date('H:i') }}
-                                                    </span>
-                                                {% endif %}
-
-                                                {% if not hasMorning and not hasAfternoon %}
-                                                    <span class="tm-profile-show__sidebar-availability-chip tm-profile-show__sidebar-availability-chip--closed">
-                                                        Fermé
-                                                    </span>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
                         {% endif %}
 

@@ -71,4 +71,32 @@ class PrestataireServiceRepository extends ServiceEntityRepository
 
         return $qb;
     }
+
+    public function isActivePrestationFavoriteable(int|string $id): bool
+    {
+        return null !== $this->createQueryBuilder('ps')
+            ->select('ps.id')
+            ->andWhere('ps.id = :id')
+            ->andWhere('ps.isActive = :isActive')
+            ->setParameter('id', $id)
+            ->setParameter('isActive', true)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function isActiveBonPlanFavoriteable(int|string $id): bool
+    {
+        return null !== $this->createQueryBuilder('ps')
+            ->select('ps.id')
+            ->andWhere('ps.id = :id')
+            ->andWhere('ps.isActive = :isActive')
+            ->andWhere('ps.tauxReduction IS NOT NULL')
+            ->andWhere('ps.tauxReduction > 0')
+            ->setParameter('id', $id)
+            ->setParameter('isActive', true)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

@@ -54,29 +54,12 @@ class HomeController extends AbstractController
 
         $favoriteProviderIds = [];
         $favoriteBonPlanIds = [];
-
         $user = $this->getUser();
 
         if ($user instanceof User && $this->isGranted('ROLE_CLIENT')) {
-            $favoriteProviderIds = array_map(
-                static fn($favorite) => (string) $favorite->getTargetId(),
-                $favoriteRepository->findByUserAndType($user, FavoriteTypeEnum::PRESTATAIRE)
-            );
+            $favoriteProviderIds = $favoriteRepository->findTargetIdsByUserAndType($user, FavoriteTypeEnum::PRESTATAIRE);
+            $favoriteBonPlanIds = $favoriteRepository->findTargetIdsByUserAndType($user, FavoriteTypeEnum::BON_PLAN);
         }
-
-        if ($user instanceof User && $this->isGranted('ROLE_CLIENT')) {
-            $favoriteProviderIds = array_map(
-                static fn($favorite) => (string) $favorite->getTargetId(),
-                $favoriteRepository->findByUserAndType($user, FavoriteTypeEnum::PRESTATAIRE)
-            );
-
-            $favoriteBonPlanIds = array_map(
-                static fn($favorite) => (string) $favorite->getTargetId(),
-                $favoriteRepository->findByUserAndType($user, FavoriteTypeEnum::BON_PLAN)
-            );
-        }
-
-
 
         return $this->render('home/index.html.twig', [
             'homepageSearchForm' => $homepageSearchForm->createView(),

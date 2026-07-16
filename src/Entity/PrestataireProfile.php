@@ -207,6 +207,9 @@ class PrestataireProfile
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $companyVerificationNote = null;
 
+    #[ORM\Column(options: ['default' => false])]
+    private bool $isOnVacation = false;
+
     /**
      * @var Collection<int, PrestataireService>
      */
@@ -924,6 +927,18 @@ class PrestataireProfile
     public function setCompanyVerificationNote(?string $companyVerificationNote): static
     {
         $this->companyVerificationNote = $companyVerificationNote;
+
+        return $this;
+    }
+
+    public function isOnVacation(): bool
+    {
+        return $this->isOnVacation;
+    }
+
+    public function setIsOnVacation(bool $isOnVacation): static
+    {
+        $this->isOnVacation = $isOnVacation;
 
         return $this;
     }

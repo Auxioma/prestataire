@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\PrestataireProfile;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -12,11 +13,17 @@ class PrestataireAvailabilityCollectionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('availabilities', CollectionType::class, [
-            'entry_type' => PrestataireAvailabilityType::class,
-            'label' => false,
-            'by_reference' => false,
-        ]);
+        $builder
+            ->add('isOnVacation', CheckboxType::class, [
+                'label' => 'Afficher "En vacances" à la place de mes horaires',
+                'required' => false,
+            ])
+            ->add('availabilities', CollectionType::class, [
+                'entry_type' => PrestataireAvailabilityType::class,
+                'label' => false,
+                'by_reference' => false,
+            ])
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

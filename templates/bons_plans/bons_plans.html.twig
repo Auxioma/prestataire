@@ -219,6 +219,7 @@
                               {% set categoryLabel = category and category.name is defined and category.name ? category.name : 'Catégorie' %}
                               {% set prestataireSlug = prestataire and prestataire.slug is defined and prestataire.slug ? prestataire.slug :
   null %}
+                              {% set isFavoriteBonPlan = bonPlan.id in (favoriteBonPlanIds|default([])) %}
 
                               {% set hasPublicPrestation = bonPlan.isActive
                                   and bonPlan.title is defined and bonPlan.title
@@ -283,12 +284,25 @@
                                           {% endif %}
                                       </span>
 
-                                      <button type="button" class="favori" aria-label="Ajouter {{ prestationTitle }} aux favoris">
-                                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-  stroke-linecap="round" stroke-linejoin="round">
-                                              <path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-
-  2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7z"/>
-                                          </svg>
+                                      <button
+                                          type="button"
+                                          class="favori favorite-btn"
+                                          data-controller="favorite-toggle"
+                                          data-action="click->favorite-toggle#toggle"
+                                          data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}"
+                                          data-favorite-toggle-type-value="bon_plan"
+                                          data-favorite-toggle-target-id-value="{{ bonPlan.id }}"
+                                          data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}"
+                                          data-favorite-toggle-is-favorite-value="{{ isFavoriteBonPlan ? 'true' : 'false' }}"
+                                          data-favorite-toggle-login-url-value="{{ path('app_login') }}"
+                                          aria-pressed="{{ isFavoriteBonPlan ? 'true' : 'false' }}"
+                                          aria-label="{{ isFavoriteBonPlan ? 'Retirer ' ~ prestationTitle ~ ' des favoris' : 'Ajouter ' ~ prestationTitle ~ ' aux favoris' }}"
+                                      >
+                                          <i
+                                              data-favorite-toggle-target="icon"
+                                              class="{{ isFavoriteBonPlan ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"
+                                              aria-hidden="true"
+                                          ></i>
                                       </button>
 
                                       <span class="icone-cat {{ iconColorClass }}" aria-hidden="true">
@@ -395,4 +409,3 @@
           </div>
       </section>
   {% endblock %}
-

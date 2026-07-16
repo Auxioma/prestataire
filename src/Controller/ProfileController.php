@@ -30,6 +30,7 @@ use App\Repository\ServiceCategoryRepository;
 use App\Repository\ServiceRepository;
 use App\Service\AccountSecurityManager;
 use App\Service\CompanyVerificationManager;
+use App\Service\PrestataireAvailabilityManager;
 use App\Service\PrestataireProfileManager;
 use App\Service\PrestataireSettingsFormsFactory;
 use App\Service\SireneClient;
@@ -49,6 +50,7 @@ class ProfileController extends AbstractController
 {
     public function __construct(
         private readonly PrestataireProfileManager $prestataireProfileManager,
+        private readonly PrestataireAvailabilityManager $prestataireAvailabilityManager,
         private readonly CompanyVerificationManager $companyVerificationManager,
         private readonly PrestataireSettingsFormsFactory $prestataireSettingsFormsFactory,
         private readonly AccountSecurityManager $accountSecurityManager,
@@ -183,6 +185,7 @@ class ProfileController extends AbstractController
             'deletionForm' => $forms->deletionForm->createView(),
             'activeTab' => $this->resolveActiveTab(
                 defaultTab: $activeTab,
+                availabilityForm: $forms->availabilityForm,
                 passwordForm: $forms->passwordForm,
                 deletionForm: $forms->deletionForm,
             ),
@@ -377,10 +380,17 @@ class ProfileController extends AbstractController
             return null;
         }
 
+        $this->prestataireAvailabilityManager->prepareForPersistence($prestataireProfile);
+
         $entityManager->persist($prestataireProfile);
         $entityManager->flush();
 
-        $this->addFlash('success', 'Vos disponibilités ont bien été enregistrées.');
+        $this->addFlash(
+            'success',
+            $prestataireProfile->isOnVacation()
+                ? 'Votre statut "En vacances" est activé. Vos horaires restent enregistrés.'
+                : 'Vos disponibilités ont bien été enregistrées.'
+        );
 
         return $this->redirectToRoute('app_prestataire_settings', [
             'tab' => 'dispo',
@@ -435,9 +445,14 @@ class ProfileController extends AbstractController
 
     private function resolveActiveTab(
         string $defaultTab,
+        ?FormInterface $availabilityForm,
         FormInterface $passwordForm,
         FormInterface $deletionForm,
     ): string {
+        if (null !== $availabilityForm && $availabilityForm->isSubmitted() && !$availabilityForm->isValid()) {
+            return 'dispo';
+        }
+
         if (($passwordForm->isSubmitted() && !$passwordForm->isValid()) || ($deletionForm->isSubmitted() && !$deletionForm->isValid())) {
             return 'security';
         }
@@ -726,6 +741,7 @@ class ProfileController extends AbstractController
             'deletionForm' => $deletionForm->createView(),
             'activeTab' => $this->resolveActiveTab(
                 defaultTab: $activeTab,
+                availabilityForm: null,
                 passwordForm: $passwordForm,
                 deletionForm: $deletionForm,
             ),

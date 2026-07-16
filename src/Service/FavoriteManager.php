@@ -6,6 +6,8 @@ use App\Entity\Favorite;
 use App\Entity\User;
 use App\Enum\FavoriteTypeEnum;
 use App\Repository\FavoriteRepository;
+use App\Repository\PrestataireProfileRepository;
+use App\Repository\PrestataireServiceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FavoriteManager
@@ -13,6 +15,8 @@ class FavoriteManager
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly FavoriteRepository $favoriteRepository,
+        private readonly PrestataireProfileRepository $prestataireProfileRepository,
+        private readonly PrestataireServiceRepository $prestataireServiceRepository,
     ) {
     }
 
@@ -23,6 +27,8 @@ class FavoriteManager
 
     public function add(User $user, FavoriteTypeEnum $type, string|int $targetId): Favorite
     {
+        $this->guardTargetExists($type, $targetId);
+
         $existing = $this->favoriteRepository->findOneByUserTypeAndTarget($user, $type, $targetId);
 
         if ($existing instanceof Favorite) {
@@ -67,6 +73,8 @@ class FavoriteManager
             return false;
         }
 
+        $this->guardTargetExists($type, $targetId);
+
         $favorite = new Favorite();
         $favorite
             ->setUser($user)
@@ -86,5 +94,18 @@ class FavoriteManager
     public function getByType(User $user, FavoriteTypeEnum $type): array
     {
         return $this->favoriteRepository->findByUserAndType($user, $type);
+    }
+
+    private function guardTargetExists(FavoriteTypeEnum $type, string|int $targetId): void
+    {
+        $exists = match ($type) {
+            FavoriteTypeEnum::PRESTATAIRE => null !== $this->prestataireProfileRepository->find($targetId),
+            FavoriteTypeEnum::PRESTATION => $this->prestataireServiceRepository->isActivePrestationFavoriteable($targetId),
+            FavoriteTypeEnum::BON_PLAN => $this->prestataireServiceRepository->isActiveBonPlanFavoriteable($targetId),
+        };
+
+        if (!$exists) {
+            throw new \InvalidArgumentException('La cible du favori est introuvable ou indisponible.');
+        }
     }
 }

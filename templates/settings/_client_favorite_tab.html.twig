@@ -64,10 +64,7 @@
 									<div class="tm-cp-favorite-provider-card-overlay"></div>
 
 									<div class="tm-cp-favorite-provider-card-badges">
-										<span class="tm-cp-favorite-provider-card-badge tm-cp-favorite-provider-card-badge--favorite">
-											<i class="fa-solid fa-heart"></i>
-											Favori
-										</span>
+
 
 										{% if provider.averageRating %}
 											<span class="tm-cp-favorite-provider-card-badge tm-cp-favorite-provider-card-badge--rating">
@@ -75,6 +72,9 @@
 												{{ provider.averageRating|number_format(1, ',', ' ') }}/5
 											</span>
 										{% endif %}
+										<button type="button" class="btn tm-cp-favorite-remove-btn favorite-btn" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="prestataire" data-favorite-toggle-target-id-value="{{ provider.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="true" data-favorite-toggle-login-url-value="{{ path('app_login') }}" data-favorite-toggle-remove-on-unfavorite-value="true" data-favorite-toggle-remove-closest-selector-value=".col-md-6" aria-pressed="true" aria-label="Retirer des favoris">
+											<i data-favorite-toggle-target="icon" class="fa-solid text-danger fa-heart"></i>
+										</button>
 									</div>
 								</div>
 
@@ -153,6 +153,9 @@
 													<i class="fa-solid fa-heart"></i>
 													Favori
 												</span>
+												<button type="button" class="btn tm-cp-favorite-remove-btn favorite-btn" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="prestataire" data-favorite-toggle-target-id-value="{{ provider.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="true" data-favorite-toggle-login-url-value="{{ path('app_login') }}" data-favorite-toggle-remove-on-unfavorite-value="true" data-favorite-toggle-remove-closest-selector-value=".col-md-6" aria-pressed="true" aria-label="Retirer des favoris">
+													<i data-favorite-toggle-target="icon" class="fa-solid text-danger fa-heart"></i>
+												</button>
 
 												{% if provider.averageRating %}
 													<span class="tm-cp-favorite-provider-card-badge tm-cp-favorite-provider-card-badge--rating">
@@ -273,9 +276,9 @@
 											Prestation
 										</span>
 
-										<span class="tm-cp-favorite-heart" aria-hidden="true">
-											<i class="fa-solid fa-heart"></i>
-										</span>
+										<button type="button" class="btn tm-cp-favorite-remove-btn favorite-btn" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="prestation" data-favorite-toggle-target-id-value="{{ prestation.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="true" data-favorite-toggle-login-url-value="{{ path('app_login') }}" data-favorite-toggle-remove-on-unfavorite-value="true" data-favorite-toggle-remove-closest-selector-value=".col-md-6" aria-pressed="true" aria-label="Retirer des favoris">
+											<i data-favorite-toggle-target="icon" class="fa-solid text-danger fa-heart"></i>
+										</button>
 									</div>
 
 									<h5 class="tm-cp-favorite-name tm-cp-favorite-name--service mb-2">
@@ -322,9 +325,9 @@
 													Prestation
 												</span>
 
-												<span class="tm-cp-favorite-heart" aria-hidden="true">
-													<i class="fa-solid fa-heart"></i>
-												</span>
+												<button type="button" class="btn tm-cp-favorite-remove-btn favorite-btn" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="prestation" data-favorite-toggle-target-id-value="{{ prestation.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="true" data-favorite-toggle-login-url-value="{{ path('app_login') }}" data-favorite-toggle-remove-on-unfavorite-value="true" data-favorite-toggle-remove-closest-selector-value=".col-md-6" aria-pressed="true" aria-label="Retirer des favoris">
+													<i data-favorite-toggle-target="icon" class="fa-solid text-danger fa-heart"></i>
+												</button>
 											</div>
 
 											<h5 class="tm-cp-favorite-name tm-cp-favorite-name--service mb-2">
@@ -413,9 +416,9 @@
 											Bon plan
 										</span>
 
-										<span class="tm-cp-favorite-heart" aria-hidden="true">
-											<i class="fa-solid fa-heart"></i>
-										</span>
+										<button type="button" class="btn tm-cp-favorite-remove-btn favorite-btn" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="bon_plan" data-favorite-toggle-target-id-value="{{ bonPlan.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="true" data-favorite-toggle-login-url-value="{{ path('app_login') }}" data-favorite-toggle-remove-on-unfavorite-value="true" data-favorite-toggle-remove-closest-selector-value=".col-md-6" aria-pressed="true" aria-label="Retirer des favoris">
+											<i data-favorite-toggle-target="icon" class="fa-solid text-danger fa-heart"></i>
+										</button>
 									</div>
 
 									<h5 class="tm-cp-favorite-name tm-cp-favorite-name--service mb-2">
@@ -464,9 +467,9 @@
 													Bon plan
 												</span>
 
-												<span class="tm-cp-favorite-heart" aria-hidden="true">
-													<i class="fa-solid fa-heart"></i>
-												</span>
+												<button type="button" class="btn tm-cp-favorite-remove-btn favorite-btn" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="bon_plan" data-favorite-toggle-target-id-value="{{ bonPlan.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="true" data-favorite-toggle-login-url-value="{{ path('app_login') }}" data-favorite-toggle-remove-on-unfavorite-value="true" data-favorite-toggle-remove-closest-selector-value=".col-md-6" aria-pressed="true" aria-label="Retirer des favoris">
+													<i data-favorite-toggle-target="icon" class="fa-solid text-danger fa-heart"></i>
+												</button>
 											</div>
 
 											<h5 class="tm-cp-favorite-name tm-cp-favorite-name--service mb-2">

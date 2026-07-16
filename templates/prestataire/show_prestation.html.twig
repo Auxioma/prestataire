@@ -286,49 +286,62 @@
 							{% endif %}
 						</div>
 
-						{% if availabilities|length > 0 %}
+						{% if prestation.prestataire.isOnVacation or availabilities|length > 0 %}
 							<div class="tm-prestation-show__availability">
 								<div class="tm-prestation-show__availability-head">
 									<h3 class="tm-prestation-show__availability-title">Disponibilités</h3>
-									<span class="tm-prestation-show__availability-badge">Semaine</span>
+									<span class="tm-prestation-show__availability-badge">{{ prestation.prestataire.isOnVacation ? 'Vacances' : 'Semaine' }}</span>
 								</div>
 
-								<div class="tm-prestation-show__availability-list">
-									{% for availability in availabilities %}
-										{% set hasMorning = availability.morningEnabled and availability.morningStart and availability.morningEnd %}
-										{% set hasAfternoon = availability.afternoonEnabled and availability.afternoonStart and availability.afternoonEnd %}
-
+								{% if prestation.prestataire.isOnVacation %}
+									<div class="tm-prestation-show__availability-list">
 										<div class="tm-prestation-show__availability-row">
-											<div class="tm-prestation-show__availability-day">
-												{{ availability.dayLabel ?? availability.dayName ?? ('Jour ' ~ loop.index) }}
-											</div>
-
+											<div class="tm-prestation-show__availability-day">Statut</div>
 											<div class="tm-prestation-show__availability-values">
-												{% if hasMorning %}
-													<span class="tm-prestation-show__availability-chip">
-														{{ availability.morningStart|date('H:i') }}
-														-
-														{{ availability.morningEnd|date('H:i') }}
-													</span>
-												{% endif %}
-
-												{% if hasAfternoon %}
-													<span class="tm-prestation-show__availability-chip">
-														{{ availability.afternoonStart|date('H:i') }}
-														-
-														{{ availability.afternoonEnd|date('H:i') }}
-													</span>
-												{% endif %}
-
-												{% if not hasMorning and not hasAfternoon %}
-													<span class="tm-prestation-show__availability-chip tm-prestation-show__availability-chip--closed">
-														Fermé
-													</span>
-												{% endif %}
+												<span class="tm-prestation-show__availability-chip">
+													En vacances
+												</span>
 											</div>
 										</div>
-									{% endfor %}
-								</div>
+									</div>
+								{% else %}
+									<div class="tm-prestation-show__availability-list">
+										{% for availability in availabilities %}
+											{% set hasMorning = availability.morningEnabled and availability.morningStart and availability.morningEnd %}
+											{% set hasAfternoon = availability.afternoonEnabled and availability.afternoonStart and availability.afternoonEnd %}
+
+											<div class="tm-prestation-show__availability-row">
+												<div class="tm-prestation-show__availability-day">
+													{{ availability.dayLabel ?? availability.dayName ?? ('Jour ' ~ loop.index) }}
+												</div>
+
+												<div class="tm-prestation-show__availability-values">
+													{% if hasMorning %}
+														<span class="tm-prestation-show__availability-chip">
+															{{ availability.morningStart|date('H:i') }}
+															-
+															{{ availability.morningEnd|date('H:i') }}
+														</span>
+													{% endif %}
+
+													{% if hasAfternoon %}
+														<span class="tm-prestation-show__availability-chip">
+															{{ availability.afternoonStart|date('H:i') }}
+															-
+															{{ availability.afternoonEnd|date('H:i') }}
+														</span>
+													{% endif %}
+
+													{% if not hasMorning and not hasAfternoon %}
+														<span class="tm-prestation-show__availability-chip tm-prestation-show__availability-chip--closed">
+															Fermé
+														</span>
+													{% endif %}
+												</div>
+											</div>
+										{% endfor %}
+									</div>
+								{% endif %}
 							</div>
 						{% endif %}
 						{% if app.user and is_granted('ROLE_CLIENT') %}
