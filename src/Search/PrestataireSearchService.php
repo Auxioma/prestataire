@@ -387,4 +387,188 @@ final class PrestataireSearchService
             return !empty($item['id']) && !empty($item['slug']);
         }));
     }
+
+    public function browseSearch(
+        ?string $query = null,
+        ?string $categorySlug = null,
+        ?string $subCategorySlug = null,
+        string $sort = 'relevance',
+        int $size = 9,
+        int $from = 0,
+    ): array {
+        $query = null !== $query ? trim($query) : null;
+        $categorySlug = null !== $categorySlug ? trim($categorySlug) : null;
+        $subCategorySlug = null !== $subCategorySlug ? trim($subCategorySlug) : null;
+        $sort = \in_array($sort, ['relevance', 'rating', 'reviews', 'alphabetical'], true) ? $sort : 'relevance';
+
+        $filter = [
+            [
+                'term' => [
+                    'profileStatus.keyword' => self::ACTIVE_PROFILE_STATUS,
+                ],
+            ],
+        ];
+        $must = [];
+
+        if ($categorySlug) {
+            $filter[] = [
+                'nested' => [
+                    'path' => 'categories',
+                    'query' => [
+                        'term' => [
+                            'categories.slug' => $categorySlug,
+                        ],
+                    ],
+                ],
+            ];
+        }
+
+        if ($subCategorySlug) {
+            $filter[] = [
+                'nested' => [
+                    'path' => 'subCategories',
+                    'query' => [
+                        'term' => [
+                            'subCategories.slug' => $subCategorySlug,
+                        ],
+                    ],
+                ],
+            ];
+        }
+
+        if ($query) {
+            $must[] = [
+                'bool' => [
+                    'should' => [
+                        [
+                            'multi_match' => [
+                                'query' => $query,
+                                'type' => 'best_fields',
+                                'fields' => [
+                                    'companyName^8',
+                                    'metier^7',
+                                    'searchText^5',
+                                    'shortDescription^2',
+                                    'description^1',
+                                ],
+                                'operator' => 'and',
+                                'fuzziness' => 'AUTO',
+                            ],
+                        ],
+                        [
+                            'nested' => [
+                                'path' => 'services',
+                                'score_mode' => 'max',
+                                'query' => [
+                                    'multi_match' => [
+                                        'query' => $query,
+                                        'type' => 'best_fields',
+                                        'fields' => [
+                                            'services.title^6',
+                                            'services.service.name^8',
+                                            'services.shortDescription^2',
+                                        ],
+                                        'operator' => 'and',
+                                        'fuzziness' => 'AUTO',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'nested' => [
+                                'path' => 'subCategories',
+                                'score_mode' => 'max',
+                                'query' => [
+                                    'match' => [
+                                        'subCategories.name' => [
+                                            'query' => $query,
+                                            'boost' => 5,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'nested' => [
+                                'path' => 'categories',
+                                'score_mode' => 'max',
+                                'query' => [
+                                    'match' => [
+                                        'categories.name' => [
+                                            'query' => $query,
+                                            'boost' => 4,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'minimum_should_match' => 1,
+                ],
+            ];
+        }
+
+        $sortDefinition = match ($sort) {
+            'rating' => [
+                ['averageRating' => ['order' => 'desc']],
+                ['reviewsCount' => ['order' => 'desc']],
+                ['companyName.keyword' => ['order' => 'asc']],
+            ],
+            'reviews' => [
+                ['reviewsCount' => ['order' => 'desc']],
+                ['averageRating' => ['order' => 'desc']],
+                ['companyName.keyword' => ['order' => 'asc']],
+            ],
+            'alphabetical' => [
+                ['companyName.keyword' => ['order' => 'asc']],
+                ['averageRating' => ['order' => 'desc']],
+            ],
+            default => [
+                ['_score' => ['order' => 'desc']],
+                ['isFeatured' => ['order' => 'desc']],
+                ['averageRating' => ['order' => 'desc']],
+                ['reviewsCount' => ['order' => 'desc']],
+            ],
+        };
+
+        $response = $this->elasticsearchClient->getClient()->search([
+            'index' => self::INDEX_NAME,
+            'body' => [
+                'from' => $from,
+                'size' => $size,
+                'track_total_hits' => true,
+                '_source' => [
+                    'id',
+                    'slug',
+                    'companyName',
+                    'averageRating',
+                    'reviewsCount',
+                ],
+                'query' => [
+                    'bool' => array_filter([
+                        'filter' => $filter,
+                        'must' => $must,
+                    ], static fn (mixed $value): bool => [] !== $value),
+                ],
+                'sort' => $sortDefinition,
+            ],
+        ])->asArray();
+
+        $hits = array_map(
+            static fn (array $hit): array => [
+                'score' => $hit['_score'] ?? null,
+                ...($hit['_source'] ?? []),
+            ],
+            $response['hits']['hits'] ?? []
+        );
+
+        $hits = array_values(array_filter($hits, static function (array $hit): bool {
+            return !empty($hit['id']) && !empty($hit['slug']);
+        }));
+
+        return [
+            'total' => $response['hits']['total']['value'] ?? 0,
+            'hits' => $hits,
+        ];
+    }
 }

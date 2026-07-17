@@ -12,8 +12,11 @@
 
 namespace App\Controller;
 
+use App\Entity\ServiceCategory;
+use App\Form\PrestataireBrowseFilterType;
 use App\Repository\PrestataireProfileRepository;
-use Knp\Component\Pager\PaginatorInterface;
+use App\Repository\ServiceCategoryRepository;
+use App\Search\PrestataireSearchService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,34 +36,121 @@ class PrestataireBrowseController extends AbstractController
     public function index(
         Request $request,
         PrestataireProfileRepository $profileRepository,
-        PaginatorInterface $paginator,
+        ServiceCategoryRepository $categoryRepository,
+        PrestataireSearchService $prestataireSearchService,
     ): Response {
-        // On récupère le paramètre pour savoir quel bouton est actif dans le Twig
-        $sortBy = $request->query->get('sort', 'all');
+        $selectedCategory = null;
+        $categoryId = $request->query->get('category');
+        if (null !== $categoryId && '' !== (string) $categoryId) {
+            $candidate = $categoryRepository->find($categoryId);
+            if ($candidate instanceof ServiceCategory && null === $candidate->getParent() && $candidate->isActive()) {
+                $selectedCategory = $candidate;
+            }
+        }
 
-        // On récupère le QueryBuilder de base (SANS le orderBy, KnpPaginator va s'en charger)
-        $queryBuilder = $profileRepository->getBrowseQueryBuilder($sortBy);
+        $form = $this->createForm(PrestataireBrowseFilterType::class, [
+            'query' => '',
+            'category' => $selectedCategory,
+            'subCategory' => null,
+            'sort' => 'relevance',
+        ], [
+            'method' => 'GET',
+            'selected_category' => $selectedCategory,
+        ]);
 
-        // On passe directement la request d'origine
-        $pagination = $paginator->paginate(
-            $queryBuilder,
-            $request->query->getInt('page', 1),
-            9,
-            [
-                'wrap-queries' => true,
-                'defaultSortFieldName' => 'p.createdAt',
-                'defaultSortDirection' => 'desc',
-            ]
+        $form->handleRequest($request);
+
+        $data = ($form->isSubmitted() && $form->isValid())
+            ? ($form->getData() ?? [])
+            : [];
+
+        $query = trim((string) ($data['query'] ?? ''));
+        /** @var ServiceCategory|null $category */
+        $category = $data['category'] ?? $selectedCategory;
+        /** @var ServiceCategory|null $subCategory */
+        $subCategory = $data['subCategory'] ?? null;
+        $sort = (string) ($data['sort'] ?? 'relevance');
+
+        if ($subCategory instanceof ServiceCategory) {
+            if (!$subCategory->isActive() || null === $subCategory->getParent()) {
+                $subCategory = null;
+            } elseif (null === $category || $subCategory->getParent()?->getId() !== $category->getId()) {
+                $category = $subCategory->getParent();
+            }
+        }
+
+        $page = max(1, $request->query->getInt('page', 1));
+        $perPage = 9;
+        $from = ($page - 1) * $perPage;
+
+        $searchResponse = $prestataireSearchService->browseSearch(
+            $query !== '' ? $query : null,
+            $category?->getSlug(),
+            $subCategory?->getSlug(),
+            $sort,
+            $perPage,
+            $from,
         );
 
-        $pageTitle = ('p.averageRating' === $sortBy)
-            ? 'Les prestataires les mieux notés'
+        $totalResults = (int) ($searchResponse['total'] ?? 0);
+        $totalPages = max(1, (int) ceil($totalResults / $perPage));
+
+        if ($page > $totalPages) {
+            $page = $totalPages;
+            $from = ($page - 1) * $perPage;
+            $searchResponse = $prestataireSearchService->browseSearch(
+                $query !== '' ? $query : null,
+                $category?->getSlug(),
+                $subCategory?->getSlug(),
+                $sort,
+                $perPage,
+                $from,
+            );
+        }
+
+        $hits = $searchResponse['hits'] ?? [];
+        $hitIds = array_values(array_filter(array_map(
+            static fn (array $hit): ?int => isset($hit['id']) ? (int) $hit['id'] : null,
+            $hits
+        )));
+
+        $profiles = [];
+
+        if ($hitIds !== []) {
+            $fetchedProfiles = $profileRepository->createQueryBuilder('p')
+                ->leftJoin('p.account', 'a')->addSelect('a')
+                ->andWhere('p.id IN (:ids)')
+                ->setParameter('ids', $hitIds)
+                ->getQuery()
+                ->getResult();
+
+            $profilesById = [];
+            foreach ($fetchedProfiles as $profile) {
+                $profilesById[(int) $profile->getId()] = $profile;
+            }
+
+            foreach ($hitIds as $id) {
+                if (isset($profilesById[$id])) {
+                    $profiles[] = $profilesById[$id];
+                }
+            }
+        }
+
+        $pageTitle = $query !== ''
+            ? 'Résultats pour "'.$query.'"'
             : 'Tous nos prestataires';
 
         return $this->render('prestataire_browse/prestataire_browse.html.twig', [
-            'pagination' => $pagination,
-            'current_sort' => $sortBy,
+            'browseForm' => $form->createView(),
+            'profiles' => $profiles,
+            'query' => $query,
+            'selectedCategory' => $category,
+            'selectedSubCategory' => $subCategory,
+            'current_sort' => $sort,
             'page_title' => $pageTitle,
+            'totalResults' => $totalResults,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
         ]);
     }
 }

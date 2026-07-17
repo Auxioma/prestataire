@@ -7,7 +7,9 @@ export default class extends Controller {
         const catId = this.categoryTarget.value;
 
         this.resetSelect(this.subcategoryTarget, 'Choisir une sous-catégorie...');
-        this.resetSelect(this.serviceTarget, 'Choisir un service...');
+        if (this.hasServiceTarget) {
+            this.resetSelect(this.serviceTarget, 'Choisir un service...');
+        }
 
         if (!catId) return;
 
@@ -29,11 +31,15 @@ export default class extends Controller {
             this.enableSelect(this.subcategoryTarget);
         } catch (error) {
             this.resetSelect(this.subcategoryTarget, 'Choisir une sous-catégorie...');
-            this.resetSelect(this.serviceTarget, 'Choisir un service...');
+            if (this.hasServiceTarget) {
+                this.resetSelect(this.serviceTarget, 'Choisir un service...');
+            }
         }
     }
 
     async loadServices() {
+        if (!this.hasServiceTarget) return;
+
         const subId = this.subcategoryTarget.value;
 
         this.resetSelect(this.serviceTarget, 'Choisir un service...');

@@ -5,6 +5,10 @@
 {% endblock %}
 
 {% block body %}
+    {% set profiles = profiles|default([]) %}
+    {% set totalResults = totalResults|default(0) %}
+    {% set currentPage = currentPage|default(1) %}
+    {% set totalPages = totalPages|default(1) %}
     <div class="container my-5 tm-browse-page">
         <section class="tm-browse-hero mb-5">
             <div class="tm-browse-hero__content">
@@ -27,24 +31,106 @@
             </div>
 
             <div class="tm-browse-hero__actions">
-                <div class="btn-group" role="group" aria-label="Filtres de tri">
-                    <a href="{{ path('app_prestataire_browse') }}"
-                       class="btn btn-sm {% if current_sort == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                        Tous
-                    </a>
-
-                    <a href="{{ path('app_prestataire_browse', {sort: 'p.averageRating', direction: 'desc'}) }}"
-                       class="btn btn-sm {% if current_sort == 'p.averageRating' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                        <i class="fa-solid fa-star me-1"></i>
-                        Mieux notés
-                    </a>
+                <div class="tm-browse-hero__stats">
+                    <strong>{{ totalResults }}</strong>
+                    <span>prestataire{{ totalResults > 1 ? 's' : '' }}</span>
                 </div>
             </div>
         </section>
 
+        <section class="tm-browse-filters mb-4" aria-labelledby="tm-browse-filters-title">
+            <div class="tm-browse-filters__head">
+                <div>
+                    <span class="tm-browse-hero__eyebrow">Recherche avancée</span>
+                    <h2 class="tm-browse-filters__title" id="tm-browse-filters-title">Affinez les prestataires</h2>
+                </div>
+            </div>
+
+            {{ form_start(browseForm, {
+                method: 'GET',
+                attr: {
+                    class: 'tm-browse-filters__form',
+                    novalidate: 'novalidate',
+                    'data-controller': 'chained-selects'
+                }
+            }) }}
+                <div class="tm-browse-filters__grid">
+                    <div class="tm-browse-filter-field tm-browse-filter-field--query">
+                        {{ form_label(browseForm.query, null, {
+                            label_attr: { class: 'tm-browse-filter-field__label' }
+                        }) }}
+                        {{ form_widget(browseForm.query, {
+                            attr: {
+                                class: 'form-control tm-browse-filter-field__control',
+                                autocomplete: 'off'
+                            }
+                        }) }}
+                    </div>
+
+                    <div class="tm-browse-filter-field">
+                        {{ form_label(browseForm.category, null, {
+                            label_attr: { class: 'tm-browse-filter-field__label' }
+                        }) }}
+                        {{ form_widget(browseForm.category, {
+                            attr: {
+                                class: 'form-select tm-browse-filter-field__control',
+                                'data-chained-selects-target': 'category',
+                                'data-action': 'change->chained-selects#loadSubCategories'
+                            }
+                        }) }}
+                    </div>
+
+                    <div class="tm-browse-filter-field">
+                        {{ form_label(browseForm.subCategory, null, {
+                            label_attr: { class: 'tm-browse-filter-field__label' }
+                        }) }}
+                        {{ form_widget(browseForm.subCategory, {
+                            attr: {
+                                class: 'form-select tm-browse-filter-field__control',
+                                'data-chained-selects-target': 'subcategory'
+                            }
+                        }) }}
+                    </div>
+
+                    <div class="tm-browse-filter-field">
+                        {{ form_label(browseForm.sort, null, {
+                            label_attr: { class: 'tm-browse-filter-field__label' }
+                        }) }}
+                        {{ form_widget(browseForm.sort, {
+                            attr: {
+                                class: 'form-select tm-browse-filter-field__control'
+                            }
+                        }) }}
+                    </div>
+                </div>
+
+                <div class="tm-browse-filters__actions">
+                    <button type="submit" class="tm-browse-filters__submit">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span>Rechercher</span>
+                    </button>
+                    <a href="{{ path('app_prestataire_browse') }}" class="tm-browse-filters__reset">Réinitialiser</a>
+                </div>
+            {{ form_end(browseForm) }}
+
+            {% if query is not empty or selectedCategory is not null or selectedSubCategory is not null %}
+                <div class="tm-browse-filters__chips" aria-label="Filtres actifs">
+                    {% if query is not empty %}
+                        <span class="tm-browse-filter-chip">{{ query }}</span>
+                    {% endif %}
+                    {% if selectedCategory is not null %}
+                        <span class="tm-browse-filter-chip">{{ selectedCategory.name }}</span>
+                    {% endif %}
+                    {% if selectedSubCategory is not null %}
+                        <span class="tm-browse-filter-chip">{{ selectedSubCategory.name }}</span>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </section>
+
         <div class="row g-4">
-            {% if pagination|length > 0 %}
-                {% for profile in pagination %}
+            {% if profiles|length > 0 %}
+                {% for profile in profiles %}
                     <div class="col-12 col-md-6 col-xl-4">
                         <article
                             class="tm-browse-card h-100"
@@ -152,15 +238,53 @@
                         </div>
                         <h3 class="tm-browse-empty__title">Aucun prestataire ne correspond à ce critère</h3>
                         <p class="tm-browse-empty__text">
-                            Aucun professionnel n’est disponible pour le moment avec ce filtre. Essayez un autre tri ou revenez un peu plus tard.
+                            Aucun professionnel n’est disponible pour le moment avec ces filtres. Essayez une autre recherche ou élargissez votre sélection.
                         </p>
                     </div>
                 </div>
             {% endif %}
         </div>
 
-        <div class="d-flex justify-content-center mt-5">
-            {{ knp_pagination_render(pagination) }}
-        </div>
+        {% if totalPages > 1 %}
+            {% set startPage = currentPage - 2 > 1 ? currentPage - 2 : 1 %}
+            {% set endPage = currentPage + 2 < totalPages ? currentPage + 2 : totalPages %}
+            <nav class="tm-browse-pagination mt-5" aria-label="Pagination des prestataires">
+                {% if currentPage > 1 %}
+                    <a href="{{ path('app_prestataire_browse', app.request.query.all|merge({ page: currentPage - 1 })) }}" class="tm-browse-pagination__control">
+                        <i class="fa-solid fa-chevron-left"></i>
+                        <span>Précédent</span>
+                    </a>
+                {% else %}
+                    <span class="tm-browse-pagination__control is-disabled">
+                        <i class="fa-solid fa-chevron-left"></i>
+                        <span>Précédent</span>
+                    </span>
+                {% endif %}
+
+                <div class="tm-browse-pagination__pages">
+                    {% for pageNumber in startPage..endPage %}
+                        {% if pageNumber == currentPage %}
+                            <span class="tm-browse-pagination__page is-active">{{ pageNumber }}</span>
+                        {% else %}
+                            <a href="{{ path('app_prestataire_browse', app.request.query.all|merge({ page: pageNumber })) }}" class="tm-browse-pagination__page">
+                                {{ pageNumber }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                {% if currentPage < totalPages %}
+                    <a href="{{ path('app_prestataire_browse', app.request.query.all|merge({ page: currentPage + 1 })) }}" class="tm-browse-pagination__control">
+                        <span>Suivant</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                {% else %}
+                    <span class="tm-browse-pagination__control is-disabled">
+                        <span>Suivant</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </span>
+                {% endif %}
+            </nav>
+        {% endif %}
     </div>
 {% endblock %}
