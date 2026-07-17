@@ -1,0 +1,86 @@
+<div class="w-100 p-3 d-flex justify-content-between align-items-center d-md-none tm-cp-mobile-navbar">
+    <button
+        type="button"
+        class="btn tm-cp-mobile-menu-btn"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#clientAccountSidebar"
+        aria-controls="clientAccountSidebar"
+        aria-label="Ouvrir la navigation du compte client"
+    >
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+    </button>
+
+    <span class="fs-4 fw-bold tm-cp-mobile-brand">
+        <i class="fa-solid fa-magnifying-glass me-2" aria-hidden="true"></i>TrouveMoi
+    </span>
+
+    <div class="d-flex gap-3 tm-cp-mobile-nav">
+        <a href="{{ path('app_quote_request_index') }}" class="text-dark text-decoration-none fs-5" aria-label="Mes demandes">
+            <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
+        </a>
+        <a href="{{ path('app_client_settings_favorites') }}" class="text-dark text-decoration-none fs-5" aria-label="Mes artisans favoris">
+            <i class="fa-regular fa-heart" aria-hidden="true"></i>
+        </a>
+        <a href="{{ path('app_client_settings') }}" class="text-dark text-decoration-none fs-5" aria-label="Paramètres">
+            <i class="fa-solid fa-gear" aria-hidden="true"></i>
+        </a>
+    </div>
+</div>
+
+<aside class="tm-cp-client-sidebar p-4 d-none d-md-flex flex-column justify-content-between tm-cp-sidebar-desktop">
+    <div>
+        <div class="text-center mb-5">
+            <div class="position-relative d-inline-block mb-3">
+                <img
+                    src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80' }}"
+                    class="rounded-circle border-3 shadow-sm tm-cp-sidebar-avatar"
+                    alt="Avatar de {{ user.firstName|default('') }} {{ user.lastName|default('') }}"
+                >
+            </div>
+            <h5 class="mb-1 fw-semibold fs-5 tm-cp-sidebar-username">
+                {{ user.firstName }}
+                {{ user.lastName }}
+            </h5>
+            <p class="small mb-2 tm-cp-sidebar-date">
+                Membre depuis {{ user.createdAt|date('Y') }}
+            </p>
+        </div>
+
+        {{ include('profile/_client_sidebar_nav.html.twig') }}
+    </div>
+
+    <div class="card border-0 p-3 rounded-4 text-center mt-5 tm-cp-sidebar-support-card">
+        <p class="small mb-2 fw-medium tm-cp-sidebar-support-text">Besoin d'aide pour vos travaux ?</p>
+        <button type="button" class="btn btn-sm w-100 fw-bold tm-cp-btn-sidebar-support">Contacter le support</button>
+    </div>
+</aside>
+
+<div
+    class="offcanvas offcanvas-start tm-cp-mobile-offcanvas"
+    tabindex="-1"
+    id="clientAccountSidebar"
+    aria-labelledby="clientAccountSidebarLabel"
+>
+    <div class="offcanvas-header border-bottom">
+        <h2 class="offcanvas-title fs-5 fw-bold mb-0" id="clientAccountSidebarLabel">Mon espace client</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fermer"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column">
+        <div class="text-center mb-4">
+            <img
+                src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80' }}"
+                class="rounded-circle border-3 shadow-sm tm-cp-sidebar-avatar mb-3"
+                alt="Avatar de {{ user.firstName|default('') }} {{ user.lastName|default('') }}"
+            >
+            <h3 class="h6 mb-1 tm-cp-sidebar-username">{{ user.firstName }} {{ user.lastName }}</h3>
+            <p class="small mb-0 tm-cp-sidebar-date">Membre depuis {{ user.createdAt|date('Y') }}</p>
+        </div>
+
+        {{ include('profile/_client_sidebar_nav.html.twig') }}
+
+        <div class="card border-0 p-3 rounded-4 text-center mt-auto tm-cp-sidebar-support-card">
+            <p class="small mb-2 fw-medium tm-cp-sidebar-support-text">Besoin d'aide pour vos travaux ?</p>
+            <button type="button" class="btn btn-sm w-100 fw-bold tm-cp-btn-sidebar-support">Contacter le support</button>
+        </div>
+    </div>
+</div>

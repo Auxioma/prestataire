@@ -3,110 +3,121 @@
 {% block title %}Nouvelle prestation{% endblock %}
 
 {% block body %}
-    <div class="container py-4 py-lg-5 tm-prestation-wizard-page">
-        <div class="tm-prestation-wizard tm-prestation-create-shell">
-            <div class="tm-prestation-wizard-card">
-                <div class="tm-prestation-wizard-hero">
-                    <span class="tm-prestation-wizard-eyebrow">
-                        <i class="bi bi-briefcase"></i>
-                        Nouvelle prestation
-                    </span>
+    <div class="tm-settings-container" {{ stimulus_controller('settings-tabs') }}>
+        <div class="tm-main-layout">
+            <aside class="tm-settings-sidebar" {{ stimulus_target('settings-tabs', 'sidebar') }}>
+                {{ include('profile/_prestataire_settings_sidebar.html.twig', {
+                    user: app.user,
+                    activeTab: 'services',
+                    asLinks: true,
+                }) }}
+            </aside>
 
-                    <h1 class="tm-prestation-wizard-title">Choisissez le service à proposer</h1>
+            <div class="tm-settings-sidebar-backdrop" {{ stimulus_target('settings-tabs', 'backdrop') }} {{ stimulus_action('settings-tabs', 'closeSidebar', 'click') }}></div>
 
-                    <p class="tm-prestation-wizard-subtitle">
-                        Commencez par sélectionner la catégorie, la sous-catégorie puis le service.
-                        Si ce service existe déjà sur votre profil, vous serez redirigé directement vers sa fiche.
-                    </p>
-                </div>
+            <main class="tm-settings-content">
+                <button type="button" class="tm-sidebar-toggle d-lg-none" aria-label="Ouvrir la navigation des paramètres" {{ stimulus_target('settings-tabs', 'toggle') }} {{ stimulus_action('settings-tabs', 'toggleSidebar', 'click') }}>
+                    ☰
+                </button>
 
-                <div class="tm-prestation-wizard-body">
-                    <div class="tm-prestation-wizard-panel">
-                        <div class="tm-prestation-wizard-panel-head">
-                            <h2 class="tm-prestation-wizard-panel-title">Sélection du service</h2>
-                            <p class="tm-prestation-wizard-panel-subtitle">
-                                Renseignez les trois niveaux ci-dessous pour rattacher votre nouvelle prestation au bon service.
-                            </p>
+                <div class="tm-prestation-wizard-page">
+                    <div class="tm-prestation-wizard tm-prestation-create-shell">
+                        <div class="tm-prestation-wizard-card">
+                            <div class="tm-prestation-wizard-hero">
+                                <span class="tm-prestation-wizard-eyebrow">
+                                    <i class="bi bi-briefcase"></i>
+                                    Nouvelle prestation
+                                </span>
+
+                                <h1 class="tm-prestation-wizard-title">Choisissez le service à proposer</h1>
+
+                                <p class="tm-prestation-wizard-subtitle">
+                                    Commencez par sélectionner la catégorie, la sous-catégorie puis le service.
+                                    Si ce service existe déjà sur votre profil, vous serez redirigé directement vers sa fiche.
+                                </p>
+                            </div>
+
+                            <div class="tm-prestation-wizard-body">
+                                <div class="tm-prestation-wizard-panel">
+                                    <div class="tm-prestation-wizard-panel-head">
+                                        <h2 class="tm-prestation-wizard-panel-title">Sélection du service</h2>
+                                        <p class="tm-prestation-wizard-panel-subtitle">
+                                            Renseignez les trois niveaux ci-dessous pour rattacher votre nouvelle prestation au bon service.
+                                        </p>
+                                    </div>
+
+                                    <form method="POST" action="{{ path('app_prestataire_service_new') }}" class="tm-prestation-create-form" data-controller="chained-selects" data-turbo="false">
+                                        <div class="tm-prestation-create-grid">
+                                            <div class="tm-prestation-create-field">
+                                                <label for="category" class="form-label">Catégorie</label>
+                                                <select
+                                                    id="category"
+                                                    class="tm-prestation-create-select"
+                                                    data-chained-selects-target="category"
+                                                    data-action="change->chained-selects#loadSubCategories"
+                                                    data-controller="symfony--ux-autocomplete--autocomplete"
+                                                    data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false},"maxOptions":500}'
+                                                    required
+                                                >
+                                                    <option value="">Choisir une catégorie principale</option>
+                                                    {% for category in categories %}
+                                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="form-text">Sélectionnez d’abord la famille principale du service.</div>
+                                            </div>
+
+                                            <div class="tm-prestation-create-field">
+                                                <label for="subcategory" class="form-label">Sous-catégorie</label>
+                                                <select
+                                                    id="subcategory"
+                                                    class="tm-prestation-create-select"
+                                                    data-chained-selects-target="subcategory"
+                                                    data-action="change->chained-selects#loadServices"
+                                                    data-controller="symfony--ux-autocomplete--autocomplete"
+                                                    data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false},"maxOptions":500}'
+                                                    disabled
+                                                    required
+                                                >
+                                                    <option value="">Choisir une sous-catégorie</option>
+                                                </select>
+                                                <div class="form-text">La liste se charge selon la catégorie choisie.</div>
+                                            </div>
+
+                                            <div class="tm-prestation-create-field">
+                                                <label for="service" class="form-label">Service</label>
+                                                <select
+                                                    id="service"
+                                                    name="serviceId"
+                                                    class="tm-prestation-create-select"
+                                                    data-chained-selects-target="service"
+                                                    data-controller="symfony--ux-autocomplete--autocomplete"
+                                                    data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false},"maxOptions":500}'
+                                                    disabled
+                                                    required
+                                                >
+                                                    <option value="">Choisir un service</option>
+                                                </select>
+                                                <div class="form-text">Choisissez le service exact que vous souhaitez proposer.</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="tm-prestation-create-actions">
+                                            <a href="{{ path('app_prestataire_settings', { tab: 'services', _fragment: 'services-panel' }) }}" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-outline">
+                                                Retour aux services
+                                            </a>
+
+                                            <button type="submit" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-primary">
+                                                Continuer
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-
-                        <form
-                            method="POST"
-                            action="{{ path('app_prestataire_service_new') }}"
-                            class="tm-prestation-create-form"
-                            data-controller="chained-selects"
-                            data-turbo="false"
-                        >
-                            <div class="tm-prestation-create-grid">
-                                <div class="tm-prestation-create-field">
-                                    <label for="category" class="form-label">Catégorie</label>
-                                    <select
-                                        id="category"
-                                        class="tm-prestation-create-select"
-                                        data-chained-selects-target="category"
-                                        data-action="change->chained-selects#loadSubCategories"
-                                        data-controller="symfony--ux-autocomplete--autocomplete"
-                                        data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false},"maxOptions":500}'
-                                        required
-                                    >
-                                        <option value="">Choisir une catégorie principale</option>
-                                        {% for category in categories %}
-                                            <option value="{{ category.id }}">{{ category.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <div class="form-text">Sélectionnez d’abord la famille principale du service.</div>
-                                </div>
-
-                                <div class="tm-prestation-create-field">
-                                    <label for="subcategory" class="form-label">Sous-catégorie</label>
-                                    <select
-                                        id="subcategory"
-                                        class="tm-prestation-create-select"
-                                        data-chained-selects-target="subcategory"
-                                        data-action="change->chained-selects#loadServices"
-                                        data-controller="symfony--ux-autocomplete--autocomplete"
-                                        data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false},"maxOptions":500}'
-                                        disabled
-                                        required
-                                    >
-                                        <option value="">Choisir une sous-catégorie</option>
-                                    </select>
-                                    <div class="form-text">La liste se charge selon la catégorie choisie.</div>
-                                </div>
-
-                                <div class="tm-prestation-create-field">
-                                    <label for="service" class="form-label">Service</label>
-                                    <select
-                                        id="service"
-                                        name="serviceId"
-                                        class="tm-prestation-create-select"
-                                        data-chained-selects-target="service"
-                                        data-controller="symfony--ux-autocomplete--autocomplete"
-                                        data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false},"maxOptions":500}'
-                                        disabled
-                                        required
-                                    >
-                                        <option value="">Choisir un service</option>
-                                    </select>
-                                    <div class="form-text">Choisissez le service exact que vous souhaitez proposer.</div>
-                                </div>
-                            </div>
-
-                            <div class="tm-prestation-create-actions">
-                                <a
-                                    href="{{ path('app_prestataire_settings', { _fragment: 'services-panel' }) }}"
-                                    class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-outline"
-                                >
-                                    Retour au dashboard
-                                </a>
-
-                                <button type="submit" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-primary">
-                                    Continuer
-                                </button>
-                            </div>
-                        </form>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     </div>
 {% endblock %}

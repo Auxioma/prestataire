@@ -3,6 +3,11 @@
 {% block title %}Historique des demandes{% endblock %}
 
 {% block body %}
+<div class="container-fluid p-0 tm-cp-page-wrapper">
+    <div class="d-flex flex-column flex-md-row align-items-stretch">
+        {{ include('profile/_client_sidebar.html.twig', { user: app.user }) }}
+
+        <div class="grow p-3 p-md-5 tm-cp-main-content-inner">
 <section class="tm-qa-page">
     <div class="tm-qa-shell">
         <a href="{{ path('app_quote_request_index') }}" class="tm-qa-backlink">
@@ -89,4 +94,7 @@
         {% endif %}
     </div>
 </section>
+        </div>
+    </div>
+</div>
 {% endblock %}

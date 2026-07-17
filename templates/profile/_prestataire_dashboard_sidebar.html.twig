@@ -1,0 +1,72 @@
+{% set currentRoute = app.request.attributes.get('_route')|default('') %}
+{% set currentTab = activeTab|default('dashboard') %}
+{% set dashboardLinks = [
+    { key: 'dashboard', label: 'Tableau de bord', icon: 'fa-house' },
+    { key: 'prestations', label: 'Mes prestations', icon: 'fa-toolbox' },
+    { key: 'revenus', label: 'Mes revenus', icon: 'fa-credit-card' },
+    { key: 'calendrier', label: 'Calendrier', icon: 'fa-calendar-days' },
+    { key: 'demandes', label: 'Demandes reçues', icon: 'fa-file-lines' },
+    { key: 'archives', label: 'Archives', icon: 'fa-box-archive' },
+    { key: 'messages', label: 'Messages', icon: 'fa-envelope' },
+] %}
+
+<div class="tm-app-sidebar tm-dashboard-page__sidebar-inner">
+    <div class="tm-app-sidebar-top tm-dashboard-page__sidebar-top">
+        <div class="tm-sidebar-profile-card tm-dashboard-page__profile-card">
+            <div class="tm-sidebar-profile-avatar-wrap">
+                <img
+                    src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}"
+                    alt="Avatar de {{ user.firstName|default('') }} {{ user.lastName|default('') }}"
+                    class="tm-sidebar-profile-avatar"
+                >
+            </div>
+
+            <div class="tm-sidebar-profile-content">
+                <div class="tm-sidebar-profile-name">{{ user.firstName }} {{ user.lastName }}</div>
+                <div class="tm-sidebar-profile-job">{{ user.prestataireProfile.metier|default('Prestataire') }}</div>
+                <div class="tm-sidebar-profile-rating">
+                    <span class="tm-sidebar-profile-star">★</span>
+                    {{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0,0' }}
+                    <span class="tm-sidebar-profile-rating-count">
+                        ({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }} avis)
+                    </span>
+                </div>
+                <div class="tm-sidebar-profile-status">
+                    <span class="tm-sidebar-profile-status-dot">●</span>
+                    {% if user.isVerified %}
+                        Compte vérifié
+                    {% else %}
+                        Compte à compléter
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="tm-sidebar-nav nav nav-pills flex-column tm-dashboard-page__nav" aria-label="Navigation principale du dashboard">
+        {% for item in dashboardLinks %}
+            {% set href = path('app_prestataire_dashboard', { tab: item.key }) %}
+            {% set isActive = currentTab == item.key %}
+            <a href="{{ href }}" class="tm-sidebar-link nav-link {{ isActive ? 'active' : '' }}" {{ isActive ? 'aria-current="page"' : '' }}>
+                <span class="tm-sidebar-link-icon"><i class="fa-solid {{ item.icon }}" aria-hidden="true"></i></span>
+                <span>{{ item.label }}</span>
+            </a>
+        {% endfor %}
+
+        <a
+            href="{{ path('app_review_prestataire_reviews') }}"
+            class="tm-sidebar-link {{ currentRoute == 'app_review_prestataire_reviews' ? 'active' : '' }}"
+            aria-current="{{ currentRoute == 'app_review_prestataire_reviews' ? 'page' : 'false' }}"
+        >
+            <span class="tm-sidebar-link-icon"><i class="fa-solid fa-star" aria-hidden="true"></i></span>
+            <span>Mes avis reçus</span>
+        </a>
+
+        <div class="tm-sidebar-divider tm-dashboard-page__divider" role="separator" aria-hidden="true"></div>
+
+        <a href="{{ path('app_prestataire_settings') }}" class="tm-sidebar-link {{ currentRoute == 'app_prestataire_settings' ? 'active' : '' }}">
+            <span class="tm-sidebar-link-icon"><i class="fa-solid fa-gear" aria-hidden="true"></i></span>
+            <span>Paramètres</span>
+        </a>
+    </nav>
+</div>

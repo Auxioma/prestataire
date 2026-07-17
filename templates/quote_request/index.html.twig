@@ -6,6 +6,11 @@
 
 
 {% block body %}
+    <div class="container-fluid p-0 tm-cp-page-wrapper">
+        <div class="d-flex flex-column flex-md-row align-items-stretch">
+            {{ include('profile/_client_sidebar.html.twig', { user: app.user }) }}
+
+            <div class="grow p-3 p-md-5 tm-cp-main-content-inner">
     <section class="c-client-quotes-page">
         <div class="c-client-quotes-page__container">
             <a href="{{ path('app_client_settings') }}" class="c-client-quotes-backlink">
@@ -183,4 +188,7 @@
             </section>
         </div>
     </section>
+            </div>
+        </div>
+    </div>
 {% endblock %}

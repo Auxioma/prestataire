@@ -1,0 +1,56 @@
+{% set currentRoute = app.request.attributes.get('_route')|default('') %}
+
+<div class="tm-app-sidebar">
+    <div class="tm-app-sidebar-top">
+        <div class="tm-sidebar-profile-card">
+            <div class="tm-sidebar-profile-avatar-wrap">
+                <img
+                    src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}"
+                    alt="Avatar de {{ user.firstName|default('') }} {{ user.lastName|default('') }}"
+                    class="tm-sidebar-profile-avatar"
+                >
+            </div>
+
+            <div class="tm-sidebar-profile-content">
+                <div class="tm-sidebar-profile-name">{{ user.firstName }} {{ user.lastName }}</div>
+                <div class="tm-sidebar-profile-job">{{ user.prestataireProfile.metier|default('Prestataire') }}</div>
+                <div class="tm-sidebar-profile-rating">
+                    <span class="tm-sidebar-profile-star">★</span>
+                    {{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0,0' }}
+                    <span class="tm-sidebar-profile-rating-count">
+                        ({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }} avis)
+                    </span>
+                </div>
+                <div class="tm-sidebar-profile-status">
+                    <span class="tm-sidebar-profile-status-dot">●</span>
+                    {% if user.isVerified %}
+                        Compte vérifié
+                    {% else %}
+                        Compte à compléter
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="tm-sidebar-nav" aria-label="Navigation des paramètres prestataire">
+        <a href="{{ path('app_prestataire_settings') }}" class="tm-sidebar-link {{ currentRoute == 'app_prestataire_settings' ? 'active' : '' }}" {{ currentRoute == 'app_prestataire_settings' ? 'aria-current="page"' : '' }}>
+            <span class="tm-sidebar-link-icon">⚙</span>
+            <span>Paramètres</span>
+        </a>
+
+        <div class="tm-sidebar-divider" role="separator" aria-hidden="true"></div>
+
+        <a href="{{ path('app_prestataire_dashboard') }}" class="tm-sidebar-link {{ currentRoute == 'app_prestataire_dashboard' ? 'active' : '' }}">
+            <span class="tm-sidebar-link-icon"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i></span>
+            <span>Espace Pro</span>
+        </a>
+
+        <div class="tm-sidebar-divider" role="separator" aria-hidden="true"></div>
+
+        <a href="#" class="tm-sidebar-link">
+            <span class="tm-sidebar-link-icon">?</span>
+            <span>Besoin d’aide</span>
+        </a>
+    </nav>
+</div>

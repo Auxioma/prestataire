@@ -9,71 +9,11 @@
 			class="tm-main-layout">
 			{# ================= SIDEBAR ================= #}
 			<aside class="tm-settings-sidebar" {{ stimulus_target('settings-tabs', 'sidebar') }}>
-				<div class="tm-app-sidebar">
-					<div class="tm-app-sidebar-top">
-
-						<div class="tm-sidebar-profile-card">
-							<div class="tm-sidebar-profile-avatar-wrap">
-								<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" alt="Avatar" class="tm-sidebar-profile-avatar">
-							</div>
-
-							<div class="tm-sidebar-profile-content">
-								<div class="tm-sidebar-profile-name">
-									{{ user.firstName }}
-									{{ user.lastName }}
-								</div>
-
-								<div class="tm-sidebar-profile-job">
-									{{ user.prestataireProfile.metier|default('Prestataire') }}
-								</div>
-
-								<div class="tm-sidebar-profile-rating">
-									<span class="tm-sidebar-profile-star">★</span>
-									4,8
-									<span class="tm-sidebar-profile-rating-count">(142 avis)</span>
-								</div>
-
-								<div class="tm-sidebar-profile-status">
-									<span class="tm-sidebar-profile-status-dot">●</span>
-									Compte vérifié
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<nav class="tm-sidebar-nav" aria-label="Navigation principale">
-
-						<a href="#" class="tm-sidebar-link active" aria-current="page">
-							<span class="tm-sidebar-link-icon">⚙</span>
-							<span>Paramètres</span>
-						</a>
-
-						<div class="tm-sidebar-divider" role="separator" aria-hidden="true"></div>
-
-						<a href="{{ path('app_prestataire_dashboard') }}" class="tm-sidebar-link">
-							<span class="tm-sidebar-link-icon">
-								<i class="fa-solid fa-gauge-high"></i>
-							</span>
-							<span>Espace Pro</span>
-						</a>
-
-						<div class="tm-sidebar-divider" role="separator" aria-hidden="true"></div>
-
-						<a href="#" class="tm-sidebar-link">
-							<span class="tm-sidebar-link-icon">?</span>
-							<span>Besoin d’aide</span>
-						</a>
-					</nav>
-
-					<div class="tm-sidebar-footer-card">
-						<div class="tm-sidebar-footer-gift">🎁</div>
-						<div class="tm-sidebar-footer-title">Parrainez un collègue</div>
-						<div class="tm-sidebar-footer-text">Gagnez 50 € de crédit</div>
-						<button type="button" class="tm-sidebar-footer-btn">
-							Parrainer maintenant
-						</button>
-					</div>
-				</div>
+				{{ include('profile/_prestataire_settings_sidebar.html.twig', {
+                    user: user,
+                    activeTab: activeTab,
+                    asLinks: true,
+                }) }}
 			</aside>
 
 			<div class="tm-settings-sidebar-backdrop" {{ stimulus_target('settings-tabs', 'backdrop') }} {{ stimulus_action('settings-tabs', 'closeSidebar', 'click') }}></div>

@@ -8,95 +8,11 @@
 		<div class="tm-settings-container tm-dashboard-page__shell">
 			<div class="tm-main-layout tm-dashboard-page__layout">
 				<aside class="tm-settings-sidebar tm-dashboard-page__sidebar" {{ stimulus_target('prestataire-dashboard-tabs', 'sidebar') }}>
-					<div class="tm-app-sidebar tm-dashboard-page__sidebar-inner">
-						<div class="tm-app-sidebar-top tm-dashboard-page__sidebar-top">
-							<div class="tm-sidebar-profile-card tm-dashboard-page__profile-card">
-								<div class="tm-sidebar-profile-avatar-wrap">
-									<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" alt="Avatar de {{ user.firstName }} {{ user.lastName }}" class="tm-sidebar-profile-avatar">
-								</div>
-
-								<div class="tm-sidebar-profile-content">
-									<div class="tm-sidebar-profile-name">
-										{{ user.firstName }}
-										{{ user.lastName }}
-									</div>
-
-									<div class="tm-sidebar-profile-job">
-										{{ user.prestataireProfile.metier|default('Prestataire') }}
-									</div>
-
-									<div class="tm-sidebar-profile-rating">
-										<span class="tm-sidebar-profile-star">★</span>
-										{{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0,0' }}
-										<span class="tm-sidebar-profile-rating-count">
-											({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }}
-											avis)
-										</span>
-									</div>
-
-									<div class="tm-sidebar-profile-status">
-										<span class="tm-sidebar-profile-status-dot">●</span>
-										{% if user.isVerified %}
-											Compte vérifié
-										{% else %}
-											Compte à compléter
-										{% endif %}
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<nav class="tm-sidebar-nav nav nav-pills flex-column tm-dashboard-page__nav" id="dashboardMainTabs" role="tablist" aria-label="Navigation principale du dashboard">
-							<button class="tm-sidebar-link nav-link {{ activeTab == 'dashboard' ? 'active' : '' }}" id="dashboard-main-tab" data-bs-toggle="tab" data-bs-target="#dashboard-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="dashboard-main-panel" aria-selected="{{ activeTab == 'dashboard' ? 'true' : 'false' }}">
-								<span class="tm-sidebar-link-icon">⌂</span>
-								<span>Tableau de bord</span>
-							</button>
-
-							<button class="tm-sidebar-link nav-link {{ activeTab == 'prestations' ? 'active' : '' }}" id="prestations-main-tab" data-bs-toggle="tab" data-bs-target="#prestations-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="prestations-main-panel" aria-selected="{{ activeTab == 'prestations' ? 'true' : 'false' }}">
-								<span class="tm-sidebar-link-icon">🧰</span>
-								<span>Mes prestations</span>
-							</button>
-
-							<a href="{{ path('app_review_prestataire_reviews') }}" class="tm-sidebar-link nav-link {{ app.request.attributes.get('_route') == 'app_review_prestataire_reviews' ? 'active' : '' }}" aria-current="{{ app.request.attributes.get('_route') == 'app_review_prestataire_reviews' ? 'page' : 'false' }}">
-								<span class="tm-sidebar-link-icon">★</span>
-								<span>Mes avis reçus</span>
-							</a>
-
-							<button class="tm-sidebar-link nav-link {{ activeTab == 'revenus' ? 'active' : '' }}" id="revenus-main-tab" data-bs-toggle="tab" data-bs-target="#revenus-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="revenus-main-panel" aria-selected="{{ activeTab == 'revenus' ? 'true' : 'false' }}">
-								<span class="tm-sidebar-link-icon">💳</span>
-								<span>Mes revenus</span>
-							</button>
-
-							<button class="tm-sidebar-link nav-link {{ activeTab == 'calendrier' ? 'active' : '' }}" id="calendrier-main-tab" data-bs-toggle="tab" data-bs-target="#calendrier-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="calendrier-main-panel" aria-selected="{{ activeTab == 'calendrier' ? 'true' : 'false' }}">
-								<span class="tm-sidebar-link-icon">🗓</span>
-								<span>Calendrier</span>
-							</button>
-
-							<button class="tm-sidebar-link nav-link {{ activeTab == 'demandes' ? 'active' : '' }}" id="demandes-main-tab" data-bs-toggle="tab" data-bs-target="#demandes-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="demandes-main-panel" aria-selected="{{ activeTab == 'demandes' ? 'true' : 'false' }}">
-								<span class="tm-sidebar-link-icon">📄</span>
-								<span>Demandes reçues</span>
-							</button>
-
-							<button class="tm-sidebar-link nav-link {{ activeTab == 'archives' ? 'active' : '' }}" id="archives-main-tab" data-bs-toggle="tab" data-bs-target="#archives-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="archives-main-panel" aria-selected="{{ activeTab == 'archives' ? 'true' : 'false' }}">
-								<span class="tm-sidebar-link-icon">🗃</span>
-								<span>Archives</span>
-							</button>
-
-							<button class="tm-sidebar-link nav-link {{ activeTab == 'messages' ? 'active' : '' }}" id="messages-main-tab" data-bs-toggle="tab" data-bs-target="#messages-main-panel" data-tab-level="main" type="button" role="tab" aria-controls="messages-main-panel" aria-selected="{{ activeTab == 'messages' ? 'true' : 'false' }}">
-								<span class="tm-sidebar-link-icon">✉</span>
-								<span>Messages</span>
-							</button>
-
-							<div class="tm-sidebar-divider tm-dashboard-page__divider" role="separator" aria-hidden="true"></div>
-
-							<a href="{{ path('app_prestataire_settings') }}" class="tm-sidebar-link tm-dashboard-page__settings-link">
-								<span class="tm-sidebar-link-icon">
-									<i class="fa-solid fa-gear"></i>
-								</span>
-								<span>Paramètres</span>
-							</a>
-						</nav>
-					</div>
+					{{ include('profile/_prestataire_dashboard_sidebar.html.twig', {
+                        user: user,
+                        activeTab: activeTab,
+                        asLinks: true,
+                    }) }}
 				</aside>
 
 				<div class="tm-settings-sidebar-backdrop tm-dashboard-page__backdrop" {{ stimulus_target('prestataire-dashboard-tabs', 'backdrop') }} {{ stimulus_action('prestataire-dashboard-tabs', 'closeSidebar', 'click') }}></div>

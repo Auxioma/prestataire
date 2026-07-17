@@ -800,6 +800,7 @@ class ProfileController extends AbstractController
             'activeTab' => $this->resolveActiveTab(
                 defaultTab: $activeTab,
                 availabilityForm: null,
+                notificationForm: null,
                 passwordForm: $passwordForm,
                 deletionForm: $deletionForm,
             ),

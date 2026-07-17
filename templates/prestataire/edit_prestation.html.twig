@@ -10,9 +10,26 @@
 
 	{# CSS => /assets/styles/prestataire/prestation_service_wizard.css #}
 
-	<div class="container py-4 py-lg-5 tm-prestation-wizard-page">
-		<div class="tm-prestation-wizard">
-			<div class="tm-prestation-wizard-card" data-controller="prestation-wizard">
+	<div class="tm-settings-container" {{ stimulus_controller('settings-tabs') }}>
+		<div class="tm-main-layout">
+			<aside class="tm-settings-sidebar" {{ stimulus_target('settings-tabs', 'sidebar') }}>
+				{{ include('profile/_prestataire_settings_sidebar.html.twig', {
+                    user: app.user,
+                    activeTab: 'services',
+                    asLinks: true,
+                }) }}
+			</aside>
+
+			<div class="tm-settings-sidebar-backdrop" {{ stimulus_target('settings-tabs', 'backdrop') }} {{ stimulus_action('settings-tabs', 'closeSidebar', 'click') }}></div>
+
+			<main class="tm-settings-content">
+				<button type="button" class="tm-sidebar-toggle d-lg-none" aria-label="Ouvrir la navigation des paramètres" {{ stimulus_target('settings-tabs', 'toggle') }} {{ stimulus_action('settings-tabs', 'toggleSidebar', 'click') }}>
+					☰
+				</button>
+
+				<div class="tm-prestation-wizard-page">
+					<div class="tm-prestation-wizard">
+						<div class="tm-prestation-wizard-card" data-controller="prestation-wizard">
 				<div class="tm-prestation-wizard-hero">
 					<span class="tm-prestation-wizard-eyebrow">
 						<i class="bi bi-magic"></i>
@@ -604,7 +621,10 @@
 				</div>
 
 				{{ form_end(form) }}
-			</div>
+						</div>
+					</div>
+				</div>
+			</main>
 		</div>
 	</div>
 {% endblock %}
