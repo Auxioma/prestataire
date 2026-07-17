@@ -156,6 +156,13 @@ final class CategorySearchService
      */
     private function getProviderCounts(?string $query, ?array $searchedLocation, int $radiusKm): array
     {
+        if (
+            null !== $searchedLocation
+            && isset($searchedLocation['latitude'], $searchedLocation['longitude'])
+        ) {
+            return $this->getProviderCountsForReachableLocation($query, $searchedLocation, $radiusKm);
+        }
+
         $filter = [
             [
                 'term' => [
@@ -164,26 +171,6 @@ final class CategorySearchService
             ],
         ];
         $must = [];
-
-        if (
-            null !== $searchedLocation
-            && isset($searchedLocation['latitude'], $searchedLocation['longitude'])
-        ) {
-            $filter[] = [
-                'nested' => [
-                    'path' => 'zones',
-                    'query' => [
-                        'geo_distance' => [
-                            'distance' => $radiusKm.'km',
-                            'zones.location' => [
-                                'lat' => (float) $searchedLocation['latitude'],
-                                'lon' => (float) $searchedLocation['longitude'],
-                            ],
-                        ],
-                    ],
-                ],
-            ];
-        }
 
         if (null !== $query && '' !== $query) {
             $must[] = [
@@ -299,6 +286,182 @@ final class CategorySearchService
         }
 
         return $counts;
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    private function getProviderCountsForReachableLocation(?string $query, array $searchedLocation, int $radiusKm): array
+    {
+        $must = [];
+
+        if (null !== $query && '' !== $query) {
+            $must[] = [
+                'bool' => [
+                    'should' => [
+                        [
+                            'nested' => [
+                                'path' => 'categories',
+                                'score_mode' => 'max',
+                                'query' => [
+                                    'match' => [
+                                        'categories.name' => [
+                                            'query' => $query,
+                                            'boost' => 8,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'nested' => [
+                                'path' => 'subCategories',
+                                'score_mode' => 'max',
+                                'query' => [
+                                    'match' => [
+                                        'subCategories.name' => [
+                                            'query' => $query,
+                                            'boost' => 10,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'nested' => [
+                                'path' => 'services',
+                                'score_mode' => 'max',
+                                'query' => [
+                                    'multi_match' => [
+                                        'query' => $query,
+                                        'type' => 'best_fields',
+                                        'fields' => [
+                                            'services.title^6',
+                                            'services.service.name^8',
+                                        ],
+                                        'operator' => 'and',
+                                        'fuzziness' => 'AUTO',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'multi_match' => [
+                                'query' => $query,
+                                'type' => 'best_fields',
+                                'fields' => [
+                                    'metier^4',
+                                    'searchText^3',
+                                ],
+                                'operator' => 'and',
+                                'fuzziness' => 'AUTO',
+                            ],
+                        ],
+                    ],
+                    'minimum_should_match' => 1,
+                ],
+            ];
+        }
+
+        try {
+            $response = $this->elasticsearchClient->getClient()->search([
+                'index' => self::INDEX_NAME,
+                'body' => [
+                    'size' => 1000,
+                    'track_total_hits' => true,
+                    '_source' => [
+                        'categories',
+                        'zones',
+                    ],
+                    'query' => [
+                        'bool' => array_filter([
+                            'filter' => [
+                                [
+                                    'term' => [
+                                        'profileStatus.keyword' => self::ACTIVE_PROFILE_STATUS,
+                                    ],
+                                ],
+                            ],
+                            'must' => $must,
+                        ], static fn (mixed $value): bool => [] !== $value),
+                    ],
+                ],
+            ])->asArray();
+        } catch (\Throwable) {
+            return [];
+        }
+
+        $counts = [];
+
+        foreach ($response['hits']['hits'] ?? [] as $hit) {
+            $source = $hit['_source'] ?? [];
+
+            if (!$this->isProviderReachableForLocation($source['zones'] ?? [], $searchedLocation, $radiusKm)) {
+                continue;
+            }
+
+            foreach ($source['categories'] ?? [] as $category) {
+                $categoryId = isset($category['id']) ? (string) $category['id'] : '';
+
+                if ('' === $categoryId) {
+                    continue;
+                }
+
+                $counts[$categoryId] = ($counts[$categoryId] ?? 0) + 1;
+            }
+        }
+
+        return $counts;
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $zones
+     */
+    private function isProviderReachableForLocation(array $zones, array $searchedLocation, int $radiusKm): bool
+    {
+        if (!isset($searchedLocation['latitude'], $searchedLocation['longitude'])) {
+            return false;
+        }
+
+        $searchedLat = (float) $searchedLocation['latitude'];
+        $searchedLon = (float) $searchedLocation['longitude'];
+
+        foreach ($zones as $zone) {
+            if (!isset($zone['location']['lat'], $zone['location']['lon'])) {
+                continue;
+            }
+
+            $distanceKm = $this->distanceKm(
+                $searchedLat,
+                $searchedLon,
+                (float) $zone['location']['lat'],
+                (float) $zone['location']['lon'],
+            );
+
+            $zoneRadiusKm = max(0, (int) ($zone['radiusKm'] ?? 0));
+
+            if ($distanceKm <= ($radiusKm + $zoneRadiusKm)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function distanceKm(float $lat1, float $lon1, float $lat2, float $lon2): float
+    {
+        $earthRadius = 6371;
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2)
+            + cos(deg2rad($lat1)) * cos(deg2rad($lat2))
+            * sin($dLon / 2) * sin($dLon / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return $earthRadius * $c;
     }
 
     private function normalizeText(?string $value): string
