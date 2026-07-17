@@ -3,8 +3,12 @@
 {% block title %}TrouveMoi - Toutes les catégories{% endblock %}
 
 {% block body %}
+    {% set activeQuery = activeQuery|default('') %}
+    {% set activeLocation = activeLocation|default('') %}
+    {% set activeRadiusKm = activeRadiusKm|default(25) %}
+    {% set activeSort = activeSort|default('providers') %}
+    {% set categoryRows = categoryRows|default([]) %}
     <div class="tmc-page">
-
         <section class="tmc-hero">
             <div class="tmc-hero__media" aria-hidden="true">
                 <img
@@ -55,6 +59,63 @@
                 </ol>
             </nav>
 
+            <section class="tmc-filters" aria-labelledby="tmc-filters-title">
+                <div class="tmc-filters__head">
+                    <div>
+                        <span class="tmc-eyebrow">Recherche ciblée</span>
+                        <h2 class="tmc-section-title" id="tmc-filters-title">Affinez les catégories</h2>
+                        <p class="tmc-section-text">
+                            Recherchez une catégorie par mot-clé, zone d’intervention et mode de tri sans quitter la page.
+                        </p>
+                    </div>
+
+                    <div class="tmc-filters__summary">
+                        <strong>{{ categoryRows|length }}</strong>
+                        <span>catégorie{{ categoryRows|length > 1 ? 's' : '' }}</span>
+                    </div>
+                </div>
+
+                {% include 'category/_filters.html.twig' with {
+                    formView: filterForm
+                } only %}
+
+                {% if hasActiveFilters|default(false) %}
+                    <div class="tmc-filter-chips" aria-label="Filtres actifs">
+                        {% if activeQuery is not empty %}
+                            <span class="tmc-filter-chip">
+                                <span class="tmc-filter-chip__label">Recherche</span>
+                                <span class="tmc-filter-chip__value">{{ activeQuery }}</span>
+                            </span>
+                        {% endif %}
+
+                        {% if activeLocation is not empty %}
+                            <span class="tmc-filter-chip">
+                                <span class="tmc-filter-chip__label">Localisation</span>
+                                <span class="tmc-filter-chip__value">{{ activeLocation }}</span>
+                            </span>
+                        {% endif %}
+
+                        {% if activeRadiusKm != 25 %}
+                            <span class="tmc-filter-chip">
+                                <span class="tmc-filter-chip__label">Rayon</span>
+                                <span class="tmc-filter-chip__value">{{ activeRadiusKm }} km</span>
+                            </span>
+                        {% endif %}
+
+                        {% if activeSort != 'providers' %}
+                            <span class="tmc-filter-chip">
+                                <span class="tmc-filter-chip__label">Tri</span>
+                                <span class="tmc-filter-chip__value">
+                                    {{ activeSort == 'alphabetical' ? 'Ordre alphabétique' : 'Plus récentes' }}
+                                </span>
+                            </span>
+                        {% endif %}
+
+                        <a href="{{ path('app_category_index') }}" class="tmc-filter-reset">Réinitialiser</a>
+                    </div>
+                {% endif %}
+            </section>
+
             <section class="tmc-categories" id="categories-grid">
                 <div class="tmc-section-head">
                     <div class="tmc-section-copy">
@@ -67,7 +128,10 @@
                 </div>
 
                 <div class="tmc-grid">
-                    {% for category in categories %}
+                    {% for row in categoryRows %}
+                        {% set category = row.category %}
+                        {% set providerCount = row.providerCount|default(0) %}
+                        {% set subCategoryCount = row.subCategoryCount|default(0) %}
                         {% set colorVariant = cycle(['blue', 'orange', 'green', 'violet'], loop.index0) %}
 
                         <a
@@ -86,15 +150,22 @@
                                 <h3 class="tmc-card__title">{{ category.name }}</h3>
 
                                 <p class="tmc-card__desc">
-                                    Découvrez les services disponibles, les spécialités associées et les professionnels
-                                    liés à cet univers.
+                                    Découvrez les services disponibles, les spécialités associées et les professionnels liés à cet univers.
                                 </p>
 
-                                <span class="tmc-card__count">
-                                    <span>
-                                        {{ category.subCategories|length }}
-                                        {{ category.subCategories|length > 1 ? 'métiers' : 'métier' }}
+                                <div class="tmc-card__meta">
+                                    <span class="tmc-card__meta-pill">
+                                        {{ providerCount }}
+                                        prestataire{{ providerCount > 1 ? 's' : '' }}
                                     </span>
+                                    <span class="tmc-card__meta-pill tmc-card__meta-pill--muted">
+                                        {{ subCategoryCount }}
+                                        {{ subCategoryCount > 1 ? 'métiers' : 'métier' }}
+                                    </span>
+                                </div>
+
+                                <span class="tmc-card__count">
+                                    <span>Explorer la catégorie</span>
                                     <i class="fa-solid fa-arrow-right"></i>
                                 </span>
                             </div>
@@ -106,9 +177,9 @@
                             </div>
 
                             <div class="tmc-empty__content">
-                                <h3 class="tmc-empty__title">Aucune catégorie disponible</h3>
+                                <h3 class="tmc-empty__title">Aucune catégorie trouvée</h3>
                                 <p class="tmc-empty__text">
-                                    Les catégories apparaîtront ici dès qu’elles seront publiées.
+                                    Modifiez la recherche, la localisation ou le rayon pour afficher des catégories correspondantes.
                                 </p>
                             </div>
                         </div>

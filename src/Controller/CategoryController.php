@@ -13,11 +13,15 @@
 namespace App\Controller;
 
 use App\Entity\ServiceCategory;
+use App\Form\CategoryFilterType;
 use App\Repository\ServiceCategoryRepository;
 use App\Repository\ServiceRepository;
+use App\Search\CategorySearchService;
+use App\Service\ZoneGeocoder;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -30,10 +34,47 @@ class CategoryController extends AbstractController
      * NIVEAU 1 : Liste toutes les grandes catégories.
      */
     #[Route('/categories', name: 'app_category_index', methods: ['GET'])]
-    public function index(ServiceCategoryRepository $categoryRepository): Response
+    public function index(
+        Request $request,
+        CategorySearchService $categorySearchService,
+        ZoneGeocoder $zoneGeocoder,
+    ): Response
     {
+        $form = $this->createForm(CategoryFilterType::class, [
+            'query' => '',
+            'location' => '',
+            'radiusKm' => 25,
+            'sort' => 'providers',
+        ], [
+            'method' => 'GET',
+        ]);
+
+        $form->handleRequest($request);
+
+        $data = ($form->isSubmitted() && $form->isValid())
+            ? ($form->getData() ?? [])
+            : [];
+
+        $query = trim((string) ($data['query'] ?? ''));
+        $location = trim((string) ($data['location'] ?? ''));
+        $radiusKm = max(5, min(100, (int) ($data['radiusKm'] ?? 25)));
+        $sort = (string) ($data['sort'] ?? 'providers');
+        $searchedLocation = $location !== '' ? $zoneGeocoder->geocode($location, null) : null;
+        $categoryRows = $categorySearchService->search(
+            $query !== '' ? $query : null,
+            $searchedLocation,
+            $radiusKm,
+            $sort,
+        );
+
         return $this->render('category/category.html.twig', [
-            'categories' => $categoryRepository->findWithSubCategories(),
+            'filterForm' => $form->createView(),
+            'categoryRows' => $categoryRows,
+            'activeQuery' => $query,
+            'activeLocation' => $location,
+            'activeRadiusKm' => $radiusKm,
+            'activeSort' => $sort,
+            'hasActiveFilters' => $query !== '' || $location !== '' || $sort !== 'providers' || $radiusKm !== 25,
         ]);
     }
 

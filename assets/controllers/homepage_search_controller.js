@@ -268,7 +268,7 @@ export default class extends Controller {
         this.portalEl.style.top = `${rect.bottom + 12}px`;
         this.portalEl.style.left = `${rect.left}px`;
         this.portalEl.style.width = `${Math.max(rect.width, 360)}px`;
-        this.portalEl.style.zIndex = '999999';
+        this.portalEl.style.zIndex = '1000';
     }
 
     removePortal() {

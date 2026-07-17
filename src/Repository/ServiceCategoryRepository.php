@@ -41,6 +41,21 @@ class ServiceCategoryRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findTopLevelWithActiveSubCategories(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->addSelect('sub')
+            ->leftJoin('c.subCategories', 'sub', 'WITH', 'sub.isActive = :active')
+            ->where('c.parent IS NULL')
+            ->andWhere('c.isActive = :active')
+            ->setParameter('active', true)
+            ->orderBy('c.position', 'ASC')
+            ->addOrderBy('sub.position', 'ASC')
+            ->addOrderBy('sub.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findNavbarCategories(): array
     {
         return $this->createQueryBuilder('c')
