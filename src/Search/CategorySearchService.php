@@ -160,7 +160,11 @@ final class CategorySearchService
             null !== $searchedLocation
             && isset($searchedLocation['latitude'], $searchedLocation['longitude'])
         ) {
-            return $this->getProviderCountsForReachableLocation($query, $searchedLocation, $radiusKm);
+            try {
+                return $this->getProviderCountsForReachableLocationFromElasticsearch($query, $searchedLocation, $radiusKm);
+            } catch (\Throwable) {
+                return $this->getProviderCountsForReachableLocation($query, $searchedLocation, $radiusKm);
+            }
         }
 
         $filter = [
@@ -272,6 +276,132 @@ final class CategorySearchService
         } catch (\Throwable) {
             return [];
         }
+
+        $buckets = $response['aggregations']['categories_nested']['category_ids']['buckets'] ?? [];
+        $counts = [];
+
+        foreach ($buckets as $bucket) {
+            $key = isset($bucket['key']) ? (string) $bucket['key'] : null;
+            if (null === $key || '' === $key) {
+                continue;
+            }
+
+            $counts[$key] = (int) ($bucket['doc_count'] ?? 0);
+        }
+
+        return $counts;
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    private function getProviderCountsForReachableLocationFromElasticsearch(?string $query, array $searchedLocation, int $radiusKm): array
+    {
+        $must = [];
+
+        if (null !== $query && '' !== $query) {
+            $must[] = [
+                'bool' => [
+                    'should' => [
+                        [
+                            'nested' => [
+                                'path' => 'categories',
+                                'score_mode' => 'max',
+                                'query' => [
+                                    'match' => [
+                                        'categories.name' => [
+                                            'query' => $query,
+                                            'boost' => 8,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'nested' => [
+                                'path' => 'subCategories',
+                                'score_mode' => 'max',
+                                'query' => [
+                                    'match' => [
+                                        'subCategories.name' => [
+                                            'query' => $query,
+                                            'boost' => 10,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'nested' => [
+                                'path' => 'services',
+                                'score_mode' => 'max',
+                                'query' => [
+                                    'multi_match' => [
+                                        'query' => $query,
+                                        'type' => 'best_fields',
+                                        'fields' => [
+                                            'services.title^6',
+                                            'services.service.name^8',
+                                        ],
+                                        'operator' => 'and',
+                                        'fuzziness' => 'AUTO',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'multi_match' => [
+                                'query' => $query,
+                                'type' => 'best_fields',
+                                'fields' => [
+                                    'metier^4',
+                                    'searchText^3',
+                                ],
+                                'operator' => 'and',
+                                'fuzziness' => 'AUTO',
+                            ],
+                        ],
+                    ],
+                    'minimum_should_match' => 1,
+                ],
+            ];
+        }
+
+        $response = $this->elasticsearchClient->getClient()->search([
+            'index' => self::INDEX_NAME,
+            'body' => [
+                'size' => 0,
+                'track_total_hits' => false,
+                'query' => [
+                    'bool' => array_filter([
+                        'filter' => [
+                            [
+                                'term' => [
+                                    'profileStatus.keyword' => self::ACTIVE_PROFILE_STATUS,
+                                ],
+                            ],
+                            $this->buildReachableLocationFilter($searchedLocation, $radiusKm),
+                        ],
+                        'must' => $must,
+                    ], static fn (mixed $value): bool => [] !== $value),
+                ],
+                'aggs' => [
+                    'categories_nested' => [
+                        'nested' => [
+                            'path' => 'categories',
+                        ],
+                        'aggs' => [
+                            'category_ids' => [
+                                'terms' => [
+                                    'field' => 'categories.id',
+                                    'size' => 200,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ])->asArray();
 
         $buckets = $response['aggregations']['categories_nested']['category_ids']['buckets'] ?? [];
         $counts = [];
@@ -446,6 +576,40 @@ final class CategorySearchService
         }
 
         return false;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildReachableLocationFilter(array $searchedLocation, int $radiusKm): array
+    {
+        return [
+            'nested' => [
+                'path' => 'zones',
+                'query' => [
+                    'script' => [
+                        'script' => [
+                            'lang' => 'painless',
+                            'source' => <<<'PAINLESS'
+if (doc['zones.location'].empty) {
+    return false;
+}
+
+double distanceMeters = doc['zones.location'].arcDistance(params.lat, params.lon);
+double zoneRadiusKm = doc['zones.radiusKm'].empty ? 0 : doc['zones.radiusKm'].value;
+
+return distanceMeters <= ((zoneRadiusKm + params.radiusKm) * 1000.0);
+PAINLESS,
+                            'params' => [
+                                'lat' => (float) $searchedLocation['latitude'],
+                                'lon' => (float) $searchedLocation['longitude'],
+                                'radiusKm' => $radiusKm,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     private function distanceKm(float $lat1, float $lon1, float $lat2, float $lon2): float
