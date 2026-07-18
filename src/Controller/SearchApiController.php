@@ -33,7 +33,7 @@ final class SearchApiController extends AbstractController
             $id = $item['id'] ?? null;
             $slug = $item['slug'] ?? null;
 
-            if (!$id || !$slug) {
+            if (!$id || !$slug || !$this->isValidPrestataireSlug((string) $slug)) {
                 continue;
             }
 
@@ -72,5 +72,10 @@ final class SearchApiController extends AbstractController
         return $this->json([
             'items' => array_slice($items, 0, 6),
         ]);
+    }
+
+    private function isValidPrestataireSlug(string $slug): bool
+    {
+        return 1 === preg_match('/^(?!abonnements$)[a-z0-9-]+$/', $slug);
     }
 }

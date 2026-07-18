@@ -7,6 +7,7 @@ use App\Enum\PrestataireProfileStatusEnum;
 use App\Repository\PrestataireProfileRepository;
 use App\Search\PrestataireDocumentMapper;
 use App\Service\ElasticsearchClient;
+use App\Service\PrestataireProfileManager;
 use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -26,6 +27,7 @@ final class ElasticsearchReindexPrestatairesCommand extends Command
         private readonly PrestataireProfileRepository $prestataireProfileRepository,
         private readonly PrestataireDocumentMapper $prestataireDocumentMapper,
         private readonly ElasticsearchClient $elasticsearchClient,
+        private readonly PrestataireProfileManager $prestataireProfileManager,
     ) {
         parent::__construct();
     }
@@ -45,6 +47,13 @@ final class ElasticsearchReindexPrestatairesCommand extends Command
 
                 return Command::SUCCESS;
             }
+
+            /** @var PrestataireProfile $prestataire */
+            foreach ($prestataires as $prestataire) {
+                $this->prestataireProfileManager->syncSlug($prestataire);
+            }
+
+            $this->prestataireProfileRepository->getEntityManager()->flush();
 
             $indexed = 0;
 

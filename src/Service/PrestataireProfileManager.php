@@ -8,6 +8,7 @@ use App\Entity\PrestataireInterventionZone;
 use App\Entity\PrestataireProfile;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
 use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
 use Symfony\UX\Map\InfoWindow;
@@ -19,6 +20,7 @@ final class PrestataireProfileManager
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly SluggerInterface $slugger,
     ) {
     }
 
@@ -99,11 +101,35 @@ final class PrestataireProfileManager
 
     public function syncSlug(PrestataireProfile $prestataireProfile): void
     {
-        if ($prestataireProfile->getCompanyName()) {
-            $prestataireProfile->setSlug(
-                mb_strtolower(str_replace(' ', '-', $prestataireProfile->getCompanyName()))
-            );
+        $companyName = trim((string) $prestataireProfile->getCompanyName());
+        $baseSlug = mb_strtolower((string) $this->slugger->slug('' !== $companyName ? $companyName : 'prestataire'));
+
+        if ('' === $baseSlug) {
+            $baseSlug = 'prestataire';
         }
+
+        $slug = $baseSlug;
+        $suffix = 2;
+
+        while ($this->slugExistsForAnotherProfile($slug, $prestataireProfile)) {
+            $slug = sprintf('%s-%d', $baseSlug, $suffix);
+            ++$suffix;
+        }
+
+        $prestataireProfile->setSlug($slug);
+    }
+
+    private function slugExistsForAnotherProfile(string $slug, PrestataireProfile $prestataireProfile): bool
+    {
+        $existingProfile = $this->entityManager
+            ->getRepository(PrestataireProfile::class)
+            ->findOneBy(['slug' => $slug]);
+
+        if (!$existingProfile instanceof PrestataireProfile) {
+            return false;
+        }
+
+        return $existingProfile->getId() !== $prestataireProfile->getId();
     }
 
     public function buildZoneMap(iterable $zones): ?Map

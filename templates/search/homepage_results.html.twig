@@ -22,6 +22,7 @@
     {% set endPage = currentPage + 2 < totalPages ? currentPage + 2 : totalPages %}
 
     {% macro prestataire_card(profile, matchLabel) %}
+    {% set canShowProfile = profile.slug is not empty and profile.slug matches '/^(?!abonnements$)[a-z0-9-]+$/' %}
     <article class="tm-search-results-card">
         <div class="tm-search-results-card__inner">
             <div class="tm-search-results-card__cover-wrap">
@@ -114,7 +115,7 @@
                     {{ profile.reviewsCount|default(0) }} avis
                 </div>
 
-                {% if profile.slug %}
+                {% if canShowProfile %}
                     <a href="{{ path('app_prestataire_show', { slug: profile.slug }) }}" class="tm-search-results-card__cta">
                         <span>Voir le profil</span>
                         <i class="fa-solid fa-arrow-right"></i>

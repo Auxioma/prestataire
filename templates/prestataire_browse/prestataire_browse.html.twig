@@ -132,6 +132,7 @@
             {% if profiles|length > 0 %}
                 {% for profile in profiles %}
                     <div class="col-12 col-md-6 col-xl-4">
+                        {% set canShowProfile = profile.slug is not empty and profile.slug matches '/^(?!abonnements$)[a-z0-9-]+$/' %}
                         <article
                             class="tm-browse-card h-100"
                             data-controller="card-hover"
@@ -221,10 +222,16 @@
                                         {% endif %}
                                     </div>
 
-                                    <a href="{{ path('app_prestataire_show', {slug: profile.slug}) }}" class="tm-browse-card__link">
-                                        Voir le profil
-                                        <i class="fa-solid fa-arrow-right"></i>
-                                    </a>
+                                    {% if canShowProfile %}
+                                        <a href="{{ path('app_prestataire_show', {slug: profile.slug}) }}" class="tm-browse-card__link">
+                                            Voir le profil
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </a>
+                                    {% else %}
+                                        <span class="tm-browse-card__link text-muted" aria-disabled="true">
+                                            Profil indisponible
+                                        </span>
+                                    {% endif %}
                                 </div>
                             </div>
                         </article>

@@ -227,9 +227,12 @@
 
     <div class="row g-3" data-controller="scroll-reveal">
         {% for provider in providers|slice(0, 4) %}
+            {% set canShowProvider = provider.slug is not empty and provider.slug matches '/^(?!abonnements$)[a-z0-9-]+$/' %}
             <div class="col-md-6 col-xl-3" data-scroll-reveal-target="element">
                 <article class="tmv2-provider-card h-100 position-relative">
-                    <a href="{{ path('app_prestataire_show', {slug: provider.slug}) }}" class="stretched-link"></a>
+                    {% if canShowProvider %}
+                        <a href="{{ path('app_prestataire_show', {slug: provider.slug}) }}" class="stretched-link"></a>
+                    {% endif %}
 
                     {% set isFavorite = provider.id in (favoriteProviderIds|default([])) %}
                     <button

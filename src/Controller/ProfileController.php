@@ -33,6 +33,7 @@ use App\Service\CompanyVerificationManager;
 use App\Service\PrestataireAvailabilityManager;
 use App\Service\PrestataireProfileCompletionService;
 use App\Service\PrestataireProfileManager;
+use App\Service\PrestataireSearchIndexer;
 use App\Service\PrestataireSettingsFormsFactory;
 use App\Service\SireneClient;
 use Doctrine\ORM\EntityManagerInterface;
@@ -56,6 +57,7 @@ class ProfileController extends AbstractController
         private readonly CompanyVerificationManager $companyVerificationManager,
         private readonly PrestataireSettingsFormsFactory $prestataireSettingsFormsFactory,
         private readonly AccountSecurityManager $accountSecurityManager,
+        private readonly PrestataireSearchIndexer $prestataireSearchIndexer,
     ) {
     }
 
@@ -347,6 +349,14 @@ class ProfileController extends AbstractController
 
             if ($result['isVerified'] && !$result['isActive']) {
                 $this->addFlash('warning', 'Le SIRET a bien été trouvé, mais l’établissement est indiqué comme fermé dans Sirene. Le profil n’a pas été activé automatiquement.');
+            }
+
+            if ($result['isVerified'] && $result['isActive']) {
+                try {
+                    $this->prestataireSearchIndexer->indexProfile($prestataireProfile);
+                } catch (\Throwable) {
+                    $this->addFlash('warning', 'L’entreprise a bien été vérifiée, mais la mise en visibilité peut prendre quelques instants.');
+                }
             }
 
             $this->addFlash('success', 'Les informations officielles de l’entreprise ont été injectées dans votre fiche.');
