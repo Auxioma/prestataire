@@ -37,8 +37,9 @@
 
                         <tr>
                             <td style="padding:40px 40px 18px;">
+                                {% set fullName = [user.firstName|default(''), user.lastName|default('')]|join(' ')|trim %}
                                 <p style="margin:0 0 18px; font-size:16px; line-height:1.7; color:#061B56;">
-                                    Bonjour,
+                                    Bonjour{% if fullName is not empty %} {{ fullName }}{% endif %},
                                 </p>
 
                                 <p style="margin:0 0 18px; font-size:16px; line-height:1.7; color:#667085;">

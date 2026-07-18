@@ -113,6 +113,10 @@ class RegistrationController extends AbstractController
             $entityManager->flush();
 
             $this->sendRegistrationConfirmationEmail($user);
+            $this->addFlash(
+                'registration_email_confirmation_notice',
+                'Votre compte a bien été créé. Vérifiez votre boîte mail et confirmez votre adresse email pour finaliser votre inscription.'
+            );
 
             return $this->redirectToRoute('app_home');
         }
@@ -348,7 +352,7 @@ class RegistrationController extends AbstractController
         $session->remove(self::PRESTATAIRE_REGISTRATION_STEP_TWO);
 
         $this->addFlash(
-            'prestataire_registration_notice',
+            'registration_email_confirmation_notice',
             'Votre compte prestataire a bien été créé. Vérifiez votre boîte mail et confirmez votre adresse email pour finaliser votre inscription.'
         );
 

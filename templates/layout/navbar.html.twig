@@ -94,9 +94,12 @@
 							<li><hr class="dropdown-divider"></li>
 
 							<li>
-								<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--danger" href="{{ path('app_logout') }}">
-									<i class="fa-solid fa-right-from-bracket me-2"></i>Déconnexion
-								</a>
+								<form method="post" action="{{ path('app_logout') }}" class="m-0">
+									<input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+									<button type="submit" class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--danger">
+										<i class="fa-solid fa-right-from-bracket me-2"></i>Déconnexion
+									</button>
+								</form>
 							</li>
 						</ul>
 					</div>
@@ -359,9 +362,12 @@
 								<li><hr class="dropdown-divider"></li>
 
 								<li>
-									<a class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--danger" href="{{ path('app_logout') }}">
-										<i class="fa-solid fa-right-from-bracket me-2"></i>Déconnexion
-									</a>
+									<form method="post" action="{{ path('app_logout') }}" class="m-0">
+										<input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+										<button type="submit" class="dropdown-item tm-navbar__dropdown-link tm-navbar__dropdown-link--danger">
+											<i class="fa-solid fa-right-from-bracket me-2"></i>Déconnexion
+										</button>
+									</form>
 								</li>
 							</ul>
 						</li>
