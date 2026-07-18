@@ -4,6 +4,9 @@
 {% endblock %}
 
 {% block body %}
+    {% set currentRole = accountType|default(app.request.query.get('role', 'client')) %}
+    {% set isPrestataire = currentRole == 'prestataire' %}
+    {% set currentStep = prestataireStep|default(null) %}
     <div class="tm-register-page">
         <div class="container-fluid px-4 px-xl-5">
             <div class="tm-register-layout">
@@ -77,7 +80,7 @@
                     <div class="tm-register-role-switch">
                         <span>
                             {{
-                                app.request.query.get('role', 'client') == 'prestataire'
+                                isPrestataire
                                 ? 'Professionnel 🛠️'
                                 : 'Particulier 👤'
                             }}
@@ -91,107 +94,283 @@
                     <h2 class="tm-register-panel__title">Créer un compte</h2>
 
                     <p class="tm-register-panel__subtitle">
-                        Remplissez les informations ci-dessous.
+                        {% if isPrestataire %}
+                            {% if currentStep == 1 %}
+                                Étape 1 sur 3 : sécurisez votre compte.
+                            {% elseif currentStep == 2 %}
+                                Étape 2 sur 3 : choisissez votre première activité.
+                            {% else %}
+                                Étape 3 sur 3 : validez votre inscription.
+                            {% endif %}
+                        {% else %}
+                            Remplissez les informations ci-dessous.
+                        {% endif %}
                     </p>
 
-                    {{ form_start(registrationForm) }}
-
-                    {# Affichage des erreurs globales nettoyé et francisé #}
-                    {% if not registrationForm.vars.valid %}
-                        <div class="alert alert-danger p-3 small mb-3 rounded-3 d-flex align-items-start fw-semibold">
-                            <i class="bi bi-exclamation-triangle-fill me-2 fs-5 mt-0.5"></i>
-                            <div>
-                                {% for error in registrationForm.vars.errors %}
-                                    {% if 'CSRF' in error.message or 'token' in error.message %}
-                                        La session de votre formulaire a expiré. Veuillez réessayer de soumettre le formulaire.
-                                    {% else %}
-                                        {{ error.message }}
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
+                    {% if isPrestataire %}
+                        <div class="d-flex align-items-center gap-2 mb-4" aria-label="Progression de l'inscription prestataire">
+                            <span class="badge rounded-pill {{ currentStep == 1 ? 'bg-primary' : 'bg-light text-dark border' }}">1. Sécurité</span>
+                            <span class="badge rounded-pill {{ currentStep == 2 ? 'bg-primary' : 'bg-light text-dark border' }}">2. Activité</span>
+                            <span class="badge rounded-pill {{ currentStep == 3 ? 'bg-primary' : 'bg-light text-dark border' }}">3. Validation</span>
                         </div>
                     {% endif %}
 
-                    {# CHAMP EMAIL ET SES ERREURS #}
-                    <div class="mb-3">
-                        <div class="tm-register-field {% if not registrationForm.email.vars.valid %}border border-danger rounded-3{% endif %}">
-                            <i class="bi bi-envelope-fill tm-register-field__icon"></i>
-                            {{
-            form_widget(registrationForm.email, {
-                attr: {
-                    placeholder: 'Adresse e-mail',
-                    class: 'tm-register-field__input',
-                },
-            })
-        }}
-                        </div>
+                    {% if registrationForm is not null %}
+                        {{ form_start(registrationForm) }}
 
-                        {# Nettoyage radical : on extrait uniquement le texte brut #}
-                        {% if registrationForm.email.vars.errors|length > 0 %}
-                            <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
-                                <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
-                                <span>{{ registrationForm.email.vars.errors[0].message }}</span>
+                        {% if not registrationForm.vars.valid %}
+                            <div class="alert alert-danger p-3 small mb-3 rounded-3 d-flex align-items-start fw-semibold">
+                                <i class="bi bi-exclamation-triangle-fill me-2 fs-5 mt-0.5"></i>
+                                <div>
+                                    {% for error in registrationForm.vars.errors %}
+                                        {% if 'CSRF' in error.message or 'token' in error.message %}
+                                            La session de votre formulaire a expiré. Veuillez réessayer de soumettre le formulaire.
+                                        {% else %}
+                                            {{ error.message }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
                             </div>
                         {% endif %}
-                    </div>
 
-                    <div class="tm-register-password-block" data-controller="password">
-                        <div class="tm-register-field tm-register-field--password">
-                            <span class="tm-register-field__icon">
-                                <i class="bi bi-lock-fill"></i>
-                            </span>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="tm-register-field {% if not registrationForm.firstName.vars.valid %}border border-danger rounded-3{% endif %}">
+                                    <i class="bi bi-person-fill tm-register-field__icon"></i>
+                                    {{ form_widget(registrationForm.firstName, {
+                                        attr: {
+                                            placeholder: 'Prénom',
+                                            class: 'tm-register-field__input',
+                                        },
+                                    }) }}
+                                </div>
+                                {% if registrationForm.firstName.vars.errors|length > 0 %}
+                                    <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
+                                        <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+                                        <span>{{ registrationForm.firstName.vars.errors[0].message }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
 
-                            {{
-                                form_widget(registrationForm.plainPassword, {
+                            <div class="col-md-6">
+                                <div class="tm-register-field {% if not registrationForm.lastName.vars.valid %}border border-danger rounded-3{% endif %}">
+                                    <i class="bi bi-person-badge-fill tm-register-field__icon"></i>
+                                    {{ form_widget(registrationForm.lastName, {
+                                        attr: {
+                                            placeholder: 'Nom',
+                                            class: 'tm-register-field__input',
+                                        },
+                                    }) }}
+                                </div>
+                                {% if registrationForm.lastName.vars.errors|length > 0 %}
+                                    <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
+                                        <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+                                        <span>{{ registrationForm.lastName.vars.errors[0].message }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3 mt-3">
+                            <div class="tm-register-field {% if not registrationForm.phoneNumber.vars.valid %}border border-danger rounded-3{% endif %}">
+                                <i class="bi bi-telephone-fill tm-register-field__icon"></i>
+                                {{ form_widget(registrationForm.phoneNumber, {
+                                    attr: {
+                                        placeholder: 'Numéro de téléphone',
+                                        class: 'tm-register-field__input',
+                                    },
+                                }) }}
+                            </div>
+
+                            {% if registrationForm.phoneNumber.vars.errors|length > 0 %}
+                                <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
+                                    <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+                                    <span>{{ registrationForm.phoneNumber.vars.errors[0].message }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="tm-register-field {% if not registrationForm.email.vars.valid %}border border-danger rounded-3{% endif %}">
+                                <i class="bi bi-envelope-fill tm-register-field__icon"></i>
+                                {{ form_widget(registrationForm.email, {
+                                    attr: {
+                                        placeholder: 'Adresse e-mail',
+                                        class: 'tm-register-field__input',
+                                    },
+                                }) }}
+                            </div>
+
+                            {% if registrationForm.email.vars.errors|length > 0 %}
+                                <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
+                                    <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+                                    <span>{{ registrationForm.email.vars.errors[0].message }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="tm-register-password-block" data-controller="password">
+                            <div class="tm-register-field tm-register-field--password {% if not registrationForm.plainPassword.first.vars.valid %}border border-danger rounded-3{% endif %}">
+                                <span class="tm-register-field__icon">
+                                    <i class="bi bi-lock-fill"></i>
+                                </span>
+
+                                {{ form_widget(registrationForm.plainPassword.first, {
                                     attr: {
                                         placeholder: 'Mot de passe',
                                         class: 'tm-register-field__input',
                                         'data-password-target': 'input',
                                         'data-action': 'input->password#checkPassword',
                                     },
-                                })
-                            }}
+                                }) }}
 
-                            <button type="button" class="tm-register-password-toggle" data-password-target="toggle" data-action="click->password#toggleVisibility" aria-label="Afficher ou masquer le mot de passe"></button>
+                                <button type="button" class="tm-register-password-toggle" data-password-target="toggle" data-action="click->password#toggleVisibility" aria-label="Afficher ou masquer le mot de passe"></button>
+                            </div>
+
+                            {% if registrationForm.plainPassword.first.vars.errors|length > 0 %}
+                                <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
+                                    <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+                                    <span>{{ registrationForm.plainPassword.first.vars.errors[0].message }}</span>
+                                </div>
+                            {% endif %}
+
+                            <div class="tm-register-password-rules">
+                                <div class="is-invalid" data-password-target="length">❌ Au moins 8 caractères</div>
+                                <div class="is-invalid" data-password-target="uppercase">❌ Au moins une majuscule</div>
+                                <div class="is-invalid" data-password-target="number">❌ Au moins un chiffre</div>
+                                <div class="is-invalid" data-password-target="special">❌ Au moins un caractère spécial</div>
+                            </div>
                         </div>
 
-                        <div class="tm-register-password-rules">
-                            <div class="is-invalid" data-password-target="length">❌ Au moins 8 caractères</div>
-                            <div class="is-invalid" data-password-target="uppercase">❌ Au moins une majuscule</div>
-                            <div class="is-invalid" data-password-target="number">❌ Au moins un chiffre</div>
-                            <div class="is-invalid" data-password-target="special">❌ Au moins un caractère spécial</div>
+                        <div class="mb-3 mt-3">
+                            <div class="tm-register-field tm-register-field--password {% if not registrationForm.plainPassword.second.vars.valid %}border border-danger rounded-3{% endif %}">
+                                <span class="tm-register-field__icon">
+                                    <i class="bi bi-shield-lock-fill"></i>
+                                </span>
+
+                                {{ form_widget(registrationForm.plainPassword.second, {
+                                    attr: {
+                                        placeholder: 'Confirmer le mot de passe',
+                                        class: 'tm-register-field__input',
+                                    },
+                                }) }}
+                            </div>
+
+                            {% if registrationForm.plainPassword.second.vars.errors|length > 0 %}
+                                <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
+                                    <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+                                    <span>{{ registrationForm.plainPassword.second.vars.errors[0].message }}</span>
+                                </div>
+                            {% endif %}
                         </div>
-                    </div>
 
-                    <div class="tm-register-checkbox">
-                        {{ form_widget(registrationForm.agreeTerms) }}
-                        {{ form_label(registrationForm.agreeTerms) }}
-                    </div>
+                        <div class="tm-register-checkbox">
+                            {{ form_widget(registrationForm.agreeTerms) }}
+                            {{ form_label(registrationForm.agreeTerms) }}
+                        </div>
 
-                    <button type="submit" class="tm-register-submit-btn">
-                        S'enregistrer
-                    </button>
+                        {% if registrationForm.agreeTerms.vars.errors|length > 0 %}
+                            <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
+                                <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+                                <span>{{ registrationForm.agreeTerms.vars.errors[0].message }}</span>
+                            </div>
+                        {% endif %}
 
-                    <div class="tm-register-divider">
-                        <span>ou</span>
-                    </div>
+                        <button type="submit" class="tm-register-submit-btn">
+                            {{ isPrestataire ? 'Continuer' : "S'enregistrer" }}
+                        </button>
 
-                    <a href="{{ path('connect_google_start', {role: app.request.query.get('role', 'client')}) }}" class="tm-register-social-btn" data-turbo="false" data-turbo-prefetch="false">
-                        <i class="bi bi-google"></i>
-                        <span>S'inscrire avec Google</span>
-                    </a>
+                        <div class="tm-register-divider">
+                            <span>ou</span>
+                        </div>
 
-                    <button type="button" class="tm-register-social-btn">
-                        <i class="bi bi-apple"></i>
-                        <span>S'inscrire avec Apple</span>
-                    </button>
+                        <a href="{{ path('connect_google_start', {role: currentRole}) }}" class="tm-register-social-btn" data-turbo="false" data-turbo-prefetch="false">
+                            <i class="bi bi-google"></i>
+                            <span>S'inscrire avec Google</span>
+                        </a>
 
-                    <p class="tm-register-login-link">
-                        Vous avez déjà un compte ?
-                        <a href="{{ path('app_login') }}">Se connecter</a>
-                    </p>
+                        <button type="button" class="tm-register-social-btn">
+                            <i class="bi bi-apple"></i>
+                            <span>S'inscrire avec Apple</span>
+                        </button>
 
-                    {{ form_end(registrationForm) }}
+                        <p class="tm-register-login-link">
+                            Vous avez déjà un compte ?
+                            <a href="{{ path('app_login') }}">Se connecter</a>
+                        </p>
+
+                        {{ form_end(registrationForm) }}
+                    {% elseif currentStep == 2 %}
+                        {% if activityError %}
+                            <div class="alert alert-danger p-3 small mb-3 rounded-3 d-flex align-items-start fw-semibold">
+                                <i class="bi bi-exclamation-triangle-fill me-2 fs-5 mt-0.5"></i>
+                                <div>{{ activityError }}</div>
+                            </div>
+                        {% endif %}
+
+                        <form method="post" action="{{ path('app_register', { role: 'prestataire', step: 2 }) }}" data-controller="chained-selects" data-turbo="false">
+                            <input type="hidden" name="_token" value="{{ csrf_token('prestataire_registration_activity') }}">
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold" for="registration-category">Catégorie</label>
+                                <select id="registration-category" class="form-select" data-chained-selects-target="category" data-action="change->chained-selects#loadSubCategories" required>
+                                    <option value="">Choisir une catégorie principale</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold" for="registration-subcategory">Sous-catégorie</label>
+                                <select id="registration-subcategory" class="form-select" data-chained-selects-target="subcategory" data-action="change->chained-selects#loadServices" disabled required>
+                                    <option value="">Choisir une sous-catégorie…</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold" for="registration-service">Service</label>
+                                <select id="registration-service" class="form-select" data-chained-selects-target="service" name="service_id" disabled required>
+                                    <option value="">Choisir un service…</option>
+                                </select>
+                            </div>
+
+                            <div class="rounded-4 border bg-light p-3 mb-4">
+                                <strong class="d-block mb-2">Pourquoi cette étape ?</strong>
+                                <p class="mb-0 text-muted small">Votre première activité permet d’associer immédiatement votre profil à un service visible dans le catalogue dès que votre entreprise est vérifiée.</p>
+                            </div>
+
+                            <div class="d-flex flex-column flex-sm-row gap-2">
+                                <a href="{{ path('app_register', { role: 'prestataire', step: 1 }) }}" class="btn btn-outline-secondary">Retour</a>
+                                <button type="submit" class="tm-register-submit-btn flex-grow-1">Continuer</button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="rounded-4 border bg-light p-4 mb-4">
+                            <h3 class="h5 mb-3">Avant de valider</h3>
+                            <ul class="mb-0 ps-3">
+                                <li>Complétez vos paramètres au maximum pour rassurer vos futurs clients.</li>
+                                <li>Faites vérifier votre entreprise par le SIRET pour activer votre visibilité sur la plateforme.</li>
+                                <li>Ajoutez ensuite votre description, vos zones d’intervention, vos disponibilités et vos prestations détaillées.</li>
+                            </ul>
+                        </div>
+
+                        <div class="rounded-4 border p-4 mb-4">
+                            <h3 class="h5 mb-3">Récapitulatif</h3>
+                            <p class="mb-2"><strong>Compte :</strong> {{ app.session.get('prestataire_registration.step_one').email|default('') }}</p>
+                            <p class="mb-2"><strong>Contact :</strong> {{ app.session.get('prestataire_registration.step_one').firstName|default('') }} {{ app.session.get('prestataire_registration.step_one').lastName|default('') }}</p>
+                            <p class="mb-0"><strong>Première activité :</strong> {{ selectedService ? selectedService.name : 'Non renseignée' }}</p>
+                        </div>
+
+                        <form method="post" action="{{ path('app_register', { role: 'prestataire', step: 3 }) }}" data-turbo="false">
+                            <input type="hidden" name="_token" value="{{ csrf_token('prestataire_registration_finalize') }}">
+
+                            <div class="d-flex flex-column flex-sm-row gap-2">
+                                <a href="{{ path('app_register', { role: 'prestataire', step: 2 }) }}" class="btn btn-outline-secondary">Retour</a>
+                                <button type="submit" class="tm-register-submit-btn flex-grow-1">Créer mon compte prestataire</button>
+                            </div>
+                        </form>
+                    {% endif %}
                 </section>
             </div>
 
