@@ -108,7 +108,9 @@
                                 <div class="tm-profile-show__stat">
                                     <i class="fa-solid fa-star"></i>
                                     <strong>{{ prestataire.averageRating|default('0.0') }}/5</strong>
-                                    <span>{{ prestataire.reviewsCount|default(0) }} avis</span>
+                                    <a href="{{ path('app_review_public_prestataire_reviews', { slug: prestataire.slug }) }}" class="tm-profile-show__stat-link" aria-label="Voir les avis de {{ prestataire.companyName }}">
+                                        {{ prestataire.reviewsCount|default(0) }} avis
+                                    </a>
                                 </div>
 
                                 {% if prestataire.responseTimeMinutes %}

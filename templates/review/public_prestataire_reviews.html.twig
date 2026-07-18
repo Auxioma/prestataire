@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Avis de {{ prestataire.companyName|default('ce prestataire') }} - TrouveMoi
+{% endblock %}
+
+{% block body %}
+    <section class="container py-5">
+        <div class="mx-auto" style="max-width: 960px;">
+            <div class="mb-4">
+                <a href="{{ path('app_prestataire_show', { slug: prestataire.slug }) }}" class="text-decoration-none">
+                    <i class="fa-solid fa-arrow-left me-1" aria-hidden="true"></i>
+                    Retour au profil
+                </a>
+            </div>
+
+            <section class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-4">
+                        <div>
+                            <span class="text-uppercase small text-muted">Avis prestataire</span>
+                            <h1 class="h2 mb-2">{{ prestataire.companyName }}</h1>
+                            <p class="mb-0 text-muted">
+                                Consultez les avis laissés pour ce prestataire.
+                            </p>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="border rounded-4 px-4 py-3 bg-light">
+                                <div class="small text-muted mb-1">Note moyenne</div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <strong class="fs-3">{{ prestataire.averageRating|default('0.00')|number_format(1, ',', ' ') }}</strong>
+                                    {{ include('review/_stars.html.twig', { rating: prestataire.averageRating|default(0)|round(0, 'common') }) }}
+                                </div>
+                            </div>
+
+                            <div class="border rounded-4 px-4 py-3 bg-light">
+                                <div class="small text-muted mb-1">Nombre d’avis</div>
+                                <strong class="fs-3">{{ prestataire.reviewsCount|default(0) }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card shadow-sm border-0">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="mb-4">
+                        <span class="text-uppercase small text-muted">Détail</span>
+                        <h2 class="h4 mb-1">Tous les avis publiés</h2>
+                        <p class="mb-0 text-muted">Chaque avis est rattaché à une demande réellement acceptée.</p>
+                    </div>
+
+                    {% if reviews is not empty %}
+                        <div class="d-grid gap-3">
+                            {% for review in reviews %}
+                                {% set account = review.clientProfile.account ?? null %}
+                                {% set reviewerFirstName = account ? account.firstName|default('')|trim : '' %}
+                                {% set reviewerLastName = account ? account.lastName|default('')|trim : '' %}
+                                {% set reviewerName = reviewerFirstName is not empty
+                                    ? reviewerFirstName ~ (reviewerLastName is not empty ? ' ' ~ reviewerLastName|first ~ '.' : '')
+                                    : 'Client vérifié'
+                                %}
+                                <article class="border rounded-4 p-4">
+                                    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
+                                        <div>
+                                            <h3 class="h5 mb-1">{{ reviewerName }}</h3>
+                                            <p class="text-muted mb-2">{{ review.quoteRequest.title|default('Demande associée') }}</p>
+                                            {{ include('review/_stars.html.twig', { rating: review.rating }) }}
+                                        </div>
+
+                                        <span class="text-muted small">{{ review.createdAt|date('d/m/Y à H:i') }}</span>
+                                    </div>
+
+                                    <p class="mb-0">{{ review.comment|default('Aucun commentaire ajouté.')|nl2br }}</p>
+                                </article>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5 text-muted">
+                            <i class="fa-regular fa-star fs-1 d-block mb-3" aria-hidden="true"></i>
+                            <p class="mb-0">Ce prestataire n’a pas encore reçu d’avis.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+    </section>
+{% endblock %}

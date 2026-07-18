@@ -70,6 +70,26 @@ final class ReviewRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, Review>
+     */
+    public function findPublicByPrestataireOrderedByDate(PrestataireProfile $prestataire): array
+    {
+        return $this->createQueryBuilder('r')
+            ->addSelect('client', 'account', 'quoteRequest', 'prestation', 'service')
+            ->leftJoin('r.clientProfile', 'client')
+            ->leftJoin('client.account', 'account')
+            ->leftJoin('r.quoteRequest', 'quoteRequest')
+            ->leftJoin('quoteRequest.prestation', 'prestation')
+            ->leftJoin('prestation.service', 'service')
+            ->andWhere('r.prestataireProfile = :prestataire')
+            ->setParameter('prestataire', $prestataire)
+            ->orderBy('r.createdAt', 'DESC')
+            ->addOrderBy('r.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function computeAverageRating(PrestataireProfile $prestataire): ?float
     {
         $result = $this->createQueryBuilder('r')

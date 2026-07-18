@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\PrestataireProfile;
 use App\Entity\QuoteRequest;
 use App\Entity\Review;
 use App\Entity\User;
@@ -9,6 +10,7 @@ use App\Form\ReviewType;
 use App\Repository\QuoteRequestRepository;
 use App\Repository\ReviewRepository;
 use App\Service\ReviewManager;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -131,6 +133,21 @@ final class ReviewController extends AbstractController
         return $this->render('review/prestataire_reviews.html.twig', [
             'prestataire' => $prestataire,
             'reviews' => $reviewRepository->findByPrestataireOrderedByDate($prestataire),
+        ]);
+    }
+
+    #[Route('/prestataire/{slug}', name: 'public_prestataire_reviews', methods: ['GET'], requirements: ['slug' => '(?!mes-avis$|mes-avis-recus$)[a-z0-9-]+'])]
+    public function publicPrestataireReviews(
+        #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireProfile $prestataire,
+        ReviewRepository $reviewRepository,
+    ): Response {
+        if (!$prestataire->getCompanyName()) {
+            throw $this->createNotFoundException('Ce profil professionnel n’est pas disponible.');
+        }
+
+        return $this->render('review/public_prestataire_reviews.html.twig', [
+            'prestataire' => $prestataire,
+            'reviews' => $reviewRepository->findPublicByPrestataireOrderedByDate($prestataire),
         ]);
     }
 
