@@ -566,6 +566,10 @@
 											{{ form_widget(messageForm._token) }}
 											{{ form_end(messageForm, { render_rest: false }) }}
 										</div>
+									{% elseif conversation and canUseInstantMessaging is defined and not canUseInstantMessaging %}
+										<div class="alert alert-warning mt-3 mb-0" role="alert">
+											La messagerie n’est pas disponible pour cette demande tant que le prestataire n’a pas souscrit une formule d’abonnement supérieure.
+										</div>
 									{% endif %}
 								{% else %}
 									<div class="tm-client-quotes-empty-state">

@@ -120,9 +120,13 @@ final class PrestataireDashboardController extends AbstractController
         }
 
         if (!$subscriptionAccessManager->canUseInstantMessaging($prestataireProfile)) {
-            $this->addFlash('warning', 'Un abonnement actif est requis pour utiliser la messagerie instantanée.');
+            $this->addFlash('warning', 'La messagerie instantanée n’est pas incluse dans votre formule actuelle.');
 
-            return $this->redirectToRoute('app_subscription_index');
+            return $this->redirectToRoute('app_prestataire_dashboard', [
+                'conversation' => $conversation->getId(),
+                'tab' => 'messages',
+                '_fragment' => 'messages-main-panel',
+            ], 303);
         }
 
         $message = new Message();
@@ -392,7 +396,9 @@ final class PrestataireDashboardController extends AbstractController
             $activeConversation = $forcedActiveConversation;
         }
 
-        if (null === $messageFormView && $activeConversation instanceof Conversation) {
+        $canUseInstantMessaging = $subscriptionAccessManager->canUseInstantMessaging($prestataireProfile);
+
+        if (null === $messageFormView && $activeConversation instanceof Conversation && $canUseInstantMessaging) {
             $messageFormView = $this->createMessageForm($activeConversation, new Message())->createView();
         }
 
@@ -448,6 +454,7 @@ final class PrestataireDashboardController extends AbstractController
             'conversations' => $conversations,
             'activeConversation' => $activeConversation,
             'messageForm' => $messageFormView,
+            'canUseInstantMessaging' => $canUseInstantMessaging,
             'activeTab' => $activeTab,
             'hasConversationPhotos' => $this->conversationHasPhotos($activeConversation),
         ];

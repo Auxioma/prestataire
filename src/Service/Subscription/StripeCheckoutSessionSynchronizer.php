@@ -18,7 +18,7 @@ class StripeCheckoutSessionSynchronizer
     public function syncCompletedSession(string $checkoutSessionId, PrestataireProfile $prestataireProfile): bool
     {
         $checkoutSession = $this->stripeApiClient->retrieveCheckoutSession($checkoutSessionId);
-        $stripeSubscriptionId = trim((string) ($checkoutSession['subscription'] ?? ''));
+        $stripeSubscriptionId = $this->extractExpandableId($checkoutSession['subscription'] ?? null);
 
         if ('' === $stripeSubscriptionId) {
             return false;
@@ -78,5 +78,18 @@ class StripeCheckoutSessionSynchronizer
         }
 
         return false;
+    }
+
+    private function extractExpandableId(mixed $value): string
+    {
+        if (\is_string($value)) {
+            return trim($value);
+        }
+
+        if (\is_array($value) && \is_string($value['id'] ?? null)) {
+            return trim($value['id']);
+        }
+
+        return '';
     }
 }

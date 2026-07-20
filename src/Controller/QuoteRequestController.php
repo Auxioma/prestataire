@@ -30,6 +30,7 @@ use App\Service\QuoteProposalNativePdfGenerator;
 use App\Service\QuoteProposalPdfResponseFactory;
 use App\Service\RealtimeNotifier;
 use App\Service\ReviewManager;
+use App\Service\Subscription\SubscriptionAccessManager;
 use App\Security\Voter\ClientSettingsVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -261,6 +262,7 @@ final class QuoteRequestController extends AbstractController
         NotificationManager $notificationManager,
         ConversationMessageManager $conversationMessageManager,
         ReviewManager $reviewManager,
+        SubscriptionAccessManager $subscriptionAccessManager,
     ): Response {
 
         $user = $this->getUser();
@@ -334,7 +336,12 @@ final class QuoteRequestController extends AbstractController
         // Formulaire de message
         // =========================
         $messageForm = null;
-        $canSendMessage = $conversation && \in_array($quoteRequest->getStatus()->value, ['accepted', 'answered'], true);
+        $canUseInstantMessaging = $conversation instanceof Conversation
+            && $conversation->getPrestataire() instanceof PrestataireProfile
+            && $subscriptionAccessManager->canUseInstantMessaging($conversation->getPrestataire());
+        $canSendMessage = $conversation
+            && \in_array($quoteRequest->getStatus()->value, ['accepted', 'answered'], true)
+            && $canUseInstantMessaging;
 
         if ($canSendMessage) {
             $message = new Message();
@@ -409,6 +416,20 @@ final class QuoteRequestController extends AbstractController
             }
         }
 
+        if (
+            $conversation instanceof Conversation
+            && \in_array($quoteRequest->getStatus()->value, ['accepted', 'answered'], true)
+            && !$canUseInstantMessaging
+            && $request->isMethod('POST')
+        ) {
+            $this->addFlash('warning', 'La messagerie n’est pas disponible pour cette demande tant que le prestataire n’a pas souscrit une formule d’abonnement supérieure.');
+
+            return $this->redirectToRoute('app_quote_request_show', [
+                'slug' => $quoteRequest->getSlug(),
+                '_fragment' => 'quote-conversation',
+            ], 303);
+        }
+
         // =========================
         // Rendu de la page
         // =========================
@@ -422,6 +443,7 @@ final class QuoteRequestController extends AbstractController
             'visiblePrestataireDocuments' => $visiblePrestataireDocuments,
             'existingReview' => $existingReview,
             'canLeaveReview' => $canLeaveReview,
+            'canUseInstantMessaging' => $canUseInstantMessaging,
             'isArchivedView' => false,
         ]);
     }

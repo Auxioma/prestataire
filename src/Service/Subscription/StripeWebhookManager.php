@@ -185,7 +185,7 @@ class StripeWebhookManager
         }
 
         $subscription = null;
-        $stripeSubscriptionId = (string) ($payload['subscription'] ?? '');
+        $stripeSubscriptionId = $this->extractExpandableId($payload['subscription'] ?? null);
         if ('' !== $stripeSubscriptionId) {
             $subscription = $this->prestataireSubscriptionRepository->findOneByStripeSubscriptionId($stripeSubscriptionId);
         }
@@ -196,7 +196,7 @@ class StripeWebhookManager
         $invoice
             ->setSubscription($subscription)
             ->setStripeInvoiceId($stripeInvoiceId)
-            ->setStripePaymentIntentId(($payload['payment_intent'] ?? null) ?: null)
+            ->setStripePaymentIntentId($this->extractNullableExpandableId($payload['payment_intent'] ?? null))
             ->setInvoiceNumber(($payload['number'] ?? null) ?: null)
             ->setHostedInvoiceUrl(($payload['hosted_invoice_url'] ?? null) ?: null)
             ->setInvoicePdfUrl(($payload['invoice_pdf'] ?? null) ?: null)
@@ -272,7 +272,7 @@ class StripeWebhookManager
      */
     private function resolveCustomerFromStripePayload(array $payload): ?SubscriptionCustomer
     {
-        $stripeCustomerId = (string) ($payload['customer'] ?? '');
+        $stripeCustomerId = $this->extractExpandableId($payload['customer'] ?? null);
         if ('' === $stripeCustomerId) {
             return null;
         }
@@ -365,5 +365,25 @@ class StripeWebhookManager
         }
 
         return number_format(((int) $amount) / 100, 2, '.', '');
+    }
+
+    private function extractNullableExpandableId(mixed $value): ?string
+    {
+        $id = $this->extractExpandableId($value);
+
+        return '' !== $id ? $id : null;
+    }
+
+    private function extractExpandableId(mixed $value): string
+    {
+        if (\is_string($value)) {
+            return trim($value);
+        }
+
+        if (\is_array($value) && \is_string($value['id'] ?? null)) {
+            return trim($value['id']);
+        }
+
+        return '';
     }
 }
