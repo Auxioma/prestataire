@@ -14,6 +14,7 @@ use App\Repository\QuoteProposalRepository;
 use App\Repository\QuoteRequestRepository;
 use App\Service\NotificationManager;
 use App\Service\Subscription\SubscriptionAccessManager;
+use App\Security\Voter\PrestataireCompanySettingsVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -148,6 +149,17 @@ final class PrestataireQuoteRequestController extends AbstractController
 
         if ($quoteRequest->getPrestataire()?->getId() !== $prestataire->getId()) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas traiter cette demande.');
+        }
+
+        if (!$this->isGranted(PrestataireCompanySettingsVoter::PRESTATAIRE_HAS_COMPLETE_COMPANY_SETTINGS, $prestataire)) {
+            $this->addFlash('warning', [
+                'title' => 'Complétez les informations entreprise de vos paramètres avant d’accepter une demande de devis.',
+                'items' => $this->getMissingPrestataireCompanySettingsLabels($prestataire),
+            ]);
+
+            return $this->redirectToRoute('app_prestataire_settings', [
+                'tab' => 'company',
+            ]);
         }
 
         if (!$subscriptionAccessManager->canRespondToQuoteRequests($prestataire)) {
@@ -445,5 +457,74 @@ final class PrestataireQuoteRequestController extends AbstractController
             'tab' => 'archives',
             '_fragment' => 'archives-main-panel',
         ]);
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function getMissingPrestataireCompanySettingsLabels(QuoteRequest|User|\App\Entity\PrestataireProfile $subject): array
+    {
+        $prestataire = $subject instanceof User ? $subject->getPrestataireProfile() : $subject;
+
+        if ($subject instanceof QuoteRequest) {
+            $prestataire = $subject->getPrestataire();
+        }
+
+        if (!$prestataire instanceof \App\Entity\PrestataireProfile) {
+            return ['profil entreprise'];
+        }
+
+        $missingFields = [];
+
+        if ($this->isBlank($prestataire->getCompanyName())) {
+            $missingFields[] = 'Nom de l’entreprise';
+        }
+
+        if ($this->isBlank($prestataire->getSiret())) {
+            $missingFields[] = 'Numéro SIRET';
+        }
+
+        if ($this->isBlank($prestataire->getSiren())) {
+            $missingFields[] = 'Numéro SIREN';
+        }
+
+        if ($this->isBlank($prestataire->getStructureType())) {
+            $missingFields[] = 'Forme juridique';
+        }
+
+        if ($this->isBlank($prestataire->getVatNumber())) {
+            $missingFields[] = 'TVA intracommunautaire';
+        }
+
+        if ($this->isBlank($prestataire->getAddress())) {
+            $missingFields[] = 'Adresse';
+        }
+
+        if ($this->isBlank($prestataire->getPostalCode())) {
+            $missingFields[] = 'Code postal';
+        }
+
+        if ($this->isBlank($prestataire->getCity())) {
+            $missingFields[] = 'Ville';
+        }
+
+        if ($this->isBlank($prestataire->getCountry())) {
+            $missingFields[] = 'Pays';
+        }
+
+        return $missingFields;
+    }
+
+    private function isBlank(mixed $value): bool
+    {
+        if (null === $value) {
+            return true;
+        }
+
+        if (\is_string($value)) {
+            return '' === trim($value);
+        }
+
+        return false;
     }
 }

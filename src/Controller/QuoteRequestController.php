@@ -30,6 +30,7 @@ use App\Service\QuoteProposalNativePdfGenerator;
 use App\Service\QuoteProposalPdfResponseFactory;
 use App\Service\RealtimeNotifier;
 use App\Service\ReviewManager;
+use App\Security\Voter\ClientSettingsVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -99,6 +100,22 @@ final class QuoteRequestController extends AbstractController
 
         if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
             throw $this->createAccessDeniedException('Accès réservé aux clients.');
+        }
+
+        if (!$this->isGranted(ClientSettingsVoter::CLIENT_HAS_COMPLETE_SETTINGS, $user)) {
+            $missingFields = $this->getMissingClientSettingsLabels($user);
+
+            $this->addFlash(
+                'warning',
+                [
+                    'title' => 'Complétez vos paramètres client avant d’envoyer une demande de devis.',
+                    'items' => $missingFields,
+                ]
+            );
+
+            return $this->redirectToRoute('app_client_settings', [
+                'tab' => $this->resolveClientSettingsTab($missingFields),
+            ]);
         }
 
         $quoteRequest = new QuoteRequest();
@@ -959,5 +976,97 @@ $quoteResponses = array_values(array_filter(
             $prestataireDocumentRepository->findVisibleToClientByPrestataire((int) $quoteRequest->getPrestataire()->getId()),
             static fn(PrestataireDocument $document): bool => $document->getFileName() !== null
         ));
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function getMissingClientSettingsLabels(User $user): array
+    {
+        $clientProfile = $user->getClientProfile();
+        if (null === $clientProfile) {
+            return ['profil client'];
+        }
+
+        $missingFields = [];
+
+        if ($this->isBlank($user->getFirstName())) {
+            $missingFields[] = 'Prénom';
+        }
+
+        if ($this->isBlank($user->getLastName())) {
+            $missingFields[] = 'Nom';
+        }
+
+        if ($this->isBlank($user->getPhoneNumber())) {
+            $missingFields[] = 'Téléphone';
+        }
+
+        if ($this->isBlank($clientProfile->getDefaultAddress())) {
+            $missingFields[] = 'Adresse principale';
+        }
+
+        if ($this->isBlank($clientProfile->getDefaultPostalCode())) {
+            $missingFields[] = 'Code postal de l’adresse principale';
+        }
+
+        if ($this->isBlank($clientProfile->getDefaultCity())) {
+            $missingFields[] = 'Ville de l’adresse principale';
+        }
+
+        if ($this->isBlank($clientProfile->getBillingAddress())) {
+            $missingFields[] = 'Adresse de facturation';
+        }
+
+        if ($this->isBlank($clientProfile->getBillingPostalCode())) {
+            $missingFields[] = 'Code postal de facturation';
+        }
+
+        if ($this->isBlank($clientProfile->getBillingCity())) {
+            $missingFields[] = 'Ville de facturation';
+        }
+
+        if ($this->isBlank($clientProfile->getBillingCountry())) {
+            $missingFields[] = 'Pays de facturation';
+        }
+
+        return $missingFields;
+    }
+
+    /**
+     * @param list<string> $missingFields
+     */
+    private function resolveClientSettingsTab(array $missingFields): string
+    {
+        $addressFields = [
+            'Adresse principale',
+            'Code postal de l’adresse principale',
+            'Ville de l’adresse principale',
+            'Adresse de facturation',
+            'Code postal de facturation',
+            'Ville de facturation',
+            'Pays de facturation',
+        ];
+
+        foreach ($missingFields as $missingField) {
+            if (\in_array($missingField, $addressFields, true)) {
+                return 'addresses';
+            }
+        }
+
+        return 'personal';
+    }
+
+    private function isBlank(mixed $value): bool
+    {
+        if (null === $value) {
+            return true;
+        }
+
+        if (\is_string($value)) {
+            return '' === trim($value);
+        }
+
+        return false;
     }
 }

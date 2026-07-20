@@ -31,7 +31,18 @@
 				{% for label in ['success', 'warning', 'danger', 'error'] %}
 					{% for message in app.flashes(label) %}
 						<div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show mb-4" role="alert">
-							{{ message }}
+							{% if message is iterable and message.title is defined %}
+								<div>{{ message.title }}</div>
+								{% if message.items is defined and message.items is iterable and message.items is not empty %}
+									<ul class="mb-0 mt-2 ps-4">
+										{% for item in message.items %}
+											<li>{{ item }}</li>
+										{% endfor %}
+									</ul>
+								{% endif %}
+							{% else %}
+								{{ message }}
+							{% endif %}
 							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>
 					{% endfor %}

@@ -23,12 +23,38 @@
 				</div>
 
 				{# Alertes Flash #}
-				{% for message in app.flashes('success') %}
-					<div class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4 fw-medium" role="alert">
-						<i class="fa-solid fa-circle-check me-2"></i>
-						{{ message }}
-						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-					</div>
+				{% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+					{% set alertClass = {
+						success: 'alert-success',
+						danger: 'alert-danger',
+						warning: 'alert-warning',
+						info: 'alert-info'
+					}[type]|default('alert-secondary') %}
+					{% set iconClass = {
+						success: 'fa-circle-check',
+						danger: 'fa-circle-xmark',
+						warning: 'fa-triangle-exclamation',
+						info: 'fa-circle-info'
+					}[type]|default('fa-circle-info') %}
+
+					{% for message in messages %}
+						<div class="alert {{ alertClass }} alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4 fw-medium" role="alert">
+							<i class="fa-solid {{ iconClass }} me-2" aria-hidden="true"></i>
+							{% if message is iterable and message.title is defined %}
+								<div>{{ message.title }}</div>
+								{% if message.items is defined and message.items is iterable and message.items is not empty %}
+									<ul class="mb-0 mt-2 ps-4">
+										{% for item in message.items %}
+											<li>{{ item }}</li>
+										{% endfor %}
+									</ul>
+								{% endif %}
+							{% else %}
+								{{ message }}
+							{% endif %}
+							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+						</div>
+					{% endfor %}
 				{% endfor %}
 
 				<div class="tm-cp-tabs-wrapper mb-4 mb-md-5">
