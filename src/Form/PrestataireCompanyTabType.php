@@ -68,7 +68,7 @@ class PrestataireCompanyTabType extends AbstractType
                 ],
             ])
             ->add('vatNumber', TextType::class, [
-                'label' => 'Numéro de TVA Intracommunautaire',
+                'label' => 'Numéro de TVA Intracommunautaire (ou: TVA non applicable, art. 293 B du CGI)',
                 'required' => false,
                 'attr' => ['placeholder' => 'ex: FR 12 123456789'],
             ])

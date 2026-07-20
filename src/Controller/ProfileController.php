@@ -283,6 +283,7 @@ class ProfileController extends AbstractController
 
         $entityManager->persist($prestataireProfile);
         $entityManager->flush();
+        $this->reindexPrestataireSearchProfile($prestataireProfile);
 
         $this->addFlash('success', 'Votre profil public a été enregistré.');
 
@@ -352,11 +353,7 @@ class ProfileController extends AbstractController
             }
 
             if ($result['isVerified'] && $result['isActive']) {
-                try {
-                    $this->prestataireSearchIndexer->indexProfile($prestataireProfile);
-                } catch (\Throwable) {
-                    $this->addFlash('warning', 'L’entreprise a bien été vérifiée, mais la mise en visibilité peut prendre quelques instants.');
-                }
+                $this->reindexPrestataireSearchProfile($prestataireProfile);
             }
 
             $this->addFlash('success', 'Les informations officielles de l’entreprise ont été injectées dans votre fiche.');
@@ -391,6 +388,7 @@ class ProfileController extends AbstractController
         $this->prestataireProfileCompletionService->syncCompletionScore($prestataireProfile->getAccount(), $prestataireProfile);
         $entityManager->persist($prestataireProfile);
         $entityManager->flush();
+        $this->reindexPrestataireSearchProfile($prestataireProfile);
 
         $this->addFlash('success', 'Les informations de l’entreprise ont été enregistrées.');
 
@@ -517,6 +515,22 @@ class ProfileController extends AbstractController
         }
 
         return $defaultTab;
+    }
+
+    private function reindexPrestataireSearchProfile(PrestataireProfile $prestataireProfile): void
+    {
+        if (
+            $prestataireProfile->getProfileStatus()?->value !== 'ACTIVE'
+            || $prestataireProfile->getVerificationStatus()?->value !== 'COMPANY_VERIFIED'
+        ) {
+            return;
+        }
+
+        try {
+            $this->prestataireSearchIndexer->indexProfile($prestataireProfile);
+        } catch (\Throwable) {
+            $this->addFlash('warning', 'L’entreprise a bien été enregistrée, mais la mise en visibilité peut prendre quelques instants.');
+        }
     }
     // #endregion
 

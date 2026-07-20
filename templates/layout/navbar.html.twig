@@ -212,23 +212,10 @@
 
 				<ul class="navbar-nav tm-navbar__nav tm-navbar__nav--bottom">
 
-					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle tm-navbar__link" href="#" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-							Prestataires
+					<li class="nav-item">
+						<a class="nav-link tm-navbar__link" href="{{ path('app_prestataire_browse') }}">
+							Tous les prestataires
 						</a>
-						<ul class="dropdown-menu tm-navbar__dropdown">
-							<li>
-								<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_prestataire_browse') }}">
-									Tous les prestataires
-								</a>
-							</li>
-							<li><hr class="dropdown-divider"></li>
-							<li>
-								<a class="dropdown-item tm-navbar__dropdown-link" href="{{ path('app_prestataire_browse', {sort: 'p.averageRating', direction: 'desc'}) }}">
-									Les mieux notés
-								</a>
-							</li>
-						</ul>
 					</li>
 
 					<li class="nav-item dropdown position-static">
