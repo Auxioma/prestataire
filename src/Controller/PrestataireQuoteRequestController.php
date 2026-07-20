@@ -14,6 +14,7 @@ use App\Repository\QuoteProposalRepository;
 use App\Repository\QuoteRequestRepository;
 use App\Service\NotificationManager;
 use App\Service\Subscription\SubscriptionAccessManager;
+use App\Service\Subscription\SubscriptionCreditManager;
 use App\Security\Voter\PrestataireCompanySettingsVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -131,6 +132,7 @@ final class PrestataireQuoteRequestController extends AbstractController
         EntityManagerInterface $entityManager,
         NotificationManager $notificationManager,
         SubscriptionAccessManager $subscriptionAccessManager,
+        SubscriptionCreditManager $subscriptionCreditManager,
     ): RedirectResponse {
         $user = $this->getUser();
 
@@ -180,6 +182,22 @@ final class PrestataireQuoteRequestController extends AbstractController
 
         if ($quoteRequest->getStatus() !== QuoteRequestStatusEnum::SUBMITTED) {
             $this->addFlash('warning', 'Cette demande ne peut plus être acceptée pour étude.');
+
+            return $this->redirectToRoute('app_prestataire_quote_request_show', [
+                'slug' => $quoteRequest->getSlug(),
+            ]);
+        }
+
+        try {
+            $activeSubscription = $subscriptionAccessManager->requireQuoteResponseAccess($prestataire);
+
+            $subscriptionCreditManager->consumeQuoteResponseCredit(
+                $activeSubscription,
+                $quoteRequest,
+                'Consommation automatique d’un crédit lors de l’acceptation d’une demande de devis.'
+            );
+        } catch (\DomainException $exception) {
+            $this->addFlash('warning', $exception->getMessage());
 
             return $this->redirectToRoute('app_prestataire_quote_request_show', [
                 'slug' => $quoteRequest->getSlug(),
