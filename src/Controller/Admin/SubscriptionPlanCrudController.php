@@ -37,6 +37,7 @@ final class SubscriptionPlanCrudController extends AbstractCrudController
         yield TextField::new('stripeProductId', 'Product ID Stripe')->hideOnIndex();
         yield IntegerField::new('monthlyCredits', 'Crédits mensuels');
         yield IntegerField::new('annualCredits', 'Crédits annuels');
+        yield IntegerField::new('welcomeCredits', 'Crédits de bienvenue');
         yield BooleanField::new('quoteResponsesEnabled', 'Réponse aux devis active');
         yield BooleanField::new('instantMessagingEnabled', 'Messagerie instantanée active');
         yield IntegerField::new('sortOrder', 'Ordre');

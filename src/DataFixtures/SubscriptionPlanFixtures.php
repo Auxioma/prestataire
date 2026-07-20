@@ -24,6 +24,7 @@ class SubscriptionPlanFixtures extends BaseFixture
      *     annual: string,
      *     monthly_credits: int,
      *     annual_credits: int,
+     *     welcome_credits: int,
      *     quote_responses_enabled: bool,
      *     instant_messaging_enabled: bool
      * }>
@@ -38,6 +39,7 @@ class SubscriptionPlanFixtures extends BaseFixture
             'annual' => '0.00',
             'monthly_credits' => 0,
             'annual_credits' => 0,
+            'welcome_credits' => 20,
             'quote_responses_enabled' => false,
             'instant_messaging_enabled' => false,
         ],
@@ -50,6 +52,7 @@ class SubscriptionPlanFixtures extends BaseFixture
             'annual' => '299.00',
             'monthly_credits' => 30,
             'annual_credits' => 360,
+            'welcome_credits' => 0,
             'quote_responses_enabled' => true,
             'instant_messaging_enabled' => true,
         ],
@@ -62,6 +65,7 @@ class SubscriptionPlanFixtures extends BaseFixture
             'annual' => '599.00',
             'monthly_credits' => 9999,
             'annual_credits' => 99999,
+            'welcome_credits' => 0,
             'quote_responses_enabled' => true,
             'instant_messaging_enabled' => true,
         ],
@@ -86,6 +90,7 @@ class SubscriptionPlanFixtures extends BaseFixture
                 ->setStripeProductId(null)
                 ->setMonthlyCredits($data['monthly_credits'])
                 ->setAnnualCredits($data['annual_credits'])
+                ->setWelcomeCredits($data['welcome_credits'])
                 ->setQuoteResponsesEnabled($data['quote_responses_enabled'])
                 ->setInstantMessagingEnabled($data['instant_messaging_enabled'])
                 ->setSortOrder($index + 1)

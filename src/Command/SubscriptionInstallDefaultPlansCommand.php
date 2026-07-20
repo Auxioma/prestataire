@@ -26,6 +26,7 @@ final class SubscriptionInstallDefaultPlansCommand extends Command
      *     annual_amount: string,
      *     monthly_credits: int,
      *     annual_credits: int,
+     *     welcome_credits: int,
      *     quote_responses_enabled: bool,
      *     instant_messaging_enabled: bool,
      *     sort_order: int
@@ -40,6 +41,7 @@ final class SubscriptionInstallDefaultPlansCommand extends Command
             'annual_amount' => '0.00',
             'monthly_credits' => 0,
             'annual_credits' => 0,
+            'welcome_credits' => 20,
             'quote_responses_enabled' => false,
             'instant_messaging_enabled' => false,
             'sort_order' => 1,
@@ -52,6 +54,7 @@ final class SubscriptionInstallDefaultPlansCommand extends Command
             'annual_amount' => '299.00',
             'monthly_credits' => 30,
             'annual_credits' => 360,
+            'welcome_credits' => 0,
             'quote_responses_enabled' => true,
             'instant_messaging_enabled' => true,
             'sort_order' => 2,
@@ -64,6 +67,7 @@ final class SubscriptionInstallDefaultPlansCommand extends Command
             'annual_amount' => '599.00',
             'monthly_credits' => 9999,
             'annual_credits' => 99999,
+            'welcome_credits' => 0,
             'quote_responses_enabled' => true,
             'instant_messaging_enabled' => true,
             'sort_order' => 3,
@@ -104,6 +108,7 @@ final class SubscriptionInstallDefaultPlansCommand extends Command
                 ->setAnnualAmount($data['annual_amount'])
                 ->setMonthlyCredits($data['monthly_credits'])
                 ->setAnnualCredits($data['annual_credits'])
+                ->setWelcomeCredits($data['welcome_credits'])
                 ->setQuoteResponsesEnabled($data['quote_responses_enabled'])
                 ->setInstantMessagingEnabled($data['instant_messaging_enabled'])
                 ->setSortOrder($data['sort_order'])

@@ -54,6 +54,9 @@ class SubscriptionPlan
     #[ORM\Column]
     private int $annualCredits = 0;
 
+    #[ORM\Column(options: ['default' => 0])]
+    private int $welcomeCredits = 0;
+
     #[ORM\Column(options: ['default' => true])]
     private bool $quoteResponsesEnabled = true;
 
@@ -229,6 +232,18 @@ class SubscriptionPlan
     public function setAnnualCredits(int $annualCredits): static
     {
         $this->annualCredits = max(0, $annualCredits);
+
+        return $this;
+    }
+
+    public function getWelcomeCredits(): int
+    {
+        return $this->welcomeCredits;
+    }
+
+    public function setWelcomeCredits(int $welcomeCredits): static
+    {
+        $this->welcomeCredits = max(0, $welcomeCredits);
 
         return $this;
     }

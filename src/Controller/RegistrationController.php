@@ -24,6 +24,7 @@ use App\Repository\ServiceRepository;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use App\Service\PrestataireProfileCompletionService;
+use App\Service\Subscription\PrestataireSubscriptionOnboardingManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -73,6 +74,7 @@ class RegistrationController extends AbstractController
         ServiceRepository $serviceRepository,
         SluggerInterface $slugger,
         PrestataireProfileCompletionService $prestataireProfileCompletionService,
+        PrestataireSubscriptionOnboardingManager $prestataireSubscriptionOnboardingManager,
     ): Response {
         $accountType = $this->resolveAccountType((string) $request->query->get('role', $request->request->get('role', 'client')));
 
@@ -85,6 +87,7 @@ class RegistrationController extends AbstractController
                 $serviceRepository,
                 $slugger,
                 $prestataireProfileCompletionService,
+                $prestataireSubscriptionOnboardingManager,
             );
         }
 
@@ -182,6 +185,7 @@ class RegistrationController extends AbstractController
         ServiceRepository $serviceRepository,
         SluggerInterface $slugger,
         PrestataireProfileCompletionService $prestataireProfileCompletionService,
+        PrestataireSubscriptionOnboardingManager $prestataireSubscriptionOnboardingManager,
     ): Response {
         $session = $request->getSession();
         $step = max(1, min(3, (int) $request->query->get('step', $request->request->get('step', 1))));
@@ -344,6 +348,15 @@ class RegistrationController extends AbstractController
         $entityManager->persist($prestataireService);
         $prestataireProfileCompletionService->syncCompletionScore($user, $prestataireProfile);
         $entityManager->persist($prestataireProfile);
+
+        try {
+            $prestataireSubscriptionOnboardingManager->assignFreePlanToNewPrestataire($prestataireProfile);
+        } catch (\RuntimeException $exception) {
+            $this->addFlash('danger', $exception->getMessage());
+
+            return $this->redirectToRoute('app_register', ['role' => 'prestataire', 'step' => 3]);
+        }
+
         $entityManager->flush();
 
         $this->sendRegistrationConfirmationEmail($user);
