@@ -21,10 +21,12 @@ use App\Repository\Subscription\SubscriptionPlanRepository;
 use App\Repository\Subscription\SubscriptionPlanPriceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-class StripeWebhookManager
+final class StripeWebhookManager
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly StripeApiClient $stripeApiClient,
+        private readonly StripeReferenceHelper $stripeReferenceHelper,
         private readonly PrestataireProfileRepository $prestataireProfileRepository,
         private readonly SubscriptionPlanRepository $subscriptionPlanRepository,
         private readonly SubscriptionCustomerRepository $subscriptionCustomerRepository,
@@ -32,6 +34,9 @@ class StripeWebhookManager
         private readonly SubscriptionInvoiceRepository $subscriptionInvoiceRepository,
         private readonly SubscriptionCreditMovementRepository $subscriptionCreditMovementRepository,
         private readonly SubscriptionPlanPriceRepository $subscriptionPlanPriceRepository,
+        private readonly SubscriptionCreditManager $subscriptionCreditManager,
+        private readonly SubscriptionUpgradePolicy $subscriptionUpgradePolicy,
+        private readonly SubscriptionFallbackManager $subscriptionFallbackManager,
     ) {
     }
 
@@ -48,6 +53,7 @@ class StripeWebhookManager
         }
 
         match ($type) {
+            'checkout.session.completed' => $this->syncCheckoutSessionCompleted($object),
             'customer.subscription.created',
             'customer.subscription.updated',
             'customer.subscription.deleted' => $this->syncSubscriptionFromStripePayload($object),
@@ -93,7 +99,7 @@ class StripeWebhookManager
         foreach ($this->prestataireSubscriptionRepository->findBy(['prestataireProfile' => $prestataireProfile]) as $subscription) {
             $stripeSubscriptionId = trim((string) ($subscription->getStripeSubscriptionId() ?? ''));
 
-            if (!str_starts_with($stripeSubscriptionId, 'sub_demo_')) {
+            if ($this->stripeReferenceHelper->isManagedSubscriptionId($stripeSubscriptionId)) {
                 continue;
             }
 
@@ -135,6 +141,10 @@ class StripeWebhookManager
 
         $subscription = $this->prestataireSubscriptionRepository->findOneByStripeSubscriptionId($stripeSubscriptionId)
             ?? new PrestataireSubscription();
+        $previousPlan = $subscription->getPlan();
+        $previousBillingPeriod = $subscription->getBillingPeriod();
+        $previousCurrentPeriodStart = $subscription->getCurrentPeriodStart();
+        $previousRemainingCredits = $subscription->getRemainingCredits();
 
         $item = $payload['items']['data'][0] ?? [];
         $priceId = is_array($item) ? (string) ($item['price']['id'] ?? '') : '';
@@ -151,7 +161,7 @@ class StripeWebhookManager
             ->setStripePriceId('' !== $priceId ? $priceId : null)
             ->setStripeSubscriptionItemId('' !== $stripeItemId ? $stripeItemId : null)
             ->setStatus($this->mapStripeSubscriptionStatus((string) ($payload['status'] ?? 'incomplete')))
-            ->setBillingPeriod($this->resolveBillingPeriodFromPayload($payload, $plan))
+            ->setBillingPeriod($this->resolveBillingPeriodFromPayload($payload))
             ->setStartedAt($this->createDateTimeFromTimestamp($payload['start_date'] ?? null))
             ->setCurrentPeriodStart($this->createDateTimeFromTimestamp($payload['current_period_start'] ?? null))
             ->setCurrentPeriodEnd($this->createDateTimeFromTimestamp($payload['current_period_end'] ?? null))
@@ -171,6 +181,22 @@ class StripeWebhookManager
             $subscription->syncCreditsWithPlan();
         }
 
+        $this->applySubscriptionCycleCreditSnapshot(
+            $subscription,
+            $previousPlan,
+            $previousBillingPeriod,
+            $previousCurrentPeriodStart,
+            $previousRemainingCredits,
+        );
+
+        if ($this->subscriptionFallbackManager->shouldFallbackToFree($subscription)) {
+            $this->subscriptionFallbackManager->fallbackToFree(
+                $prestataireProfile,
+                $subscription,
+                'stripe_subscription_status_change'
+            );
+        }
+
         $this->entityManager->persist($subscription);
     }
 
@@ -185,9 +211,14 @@ class StripeWebhookManager
         }
 
         $subscription = null;
-        $stripeSubscriptionId = $this->extractExpandableId($payload['subscription'] ?? null);
+        $stripeSubscriptionId = $this->stripeReferenceHelper->extractExpandableId($payload['subscription'] ?? null);
         if ('' !== $stripeSubscriptionId) {
             $subscription = $this->prestataireSubscriptionRepository->findOneByStripeSubscriptionId($stripeSubscriptionId);
+            if (!$subscription instanceof PrestataireSubscription) {
+                $remoteSubscription = $this->stripeApiClient->retrieveSubscription($stripeSubscriptionId);
+                $this->syncSubscriptionFromStripePayload($remoteSubscription);
+                $subscription = $this->prestataireSubscriptionRepository->findOneByStripeSubscriptionId($stripeSubscriptionId);
+            }
         }
 
         $invoice = $this->subscriptionInvoiceRepository->findOneByStripeInvoiceId($stripeInvoiceId)
@@ -196,7 +227,7 @@ class StripeWebhookManager
         $invoice
             ->setSubscription($subscription)
             ->setStripeInvoiceId($stripeInvoiceId)
-            ->setStripePaymentIntentId($this->extractNullableExpandableId($payload['payment_intent'] ?? null))
+            ->setStripePaymentIntentId($this->stripeReferenceHelper->extractNullableExpandableId($payload['payment_intent'] ?? null))
             ->setInvoiceNumber(($payload['number'] ?? null) ?: null)
             ->setHostedInvoiceUrl(($payload['hosted_invoice_url'] ?? null) ?: null)
             ->setInvoicePdfUrl(($payload['invoice_pdf'] ?? null) ?: null)
@@ -229,7 +260,12 @@ class StripeWebhookManager
         $planCredits = $subscription->getPlan()->getCreditsForPeriod($subscription->getBillingPeriod());
         $billingReason = (string) ($payload['billing_reason'] ?? '');
 
-        if (\in_array($billingReason, ['subscription_create', 'subscription_cycle'], true)) {
+        if ('subscription_create' === $billingReason) {
+            $this->applyCreatedSubscriptionCredits($subscription, $invoice, $planCredits);
+            return;
+        }
+
+        if ('subscription_cycle' === $billingReason) {
             $subscription->syncCreditsWithPlan()->setUpdatedAt(new \DateTimeImmutable());
 
             $movement = (new SubscriptionCreditMovement())
@@ -247,24 +283,36 @@ class StripeWebhookManager
         }
 
         if ('subscription_update' === $billingReason) {
-            $delta = max(0, $planCredits - $subscription->getCreditsGrantedCurrentPeriod());
+            $currentRemainingCredits = $subscription->getRemainingCredits();
+            $targetRemainingCredits = $this->subscriptionUpgradePolicy->calculateCappedRemainingCredits(
+                $currentRemainingCredits,
+                $planCredits
+            );
+            $delta = max(0, $targetRemainingCredits - $currentRemainingCredits);
+
             if ($delta <= 0) {
                 return;
             }
 
-            $subscription->grantCredits($delta)->setUpdatedAt(new \DateTimeImmutable());
+            $movement = $this->subscriptionCreditManager->grantCredits(
+                $subscription,
+                $delta,
+                SubscriptionCreditMovementTypeEnum::UPGRADE_GRANT,
+                'Attribution complémentaire des crédits après montée en gamme.',
+                [
+                    'billing_reason' => $billingReason,
+                    'cap_applied' => true,
+                    'included_plan_credits' => $planCredits,
+                    'remaining_before_upgrade' => $currentRemainingCredits,
+                    'remaining_after_upgrade' => $targetRemainingCredits,
+                ]
+            );
+            $movement->setInvoice($invoice);
 
-            $movement = (new SubscriptionCreditMovement())
-                ->setPrestataireProfile($subscription->getPrestataireProfile())
-                ->setSubscription($subscription)
-                ->setInvoice($invoice)
-                ->setType(SubscriptionCreditMovementTypeEnum::UPGRADE_GRANT)
-                ->setCreditsDelta($delta)
-                ->setBalanceAfter($subscription->getRemainingCredits())
-                ->setDescription('Attribution complémentaire des crédits après montée en gamme.');
-
-            $this->entityManager->persist($movement);
+            return;
         }
+
+        $this->applyFallbackPaidInvoiceCredits($subscription, $invoice, $planCredits, $billingReason);
     }
 
     /**
@@ -272,7 +320,7 @@ class StripeWebhookManager
      */
     private function resolveCustomerFromStripePayload(array $payload): ?SubscriptionCustomer
     {
-        $stripeCustomerId = $this->extractExpandableId($payload['customer'] ?? null);
+        $stripeCustomerId = $this->stripeReferenceHelper->extractExpandableId($payload['customer'] ?? null);
         if ('' === $stripeCustomerId) {
             return null;
         }
@@ -305,7 +353,7 @@ class StripeWebhookManager
     /**
      * @param array<string, mixed> $payload
      */
-    private function resolveBillingPeriodFromPayload(array $payload, mixed $plan): SubscriptionBillingPeriodEnum
+    private function resolveBillingPeriodFromPayload(array $payload): SubscriptionBillingPeriodEnum
     {
         $interval = $payload['items']['data'][0]['price']['recurring']['interval'] ?? null;
         if ('year' === $interval) {
@@ -367,23 +415,235 @@ class StripeWebhookManager
         return number_format(((int) $amount) / 100, 2, '.', '');
     }
 
-    private function extractNullableExpandableId(mixed $value): ?string
+    /**
+     * @param array<string, mixed> $payload
+     */
+    private function syncCheckoutSessionCompleted(array $payload): void
     {
-        $id = $this->extractExpandableId($value);
-
-        return '' !== $id ? $id : null;
-    }
-
-    private function extractExpandableId(mixed $value): string
-    {
-        if (\is_string($value)) {
-            return trim($value);
+        $stripeSubscriptionId = $this->stripeReferenceHelper->extractExpandableId($payload['subscription'] ?? null);
+        if ('' === $stripeSubscriptionId) {
+            return;
         }
 
-        if (\is_array($value) && \is_string($value['id'] ?? null)) {
-            return trim($value['id']);
+        $subscription = $this->stripeApiClient->retrieveSubscription($stripeSubscriptionId);
+        $this->syncSubscriptionFromStripePayload($subscription);
+
+        $latestInvoice = $subscription['latest_invoice'] ?? null;
+        if (\is_array($latestInvoice)) {
+            $eventType = match ((string) ($latestInvoice['status'] ?? 'draft')) {
+                'paid' => 'invoice.paid',
+                'open' => 'invoice.finalized',
+                default => 'invoice.created',
+            };
+
+            $this->syncInvoiceFromStripePayload($eventType, $latestInvoice);
+        }
+    }
+
+    private function applyCreatedSubscriptionCredits(
+        PrestataireSubscription $subscription,
+        SubscriptionInvoice $invoice,
+        int $planCredits,
+    ): void {
+        $sourceSubscription = $this->findUpgradeSourceSubscription($subscription);
+
+        $subscription
+            ->setCreditsGrantedCurrentPeriod(0)
+            ->setCreditsConsumedCurrentPeriod(0)
+            ->setUpdatedAt(new \DateTimeImmutable());
+
+        $baseGrantType = $sourceSubscription instanceof PrestataireSubscription
+            ? SubscriptionCreditMovementTypeEnum::UPGRADE_GRANT
+            : SubscriptionCreditMovementTypeEnum::RENEWAL_GRANT;
+        $baseGrantDescription = $sourceSubscription instanceof PrestataireSubscription
+            ? 'Attribution des crédits du nouveau plan après montée en gamme.'
+            : 'Attribution automatique des crédits à la validation du paiement Stripe.';
+
+        $baseMovement = $this->subscriptionCreditManager->grantCredits(
+            $subscription,
+            $planCredits,
+            $baseGrantType,
+            $baseGrantDescription,
+            [
+                'billing_reason' => 'subscription_create',
+                'included_plan_credits' => $planCredits,
+            ]
+        );
+        $baseMovement->setInvoice($invoice);
+
+        if (!$sourceSubscription instanceof PrestataireSubscription) {
+            return;
         }
 
-        return '';
+        $sourceRemainingCredits = $sourceSubscription->getRemainingCredits();
+        $targetRemainingCredits = $subscription->getRemainingCredits();
+        $cappedRemainingCredits = $this->subscriptionUpgradePolicy->calculateCappedRemainingCredits(
+            $sourceRemainingCredits,
+            $planCredits
+        );
+        $transferableCredits = max(0, $cappedRemainingCredits - $targetRemainingCredits);
+
+        if ($transferableCredits > 0) {
+            $this->subscriptionCreditManager->debitCredits(
+                $sourceSubscription,
+                $transferableCredits,
+                SubscriptionCreditMovementTypeEnum::CORRECTION,
+                'Transfert des crédits restants vers la formule supérieure.',
+                [
+                    'target_subscription_id' => $subscription->getId(),
+                    'reason' => 'upgrade_transfer_out',
+                ]
+            );
+
+            $this->subscriptionCreditManager->grantCredits(
+                $subscription,
+                $transferableCredits,
+                SubscriptionCreditMovementTypeEnum::UPGRADE_GRANT,
+                'Report plafonné des crédits restants lors de la montée en gamme.',
+                [
+                    'source_subscription_id' => $sourceSubscription->getId(),
+                    'billing_reason' => 'subscription_create',
+                    'included_plan_credits' => $planCredits,
+                    'remaining_before_transfer' => $sourceRemainingCredits,
+                    'remaining_after_transfer' => $subscription->getRemainingCredits(),
+                ]
+            );
+        }
+
+        $this->closeSupersededSubscription($sourceSubscription);
     }
+
+    private function applyFallbackPaidInvoiceCredits(
+        PrestataireSubscription $subscription,
+        SubscriptionInvoice $invoice,
+        int $planCredits,
+        string $billingReason,
+    ): void {
+        $sourceSubscription = $this->findUpgradeSourceSubscription($subscription);
+
+        if (
+            $sourceSubscription instanceof PrestataireSubscription
+            && $this->isInitialPaidGrantState($subscription, $planCredits)
+        ) {
+            $this->applyCreatedSubscriptionCredits($subscription, $invoice, $planCredits);
+
+            return;
+        }
+
+        $currentRemainingCredits = $subscription->getRemainingCredits();
+        $targetRemainingCredits = $this->subscriptionUpgradePolicy->calculateCappedRemainingCredits(
+            $currentRemainingCredits,
+            $planCredits
+        );
+        $delta = max(0, $targetRemainingCredits - $currentRemainingCredits);
+
+        if ($delta <= 0) {
+            return;
+        }
+
+        $movement = $this->subscriptionCreditManager->grantCredits(
+            $subscription,
+            $delta,
+            SubscriptionCreditMovementTypeEnum::UPGRADE_GRANT,
+            'Attribution complémentaire des crédits après synchronisation d’un paiement Stripe confirmé.',
+            [
+                'billing_reason' => $billingReason,
+                'fallback_applied' => true,
+                'included_plan_credits' => $planCredits,
+                'remaining_before_grant' => $currentRemainingCredits,
+                'remaining_after_grant' => $targetRemainingCredits,
+            ]
+        );
+        $movement->setInvoice($invoice);
+    }
+
+    private function findUpgradeSourceSubscription(PrestataireSubscription $targetSubscription): ?PrestataireSubscription
+    {
+        $prestataireProfile = $targetSubscription->getPrestataireProfile();
+        if (!$prestataireProfile instanceof PrestataireProfile) {
+            return null;
+        }
+
+        $targetStripeSubscriptionId = trim((string) ($targetSubscription->getStripeSubscriptionId() ?? ''));
+
+        foreach ($this->prestataireSubscriptionRepository->findUsableForPrestataire($prestataireProfile) as $candidate) {
+            if ($candidate === $targetSubscription) {
+                continue;
+            }
+
+            $candidateStripeSubscriptionId = trim((string) ($candidate->getStripeSubscriptionId() ?? ''));
+            if ('' !== $targetStripeSubscriptionId && $candidateStripeSubscriptionId === $targetStripeSubscriptionId) {
+                continue;
+            }
+
+            return $candidate;
+        }
+
+        return null;
+    }
+
+    private function closeSupersededSubscription(PrestataireSubscription $subscription): void
+    {
+        $now = new \DateTimeImmutable();
+
+        $subscription
+            ->setStatus(SubscriptionStatusEnum::CANCELED)
+            ->setCancelAtPeriodEnd(false)
+            ->setCancellationRequestedAt($subscription->getCancellationRequestedAt() ?? $now)
+            ->setCanceledAt($subscription->getCanceledAt() ?? $now)
+            ->setEndedAt($subscription->getEndedAt() ?? $now)
+            ->setUpdatedAt($now);
+
+        $this->entityManager->persist($subscription);
+    }
+
+    private function isInitialPaidGrantState(PrestataireSubscription $subscription, int $planCredits): bool
+    {
+        return $subscription->getCreditsGrantedCurrentPeriod() === $planCredits
+            && 0 === $subscription->getCreditsConsumedCurrentPeriod();
+    }
+
+    private function applySubscriptionCycleCreditSnapshot(
+        PrestataireSubscription $subscription,
+        mixed $previousPlan,
+        SubscriptionBillingPeriodEnum $previousBillingPeriod,
+        ?\DateTimeImmutable $previousCurrentPeriodStart,
+        int $previousRemainingCredits,
+    ): void {
+        $currentPlan = $subscription->getPlan();
+        if (
+            !$currentPlan instanceof \App\Entity\Subscription\SubscriptionPlan
+            || !$subscription->getStatus()->isUsable()
+        ) {
+            return;
+        }
+
+        $currentPeriodStart = $subscription->getCurrentPeriodStart();
+        $hasNewCycle = $previousCurrentPeriodStart instanceof \DateTimeImmutable
+            && $currentPeriodStart instanceof \DateTimeImmutable
+            && $currentPeriodStart > $previousCurrentPeriodStart;
+        $hasPlanChanged = $previousPlan instanceof \App\Entity\Subscription\SubscriptionPlan
+            && $previousPlan->getId() !== $currentPlan->getId();
+        $hasBillingPeriodChanged = $previousBillingPeriod !== $subscription->getBillingPeriod();
+
+        if (!$hasNewCycle && !$hasPlanChanged && !$hasBillingPeriodChanged) {
+            return;
+        }
+
+        $planCredits = $currentPlan->getCreditsForPeriod($subscription->getBillingPeriod());
+        $targetRemainingCredits = $this->subscriptionUpgradePolicy->calculateCappedRemainingCredits(
+            $previousRemainingCredits,
+            $planCredits
+        );
+
+        if ($targetRemainingCredits <= $subscription->getRemainingCredits()) {
+            return;
+        }
+
+        $subscription
+            ->setCreditsGrantedCurrentPeriod($targetRemainingCredits)
+            ->setCreditsConsumedCurrentPeriod(0)
+            ->setUpdatedAt(new \DateTimeImmutable());
+    }
+
 }

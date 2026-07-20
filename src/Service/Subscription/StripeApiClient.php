@@ -74,6 +74,9 @@ class StripeApiClient
             'mode' => 'subscription',
             'success_url' => $successUrl,
             'cancel_url' => $cancelUrl,
+            'payment_method_types[0]' => 'card',
+            'payment_method_collection' => 'always',
+            'billing_address_collection' => 'auto',
             'line_items[0][price]' => $priceId,
             'line_items[0][quantity]' => 1,
             'allow_promotion_codes' => 'false',
@@ -133,10 +136,14 @@ class StripeApiClient
         return $this->request('POST', sprintf('/subscriptions/%s', $stripeSubscriptionId), [
             'items[0][id]' => $stripeSubscriptionItemId,
             'items[0][price]' => $priceId,
-            'proration_behavior' => 'always_invoice',
+            'billing_cycle_anchor' => 'now',
+            'proration_behavior' => 'none',
+            'payment_behavior' => 'error_if_incomplete',
             'cancel_at_period_end' => 'false',
             'metadata[plan_code]' => $plan->getCode(),
             'metadata[billing_period]' => $billingPeriod->value,
+            'expand[0]' => 'items.data.price',
+            'expand[1]' => 'latest_invoice',
         ]);
     }
 

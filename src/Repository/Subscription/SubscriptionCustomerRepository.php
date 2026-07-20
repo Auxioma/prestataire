@@ -26,4 +26,20 @@ class SubscriptionCustomerRepository extends ServiceEntityRepository
     {
         return $this->findOneBy(['stripeCustomerId' => $stripeCustomerId]);
     }
+
+    /**
+     * @return list<SubscriptionCustomer>
+     */
+    public function findManagedStripeCustomers(): array
+    {
+        return $this->createQueryBuilder('customer')
+            ->andWhere('customer.stripeCustomerId IS NOT NULL')
+            ->andWhere('customer.stripeCustomerId <> :empty')
+            ->andWhere('customer.stripeCustomerId NOT LIKE :demoPrefix')
+            ->setParameter('empty', '')
+            ->setParameter('demoPrefix', 'cus_demo_%')
+            ->orderBy('customer.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

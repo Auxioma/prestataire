@@ -29,6 +29,23 @@ class PrestataireSubscriptionRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function findLatestForPrestataireAndPlanCode(
+        PrestataireProfile $prestataireProfile,
+        string $planCode,
+    ): ?PrestataireSubscription {
+        return $this->createQueryBuilder('ps')
+            ->leftJoin('ps.plan', 'plan')
+            ->addSelect('plan')
+            ->andWhere('ps.prestataireProfile = :prestataireProfile')
+            ->andWhere('plan.code = :planCode')
+            ->setParameter('prestataireProfile', $prestataireProfile)
+            ->setParameter('planCode', $planCode)
+            ->orderBy('ps.createdAt', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function findCurrentUsableForPrestataire(
         PrestataireProfile $prestataireProfile,
         ?\DateTimeImmutable $at = null
@@ -65,6 +82,36 @@ class PrestataireSubscriptionRepository extends ServiceEntityRepository
     /**
      * @return list<PrestataireSubscription>
      */
+    public function findUsableForPrestataire(
+        PrestataireProfile $prestataireProfile,
+        ?\DateTimeImmutable $at = null
+    ): array {
+        $at ??= new \DateTimeImmutable();
+
+        return $this->createQueryBuilder('ps')
+            ->leftJoin('ps.plan', 'plan')
+            ->addSelect('plan')
+            ->leftJoin('ps.planPrice', 'planPrice')
+            ->addSelect('planPrice')
+            ->andWhere('ps.prestataireProfile = :prestataireProfile')
+            ->andWhere('ps.status IN (:statuses)')
+            ->andWhere('ps.endedAt IS NULL OR ps.endedAt > :at')
+            ->andWhere('ps.currentPeriodEnd IS NULL OR ps.currentPeriodEnd >= :at')
+            ->setParameter('prestataireProfile', $prestataireProfile)
+            ->setParameter('statuses', [
+                SubscriptionStatusEnum::TRIALING,
+                SubscriptionStatusEnum::ACTIVE,
+            ])
+            ->setParameter('at', $at)
+            ->orderBy('ps.currentPeriodEnd', 'DESC')
+            ->addOrderBy('ps.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return list<PrestataireSubscription>
+     */
     public function findEndingSoon(\DateTimeImmutable $until): array
     {
         return $this->createQueryBuilder('ps')
@@ -78,6 +125,34 @@ class PrestataireSubscriptionRepository extends ServiceEntityRepository
                 SubscriptionStatusEnum::ACTIVE,
             ])
             ->orderBy('ps.currentPeriodEnd', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return list<PrestataireSubscription>
+     */
+    public function findSubscriptionsNeedingFreeFallback(?\DateTimeImmutable $at = null): array
+    {
+        $at ??= new \DateTimeImmutable();
+
+        return $this->createQueryBuilder('ps')
+            ->leftJoin('ps.plan', 'plan')
+            ->addSelect('plan')
+            ->andWhere('plan.code IS NOT NULL')
+            ->andWhere('plan.code <> :freeCode')
+            ->andWhere('ps.status IN (:statuses)')
+            ->andWhere('(ps.endedAt IS NOT NULL AND ps.endedAt <= :at) OR (ps.currentPeriodEnd IS NOT NULL AND ps.currentPeriodEnd <= :at)')
+            ->setParameter('freeCode', 'free')
+            ->setParameter('statuses', [
+                SubscriptionStatusEnum::CANCELED,
+                SubscriptionStatusEnum::UNPAID,
+                SubscriptionStatusEnum::INCOMPLETE_EXPIRED,
+                SubscriptionStatusEnum::PAUSED,
+            ])
+            ->setParameter('at', $at)
+            ->orderBy('ps.currentPeriodEnd', 'ASC')
+            ->addOrderBy('ps.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
     }

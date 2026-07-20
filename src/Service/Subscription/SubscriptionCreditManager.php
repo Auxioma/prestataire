@@ -44,6 +44,37 @@ class SubscriptionCreditManager
         return $movement;
     }
 
+    public function debitCredits(
+        PrestataireSubscription $subscription,
+        int $credits,
+        SubscriptionCreditMovementTypeEnum $type,
+        ?string $description = null,
+        ?array $metadata = null,
+    ): SubscriptionCreditMovement {
+        if ($credits <= 0) {
+            throw new \InvalidArgumentException('Le nombre de crédits retirés doit être strictement positif.');
+        }
+
+        if ($subscription->getRemainingCredits() < $credits) {
+            throw new \DomainException('Impossible de retirer davantage de crédits que le solde disponible.');
+        }
+
+        $subscription->consumeCredits($credits)->setUpdatedAt(new \DateTimeImmutable());
+
+        $movement = (new SubscriptionCreditMovement())
+            ->setPrestataireProfile($subscription->getPrestataireProfile())
+            ->setSubscription($subscription)
+            ->setType($type)
+            ->setCreditsDelta(-$credits)
+            ->setBalanceAfter($subscription->getRemainingCredits())
+            ->setDescription($description)
+            ->setMetadata($metadata);
+
+        $this->entityManager->persist($movement);
+
+        return $movement;
+    }
+
     public function consumeQuoteResponseCredit(
         PrestataireSubscription $subscription,
         QuoteRequest $quoteRequest,

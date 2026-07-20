@@ -89,14 +89,34 @@
                                     </ul>
 
                                     <div class="mt-auto d-grid gap-2">
-                                        <form method="post" action="{{ path('app_subscription_checkout', { code: plan.code, period: 'monthly' }) }}" data-turbo="false">
+                                        <form
+                                            method="post"
+                                            action="{{ path('app_subscription_checkout', { code: plan.code, period: 'monthly' }) }}"
+                                            data-turbo="false"
+                                            data-controller="confirm-dialog"
+                                            data-action="submit->confirm-dialog#confirm"
+                                            data-confirm-dialog-title-value="Confirmer la souscription mensuelle ?"
+                                            data-confirm-dialog-text-value="En validant, vous autorisez un paiement récurrent de {{ (plan.monthlyAmount ?: '0.00')|e('html_attr') }} € pour le forfait {{ plan.name|e('html_attr') }}. La reconduction est tacite. Vous pourrez annuler vous-même depuis « Gérer mon abonnement Stripe »."
+                                            data-confirm-dialog-confirm-button-text-value="Payer {{ (plan.monthlyAmount ?: '0.00')|e('html_attr') }} € / mois"
+                                            data-confirm-dialog-cancel-button-text-value="Annuler"
+                                        >
                                             <input type="hidden" name="_token" value="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-monthly') }}">
                                             <button type="submit" class="btn btn-primary w-100" {{ not stripeConfigured or not plan.monthlyStripePriceId ? 'disabled' : '' }}>
                                                 Souscrire en mensuel
                                             </button>
                                         </form>
 
-                                        <form method="post" action="{{ path('app_subscription_checkout', { code: plan.code, period: 'annual' }) }}" data-turbo="false">
+                                        <form
+                                            method="post"
+                                            action="{{ path('app_subscription_checkout', { code: plan.code, period: 'annual' }) }}"
+                                            data-turbo="false"
+                                            data-controller="confirm-dialog"
+                                            data-action="submit->confirm-dialog#confirm"
+                                            data-confirm-dialog-title-value="Confirmer la souscription annuelle ?"
+                                            data-confirm-dialog-text-value="En validant, vous autorisez un paiement récurrent de {{ (plan.annualAmount ?: '0.00')|e('html_attr') }} € par an pour le forfait {{ plan.name|e('html_attr') }}. La reconduction est tacite. Vous pourrez annuler vous-même depuis « Gérer mon abonnement Stripe »."
+                                            data-confirm-dialog-confirm-button-text-value="Payer {{ (plan.annualAmount ?: '0.00')|e('html_attr') }} € / an"
+                                            data-confirm-dialog-cancel-button-text-value="Annuler"
+                                        >
                                             <input type="hidden" name="_token" value="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-annual') }}">
                                             <button type="submit" class="btn btn-outline-primary w-100" {{ not stripeConfigured or not plan.annualStripePriceId ? 'disabled' : '' }}>
                                                 Souscrire en annuel

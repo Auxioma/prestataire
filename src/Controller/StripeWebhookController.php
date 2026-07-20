@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\Subscription\StripeWebhookEventRecorder;
 use App\Service\Subscription\StripeWebhookManager;
 use App\Service\Subscription\StripeWebhookSignatureVerifier;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,6 +16,7 @@ final class StripeWebhookController extends AbstractController
     public function __invoke(
         Request $request,
         StripeWebhookSignatureVerifier $signatureVerifier,
+        StripeWebhookEventRecorder $stripeWebhookEventRecorder,
         StripeWebhookManager $stripeWebhookManager,
     ): Response {
         $payload = $request->getContent();
@@ -29,7 +31,12 @@ final class StripeWebhookController extends AbstractController
             return new Response('Invalid payload', Response::HTTP_BAD_REQUEST);
         }
 
+        if ($stripeWebhookEventRecorder->isAlreadyProcessed($event)) {
+            return new Response('ok', Response::HTTP_OK);
+        }
+
         $stripeWebhookManager->handle($event);
+        $stripeWebhookEventRecorder->recordProcessed($event);
 
         return new Response('ok', Response::HTTP_OK);
     }
