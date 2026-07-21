@@ -156,6 +156,19 @@ class QuoteProposalManager
 
     public function save(QuoteProposal $proposal, bool $flush = true): void
     {
+        $quoteRequest = $proposal->getQuoteRequest();
+        $prestataire = $proposal->getPrestataire();
+
+        if ($quoteRequest instanceof QuoteRequest && $prestataire instanceof PrestataireProfile) {
+            $this->freezeSnapshot(
+                $proposal,
+                $quoteRequest,
+                $prestataire,
+                $proposal->getClient(),
+                $proposal->getConversation()
+            );
+        }
+
         $this->normalizeDocumentConfiguration($proposal);
         $this->removeEmptyItems($proposal);
         $this->normalizeItemPositions($proposal);

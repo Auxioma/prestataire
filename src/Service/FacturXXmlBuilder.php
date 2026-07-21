@@ -41,7 +41,7 @@ final class FacturXXmlBuilder
         $context = $document->createElementNS(self::NS_RSM, 'rsm:ExchangedDocumentContext');
 
         $guideline = $document->createElementNS(self::NS_RAM, 'ram:GuidelineSpecifiedDocumentContextParameter');
-        $guideline->appendChild($document->createElementNS(self::NS_RAM, 'ram:ID', self::FACTURX_GUIDELINE));
+        $guideline->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:ID', self::FACTURX_GUIDELINE));
         $context->appendChild($guideline);
 
         $root->appendChild($context);
@@ -50,13 +50,13 @@ final class FacturXXmlBuilder
     private function appendExchangedDocument(\DOMDocument $document, \DOMElement $root, Invoice $invoice): void
     {
         $header = $document->createElementNS(self::NS_RSM, 'rsm:ExchangedDocument');
-        $header->appendChild($document->createElementNS(self::NS_RAM, 'ram:ID', $invoice->getInvoiceNumber() ?: 'BROUILLON'));
-        $header->appendChild($document->createElementNS(self::NS_RAM, 'ram:TypeCode', '380'));
+        $header->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:ID', $invoice->getInvoiceNumber() ?: 'BROUILLON'));
+        $header->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:TypeCode', '380'));
 
         $issueDate = $invoice->getIssuedAt() ?? $invoice->getCreatedAt();
         if ($issueDate instanceof \DateTimeInterface) {
             $issueDateTime = $document->createElementNS(self::NS_RAM, 'ram:IssueDateTime');
-            $dateTimeString = $document->createElementNS(self::NS_UDT, 'udt:DateTimeString', $issueDate->format('Ymd'));
+            $dateTimeString = $this->createTextElementNS($document, self::NS_UDT, 'udt:DateTimeString', $issueDate->format('Ymd'));
             $dateTimeString->setAttribute('format', '102');
             $issueDateTime->appendChild($dateTimeString);
             $header->appendChild($issueDateTime);
@@ -82,37 +82,37 @@ final class FacturXXmlBuilder
                 $line = $document->createElementNS(self::NS_RAM, 'ram:IncludedSupplyChainTradeLineItem');
 
                 $lineDocument = $document->createElementNS(self::NS_RAM, 'ram:AssociatedDocumentLineDocument');
-                $lineDocument->appendChild($document->createElementNS(self::NS_RAM, 'ram:LineID', (string) ($item->getPosition() ?? 0)));
+                $lineDocument->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:LineID', (string) ($item->getPosition() ?? 0)));
                 $line->appendChild($lineDocument);
 
                 $product = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedTradeProduct');
-                $product->appendChild($document->createElementNS(self::NS_RAM, 'ram:Name', $item->getLabel() ?: 'Ligne'));
+                $product->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Name', $item->getLabel() ?: 'Ligne'));
                 if ($item->getDescription() !== null && trim($item->getDescription()) !== '') {
-                    $product->appendChild($document->createElementNS(self::NS_RAM, 'ram:Description', $item->getDescription()));
+                    $product->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Description', $item->getDescription()));
                 }
                 $line->appendChild($product);
 
                 $agreement = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedLineTradeAgreement');
                 $price = $document->createElementNS(self::NS_RAM, 'ram:NetPriceProductTradePrice');
-                $price->appendChild($document->createElementNS(self::NS_RAM, 'ram:ChargeAmount', $this->formatAmount($item->getUnitPriceHt())));
+                $price->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:ChargeAmount', $this->formatAmount($item->getUnitPriceHt())));
                 $agreement->appendChild($price);
                 $line->appendChild($agreement);
 
                 $delivery = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedLineTradeDelivery');
-                $quantity = $document->createElementNS(self::NS_RAM, 'ram:BilledQuantity', $this->formatAmount($item->getQuantity()));
+                $quantity = $this->createTextElementNS($document, self::NS_RAM, 'ram:BilledQuantity', $this->formatAmount($item->getQuantity()));
                 $quantity->setAttribute('unitCode', self::DEFAULT_UNIT_CODE);
                 $delivery->appendChild($quantity);
                 $line->appendChild($delivery);
 
                 $settlement = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedLineTradeSettlement');
                 $tax = $document->createElementNS(self::NS_RAM, 'ram:ApplicableTradeTax');
-                $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:TypeCode', 'VAT'));
-                $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:CategoryCode', $this->resolveTaxCategoryCode($item->getVatRate())));
-                $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:RateApplicablePercent', $this->formatAmount($item->getVatRate())));
+                $tax->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:TypeCode', 'VAT'));
+                $tax->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:CategoryCode', $this->resolveTaxCategoryCode($item->getVatRate())));
+                $tax->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:RateApplicablePercent', $this->formatAmount($item->getVatRate())));
                 $settlement->appendChild($tax);
 
                 $lineSum = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedTradeSettlementLineMonetarySummation');
-                $lineSum->appendChild($document->createElementNS(self::NS_RAM, 'ram:LineTotalAmount', $this->formatAmount($item->getTotalHt())));
+                $lineSum->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:LineTotalAmount', $this->formatAmount($item->getTotalHt())));
                 $settlement->appendChild($lineSum);
                 $line->appendChild($settlement);
 
@@ -133,7 +133,7 @@ final class FacturXXmlBuilder
         $agreement = $document->createElementNS(self::NS_RAM, 'ram:ApplicableHeaderTradeAgreement');
 
         $seller = $document->createElementNS(self::NS_RAM, 'ram:SellerTradeParty');
-        $seller->appendChild($document->createElementNS(self::NS_RAM, 'ram:Name', $quote?->getPrestataireCompanyName() ?: $quote?->getPrestataireLegalName() ?: 'Prestataire'));
+        $seller->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Name', $quote?->getPrestataireCompanyName() ?: $quote?->getPrestataireLegalName() ?: 'Prestataire'));
         $this->appendLegalOrganization($document, $seller, $this->extractSiren($quote?->getPrestataireSiret()));
         $this->appendPostalAddress($document, $seller, [
             'ram:LineOne' => $quote?->getPrestataireAddress(),
@@ -146,7 +146,7 @@ final class FacturXXmlBuilder
         $agreement->appendChild($seller);
 
         $buyer = $document->createElementNS(self::NS_RAM, 'ram:BuyerTradeParty');
-        $buyer->appendChild($document->createElementNS(self::NS_RAM, 'ram:Name', $quote?->getClientCompanyName() ?: $quote?->getClientFullName() ?: 'Client'));
+        $buyer->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Name', $quote?->getClientCompanyName() ?: $quote?->getClientFullName() ?: 'Client'));
         $this->appendLegalOrganization($document, $buyer, $this->extractSiren($quote?->getClientSiret()));
         $this->appendPostalAddress($document, $buyer, [
             'ram:LineOne' => $quote?->getClientBillingAddress() ?: $quote?->getClientInterventionAddress(),
@@ -158,7 +158,7 @@ final class FacturXXmlBuilder
 
         if ($quote?->getProposalNumber() !== null && trim($quote->getProposalNumber()) !== '') {
             $referencedDocument = $document->createElementNS(self::NS_RAM, 'ram:BuyerOrderReferencedDocument');
-            $referencedDocument->appendChild($document->createElementNS(self::NS_RAM, 'ram:IssuerAssignedID', $quote->getProposalNumber()));
+            $referencedDocument->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:IssuerAssignedID', $quote->getProposalNumber()));
             $agreement->appendChild($referencedDocument);
         }
 
@@ -172,7 +172,7 @@ final class FacturXXmlBuilder
 
         if ($this->hasDistinctDeliveryAddress($quote)) {
             $shipTo = $document->createElementNS(self::NS_RAM, 'ram:ShipToTradeParty');
-            $shipTo->appendChild($document->createElementNS(self::NS_RAM, 'ram:Name', $quote?->getClientCompanyName() ?: $quote?->getClientFullName() ?: 'Client'));
+            $shipTo->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Name', $quote?->getClientCompanyName() ?: $quote?->getClientFullName() ?: 'Client'));
             $this->appendPostalAddress($document, $shipTo, [
                 'ram:LineOne' => $quote?->getClientInterventionAddress(),
                 'ram:LineTwo' => $quote?->getClientInterventionAddressComplement(),
@@ -188,7 +188,7 @@ final class FacturXXmlBuilder
         if ($occurrence instanceof \DateTimeInterface) {
             $event = $document->createElementNS(self::NS_RAM, 'ram:ActualDeliverySupplyChainEvent');
             $date = $document->createElementNS(self::NS_RAM, 'ram:OccurrenceDateTime');
-            $dateTimeString = $document->createElementNS(self::NS_UDT, 'udt:DateTimeString', $occurrence->format('Ymd'));
+            $dateTimeString = $this->createTextElementNS($document, self::NS_UDT, 'udt:DateTimeString', $occurrence->format('Ymd'));
             $dateTimeString->setAttribute('format', '102');
             $date->appendChild($dateTimeString);
             $event->appendChild($date);
@@ -201,15 +201,15 @@ final class FacturXXmlBuilder
     private function buildHeaderSettlement(\DOMDocument $document, Invoice $invoice, ?QuoteProposal $quote): \DOMElement
     {
         $settlement = $document->createElementNS(self::NS_RAM, 'ram:ApplicableHeaderTradeSettlement');
-        $settlement->appendChild($document->createElementNS(self::NS_RAM, 'ram:InvoiceCurrencyCode', $invoice->getCurrency()));
+        $settlement->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:InvoiceCurrencyCode', $invoice->getCurrency()));
 
         foreach ($this->buildTaxBreakdowns($invoice) as $taxBreakdown) {
             $tax = $document->createElementNS(self::NS_RAM, 'ram:ApplicableTradeTax');
-            $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:CalculatedAmount', $taxBreakdown['taxAmount']));
-            $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:TypeCode', 'VAT'));
-            $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:BasisAmount', $taxBreakdown['basisAmount']));
-            $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:CategoryCode', $taxBreakdown['categoryCode']));
-            $tax->appendChild($document->createElementNS(self::NS_RAM, 'ram:RateApplicablePercent', $taxBreakdown['rate']));
+            $tax->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:CalculatedAmount', $taxBreakdown['taxAmount']));
+            $tax->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:TypeCode', 'VAT'));
+            $tax->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:BasisAmount', $taxBreakdown['basisAmount']));
+            $tax->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:CategoryCode', $taxBreakdown['categoryCode']));
+            $tax->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:RateApplicablePercent', $taxBreakdown['rate']));
             $settlement->appendChild($tax);
         }
 
@@ -217,12 +217,12 @@ final class FacturXXmlBuilder
             $terms = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedTradePaymentTerms');
 
             if ($invoice->getTerms() !== null && trim($invoice->getTerms()) !== '') {
-                $terms->appendChild($document->createElementNS(self::NS_RAM, 'ram:Description', $invoice->getTerms()));
+                $terms->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Description', $invoice->getTerms()));
             }
 
             if ($invoice->getDueAt() instanceof \DateTimeInterface) {
                 $dueDate = $document->createElementNS(self::NS_RAM, 'ram:DueDateDateTime');
-                $dateTimeString = $document->createElementNS(self::NS_UDT, 'udt:DateTimeString', $invoice->getDueAt()->format('Ymd'));
+                $dateTimeString = $this->createTextElementNS($document, self::NS_UDT, 'udt:DateTimeString', $invoice->getDueAt()->format('Ymd'));
                 $dateTimeString->setAttribute('format', '102');
                 $dueDate->appendChild($dateTimeString);
                 $terms->appendChild($dueDate);
@@ -232,11 +232,11 @@ final class FacturXXmlBuilder
         }
 
         $summation = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedTradeSettlementHeaderMonetarySummation');
-        $summation->appendChild($document->createElementNS(self::NS_RAM, 'ram:LineTotalAmount', $this->formatAmount($invoice->getSubtotalHt())));
-        $summation->appendChild($document->createElementNS(self::NS_RAM, 'ram:TaxBasisTotalAmount', $this->formatAmount($invoice->getSubtotalHt())));
-        $summation->appendChild($document->createElementNS(self::NS_RAM, 'ram:TaxTotalAmount', $this->formatAmount($invoice->getTaxAmount())));
-        $summation->appendChild($document->createElementNS(self::NS_RAM, 'ram:GrandTotalAmount', $this->formatAmount($invoice->getTotalTtc())));
-        $summation->appendChild($document->createElementNS(self::NS_RAM, 'ram:DuePayableAmount', $this->formatAmount($invoice->getTotalTtc())));
+        $summation->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:LineTotalAmount', $this->formatAmount($invoice->getSubtotalHt())));
+        $summation->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:TaxBasisTotalAmount', $this->formatAmount($invoice->getSubtotalHt())));
+        $summation->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:TaxTotalAmount', $this->formatAmount($invoice->getTaxAmount())));
+        $summation->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:GrandTotalAmount', $this->formatAmount($invoice->getTotalTtc())));
+        $summation->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:DuePayableAmount', $this->formatAmount($invoice->getTotalTtc())));
         $settlement->appendChild($summation);
 
         return $settlement;
@@ -249,7 +249,7 @@ final class FacturXXmlBuilder
         }
 
         $organization = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedLegalOrganization');
-        $identifier = $document->createElementNS(self::NS_RAM, 'ram:ID', $siren);
+        $identifier = $this->createTextElementNS($document, self::NS_RAM, 'ram:ID', $siren);
         $identifier->setAttribute('schemeID', self::SIREN_SCHEME_ID);
         $organization->appendChild($identifier);
         $parent->appendChild($organization);
@@ -281,7 +281,7 @@ final class FacturXXmlBuilder
 
         $address = $document->createElementNS(self::NS_RAM, 'ram:PostalTradeAddress');
         foreach ($values as $tag => $value) {
-            $address->appendChild($document->createElementNS(self::NS_RAM, $tag, $value));
+            $address->appendChild($this->createTextElementNS($document, self::NS_RAM, $tag, $value));
         }
 
         $parent->appendChild($address);
@@ -294,7 +294,7 @@ final class FacturXXmlBuilder
         }
 
         $taxRegistration = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedTaxRegistration');
-        $taxId = $document->createElementNS(self::NS_RAM, 'ram:ID', $vatNumber);
+        $taxId = $this->createTextElementNS($document, self::NS_RAM, 'ram:ID', $vatNumber);
         $taxId->setAttribute('schemeID', 'VA');
         $taxRegistration->appendChild($taxId);
         $parent->appendChild($taxRegistration);
@@ -315,7 +315,7 @@ final class FacturXXmlBuilder
             return;
         }
 
-        $terms->appendChild($document->createElementNS(self::NS_RAM, 'ram:Description', $description));
+        $terms->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Description', $description));
     }
 
     private function appendFrenchPaymentNotice(\DOMDocument $document, \DOMElement $header, ?string $content, string $subjectCode): void
@@ -330,10 +330,10 @@ final class FacturXXmlBuilder
     private function buildIncludedNote(\DOMDocument $document, string $content, ?string $subjectCode = null): \DOMElement
     {
         $includedNote = $document->createElementNS(self::NS_RAM, 'ram:IncludedNote');
-        $includedNote->appendChild($document->createElementNS(self::NS_RAM, 'ram:Content', $content));
+        $includedNote->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Content', $content));
 
         if ($subjectCode !== null) {
-            $includedNote->appendChild($document->createElementNS(self::NS_RAM, 'ram:SubjectCode', $subjectCode));
+            $includedNote->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:SubjectCode', $subjectCode));
         }
 
         return $includedNote;
@@ -388,6 +388,18 @@ final class FacturXXmlBuilder
     private function calculateLineTaxAmount(string $basisAmount, string $rate): string
     {
         return bcmul($basisAmount, bcdiv($rate, '100', 4), 2);
+    }
+
+    private function createTextElementNS(
+        \DOMDocument $document,
+        string $namespace,
+        string $qualifiedName,
+        null|string|int|float $value,
+    ): \DOMElement {
+        $element = $document->createElementNS($namespace, $qualifiedName);
+        $element->appendChild($document->createTextNode((string) $value));
+
+        return $element;
     }
 
     private function resolveTaxCategoryCode(null|string|int|float $rate): string

@@ -27,6 +27,12 @@
 							<span class="qp-meta-pill__label">Statut</span>
 							<span class="qp-meta-pill__value">{{ invoice.status.label }}</span>
 						</div>
+						{% if invoice.isIssued and invoice.issuedAt %}
+							<div class="qp-meta-pill">
+								<span class="qp-meta-pill__label">Émise le</span>
+								<span class="qp-meta-pill__value">{{ invoice.issuedAt|date('d/m/Y à H:i') }}</span>
+							</div>
+						{% endif %}
 						<div class="qp-meta-pill">
 							<span class="qp-meta-pill__label">Mode</span>
 							<span class="qp-meta-pill__value">{{ invoice.sourceType.label }}</span>

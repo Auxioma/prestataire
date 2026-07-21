@@ -696,6 +696,19 @@
     overflow: hidden;
 }
 
+#quoteRequestDetailsModal {
+    z-index: 1400;
+}
+
+body:has(#quoteRequestDetailsModal.show) .modal-backdrop.show {
+    z-index: 1390;
+}
+
+#quoteRequestDetailsModal .modal-dialog {
+    margin-top: 1.75rem;
+    margin-bottom: 1.75rem;
+}
+
 .tm-msg .modal-header,
 .tm-msg .modal-footer {
     border-color: rgba(6, 27, 86, 0.07);
@@ -852,4 +865,3 @@
         height: min(88vh, 860px);
     }
 }
-

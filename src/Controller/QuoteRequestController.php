@@ -336,12 +336,13 @@ final class QuoteRequestController extends AbstractController
         // Formulaire de message
         // =========================
         $messageForm = null;
+        $isConversationArchived = $quoteRequest->isArchivedByClient() || $quoteRequest->isArchivedByPrestataire();
         $canUseInstantMessaging = $conversation instanceof Conversation
             && $conversation->getPrestataire() instanceof PrestataireProfile
             && $subscriptionAccessManager->canUseInstantMessaging($conversation->getPrestataire());
-        $canSendMessage = $conversation
-            && \in_array($quoteRequest->getStatus()->value, ['accepted', 'answered'], true)
-            && $canUseInstantMessaging;
+        $canSendMessage = $conversation instanceof Conversation
+            && $canUseInstantMessaging
+            && !$isConversationArchived;
 
         if ($canSendMessage) {
             $message = new Message();
@@ -418,7 +419,6 @@ final class QuoteRequestController extends AbstractController
 
         if (
             $conversation instanceof Conversation
-            && \in_array($quoteRequest->getStatus()->value, ['accepted', 'answered'], true)
             && !$canUseInstantMessaging
             && $request->isMethod('POST')
         ) {
@@ -444,6 +444,7 @@ final class QuoteRequestController extends AbstractController
             'existingReview' => $existingReview,
             'canLeaveReview' => $canLeaveReview,
             'canUseInstantMessaging' => $canUseInstantMessaging,
+            'isConversationArchived' => $isConversationArchived,
             'isArchivedView' => false,
         ]);
     }

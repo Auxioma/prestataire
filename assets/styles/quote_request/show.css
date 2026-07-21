@@ -172,6 +172,25 @@
     font-weight: 800;
 }
 
+.tm-client-quotes-profile-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.tm-client-quotes-profile-link:hover,
+.tm-client-quotes-profile-link:focus-visible {
+    color: var(--tmc-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+}
+
+.tm-client-quotes-profile-link--hero:hover,
+.tm-client-quotes-profile-link--hero:focus-visible {
+    color: #ffffff;
+    opacity: 0.8;
+}
+
 .tm-client-quotes-hero__side {
     display: flex;
     align-items: stretch;
@@ -999,6 +1018,22 @@
     margin-bottom: 1rem;
 }
 
+.tm-client-quotes-provider__identity-link {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 1rem;
+    align-items: center;
+    color: inherit;
+    text-decoration: none;
+}
+
+.tm-client-quotes-provider__identity-link:hover .tm-client-quotes-provider__name,
+.tm-client-quotes-provider__identity-link:focus-visible .tm-client-quotes-provider__name {
+    color: var(--tmc-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+}
+
 .tm-client-quotes-provider__avatar {
     width: 64px;
     height: 64px;
@@ -1395,4 +1430,5 @@
     gap: 0.65rem;
     flex-wrap: wrap;
     justify-content: flex-end;
+}
 }

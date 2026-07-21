@@ -8,6 +8,7 @@
 	<div class="tm-client-quotes-page">
 		<div class="container py-4 py-lg-5">
 			{% set statusValue = quoteRequest.status.value %}
+            {% set providerProfileUrl = quoteRequest.prestataire and quoteRequest.prestataire.slug ? path('app_prestataire_show', { slug: quoteRequest.prestataire.slug }) : null %}
 
 			{% set timelineSteps = [
                 {
@@ -66,7 +67,13 @@
 						<article class="tm-client-quotes-hero-metric">
 							<span class="tm-client-quotes-hero-metric__label">Prestataire</span>
 							<strong class="tm-client-quotes-hero-metric__value">
-								{{ quoteRequest.prestataire.companyName ?? 'Non renseigné' }}
+                                {% if providerProfileUrl %}
+                                    <a href="{{ providerProfileUrl }}" class="tm-client-quotes-profile-link tm-client-quotes-profile-link--hero">
+								    {{ quoteRequest.prestataire.companyName ?? 'Non renseigné' }}
+                                    </a>
+                                {% else %}
+								    {{ quoteRequest.prestataire.companyName ?? 'Non renseigné' }}
+                                {% endif %}
 							</strong>
 						</article>
 
@@ -128,7 +135,13 @@
 								<article class="tm-client-quotes-info">
 									<span class="tm-client-quotes-info__label">Prestataire</span>
 									<strong class="tm-client-quotes-info__value">
-										{{ quoteRequest.prestataire.companyName ?? 'Non renseigné' }}
+                                        {% if providerProfileUrl %}
+                                            <a href="{{ providerProfileUrl }}" class="tm-client-quotes-profile-link">
+										    {{ quoteRequest.prestataire.companyName ?? 'Non renseigné' }}
+                                            </a>
+                                        {% else %}
+										    {{ quoteRequest.prestataire.companyName ?? 'Non renseigné' }}
+                                        {% endif %}
 									</strong>
 								</article>
 
@@ -549,6 +562,10 @@
 											{{ form_widget(messageForm._token) }}
 											{{ form_end(messageForm, { render_rest: false }) }}
 										</div>
+									{% elseif conversation and isConversationArchived is defined and isConversationArchived %}
+										<div class="alert alert-secondary mt-3 mb-0" role="alert">
+											La messagerie est clôturée car cette demande a été archivée par votre interlocuteur.
+										</div>
 									{% elseif conversation and canUseInstantMessaging is defined and not canUseInstantMessaging %}
 										<div class="alert alert-warning mt-3 mb-0" role="alert">
 											La messagerie n’est pas disponible pour cette demande tant que le prestataire n’a pas souscrit une formule d’abonnement supérieure.
@@ -652,27 +669,53 @@
 							<h2 class="tm-client-quotes-sidecard__title">Prestataire concerné</h2>
 
 							<div class="tm-client-quotes-provider">
-								<div class="tm-client-quotes-provider__avatar">
-									<span>
-										{{ (quoteRequest.prestataire.companyName ?? 'P')|slice(0, 1)|upper }}
-									</span>
-								</div>
+                                {% if providerProfileUrl %}
+                                    <a href="{{ providerProfileUrl }}" class="tm-client-quotes-provider__identity-link">
+								        <div class="tm-client-quotes-provider__avatar">
+									        <span>
+										        {{ (quoteRequest.prestataire.companyName ?? 'P')|slice(0, 1)|upper }}
+									        </span>
+								        </div>
 
-								<div class="tm-client-quotes-provider__body">
-									<h3 class="tm-client-quotes-provider__name">
-										{{ quoteRequest.prestataire.companyName ?? 'Prestataire' }}
-									</h3>
+								        <div class="tm-client-quotes-provider__body">
+									        <h3 class="tm-client-quotes-provider__name">
+										        {{ quoteRequest.prestataire.companyName ?? 'Prestataire' }}
+									        </h3>
 
-									<p class="tm-client-quotes-provider__meta mb-0">
-										{{ quoteRequest.prestation.service.name ?? quoteRequest.prestation.title ?? 'Service non renseigné' }}
-									</p>
+									        <p class="tm-client-quotes-provider__meta mb-0">
+										        {{ quoteRequest.prestation.service.name ?? quoteRequest.prestation.title ?? 'Service non renseigné' }}
+									        </p>
 
-									{% if quoteRequest.prestataire.city is defined and quoteRequest.prestataire.city %}
-										<p class="tm-client-quotes-provider__meta mb-0">
-											{{ quoteRequest.prestataire.city }}
-										</p>
-									{% endif %}
-								</div>
+									        {% if quoteRequest.prestataire.city is defined and quoteRequest.prestataire.city %}
+										        <p class="tm-client-quotes-provider__meta mb-0">
+											        {{ quoteRequest.prestataire.city }}
+										        </p>
+									        {% endif %}
+								        </div>
+                                    </a>
+                                {% else %}
+								    <div class="tm-client-quotes-provider__avatar">
+									    <span>
+										    {{ (quoteRequest.prestataire.companyName ?? 'P')|slice(0, 1)|upper }}
+									    </span>
+								    </div>
+
+								    <div class="tm-client-quotes-provider__body">
+									    <h3 class="tm-client-quotes-provider__name">
+										    {{ quoteRequest.prestataire.companyName ?? 'Prestataire' }}
+									    </h3>
+
+									    <p class="tm-client-quotes-provider__meta mb-0">
+										    {{ quoteRequest.prestation.service.name ?? quoteRequest.prestation.title ?? 'Service non renseigné' }}
+									    </p>
+
+									    {% if quoteRequest.prestataire.city is defined and quoteRequest.prestataire.city %}
+										    <p class="tm-client-quotes-provider__meta mb-0">
+											    {{ quoteRequest.prestataire.city }}
+										    </p>
+									    {% endif %}
+								    </div>
+                                {% endif %}
 							</div>
 
 							<div class="tm-client-quotes-provider__facts">

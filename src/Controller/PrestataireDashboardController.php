@@ -129,6 +129,20 @@ final class PrestataireDashboardController extends AbstractController
             ], 303);
         }
 
+        $quoteRequest = $conversation->getQuoteRequest();
+        $isConversationArchived = $quoteRequest instanceof \App\Entity\QuoteRequest
+            && ($quoteRequest->isArchivedByClient() || $quoteRequest->isArchivedByPrestataire());
+
+        if ($isConversationArchived) {
+            $this->addFlash('warning', 'La messagerie est clôturée car cette demande a été archivée.');
+
+            return $this->redirectToRoute('app_prestataire_dashboard', [
+                'conversation' => $conversation->getId(),
+                'tab' => 'messages',
+                '_fragment' => 'messages-main-panel',
+            ], 303);
+        }
+
         $message = new Message();
         $form = $this->createMessageForm($conversation, $message);
         $form->handleRequest($request);
@@ -397,8 +411,18 @@ final class PrestataireDashboardController extends AbstractController
         }
 
         $canUseInstantMessaging = $subscriptionAccessManager->canUseInstantMessaging($prestataireProfile);
+        $isConversationArchived = $activeConversation?->getQuoteRequest() instanceof \App\Entity\QuoteRequest
+            && (
+                $activeConversation->getQuoteRequest()->isArchivedByClient()
+                || $activeConversation->getQuoteRequest()->isArchivedByPrestataire()
+            );
 
-        if (null === $messageFormView && $activeConversation instanceof Conversation && $canUseInstantMessaging) {
+        if (
+            null === $messageFormView
+            && $activeConversation instanceof Conversation
+            && $canUseInstantMessaging
+            && !$isConversationArchived
+        ) {
             $messageFormView = $this->createMessageForm($activeConversation, new Message())->createView();
         }
 
@@ -455,6 +479,7 @@ final class PrestataireDashboardController extends AbstractController
             'activeConversation' => $activeConversation,
             'messageForm' => $messageFormView,
             'canUseInstantMessaging' => $canUseInstantMessaging,
+            'isConversationArchived' => $isConversationArchived,
             'activeTab' => $activeTab,
             'hasConversationPhotos' => $this->conversationHasPhotos($activeConversation),
         ];
