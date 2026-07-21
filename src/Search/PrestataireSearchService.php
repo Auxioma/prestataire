@@ -55,23 +55,17 @@ final class PrestataireSearchService
             null !== $searchedLocation
             && isset($searchedLocation['latitude'], $searchedLocation['longitude'])
         ) {
-            $lat = (float) $searchedLocation['latitude'];
-            $lon = (float) $searchedLocation['longitude'];
-
-            $filter[] = [
-                'nested' => [
-                    'path' => 'zones',
-                    'query' => [
-                        'geo_distance' => [
-                            'distance' => $radiusKm . 'km',
-                            'zones.location' => [
-                                'lat' => $lat,
-                                'lon' => $lon,
-                            ],
+            $filter[] = $location
+                ? [
+                    'bool' => [
+                        'should' => [
+                            $this->buildReachableLocationFilter($searchedLocation, $radiusKm),
+                            $this->buildLocationTextFilter($location),
                         ],
+                        'minimum_should_match' => 1,
                     ],
-                ],
-            ];
+                ]
+                : $this->buildReachableLocationFilter($searchedLocation, $radiusKm);
 
             $should[] = [
                 'nested' => [
@@ -202,6 +196,10 @@ final class PrestataireSearchService
                     ],
                 ],
             ];
+
+            if (null === $searchedLocation || !isset($searchedLocation['latitude'], $searchedLocation['longitude'])) {
+                $filter[] = $this->buildLocationTextFilter($location);
+            }
         }
 
         $boolQuery = array_filter([
@@ -264,6 +262,86 @@ final class PrestataireSearchService
         return [
             'total' => $response['hits']['total']['value'] ?? 0,
             'hits' => $hits,
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $searchedLocation
+     *
+     * @return array<string, mixed>
+     */
+    private function buildReachableLocationFilter(array $searchedLocation, int $radiusKm): array
+    {
+        return [
+            'nested' => [
+                'path' => 'zones',
+                'query' => [
+                    'script' => [
+                        'script' => [
+                            'lang' => 'painless',
+                            'source' => <<<'PAINLESS'
+if (doc['zones.location'].empty) {
+    return false;
+}
+
+double distanceMeters = doc['zones.location'].arcDistance(params.lat, params.lon);
+double zoneRadiusKm = doc['zones.radiusKm'].empty ? 0 : doc['zones.radiusKm'].value;
+
+return distanceMeters <= ((zoneRadiusKm + params.radiusKm) * 1000.0);
+PAINLESS,
+                            'params' => [
+                                'lat' => (float) $searchedLocation['latitude'],
+                                'lon' => (float) $searchedLocation['longitude'],
+                                'radiusKm' => $radiusKm,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildLocationTextFilter(string $location): array
+    {
+        return [
+            'bool' => [
+                'should' => [
+                    [
+                        'match' => [
+                            'city' => [
+                                'query' => $location,
+                            ],
+                        ],
+                    ],
+                    [
+                        'term' => [
+                            'postalCode' => [
+                                'value' => $location,
+                            ],
+                        ],
+                    ],
+                    [
+                        'nested' => [
+                            'path' => 'zones',
+                            'query' => [
+                                'bool' => [
+                                    'should' => [
+                                        ['match' => ['zones.city' => ['query' => $location]]],
+                                        ['match' => ['zones.region' => ['query' => $location]]],
+                                        ['match' => ['zones.department' => ['query' => $location]]],
+                                        ['term' => ['zones.postalCode' => ['value' => $location]]],
+                                    ],
+                                    'minimum_should_match' => 1,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'minimum_should_match' => 1,
+            ],
         ];
     }
 

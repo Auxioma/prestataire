@@ -129,6 +129,18 @@
     max-width: 720px;
 }
 
+#addServiceModal {
+    z-index: 1200;
+}
+
+body:has(#addServiceModal.show) .modal-backdrop.show {
+    z-index: 1190;
+}
+
+#addServiceModal .modal-dialog {
+    margin: 1.75rem auto;
+}
+
 #addServiceModal .modal-content {
     border: 0;
     border-radius: 22px;
@@ -408,7 +420,7 @@
 
     #addServiceModal .modal-dialog.tm-add-service-dialog {
         max-width: calc(100vw - 20px);
-        margin: 10px auto;
+        margin: 1rem auto;
     }
 
     #addServiceModal .modal-header,

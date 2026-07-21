@@ -112,13 +112,13 @@ class HomepageSearchController extends AbstractController
                 continue;
             }
 
-            $matchType = $this->getPrestataireMatchType($profile, $searchedLocation, $radiusKm);
+            $matchType = $this->getPrestataireMatchType($profile, $searchedLocation, $location, $radiusKm);
 
             if ($matchType === null) {
                 continue;
             }
 
-            $profile->matchedDistanceKm = $this->getClosestReachableDistanceKm($profile, $searchedLocation, $radiusKm);
+            $profile->matchedDistanceKm = $this->getClosestReachableDistanceKm($profile, $searchedLocation, $location, $radiusKm);
 
             if ($matchType === 'direct') {
                 $directResults[] = $profile;
@@ -164,8 +164,15 @@ class HomepageSearchController extends AbstractController
     private function getPrestataireMatchType(
         PrestataireProfile $prestataire,
         ?array $searchedLocation,
+        ?string $location,
         int $radiusKm = 25,
     ): ?string {
+        $normalizedLocation = $this->normalizeLocationValue($location);
+
+        if ('' !== $normalizedLocation && $this->matchesLocationText($prestataire, $normalizedLocation, $searchedLocation)) {
+            return 'direct';
+        }
+
         if ($searchedLocation === null) {
             return 'direct';
         }
@@ -212,8 +219,15 @@ class HomepageSearchController extends AbstractController
     private function getClosestReachableDistanceKm(
         PrestataireProfile $prestataire,
         ?array $searchedLocation,
+        ?string $location,
         int $radiusKm = 25,
     ): ?float {
+        $normalizedLocation = $this->normalizeLocationValue($location);
+
+        if ('' !== $normalizedLocation && $this->matchesLocationText($prestataire, $normalizedLocation, $searchedLocation)) {
+            return 0.0;
+        }
+
         if ($searchedLocation === null) {
             return null;
         }
@@ -255,6 +269,53 @@ class HomepageSearchController extends AbstractController
         return $bestDistance;
     }
 
+    private function matchesLocationText(
+        PrestataireProfile $prestataire,
+        string $normalizedLocation,
+        ?array $searchedLocation = null,
+    ): bool {
+        $candidates = [
+            $prestataire->getCity(),
+            $prestataire->getPostalCode(),
+        ];
+
+        if ($searchedLocation !== null) {
+            $candidates[] = $searchedLocation['city'] ?? null;
+            $candidates[] = $searchedLocation['postalCode'] ?? null;
+            $candidates[] = $searchedLocation['department'] ?? null;
+            $candidates[] = $searchedLocation['region'] ?? null;
+        }
+
+        foreach ($prestataire->getPrestataireInterventionZones() as $zone) {
+            if (!$zone->isActive()) {
+                continue;
+            }
+
+            $candidates[] = $zone->getCity();
+            $candidates[] = $zone->getPostalCode();
+            $candidates[] = $zone->getDepartment();
+            $candidates[] = $zone->getRegion();
+        }
+
+        foreach ($candidates as $candidate) {
+            $normalizedCandidate = $this->normalizeLocationValue($candidate);
+
+            if ('' === $normalizedCandidate) {
+                continue;
+            }
+
+            if (
+                $normalizedCandidate === $normalizedLocation
+                || str_contains($normalizedCandidate, $normalizedLocation)
+                || str_contains($normalizedLocation, $normalizedCandidate)
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private function distanceKm(float $lat1, float $lng1, float $lat2, float $lng2): float
     {
         $earthRadius = 6371;
@@ -269,5 +330,22 @@ class HomepageSearchController extends AbstractController
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
         return $earthRadius * $c;
+    }
+
+    private function normalizeLocationValue(?string $value): string
+    {
+        $value = mb_strtolower(trim((string) $value));
+
+        if ('' === $value) {
+            return '';
+        }
+
+        if (\function_exists('transliterator_transliterate')) {
+            $value = transliterator_transliterate('Any-Latin; Latin-ASCII;', $value);
+        }
+
+        $value = preg_replace('/\s+/', ' ', $value) ?? $value;
+
+        return trim($value);
     }
 }
