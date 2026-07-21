@@ -4,6 +4,11 @@
 {% endblock %}
 
 {% block body %}
+	{% set directPrestataires = directPrestataires|default([]) %}
+	{% set fallbackPrestataires = fallbackPrestataires|default([]) %}
+	{% set location = location|default('') %}
+	{% set radiusKm = radiusKm|default(25) %}
+	{% set sort = sort|default('proximity') %}
 	<div class="tm-flow-page">
 		<div
 			class="tm-flow-page__container">
@@ -237,15 +242,119 @@
 
 						{% if prestataires is not empty %}
 							<div class="tm-flow-results-pill">
-								{{ prestataires|length }}
-								résultat{{ prestataires|length > 1 ? 's' : '' }}
+								{{ directPrestataires|length }}
+								résultat{{ directPrestataires|length > 1 ? 's' : '' }}
 							</div>
 						{% endif %}
 					</div>
 
-					{% if prestataires is not empty %}
+					<div class="tm-flow-filterbar">
+						<form
+							method="GET"
+							class="tm-homepage-search-form tm-flow-filterbar__form"
+							data-controller="homepage-search"
+							data-homepage-search-default-radius-value="{{ radiusKm }}"
+						>
+							<div class="tm-homepage-search-field tm-homepage-search-field--location">
+								<span class="tm-homepage-search-field-icon" aria-hidden="true">
+									<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/>
+										<circle cx="12" cy="10" r="2.6"/>
+									</svg>
+								</span>
+
+								<div class="tm-homepage-search-field-body">
+									<label for="tm-flow-location" class="tm-homepage-search-label">Localisation</label>
+									<div class="tm-homepage-search-control">
+										<input
+											id="tm-flow-location"
+											type="text"
+											name="location"
+											value="{{ location }}"
+											placeholder="Ville ou code postal..."
+											autocomplete="off"
+											class="tm-homepage-search-input"
+										>
+									</div>
+								</div>
+							</div>
+
+							<div class="tm-homepage-search-field tm-homepage-search-field--radius">
+								<span class="tm-homepage-search-field-icon" aria-hidden="true">
+									<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M12 3a9 9 0 1 0 9 9"/>
+										<path d="M12 7v5l3 3"/>
+									</svg>
+								</span>
+
+								<div class="tm-homepage-search-field-body tm-homepage-search-field-body--radius">
+									<div class="tm-homepage-search-radius-head">
+										<label for="tm-flow-radius" class="tm-homepage-search-label mb-0">Rayon</label>
+										<span class="tm-homepage-search-radius-value" data-homepage-search-target="value">{{ radiusKm }} km</span>
+									</div>
+
+									<div class="tm-homepage-search-radius-wrap">
+										<input
+											id="tm-flow-radius"
+											type="range"
+											name="radiusKm"
+											min="5"
+											max="100"
+											step="5"
+											value="{{ radiusKm }}"
+											class="tm-homepage-search-range"
+											data-homepage-search-target="range"
+											data-action="input->homepage-search#update change->homepage-search#update"
+										>
+									</div>
+								</div>
+							</div>
+
+							<div class="tm-homepage-search-field tm-homepage-search-field--category">
+								<span class="tm-homepage-search-field-icon" aria-hidden="true">
+									<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M4 7h16"/>
+										<path d="M4 12h16"/>
+										<path d="M4 17h10"/>
+									</svg>
+								</span>
+
+								<div class="tm-homepage-search-field-body">
+									<label for="tm-flow-sort" class="tm-homepage-search-label">Trier par</label>
+									<div class="tm-homepage-search-control">
+										<select id="tm-flow-sort" name="sort" class="tm-homepage-search-select">
+											<option value="proximity" {{ sort == 'proximity' ? 'selected' : '' }}>Proximité</option>
+											<option value="alphabetical" {{ sort == 'alphabetical' ? 'selected' : '' }}>Ordre alphabétique</option>
+											<option value="rating" {{ sort == 'rating' ? 'selected' : '' }}>Meilleure note</option>
+											<option value="reviews" {{ sort == 'reviews' ? 'selected' : '' }}>Nombre d'avis</option>
+										</select>
+									</div>
+								</div>
+							</div>
+
+							<div class="tm-homepage-search-action tm-flow-filterbar__actions">
+								<button type="submit" class="tm-homepage-search-submit">
+									<span>Filtrer</span>
+								</button>
+								{% if location is not empty or radiusKm != 25 or sort != 'proximity' %}
+									<a href="{{ path('app_search_flow', {type: 'service', slug: currentService.slug}) }}" class="tm-flow-filterbar__reset">
+										<i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+										<span>Réinitialiser</span>
+									</a>
+								{% endif %}
+							</div>
+						</form>
+					</div>
+
+					{% if directPrestataires is not empty %}
+						<div class="tm-flow-provider-group">
+							<div class="tm-flow-provider-group__head">
+								<h3 class="tm-flow-provider-group__title">Dans votre zone</h3>
+								<p class="tm-flow-provider-group__text">Prestataires trouvés directement dans la zone demandée.</p>
+							</div>
+
 						<div class="tm-flow-grid tm-flow-grid--providers">
-							{% for prestataire in prestataires %}
+							{% for prestataire in directPrestataires %}
     <article class="tm-flow-provider-card tm-flow-provider-card--interactive">
         <div class="tm-flow-provider-card__cover">
             {% if prestataire.coverImage %}
@@ -291,6 +400,12 @@
 											{% endif %}
 										</div>
 
+										{% if prestataire.matchedDistanceKm is defined and prestataire.matchedDistanceKm is not null %}
+											<div class="tm-flow-provider-card__distance">
+												À {{ prestataire.matchedDistanceKm|round(1) }} km
+											</div>
+										{% endif %}
+
 										<div class="tm-flow-provider-card__tags">
 											<span class="tm-flow-tag tm-flow-tag--primary">
 												{{ prestataire.metier|default('Prestataire') }}
@@ -327,7 +442,85 @@
 								</article>
 							{% endfor %}
 						</div>
-					{% else %}
+						</div>
+					{% endif %}
+
+					{% if fallbackPrestataires is not empty %}
+						<div class="tm-flow-provider-group tm-flow-provider-group--fallback">
+							<div class="tm-flow-provider-group__head">
+								<h3 class="tm-flow-provider-group__title">Pourraient intervenir dans votre zone</h3>
+								<p class="tm-flow-provider-group__text">Hors du rayon direct, mais avec une couverture compatible.</p>
+							</div>
+
+							<div class="tm-flow-grid tm-flow-grid--providers">
+								{% for prestataire in fallbackPrestataires|slice(0, 6) %}
+									<article class="tm-flow-provider-card tm-flow-provider-card--interactive">
+										<div class="tm-flow-provider-card__cover">
+											{% if prestataire.coverImage %}
+												<img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="{{ prestataire.companyName }}">
+											{% elseif prestataire.logo %}
+												<img src="{{ prestataire.logo }}" alt="{{ prestataire.companyName }}">
+											{% else %}
+												<img src="{{ asset('images/img_par_defaut.png') }}" alt="{{ prestataire.companyName }}">
+											{% endif %}
+										</div>
+
+										<div class="tm-flow-provider-card__body">
+											<div class="tm-flow-provider-card__topline">
+												<div class="tm-flow-provider-card__rating tm-flow-provider-card__rating--muted">
+													<i class="fa-solid fa-route"></i>
+													<span class="tm-flow-provider-card__rating-count">Couverture étendue</span>
+												</div>
+												<span class="tm-flow-provider-card__verified">
+													<i class="fa-solid fa-circle-check"></i>
+													Vérifié
+												</span>
+											</div>
+
+											<h3 class="tm-flow-provider-card__title">{{ prestataire.companyName }}</h3>
+
+											<div class="tm-flow-provider-card__location">
+												<i class="fa-solid fa-location-dot"></i>
+												<span>{{ prestataire.city|default('Ville non renseignée') }}</span>
+												{% if prestataire.postalCode %}
+													<em>{{ prestataire.postalCode|slice(0, 2) }}</em>
+												{% endif %}
+											</div>
+
+											{% if prestataire.matchedDistanceKm is defined and prestataire.matchedDistanceKm is not null %}
+												<div class="tm-flow-provider-card__distance">
+													À {{ prestataire.matchedDistanceKm|round(1) }} km
+												</div>
+											{% endif %}
+
+											<p class="tm-flow-provider-card__desc">
+												{% if prestataire.shortDescription %}
+													{{ prestataire.shortDescription|length > 135 ? prestataire.shortDescription|slice(0, 135) ~ '…' : prestataire.shortDescription }}
+												{% elseif prestataire.description %}
+													{{ prestataire.description|length > 135 ? prestataire.description|slice(0, 135) ~ '…' : prestataire.description }}
+												{% else %}
+													Aucune description rédigée pour le moment.
+												{% endif %}
+											</p>
+										</div>
+
+										<div class="tm-flow-provider-card__footer">
+											<a href="{{ path('app_prestataire_show', {slug: prestataire.slug}) }}" class="tm-flow-provider-card__link">
+												<span>Voir le profil</span>
+												<i class="fa-solid fa-arrow-right"></i>
+											</a>
+
+											<a href="{{ path('app_quote_request_new_by_prestataire', { prestataireSlug: prestataire.slug }) }}" class="tm-flow-btn tm-flow-btn--primary tm-flow-btn--compact">
+												Demander un devis
+											</a>
+										</div>
+									</article>
+								{% endfor %}
+							</div>
+						</div>
+					{% endif %}
+
+					{% if directPrestataires is empty and fallbackPrestataires is empty %}
 						<div class="tm-flow-empty">
 							<div class="tm-flow-empty__icon">
 								<i class="fa-solid fa-users-slash"></i>
