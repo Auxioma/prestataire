@@ -22,16 +22,18 @@ final class CategorySearchService
      */
     public function search(
         ?string $query = null,
+        ?string $location = null,
         ?array $searchedLocation = null,
         int $radiusKm = 25,
         string $sort = 'providers',
     ): array {
         $query = null !== $query ? trim($query) : '';
+        $location = null !== $location ? trim($location) : null;
         $radiusKm = max(5, min(100, $radiusKm));
         $sort = \in_array($sort, ['providers', 'alphabetical', 'recent'], true) ? $sort : 'providers';
 
         $categories = $this->categoryRepository->findTopLevelWithActiveSubCategories();
-        $providerCounts = $this->getProviderCounts($query !== '' ? $query : null, $searchedLocation, $radiusKm);
+        $providerCounts = $this->getProviderCounts($query !== '' ? $query : null, $location, $searchedLocation, $radiusKm);
         $hasLocationFilter = null !== $searchedLocation
             && isset($searchedLocation['latitude'], $searchedLocation['longitude']);
 
@@ -154,16 +156,16 @@ final class CategorySearchService
     /**
      * @return array<string, int>
      */
-    private function getProviderCounts(?string $query, ?array $searchedLocation, int $radiusKm): array
+    private function getProviderCounts(?string $query, ?string $location, ?array $searchedLocation, int $radiusKm): array
     {
         if (
             null !== $searchedLocation
             && isset($searchedLocation['latitude'], $searchedLocation['longitude'])
         ) {
             try {
-                return $this->getProviderCountsForReachableLocationFromElasticsearch($query, $searchedLocation, $radiusKm);
+                return $this->getProviderCountsForReachableLocationFromElasticsearch($query, $location, $searchedLocation, $radiusKm);
             } catch (\Throwable) {
-                return $this->getProviderCountsForReachableLocation($query, $searchedLocation, $radiusKm);
+                return $this->getProviderCountsForReachableLocation($query, $location, $searchedLocation, $radiusKm);
             }
         }
 
@@ -295,7 +297,12 @@ final class CategorySearchService
     /**
      * @return array<string, int>
      */
-    private function getProviderCountsForReachableLocationFromElasticsearch(?string $query, array $searchedLocation, int $radiusKm): array
+    private function getProviderCountsForReachableLocationFromElasticsearch(
+        ?string $query,
+        ?string $location,
+        array $searchedLocation,
+        int $radiusKm,
+    ): array
     {
         $must = [];
 
@@ -367,6 +374,20 @@ final class CategorySearchService
             ];
         }
 
+        $locationFilter = $this->buildReachableLocationFilter($searchedLocation, $radiusKm);
+
+        if (null !== $location && '' !== $location) {
+            $locationFilter = [
+                'bool' => [
+                    'should' => [
+                        $locationFilter,
+                        $this->buildLocationTextFilter($location),
+                    ],
+                    'minimum_should_match' => 1,
+                ],
+            ];
+        }
+
         $response = $this->elasticsearchClient->getClient()->search([
             'index' => self::INDEX_NAME,
             'body' => [
@@ -380,7 +401,7 @@ final class CategorySearchService
                                     'profileStatus.keyword' => self::ACTIVE_PROFILE_STATUS,
                                 ],
                             ],
-                            $this->buildReachableLocationFilter($searchedLocation, $radiusKm),
+                            $locationFilter,
                         ],
                         'must' => $must,
                     ], static fn (mixed $value): bool => [] !== $value),
@@ -421,7 +442,12 @@ final class CategorySearchService
     /**
      * @return array<string, int>
      */
-    private function getProviderCountsForReachableLocation(?string $query, array $searchedLocation, int $radiusKm): array
+    private function getProviderCountsForReachableLocation(
+        ?string $query,
+        ?string $location,
+        array $searchedLocation,
+        int $radiusKm,
+    ): array
     {
         $must = [];
 
@@ -526,7 +552,7 @@ final class CategorySearchService
         foreach ($response['hits']['hits'] ?? [] as $hit) {
             $source = $hit['_source'] ?? [];
 
-            if (!$this->isProviderReachableForLocation($source['zones'] ?? [], $searchedLocation, $radiusKm)) {
+            if (!$this->matchesLocationFilter($source, $location, $searchedLocation, $radiusKm)) {
                 continue;
             }
 
@@ -579,6 +605,62 @@ final class CategorySearchService
     }
 
     /**
+     * @param array<string, mixed> $source
+     * @param array<string, mixed> $searchedLocation
+     */
+    private function matchesLocationFilter(array $source, ?string $location, array $searchedLocation, int $radiusKm): bool
+    {
+        $zones = is_array($source['zones'] ?? null) ? $source['zones'] : [];
+
+        if ($this->isProviderReachableForLocation($zones, $searchedLocation, $radiusKm)) {
+            return true;
+        }
+
+        if (null === $location || '' === $location) {
+            return false;
+        }
+
+        $normalizedLocation = $this->normalizeText($location);
+        if ('' === $normalizedLocation) {
+            return false;
+        }
+
+        $candidates = [
+            is_scalar($source['city'] ?? null) ? (string) $source['city'] : null,
+            is_scalar($source['postalCode'] ?? null) ? (string) $source['postalCode'] : null,
+        ];
+
+        foreach ($zones as $zone) {
+            if (!is_array($zone)) {
+                continue;
+            }
+
+            $candidates[] = is_scalar($zone['city'] ?? null) ? (string) $zone['city'] : null;
+            $candidates[] = is_scalar($zone['postalCode'] ?? null) ? (string) $zone['postalCode'] : null;
+            $candidates[] = is_scalar($zone['department'] ?? null) ? (string) $zone['department'] : null;
+            $candidates[] = is_scalar($zone['region'] ?? null) ? (string) $zone['region'] : null;
+        }
+
+        foreach ($candidates as $candidate) {
+            $normalizedCandidate = $this->normalizeText($candidate);
+
+            if ('' === $normalizedCandidate) {
+                continue;
+            }
+
+            if (
+                $normalizedCandidate === $normalizedLocation
+                || str_contains($normalizedCandidate, $normalizedLocation)
+                || str_contains($normalizedLocation, $normalizedCandidate)
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @return array<string, mixed>
      */
     private function buildReachableLocationFilter(array $searchedLocation, int $radiusKm): array
@@ -608,6 +690,50 @@ PAINLESS,
                         ],
                     ],
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildLocationTextFilter(string $location): array
+    {
+        return [
+            'bool' => [
+                'should' => [
+                    [
+                        'match' => [
+                            'city' => [
+                                'query' => $location,
+                            ],
+                        ],
+                    ],
+                    [
+                        'term' => [
+                            'postalCode' => [
+                                'value' => $location,
+                            ],
+                        ],
+                    ],
+                    [
+                        'nested' => [
+                            'path' => 'zones',
+                            'query' => [
+                                'bool' => [
+                                    'should' => [
+                                        ['match' => ['zones.city' => ['query' => $location]]],
+                                        ['match' => ['zones.region' => ['query' => $location]]],
+                                        ['match' => ['zones.department' => ['query' => $location]]],
+                                        ['term' => ['zones.postalCode' => ['value' => $location]]],
+                                    ],
+                                    'minimum_should_match' => 1,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'minimum_should_match' => 1,
             ],
         ];
     }

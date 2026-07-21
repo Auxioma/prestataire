@@ -62,6 +62,7 @@ class CategoryController extends AbstractController
         $searchedLocation = $location !== '' ? $zoneGeocoder->geocode($location, null) : null;
         $categoryRows = $categorySearchService->search(
             $query !== '' ? $query : null,
+            $location !== '' ? $location : null,
             $searchedLocation,
             $radiusKm,
             $sort,

@@ -468,15 +468,20 @@ PAINLESS,
 
     public function browseSearch(
         ?string $query = null,
+        ?string $location = null,
         ?string $categorySlug = null,
         ?string $subCategorySlug = null,
         string $sort = 'relevance',
         int $size = 9,
         int $from = 0,
+        ?array $searchedLocation = null,
+        int $radiusKm = 25,
     ): array {
         $query = null !== $query ? trim($query) : null;
+        $location = null !== $location ? trim($location) : null;
         $categorySlug = null !== $categorySlug ? trim($categorySlug) : null;
         $subCategorySlug = null !== $subCategorySlug ? trim($subCategorySlug) : null;
+        $radiusKm = max(5, min(100, $radiusKm));
         $sort = \in_array($sort, ['relevance', 'rating', 'reviews', 'alphabetical'], true) ? $sort : 'relevance';
 
         $filter = [
@@ -512,6 +517,24 @@ PAINLESS,
                     ],
                 ],
             ];
+        }
+
+        if ($location) {
+            $locationFilter = $this->buildLocationTextFilter($location);
+
+            if (null !== $searchedLocation && isset($searchedLocation['latitude'], $searchedLocation['longitude'])) {
+                $locationFilter = [
+                    'bool' => [
+                        'should' => [
+                            $this->buildReachableLocationFilter($searchedLocation, $radiusKm),
+                            $locationFilter,
+                        ],
+                        'minimum_should_match' => 1,
+                    ],
+                ];
+            }
+
+            $filter[] = $locationFilter;
         }
 
         if ($query) {

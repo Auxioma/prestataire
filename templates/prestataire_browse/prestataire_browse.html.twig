@@ -6,9 +6,136 @@
 
 {% block body %}
     {% set profiles = profiles|default([]) %}
+    {% set directResults = directResults|default([]) %}
+    {% set fallbackResults = fallbackResults|default([]) %}
     {% set totalResults = totalResults|default(0) %}
+    {% set totalFallbackResults = totalFallbackResults|default(0) %}
     {% set currentPage = currentPage|default(1) %}
     {% set totalPages = totalPages|default(1) %}
+    {% set radiusKm = radiusKm|default(25) %}
+
+    {% macro browse_card(profile, matchLabel) %}
+        {% set canShowProfile = profile.slug is not empty and profile.slug matches '/^(?!abonnements$)[a-z0-9-]+$/' %}
+        <div class="col-12 col-md-6 col-xl-4">
+            <article
+                class="tm-browse-card h-100"
+                data-controller="card-hover"
+                data-card-hover-hovered-class="tm-browse-card--hovered"
+                data-action="mouseenter->card-hover#mouseEnter mouseleave->card-hover#mouseLeave"
+            >
+                <div class="tm-browse-card__cover">
+                    {% if profile.coverImage %}
+                        <img src="{{ asset('uploads/covers/' ~ profile.coverImage) }}" alt="{{ profile.companyName|default('Prestataire') }}">
+                    {% else %}
+                        <img src="{{ asset('images/img_par_defaut.png') }}" alt="{{ profile.companyName|default('Prestataire') }}">
+                    {% endif %}
+                    <div class="tm-browse-card__cover-overlay"></div>
+
+                    {% if profile.verificationStatus or profile.isFeatured %}
+                        <div class="tm-browse-card__badges">
+                            {% if profile.verificationStatus %}
+                                <span class="tm-browse-card__badge tm-browse-card__badge--verified">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    Vérifié
+                                </span>
+                            {% endif %}
+                            {% if profile.isFeatured %}
+                                <span class="tm-browse-card__badge tm-browse-card__badge--featured">
+                                    <i class="fa-solid fa-gem"></i>
+                                    À la une
+                                </span>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="tm-browse-card__body">
+                    <div class="tm-browse-card__identity">
+                        <div class="tm-browse-card__logo">
+                            {% if profile.logo %}
+                                <img src="{{ asset('uploads/logos/' ~ profile.logo) }}" alt="{{ profile.companyName }}">
+                            {% else %}
+                                <i class="fa-solid fa-building"></i>
+                            {% endif %}
+                        </div>
+
+                        <div class="tm-browse-card__identity-text">
+                            <div class="tm-browse-card__title-row">
+                                <h2 class="tm-browse-card__title">
+                                    {{ profile.companyName|default(profile.account.userIdentifier) }}
+                                </h2>
+
+                                {% if matchLabel is not empty %}
+                                    <span class="tm-browse-card__match-pill">{{ matchLabel }}</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="tm-browse-card__meta">
+                                {% if profile.metier %}
+                                    <span>
+                                        <i class="fa-solid fa-briefcase"></i>
+                                        {{ profile.metier }}
+                                    </span>
+                                {% endif %}
+
+                                <span>
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    {{ profile.city|default('Ville non renseignée') }}
+                                    {% if profile.postalCode %}({{ profile.postalCode }}){% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="tm-browse-card__description">
+                        {% if profile.shortDescription is not null and profile.shortDescription is not empty %}
+                            {{ profile.shortDescription }}
+                        {% else %}
+                            <span class="text-muted fst-italic">
+                                Ce prestataire n’a pas encore rédigé de description courte, mais son savoir-faire reste entièrement à votre disposition.
+                            </span>
+                        {% endif %}
+                    </p>
+
+                    <div class="tm-browse-card__footer">
+                        <div class="tm-browse-card__stats">
+                            <span class="tm-browse-card__rating">
+                                <i class="fa-solid fa-star"></i>
+                                <strong>{{ profile.averageRating|default('0.0') }}</strong>
+                                <small>/5</small>
+                            </span>
+
+                            {% if profile.matchedDistanceKm is defined and profile.matchedDistanceKm is not null %}
+                                <span class="tm-browse-card__distance">
+                                    À {{ profile.matchedDistanceKm|round(1) }} km
+                                </span>
+                            {% endif %}
+
+                            {% if profile.reviewsCount %}
+                                <span class="tm-browse-card__reviews">
+                                    {{ profile.reviewsCount }} avis
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        {% if canShowProfile %}
+                            <a href="{{ path('app_prestataire_show', {slug: profile.slug}) }}" class="tm-browse-card__link">
+                                Voir le profil
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        {% else %}
+                            <span class="tm-browse-card__link text-muted" aria-disabled="true">
+                                Profil indisponible
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+        </div>
+    {% endmacro %}
+
+    {% import _self as cards %}
+
     <div class="container my-5 tm-browse-page">
         <section class="tm-browse-hero mb-5">
             <div class="tm-browse-hero__content">
@@ -35,6 +162,13 @@
                     <strong>{{ totalResults }}</strong>
                     <span>prestataire{{ totalResults > 1 ? 's' : '' }}</span>
                 </div>
+
+                {% if totalFallbackResults > 0 %}
+                    <div class="tm-browse-hero__stats tm-browse-hero__stats--secondary">
+                        <strong>{{ totalFallbackResults }}</strong>
+                        <span>peuvent intervenir</span>
+                    </div>
+                {% endif %}
             </div>
         </section>
 
@@ -51,7 +185,8 @@
                 attr: {
                     class: 'tm-browse-filters__form',
                     novalidate: 'novalidate',
-                    'data-controller': 'chained-selects'
+                    'data-controller': 'chained-selects homepage-search',
+                    'data-homepage-search-default-radius-value': radiusKm
                 }
             }) }}
                 <div class="tm-browse-filters__grid">
@@ -65,6 +200,34 @@
                                 autocomplete: 'off'
                             }
                         }) }}
+                    </div>
+
+                    <div class="tm-browse-filter-field">
+                        {{ form_label(browseForm.location, null, {
+                            label_attr: { class: 'tm-browse-filter-field__label' }
+                        }) }}
+                        {{ form_widget(browseForm.location, {
+                            attr: {
+                                class: 'form-control tm-browse-filter-field__control',
+                                autocomplete: 'off'
+                            }
+                        }) }}
+                    </div>
+
+                    <div class="tm-browse-filter-field">
+                        {{ form_label(browseForm.radiusKm, null, {
+                            label_attr: { class: 'tm-browse-filter-field__label' }
+                        }) }}
+                        <div class="tm-browse-filter-field__range-wrap">
+                            {{ form_widget(browseForm.radiusKm, {
+                                attr: {
+                                    class: 'form-range tm-browse-filter-field__range',
+                                    'data-homepage-search-target': 'range',
+                                    'data-action': 'input->homepage-search#update change->homepage-search#update'
+                                }
+                            }) }}
+                            <span class="tm-browse-filter-field__range-value" data-homepage-search-target="value">{{ radiusKm }} km</span>
+                        </div>
                     </div>
 
                     <div class="tm-browse-filter-field">
@@ -113,10 +276,16 @@
                 </div>
             {{ form_end(browseForm) }}
 
-            {% if query is not empty or selectedCategory is not null or selectedSubCategory is not null %}
+            {% if query is not empty or location is not empty or selectedCategory is not null or selectedSubCategory is not null or radiusKm != 25 %}
                 <div class="tm-browse-filters__chips" aria-label="Filtres actifs">
                     {% if query is not empty %}
                         <span class="tm-browse-filter-chip">{{ query }}</span>
+                    {% endif %}
+                    {% if location is not empty %}
+                        <span class="tm-browse-filter-chip">{{ location }}</span>
+                    {% endif %}
+                    {% if radiusKm != 25 %}
+                        <span class="tm-browse-filter-chip">{{ radiusKm }} km</span>
                     {% endif %}
                     {% if selectedCategory is not null %}
                         <span class="tm-browse-filter-chip">{{ selectedCategory.name }}</span>
@@ -128,116 +297,38 @@
             {% endif %}
         </section>
 
-        <div class="row g-4">
-            {% if profiles|length > 0 %}
-                {% for profile in profiles %}
-                    <div class="col-12 col-md-6 col-xl-4">
-                        {% set canShowProfile = profile.slug is not empty and profile.slug matches '/^(?!abonnements$)[a-z0-9-]+$/' %}
-                        <article
-                            class="tm-browse-card h-100"
-                            data-controller="card-hover"
-                            data-card-hover-hovered-class="tm-browse-card--hovered"
-                            data-action="mouseenter->card-hover#mouseEnter mouseleave->card-hover#mouseLeave"
-                        >
-                            <div class="tm-browse-card__cover">
-                                {% if profile.coverImage %}
-                                    <img src="{{ asset('uploads/covers/' ~ profile.coverImage) }}" alt="{{ profile.companyName|default('Prestataire') }}">
-                                {% else %}
-                                    <img src="{{ asset('images/img_par_defaut.png') }}" alt="{{ profile.companyName|default('Prestataire') }}">
-                                {% endif %}
-                                <div class="tm-browse-card__cover-overlay"></div>
+        {% if directResults|length > 0 %}
+            <section class="tm-browse-section">
+                <div class="tm-browse-section__head">
+                    <h2 class="tm-browse-section__title">Résultats précis</h2>
+                    <p class="tm-browse-section__text">Prestataires trouvés dans votre zone de recherche.</p>
+                </div>
 
-                                {% if profile.verificationStatus or profile.isFeatured %}
-                                    <div class="tm-browse-card__badges">
-                                        {% if profile.verificationStatus %}
-                                            <span class="tm-browse-card__badge tm-browse-card__badge--verified">
-                                                <i class="fa-solid fa-circle-check"></i>
-                                                Vérifié
-                                            </span>
-                                        {% endif %}
-                                        {% if profile.isFeatured %}
-                                            <span class="tm-browse-card__badge tm-browse-card__badge--featured">
-                                                <i class="fa-solid fa-gem"></i>
-                                                À la une
-                                            </span>
-                                        {% endif %}
-                                    </div>
-                                {% endif %}
-                            </div>
+                <div class="row g-4">
+                    {% for profile in directResults %}
+                        {{ cards.browse_card(profile, location is not empty ? 'Dans votre zone' : '') }}
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
 
-                            <div class="tm-browse-card__body">
-                                <div class="tm-browse-card__identity">
-                                    <div class="tm-browse-card__logo">
-                                        {% if profile.logo %}
-                                            <img src="{{ asset('uploads/logos/' ~ profile.logo) }}" alt="{{ profile.companyName }}">
-                                        {% else %}
-                                            <i class="fa-solid fa-building"></i>
-                                        {% endif %}
-                                    </div>
+        {% if fallbackResults|length > 0 %}
+            <section class="tm-browse-section tm-browse-section--fallback">
+                <div class="tm-browse-section__head">
+                    <h2 class="tm-browse-section__title">Prestataires qui pourraient intervenir dans votre zone</h2>
+                    <p class="tm-browse-section__text">Ils sont hors de votre rayon direct, mais leur couverture reste compatible avec votre recherche.</p>
+                </div>
 
-                                    <div class="tm-browse-card__identity-text">
-                                        <h2 class="tm-browse-card__title">
-                                            {{ profile.companyName|default(profile.account.userIdentifier) }}
-                                        </h2>
+                <div class="row g-4">
+                    {% for profile in fallbackResults|slice(0, 6) %}
+                        {{ cards.browse_card(profile, 'Couverture étendue') }}
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
 
-                                        <div class="tm-browse-card__meta">
-                                            {% if profile.metier %}
-                                                <span>
-                                                    <i class="fa-solid fa-briefcase"></i>
-                                                    {{ profile.metier }}
-                                                </span>
-                                            {% endif %}
-
-                                            <span>
-                                                <i class="fa-solid fa-location-dot"></i>
-                                                {{ profile.city|default('Ville non renseignée') }}
-                                                {% if profile.postalCode %}({{ profile.postalCode }}){% endif %}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <p class="tm-browse-card__description">
-                                    {% if profile.shortDescription is not null and profile.shortDescription is not empty %}
-                                        {{ profile.shortDescription }}
-                                    {% else %}
-                                        <span class="text-muted fst-italic">
-                                            Ce prestataire n’a pas encore rédigé de description courte, mais son savoir-faire reste entièrement à votre disposition.
-                                        </span>
-                                    {% endif %}
-                                </p>
-
-                                <div class="tm-browse-card__footer">
-                                    <div class="tm-browse-card__stats">
-                                        <span class="tm-browse-card__rating">
-                                            <i class="fa-solid fa-star"></i>
-                                            <strong>{{ profile.averageRating|default('0.0') }}</strong>
-                                            <small>/5</small>
-                                        </span>
-
-                                        {% if profile.reviewsCount %}
-                                            <span class="tm-browse-card__reviews">
-                                                {{ profile.reviewsCount }} avis
-                                            </span>
-                                        {% endif %}
-                                    </div>
-
-                                    {% if canShowProfile %}
-                                        <a href="{{ path('app_prestataire_show', {slug: profile.slug}) }}" class="tm-browse-card__link">
-                                            Voir le profil
-                                            <i class="fa-solid fa-arrow-right"></i>
-                                        </a>
-                                    {% else %}
-                                        <span class="tm-browse-card__link text-muted" aria-disabled="true">
-                                            Profil indisponible
-                                        </span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                {% endfor %}
-            {% else %}
+        {% if directResults|length == 0 and fallbackResults|length == 0 %}
+            <div class="row g-4">
                 <div class="col-12">
                     <div class="tm-browse-empty">
                         <div class="tm-browse-empty__icon">
@@ -249,8 +340,8 @@
                         </p>
                     </div>
                 </div>
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
 
         {% if totalPages > 1 %}
             {% set startPage = currentPage - 2 > 1 ? currentPage - 2 : 1 %}

@@ -7,7 +7,9 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\RangeType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -33,6 +35,27 @@ class PrestataireBrowseFilterType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Entreprise, métier, prestation...',
                     'autocomplete' => 'off',
+                ],
+            ])
+            ->add('location', TextType::class, [
+                'label' => 'Où ?',
+                'required' => false,
+                'trim' => true,
+                'empty_data' => '',
+                'attr' => [
+                    'placeholder' => 'Ville ou code postal...',
+                    'autocomplete' => 'off',
+                ],
+            ])
+            ->add('radiusKm', RangeType::class, [
+                'label' => 'Rayon',
+                'required' => false,
+                'empty_data' => '25',
+                'data' => 25,
+                'attr' => [
+                    'min' => 5,
+                    'max' => 100,
+                    'step' => 5,
                 ],
             ])
             ->add('category', EntityType::class, [

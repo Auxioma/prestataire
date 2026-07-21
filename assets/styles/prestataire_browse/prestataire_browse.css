@@ -36,7 +36,7 @@
 
 .tm-browse-filters__grid {
     display: grid;
-    grid-template-columns: 1.35fr 1fr 1fr 1fr;
+    grid-template-columns: 1.35fr 1fr 1fr 1fr 1fr 1fr;
     gap: 0.95rem;
 }
 
@@ -68,6 +68,30 @@
 .tm-browse-filter-field__control:focus {
     border-color: rgba(30, 73, 199, 0.45);
     box-shadow: 0 0 0 0.2rem rgba(30, 73, 199, 0.08) !important;
+}
+
+.tm-browse-filter-field__range-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 50px;
+    padding: 0 1rem;
+    border-radius: 1rem;
+    border: 1px solid #e3e8f1;
+    background: #fff;
+}
+
+.tm-browse-filter-field__range {
+    flex: 1 1 auto;
+    margin: 0;
+}
+
+.tm-browse-filter-field__range-value {
+    min-width: 54px;
+    text-align: right;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #1e49c7;
 }
 
 .tm-browse-filters__actions {
@@ -216,6 +240,40 @@
     font-weight: 700;
 }
 
+.tm-browse-hero__stats--secondary {
+    background: #f4f7ff;
+    color: #0a1633;
+}
+
+.tm-browse-hero__stats--secondary span {
+    color: #5b6b85;
+}
+
+.tm-browse-section {
+    margin-bottom: 2rem;
+}
+
+.tm-browse-section__head {
+    margin-bottom: 1rem;
+}
+
+.tm-browse-section__title {
+    margin: 0 0 0.25rem;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #0a1633;
+}
+
+.tm-browse-section__text {
+    margin: 0;
+    color: #5b6b85;
+    line-height: 1.6;
+}
+
+.tm-browse-section--fallback {
+    margin-top: 2rem;
+}
+
 /* Cards */
 .tm-browse-card {
     display: flex;
@@ -340,6 +398,13 @@
     padding-top: 2rem;
 }
 
+.tm-browse-card__title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.65rem;
+}
+
 .tm-browse-card__title {
     margin: 0 0 0.3rem;
     font-size: 1.04rem;
@@ -347,6 +412,19 @@
     font-weight: 900;
     letter-spacing: -0.02em;
     color: #1f2748;
+}
+
+.tm-browse-card__match-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0.28rem 0.55rem;
+    border-radius: 999px;
+    background: #eef4ff;
+    color: #1e49c7;
+    font-size: 0.68rem;
+    font-weight: 800;
+    white-space: nowrap;
 }
 
 .tm-browse-card__meta {
@@ -424,6 +502,12 @@
     color: #8a92a6;
     font-size: 0.77rem;
     font-weight: 700;
+}
+
+.tm-browse-card__distance {
+    color: #1e49c7;
+    font-size: 0.77rem;
+    font-weight: 800;
 }
 
 .tm-browse-card__link {
