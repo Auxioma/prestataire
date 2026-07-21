@@ -154,7 +154,17 @@
                             {% for ps in prestataire.prestataireServices %}
                                 <div class="col">
                                     {% set isFavoritePrestation = ps.id in (favoritePrestationIds|default([])) %}
-                                    <article class="tm-profile-show__service-item{% if ps.isActive %} tm-profile-show__service-item--link{% else %} tm-profile-show__service-item--disabled{% endif %}">
+                                    <article
+                                        class="tm-profile-show__service-item{% if ps.isActive %} tm-profile-show__service-item--link{% else %} tm-profile-show__service-item--disabled{% endif %}"
+                                        {% if ps.isActive %}
+                                            data-controller="clickable-card"
+                                            data-clickable-card-url-value="{{ path('app_prestataire_service_prestation_show', { slug: ps.slug }) }}"
+                                            data-action="click->clickable-card#open keydown->clickable-card#keydown"
+                                            tabindex="0"
+                                            role="link"
+                                            aria-label="Découvrir la prestation {{ ps.title ?: ps.service.name }}"
+                                        {% endif %}
+                                    >
                                         <div class="tm-profile-show__service-top">
                                             <div class="tm-profile-show__service-icon">
                                                 <i class="fa-solid {{ ps.service.icon|default('fa-check') }}"></i>
@@ -198,14 +208,14 @@
 
                                         {% if ps.isActive %}
                                             <div class="tm-profile-show__service-footer">
-                                                <a href="{{ path('app_prestataire_service_prestation_show', { slug: ps.slug }) }}" class="tm-profile-show__service-link">
+                                                <div class="tm-profile-show__service-link">
                                                     <span class="tm-profile-show__service-link-text">
                                                         Découvrir cette prestation
                                                     </span>
                                                     <span class="tm-profile-show__service-link-icon">
                                                         <i class="fa-solid fa-arrow-up-right-from-square"></i>
                                                     </span>
-                                                </a>
+                                                </div>
                                             </div>
                                         {% endif %}
                                     </article>
@@ -220,83 +230,93 @@
                         </div>
                     </div>
 
-                    <div class="tm-profile-show__card mb-4">
+                    <div class="tm-profile-show__card tm-profile-show__card--contact{% if not hasUnlockedContactDetails %} tm-profile-show__card--contact-locked{% endif %} mb-4">
                         <h2 class="tm-profile-show__section-title">Coordonnées & présence en ligne</h2>
 
-                        <div class="tm-profile-show__info-grid">
-                            {% if prestataire.phonePublic %}
-                                <div class="tm-profile-show__info-item">
-                                    <i class="fa-solid fa-phone"></i>
-                                    <div>
-                                        <span>Téléphone</span>
-                                        <strong>{{ prestataire.phonePublic }}</strong>
+                        <div class="tm-profile-show__contact-content">
+                            <div class="tm-profile-show__info-grid">
+                                {% if prestataire.phonePublic %}
+                                    <div class="tm-profile-show__info-item">
+                                        <i class="fa-solid fa-phone"></i>
+                                        <div>
+                                            <span>Téléphone</span>
+                                            <strong>{{ prestataire.phonePublic }}</strong>
+                                        </div>
                                     </div>
+                                {% endif %}
+
+                                {# {% if prestataire.account.email %}
+                                <div class="tm-profile-show__info-item">
+                                <i class="fa-regular fa-envelope"></i>
+                                <div>
+                                <span>Email</span>
+                                <strong>{{ prestataire.account.email }}</strong>
+                                </div>
+                                </div>
+                                {% endif %} #}
+
+                                {% if prestataire.website %}
+                                    <div class="tm-profile-show__info-item">
+                                        <i class="fa-solid fa-globe"></i>
+                                        <div>
+                                            <span>Site internet</span>
+                                            <strong>
+                                                <a href="{{ prestataire.website }}" target="_blank" rel="noopener noreferrer">
+                                                    Visiter le site
+                                                </a>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                                {# {% if prestataire.address or prestataire.city %}
+                                <div class="tm-profile-show__info-item">
+                                <i class="fa-solid fa-map-pin"></i>
+                                <div>
+                                <span>Adresse</span>
+                                <strong>
+                                {{ prestataire.address|default('Adresse non renseignée') }}
+                                {% if prestataire.city %}
+                                -
+                                {{ prestataire.city }}
+                                {% endif %}
+                                </strong>
+                                </div>
+                                </div>
+                                {% endif %} #}
+                            </div>
+
+                            {% if prestataire.facebookUrl or prestataire.instagramUrl or prestataire.linkedinUrl %}
+                                <div class="tm-profile-show__socials justify-content-center mt-4">
+                                    {% if prestataire.facebookUrl %}
+                                        <a href="{{ prestataire.facebookUrl }}" target="_blank" rel="noopener noreferrer" class="tm-profile-show__social-link">
+                                            <i class="fa-brands fa-facebook-f"></i>
+                                            Facebook
+                                        </a>
+                                    {% endif %}
+
+                                    {% if prestataire.instagramUrl %}
+                                        <a href="{{ prestataire.instagramUrl }}" target="_blank" rel="noopener noreferrer" class="tm-profile-show__social-link">
+                                            <i class="fa-brands fa-instagram"></i>
+                                            Instagram
+                                        </a>
+                                    {% endif %}
+
+                                    {% if prestataire.linkedinUrl %}
+                                        <a href="{{ prestataire.linkedinUrl }}" target="_blank" rel="noopener noreferrer" class="tm-profile-show__social-link">
+                                            <i class="fa-brands fa-linkedin-in"></i>
+                                            LinkedIn
+                                        </a>
+                                    {% endif %}
                                 </div>
                             {% endif %}
-
-                            {# {% if prestataire.account.email %}
-                            <div class="tm-profile-show__info-item">
-                            <i class="fa-regular fa-envelope"></i>
-                            <div>
-                            <span>Email</span>
-                            <strong>{{ prestataire.account.email }}</strong>
-                            </div>
-                            </div>
-                            {% endif %} #}
-
-                            {% if prestataire.website %}
-                                <div class="tm-profile-show__info-item">
-                                    <i class="fa-solid fa-globe"></i>
-                                    <div>
-                                        <span>Site internet</span>
-                                        <strong>
-                                            <a href="{{ prestataire.website }}" target="_blank" rel="noopener noreferrer">
-                                                Visiter le site
-                                            </a>
-                                        </strong>
-                                    </div>
-                                </div>
-                            {% endif %}
-
-                            {# {% if prestataire.address or prestataire.city %}
-                            <div class="tm-profile-show__info-item">
-                            <i class="fa-solid fa-map-pin"></i>
-                            <div>
-                            <span>Adresse</span>
-                            <strong>
-                            {{ prestataire.address|default('Adresse non renseignée') }}
-                            {% if prestataire.city %}
-                            -
-                            {{ prestataire.city }}
-                            {% endif %}
-                            </strong>
-                            </div>
-                            </div>
-                            {% endif %} #}
                         </div>
 
-                        {% if prestataire.facebookUrl or prestataire.instagramUrl or prestataire.linkedinUrl %}
-                            <div class="tm-profile-show__socials justify-content-center mt-4">
-                                {% if prestataire.facebookUrl %}
-                                    <a href="{{ prestataire.facebookUrl }}" target="_blank" rel="noopener noreferrer" class="tm-profile-show__social-link">
-                                        <i class="fa-brands fa-facebook-f"></i>
-                                        Facebook
-                                    </a>
-                                {% endif %}
-
-                                {% if prestataire.instagramUrl %}
-                                    <a href="{{ prestataire.instagramUrl }}" target="_blank" rel="noopener noreferrer" class="tm-profile-show__social-link">
-                                        <i class="fa-brands fa-instagram"></i>
-                                        Instagram
-                                    </a>
-                                {% endif %}
-
-                                {% if prestataire.linkedinUrl %}
-                                    <a href="{{ prestataire.linkedinUrl }}" target="_blank" rel="noopener noreferrer" class="tm-profile-show__social-link">
-                                        <i class="fa-brands fa-linkedin-in"></i>
-                                        LinkedIn
-                                    </a>
-                                {% endif %}
+                        {% if not hasUnlockedContactDetails %}
+                            <div class="tm-profile-show__contact-lock" aria-hidden="true">
+                                <div class="tm-profile-show__contact-lock-badge">
+                                    Coordonnées visibles avec une offre supérieure du prestataire.
+                                </div>
                             </div>
                         {% endif %}
                     </div>

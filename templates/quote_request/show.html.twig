@@ -480,24 +480,7 @@
 
 									{% if messageForm is defined and messageForm %}
 										<div id="quote-message-form" class="tm-client-quotes-message-composer">
-											<div class="tm-client-quotes-message-composer__header">
-												<div>
-													<h3 class="tm-client-quotes-message-composer__title">
-														{% if messages is defined and messages is not empty %}
-															Répondre à la conversation
-														{% else %}
-															Envoyer le premier message
-														{% endif %}
-													</h3>
-													<p class="tm-client-quotes-message-composer__text mb-0">
-														{% if messages is defined and messages is not empty %}
-															Ajoutez une précision, une question ou une information utile pour le prestataire.
-														{% else %}
-															Ouvrez la discussion pour apporter un complément ou poser votre première question.
-														{% endif %}
-													</p>
-												</div>
-											</div>
+											
 
 											{{ form_start(messageForm, {
                                                 attr: {

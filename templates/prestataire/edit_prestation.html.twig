@@ -403,7 +403,14 @@
 								{% set mediaId = media and attribute(media, 'id') ? attribute(media, 'id') : null %}
 								{% set existingFile = media and attribute(media, 'fileName') ? attribute(media, 'fileName') : null %}
 
-								<article class="tm-prestation-wizard-media-card" data-controller="media-preview">
+								<article
+									class="tm-prestation-wizard-media-card"
+									data-controller="media-preview"
+									data-media-preview-has-existing-value="{{ existingFile ? 'true' : 'false' }}"
+									{% if existingFile %}
+										data-media-preview-existing-src-value="{{ asset('uploads/prestations/' ~ existingFile) }}"
+									{% endif %}
+								>
 									<div class="tm-prestation-wizard-media-card-head">
 										<div>
 											<span class="tm-prestation-wizard-media-index">Photo
@@ -412,21 +419,27 @@
 										</div>
 
 										<div class="tm-prestation-wizard-media-actions">
-											{% if existingFile and mediaId and mediaForm.delete is defined %}
-												<div class="form-check">
+											<div class="tm-prestation-wizard-media-delete">
+												{% if mediaForm.delete is defined %}
 													{{ form_widget(mediaForm.delete, {
                                     attr: {
-                                        class: 'form-check-input'
-                                    }
-                                }) }}
-													{{ form_label(mediaForm.delete, null, {
-                                    label_attr: {
-                                        class: 'form-check-label'
+                                        class: 'tm-prestation-wizard-media-delete-input',
+                                        'data-media-preview-target': 'deleteCheckbox'
                                     }
                                 }) }}
 													{{ form_errors(mediaForm.delete) }}
-												</div>
-											{% endif %}
+												{% endif %}
+
+												<button
+													type="button"
+													class="tm-prestation-wizard-media-delete-button {{ existingFile ? '' : 'd-none' }}"
+													data-media-preview-target="clearButton"
+													data-action="click->media-preview#clear"
+												>
+													<i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+													<span>Retirer la photo</span>
+												</button>
+											</div>
 										</div>
 									</div>
 
@@ -469,7 +482,7 @@
 												{% if existingFile %}
 													Sélectionnez une nouvelle image pour remplacer la photo actuelle.
 												{% else %}
-													Ajoutez une image pour illustrer cette prestation.
+													Ajoutez une image pour illustrer cette prestation. Une corbeille apparaîtra dès qu’un fichier sera sélectionné.
 												{% endif %}
 											</div>
 										</div>
@@ -492,10 +505,6 @@
 													{{ form_row(mediaForm.position) }}
 												</div>
 											</div>
-
-											{% if not existingFile and mediaForm.delete is defined %}
-												{{ form_widget(mediaForm.delete, { attr: { class: 'd-none' } }) }}
-											{% endif %}
 										</div>
 									</div>
 								</article>

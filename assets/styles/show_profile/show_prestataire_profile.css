@@ -379,6 +379,7 @@
 }
 
 .tm-profile-show__service-item--link {
+    position: relative;
     cursor: pointer;
 }
 
@@ -452,6 +453,8 @@
 }
 
 .tm-profile-show__service-actions {
+    position: relative;
+    z-index: 3;
     display: inline-flex;
     align-items: center;
     gap: 0.65rem;
@@ -527,9 +530,56 @@
     text-decoration: none;
 }
 
+.tm-profile-show__service-item--link:focus-visible {
+    outline: 3px solid rgba(244, 169, 17, 0.45);
+    outline-offset: 3px;
+}
+
 .tm-profile-show__info-grid {
     display: grid;
     gap: 1rem;
+}
+
+.tm-profile-show__card--contact {
+    position: relative;
+}
+
+.tm-profile-show__contact-content {
+    position: relative;
+    z-index: 1;
+}
+
+.tm-profile-show__card--contact-locked .tm-profile-show__contact-content {
+    filter: blur(6px);
+    pointer-events: none;
+    user-select: none;
+}
+
+.tm-profile-show__contact-lock {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    border-radius: inherit;
+    background: rgba(255, 255, 255, 0.24);
+    backdrop-filter: blur(2px);
+}
+
+.tm-profile-show__contact-lock-badge {
+    max-width: 280px;
+    padding: 0.8rem 1rem;
+    border: 1px solid rgba(6, 27, 86, 0.12);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 16px 30px rgba(6, 27, 86, 0.08);
+    color: var(--tm-primary);
+    font-size: 0.88rem;
+    font-weight: 700;
+    line-height: 1.45;
+    text-align: center;
 }
 
 .tm-profile-show__info-item {

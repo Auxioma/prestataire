@@ -26,6 +26,7 @@ use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
 use App\Entity\User;
 use App\Enum\FavoriteTypeEnum;
 use App\Repository\FavoriteRepository;
+use App\Service\Subscription\SubscriptionAccessManager;
 
 /**
  * Gère les actions liées à show prestataire.
@@ -46,6 +47,7 @@ class ShowPrestataireController extends AbstractController
     public function __invoke(
         #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireProfile $prestataire,
         FavoriteRepository $favoriteRepository,
+        SubscriptionAccessManager $subscriptionAccessManager,
     ): Response {
         if (!$prestataire->getCompanyName()) {
             throw $this->createNotFoundException('Ce profil professionnel n\'est pas encore actif.');
@@ -123,12 +125,17 @@ class ShowPrestataireController extends AbstractController
             $favoritePrestationIds = $favoriteRepository->findTargetIdsByUserAndType($user, FavoriteTypeEnum::PRESTATION);
         }
 
+        $currentSubscription = $subscriptionAccessManager->getCurrentUsableSubscription($prestataire);
+        $hasUnlockedContactDetails = null !== $currentSubscription
+            && 'free' !== $currentSubscription->getPlan()?->getCode();
+
         return $this->render('show_prestataire/show.html.twig', [
             'prestataire' => $prestataire,
             'zones' => $zones,
             'zoneMap' => $zoneMap,
             'isFavoriteProvider' => $isFavoriteProvider,
             'favoritePrestationIds' => $favoritePrestationIds,
+            'hasUnlockedContactDetails' => $hasUnlockedContactDetails,
         ]);
     }
 }
