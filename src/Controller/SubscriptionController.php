@@ -334,6 +334,119 @@ final class SubscriptionController extends AbstractController
         return $this->redirect($portalUrl);
     }
 
+    #[Route('/resiliation', name: 'cancel', methods: ['POST'])]
+    public function cancel(
+        Request $request,
+        StripeApiClient $stripeApiClient,
+        StripeCheckoutSessionSynchronizer $stripeCheckoutSessionSynchronizer,
+        StripeSubscriptionCheckoutManager $stripeSubscriptionCheckoutManager,
+        SubscriptionAccessManager $subscriptionAccessManager,
+    ): RedirectResponse {
+        $prestataireProfile = $this->getPrestataireProfile();
+
+        if (!$this->isCsrfTokenValid('subscription-cancel', (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Jeton CSRF invalide.');
+        }
+
+        if (!$stripeApiClient->isConfigured()) {
+            $this->addFlash('danger', 'Stripe n’est pas configuré sur cet environnement.');
+
+            return $this->redirectToRoute('app_subscription_index');
+        }
+
+        try {
+            $stripeCheckoutSessionSynchronizer->syncLatestSubscriptionForPrestataire($prestataireProfile);
+        } catch (\Throwable) {
+        }
+
+        $currentSubscription = $subscriptionAccessManager->getCurrentUsableSubscription($prestataireProfile);
+        if (
+            null === $currentSubscription
+            || null === $currentSubscription->getPlan()
+            || 'free' === $currentSubscription->getPlan()->getCode()
+            || !$stripeSubscriptionCheckoutManager->isManagedStripeSubscription($currentSubscription)
+        ) {
+            $this->addFlash('warning', 'Aucun abonnement payant résiliable n’est actuellement associé à votre compte.');
+
+            return $this->redirectToRoute('app_subscription_index');
+        }
+
+        if ($currentSubscription->isCancelAtPeriodEnd()) {
+            $this->addFlash('info', 'La résiliation de votre abonnement est déjà programmée.');
+
+            return $this->redirectToRoute('app_subscription_index');
+        }
+
+        try {
+            $updatedSubscription = $stripeSubscriptionCheckoutManager->scheduleCancellation($currentSubscription);
+            $effectiveDate = $updatedSubscription->getCurrentPeriodEnd();
+
+            $this->addFlash(
+                'success',
+                $effectiveDate instanceof \DateTimeImmutable
+                    ? sprintf('Votre abonnement sera résilié le %s. Vous conservez l’accès jusqu’à cette date.', $effectiveDate->format('d/m/Y'))
+                    : 'Votre abonnement sera résilié à la fin de la période en cours.'
+            );
+        } catch (\Throwable $exception) {
+            $this->addFlash('danger', 'Impossible de programmer la résiliation : ' . $exception->getMessage());
+        }
+
+        return $this->redirectToRoute('app_subscription_index');
+    }
+
+    #[Route('/resiliation/annuler', name: 'resume', methods: ['POST'])]
+    public function resume(
+        Request $request,
+        StripeApiClient $stripeApiClient,
+        StripeCheckoutSessionSynchronizer $stripeCheckoutSessionSynchronizer,
+        StripeSubscriptionCheckoutManager $stripeSubscriptionCheckoutManager,
+        SubscriptionAccessManager $subscriptionAccessManager,
+    ): RedirectResponse {
+        $prestataireProfile = $this->getPrestataireProfile();
+
+        if (!$this->isCsrfTokenValid('subscription-resume', (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Jeton CSRF invalide.');
+        }
+
+        if (!$stripeApiClient->isConfigured()) {
+            $this->addFlash('danger', 'Stripe n’est pas configuré sur cet environnement.');
+
+            return $this->redirectToRoute('app_subscription_index');
+        }
+
+        try {
+            $stripeCheckoutSessionSynchronizer->syncLatestSubscriptionForPrestataire($prestataireProfile);
+        } catch (\Throwable) {
+        }
+
+        $currentSubscription = $subscriptionAccessManager->getCurrentUsableSubscription($prestataireProfile);
+        if (
+            null === $currentSubscription
+            || null === $currentSubscription->getPlan()
+            || 'free' === $currentSubscription->getPlan()->getCode()
+            || !$stripeSubscriptionCheckoutManager->isManagedStripeSubscription($currentSubscription)
+        ) {
+            $this->addFlash('warning', 'Aucun abonnement payant réactivable n’est actuellement associé à votre compte.');
+
+            return $this->redirectToRoute('app_subscription_index');
+        }
+
+        if (!$currentSubscription->isCancelAtPeriodEnd()) {
+            $this->addFlash('info', 'Aucune résiliation n’est actuellement programmée sur votre abonnement.');
+
+            return $this->redirectToRoute('app_subscription_index');
+        }
+
+        try {
+            $stripeSubscriptionCheckoutManager->resumeScheduledCancellation($currentSubscription);
+            $this->addFlash('success', 'La résiliation programmée a été annulée. Votre abonnement restera actif.');
+        } catch (\Throwable $exception) {
+            $this->addFlash('danger', 'Impossible d’annuler la résiliation programmée : ' . $exception->getMessage());
+        }
+
+        return $this->redirectToRoute('app_subscription_index');
+    }
+
     #[Route('/factures/{invoiceId}/telecharger', name: 'invoice_download', methods: ['GET'])]
     public function downloadInvoice(
         string $invoiceId,

@@ -258,6 +258,50 @@ class StripeApiClient
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
+    public function scheduleSubscriptionCancellation(PrestataireSubscription $subscription): array
+    {
+        $stripeSubscriptionId = trim((string) $subscription->getStripeSubscriptionId());
+        if ('' === $stripeSubscriptionId) {
+            throw new \InvalidArgumentException('Impossible de résilier un abonnement Stripe sans identifiant.');
+        }
+
+        return $this->request('POST', sprintf('/subscriptions/%s', $stripeSubscriptionId), [
+            'cancel_at_period_end' => 'true',
+            'expand[0]' => 'items.data.price',
+            'expand[1]' => 'latest_invoice',
+            'expand[2]' => 'latest_invoice.payment_intent',
+        ]);
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function resumeSubscription(PrestataireSubscription $subscription): array
+    {
+        $stripeSubscriptionId = trim((string) $subscription->getStripeSubscriptionId());
+        if ('' === $stripeSubscriptionId) {
+            throw new \InvalidArgumentException('Impossible de réactiver un abonnement Stripe sans identifiant.');
+        }
+
+        return $this->request('POST', sprintf('/subscriptions/%s', $stripeSubscriptionId), [
+            'cancel_at_period_end' => 'false',
+            'expand[0]' => 'items.data.price',
+            'expand[1]' => 'latest_invoice',
+            'expand[2]' => 'latest_invoice.payment_intent',
+        ]);
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
     public function retrieveSubscription(string $stripeSubscriptionId): array
     {
         return $this->request('GET', sprintf('/subscriptions/%s', $stripeSubscriptionId), [

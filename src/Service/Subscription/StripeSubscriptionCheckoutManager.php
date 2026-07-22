@@ -116,6 +116,28 @@ final class StripeSubscriptionCheckoutManager
         return $this->stripeReferenceHelper->isManagedSubscription($subscription);
     }
 
+    public function scheduleCancellation(PrestataireSubscription $subscription): PrestataireSubscription
+    {
+        if (!$this->isManagedStripeSubscription($subscription)) {
+            throw new \RuntimeException('Aucun abonnement Stripe actif ne peut être résilié depuis cet écran.');
+        }
+
+        $payload = $this->stripeApiClient->scheduleSubscriptionCancellation($subscription);
+
+        return $this->stripeWebhookManager->syncSubscriptionPayloadAndReturn($payload);
+    }
+
+    public function resumeScheduledCancellation(PrestataireSubscription $subscription): PrestataireSubscription
+    {
+        if (!$this->isManagedStripeSubscription($subscription)) {
+            throw new \RuntimeException('Aucun abonnement Stripe actif ne peut être réactivé depuis cet écran.');
+        }
+
+        $payload = $this->stripeApiClient->resumeSubscription($subscription);
+
+        return $this->stripeWebhookManager->syncSubscriptionPayloadAndReturn($payload);
+    }
+
     public function applySetupIntentPaymentMethod(
         PrestataireProfile $prestataireProfile,
         string $setupIntentId,

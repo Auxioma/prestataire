@@ -24,22 +24,17 @@
 
                 <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
                     <div>
-                        <span class="text-uppercase text-primary fw-bold small d-block mb-2">Facturation Stripe</span>
+                        <span class="text-uppercase text-primary fw-bold small d-block mb-2">Abonnements et facturation</span>
                         <h1 class="h2 fw-bold mb-2">Mes abonnements</h1>
+                        <p class="text-muted mb-0">
+                            Gérez votre abonnement, vos moyens de paiement et vos factures directement depuis l’espace prestataire.
+                        </p>
                     </div>
-
-                    {# {% if currentSubscription %}
-                        <div class="d-flex flex-wrap gap-2">
-                            <a href="{{ path('app_subscription_portal') }}" class="btn btn-outline-primary">
-                                Moyens de paiement
-                            </a>
-                        </div>
-                    {% endif %} #}
                 </div>
 
                 {% if not stripeConfigured or not stripePublicKey %}
                     <div class="alert alert-warning" role="alert">
-                        Stripe n’est pas configuré sur cet environnement. Les abonnements ne peuvent pas être souscrits tant que les clés ne sont pas renseignées.
+                        Le module de paiement n’est pas disponible sur cet environnement. Les abonnements ne peuvent pas être souscrits pour le moment.
                     </div>
                 {% endif %}
 
@@ -48,9 +43,16 @@
                         <div class="card-body p-4 p-lg-5">
                             <div class="row g-4 align-items-start">
                                 <div class="col-12 col-lg-7">
-                                    <span class="badge rounded-pill text-bg-primary-subtle text-primary-emphasis border border-primary-subtle mb-3">
-                                        Abonnement actif
-                                    </span>
+                                    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                                        <span class="badge rounded-pill text-bg-primary-subtle text-primary-emphasis border border-primary-subtle">
+                                            Abonnement actif
+                                        </span>
+                                        {% if currentSubscription.isCancelAtPeriodEnd %}
+                                            <span class="badge rounded-pill text-bg-warning">
+                                                Résiliation programmée
+                                            </span>
+                                        {% endif %}
+                                    </div>
                                     <h2 class="h4 fw-bold mb-2">
                                         {{ currentSubscription.plan ? currentSubscription.plan.name : 'Abonnement actif' }}
                                     </h2>
@@ -63,6 +65,14 @@
                                         Renouvellement le
                                         <strong>{{ subscriptionRenewalDate ? subscriptionRenewalDate|date('d/m/Y') : 'à confirmer' }}</strong>
                                     </p>
+
+                                    {% if currentSubscription.isCancelAtPeriodEnd %}
+                                        <div class="alert alert-warning mb-4" role="alert">
+                                            La résiliation de cet abonnement est programmée pour le
+                                            <strong>{{ subscriptionRenewalDate ? subscriptionRenewalDate|date('d/m/Y') : 'prochain renouvellement' }}</strong>.
+                                            Jusqu’à cette date, l’abonnement et ses crédits restent utilisables.
+                                        </div>
+                                    {% endif %}
 
                                     <div class="row g-3">
                                         <div class="col-12 col-sm-4">
@@ -86,7 +96,47 @@
                                     </div>
                                 </div>
 
-                                
+                                {% if currentSubscription.plan and currentSubscription.plan.code != 'free' %}
+                                    <div class="col-12 col-lg-5">
+                                        <div class="rounded-4 border bg-light p-4 h-100 d-flex flex-column justify-content-center">
+                                            <div class="small text-uppercase text-muted mb-2">Abonnement</div>
+
+                                            {% if currentSubscription.isCancelAtPeriodEnd %}
+                                                <form
+                                                    method="post"
+                                                    action="{{ path('app_subscription_resume') }}"
+                                                    data-controller="confirm-dialog"
+                                                    data-action="submit->confirm-dialog#confirm"
+                                                    data-confirm-dialog-title-value="Annuler la résiliation programmée ?"
+                                                    data-confirm-dialog-text-value="Votre abonnement restera actif et sera renouvelé normalement à la prochaine échéance."
+                                                    data-confirm-dialog-confirm-button-text-value="Conserver l’abonnement"
+                                                    data-confirm-dialog-cancel-button-text-value="Garder la résiliation"
+                                                >
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('subscription-resume') }}">
+                                                    <button type="submit" class="btn btn-primary w-100">
+                                                        Annuler la résiliation
+                                                    </button>
+                                                </form>
+                                            {% else %}
+                                                <form
+                                                    method="post"
+                                                    action="{{ path('app_subscription_cancel') }}"
+                                                    data-controller="confirm-dialog"
+                                                    data-action="submit->confirm-dialog#confirm"
+                                                    data-confirm-dialog-title-value="Résilier cet abonnement ?"
+                                                    data-confirm-dialog-text-value="La résiliation prendra effet à la fin de la période en cours. Vous conservez l’accès et vos crédits jusqu’à cette date."
+                                                    data-confirm-dialog-confirm-button-text-value="Programmer la résiliation"
+                                                    data-confirm-dialog-cancel-button-text-value="Conserver l’abonnement"
+                                                >
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('subscription-cancel') }}">
+                                                    <button type="submit" class="btn btn-outline-danger w-100">
+                                                        Résilier à l’échéance
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     </section>
@@ -121,7 +171,7 @@
                                                 <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
                                                     <div>
                                                         <h3 class="h5 fw-bold mb-1">{{ plan.name }}</h3>
-                                                        <p class="text-muted small mb-0">{{ plan.description ?: 'Abonnement Stripe à reconduction tacite pour prestataires.' }}</p>
+                                                        <p class="text-muted small mb-0">{{ plan.description ?: 'Abonnement à reconduction tacite pour prestataires.' }}</p>
                                                     </div>
                                                     {% if currentSubscription and currentSubscription.plan and currentSubscription.plan.code == plan.code %}
                                                         <span class="badge rounded-pill text-bg-primary">Actuel</span>
@@ -201,7 +251,7 @@
                             <div class="card-body p-4 p-lg-5">
                                 <div class="row g-4 align-items-start">
                                     <div class="col-12 col-lg-5">
-                                        <span class="badge text-bg-light border mb-3">Paiement intégré</span>
+                                        <span class="badge text-bg-light border mb-3">Paiement sécurisé</span>
                                         <h2 class="h4 fw-bold mb-3">Confirmer la carte et l’abonnement</h2>
                                         <p class="text-muted mb-3">
                                             La carte sera enregistrée pour les renouvellements automatiques. Seule la carte bancaire est acceptée sur cet écran.
@@ -215,7 +265,7 @@
                                             </div>
                                         </div>
                                         <div class="small text-muted mt-3">
-                                            En validant, vous autorisez la facturation récurrente Stripe. Les futures factures resteront accessibles ci-dessous depuis votre espace prestataire.
+                                            En validant, vous autorisez la facturation récurrente. Les futures factures resteront accessibles ci-dessous depuis votre espace prestataire.
                                         </div>
                                     </div>
 
@@ -240,7 +290,7 @@
                                         </button>
 
                                         <div class="small text-muted mt-3" data-subscription-checkout-target="submitHelp">
-                                            Le bouton sera activé dès qu’une formule est choisie et que le formulaire Stripe est prêt.
+                                            Le bouton sera activé dès qu’une formule est choisie et que le formulaire de carte est prêt.
                                         </div>
                                     </div>
                                 </div>
@@ -255,7 +305,7 @@
                                     <span class="text-uppercase text-primary fw-bold small d-block mb-2">Factures d’abonnement</span>
                                     <h2 class="h4 fw-bold mb-2">Historique de facturation</h2>
                                     <p class="text-muted mb-0">
-                                        Les factures sont générées par Stripe, mais consultables ici via leurs liens de consultation et de téléchargement.
+                                        Retrouvez ici l’historique de vos factures d’abonnement et téléchargez-les directement depuis votre espace.
                                     </p>
                                 </div>
                             </div>
@@ -277,7 +327,7 @@
                                             {% for invoice in recentInvoices %}
                                                 <tr>
                                                     <td>
-                                                        <div class="fw-semibold">{{ invoice.invoiceNumber ?: invoice.stripeInvoiceId }}</div>
+                                                        <div class="fw-semibold">{{ invoice.invoiceNumber ?: ('Facture n° ' ~ invoice.id) }}</div>
                                                         <div class="small text-muted">
                                                             {{ invoice.paidAt ? 'Payée le ' ~ invoice.paidAt|date('d/m/Y') : 'Créée le ' ~ invoice.createdAt|date('d/m/Y') }}
                                                         </div>
