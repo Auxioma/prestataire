@@ -141,6 +141,124 @@ final class PrestataireProfileCompletionService
     }
 
     /**
+     * @return array{
+     *     completed:int,
+     *     total:int,
+     *     isComplete:bool,
+     *     items:list<array{
+     *         key:string,
+     *         label:string,
+     *         tab:string,
+     *         fragment:string|null,
+     *         completed:bool
+     *     }>,
+     *     missingItems:list<array{
+     *         key:string,
+     *         label:string,
+     *         tab:string,
+     *         fragment:string|null,
+     *         completed:bool
+     *     }>
+     * }
+     */
+    public function buildMandatoryChecklist(User $user, PrestataireProfile $prestataireProfile): array
+    {
+        $items = [
+            [
+                'key' => 'first_name',
+                'label' => 'Prénom',
+                'tab' => 'profile',
+                'fragment' => null,
+                'completed' => $this->hasText($user->getFirstName()),
+            ],
+            [
+                'key' => 'last_name',
+                'label' => 'Nom',
+                'tab' => 'profile',
+                'fragment' => null,
+                'completed' => $this->hasText($user->getLastName()),
+            ],
+            [
+                'key' => 'phone_number',
+                'label' => 'Numéro de téléphone',
+                'tab' => 'profile',
+                'fragment' => null,
+                'completed' => $this->hasText($user->getPhoneNumber()),
+            ],
+            [
+                'key' => 'company_name',
+                'label' => 'Nom de l’entreprise',
+                'tab' => 'company',
+                'fragment' => null,
+                'completed' => $this->hasText($prestataireProfile->getCompanyName()),
+            ],
+            [
+                'key' => 'company_identifier',
+                'label' => 'SIRET ou SIREN',
+                'tab' => 'company',
+                'fragment' => null,
+                'completed' => $this->hasCompanyIdentifier($prestataireProfile),
+            ],
+            [
+                'key' => 'company_address',
+                'label' => 'Adresse complète',
+                'tab' => 'company',
+                'fragment' => null,
+                'completed' => $this->hasCompanyAddress($prestataireProfile),
+            ],
+            [
+                'key' => 'metier',
+                'label' => 'Métier / spécialité',
+                'tab' => 'profile',
+                'fragment' => null,
+                'completed' => $this->hasText($prestataireProfile->getMetier()),
+            ],
+            [
+                'key' => 'short_description',
+                'label' => 'Phrase d’accroche',
+                'tab' => 'profile',
+                'fragment' => null,
+                'completed' => $this->hasText($prestataireProfile->getShortDescription()),
+            ],
+            [
+                'key' => 'description',
+                'label' => 'Présentation complète',
+                'tab' => 'profile',
+                'fragment' => null,
+                'completed' => $this->hasText($prestataireProfile->getDescription()),
+            ],
+            [
+                'key' => 'services',
+                'label' => 'Au moins une prestation active',
+                'tab' => 'services',
+                'fragment' => 'services-panel',
+                'completed' => $this->hasActiveService($prestataireProfile),
+            ],
+            [
+                'key' => 'zones',
+                'label' => 'Au moins une zone d’intervention active',
+                'tab' => 'zones',
+                'fragment' => 'zones-panel',
+                'completed' => $this->hasActiveZone($prestataireProfile),
+            ],
+        ];
+
+        $missingItems = array_values(array_filter(
+            $items,
+            static fn (array $item): bool => !$item['completed']
+        ));
+        $completedItems = count($items) - count($missingItems);
+
+        return [
+            'completed' => $completedItems,
+            'total' => count($items),
+            'isComplete' => [] === $missingItems,
+            'items' => $items,
+            'missingItems' => $missingItems,
+        ];
+    }
+
+    /**
      * @param array<string, bool> $checks
      * @return array{
      *     key:string,

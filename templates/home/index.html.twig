@@ -594,4 +594,37 @@
 
 		</div>
 	</section>
+
+	{% if showProfileCompletionModal and mandatoryChecklist is not null %}
+		<div {{ stimulus_controller('profile-completion-modal') }}>
+			<div class="modal fade show" id="profileCompletionModal" tabindex="-1" aria-labelledby="profileCompletionModalLabel" aria-modal="true" role="dialog" style="display: block;" {{ stimulus_target('profile-completion-modal', 'modal') }}>
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h2 class="modal-title fs-5" id="profileCompletionModalLabel">Complétez vos paramètres prestataire</h2>
+							<button type="button" class="btn-close" aria-label="Fermer" {{ stimulus_action('profile-completion-modal', 'close', 'click') }}></button>
+						</div>
+						<div class="modal-body">
+							<p class="mb-3">Bienvenue. Pour partir sur de bonnes bases, prenez une minute pour compléter les informations essentielles de votre profil.</p>
+							<div class="alert alert-warning" role="alert">
+								{{ mandatoryChecklist.completed }}/{{ mandatoryChecklist.total }} informations indispensables complétées.
+							</div>
+							{% if mandatoryChecklist.missingItems is not empty %}
+								<ul class="mb-0 ps-3">
+									{% for item in mandatoryChecklist.missingItems %}
+										<li>{{ item.label }}</li>
+									{% endfor %}
+								</ul>
+							{% endif %}
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-outline-secondary" {{ stimulus_action('profile-completion-modal', 'close', 'click') }}>Plus tard</button>
+							<a href="{{ profileCompletionSettingsUrl }}" class="btn btn-primary">Ouvrir mes paramètres</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-backdrop fade show" {{ stimulus_target('profile-completion-modal', 'backdrop') }}></div>
+		</div>
+	{% endif %}
 </div>{% endblock %}

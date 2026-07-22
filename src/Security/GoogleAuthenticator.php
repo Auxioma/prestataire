@@ -16,6 +16,9 @@ use App\Entity\ClientProfile;
 use App\Entity\PrestataireProfile;
 use App\Entity\User;
 use App\Enum\ClientTypeEnum;
+use App\Repository\PrestataireProfileRepository;
+use App\Service\PrestataireProfileCompletionService;
+use App\Service\UserLoginTracker;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
@@ -39,12 +42,24 @@ class GoogleAuthenticator extends OAuth2Authenticator
     private ClientRegistry $clientRegistry;
     private EntityManagerInterface $entityManager;
     private RouterInterface $router;
+    private UserLoginTracker $userLoginTracker;
+    private PrestataireProfileCompletionService $prestataireProfileCompletionService;
+    private PrestataireProfileRepository $prestataireProfileRepository;
 
-    public function __construct(ClientRegistry $clientRegistry, EntityManagerInterface $entityManager, RouterInterface $router)
-    {
+    public function __construct(
+        ClientRegistry $clientRegistry,
+        EntityManagerInterface $entityManager,
+        RouterInterface $router,
+        UserLoginTracker $userLoginTracker,
+        PrestataireProfileCompletionService $prestataireProfileCompletionService,
+        PrestataireProfileRepository $prestataireProfileRepository,
+    ) {
         $this->clientRegistry = $clientRegistry;
         $this->entityManager = $entityManager;
         $this->router = $router;
+        $this->userLoginTracker = $userLoginTracker;
+        $this->prestataireProfileCompletionService = $prestataireProfileCompletionService;
+        $this->prestataireProfileRepository = $prestataireProfileRepository;
     }
 
     public function supports(Request $request): ?bool
@@ -112,11 +127,45 @@ class GoogleAuthenticator extends OAuth2Authenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        $user = $token->getUser();
+        $redirectParameters = [];
+
+        if ($user instanceof User) {
+            $this->userLoginTracker->trackSuccessfulLogin($user);
+        }
+
+        if (
+            $user instanceof User
+            && \in_array('ROLE_PRESTATAIRE', $user->getRoles(), true)
+            && 1 === (int) ($user->getLoginCount() ?? 0)
+        ) {
+            $prestataireProfile = $this->prestataireProfileRepository->findOneBy([
+                'account' => $user,
+            ]);
+
+            if (null === $prestataireProfile) {
+                if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
+                    return new RedirectResponse($targetPath);
+                }
+
+                return new RedirectResponse($this->router->generate('app_home'));
+            }
+
+            $mandatoryChecklist = $this->prestataireProfileCompletionService->buildMandatoryChecklist(
+                $user,
+                $prestataireProfile
+            );
+
+            if (!$mandatoryChecklist['isComplete']) {
+                $redirectParameters['onboarding'] = 1;
+            }
+        }
+
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->router->generate('app_home'));
+        return new RedirectResponse($this->router->generate('app_home', $redirectParameters));
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response

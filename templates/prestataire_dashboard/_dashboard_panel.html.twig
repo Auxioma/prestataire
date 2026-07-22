@@ -16,6 +16,13 @@
                     <span class="tm-dashboard-priority-band__eyebrow">Priorité</span>
                     <h3>{{ alert.title }}</h3>
                     <p>{{ alert.text }}</p>
+                    {% if alert.items is defined and alert.items is not empty %}
+                        <ul class="mb-0 ps-3">
+                            {% for item in alert.items %}
+                                <li>{{ item }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 </div>
                 <a href="{{ alert.href }}" class="tm-dashboard-priority-band__link">{{ alert.label }}</a>
             </article>
@@ -59,6 +66,7 @@
                     <p class="text-muted small mb-2">Un site web ou un seul réseau social suffit pour la présence publique.</p>
                     <div class="tm-dashboard-widget__chips">
                         <span>{{ completionReport.completedChecks }}/{{ completionReport.totalChecks }} critères</span>
+                        <span>{{ mandatoryChecklist.completed }}/{{ mandatoryChecklist.total }} indispensables</span>
                     </div>
                 </div>
             </div>

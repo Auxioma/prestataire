@@ -431,6 +431,7 @@ final class PrestataireDashboardController extends AbstractController
         }
 
         $completionReport = $this->prestataireProfileCompletionService->buildReport($user, $prestataireProfile);
+        $mandatoryChecklist = $this->prestataireProfileCompletionService->buildMandatoryChecklist($user, $prestataireProfile);
         $currentSubscription = $subscriptionAccessManager->getCurrentUsableSubscription($prestataireProfile);
         $recentQuoteRequests = $quoteRequestRepository->findRecentForPrestataireDashboard($prestataireProfile, 5);
         $recentMessages = $messageRepository->findLatestForPrestataire($prestataireProfile, 5);
@@ -445,13 +446,18 @@ final class PrestataireDashboardController extends AbstractController
             currentSubscription: $currentSubscription,
             remainingCredits: $remainingCredits,
             upcomingAppointments: $upcomingAppointments,
+            mandatoryChecklist: $mandatoryChecklist,
         );
+        $showProfileCompletionModal = 1 === (int) ($user->getLoginCount() ?? 0) && !$mandatoryChecklist['isComplete'];
 
         return [
             'user' => $user,
             'prestataireProfile' => $prestataireProfile,
             'completionReport' => $completionReport,
+            'mandatoryChecklist' => $mandatoryChecklist,
             'priorityAlerts' => $priorityAlerts,
+            'showProfileCompletionModal' => $showProfileCompletionModal,
+            'profileCompletionSettingsUrl' => $this->buildSettingsUrlFromChecklist($mandatoryChecklist),
             'recentQuoteRequests' => $recentQuoteRequests,
             'recentMessages' => $recentMessages,
             'recentReviews' => $recentReviews,
@@ -524,7 +530,14 @@ final class PrestataireDashboardController extends AbstractController
     /**
      * @param list<\App\Entity\PrestataireAppointment> $upcomingAppointments
      *
-     * @return list<array{tone:string,title:string,text:string,href:string,label:string}>
+     * @return list<array{
+     *     tone:string,
+     *     title:string,
+     *     text:string,
+     *     href:string,
+     *     label:string,
+     *     items?:list<string>
+     * }>
      */
     private function buildPriorityAlerts(
         PrestataireProfile $prestataireProfile,
@@ -534,8 +547,31 @@ final class PrestataireDashboardController extends AbstractController
         mixed $currentSubscription,
         int $remainingCredits,
         array $upcomingAppointments,
+        array $mandatoryChecklist,
     ): array {
         $alerts = [];
+
+        if (!$mandatoryChecklist['isComplete']) {
+            $missingLabels = array_map(
+                static fn (array $item): string => $item['label'],
+                array_slice($mandatoryChecklist['missingItems'], 0, 4)
+            );
+
+            $alerts[] = [
+                'tone' => 'warning',
+                'title' => 'Profil à finaliser',
+                'text' => sprintf(
+                    '%d information%s indispensable%s encore manquante%s avant une mise en ligne optimale.',
+                    count($mandatoryChecklist['missingItems']),
+                    count($mandatoryChecklist['missingItems']) > 1 ? 's' : '',
+                    count($mandatoryChecklist['missingItems']) > 1 ? 's' : '',
+                    count($mandatoryChecklist['missingItems']) > 1 ? 's' : ''
+                ),
+                'href' => $this->buildSettingsUrlFromChecklist($mandatoryChecklist),
+                'label' => 'Compléter maintenant',
+                'items' => $missingLabels,
+            ];
+        }
 
         $unreadMessagesCount = $messageRepository->countUnreadIncomingForPrestataire($prestataireProfile, $user);
         if ($unreadMessagesCount > 0) {
@@ -742,5 +778,19 @@ final class PrestataireDashboardController extends AbstractController
             ]),
             'method' => 'POST',
         ]);
+    }
+
+    private function buildSettingsUrlFromChecklist(array $mandatoryChecklist): string
+    {
+        $target = $mandatoryChecklist['missingItems'][0] ?? null;
+        $parameters = [
+            'tab' => $target['tab'] ?? 'profile',
+        ];
+
+        if (isset($target['fragment']) && null !== $target['fragment']) {
+            $parameters['_fragment'] = $target['fragment'];
+        }
+
+        return $this->generateUrl('app_prestataire_settings', $parameters);
     }
 }
