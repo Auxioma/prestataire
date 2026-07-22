@@ -57,6 +57,31 @@ class StripeApiClient
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
+    public function createSetupIntent(
+        PrestataireProfile $prestataireProfile,
+        SubscriptionCustomer $customer,
+    ): array {
+        $stripeCustomerId = trim((string) $customer->getStripeCustomerId());
+        if ('' === $stripeCustomerId) {
+            throw new \InvalidArgumentException('Aucun client Stripe n’est disponible pour créer le SetupIntent.');
+        }
+
+        return $this->request('POST', '/setup_intents', [
+            'customer' => $stripeCustomerId,
+            'usage' => 'off_session',
+            'payment_method_types[0]' => 'card',
+            'metadata[prestataire_profile_id]' => (string) $prestataireProfile->getId(),
+            'metadata[customer_id]' => $stripeCustomerId,
+        ]);
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
     public function createCheckoutSession(
         PrestataireProfile $prestataireProfile,
         SubscriptionPlan $plan,
@@ -120,6 +145,77 @@ class StripeApiClient
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
+    public function retrieveSetupIntent(string $setupIntentId): array
+    {
+        return $this->request('GET', sprintf('/setup_intents/%s', $setupIntentId), [
+            'expand[0]' => 'payment_method',
+            'expand[1]' => 'customer',
+        ]);
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function updateCustomerDefaultPaymentMethod(SubscriptionCustomer $customer, string $paymentMethodId): array
+    {
+        $stripeCustomerId = trim((string) $customer->getStripeCustomerId());
+        if ('' === $stripeCustomerId) {
+            throw new \InvalidArgumentException('Le client Stripe est introuvable.');
+        }
+
+        return $this->request('POST', sprintf('/customers/%s', $stripeCustomerId), [
+            'invoice_settings[default_payment_method]' => $paymentMethodId,
+        ]);
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function createSubscription(
+        PrestataireProfile $prestataireProfile,
+        SubscriptionPlan $plan,
+        SubscriptionBillingPeriodEnum $billingPeriod,
+        SubscriptionCustomer $customer,
+        string $paymentMethodId,
+    ): array {
+        $priceId = $plan->getStripePriceIdForPeriod($billingPeriod);
+        $stripeCustomerId = trim((string) $customer->getStripeCustomerId());
+
+        if (null === $priceId || '' === $stripeCustomerId) {
+            throw new \InvalidArgumentException('Impossible de créer l’abonnement Stripe sans client et prix valides.');
+        }
+
+        return $this->request('POST', '/subscriptions', [
+            'customer' => $stripeCustomerId,
+            'items[0][price]' => $priceId,
+            'default_payment_method' => $paymentMethodId,
+            'collection_method' => 'charge_automatically',
+            'payment_behavior' => 'default_incomplete',
+            'payment_settings[save_default_payment_method]' => 'on_subscription',
+            'metadata[prestataire_profile_id]' => (string) $prestataireProfile->getId(),
+            'metadata[plan_code]' => $plan->getCode(),
+            'metadata[billing_period]' => $billingPeriod->value,
+            'expand[0]' => 'items.data.price',
+            'expand[1]' => 'latest_invoice',
+            'expand[2]' => 'latest_invoice.payment_intent',
+        ]);
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
     public function updateSubscriptionPlan(
         PrestataireSubscription $subscription,
         SubscriptionPlan $plan,
@@ -128,23 +224,31 @@ class StripeApiClient
         $stripeSubscriptionId = $subscription->getStripeSubscriptionId();
         $stripeSubscriptionItemId = $subscription->getStripeSubscriptionItemId();
         $priceId = $plan->getStripePriceIdForPeriod($billingPeriod);
+        $defaultPaymentMethodId = trim((string) $subscription->getCustomer()?->getStripeDefaultPaymentMethodId());
 
         if (null === $stripeSubscriptionId || null === $stripeSubscriptionItemId || null === $priceId) {
             throw new \InvalidArgumentException('Impossible de modifier l’abonnement Stripe sans identifiants complets.');
         }
 
-        return $this->request('POST', sprintf('/subscriptions/%s', $stripeSubscriptionId), [
+        $payload = [
             'items[0][id]' => $stripeSubscriptionItemId,
             'items[0][price]' => $priceId,
             'billing_cycle_anchor' => 'now',
             'proration_behavior' => 'none',
-            'payment_behavior' => 'error_if_incomplete',
+            'payment_behavior' => 'default_incomplete',
             'cancel_at_period_end' => 'false',
             'metadata[plan_code]' => $plan->getCode(),
             'metadata[billing_period]' => $billingPeriod->value,
             'expand[0]' => 'items.data.price',
             'expand[1]' => 'latest_invoice',
-        ]);
+            'expand[2]' => 'latest_invoice.payment_intent',
+        ];
+
+        if ('' !== $defaultPaymentMethodId) {
+            $payload['default_payment_method'] = $defaultPaymentMethodId;
+        }
+
+        return $this->request('POST', sprintf('/subscriptions/%s', $stripeSubscriptionId), $payload);
     }
 
     /**
@@ -159,6 +263,21 @@ class StripeApiClient
         return $this->request('GET', sprintf('/subscriptions/%s', $stripeSubscriptionId), [
             'expand[0]' => 'items.data.price',
             'expand[1]' => 'latest_invoice',
+            'expand[2]' => 'latest_invoice.payment_intent',
+        ]);
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function retrieveInvoice(string $stripeInvoiceId): array
+    {
+        return $this->request('GET', sprintf('/invoices/%s', $stripeInvoiceId), [
+            'expand[0]' => 'payment_intent',
         ]);
     }
 
@@ -198,6 +317,61 @@ class StripeApiClient
         $data = $response['data'] ?? [];
 
         return is_array($data) ? array_values(array_filter($data, 'is_array')) : [];
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     *
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function listCustomerPaymentMethods(string $stripeCustomerId, string $type = 'card', int $limit = 20): array
+    {
+        $response = $this->request('GET', '/payment_methods', [
+            'customer' => $stripeCustomerId,
+            'type' => $type,
+            'limit' => (string) max(1, min(100, $limit)),
+        ]);
+
+        $data = $response['data'] ?? [];
+
+        return is_array($data) ? array_values(array_filter($data, 'is_array')) : [];
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function detachPaymentMethod(string $paymentMethodId): array
+    {
+        return $this->request('POST', sprintf('/payment_methods/%s/detach', $paymentMethodId));
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function payInvoice(string $stripeInvoiceId, ?string $paymentMethodId = null): array
+    {
+        $payload = [
+            'expand[0]' => 'payment_intent',
+        ];
+
+        $paymentMethodId = trim((string) $paymentMethodId);
+        if ('' !== $paymentMethodId) {
+            $payload['payment_method'] = $paymentMethodId;
+        }
+
+        return $this->request('POST', sprintf('/invoices/%s/pay', $stripeInvoiceId), $payload);
     }
 
     /**

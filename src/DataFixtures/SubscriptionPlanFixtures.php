@@ -39,7 +39,7 @@ class SubscriptionPlanFixtures extends BaseFixture
             'annual' => '0.00',
             'monthly_credits' => 0,
             'annual_credits' => 0,
-            'welcome_credits' => 20,
+            'welcome_credits' => 10,
             'quote_responses_enabled' => true,
             'instant_messaging_enabled' => false,
         ],

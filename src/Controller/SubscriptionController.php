@@ -4,14 +4,20 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Enum\SubscriptionBillingPeriodEnum;
+use App\Repository\Subscription\PrestataireSubscriptionRepository;
+use App\Repository\Subscription\SubscriptionInvoiceRepository;
 use App\Repository\Subscription\SubscriptionPlanRepository;
 use App\Service\Subscription\StripeCheckoutSessionSynchronizer;
 use App\Service\Subscription\StripeApiClient;
 use App\Service\Subscription\StripeCustomerManager;
 use App\Service\Subscription\StripeSubscriptionCheckoutManager;
 use App\Service\Subscription\SubscriptionAccessManager;
+use App\Service\Subscription\SubscriptionFallbackManager;
 use App\Service\Subscription\SubscriptionUpgradePolicy;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,9 +31,14 @@ final class SubscriptionController extends AbstractController
     public function index(
         Request $request,
         SubscriptionPlanRepository $subscriptionPlanRepository,
+        PrestataireSubscriptionRepository $prestataireSubscriptionRepository,
+        SubscriptionInvoiceRepository $subscriptionInvoiceRepository,
         SubscriptionAccessManager $subscriptionAccessManager,
+        SubscriptionFallbackManager $subscriptionFallbackManager,
         StripeApiClient $stripeApiClient,
         StripeCheckoutSessionSynchronizer $stripeCheckoutSessionSynchronizer,
+        EntityManagerInterface $entityManager,
+        #[Autowire('%app.stripe.public_key%')] string $stripePublicKey,
     ): Response {
         $prestataireProfile = $this->getPrestataireProfile();
 
@@ -66,10 +77,78 @@ final class SubscriptionController extends AbstractController
             }
         }
 
+        if (null === $currentSubscription) {
+            $latestSubscription = $prestataireSubscriptionRepository->findLatestForPrestataire($prestataireProfile);
+
+            if (null !== $latestSubscription && $subscriptionFallbackManager->shouldFallbackToFree($latestSubscription)) {
+                $currentSubscription = $subscriptionFallbackManager->fallbackToFree(
+                    $prestataireProfile,
+                    $latestSubscription,
+                    'subscription_page_display'
+                );
+                $entityManager->flush();
+            } elseif (null !== $latestSubscription) {
+                $currentSubscription = $subscriptionFallbackManager->ensureFreeSubscription($prestataireProfile);
+                $entityManager->flush();
+            } else {
+                $currentSubscription = $subscriptionFallbackManager->ensureFreeSubscription($prestataireProfile);
+                $entityManager->flush();
+            }
+        }
+
+        $subscriptionRenewalDate = null;
+        if (null !== $currentSubscription) {
+            $subscriptionRenewalDate = $currentSubscription->getCurrentPeriodEnd();
+
+            if (!$subscriptionRenewalDate instanceof \DateTimeImmutable) {
+                $latestSettledInvoice = $subscriptionInvoiceRepository->findLatestSettledForSubscription($currentSubscription);
+                $subscriptionRenewalDate = $latestSettledInvoice?->getPeriodEnd();
+            }
+        }
+
         return $this->render('subscription/index.html.twig', [
             'plans' => $subscriptionPlanRepository->findActiveOrdered(),
             'currentSubscription' => $currentSubscription,
+            'subscriptionRenewalDate' => $subscriptionRenewalDate,
             'stripeConfigured' => $stripeApiClient->isConfigured(),
+            'stripePublicKey' => $stripePublicKey,
+        ]);
+    }
+
+    #[Route('/setup-intent', name: 'setup_intent', methods: ['POST'])]
+    public function setupIntent(
+        Request $request,
+        StripeApiClient $stripeApiClient,
+        StripeSubscriptionCheckoutManager $stripeSubscriptionCheckoutManager,
+    ): JsonResponse {
+        if (!$stripeApiClient->isConfigured()) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Stripe n’est pas configuré sur cet environnement.',
+            ], Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+
+        $token = $this->extractRequestValue($request, '_token');
+        if (!$this->isCsrfTokenValid('subscription-setup-intent', $token)) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Jeton CSRF invalide.',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        try {
+            $setupIntent = $stripeSubscriptionCheckoutManager->createEmbeddedSetupIntent($this->getPrestataireProfile());
+        } catch (\Throwable $exception) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Impossible d’initialiser le formulaire Stripe : ' . $exception->getMessage(),
+            ], Response::HTTP_BAD_GATEWAY);
+        }
+
+        return $this->json([
+            'success' => true,
+            'clientSecret' => $setupIntent['clientSecret'],
+            'customerId' => $setupIntent['customerId'],
         ]);
     }
 
@@ -82,65 +161,129 @@ final class SubscriptionController extends AbstractController
         SubscriptionAccessManager $subscriptionAccessManager,
         SubscriptionUpgradePolicy $subscriptionUpgradePolicy,
         StripeApiClient $stripeApiClient,
+        StripeCheckoutSessionSynchronizer $stripeCheckoutSessionSynchronizer,
         StripeSubscriptionCheckoutManager $stripeSubscriptionCheckoutManager,
-    ): RedirectResponse {
+    ): JsonResponse {
         $prestataireProfile = $this->getPrestataireProfile();
 
         if (!$stripeApiClient->isConfigured()) {
-            $this->addFlash('danger', 'Stripe n’est pas configuré sur cet environnement.');
-
-            return $this->redirectToRoute('app_subscription_index');
+            return $this->json([
+                'success' => false,
+                'message' => 'Stripe n’est pas configuré sur cet environnement.',
+            ], Response::HTTP_SERVICE_UNAVAILABLE);
         }
 
-        if (!$this->isCsrfTokenValid('subscription-checkout-' . $code . '-' . $period, (string) $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException('Jeton CSRF invalide.');
+        $csrfToken = $this->extractRequestValue($request, '_token');
+        if (!$this->isCsrfTokenValid('subscription-checkout-' . $code . '-' . $period, $csrfToken)) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Jeton CSRF invalide.',
+            ], Response::HTTP_FORBIDDEN);
         }
 
         $billingPeriod = SubscriptionBillingPeriodEnum::tryFrom($period);
         if (!$billingPeriod instanceof SubscriptionBillingPeriodEnum) {
-            throw $this->createNotFoundException('Période de facturation invalide.');
+            return $this->json([
+                'success' => false,
+                'message' => 'Période de facturation invalide.',
+            ], Response::HTTP_NOT_FOUND);
         }
 
         $plan = $subscriptionPlanRepository->findOneActiveByCode($code);
         if (null === $plan || !$plan->supportsBillingPeriod($billingPeriod)) {
-            throw $this->createNotFoundException('Abonnement introuvable.');
+            return $this->json([
+                'success' => false,
+                'message' => 'Abonnement introuvable.',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        try {
+            $stripeCheckoutSessionSynchronizer->syncLatestSubscriptionForPrestataire($prestataireProfile);
+        } catch (\Throwable) {
         }
 
         $currentSubscription = $subscriptionAccessManager->getCurrentUsableSubscription($prestataireProfile);
         try {
             $subscriptionUpgradePolicy->assertCanPurchasePlan($currentSubscription, $plan, $billingPeriod);
         } catch (\DomainException $exception) {
-            $this->addFlash('warning', $exception->getMessage());
-
-            return $this->redirectToRoute('app_subscription_index');
+            return $this->json([
+                'success' => false,
+                'message' => $exception->getMessage(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if ($stripeSubscriptionCheckoutManager->isManagedStripeSubscription($currentSubscription) && null !== $currentSubscription?->getPlan()) {
-            try {
-                $stripeSubscriptionCheckoutManager->requestUpgrade($currentSubscription, $plan, $billingPeriod);
-                $this->addFlash('success', 'La montée en gamme a été demandée à Stripe. Le nouveau cycle et sa facturation immédiate ont été transmis.');
-            } catch (\Throwable $exception) {
-                $this->addFlash('danger', 'Impossible de mettre à jour l’abonnement Stripe : ' . $exception->getMessage());
-            }
-
-            return $this->redirectToRoute('app_subscription_index');
+        $setupIntentId = trim($this->extractRequestValue($request, 'setupIntentId'));
+        if ('' === $setupIntentId) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Le moyen de paiement Stripe n’a pas été confirmé.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         try {
-            $checkoutUrl = $stripeSubscriptionCheckoutManager->startSubscriptionCheckout(
-                $prestataireProfile,
-                $plan,
-                $billingPeriod,
-                $this->generateUrl('app_subscription_index', [], UrlGeneratorInterface::ABSOLUTE_URL) . '?checkout=success&session_id={CHECKOUT_SESSION_ID}',
-                $this->generateUrl('app_subscription_index', [], UrlGeneratorInterface::ABSOLUTE_URL) . '?checkout=cancel',
-            );
+            if ($stripeSubscriptionCheckoutManager->isManagedStripeSubscription($currentSubscription) && null !== $currentSubscription?->getPlan()) {
+                $stripeSubscriptionCheckoutManager->applySetupIntentPaymentMethod($prestataireProfile, $setupIntentId);
+                $result = $stripeSubscriptionCheckoutManager->requestUpgrade($currentSubscription, $plan, $billingPeriod);
+            } else {
+                $result = $stripeSubscriptionCheckoutManager->createSubscriptionFromSetupIntent(
+                    $prestataireProfile,
+                    $plan,
+                    $billingPeriod,
+                    $setupIntentId,
+                );
+            }
         } catch (\Throwable $exception) {
-            $this->addFlash('danger', 'Impossible de créer la session Stripe : ' . $exception->getMessage());
-
-            return $this->redirectToRoute('app_subscription_index');
+            return $this->json([
+                'success' => false,
+                'message' => 'Impossible de créer ou mettre à jour l’abonnement Stripe : ' . $exception->getMessage(),
+            ], Response::HTTP_BAD_GATEWAY);
         }
 
-        return $this->redirect($checkoutUrl);
+        return $this->json([
+            'success' => true,
+            'requiresAction' => (bool) ($result['requiresAction'] ?? false),
+            'paymentIntentClientSecret' => $result['paymentIntentClientSecret'] ?? null,
+            'paymentIntentStatus' => $result['paymentIntentStatus'] ?? null,
+            'stripeSubscriptionId' => $result['stripeSubscriptionId'] ?? null,
+            'message' => $result['message'] ?? 'L’abonnement a été transmis à Stripe.',
+            'redirectUrl' => $this->generateUrl('app_subscription_index'),
+        ]);
+    }
+
+    #[Route('/finalize', name: 'finalize', methods: ['POST'])]
+    public function finalize(
+        Request $request,
+        StripeApiClient $stripeApiClient,
+        StripeCheckoutSessionSynchronizer $stripeCheckoutSessionSynchronizer,
+    ): JsonResponse {
+        if (!$stripeApiClient->isConfigured()) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Stripe n’est pas configuré sur cet environnement.',
+            ], Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+
+        $prestataireProfile = $this->getPrestataireProfile();
+
+        $stripeSubscriptionId = $this->extractRequestValue($request, 'stripeSubscriptionId');
+
+        try {
+            if ('' !== $stripeSubscriptionId) {
+                $stripeCheckoutSessionSynchronizer->syncSubscriptionForPrestataire($stripeSubscriptionId, $prestataireProfile);
+            } else {
+                $stripeCheckoutSessionSynchronizer->syncLatestSubscriptionForPrestataire($prestataireProfile);
+            }
+        } catch (\Throwable $exception) {
+            return $this->json([
+                'success' => false,
+                'message' => 'La synchronisation finale avec Stripe a échoué : ' . $exception->getMessage(),
+            ], Response::HTTP_BAD_GATEWAY);
+        }
+
+        return $this->json([
+            'success' => true,
+            'redirectUrl' => $this->generateUrl('app_subscription_index'),
+        ]);
     }
 
     #[Route('/portal', name: 'portal', methods: ['GET', 'POST'])]
@@ -193,5 +336,27 @@ final class SubscriptionController extends AbstractController
         }
 
         return $user->getPrestataireProfile();
+    }
+
+    private function extractRequestValue(Request $request, string $key): string
+    {
+        $formValue = $request->request->get($key);
+        if (\is_scalar($formValue)) {
+            return trim((string) $formValue);
+        }
+
+        if ('' === trim((string) $request->getContent())) {
+            return '';
+        }
+
+        try {
+            $payload = $request->toArray();
+        } catch (\Throwable) {
+            return '';
+        }
+
+        $value = $payload[$key] ?? null;
+
+        return \is_scalar($value) ? trim((string) $value) : '';
     }
 }

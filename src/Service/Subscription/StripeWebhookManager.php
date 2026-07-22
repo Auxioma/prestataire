@@ -122,21 +122,21 @@ final class StripeWebhookManager
     /**
      * @param array<string, mixed> $payload
      */
-    private function syncSubscriptionFromStripePayload(array $payload): void
+    private function syncSubscriptionFromStripePayload(array $payload): ?PrestataireSubscription
     {
         $stripeSubscriptionId = (string) ($payload['id'] ?? '');
         if ('' === $stripeSubscriptionId) {
-            return;
+            return null;
         }
 
         $customer = $this->resolveCustomerFromStripePayload($payload);
         if (!$customer instanceof SubscriptionCustomer) {
-            return;
+            return null;
         }
 
         $prestataireProfile = $customer->getPrestataireProfile();
         if (!$prestataireProfile instanceof PrestataireProfile) {
-            return;
+            return null;
         }
 
         $subscription = $this->prestataireSubscriptionRepository->findOneByStripeSubscriptionId($stripeSubscriptionId)
@@ -151,6 +151,7 @@ final class StripeWebhookManager
         $stripeItemId = is_array($item) ? (string) ($item['id'] ?? '') : '';
         $plan = '' !== $priceId ? $this->subscriptionPlanRepository->findOneByStripePriceId($priceId) : null;
         $planPrice = '' !== $priceId ? $this->subscriptionPlanPriceRepository->findOneByStripePriceId($priceId) : null;
+        [$currentPeriodStart, $currentPeriodEnd] = $this->resolveSubscriptionPeriodBounds($payload);
 
         $subscription
             ->setPrestataireProfile($prestataireProfile)
@@ -163,8 +164,8 @@ final class StripeWebhookManager
             ->setStatus($this->mapStripeSubscriptionStatus((string) ($payload['status'] ?? 'incomplete')))
             ->setBillingPeriod($this->resolveBillingPeriodFromPayload($payload))
             ->setStartedAt($this->createDateTimeFromTimestamp($payload['start_date'] ?? null))
-            ->setCurrentPeriodStart($this->createDateTimeFromTimestamp($payload['current_period_start'] ?? null))
-            ->setCurrentPeriodEnd($this->createDateTimeFromTimestamp($payload['current_period_end'] ?? null))
+            ->setCurrentPeriodStart($currentPeriodStart)
+            ->setCurrentPeriodEnd($currentPeriodEnd)
             ->setTrialStartsAt($this->createDateTimeFromTimestamp($payload['trial_start'] ?? null))
             ->setTrialEndsAt($this->createDateTimeFromTimestamp($payload['trial_end'] ?? null))
             ->setCancelAtPeriodEnd((bool) ($payload['cancel_at_period_end'] ?? false))
@@ -198,6 +199,8 @@ final class StripeWebhookManager
         }
 
         $this->entityManager->persist($subscription);
+
+        return $subscription;
     }
 
     /**
@@ -216,8 +219,7 @@ final class StripeWebhookManager
             $subscription = $this->prestataireSubscriptionRepository->findOneByStripeSubscriptionId($stripeSubscriptionId);
             if (!$subscription instanceof PrestataireSubscription) {
                 $remoteSubscription = $this->stripeApiClient->retrieveSubscription($stripeSubscriptionId);
-                $this->syncSubscriptionFromStripePayload($remoteSubscription);
-                $subscription = $this->prestataireSubscriptionRepository->findOneByStripeSubscriptionId($stripeSubscriptionId);
+                $subscription = $this->syncSubscriptionFromStripePayload($remoteSubscription);
             }
         }
 
@@ -413,6 +415,108 @@ final class StripeWebhookManager
         }
 
         return number_format(((int) $amount) / 100, 2, '.', '');
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     *
+     * @return array{0: ?\DateTimeImmutable, 1: ?\DateTimeImmutable}
+     */
+    private function resolveSubscriptionPeriodBounds(array $payload): array
+    {
+        $currentPeriodStart = $this->createDateTimeFromTimestamp($payload['current_period_start'] ?? null);
+        $currentPeriodEnd = $this->createDateTimeFromTimestamp($payload['current_period_end'] ?? null);
+
+        if ($currentPeriodStart instanceof \DateTimeImmutable && $currentPeriodEnd instanceof \DateTimeImmutable) {
+            return [$currentPeriodStart, $currentPeriodEnd];
+        }
+
+        $latestInvoice = $payload['latest_invoice'] ?? null;
+        if (!is_array($latestInvoice)) {
+            return [$currentPeriodStart, $currentPeriodEnd];
+        }
+
+        $invoiceCreatedAt = $this->createDateTimeFromTimestamp($latestInvoice['created'] ?? null);
+        $invoicePeriodStart = $this->createDateTimeFromTimestamp($latestInvoice['period_start'] ?? null);
+        $invoicePeriodEnd = $this->createDateTimeFromTimestamp($latestInvoice['period_end'] ?? null);
+        [$linePeriodStart, $linePeriodEnd] = $this->extractInvoiceLinePeriodBounds($latestInvoice);
+
+        if ($this->isValidSubscriptionPeriod($linePeriodStart, $linePeriodEnd)) {
+            return [
+                $currentPeriodStart ?? $linePeriodStart,
+                $currentPeriodEnd ?? $linePeriodEnd,
+            ];
+        }
+
+        if (
+            $this->isValidSubscriptionPeriod($invoicePeriodStart, $invoicePeriodEnd)
+            && !$this->looksLikeImmediateInvoiceSnapshot($invoiceCreatedAt, $invoicePeriodStart, $invoicePeriodEnd)
+        ) {
+            return [
+                $currentPeriodStart ?? $invoicePeriodStart,
+                $currentPeriodEnd ?? $invoicePeriodEnd,
+            ];
+        }
+
+        if ($this->isValidSubscriptionPeriod($invoicePeriodStart, $invoicePeriodEnd)) {
+            return [
+                $currentPeriodStart ?? $invoicePeriodStart,
+                $currentPeriodEnd ?? $invoicePeriodEnd,
+            ];
+        }
+
+        return [
+            $currentPeriodStart ?? $linePeriodStart ?? $invoicePeriodStart,
+            $currentPeriodEnd ?? $linePeriodEnd ?? $invoicePeriodEnd,
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $latestInvoice
+     *
+     * @return array{0: ?\DateTimeImmutable, 1: ?\DateTimeImmutable}
+     */
+    private function extractInvoiceLinePeriodBounds(array $latestInvoice): array
+    {
+        $firstLine = $latestInvoice['lines']['data'][0] ?? null;
+        if (!is_array($firstLine) || !is_array($firstLine['period'] ?? null)) {
+            return [null, null];
+        }
+
+        return [
+            $this->createDateTimeFromTimestamp($firstLine['period']['start'] ?? null),
+            $this->createDateTimeFromTimestamp($firstLine['period']['end'] ?? null),
+        ];
+    }
+
+    private function isValidSubscriptionPeriod(
+        ?\DateTimeImmutable $periodStart,
+        ?\DateTimeImmutable $periodEnd,
+    ): bool {
+        return $periodStart instanceof \DateTimeImmutable
+            && $periodEnd instanceof \DateTimeImmutable
+            && $periodEnd > $periodStart;
+    }
+
+    private function looksLikeImmediateInvoiceSnapshot(
+        ?\DateTimeImmutable $invoiceCreatedAt,
+        ?\DateTimeImmutable $periodStart,
+        ?\DateTimeImmutable $periodEnd,
+    ): bool {
+        if (
+            !$invoiceCreatedAt instanceof \DateTimeImmutable
+            || !$periodStart instanceof \DateTimeImmutable
+            || !$periodEnd instanceof \DateTimeImmutable
+        ) {
+            return false;
+        }
+
+        $createdTimestamp = $invoiceCreatedAt->getTimestamp();
+        $startTimestamp = $periodStart->getTimestamp();
+        $endTimestamp = $periodEnd->getTimestamp();
+
+        return abs($startTimestamp - $createdTimestamp) <= 300
+            && abs($endTimestamp - $createdTimestamp) <= 300;
     }
 
     /**

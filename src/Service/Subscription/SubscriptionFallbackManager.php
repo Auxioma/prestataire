@@ -149,4 +149,48 @@ final class SubscriptionFallbackManager
 
         return $freeSubscription;
     }
+
+    public function ensureFreeSubscription(PrestataireProfile $prestataireProfile): PrestataireSubscription
+    {
+        $now = new \DateTimeImmutable();
+        $existingUsable = $this->prestataireSubscriptionRepository->findCurrentUsableForPrestataire($prestataireProfile, $now);
+
+        if ($existingUsable instanceof PrestataireSubscription && self::FREE_PLAN_CODE === $existingUsable->getPlan()?->getCode()) {
+            return $existingUsable;
+        }
+
+        $freePlan = $this->subscriptionPlanRepository->findOneActiveByCode(self::FREE_PLAN_CODE);
+        if (null === $freePlan) {
+            throw new \RuntimeException(sprintf('Le plan gratuit "%s" est introuvable.', self::FREE_PLAN_CODE));
+        }
+
+        $freeSubscription = $this->prestataireSubscriptionRepository
+            ->findLatestForPrestataireAndPlanCode($prestataireProfile, self::FREE_PLAN_CODE)
+            ?? new PrestataireSubscription();
+
+        $freeSubscription
+            ->setPrestataireProfile($prestataireProfile)
+            ->setPlan($freePlan)
+            ->setPlanPrice($freePlan->getCurrentPriceForPeriod(SubscriptionBillingPeriodEnum::MONTHLY))
+            ->setBillingPeriod(SubscriptionBillingPeriodEnum::MONTHLY)
+            ->setStatus(SubscriptionStatusEnum::ACTIVE)
+            ->setStartedAt($freeSubscription->getStartedAt() ?? $now)
+            ->setCurrentPeriodStart($now)
+            ->setCurrentPeriodEnd(null)
+            ->setCancelAtPeriodEnd(false)
+            ->setCancellationRequestedAt(null)
+            ->setCanceledAt(null)
+            ->setEndedAt(null)
+            ->setUpdatedAt($now);
+
+        if (null === $freeSubscription->getId()) {
+            $freeSubscription
+                ->setCreditsGrantedCurrentPeriod(0)
+                ->setCreditsConsumedCurrentPeriod(0);
+        }
+
+        $this->entityManager->persist($freeSubscription);
+
+        return $freeSubscription;
+    }
 }

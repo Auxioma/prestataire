@@ -57,6 +57,7 @@ class PrestataireSubscriptionRepository extends ServiceEntityRepository
             ->addSelect('plan')
             ->leftJoin('ps.planPrice', 'planPrice')
             ->addSelect('planPrice')
+            ->addSelect('CASE WHEN ps.currentPeriodEnd IS NULL THEN 1 ELSE 0 END AS HIDDEN currentPeriodEndNullRank')
             ->andWhere('ps.prestataireProfile = :prestataireProfile')
             ->andWhere('ps.status IN (:statuses)')
             ->andWhere('ps.endedAt IS NULL OR ps.endedAt > :at')
@@ -67,7 +68,8 @@ class PrestataireSubscriptionRepository extends ServiceEntityRepository
                 SubscriptionStatusEnum::ACTIVE,
             ])
             ->setParameter('at', $at)
-            ->orderBy('ps.currentPeriodEnd', 'DESC')
+            ->orderBy('currentPeriodEndNullRank', 'ASC')
+            ->addOrderBy('ps.currentPeriodEnd', 'DESC')
             ->addOrderBy('ps.createdAt', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
@@ -93,6 +95,7 @@ class PrestataireSubscriptionRepository extends ServiceEntityRepository
             ->addSelect('plan')
             ->leftJoin('ps.planPrice', 'planPrice')
             ->addSelect('planPrice')
+            ->addSelect('CASE WHEN ps.currentPeriodEnd IS NULL THEN 1 ELSE 0 END AS HIDDEN currentPeriodEndNullRank')
             ->andWhere('ps.prestataireProfile = :prestataireProfile')
             ->andWhere('ps.status IN (:statuses)')
             ->andWhere('ps.endedAt IS NULL OR ps.endedAt > :at')
@@ -103,7 +106,8 @@ class PrestataireSubscriptionRepository extends ServiceEntityRepository
                 SubscriptionStatusEnum::ACTIVE,
             ])
             ->setParameter('at', $at)
-            ->orderBy('ps.currentPeriodEnd', 'DESC')
+            ->orderBy('currentPeriodEndNullRank', 'ASC')
+            ->addOrderBy('ps.currentPeriodEnd', 'DESC')
             ->addOrderBy('ps.createdAt', 'DESC')
             ->getQuery()
             ->getResult();

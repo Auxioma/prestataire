@@ -24,6 +24,21 @@ class SubscriptionInvoiceRepository extends ServiceEntityRepository
         return $this->findOneBy(['stripeInvoiceId' => $stripeInvoiceId]);
     }
 
+    public function findLatestSettledForSubscription(PrestataireSubscription $subscription): ?SubscriptionInvoice
+    {
+        return $this->createQueryBuilder('si')
+            ->andWhere('si.subscription = :subscription')
+            ->andWhere('si.status = :status')
+            ->setParameter('subscription', $subscription)
+            ->setParameter('status', SubscriptionInvoiceStatusEnum::PAID)
+            ->orderBy('si.periodEnd', 'DESC')
+            ->addOrderBy('si.paidAt', 'DESC')
+            ->addOrderBy('si.createdAt', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     /**
      * @return list<SubscriptionInvoice>
      */

@@ -56,4 +56,22 @@ final class StripeCustomerManager
     {
         return $this->stripeReferenceHelper->isManagedCustomer($customer);
     }
+
+    public function syncDefaultPaymentMethod(
+        SubscriptionCustomer $customer,
+        ?string $paymentMethodId,
+        ?string $paymentMethodType,
+        bool $flush = true,
+    ): void {
+        $customer
+            ->setStripeDefaultPaymentMethodId($paymentMethodId)
+            ->setDefaultPaymentMethodType($paymentMethodType)
+            ->setUpdatedAt(new \DateTimeImmutable());
+
+        $this->entityManager->persist($customer);
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
+    }
 }

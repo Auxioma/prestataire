@@ -2,6 +2,13 @@
 
 {% block title %}Abonnements prestataire - TrouveMoi{% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    {% if stripeConfigured and stripePublicKey %}
+        <script src="https://js.stripe.com/v3/"></script>
+    {% endif %}
+{% endblock %}
+
 {% block body %}
     <div class="container py-5">
         <div class="row justify-content-center">
@@ -20,7 +27,7 @@
                         <span class="text-uppercase text-primary fw-bold small d-block mb-2">Facturation Stripe</span>
                         <h1 class="h2 fw-bold mb-2">Mes abonnements</h1>
                         <p class="text-muted mb-0">
-                            Répondez aux demandes de devis et utilisez la messagerie instantanée avec un abonnement actif.
+                            Enregistrez votre carte dans l’application puis activez un abonnement récurrent sans passer par Stripe Checkout.
                         </p>
                     </div>
 
@@ -33,13 +40,16 @@
                                     {{ currentSubscription.plan ? currentSubscription.plan.name : 'Plan actif' }}
                                     ·
                                     {{ currentSubscription.billingPeriod.label }}
+                                    {% if currentSubscription.status is defined %}
+                                        · {{ currentSubscription.status.label }}
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                     {% endif %}
                 </div>
 
-                {% if not stripeConfigured %}
+                {% if not stripeConfigured or not stripePublicKey %}
                     <div class="alert alert-warning" role="alert">
                         Stripe n’est pas configuré sur cet environnement. Les abonnements ne peuvent pas être souscrits tant que les clés ne sont pas renseignées.
                     </div>
@@ -51,88 +61,148 @@
                             Votre abonnement actuel est
                             <strong>{{ currentSubscription.plan ? currentSubscription.plan.name : 'actif' }}</strong>
                             jusqu’au
-                            <strong>{{ currentSubscription.currentPeriodEnd ? currentSubscription.currentPeriodEnd|date('d/m/Y') : 'renouvellement en cours' }}</strong>.
+                            <strong>{{ subscriptionRenewalDate ? subscriptionRenewalDate|date('d/m/Y') : 'renouvellement en cours' }}</strong>.
                         </div>
-                        <a href="{{ path('app_subscription_portal') }}" class="btn btn-outline-primary">
+                        {# <a href="{{ path('app_subscription_portal') }}" class="btn btn-outline-primary">
                             Gérer mon abonnement Stripe
-                        </a>
+                        </a> #}
                     </div>
                 {% endif %}
 
-                <div class="row g-4">
-                    {% for plan in plans %}
-                        <div class="col-12 col-md-6 col-xl-4">
-                            <article class="card border-0 shadow-sm h-100">
-                                <div class="card-body d-flex flex-column">
-                                    <h2 class="h4 fw-bold mb-2">{{ plan.name }}</h2>
-                                    <p class="text-muted small mb-3">{{ plan.description ?: 'Abonnement Stripe à reconduction tacite pour prestataires.' }}</p>
+                <div
+                    data-controller="subscription-checkout"
+                    data-subscription-checkout-stripe-public-key-value="{{ stripePublicKey }}"
+                    data-subscription-checkout-setup-intent-url-value="{{ path('app_subscription_setup_intent') }}"
+                    data-subscription-checkout-finalize-url-value="{{ path('app_subscription_finalize') }}"
+                    data-subscription-checkout-setup-intent-csrf-token-value="{{ csrf_token('subscription-setup-intent') }}"
+                    data-subscription-checkout-enabled-value="{{ stripeConfigured and stripePublicKey ? 'true' : 'false' }}"
+                    data-subscription-checkout-return-url-value="{{ path('app_subscription_index') }}"
+                >
+                    <div class="row g-4">
+                        {% for plan in plans %}
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <article class="card border-0 shadow-sm h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <h2 class="h4 fw-bold mb-2">{{ plan.name }}</h2>
+                                        <p class="text-muted small mb-3">{{ plan.description ?: 'Abonnement Stripe à reconduction tacite pour prestataires.' }}</p>
 
-                                    <div class="mb-3">
-                                        <div class="fw-semibold">Mensuel</div>
-                                        <div class="fs-4 fw-bold">{{ plan.monthlyAmount ?: '—' }} €</div>
-                                        <div class="small text-muted">{{ plan.monthlyCredits }} crédit{{ plan.monthlyCredits > 1 ? 's' : '' }}</div>
+                                        <div class="mb-3">
+                                            <div class="fw-semibold">Mensuel</div>
+                                            <div class="fs-4 fw-bold">{{ plan.monthlyAmount ?: '—' }} €</div>
+                                            <div class="small text-muted">{{ plan.monthlyCredits }} crédit{{ plan.monthlyCredits > 1 ? 's' : '' }}</div>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <div class="fw-semibold">Annuel</div>
+                                            <div class="fs-4 fw-bold">{{ plan.annualAmount ?: '—' }} €</div>
+                                            <div class="small text-muted">{{ plan.annualCredits }} crédit{{ plan.annualCredits > 1 ? 's' : '' }}</div>
+                                        </div>
+
+                                        <ul class="list-unstyled small text-muted mb-4">
+                                            <li class="mb-2">
+                                                {{ plan.quoteResponsesEnabled ? 'Réponse aux devis incluse' : 'Réponse aux devis désactivée' }}
+                                            </li>
+                                            <li>
+                                                {{ plan.instantMessagingEnabled ? 'Messagerie instantanée incluse' : 'Messagerie instantanée désactivée' }}
+                                            </li>
+                                        </ul>
+
+                                        <div class="mt-auto d-grid gap-2">
+                                            <button
+                                                type="button"
+                                                class="btn btn-primary w-100"
+                                                data-action="click->subscription-checkout#selectPlan"
+                                                data-subscription-checkout-plan-code-param="{{ plan.code }}"
+                                                data-subscription-checkout-plan-period-param="monthly"
+                                                data-subscription-checkout-plan-name-param="{{ plan.name }}"
+                                                data-subscription-checkout-plan-price-param="{{ plan.monthlyAmount ?: '0.00' }}"
+                                                data-subscription-checkout-plan-label-param="Mensuel"
+                                                data-subscription-checkout-plan-submit-url-param="{{ path('app_subscription_checkout', { code: plan.code, period: 'monthly' }) }}"
+                                                data-subscription-checkout-plan-csrf-token-param="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-monthly') }}"
+                                                {{ not stripeConfigured or not stripePublicKey or not plan.monthlyStripePriceId ? 'disabled' : '' }}
+                                            >
+                                                Choisir le mensuel
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                class="btn btn-outline-primary w-100"
+                                                data-action="click->subscription-checkout#selectPlan"
+                                                data-subscription-checkout-plan-code-param="{{ plan.code }}"
+                                                data-subscription-checkout-plan-period-param="annual"
+                                                data-subscription-checkout-plan-name-param="{{ plan.name }}"
+                                                data-subscription-checkout-plan-price-param="{{ plan.annualAmount ?: '0.00' }}"
+                                                data-subscription-checkout-plan-label-param="Annuel"
+                                                data-subscription-checkout-plan-submit-url-param="{{ path('app_subscription_checkout', { code: plan.code, period: 'annual' }) }}"
+                                                data-subscription-checkout-plan-csrf-token-param="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-annual') }}"
+                                                {{ not stripeConfigured or not stripePublicKey or not plan.annualStripePriceId ? 'disabled' : '' }}
+                                            >
+                                                Choisir l’annuel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                        {% else %}
+                            <div class="col-12">
+                                <div class="alert alert-secondary mb-0" role="alert">
+                                    Aucun plan d’abonnement actif n’est configuré dans l’administration.
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if stripeConfigured and stripePublicKey and plans is not empty %}
+                        <section class="card border-0 shadow-sm mt-4">
+                            <div class="card-body p-4 p-lg-5">
+                                <div class="row g-4 align-items-start">
+                                    <div class="col-12 col-lg-5">
+                                        <span class="badge text-bg-light border mb-3">Paiement intégré</span>
+                                        <h2 class="h4 fw-bold mb-3">Confirmer la carte et l’abonnement</h2>
+                                        <p class="text-muted mb-3">
+                                            La carte sera enregistrée pour les renouvellements automatiques. Seule la carte bancaire est acceptée sur cet écran.
+                                        </p>
+
+                                        <div class="bg-light rounded-4 p-3 border">
+                                            <div class="small text-uppercase text-muted mb-2">Offre sélectionnée</div>
+                                            <div class="fw-semibold" data-subscription-checkout-target="selectionName">Choisissez une formule</div>
+                                            <div class="text-muted small" data-subscription-checkout-target="selectionMeta">
+                                                Sélectionnez d’abord un abonnement mensuel ou annuel dans la liste ci-dessus.
+                                            </div>
+                                        </div>
+                                        <div class="small text-muted mt-3">
+                                            En validant, vous autorisez la facturation récurrente Stripe jusqu’à résiliation depuis le portail client.
+                                        </div>
                                     </div>
 
-                                    <div class="mb-4">
-                                        <div class="fw-semibold">Annuel</div>
-                                        <div class="fs-4 fw-bold">{{ plan.annualAmount ?: '—' }} €</div>
-                                        <div class="small text-muted">{{ plan.annualCredits }} crédit{{ plan.annualCredits > 1 ? 's' : '' }}</div>
-                                    </div>
+                                    <div class="col-12 col-lg-7">
+                                        <div class="alert alert-danger d-none" data-subscription-checkout-target="errorBox"></div>
+                                        <div class="alert alert-success d-none" data-subscription-checkout-target="successBox"></div>
 
-                                    <ul class="list-unstyled small text-muted mb-4">
-                                        <li class="mb-2">
-                                            {{ plan.quoteResponsesEnabled ? 'Réponse aux devis incluse' : 'Réponse aux devis désactivée' }}
-                                        </li>
-                                        <li>
-                                            {{ plan.instantMessagingEnabled ? 'Messagerie instantanée incluse' : 'Messagerie instantanée désactivée' }}
-                                        </li>
-                                    </ul>
+                                        <div class="border rounded-4 p-3 bg-body-tertiary mb-3">
+                                            <div class="fw-semibold mb-2">Carte bancaire</div>
 
-                                    <div class="mt-auto d-grid gap-2">
-                                        <form
-                                            method="post"
-                                            action="{{ path('app_subscription_checkout', { code: plan.code, period: 'monthly' }) }}"
-                                            data-turbo="false"
-                                            data-controller="confirm-dialog"
-                                            data-action="submit->confirm-dialog#confirm"
-                                            data-confirm-dialog-title-value="Confirmer la souscription mensuelle ?"
-                                            data-confirm-dialog-text-value="En validant, vous autorisez un paiement récurrent de {{ (plan.monthlyAmount ?: '0.00')|e('html_attr') }} € pour le forfait {{ plan.name|e('html_attr') }}. La reconduction est tacite. Vous pourrez annuler vous-même depuis « Gérer mon abonnement Stripe »."
-                                            data-confirm-dialog-confirm-button-text-value="Payer {{ (plan.monthlyAmount ?: '0.00')|e('html_attr') }} € / mois"
-                                            data-confirm-dialog-cancel-button-text-value="Annuler"
+                                            <div data-subscription-checkout-target="paymentElement"></div>
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            class="btn btn-primary btn-lg w-100"
+                                            data-action="click->subscription-checkout#submit"
+                                            data-subscription-checkout-target="submitButton"
+                                            disabled
                                         >
-                                            <input type="hidden" name="_token" value="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-monthly') }}">
-                                            <button type="submit" class="btn btn-primary w-100" {{ not stripeConfigured or not plan.monthlyStripePriceId ? 'disabled' : '' }}>
-                                                Souscrire en mensuel
-                                            </button>
-                                        </form>
+                                            Régler et activer l’abonnement
+                                        </button>
 
-                                        <form
-                                            method="post"
-                                            action="{{ path('app_subscription_checkout', { code: plan.code, period: 'annual' }) }}"
-                                            data-turbo="false"
-                                            data-controller="confirm-dialog"
-                                            data-action="submit->confirm-dialog#confirm"
-                                            data-confirm-dialog-title-value="Confirmer la souscription annuelle ?"
-                                            data-confirm-dialog-text-value="En validant, vous autorisez un paiement récurrent de {{ (plan.annualAmount ?: '0.00')|e('html_attr') }} € par an pour le forfait {{ plan.name|e('html_attr') }}. La reconduction est tacite. Vous pourrez annuler vous-même depuis « Gérer mon abonnement Stripe »."
-                                            data-confirm-dialog-confirm-button-text-value="Payer {{ (plan.annualAmount ?: '0.00')|e('html_attr') }} € / an"
-                                            data-confirm-dialog-cancel-button-text-value="Annuler"
-                                        >
-                                            <input type="hidden" name="_token" value="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-annual') }}">
-                                            <button type="submit" class="btn btn-outline-primary w-100" {{ not stripeConfigured or not plan.annualStripePriceId ? 'disabled' : '' }}>
-                                                Souscrire en annuel
-                                            </button>
-                                        </form>
+                                        <div class="small text-muted mt-3" data-subscription-checkout-target="submitHelp">
+                                            Le bouton sera activé dès qu’une formule est choisie et que le formulaire Stripe est prêt.
+                                        </div>
                                     </div>
                                 </div>
-                            </article>
-                        </div>
-                    {% else %}
-                        <div class="col-12">
-                            <div class="alert alert-secondary mb-0" role="alert">
-                                Aucun plan d’abonnement actif n’est configuré dans l’administration.
                             </div>
-                        </div>
-                    {% endfor %}
+                        </section>
+                    {% endif %}
                 </div>
             </div>
         </div>
