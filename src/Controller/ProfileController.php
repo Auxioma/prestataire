@@ -39,10 +39,14 @@ use App\Service\SireneClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 
 /**
@@ -58,6 +62,8 @@ class ProfileController extends AbstractController
         private readonly PrestataireSettingsFormsFactory $prestataireSettingsFormsFactory,
         private readonly AccountSecurityManager $accountSecurityManager,
         private readonly PrestataireSearchIndexer $prestataireSearchIndexer,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly RequestStack $requestStack,
     ) {
     }
 
@@ -490,9 +496,28 @@ class ProfileController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        $this->addFlash('success', 'Votre compte a bien été désinscrit.');
+        $this->tokenStorage->setToken(null);
 
-        return $this->redirectToRoute('app_logout');
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request?->hasSession()) {
+            $request->getSession()->invalidate();
+        }
+
+        $response = new RedirectResponse($this->generateUrl('app_home'));
+        $response->headers->clearCookie('REMEMBERME', '/');
+
+        if (\function_exists('session_name')) {
+            $sessionCookieName = session_name();
+            if (\is_string($sessionCookieName) && '' !== $sessionCookieName) {
+                $response->headers->clearCookie($sessionCookieName, '/');
+            }
+        }
+
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', 'Thu, 01 Jan 1970 00:00:00 GMT');
+
+        return $response;
     }
 
     private function resolveActiveTab(
