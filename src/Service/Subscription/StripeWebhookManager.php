@@ -83,9 +83,28 @@ final class StripeWebhookManager
     /**
      * @param array<string, mixed> $payload
      */
-    public function syncInvoicePayload(string $eventType, array $payload, bool $flush = true): void
+    public function syncSubscriptionPayloadAndReturn(array $payload, bool $flush = true): ?PrestataireSubscription
     {
-        $this->syncInvoiceFromStripePayload($eventType, $payload);
+        $subscription = $this->syncSubscriptionFromStripePayload($payload);
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
+
+        return $subscription;
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     */
+    public function syncInvoicePayload(
+        string $eventType,
+        array $payload,
+        bool $flush = true,
+        ?PrestataireSubscription $fallbackSubscription = null,
+    ): void
+    {
+        $this->syncInvoiceFromStripePayload($eventType, $payload, $fallbackSubscription);
 
         if ($flush) {
             $this->entityManager->flush();
@@ -206,14 +225,18 @@ final class StripeWebhookManager
     /**
      * @param array<string, mixed> $payload
      */
-    private function syncInvoiceFromStripePayload(string $eventType, array $payload): void
+    private function syncInvoiceFromStripePayload(
+        string $eventType,
+        array $payload,
+        ?PrestataireSubscription $fallbackSubscription = null,
+    ): void
     {
         $stripeInvoiceId = (string) ($payload['id'] ?? '');
         if ('' === $stripeInvoiceId) {
             return;
         }
 
-        $subscription = null;
+        $subscription = $fallbackSubscription;
         $stripeSubscriptionId = $this->stripeReferenceHelper->extractExpandableId($payload['subscription'] ?? null);
         if ('' !== $stripeSubscriptionId) {
             $subscription = $this->prestataireSubscriptionRepository->findOneByStripeSubscriptionId($stripeSubscriptionId);
@@ -540,7 +563,7 @@ final class StripeWebhookManager
                 default => 'invoice.created',
             };
 
-            $this->syncInvoiceFromStripePayload($eventType, $latestInvoice);
+            $this->syncInvoiceFromStripePayload($eventType, $latestInvoice, $this->prestataireSubscriptionRepository->findOneByStripeSubscriptionId($stripeSubscriptionId));
         }
     }
 

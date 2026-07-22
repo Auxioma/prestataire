@@ -106,10 +106,13 @@ final class SubscriptionController extends AbstractController
             }
         }
 
+        $recentInvoices = $subscriptionInvoiceRepository->findRecentForPrestataire($prestataireProfile);
+
         return $this->render('subscription/index.html.twig', [
             'plans' => $subscriptionPlanRepository->findActiveOrdered(),
             'currentSubscription' => $currentSubscription,
             'subscriptionRenewalDate' => $subscriptionRenewalDate,
+            'recentInvoices' => $recentInvoices,
             'stripeConfigured' => $stripeApiClient->isConfigured(),
             'stripePublicKey' => $stripePublicKey,
         ]);

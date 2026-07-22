@@ -12,7 +12,7 @@
 {% block body %}
     <div class="container py-5">
         <div class="row justify-content-center">
-            <div class="col-12 col-xl-10">
+            <div class="col-12 col-xl-11">
                 {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
                     {% for message in messages %}
                         <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show mb-4" role="alert">
@@ -27,24 +27,15 @@
                         <span class="text-uppercase text-primary fw-bold small d-block mb-2">Facturation Stripe</span>
                         <h1 class="h2 fw-bold mb-2">Mes abonnements</h1>
                         <p class="text-muted mb-0">
-                            Enregistrez votre carte dans l’application puis activez un abonnement récurrent sans passer par Stripe Checkout.
+                            Gérez votre abonnement, votre moyen de paiement et vos factures directement depuis l’espace prestataire, sans passer par Stripe Checkout.
                         </p>
                     </div>
 
                     {% if currentSubscription %}
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body">
-                                <div class="small text-muted">Crédits restants</div>
-                                <div class="display-6 fw-bold mb-1">{{ currentSubscription.remainingCredits }}</div>
-                                <div class="small text-muted">
-                                    {{ currentSubscription.plan ? currentSubscription.plan.name : 'Plan actif' }}
-                                    ·
-                                    {{ currentSubscription.billingPeriod.label }}
-                                    {% if currentSubscription.status is defined %}
-                                        · {{ currentSubscription.status.label }}
-                                    {% endif %}
-                                </div>
-                            </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a href="{{ path('app_subscription_portal') }}" class="btn btn-outline-primary">
+                                Moyens de paiement
+                            </a>
                         </div>
                     {% endif %}
                 </div>
@@ -56,17 +47,71 @@
                 {% endif %}
 
                 {% if currentSubscription %}
-                    <div class="alert alert-info d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" role="alert">
-                        <div>
-                            Votre abonnement actuel est
-                            <strong>{{ currentSubscription.plan ? currentSubscription.plan.name : 'actif' }}</strong>
-                            jusqu’au
-                            <strong>{{ subscriptionRenewalDate ? subscriptionRenewalDate|date('d/m/Y') : 'renouvellement en cours' }}</strong>.
+                    <section class="card border-0 shadow-sm mb-4 overflow-hidden">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="row g-4 align-items-start">
+                                <div class="col-12 col-lg-7">
+                                    <span class="badge rounded-pill text-bg-primary-subtle text-primary-emphasis border border-primary-subtle mb-3">
+                                        Abonnement actif
+                                    </span>
+                                    <h2 class="h4 fw-bold mb-2">
+                                        {{ currentSubscription.plan ? currentSubscription.plan.name : 'Abonnement actif' }}
+                                    </h2>
+                                    <p class="text-muted mb-4">
+                                        {{ currentSubscription.billingPeriod.label }}
+                                        {% if currentSubscription.status is defined %}
+                                            · {{ currentSubscription.status.label }}
+                                        {% endif %}
+                                        ·
+                                        Renouvellement le
+                                        <strong>{{ subscriptionRenewalDate ? subscriptionRenewalDate|date('d/m/Y') : 'à confirmer' }}</strong>
+                                    </p>
+
+                                    <div class="row g-3">
+                                        <div class="col-12 col-sm-4">
+                                            <div class="rounded-4 border bg-body-tertiary p-3 h-100">
+                                                <div class="small text-uppercase text-muted mb-2">Crédits restants</div>
+                                                <div class="fs-2 fw-bold">{{ currentSubscription.remainingCredits }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-sm-4">
+                                            <div class="rounded-4 border bg-body-tertiary p-3 h-100">
+                                                <div class="small text-uppercase text-muted mb-2">Crédits attribués</div>
+                                                <div class="fs-4 fw-semibold">{{ currentSubscription.creditsGrantedCurrentPeriod }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-sm-4">
+                                            <div class="rounded-4 border bg-body-tertiary p-3 h-100">
+                                                <div class="small text-uppercase text-muted mb-2">Crédits consommés</div>
+                                                <div class="fs-4 fw-semibold">{{ currentSubscription.creditsConsumedCurrentPeriod }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-lg-5">
+                                    <div class="rounded-4 border bg-light p-4 h-100">
+                                        <div class="small text-uppercase text-muted mb-2">Règle de montée en gamme</div>
+                                        <p class="mb-3">
+                                            Vous ne pouvez changer d’abonnement que vers une formule supérieure.
+                                        </p>
+                                        <div class="small text-muted">
+                                            Ordre appliqué :
+                                            <strong>Gratuit</strong>
+                                            <span aria-hidden="true">&lt;</span>
+                                            <strong>Pro mensuel</strong>
+                                            <span aria-hidden="true">&lt;</span>
+                                            <strong>Pro annuel</strong>
+                                            <span aria-hidden="true">&lt;</span>
+                                            <strong>Premium mensuel</strong>
+                                            <span aria-hidden="true">&lt;</span>
+                                            <strong>Premium annuel</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        {# <a href="{{ path('app_subscription_portal') }}" class="btn btn-outline-primary">
-                            Gérer mon abonnement Stripe
-                        </a> #}
-                    </div>
+                    </section>
                 {% endif %}
 
                 <div
@@ -78,82 +123,103 @@
                     data-subscription-checkout-enabled-value="{{ stripeConfigured and stripePublicKey ? 'true' : 'false' }}"
                     data-subscription-checkout-return-url-value="{{ path('app_subscription_index') }}"
                 >
-                    <div class="row g-4">
-                        {% for plan in plans %}
-                            <div class="col-12 col-md-6 col-xl-4">
-                                <article class="card border-0 shadow-sm h-100">
-                                    <div class="card-body d-flex flex-column">
-                                        <h2 class="h4 fw-bold mb-2">{{ plan.name }}</h2>
-                                        <p class="text-muted small mb-3">{{ plan.description ?: 'Abonnement Stripe à reconduction tacite pour prestataires.' }}</p>
-
-                                        <div class="mb-3">
-                                            <div class="fw-semibold">Mensuel</div>
-                                            <div class="fs-4 fw-bold">{{ plan.monthlyAmount ?: '—' }} €</div>
-                                            <div class="small text-muted">{{ plan.monthlyCredits }} crédit{{ plan.monthlyCredits > 1 ? 's' : '' }}</div>
-                                        </div>
-
-                                        <div class="mb-4">
-                                            <div class="fw-semibold">Annuel</div>
-                                            <div class="fs-4 fw-bold">{{ plan.annualAmount ?: '—' }} €</div>
-                                            <div class="small text-muted">{{ plan.annualCredits }} crédit{{ plan.annualCredits > 1 ? 's' : '' }}</div>
-                                        </div>
-
-                                        <ul class="list-unstyled small text-muted mb-4">
-                                            <li class="mb-2">
-                                                {{ plan.quoteResponsesEnabled ? 'Réponse aux devis incluse' : 'Réponse aux devis désactivée' }}
-                                            </li>
-                                            <li>
-                                                {{ plan.instantMessagingEnabled ? 'Messagerie instantanée incluse' : 'Messagerie instantanée désactivée' }}
-                                            </li>
-                                        </ul>
-
-                                        <div class="mt-auto d-grid gap-2">
-                                            <button
-                                                type="button"
-                                                class="btn btn-primary w-100"
-                                                data-action="click->subscription-checkout#selectPlan"
-                                                data-subscription-checkout-plan-code-param="{{ plan.code }}"
-                                                data-subscription-checkout-plan-period-param="monthly"
-                                                data-subscription-checkout-plan-name-param="{{ plan.name }}"
-                                                data-subscription-checkout-plan-price-param="{{ plan.monthlyAmount ?: '0.00' }}"
-                                                data-subscription-checkout-plan-label-param="Mensuel"
-                                                data-subscription-checkout-plan-submit-url-param="{{ path('app_subscription_checkout', { code: plan.code, period: 'monthly' }) }}"
-                                                data-subscription-checkout-plan-csrf-token-param="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-monthly') }}"
-                                                {{ not stripeConfigured or not stripePublicKey or not plan.monthlyStripePriceId ? 'disabled' : '' }}
-                                            >
-                                                Choisir le mensuel
-                                            </button>
-
-                                            <button
-                                                type="button"
-                                                class="btn btn-outline-primary w-100"
-                                                data-action="click->subscription-checkout#selectPlan"
-                                                data-subscription-checkout-plan-code-param="{{ plan.code }}"
-                                                data-subscription-checkout-plan-period-param="annual"
-                                                data-subscription-checkout-plan-name-param="{{ plan.name }}"
-                                                data-subscription-checkout-plan-price-param="{{ plan.annualAmount ?: '0.00' }}"
-                                                data-subscription-checkout-plan-label-param="Annuel"
-                                                data-subscription-checkout-plan-submit-url-param="{{ path('app_subscription_checkout', { code: plan.code, period: 'annual' }) }}"
-                                                data-subscription-checkout-plan-csrf-token-param="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-annual') }}"
-                                                {{ not stripeConfigured or not stripePublicKey or not plan.annualStripePriceId ? 'disabled' : '' }}
-                                            >
-                                                Choisir l’annuel
-                                            </button>
-                                        </div>
-                                    </div>
-                                </article>
-                            </div>
-                        {% else %}
-                            <div class="col-12">
-                                <div class="alert alert-secondary mb-0" role="alert">
-                                    Aucun plan d’abonnement actif n’est configuré dans l’administration.
+                    <section class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
+                                <div>
+                                    <span class="text-uppercase text-primary fw-bold small d-block mb-2">Choix du forfait</span>
+                                    <h2 class="h4 fw-bold mb-2">Monter en gamme</h2>
+                                    <p class="text-muted mb-0">
+                                        Sélectionnez une formule supérieure avant de confirmer la carte bancaire.
+                                    </p>
                                 </div>
                             </div>
-                        {% endfor %}
-                    </div>
+
+                            <div class="row g-4">
+                                {% for plan in plans %}
+                                    <div class="col-12 col-md-6 col-xl-4">
+                                        <article class="card border h-100 bg-body-tertiary">
+                                            <div class="card-body d-flex flex-column p-4">
+                                                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                                                    <div>
+                                                        <h3 class="h5 fw-bold mb-1">{{ plan.name }}</h3>
+                                                        <p class="text-muted small mb-0">{{ plan.description ?: 'Abonnement Stripe à reconduction tacite pour prestataires.' }}</p>
+                                                    </div>
+                                                    {% if currentSubscription and currentSubscription.plan and currentSubscription.plan.code == plan.code %}
+                                                        <span class="badge rounded-pill text-bg-primary">Actuel</span>
+                                                    {% endif %}
+                                                </div>
+
+                                                <div class="rounded-4 bg-white border p-3 mb-3">
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span class="fw-semibold">Mensuel</span>
+                                                        <span class="fs-5 fw-bold">{{ plan.monthlyAmount ?: '—' }} €</span>
+                                                    </div>
+                                                    <div class="small text-muted">{{ plan.monthlyCredits }} crédit{{ plan.monthlyCredits > 1 ? 's' : '' }}</div>
+                                                </div>
+
+                                                <div class="rounded-4 bg-white border p-3 mb-4">
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span class="fw-semibold">Annuel</span>
+                                                        <span class="fs-5 fw-bold">{{ plan.annualAmount ?: '—' }} €</span>
+                                                    </div>
+                                                    <div class="small text-muted">{{ plan.annualCredits }} crédit{{ plan.annualCredits > 1 ? 's' : '' }}</div>
+                                                </div>
+
+                                                <ul class="list-unstyled small text-muted mb-4">
+                                                    <li class="mb-2">{{ plan.quoteResponsesEnabled ? 'Réponse aux devis incluse' : 'Réponse aux devis désactivée' }}</li>
+                                                    <li>{{ plan.instantMessagingEnabled ? 'Messagerie instantanée incluse' : 'Messagerie instantanée désactivée' }}</li>
+                                                </ul>
+
+                                                <div class="mt-auto d-grid gap-2">
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-primary w-100"
+                                                        data-action="click->subscription-checkout#selectPlan"
+                                                        data-subscription-checkout-plan-code-param="{{ plan.code }}"
+                                                        data-subscription-checkout-plan-period-param="monthly"
+                                                        data-subscription-checkout-plan-name-param="{{ plan.name }}"
+                                                        data-subscription-checkout-plan-price-param="{{ plan.monthlyAmount ?: '0.00' }}"
+                                                        data-subscription-checkout-plan-label-param="Mensuel"
+                                                        data-subscription-checkout-plan-submit-url-param="{{ path('app_subscription_checkout', { code: plan.code, period: 'monthly' }) }}"
+                                                        data-subscription-checkout-plan-csrf-token-param="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-monthly') }}"
+                                                        {{ not stripeConfigured or not stripePublicKey or not plan.monthlyStripePriceId ? 'disabled' : '' }}
+                                                    >
+                                                        Choisir le mensuel
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-outline-primary w-100"
+                                                        data-action="click->subscription-checkout#selectPlan"
+                                                        data-subscription-checkout-plan-code-param="{{ plan.code }}"
+                                                        data-subscription-checkout-plan-period-param="annual"
+                                                        data-subscription-checkout-plan-name-param="{{ plan.name }}"
+                                                        data-subscription-checkout-plan-price-param="{{ plan.annualAmount ?: '0.00' }}"
+                                                        data-subscription-checkout-plan-label-param="Annuel"
+                                                        data-subscription-checkout-plan-submit-url-param="{{ path('app_subscription_checkout', { code: plan.code, period: 'annual' }) }}"
+                                                        data-subscription-checkout-plan-csrf-token-param="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-annual') }}"
+                                                        {{ not stripeConfigured or not stripePublicKey or not plan.annualStripePriceId ? 'disabled' : '' }}
+                                                    >
+                                                        Choisir l’annuel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    </div>
+                                {% else %}
+                                    <div class="col-12">
+                                        <div class="alert alert-secondary mb-0" role="alert">
+                                            Aucun plan d’abonnement actif n’est configuré dans l’administration.
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </section>
 
                     {% if stripeConfigured and stripePublicKey and plans is not empty %}
-                        <section class="card border-0 shadow-sm mt-4">
+                        <section class="card border-0 shadow-sm mb-4">
                             <div class="card-body p-4 p-lg-5">
                                 <div class="row g-4 align-items-start">
                                     <div class="col-12 col-lg-5">
@@ -171,7 +237,7 @@
                                             </div>
                                         </div>
                                         <div class="small text-muted mt-3">
-                                            En validant, vous autorisez la facturation récurrente Stripe jusqu’à résiliation depuis le portail client.
+                                            En validant, vous autorisez la facturation récurrente Stripe. Les futures factures resteront accessibles ci-dessous depuis votre espace prestataire.
                                         </div>
                                     </div>
 
@@ -203,6 +269,93 @@
                             </div>
                         </section>
                     {% endif %}
+
+                    <section class="card border-0 shadow-sm">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
+                                <div>
+                                    <span class="text-uppercase text-primary fw-bold small d-block mb-2">Factures d’abonnement</span>
+                                    <h2 class="h4 fw-bold mb-2">Historique de facturation</h2>
+                                    <p class="text-muted mb-0">
+                                        Les factures sont générées par Stripe, mais consultables ici via leurs liens de consultation et de téléchargement.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {% if recentInvoices is not empty %}
+                                <div class="table-responsive">
+                                    <table class="table align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Facture</th>
+                                                <th>Plan</th>
+                                                <th>Statut</th>
+                                                <th>Période</th>
+                                                <th class="text-end">Montant</th>
+                                                <th class="text-end">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for invoice in recentInvoices %}
+                                                <tr>
+                                                    <td>
+                                                        <div class="fw-semibold">{{ invoice.invoiceNumber ?: invoice.stripeInvoiceId }}</div>
+                                                        <div class="small text-muted">
+                                                            {{ invoice.paidAt ? 'Payée le ' ~ invoice.paidAt|date('d/m/Y') : 'Créée le ' ~ invoice.createdAt|date('d/m/Y') }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        {% if invoice.subscription and invoice.subscription.plan %}
+                                                            <div class="fw-semibold">{{ invoice.subscription.plan.name }}</div>
+                                                            <div class="small text-muted">{{ invoice.subscription.billingPeriod.label }}</div>
+                                                        {% else %}
+                                                            <span class="text-muted">Abonnement synchronisé</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% set statusClass = invoice.status.value == 'paid' ? 'success' : (invoice.status.value == 'open' ? 'warning' : (invoice.status.value == 'void' ? 'secondary' : 'danger')) %}
+                                                        <span class="badge text-bg-{{ statusClass }}">
+                                                            {{ invoice.status.label }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        {% if invoice.periodStart and invoice.periodEnd %}
+                                                            {{ invoice.periodStart|date('d/m/Y') }} - {{ invoice.periodEnd|date('d/m/Y') }}
+                                                        {% elseif invoice.periodStart %}
+                                                            À partir du {{ invoice.periodStart|date('d/m/Y') }}
+                                                        {% else %}
+                                                            <span class="text-muted">Période non disponible</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td class="text-end fw-semibold">
+                                                        {{ (invoice.totalAmount ?: invoice.amountPaid ?: '0.00')|number_format(2, ',', ' ') }} {{ invoice.currencyCode }}
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <div class="d-inline-flex flex-wrap justify-content-end gap-2">
+                                                            {% if invoice.hostedInvoiceUrl %}
+                                                                <a href="{{ invoice.hostedInvoiceUrl }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary">
+                                                                    Voir
+                                                                </a>
+                                                            {% endif %}
+                                                            {% if invoice.invoicePdfUrl %}
+                                                                <a href="{{ invoice.invoicePdfUrl }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">
+                                                                    PDF
+                                                                </a>
+                                                            {% endif %}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-secondary mb-0" role="alert">
+                                    Aucune facture d’abonnement n’est encore disponible pour ce compte.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>

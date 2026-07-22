@@ -37,8 +37,8 @@ final class StripeCheckoutSessionSynchronizer
         }
 
         $subscription = $this->stripeApiClient->retrieveSubscription($stripeSubscriptionId);
-        $this->stripeWebhookManager->syncSubscriptionPayload($subscription, false);
-        $this->syncLatestInvoiceFromSubscriptionPayload($subscription);
+        $localSubscription = $this->stripeWebhookManager->syncSubscriptionPayloadAndReturn($subscription, false);
+        $this->syncLatestInvoiceFromSubscriptionPayload($subscription, $localSubscription);
 
         $this->stripeWebhookManager->cleanupDemoSubscriptionsForPrestataire($prestataireProfile, true);
 
@@ -73,8 +73,8 @@ final class StripeCheckoutSessionSynchronizer
             }
 
             $fullSubscription = $this->stripeApiClient->retrieveSubscription($stripeSubscriptionId);
-            $this->stripeWebhookManager->syncSubscriptionPayload($fullSubscription, false);
-            $this->syncLatestInvoiceFromSubscriptionPayload($fullSubscription);
+            $localSubscription = $this->stripeWebhookManager->syncSubscriptionPayloadAndReturn($fullSubscription, false);
+            $this->syncLatestInvoiceFromSubscriptionPayload($fullSubscription, $localSubscription);
             $hasSynchronizedAtLeastOneSubscription = true;
         }
 
@@ -95,8 +95,8 @@ final class StripeCheckoutSessionSynchronizer
         }
 
         $subscription = $this->stripeApiClient->retrieveSubscription($stripeSubscriptionId);
-        $this->stripeWebhookManager->syncSubscriptionPayload($subscription, false);
-        $this->syncLatestInvoiceFromSubscriptionPayload($subscription);
+        $localSubscription = $this->stripeWebhookManager->syncSubscriptionPayloadAndReturn($subscription, false);
+        $this->syncLatestInvoiceFromSubscriptionPayload($subscription, $localSubscription);
 
         $this->stripeWebhookManager->cleanupDemoSubscriptionsForPrestataire($prestataireProfile, true);
 
@@ -183,7 +183,10 @@ final class StripeCheckoutSessionSynchronizer
     /**
      * @param array<string, mixed> $subscription
      */
-    private function syncLatestInvoiceFromSubscriptionPayload(array $subscription): void
+    private function syncLatestInvoiceFromSubscriptionPayload(
+        array $subscription,
+        ?\App\Entity\Subscription\PrestataireSubscription $fallbackSubscription = null,
+    ): void
     {
         $latestInvoice = $subscription['latest_invoice'] ?? null;
         if (is_string($latestInvoice) && '' !== trim($latestInvoice)) {
@@ -200,6 +203,6 @@ final class StripeCheckoutSessionSynchronizer
             default => 'invoice.created',
         };
 
-        $this->stripeWebhookManager->syncInvoicePayload($eventType, $latestInvoice, false);
+        $this->stripeWebhookManager->syncInvoicePayload($eventType, $latestInvoice, false, $fallbackSubscription);
     }
 }

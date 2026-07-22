@@ -42,6 +42,23 @@ class SubscriptionInvoiceRepository extends ServiceEntityRepository
     /**
      * @return list<SubscriptionInvoice>
      */
+    public function findRecentForPrestataire(PrestataireProfile $prestataireProfile, int $limit = 12): array
+    {
+        return $this->createQueryBuilder('si')
+            ->innerJoin('si.subscription', 'subscription')
+            ->leftJoin('subscription.plan', 'plan')
+            ->addSelect('subscription', 'plan')
+            ->andWhere('subscription.prestataireProfile = :prestataireProfile')
+            ->setParameter('prestataireProfile', $prestataireProfile)
+            ->orderBy('si.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return list<SubscriptionInvoice>
+     */
     public function findLatestForSubscription(PrestataireSubscription $subscription, int $limit = 20): array
     {
         return $this->createQueryBuilder('si')
