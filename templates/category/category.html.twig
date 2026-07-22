@@ -133,13 +133,22 @@
                         {% set providerCount = row.providerCount|default(0) %}
                         {% set subCategoryCount = row.subCategoryCount|default(0) %}
                         {% set colorVariant = cycle(['blue', 'orange', 'green', 'violet'], loop.index0) %}
+                        {% set hasUploadedCategoryImage = category.image is not empty and '/' not in category.image %}
 
                         <a
                             href="{{ path('app_category_show', {slug: category.slug}) }}"
                             class="tmc-card"
                         >
                             <div class="tmc-card__media">
-                                <div class="tmc-card__cover tmc-card__cover--{{ colorVariant }}"></div>
+                                {% if hasUploadedCategoryImage %}
+                                    <img
+                                        src="{{ asset('uploads/service-categories/' ~ category.image) }}"
+                                        alt="{{ category.name }}"
+                                        class="tmc-card__cover tmc-card__cover-image"
+                                    >
+                                {% else %}
+                                    <div class="tmc-card__cover tmc-card__cover--{{ colorVariant }}"></div>
+                                {% endif %}
 
                                 <span class="tmc-card__icon tmc-card__icon--{{ colorVariant }}">
                                     <i class="fa-solid {{ category.icon|default('fa-folder') }}"></i>

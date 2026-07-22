@@ -276,9 +276,12 @@ class ServiceCategoryCrudController extends AbstractCrudController
             ->allowMultipleChoices(false);
 
         yield ImageField::new('image', 'Image')
-            ->hideOnForm()
-            ->hideOnIndex()
-            ->setHelp('Image actuellement enregistrée pour cette catégorie.');
+            ->setBasePath('/uploads/service-categories')
+            ->setUploadDir('public/uploads/service-categories')
+            ->setUploadedFileNamePattern('[slug]-[timestamp].[extension]')
+            ->setRequired(false)
+            ->setHelp('Image optionnelle pour illustrer la catégorie sur le site. Si aucune image n’est envoyée, le visuel coloré par défaut sera conservé.')
+            ->hideOnIndex(false);
 
         yield IntegerField::new('position', 'Ordre d’affichage')
             ->setHelp('Définit l’ordre d’apparition sur le site. Plus le nombre est petit, plus la catégorie remonte.')
