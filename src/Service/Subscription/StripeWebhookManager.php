@@ -248,6 +248,7 @@ final class StripeWebhookManager
 
         $invoice = $this->subscriptionInvoiceRepository->findOneByStripeInvoiceId($stripeInvoiceId)
             ?? new SubscriptionInvoice();
+        [$invoicePeriodStart, $invoicePeriodEnd] = $this->resolveInvoicePeriodBounds($payload);
 
         $invoice
             ->setSubscription($subscription)
@@ -264,8 +265,8 @@ final class StripeWebhookManager
             ->setAmountRemaining($this->normalizeStripeAmount($payload['amount_remaining'] ?? null))
             ->setStatus($this->mapStripeInvoiceStatus((string) ($payload['status'] ?? 'draft')))
             ->setBillingReason(($payload['billing_reason'] ?? null) ?: null)
-            ->setPeriodStart($this->createDateTimeFromTimestamp($payload['period_start'] ?? null))
-            ->setPeriodEnd($this->createDateTimeFromTimestamp($payload['period_end'] ?? null))
+            ->setPeriodStart($invoicePeriodStart)
+            ->setPeriodEnd($invoicePeriodEnd)
             ->setDueAt($this->createDateTimeFromTimestamp($payload['due_date'] ?? null))
             ->setPaidAt($this->createDateTimeFromTimestamp($payload['status_transitions']['paid_at'] ?? null))
             ->setStripePayload($payload)
@@ -492,6 +493,32 @@ final class StripeWebhookManager
             $currentPeriodStart ?? $linePeriodStart ?? $invoicePeriodStart,
             $currentPeriodEnd ?? $linePeriodEnd ?? $invoicePeriodEnd,
         ];
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     *
+     * @return array{0: ?\DateTimeImmutable, 1: ?\DateTimeImmutable}
+     */
+    private function resolveInvoicePeriodBounds(array $payload): array
+    {
+        $invoiceCreatedAt = $this->createDateTimeFromTimestamp($payload['created'] ?? null);
+        $invoicePeriodStart = $this->createDateTimeFromTimestamp($payload['period_start'] ?? null);
+        $invoicePeriodEnd = $this->createDateTimeFromTimestamp($payload['period_end'] ?? null);
+        [$linePeriodStart, $linePeriodEnd] = $this->extractInvoiceLinePeriodBounds($payload);
+
+        if ($this->isValidSubscriptionPeriod($linePeriodStart, $linePeriodEnd)) {
+            return [$linePeriodStart, $linePeriodEnd];
+        }
+
+        if (
+            $this->isValidSubscriptionPeriod($invoicePeriodStart, $invoicePeriodEnd)
+            && !$this->looksLikeImmediateInvoiceSnapshot($invoiceCreatedAt, $invoicePeriodStart, $invoicePeriodEnd)
+        ) {
+            return [$invoicePeriodStart, $invoicePeriodEnd];
+        }
+
+        return [$invoicePeriodStart, $invoicePeriodEnd];
     }
 
     /**

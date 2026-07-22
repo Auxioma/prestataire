@@ -24,6 +24,19 @@ class SubscriptionInvoiceRepository extends ServiceEntityRepository
         return $this->findOneBy(['stripeInvoiceId' => $stripeInvoiceId]);
     }
 
+    public function findOneForPrestataireById(PrestataireProfile $prestataireProfile, string $invoiceId): ?SubscriptionInvoice
+    {
+        return $this->createQueryBuilder('si')
+            ->innerJoin('si.subscription', 'subscription')
+            ->andWhere('si.id = :invoiceId')
+            ->andWhere('subscription.prestataireProfile = :prestataireProfile')
+            ->setParameter('invoiceId', $invoiceId)
+            ->setParameter('prestataireProfile', $prestataireProfile)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function findLatestSettledForSubscription(PrestataireSubscription $subscription): ?SubscriptionInvoice
     {
         return $this->createQueryBuilder('si')

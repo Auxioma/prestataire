@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Enum\SubscriptionBillingPeriodEnum;
+use App\Entity\Subscription\SubscriptionInvoice;
 use App\Repository\Subscription\PrestataireSubscriptionRepository;
 use App\Repository\Subscription\SubscriptionInvoiceRepository;
 use App\Repository\Subscription\SubscriptionPlanRepository;
@@ -21,8 +22,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Route('/prestataire/abonnements', name: 'app_subscription_')]
 final class SubscriptionController extends AbstractController
@@ -330,6 +334,56 @@ final class SubscriptionController extends AbstractController
         return $this->redirect($portalUrl);
     }
 
+    #[Route('/factures/{invoiceId}/telecharger', name: 'invoice_download', methods: ['GET'])]
+    public function downloadInvoice(
+        string $invoiceId,
+        SubscriptionInvoiceRepository $subscriptionInvoiceRepository,
+        HttpClientInterface $httpClient,
+    ): Response {
+        $prestataireProfile = $this->getPrestataireProfile();
+        $invoice = $subscriptionInvoiceRepository->findOneForPrestataireById($prestataireProfile, $invoiceId);
+
+        if (!$invoice instanceof SubscriptionInvoice) {
+            throw $this->createNotFoundException('Facture introuvable.');
+        }
+
+        $invoicePdfUrl = trim((string) $invoice->getInvoicePdfUrl());
+        if ('' === $invoicePdfUrl) {
+            $this->addFlash('warning', 'Le PDF de cette facture n’est pas encore disponible.');
+
+            return $this->redirectToRoute('app_subscription_index');
+        }
+
+        try {
+            $upstreamResponse = $httpClient->request('GET', $invoicePdfUrl);
+            $statusCode = $upstreamResponse->getStatusCode();
+            if ($statusCode >= 400) {
+                throw new \RuntimeException('Stripe a refusé le téléchargement du PDF.');
+            }
+        } catch (\Throwable $exception) {
+            $this->addFlash('danger', 'Impossible de télécharger la facture pour le moment : ' . $exception->getMessage());
+
+            return $this->redirectToRoute('app_subscription_index');
+        }
+
+        $filename = $this->buildInvoiceDownloadFilename($invoice);
+        $headers = $upstreamResponse->getHeaders(false);
+        $contentType = $headers['content-type'][0] ?? 'application/pdf';
+
+        $response = new StreamedResponse(function () use ($upstreamResponse): void {
+            echo $upstreamResponse->getContent();
+        });
+
+        $response->headers->set('Content-Type', $contentType);
+        $response->headers->set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+        $response->headers->set(
+            'Content-Disposition',
+            $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename)
+        );
+
+        return $response;
+    }
+
     private function getPrestataireProfile(): \App\Entity\PrestataireProfile
     {
         $user = $this->getUser();
@@ -361,5 +415,13 @@ final class SubscriptionController extends AbstractController
         $value = $payload[$key] ?? null;
 
         return \is_scalar($value) ? trim((string) $value) : '';
+    }
+
+    private function buildInvoiceDownloadFilename(SubscriptionInvoice $invoice): string
+    {
+        $baseName = trim((string) ($invoice->getInvoiceNumber() ?: $invoice->getStripeInvoiceId() ?: 'facture-abonnement'));
+        $baseName = preg_replace('/[^A-Za-z0-9._-]+/', '-', $baseName) ?: 'facture-abonnement';
+
+        return sprintf('%s.pdf', trim($baseName, '-'));
     }
 }
