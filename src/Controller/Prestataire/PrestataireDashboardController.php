@@ -502,17 +502,33 @@ final class PrestataireDashboardController extends AbstractController
         $quoteSort = $this->resolveQuoteSort($request);
         $quoteOrderBy = $this->resolveQuoteOrderBy($quoteSort);
         $activeTab = $forcedActiveTab ?? (string) $request->query->get('tab', 'dashboard');
-        $allConversations = $this->loadConversations($conversationRepository, $prestataireProfile);
-        $activeConversation = $forcedActiveConversation ?? $this->resolveActiveConversation(
-            $allConversations,
-            $request->query->get('conversation')
-        );
-        $conversations = $paginator->paginate(
-            $allConversations,
-            $request->query->getInt('conversationPage', 1),
-            self::CONVERSATION_PAGE_SIZE,
-            ['pageParameterName' => 'conversationPage']
-        );
+        $isDashboardTab = 'dashboard' === $activeTab;
+        $isMessagesTab = 'messages' === $activeTab;
+        $isRevenusTab = 'revenus' === $activeTab;
+        $isPrestationsTab = 'prestations' === $activeTab;
+        $isDemandesTab = 'demandes' === $activeTab;
+        $isArchivesTab = 'archives' === $activeTab;
+
+        $allConversations = [];
+        $activeConversation = $forcedActiveConversation;
+        $conversations = [];
+        $conversationUnreadCounts = [];
+        $messageFormView ??= null;
+
+        if ($isMessagesTab) {
+            $allConversations = $this->loadConversations($conversationRepository, $prestataireProfile);
+            $activeConversation = $forcedActiveConversation ?? $this->resolveActiveConversation(
+                $allConversations,
+                $request->query->get('conversation')
+            );
+            $conversations = $paginator->paginate(
+                $allConversations,
+                $request->query->getInt('conversationPage', 1),
+                self::CONVERSATION_PAGE_SIZE,
+                ['pageParameterName' => 'conversationPage']
+            );
+            $conversationUnreadCounts = $this->buildConversationUnreadCounts($allConversations, $user);
+        }
 
         if (!$activeConversation instanceof Conversation && $forcedActiveConversation instanceof Conversation) {
             $activeConversation = $forcedActiveConversation;
@@ -534,67 +550,115 @@ final class PrestataireDashboardController extends AbstractController
             $messageFormView = $this->createMessageForm($activeConversation, new Message())->createView();
         }
 
-        if ('messages' === $activeTab) {
+        if ($isMessagesTab) {
             $this->markActiveConversationMessagesAsRead($activeConversation, $user, $entityManager);
         }
 
-        $conversationUnreadCounts = $this->buildConversationUnreadCounts($allConversations, $user);
+        $completionReport = null;
+        $mandatoryChecklist = null;
+        $currentSubscription = null;
+        $recentQuoteRequests = [];
+        $recentMessages = [];
+        $recentReviews = [];
+        $upcomingAppointments = [];
+        $remainingCredits = 0;
+        $priorityAlerts = [];
+        $showProfileCompletionModal = false;
 
-        $completionReport = $this->prestataireProfileCompletionService->buildReport($user, $prestataireProfile);
-        $mandatoryChecklist = $this->prestataireProfileCompletionService->buildMandatoryChecklist($user, $prestataireProfile);
-        $currentSubscription = $subscriptionAccessManager->getCurrentUsableSubscription($prestataireProfile);
-        $recentQuoteRequests = $quoteRequestRepository->findRecentForPrestataireDashboard($prestataireProfile, 5);
-        $recentMessages = $messageRepository->findLatestForPrestataire($prestataireProfile, 5);
-        $recentReviews = $reviewRepository->findRecentForPrestataireDashboard($prestataireProfile, 5);
-        $upcomingAppointments = $prestataireAppointmentRepository->findUpcomingForDashboard((int) $prestataireProfile->getId(), 3);
-        $remainingCredits = $subscriptionAccessManager->getRemainingCredits($prestataireProfile);
-        $priorityAlerts = $this->buildPriorityAlerts(
-            prestataireProfile: $prestataireProfile,
-            user: $user,
-            quoteRequestRepository: $quoteRequestRepository,
-            messageRepository: $messageRepository,
-            currentSubscription: $currentSubscription,
-            remainingCredits: $remainingCredits,
-            upcomingAppointments: $upcomingAppointments,
-            mandatoryChecklist: $mandatoryChecklist,
-        );
-        $showProfileCompletionModal = 1 === (int) ($user->getLoginCount() ?? 0) && !$mandatoryChecklist['isComplete'];
+        if ($isDashboardTab) {
+            $completionReport = $this->prestataireProfileCompletionService->buildReport($user, $prestataireProfile);
+            $mandatoryChecklist = $this->prestataireProfileCompletionService->buildMandatoryChecklist($user, $prestataireProfile);
+            $currentSubscription = $subscriptionAccessManager->getCurrentUsableSubscription($prestataireProfile);
+            $recentQuoteRequests = $quoteRequestRepository->findRecentForPrestataireDashboard($prestataireProfile, 5);
+            $recentMessages = $messageRepository->findLatestForPrestataire($prestataireProfile, 5);
+            $recentReviews = $reviewRepository->findRecentForPrestataireDashboard($prestataireProfile, 5);
+            $upcomingAppointments = $prestataireAppointmentRepository->findUpcomingForDashboard((int) $prestataireProfile->getId(), 3);
+            $remainingCredits = $subscriptionAccessManager->getRemainingCredits($prestataireProfile);
+            $priorityAlerts = $this->buildPriorityAlerts(
+                prestataireProfile: $prestataireProfile,
+                user: $user,
+                quoteRequestRepository: $quoteRequestRepository,
+                messageRepository: $messageRepository,
+                currentSubscription: $currentSubscription,
+                remainingCredits: $remainingCredits,
+                upcomingAppointments: $upcomingAppointments,
+                mandatoryChecklist: $mandatoryChecklist,
+            );
+            $showProfileCompletionModal = 1 === (int) ($user->getLoginCount() ?? 0) && !$mandatoryChecklist['isComplete'];
+        }
+
         $currentDate = new \DateTimeImmutable();
         $selectedRevenueMonth = max(1, min(12, $request->query->getInt('revenues_month', (int) $currentDate->format('n'))));
         $selectedRevenueYear = $request->query->getInt('revenues_year', (int) $currentDate->format('Y'));
         $activeRevenueSubtab = $this->resolveRevenueSubtab($request);
-        $revenueOverview = $this->prestataireRevenueOverviewBuilder->build(
-            $prestataireProfile,
-            $selectedRevenueMonth,
-            $selectedRevenueYear,
-        );
         $revenueHistorySort = $this->resolveRevenueHistorySort($request);
         $revenueHistoryStatus = $this->resolveRevenueHistoryStatus($request);
-        $revenueHistoryItems = $this->buildRevenueHistoryItems(
-            $revenueOverview['history'],
-            $revenueHistorySort,
-            $revenueHistoryStatus,
-        );
-        $revenueHistory = $paginator->paginate(
-            $revenueHistoryItems,
-            $request->query->getInt('revenuePage', 1),
-            self::DASHBOARD_PAGE_SIZE,
-            ['pageParameterName' => 'revenuePage']
-        );
-        $revenuePayouts = $paginator->paginate(
-            $revenueOverview['unpaid'],
-            $request->query->getInt('revenuePayoutPage', 1),
-            self::REVENUE_PAYOUTS_PAGE_SIZE,
-            ['pageParameterName' => 'revenuePayoutPage']
-        );
+        $revenueOverview = null;
+        $revenueHistoryItems = [];
+        $revenueHistory = [];
+        $revenuePayouts = [];
+
+        if ($isRevenusTab) {
+            $revenueOverview = $this->prestataireRevenueOverviewBuilder->build(
+                $prestataireProfile,
+                $selectedRevenueMonth,
+                $selectedRevenueYear,
+            );
+            $revenueHistoryItems = $this->buildRevenueHistoryItems(
+                $revenueOverview['history'],
+                $revenueHistorySort,
+                $revenueHistoryStatus,
+            );
+            $revenueHistory = $paginator->paginate(
+                $revenueHistoryItems,
+                $request->query->getInt('revenuePage', 1),
+                self::DASHBOARD_PAGE_SIZE,
+                ['pageParameterName' => 'revenuePage']
+            );
+            $revenuePayouts = $paginator->paginate(
+                $revenueOverview['unpaid'],
+                $request->query->getInt('revenuePayoutPage', 1),
+                self::REVENUE_PAYOUTS_PAGE_SIZE,
+                ['pageParameterName' => 'revenuePayoutPage']
+            );
+        }
 
         if (null === $revenueFormEntry) {
             $revenueFormEntry = new PrestataireRevenueEntry();
         }
 
-        if (null === $revenueFormView) {
+        if ($isRevenusTab && null === $revenueFormView) {
             $revenueFormView = $this->createRevenueForm($revenueFormEntry, $prestataireProfile)->createView();
         }
+
+        $prestations = $isPrestationsTab
+            ? $prestataireServiceRepository->findBy(
+                ['prestataire' => $prestataireProfile],
+                ['updatedAt' => 'DESC', 'createdAt' => 'DESC']
+            )
+            : [];
+
+        $quoteRequests = $isDemandesTab
+            ? $paginator->paginate(
+                $this->createQuoteRequestsQueryBuilder($quoteRequestRepository, $prestataireProfile, false, $quoteOrderBy),
+                $request->query->getInt('quotePage', 1),
+                self::DASHBOARD_PAGE_SIZE,
+                ['pageParameterName' => 'quotePage']
+            )
+            : [];
+
+        $archivedQuoteRequests = $isArchivesTab
+            ? $paginator->paginate(
+                $this->createQuoteRequestsQueryBuilder($quoteRequestRepository, $prestataireProfile, true, $quoteOrderBy),
+                $request->query->getInt('archivedQuotePage', 1),
+                self::DASHBOARD_PAGE_SIZE,
+                ['pageParameterName' => 'archivedQuotePage']
+            )
+            : [];
+
+        $unreadConversationCount = $isMessagesTab
+            ? $this->countUnreadConversations($conversationUnreadCounts)
+            : $messageRepository->countUnreadConversationsForPrestataire($prestataireProfile, $user);
 
         return [
             'user' => $user,
@@ -603,33 +667,22 @@ final class PrestataireDashboardController extends AbstractController
             'mandatoryChecklist' => $mandatoryChecklist,
             'priorityAlerts' => $priorityAlerts,
             'showProfileCompletionModal' => $showProfileCompletionModal,
-            'profileCompletionSettingsUrl' => $this->buildSettingsUrlFromChecklist($mandatoryChecklist),
+            'profileCompletionSettingsUrl' => \is_array($mandatoryChecklist)
+                ? $this->buildSettingsUrlFromChecklist($mandatoryChecklist)
+                : $this->generateUrl('app_prestataire_settings', ['tab' => 'profile']),
             'recentQuoteRequests' => $recentQuoteRequests,
             'recentMessages' => $recentMessages,
             'recentReviews' => $recentReviews,
             'upcomingAppointments' => $upcomingAppointments,
             'currentSubscription' => $currentSubscription,
             'remainingCredits' => $remainingCredits,
-            'prestations' => $prestataireServiceRepository->findBy(
-                ['prestataire' => $prestataireProfile],
-                ['updatedAt' => 'DESC', 'createdAt' => 'DESC']
-            ),
-            'quoteRequests' => $paginator->paginate(
-                $this->createQuoteRequestsQueryBuilder($quoteRequestRepository, $prestataireProfile, false, $quoteOrderBy),
-                $request->query->getInt('quotePage', 1),
-                self::DASHBOARD_PAGE_SIZE,
-                ['pageParameterName' => 'quotePage']
-            ),
-            'archivedQuoteRequests' => $paginator->paginate(
-                $this->createQuoteRequestsQueryBuilder($quoteRequestRepository, $prestataireProfile, true, $quoteOrderBy),
-                $request->query->getInt('archivedQuotePage', 1),
-                self::DASHBOARD_PAGE_SIZE,
-                ['pageParameterName' => 'archivedQuotePage']
-            ),
+            'prestations' => $prestations,
+            'quoteRequests' => $quoteRequests,
+            'archivedQuoteRequests' => $archivedQuoteRequests,
             'quoteSort' => $quoteSort,
             'conversations' => $conversations,
             'conversationUnreadCounts' => $conversationUnreadCounts,
-            'unreadConversationCount' => $this->countUnreadConversations($conversationUnreadCounts),
+            'unreadConversationCount' => $unreadConversationCount,
             'activeConversation' => $activeConversation,
             'messageForm' => $messageFormView,
             'revenueForm' => $revenueFormView,
@@ -646,7 +699,7 @@ final class PrestataireDashboardController extends AbstractController
             'canUseInstantMessaging' => $canUseInstantMessaging,
             'isConversationArchived' => $isConversationArchived,
             'activeTab' => $activeTab,
-            'hasConversationPhotos' => $this->conversationHasPhotos($activeConversation),
+            'hasConversationPhotos' => $isMessagesTab ? $this->conversationHasPhotos($activeConversation) : false,
             'realtimeConversationToken' => $activeConversation instanceof Conversation
                 ? $this->realtimeAuthTokenManager->createConversationToken($activeConversation->getId(), $user)
                 : null,

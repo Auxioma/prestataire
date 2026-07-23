@@ -83,4 +83,23 @@ class MessageRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function countUnreadConversationsForPrestataire(
+        PrestataireProfile $prestataireProfile,
+        User $prestataireUser,
+    ): int {
+        return (int) $this->createQueryBuilder('m')
+            ->select('COUNT(DISTINCT conversation.id)')
+            ->leftJoin('m.conversation', 'conversation')
+            ->andWhere('conversation.prestataire = :prestataire')
+            ->andWhere('m.type = :messageType')
+            ->andWhere('m.readAt IS NULL')
+            ->andWhere('m.author IS NOT NULL')
+            ->andWhere('m.author != :prestataireUser')
+            ->setParameter('prestataire', $prestataireProfile)
+            ->setParameter('messageType', MessageTypeEnum::USER)
+            ->setParameter('prestataireUser', $prestataireUser)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }
