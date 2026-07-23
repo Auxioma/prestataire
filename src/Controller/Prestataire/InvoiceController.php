@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Prestataire;
 
+use App\Controller\AbstractInvoiceController;
 use App\Entity\Invoice;
 use App\Entity\PrestataireProfile;
 use App\Entity\QuoteProposal;
@@ -17,14 +18,13 @@ use App\Service\InvoiceDocumentResolver;
 use App\Service\InvoiceManager;
 use App\Service\InvoicePdfGenerator;
 use App\Service\NotificationManager;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class InvoiceController extends AbstractController
+final class InvoiceController extends AbstractInvoiceController
 {
     #[Route('/prestataire/devis/{publicReference}/facture', name: 'app_prestataire_invoice_manage', methods: ['GET', 'POST'])]
     public function manage(
@@ -37,12 +37,11 @@ final class InvoiceController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_PRESTATAIRE');
 
-        $prestataire = $this->getCurrentPrestataire($prestataireProfileRepository);
-        $proposal = $quoteProposalRepository->findOneForPrestataireByPublicReference($publicReference, $prestataire);
-
-        if (!$proposal instanceof QuoteProposal) {
-            throw $this->createNotFoundException('Devis introuvable.');
-        }
+        $proposal = $this->getPrestataireProposal(
+            $publicReference,
+            $quoteProposalRepository,
+            $prestataireProfileRepository,
+        );
 
         if (!$proposal->isAccepted()) {
             throw $this->createNotFoundException('La facture n’est disponible qu’après acceptation du devis.');
@@ -69,28 +68,7 @@ final class InvoiceController extends AbstractController
 
                 if ($request->request->has('issue_invoice')) {
                     $invoiceManager->issue($invoice);
-
-                    $clientUser = $proposal->getClient()?->getAccount();
-                    if ($clientUser instanceof User) {
-                        $notificationManager->notify(
-                            $clientUser,
-                            NotificationTypeEnum::INVOICE_RECEIVED,
-                            'Nouvelle facture disponible',
-                            'Une nouvelle facture liée à votre devis est disponible.',
-                            $this->generateUrl('app_quote_request_invoice_show', [
-                                'publicReference' => $proposal->getPublicReference(),
-                            ]),
-                            [
-                                'invoiceId' => $invoice->getId(),
-                                'invoiceNumber' => $invoice->getInvoiceNumber(),
-                                'quoteProposalId' => $proposal->getId(),
-                                'quoteProposalReference' => $proposal->getPublicReference(),
-                                'quoteProposalNumber' => $proposal->getProposalNumber(),
-                                'quoteRequestId' => $proposal->getQuoteRequest()?->getId(),
-                                'quoteRequestSlug' => $proposal->getQuoteRequest()?->getSlug(),
-                            ]
-                        );
-                    }
+                    $this->notifyClientInvoiceAvailable($proposal, $invoice, $notificationManager);
 
                     $this->addFlash('success', 'La facture a bien été émise.');
 
@@ -131,12 +109,11 @@ final class InvoiceController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_PRESTATAIRE');
 
-        $prestataire = $this->getCurrentPrestataire($prestataireProfileRepository);
-        $proposal = $quoteProposalRepository->findOneForPrestataireByPublicReference($publicReference, $prestataire);
-
-        if (!$proposal instanceof QuoteProposal) {
-            throw $this->createNotFoundException('Devis introuvable.');
-        }
+        $proposal = $this->getPrestataireProposal(
+            $publicReference,
+            $quoteProposalRepository,
+            $prestataireProfileRepository,
+        );
 
         if (!$this->isCsrfTokenValid('issue_invoice_' . $proposal->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Jeton CSRF invalide.');
@@ -145,28 +122,7 @@ final class InvoiceController extends AbstractController
         try {
             $invoice = $invoiceManager->getOrCreateFromAcceptedQuote($proposal);
             $invoiceManager->issue($invoice);
-
-            $clientUser = $proposal->getClient()?->getAccount();
-            if ($clientUser instanceof User) {
-                $notificationManager->notify(
-                    $clientUser,
-                    NotificationTypeEnum::INVOICE_RECEIVED,
-                    'Nouvelle facture disponible',
-                    'Une nouvelle facture liée à votre devis est disponible.',
-                    $this->generateUrl('app_quote_request_invoice_show', [
-                        'publicReference' => $proposal->getPublicReference(),
-                    ]),
-                    [
-                        'invoiceId' => $invoice->getId(),
-                        'invoiceNumber' => $invoice->getInvoiceNumber(),
-                        'quoteProposalId' => $proposal->getId(),
-                        'quoteProposalReference' => $proposal->getPublicReference(),
-                        'quoteProposalNumber' => $proposal->getProposalNumber(),
-                        'quoteRequestId' => $proposal->getQuoteRequest()?->getId(),
-                        'quoteRequestSlug' => $proposal->getQuoteRequest()?->getSlug(),
-                    ]
-                );
-            }
+            $this->notifyClientInvoiceAvailable($proposal, $invoice, $notificationManager);
 
             $this->addFlash('success', 'La facture a bien été émise.');
         } catch (\DomainException $exception) {
@@ -186,12 +142,11 @@ final class InvoiceController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_PRESTATAIRE');
 
-        $prestataire = $this->getCurrentPrestataire($prestataireProfileRepository);
-        $invoice = $invoiceRepository->findOneForPrestataireByProposalReference($publicReference, $prestataire);
-
-        if (!$invoice instanceof Invoice) {
-            throw $this->createNotFoundException('Facture introuvable.');
-        }
+        $invoice = $this->getPrestataireInvoice(
+            $publicReference,
+            $invoiceRepository,
+            $prestataireProfileRepository,
+        );
 
         return $this->render('invoice/show.html.twig', [
             'invoice' => $invoice,
@@ -210,12 +165,11 @@ final class InvoiceController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_PRESTATAIRE');
 
-        $prestataire = $this->getCurrentPrestataire($prestataireProfileRepository);
-        $invoice = $invoiceRepository->findOneForPrestataireByProposalReference($publicReference, $prestataire);
-
-        if (!$invoice instanceof Invoice) {
-            throw $this->createNotFoundException('Facture introuvable.');
-        }
+        $invoice = $this->getPrestataireInvoice(
+            $publicReference,
+            $invoiceRepository,
+            $prestataireProfileRepository,
+        );
 
         return $this->createPdfResponse($invoice, $documentResolver, $pdfGenerator);
     }
@@ -229,12 +183,11 @@ final class InvoiceController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_PRESTATAIRE');
 
-        $prestataire = $this->getCurrentPrestataire($prestataireProfileRepository);
-        $invoice = $invoiceRepository->findOneForPrestataireByProposalReference($publicReference, $prestataire);
-
-        if (!$invoice instanceof Invoice) {
-            throw $this->createNotFoundException('Facture introuvable.');
-        }
+        $invoice = $this->getPrestataireInvoice(
+            $publicReference,
+            $invoiceRepository,
+            $prestataireProfileRepository,
+        );
 
         $xmlPath = $documentResolver->getXmlPath($invoice);
         if ($xmlPath === null) {
@@ -260,12 +213,11 @@ final class InvoiceController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_PRESTATAIRE');
 
-        $prestataire = $this->getCurrentPrestataire($prestataireProfileRepository);
-        $invoice = $invoiceRepository->findOneForPrestataireByProposalReference($publicReference, $prestataire);
-
-        if (!$invoice instanceof Invoice) {
-            throw $this->createNotFoundException('Facture introuvable.');
-        }
+        $invoice = $this->getPrestataireInvoice(
+            $publicReference,
+            $invoiceRepository,
+            $prestataireProfileRepository,
+        );
 
         $xmlPath = $documentResolver->getXmlPath($invoice);
         if ($xmlPath === null) {
@@ -282,79 +234,32 @@ final class InvoiceController extends AbstractController
         return $response;
     }
 
-    #[Route('/demandes-de-devis/factures/{publicReference}', name: 'app_quote_request_invoice_show', methods: ['GET'])]
-    public function showForClient(
-        string $publicReference,
-        InvoiceRepository $invoiceRepository,
-    ): Response {
-        $user = $this->getUser();
-
-        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
-            throw $this->createAccessDeniedException('Accès réservé aux clients.');
-        }
-
-        $invoice = $invoiceRepository->findOneVisibleForClientByProposalReference($publicReference, $user->getClientProfile());
-
-        if (!$invoice instanceof Invoice) {
-            throw $this->createNotFoundException('Facture introuvable.');
-        }
-
-        return $this->render('invoice/show.html.twig', [
-            'invoice' => $invoice,
-            'proposal' => $invoice->getQuoteProposal(),
-            'viewerContext' => 'client',
-        ]);
-    }
-
-    #[Route('/demandes-de-devis/factures/{publicReference}/pdf', name: 'app_quote_request_invoice_pdf', methods: ['GET'])]
-    public function showPdfForClient(
-        string $publicReference,
-        InvoiceRepository $invoiceRepository,
-        InvoiceDocumentResolver $documentResolver,
-        InvoicePdfGenerator $pdfGenerator,
-    ): Response {
-        $user = $this->getUser();
-
-        if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
-            throw $this->createAccessDeniedException('Accès réservé aux clients.');
-        }
-
-        $invoice = $invoiceRepository->findOneVisibleForClientByProposalReference($publicReference, $user->getClientProfile());
-
-        if (!$invoice instanceof Invoice) {
-            throw $this->createNotFoundException('Facture introuvable.');
-        }
-
-        return $this->createPdfResponse($invoice, $documentResolver, $pdfGenerator);
-    }
-
-    private function createPdfResponse(
+    private function notifyClientInvoiceAvailable(
+        QuoteProposal $proposal,
         Invoice $invoice,
-        InvoiceDocumentResolver $documentResolver,
-        InvoicePdfGenerator $pdfGenerator,
-    ): Response {
-        $resolvedDocument = $documentResolver->resolve($invoice);
-
-        if ($resolvedDocument instanceof \App\Service\InvoiceResolvedDocument) {
-            $response = new BinaryFileResponse($resolvedDocument->getFilesystemPath());
-            $response->headers->set('Content-Type', $resolvedDocument->getMimeType());
-            $response->setContentDisposition(
-                ResponseHeaderBag::DISPOSITION_INLINE,
-                $resolvedDocument->getDownloadFilename()
-            );
-
-            return $response;
+        NotificationManager $notificationManager,
+    ): void {
+        $clientUser = $proposal->getClient()?->getAccount();
+        if (!$clientUser instanceof User) {
+            return;
         }
 
-        return new Response(
-            $pdfGenerator->generatePdfOutput($invoice),
-            Response::HTTP_OK,
+        $notificationManager->notify(
+            $clientUser,
+            NotificationTypeEnum::INVOICE_RECEIVED,
+            'Nouvelle facture disponible',
+            'Une nouvelle facture liée à votre devis est disponible.',
+            $this->generateUrl('app_quote_request_invoice_show', [
+                'publicReference' => $proposal->getPublicReference(),
+            ]),
             [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => sprintf(
-                    'inline; filename="%s.pdf"',
-                    $invoice->getInvoiceNumber() ?: 'facture'
-                ),
+                'invoiceId' => $invoice->getId(),
+                'invoiceNumber' => $invoice->getInvoiceNumber(),
+                'quoteProposalId' => $proposal->getId(),
+                'quoteProposalReference' => $proposal->getPublicReference(),
+                'quoteProposalNumber' => $proposal->getProposalNumber(),
+                'quoteRequestId' => $proposal->getQuoteRequest()?->getId(),
+                'quoteRequestSlug' => $proposal->getQuoteRequest()?->getSlug(),
             ]
         );
     }
@@ -374,5 +279,39 @@ final class InvoiceController extends AbstractController
         }
 
         return $prestataire;
+    }
+
+    private function getPrestataireProposal(
+        string $publicReference,
+        QuoteProposalRepository $quoteProposalRepository,
+        PrestataireProfileRepository $prestataireProfileRepository,
+    ): QuoteProposal {
+        $proposal = $quoteProposalRepository->findOneForPrestataireByPublicReference(
+            $publicReference,
+            $this->getCurrentPrestataire($prestataireProfileRepository),
+        );
+
+        if (!$proposal instanceof QuoteProposal) {
+            throw $this->createNotFoundException('Devis introuvable.');
+        }
+
+        return $proposal;
+    }
+
+    private function getPrestataireInvoice(
+        string $publicReference,
+        InvoiceRepository $invoiceRepository,
+        PrestataireProfileRepository $prestataireProfileRepository,
+    ): Invoice {
+        $invoice = $invoiceRepository->findOneForPrestataireByProposalReference(
+            $publicReference,
+            $this->getCurrentPrestataire($prestataireProfileRepository),
+        );
+
+        if (!$invoice instanceof Invoice) {
+            throw $this->createNotFoundException('Facture introuvable.');
+        }
+
+        return $invoice;
     }
 }

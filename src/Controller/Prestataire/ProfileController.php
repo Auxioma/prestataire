@@ -10,22 +10,14 @@
  * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
  */
 
-namespace App\Controller;
+namespace App\Controller\Prestataire;
 
-use App\Dto\PrestataireSettingsForms;
-use App\Entity\ClientProfile;
+use App\Controller\AbstractProfileController;
 use App\Entity\PrestataireDocument;
 use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
 use App\Entity\User;
-use App\Enum\FavoriteTypeEnum;
-use App\Form\AccountSettingsType;
-use App\Form\AccountDeletionType;
-use App\Form\AccountPasswordChangeType;
 use App\Form\PrestataireServiceType;
-use App\Repository\FavoriteRepository;
-use App\Repository\PrestataireProfileRepository;
-use App\Repository\PrestataireServiceRepository;
 use App\Repository\ServiceCategoryRepository;
 use App\Repository\ServiceRepository;
 use App\Service\AccountSecurityManager;
@@ -37,23 +29,16 @@ use App\Service\PrestataireSearchIndexer;
 use App\Service\PrestataireSettingsFormsFactory;
 use App\Service\SireneClient;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
-
-/**
- * Gère les actions liées à profile.
- */
-class ProfileController extends AbstractController
+class ProfileController extends AbstractProfileController
 {
     public function __construct(
         private readonly PrestataireProfileManager $prestataireProfileManager,
@@ -61,28 +46,23 @@ class ProfileController extends AbstractController
         private readonly PrestataireProfileCompletionService $prestataireProfileCompletionService,
         private readonly CompanyVerificationManager $companyVerificationManager,
         private readonly PrestataireSettingsFormsFactory $prestataireSettingsFormsFactory,
-        private readonly AccountSecurityManager $accountSecurityManager,
+        AccountSecurityManager $accountSecurityManager,
         private readonly PrestataireSearchIndexer $prestataireSearchIndexer,
-        private readonly TokenStorageInterface $tokenStorage,
-        private readonly RequestStack $requestStack,
+        TokenStorageInterface $tokenStorage,
+        RequestStack $requestStack,
     ) {
+        parent::__construct($accountSecurityManager, $tokenStorage, $requestStack);
     }
 
-    // #region Settings
     #[Route('/prestataire/parametres', name: 'app_prestataire_settings')]
     #[IsGranted('ROLE_PRESTATAIRE')]
-    /**
-     * Affiche et traite les paramètres associés à ce contrôleur.
-     *
-     * @return Response
-     */
     public function settings(
         Request $request,
         EntityManagerInterface $entityManager,
         ServiceCategoryRepository $categoryRepository,
         SireneClient $sireneClient,
     ): Response {
-        /** @var \App\Entity\User|null $user */
+        /** @var User|null $user */
         $user = $this->getUser();
 
         if (!$user) {
@@ -112,7 +92,6 @@ class ProfileController extends AbstractController
         $activeTab = $request->query->get('tab', 'profile');
 
         if ($response = $this->handleDocumentForm(
-            request: $request,
             entityManager: $entityManager,
             prestataireProfile: $prestataireProfile,
             documentForm: $forms->documentForm,
@@ -216,10 +195,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    // METHODES DE TRAITEMENT DES FORMULAIRES
-    // #region Documents
     private function handleDocumentForm(
-        Request $request,
         EntityManagerInterface $entityManager,
         PrestataireProfile $prestataireProfile,
         FormInterface $documentForm,
@@ -249,9 +225,7 @@ class ProfileController extends AbstractController
 
         return null;
     }
-    // #endregion
 
-    // #region Utilisateur
     private function handleUserForm(
         EntityManagerInterface $entityManager,
         FormInterface $userForm,
@@ -274,9 +248,7 @@ class ProfileController extends AbstractController
             'tab' => 'profile',
         ]);
     }
-    // #endregion
 
-    // #region Profil Public
     private function handlePublicProfileForm(
         EntityManagerInterface $entityManager,
         FormInterface $publicProfileForm,
@@ -299,9 +271,7 @@ class ProfileController extends AbstractController
             'tab' => 'profile',
         ]);
     }
-    // #endregion
 
-    // #region Informations de entreprise
     private function handleCompanyForm(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -406,9 +376,7 @@ class ProfileController extends AbstractController
             'openCompanyVerificationModal' => false,
         ];
     }
-    // #endregion
 
-    // #region disponibilités
     private function handleAvailabilityForm(
         EntityManagerInterface $entityManager,
         FormInterface $availabilityForm,
@@ -435,9 +403,7 @@ class ProfileController extends AbstractController
             'tab' => 'dispo',
         ]);
     }
-    // #endregion
 
-    // #region notifications
     private function handleNotificationForm(
         EntityManagerInterface $entityManager,
         FormInterface $notificationForm,
@@ -456,93 +422,6 @@ class ProfileController extends AbstractController
             'tab' => 'notif',
         ]);
     }
-    // #endregion
-
-    // #region sécurité
-    private function handlePasswordForm(
-        EntityManagerInterface $entityManager,
-        FormInterface $passwordForm,
-        User $user,
-        string $redirectRoute,
-    ): ?Response {
-        if (!$passwordForm->isSubmitted() || !$passwordForm->isValid()) {
-            return null;
-        }
-
-        $plainPassword = $passwordForm->get('plainPassword')->getData();
-        \assert(\is_string($plainPassword));
-
-        $this->accountSecurityManager->changePassword($user, $plainPassword);
-
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        $this->addFlash('success', 'Votre mot de passe a bien été mis à jour.');
-
-        return $this->redirectToRoute($redirectRoute, [
-            'tab' => 'security',
-        ]);
-    }
-
-    private function handleDeletionForm(
-        EntityManagerInterface $entityManager,
-        FormInterface $deletionForm,
-        User $user,
-    ): ?Response {
-        if (!$deletionForm->isSubmitted() || !$deletionForm->isValid()) {
-            return null;
-        }
-
-        $this->accountSecurityManager->softDelete($user);
-
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        $this->tokenStorage->setToken(null);
-
-        $request = $this->requestStack->getCurrentRequest();
-        if ($request?->hasSession()) {
-            $request->getSession()->invalidate();
-        }
-
-        $response = new RedirectResponse($this->generateUrl('app_home'));
-        $response->headers->clearCookie('REMEMBERME', '/');
-
-        if (\function_exists('session_name')) {
-            $sessionCookieName = session_name();
-            if (\is_string($sessionCookieName) && '' !== $sessionCookieName) {
-                $response->headers->clearCookie($sessionCookieName, '/');
-            }
-        }
-
-        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-        $response->headers->set('Pragma', 'no-cache');
-        $response->headers->set('Expires', 'Thu, 01 Jan 1970 00:00:00 GMT');
-
-        return $response;
-    }
-
-    private function resolveActiveTab(
-        string $defaultTab,
-        ?FormInterface $availabilityForm,
-        ?FormInterface $notificationForm,
-        FormInterface $passwordForm,
-        FormInterface $deletionForm,
-    ): string {
-        if (null !== $availabilityForm && $availabilityForm->isSubmitted() && !$availabilityForm->isValid()) {
-            return 'dispo';
-        }
-
-        if (null !== $notificationForm && $notificationForm->isSubmitted() && !$notificationForm->isValid()) {
-            return 'notif';
-        }
-
-        if (($passwordForm->isSubmitted() && !$passwordForm->isValid()) || ($deletionForm->isSubmitted() && !$deletionForm->isValid())) {
-            return 'security';
-        }
-
-        return $defaultTab;
-    }
 
     private function reindexPrestataireSearchProfile(PrestataireProfile $prestataireProfile): void
     {
@@ -559,16 +438,9 @@ class ProfileController extends AbstractController
             $this->addFlash('warning', 'L’entreprise a bien été enregistrée, mais la mise en visibilité peut prendre quelques instants.');
         }
     }
-    // #endregion
 
-    // #region services
     #[Route('/prestataire/service/ajouter', name: 'app_prestataire_add_service', methods: ['POST'])]
     #[IsGranted('ROLE_PRESTATAIRE')]
-    /**
-     * Traite l’action "addService" du contrôleur Profile.
-     *
-     * @return Response
-     */
     public function addService(
         Request $request,
         EntityManagerInterface $em,
@@ -585,7 +457,7 @@ class ProfileController extends AbstractController
         $user = $this->getUser();
         $service = $serviceRepo->find($serviceId);
 
-        if (!$service || !($user instanceof \App\Entity\User) || !$user->getPrestataireProfile()) {
+        if (!$service || !($user instanceof User) || !$user->getPrestataireProfile()) {
             $this->addFlash('error', 'Une erreur est survenue.');
 
             return $this->redirectToRoute('app_prestataire_settings');
@@ -618,27 +490,21 @@ class ProfileController extends AbstractController
 
         return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
     }
-    #endregion
 
-    // #region Suppression d'un service
     #[Route('/prestataire/service/supprimer/{id}', name: 'app_prestataire_service_delete', methods: ['POST'])]
     #[IsGranted('ROLE_PRESTATAIRE')]
-    /**
-     * Supprime la ressource demandée.
-     *
-     * @return Response
-     */
     public function delete(Request $request, PrestataireService $ps, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
 
         if (
-            !$user instanceof \App\Entity\User
+            !$user instanceof User
             || !$user->getPrestataireProfile()
             || $ps->getPrestataire() !== $user->getPrestataireProfile()
         ) {
             throw $this->createAccessDeniedException();
         }
+
         if ($this->isCsrfTokenValid('delete' . $ps->getId(), $request->request->get('_token'))) {
             $em->remove($ps);
             $this->prestataireProfileCompletionService->syncCompletionScore($user, $user->getPrestataireProfile());
@@ -647,25 +513,17 @@ class ProfileController extends AbstractController
             $this->addFlash('success', 'Le service a bien été retiré de votre profil.');
         }
 
-        // On redirige vers la route nommée avec l'ancre
         return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
     }
-    #endregion
 
-    // #region Edition d'un service
     #[Route('/prestataire/service/editer/{id}', name: 'app_prestataire_service_edit')]
     #[IsGranted('ROLE_PRESTATAIRE')]
-    /**
-     * Affiche et traite le formulaire de modification.
-     *
-     * @return Response
-     */
     public function edit(Request $request, PrestataireService $ps, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
 
         if (
-            !$user instanceof \App\Entity\User
+            !$user instanceof User
             || !$user->getPrestataireProfile()
             || $ps->getPrestataire() !== $user->getPrestataireProfile()
         ) {
@@ -711,30 +569,21 @@ class ProfileController extends AbstractController
             'ps' => $ps,
         ]);
     }
-    #endregion
 
-    // #region Suppression d'un document
     #[Route('/prestataire/document/{id}/supprimer', name: 'app_prestataire_document_delete', methods: ['POST'])]
     #[IsGranted('ROLE_PRESTATAIRE')]
-    /**
-     * Traite l’action "deleteDocument" du contrôleur Profile.
-     *
-     * @return Response
-     */
     public function deleteDocument(
         Request $request,
         PrestataireDocument $document,
         EntityManagerInterface $entityManager,
     ): Response {
-    // utilisateur connecté
-        /** @var \App\Entity\User|null $user */
+        /** @var User|null $user */
         $user = $this->getUser();
 
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
 
-        // profil prestataire courant
         $prestataireProfile = $user->getPrestataireProfile();
 
         if (!$prestataireProfile) {
@@ -745,12 +594,10 @@ class ProfileController extends AbstractController
             ]);
         }
 
-        // sécurité : le document doit appartenir au prestataire connecté
         if ($document->getPrestataireProfile()?->getId() !== $prestataireProfile->getId()) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer ce document.');
         }
 
-        // validation CSRF
         if (!$this->isCsrfTokenValid('delete_document_' . $document->getId(), $request->request->get('_token'))) {
             $this->addFlash('danger', 'Le jeton CSRF est invalide. Veuillez réessayer.');
 
@@ -759,7 +606,6 @@ class ProfileController extends AbstractController
             ]);
         }
 
-        // suppression document
         $prestataireProfile->removeDocument($document);
         $this->prestataireProfileCompletionService->syncCompletionScore($user, $prestataireProfile);
         $entityManager->remove($document);
@@ -772,164 +618,4 @@ class ProfileController extends AbstractController
             '_fragment' => 'company-panel',
         ]);
     }
-    #endregion
-
-
-    // #region PARAMETRES PROFILE CLIENT
-
-    #region Affichage
-    #[Route('/client/parametres', name: 'app_client_settings')]
-    #[IsGranted('ROLE_CLIENT')]
-    /**
-     * Traite l’action "clientSettings" du contrôleur Profile.
-     *
-     * @return Response
-     */
-    public function clientSettings(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        if (!$user) {
-            return $this->redirectToRoute('app_login');
-        }
-
-        // 1. Initialisation à la volée du ClientProfile s'il n'existe pas encore
-        if (null === $user->getClientProfile()) {
-            $profile = new ClientProfile();
-
-            $user->setClientProfile($profile);
-            $profile->setAccount($user);
-        }
-
-        // 2. Utiliser le formulaire global AccountSettingsType lié au $user
-        $form = $this->createForm(AccountSettingsType::class, $user, [
-            'profile_type' => \in_array('ROLE_PRESTATAIRE', $user->getRoles(), true) ? 'prestataire' : 'client',
-        ]);
-        $passwordForm = $this->createForm(AccountPasswordChangeType::class, null, [
-            'action' => $this->generateUrl('app_client_settings'),
-            'method' => 'POST',
-        ]);
-        $deletionForm = $this->createForm(AccountDeletionType::class, null, [
-            'action' => $this->generateUrl('app_client_settings'),
-            'method' => 'POST',
-        ]);
-
-        $form->handleRequest($request);
-        $passwordForm->handleRequest($request);
-        $deletionForm->handleRequest($request);
-        $activeTab = $request->query->get('tab', 'personal');
-
-        // 3. Traitement de la soumission
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Votre profil client a été mis à jour avec succès !');
-
-            return $this->redirectToRoute('app_client_settings');
-        }
-
-        if ($response = $this->handlePasswordForm(
-            entityManager: $entityManager,
-            passwordForm: $passwordForm,
-            user: $user,
-            redirectRoute: 'app_client_settings',
-        )) {
-            return $response;
-        }
-
-        if ($response = $this->handleDeletionForm(
-            entityManager: $entityManager,
-            deletionForm: $deletionForm,
-            user: $user,
-        )) {
-            return $response;
-        }
-
-        // 4. Envoi à la vue client dédiée
-        return $this->render('profile/client_profile.html.twig', [
-            'settingsForm' => $form->createView(),
-            'user' => $user,
-            'passwordForm' => $passwordForm->createView(),
-            'deletionForm' => $deletionForm->createView(),
-            'activeTab' => $this->resolveActiveTab(
-                defaultTab: $activeTab,
-                availabilityForm: null,
-                notificationForm: null,
-                passwordForm: $passwordForm,
-                deletionForm: $deletionForm,
-            ),
-        ]);
-    }
-    #endregion
-
-    #region Affichage des favoris
-    #[Route('/client/parametres/favoris', name: 'app_client_settings_favorites', methods: ['GET'])]
-    #[IsGranted('ROLE_CLIENT')]
-    /**
-     * Traite l’action "clientFavorites" du contrôleur Profile.
-     *
-     * @return Response
-     */
-    public function clientFavorites(
-        FavoriteRepository $favoriteRepository,
-        PrestataireProfileRepository $prestataireProfileRepository,
-        PrestataireServiceRepository $prestataireServiceRepository,
-    ): Response {
-        $user = $this->getUser();
-
-        if (!$user instanceof User) {
-            return $this->redirectToRoute('app_login');
-        }
-
-        $favorites = $favoriteRepository->findBy(
-            ['user' => $user],
-            ['createdAt' => 'DESC']
-        );
-
-        $providerIds = [];
-        $prestationIds = [];
-        $bonsPlanIds = [];
-
-        foreach ($favorites as $favorite) {
-            $type = $favorite->getType();
-
-            if ($type === FavoriteTypeEnum::PRESTATAIRE) {
-                $providerIds[] = $favorite->getTargetId();
-            }
-
-            if ($type === FavoriteTypeEnum::PRESTATION) {
-                $prestationIds[] = $favorite->getTargetId();
-            }
-
-            if ($type === FavoriteTypeEnum::BON_PLAN) {
-                $bonsPlanIds[] = $favorite->getTargetId();
-            }
-        }
-
-        $favoriteProviders = !empty($providerIds)
-            ? $prestataireProfileRepository->findBy(['id' => array_unique($providerIds)])
-            : [];
-
-        $favoritePrestations = !empty($prestationIds)
-            ? $prestataireServiceRepository->findBy(['id' => array_unique($prestationIds)])
-            : [];
-
-        $favoriteBonsPlans = !empty($bonsPlanIds)
-            ? $prestataireServiceRepository->findBy(['id' => array_unique($bonsPlanIds)])
-            : [];
-
-        return $this->render('client/client_favorite.html.twig', [
-            'user' => $user,
-            'favoriteProviders' => $favoriteProviders,
-            'favoritePrestations' => $favoritePrestations,
-            'favoriteBonsPlans' => $favoriteBonsPlans,
-        ]);
-    }
-    #endregion
-
-    // #endregion
-
-
 }
