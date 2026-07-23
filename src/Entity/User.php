@@ -573,11 +573,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function shouldReceiveNotificationType(NotificationTypeEnum $type): bool
     {
         return match ($type) {
-            NotificationTypeEnum::QUOTE_REQUEST_RECEIVED => $this->notifyOnQuoteRequestReceived,
             NotificationTypeEnum::MESSAGE_RECEIVED => $this->notifyOnMessageReceived,
+            NotificationTypeEnum::QUOTE_REQUEST_RECEIVED => $this->notifyOnQuoteRequestReceived,
             NotificationTypeEnum::QUOTE_REQUEST_ACCEPTED,
             NotificationTypeEnum::QUOTE_PROPOSAL_RECEIVED => $this->notifyOnQuoteRequestAccepted,
             NotificationTypeEnum::REVIEW_RECEIVED => $this->notifyOnReviewReceived,
+            NotificationTypeEnum::INVOICE_RECEIVED => \in_array('ROLE_CLIENT', $this->getRoles(), true)
+                ? $this->notifyOnReviewReceived
+                : true,
             default => true,
         };
     }

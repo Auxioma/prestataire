@@ -94,6 +94,26 @@ abstract class AbstractProfileController extends AbstractController
         return $response;
     }
 
+    protected function handleNotificationForm(
+        EntityManagerInterface $entityManager,
+        FormInterface $notificationForm,
+        User $user,
+        string $redirectRoute,
+    ): ?Response {
+        if (!$notificationForm->isSubmitted() || !$notificationForm->isValid()) {
+            return null;
+        }
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Vos préférences de notifications ont bien été enregistrées.');
+
+        return $this->redirectToRoute($redirectRoute, [
+            'tab' => 'notif',
+        ]);
+    }
+
     protected function resolveActiveTab(
         string $defaultTab,
         ?FormInterface $availabilityForm,

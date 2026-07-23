@@ -19,6 +19,7 @@ use App\Enum\FavoriteTypeEnum;
 use App\Form\AccountDeletionType;
 use App\Form\AccountPasswordChangeType;
 use App\Form\AccountSettingsType;
+use App\Form\ClientNotificationPreferencesType;
 use App\Repository\FavoriteRepository;
 use App\Repository\PrestataireProfileRepository;
 use App\Repository\PrestataireServiceRepository;
@@ -71,8 +72,18 @@ class ProfileController extends AbstractProfileController
             'method' => 'POST',
         ]);
 
+        $notificationForm = $this->createForm(
+            ClientNotificationPreferencesType::class,
+            $user,
+            [
+                'action' => $this->generateUrl('app_client_settings'),
+                'method' => 'POST',
+            ]
+        );
+
         $form->handleRequest($request);
         $passwordForm->handleRequest($request);
+        $notificationForm->handleRequest($request);
         $deletionForm->handleRequest($request);
         $activeTab = $request->query->get('tab', 'personal');
 
@@ -83,6 +94,15 @@ class ProfileController extends AbstractProfileController
             $this->addFlash('success', 'Votre profil client a été mis à jour avec succès !');
 
             return $this->redirectToRoute('app_client_settings');
+        }
+
+        if ($response = $this->handleNotificationForm(
+            entityManager: $entityManager,
+            notificationForm: $notificationForm,
+            user: $user,
+            redirectRoute: 'app_client_settings',
+        )) {
+            return $response;
         }
 
         if ($response = $this->handlePasswordForm(
@@ -105,12 +125,13 @@ class ProfileController extends AbstractProfileController
         return $this->render('profile/client_profile.html.twig', [
             'settingsForm' => $form->createView(),
             'user' => $user,
+            'notificationForm' => $notificationForm->createView(),
             'passwordForm' => $passwordForm->createView(),
             'deletionForm' => $deletionForm->createView(),
             'activeTab' => $this->resolveActiveTab(
                 defaultTab: $activeTab,
                 availabilityForm: null,
-                notificationForm: null,
+                notificationForm: $notificationForm,
                 passwordForm: $passwordForm,
                 deletionForm: $deletionForm,
             ),

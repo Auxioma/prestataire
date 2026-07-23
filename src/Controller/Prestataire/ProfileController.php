@@ -144,6 +144,7 @@ class ProfileController extends AbstractProfileController
             entityManager: $entityManager,
             notificationForm: $forms->notificationForm,
             user: $user,
+            redirectRoute: 'app_prestataire_settings',
         )) {
             return $response;
         }
@@ -401,25 +402,6 @@ class ProfileController extends AbstractProfileController
 
         return $this->redirectToRoute('app_prestataire_settings', [
             'tab' => 'dispo',
-        ]);
-    }
-
-    private function handleNotificationForm(
-        EntityManagerInterface $entityManager,
-        FormInterface $notificationForm,
-        User $user,
-    ): ?Response {
-        if (!$notificationForm->isSubmitted() || !$notificationForm->isValid()) {
-            return null;
-        }
-
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        $this->addFlash('success', 'Vos préférences de notifications ont bien été enregistrées.');
-
-        return $this->redirectToRoute('app_prestataire_settings', [
-            'tab' => 'notif',
         ]);
     }
 

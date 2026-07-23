@@ -70,6 +70,11 @@
 							</button>
 						</li>
 						<li class="nav-item">
+							<button class="nav-link {{ activeTab == 'notif' ? 'active' : '' }}" id="notif-tab" data-bs-toggle="tab" data-bs-target="#notif-panel" type="button" role="tab" aria-selected="{{ activeTab == 'notif' ? 'true' : 'false' }}">
+								<i class="fa-regular fa-bell me-2"></i>Notifications
+							</button>
+						</li>
+						<li class="nav-item">
 							<button class="nav-link {{ activeTab == 'security' ? 'active' : '' }}" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-panel" type="button" role="tab" aria-selected="{{ activeTab == 'security' ? 'true' : 'false' }}">
 								<i class="fa-solid fa-shield-halved me-2"></i>Sécurité
 							</button>
@@ -191,6 +196,12 @@
 					</div>
 
 					{{ form_end(settingsForm) }}
+
+					<div class="tab-pane fade {{ activeTab == 'notif' ? 'show active' : '' }}" id="notif-panel" role="tabpanel">
+						{{ include('settings/_client_notifications_tab.html.twig', {
+							notificationForm: notificationForm
+						}) }}
+					</div>
 
 					<div class="tab-pane fade {{ activeTab == 'security' ? 'show active' : '' }}" id="security-panel" role="tabpanel">
 						<div class="row g-4">
