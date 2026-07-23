@@ -16,8 +16,12 @@ final class SubscriptionFacturXXmlBuilder
     private const DEFAULT_UNIT_CODE = 'C62';
     private const SIREN_SCHEME_ID = '0002';
     private const PLATFORM_NAME = 'TrouveMoi SAS';
+    private const PLATFORM_EMAIL = 'contact@trouvemoi.com';
     private const PLATFORM_VAT_NUMBER = 'FR 12 123456789';
     private const PLATFORM_SIREN = '123456789';
+    private const PLATFORM_LATE_PAYMENT_TERMS = 'Penalites de retard exigibles en cas de paiement apres la date d\'echeance.';
+    private const PLATFORM_RECOVERY_TERMS = 'Indemnite forfaitaire de 40 EUR pour frais de recouvrement en cas de retard de paiement.';
+    private const PLATFORM_EARLY_PAYMENT_DISCOUNT_TERMS = 'Pas d\'escompte pour paiement anticipe.';
 
     public function build(SubscriptionInvoice $invoice): string
     {
@@ -67,6 +71,9 @@ final class SubscriptionFacturXXmlBuilder
             'Facture d’abonnement générée par TrouveMoi à partir des données de paiement synchronisées avec Stripe.'
         ));
         $header->appendChild($note);
+        $this->appendFrenchPaymentNotice($document, $header, self::PLATFORM_RECOVERY_TERMS, 'PMT');
+        $this->appendFrenchPaymentNotice($document, $header, self::PLATFORM_LATE_PAYMENT_TERMS, 'PMD');
+        $this->appendFrenchPaymentNotice($document, $header, self::PLATFORM_EARLY_PAYMENT_DISCOUNT_TERMS, 'AAB');
 
         $root->appendChild($header);
     }
@@ -147,10 +154,12 @@ final class SubscriptionFacturXXmlBuilder
             'ram:CityName' => 'Paris',
             'ram:CountryID' => 'FR',
         ]);
+        $this->appendElectronicCommunication($document, $seller, self::PLATFORM_EMAIL);
         $this->appendTaxRegistration($document, $seller, self::PLATFORM_VAT_NUMBER);
         $agreement->appendChild($seller);
 
         $prestataire = $invoice->getSubscription()?->getPrestataireProfile();
+        $customer = $invoice->getSubscription()?->getCustomer();
         $buyer = $document->createElementNS(self::NS_RAM, 'ram:BuyerTradeParty');
         $buyer->appendChild($this->createTextElementNS(
             $document,
@@ -166,6 +175,11 @@ final class SubscriptionFacturXXmlBuilder
             'ram:CityName' => $prestataire?->getCity(),
             'ram:CountryID' => $this->normalizeCountryCode($prestataire?->getCountry()),
         ]);
+        $this->appendElectronicCommunication(
+            $document,
+            $buyer,
+            $customer?->getBillingEmail() ?: $prestataire?->getAccount()?->getEmail()
+        );
         $this->appendTaxRegistration($document, $buyer, $prestataire?->getVatNumber());
         $agreement->appendChild($buyer);
 
@@ -287,6 +301,41 @@ final class SubscriptionFacturXXmlBuilder
         $parent->appendChild($taxRegistration);
     }
 
+    private function appendElectronicCommunication(\DOMDocument $document, \DOMElement $parent, ?string $email): void
+    {
+        $email = $this->normalizeEmail($email);
+        if ($email === null) {
+            return;
+        }
+
+        $communication = $document->createElementNS(self::NS_RAM, 'ram:URIUniversalCommunication');
+        $identifier = $this->createTextElementNS($document, self::NS_RAM, 'ram:URIID', $email);
+        $identifier->setAttribute('schemeID', 'EM');
+        $communication->appendChild($identifier);
+        $parent->appendChild($communication);
+    }
+
+    private function appendFrenchPaymentNotice(\DOMDocument $document, \DOMElement $header, ?string $content, string $subjectCode): void
+    {
+        if (!$this->hasTextContent($content)) {
+            return;
+        }
+
+        $header->appendChild($this->buildIncludedNote($document, $content, $subjectCode));
+    }
+
+    private function buildIncludedNote(\DOMDocument $document, string $content, ?string $subjectCode = null): \DOMElement
+    {
+        $includedNote = $document->createElementNS(self::NS_RAM, 'ram:IncludedNote');
+        $includedNote->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Content', trim($content)));
+
+        if ($subjectCode !== null) {
+            $includedNote->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:SubjectCode', $subjectCode));
+        }
+
+        return $includedNote;
+    }
+
     private function createTextElementNS(\DOMDocument $document, string $namespace, string $name, string $value): \DOMElement
     {
         $element = $document->createElementNS($namespace, $name);
@@ -357,5 +406,17 @@ final class SubscriptionFacturXXmlBuilder
     private function normalizeVatNumber(?string $vatNumber): string
     {
         return preg_replace('/\s+/', '', mb_strtoupper(trim((string) $vatNumber))) ?: '';
+    }
+
+    private function normalizeEmail(?string $email): ?string
+    {
+        $email = trim((string) $email);
+
+        return $email !== '' ? mb_strtolower($email) : null;
+    }
+
+    private function hasTextContent(?string $value): bool
+    {
+        return trim((string) $value) !== '';
     }
 }

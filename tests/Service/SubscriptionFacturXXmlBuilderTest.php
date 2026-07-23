@@ -6,8 +6,10 @@ namespace App\Tests\Service;
 
 use App\Entity\PrestataireProfile;
 use App\Entity\Subscription\PrestataireSubscription;
+use App\Entity\Subscription\SubscriptionCustomer;
 use App\Entity\Subscription\SubscriptionInvoice;
 use App\Entity\Subscription\SubscriptionPlan;
+use App\Entity\User;
 use App\Enum\SubscriptionBillingPeriodEnum;
 use App\Enum\SubscriptionInvoiceStatusEnum;
 use App\Service\Subscription\SubscriptionFacturXXmlBuilder;
@@ -42,6 +44,18 @@ final class SubscriptionFacturXXmlBuilderTest extends TestCase
             'FR12123456789',
             $xpath->evaluate('string(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID)')
         );
+        self::assertSame(
+            'contact@trouvemoi.com',
+            $xpath->evaluate('string(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication/ram:URIID)')
+        );
+        self::assertSame(
+            'billing@example.test',
+            $xpath->evaluate('string(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication/ram:URIID)')
+        );
+        self::assertCount(
+            3,
+            $xpath->query('/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote[ram:SubjectCode]')
+        );
 
         $xsd = PathUtils::combineAllPaths(ZugferdSettings::getSchemaDirectory(), 'FACTUR-X_EN16931.xsd');
         libxml_use_internal_errors(true);
@@ -57,7 +71,11 @@ final class SubscriptionFacturXXmlBuilderTest extends TestCase
 
     private function createInvoiceFixture(): SubscriptionInvoice
     {
+        $user = (new User())
+            ->setEmail('buyer@example.test');
+
         $prestataire = (new PrestataireProfile())
+            ->setAccount($user)
             ->setCompanyName('Acme Services')
             ->setLegalName('Acme Services SARL')
             ->setAddress('10 rue de la Paix')
@@ -68,6 +86,11 @@ final class SubscriptionFacturXXmlBuilderTest extends TestCase
             ->setSiret('98765432100019')
             ->setVatNumber('FR12 123456789');
 
+        $customer = (new SubscriptionCustomer())
+            ->setPrestataireProfile($prestataire)
+            ->setStripeCustomerId('cus_test_001')
+            ->setBillingEmail('billing@example.test');
+
         $plan = (new SubscriptionPlan())
             ->setCode('pro')
             ->setName('Abonnement Pro')
@@ -75,6 +98,7 @@ final class SubscriptionFacturXXmlBuilderTest extends TestCase
 
         $subscription = (new PrestataireSubscription())
             ->setPrestataireProfile($prestataire)
+            ->setCustomer($customer)
             ->setPlan($plan)
             ->setBillingPeriod(SubscriptionBillingPeriodEnum::MONTHLY)
             ->setCurrentPeriodStart(new \DateTimeImmutable('2026-07-01 00:00:00'))
