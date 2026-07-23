@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Facture d'abonnement {{ invoice.invoiceNumber ?: invoice.id }}</title>
+    <style>
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            color: #172033;
+            font-size: 12px;
+            line-height: 1.45;
+            margin: 0;
+        }
+
+        .page {
+            padding: 34px 38px 42px;
+        }
+
+        .topbar {
+            width: 100%;
+            margin-bottom: 28px;
+        }
+
+        .topbar td {
+            vertical-align: top;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f2d6b;
+            margin-bottom: 8px;
+        }
+
+        .muted {
+            color: #657089;
+        }
+
+        .invoice-box {
+            text-align: right;
+        }
+
+        .invoice-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #5e6a85;
+            margin-bottom: 8px;
+        }
+
+        .card {
+            border: 1px solid #d9dfeb;
+            border-radius: 10px;
+            padding: 14px 16px;
+        }
+
+        .two-cols {
+            width: 100%;
+        }
+
+        .two-cols td {
+            width: 50%;
+            vertical-align: top;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .summary-table th,
+        .summary-table td {
+            border-bottom: 1px solid #dde3ee;
+            padding: 10px 8px;
+            text-align: left;
+        }
+
+        .summary-table th:last-child,
+        .summary-table td:last-child {
+            text-align: right;
+        }
+
+        .summary-table tfoot td {
+            font-weight: 700;
+            border-top: 2px solid #c6cfdf;
+            border-bottom: 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #eef3ff;
+            color: #23408f;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 10px;
+            color: #6d768c;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        {% set prestataire = prestataire %}
+        {% set account = prestataire ? prestataire.account : null %}
+        {% set invoiceNumber = invoice.invoiceNumber ?: ('ABO-' ~ (invoice.id ?: 'draft')) %}
+        {% set totalAmount = invoice.totalAmount ?: invoice.amountPaid ?: '0.00' %}
+
+        <table class="topbar">
+            <tr>
+                <td>
+                    <div class="brand">{{ platform.name }}</div>
+                    <div>{{ platform.legal_name }}</div>
+                    <div class="muted">{{ platform.email }}</div>
+                    <div class="muted">{{ platform.website }}</div>
+                </td>
+                <td class="invoice-box">
+                    <div class="invoice-title">Facture d'abonnement</div>
+                    <div><strong>{{ invoiceNumber }}</strong></div>
+                    <div class="muted">
+                        {{ invoice.paidAt ? 'Payée le ' ~ invoice.paidAt|date('d/m/Y') : 'Émise le ' ~ invoice.createdAt|date('d/m/Y') }}
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <span class="badge">{{ invoice.status.label }}</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <table class="two-cols section">
+            <tr>
+                <td style="padding-right: 10px;">
+                    <div class="section-title">Émetteur</div>
+                    <div class="card">
+                        <div><strong>{{ platform.legal_name }}</strong></div>
+                        <div>Facturation plateforme TrouveMoi</div>
+                        <div class="muted">{{ platform.email }}</div>
+                    </div>
+                </td>
+                <td style="padding-left: 10px;">
+                    <div class="section-title">Facturé à</div>
+                    <div class="card">
+                        <div><strong>{{ prestataire.companyName ?: prestataire.legalName ?: 'Prestataire' }}</strong></div>
+                        {% if prestataire.legalName and prestataire.legalName != prestataire.companyName %}
+                            <div>{{ prestataire.legalName }}</div>
+                        {% endif %}
+                        {% if prestataire.address %}
+                            <div>{{ prestataire.address }}</div>
+                        {% endif %}
+                        {% if prestataire.addressComplement %}
+                            <div>{{ prestataire.addressComplement }}</div>
+                        {% endif %}
+                        {% if prestataire.postalCode or prestataire.city %}
+                            <div>{{ prestataire.postalCode }} {{ prestataire.city }}</div>
+                        {% endif %}
+                        {% if prestataire.country %}
+                            <div>{{ prestataire.country }}</div>
+                        {% endif %}
+                        {% if prestataire.siret %}
+                            <div>SIRET : {{ prestataire.siret }}</div>
+                        {% endif %}
+                        {% if prestataire.vatNumber %}
+                            <div>TVA : {{ prestataire.vatNumber }}</div>
+                        {% endif %}
+                        {% if account and account.email %}
+                            <div class="muted">{{ account.email }}</div>
+                        {% elseif customer and customer.billingEmail %}
+                            <div class="muted">{{ customer.billingEmail }}</div>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="section">
+            <div class="section-title">Détail de l'abonnement</div>
+            <div class="card">
+                <div><strong>{{ subscription and subscription.plan ? subscription.plan.name : 'Abonnement plateforme' }}</strong></div>
+                <div class="muted">
+                    {{ subscription ? subscription.billingPeriod.label : 'Périodicité non disponible' }}
+                    {% if invoice.periodStart and invoice.periodEnd %}
+                        · période du {{ invoice.periodStart|date('d/m/Y') }} au {{ invoice.periodEnd|date('d/m/Y') }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <table class="summary-table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Montant</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        {{ subscription and subscription.plan ? subscription.plan.name : 'Abonnement TrouveMoi' }}
+                        {% if invoice.periodStart and invoice.periodEnd %}
+                            <div class="muted">Période : {{ invoice.periodStart|date('d/m/Y') }} - {{ invoice.periodEnd|date('d/m/Y') }}</div>
+                        {% endif %}
+                    </td>
+                    <td>{{ (invoice.subtotalAmount ?: totalAmount)|number_format(2, ',', ' ') }} {{ invoice.currencyCode }}</td>
+                </tr>
+                {% if invoice.taxAmount and invoice.taxAmount != '0.00' %}
+                    <tr>
+                        <td>TVA</td>
+                        <td>{{ invoice.taxAmount|number_format(2, ',', ' ') }} {{ invoice.currencyCode }}</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>Total</td>
+                    <td>{{ totalAmount|number_format(2, ',', ' ') }} {{ invoice.currencyCode }}</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="footer">
+            <div>Facture générée par la plateforme TrouveMoi à partir des données de paiement synchronisées avec Stripe.</div>
+            {% if invoice.stripeInvoiceId %}
+                <div>Référence Stripe : {{ invoice.stripeInvoiceId }}</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

@@ -361,11 +361,9 @@
                                                     </td>
                                                     <td class="text-end">
                                                         <div class="d-inline-flex flex-wrap justify-content-end gap-2">
-                                                            {% if invoice.invoicePdfUrl %}
-                                                                <a href="{{ path('app_subscription_invoice_download', { invoiceId: invoice.id }) }}" class="btn btn-sm btn-outline-primary">
-                                                                    Télécharger
-                                                                </a>
-                                                            {% endif %}
+                                                            <a href="{{ path('app_subscription_invoice_download', { invoiceId: invoice.id }) }}" class="btn btn-sm btn-outline-primary">
+                                                                Télécharger
+                                                            </a>
                                                         </div>
                                                     </td>
                                                 </tr>
