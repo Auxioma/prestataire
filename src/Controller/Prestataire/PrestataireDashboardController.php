@@ -629,6 +629,7 @@ final class PrestataireDashboardController extends AbstractController
             'quoteSort' => $quoteSort,
             'conversations' => $conversations,
             'conversationUnreadCounts' => $conversationUnreadCounts,
+            'unreadConversationCount' => $this->countUnreadConversations($conversationUnreadCounts),
             'activeConversation' => $activeConversation,
             'messageForm' => $messageFormView,
             'revenueForm' => $revenueFormView,
@@ -1036,6 +1037,17 @@ final class PrestataireDashboardController extends AbstractController
         }
 
         return $counts;
+    }
+
+    /**
+     * @param array<string, int> $conversationUnreadCounts
+     */
+    private function countUnreadConversations(array $conversationUnreadCounts): int
+    {
+        return \count(array_filter(
+            $conversationUnreadCounts,
+            static fn (int $count): bool => $count > 0
+        ));
     }
 
     private function conversationHasPhotos(?Conversation $conversation): bool

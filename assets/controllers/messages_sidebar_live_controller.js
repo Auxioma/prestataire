@@ -8,9 +8,12 @@ export default class extends Controller {
         joinEventName: { type: String, default: 'join_user' },
         eventName: { type: String, default: 'notification_created' },
         activeConversationId: { type: Number, default: 0 },
+        activeTab: { type: String, default: '' },
     };
 
     connect() {
+        this.sidebarBadge = document.querySelector('[data-unread-conversations-badge]');
+
         if (typeof io === 'undefined') {
             console.error('Socket.IO non charge');
             return;
@@ -58,18 +61,51 @@ export default class extends Controller {
 
         const conversationId = this.extractConversationId(payload.notification.targetUrl);
 
-        if (!conversationId || Number(conversationId) === Number(this.activeConversationIdValue)) {
+        if (!conversationId) {
+            return;
+        }
+
+        if (
+            this.activeTabValue === 'messages'
+            && Number(conversationId) === Number(this.activeConversationIdValue)
+        ) {
             return;
         }
 
         const thread = this.element.querySelector(`[data-conversation-id="${conversationId}"]`);
 
         if (!thread) {
+            this.incrementSidebarBadge();
             return;
+        }
+
+        const currentUnreadCount = Number.parseInt(thread.dataset.unreadCount || '0', 10);
+
+        if (Number.isNaN(currentUnreadCount) || currentUnreadCount === 0) {
+            this.incrementSidebarBadge();
         }
 
         this.promoteThread(thread);
         this.bumpUnreadBadge(thread);
+    }
+
+    markThreadRead(event) {
+        const thread = event.currentTarget;
+        const currentUnreadCount = Number.parseInt(thread.dataset.unreadCount || '0', 10);
+
+        if (Number.isNaN(currentUnreadCount) || currentUnreadCount <= 0) {
+            return;
+        }
+
+        thread.dataset.unreadCount = '0';
+        thread.classList.remove('is-unread', 'is-unread-live');
+
+        const badge = thread.querySelector('[data-unread-badge]');
+        if (badge) {
+            badge.remove();
+        }
+
+        this.decrementSidebarBadge();
     }
 
     extractConversationId(targetUrl) {
@@ -131,5 +167,34 @@ export default class extends Controller {
             `${nextCount} message${nextCount > 1 ? 's' : ''} non lu${nextCount > 1 ? 's' : ''}`
         );
         badge.innerHTML = '<i class="fa-solid fa-envelope"></i><span>' + nextCount + '</span>';
+    }
+
+    incrementSidebarBadge() {
+        this.renderSidebarBadge(this.readSidebarBadgeCount() + 1);
+    }
+
+    decrementSidebarBadge() {
+        this.renderSidebarBadge(Math.max(0, this.readSidebarBadgeCount() - 1));
+    }
+
+    readSidebarBadgeCount() {
+        if (!this.sidebarBadge) {
+            return 0;
+        }
+
+        const raw = this.sidebarBadge.dataset.countValue || this.sidebarBadge.textContent || '0';
+        const parsed = Number.parseInt(raw, 10);
+
+        return Number.isNaN(parsed) ? 0 : parsed;
+    }
+
+    renderSidebarBadge(count) {
+        if (!this.sidebarBadge) {
+            return;
+        }
+
+        this.sidebarBadge.dataset.countValue = String(count);
+        this.sidebarBadge.textContent = String(count);
+        this.sidebarBadge.classList.toggle('d-none', count <= 0);
     }
 }
