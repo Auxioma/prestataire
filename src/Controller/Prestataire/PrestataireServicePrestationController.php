@@ -39,12 +39,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 
-#[IsGranted('ROLE_PRESTATAIRE')]
 /**
  * Gère les actions liées à prestataire service prestation.
  */
 final class PrestataireServicePrestationController extends AbstractController
 {
+    #[IsGranted('ROLE_PRESTATAIRE')]
     #[Route('/prestataire/service/{slug}/prestation', name: 'app_prestataire_service_prestation_edit', requirements: ['slug' => Requirement::ASCII_SLUG])]
     /**
      * Affiche et traite le formulaire de modification.
@@ -176,6 +176,7 @@ final class PrestataireServicePrestationController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_PRESTATAIRE')]
     #[Route('/prestataire/prestations/nouvelle', name: 'app_prestataire_service_new', methods: ['GET', 'POST'])]
     /**
      * Affiche et traite le formulaire de création.
@@ -332,6 +333,7 @@ final class PrestataireServicePrestationController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_PRESTATAIRE')]
     #[Route('/prestataire/service/{id}/toggle-active', name: 'app_prestataire_service_toggle_active', methods: ['POST'])]
     /**
      * Traite l’action "toggleActive" du contrôleur Prestataire Service Prestation.
