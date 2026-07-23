@@ -10,7 +10,7 @@
  * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
  */
 
-namespace App\Controller;
+namespace App\Controller\Prestataire;
 
 use App\Entity\PrestataireService;
 use App\Entity\User;
@@ -35,9 +35,11 @@ use App\Repository\FavoriteRepository;
 use App\Service\PrestataireProfileCompletionService;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 
+#[IsGranted('ROLE_PRESTATAIRE')]
 /**
  * Gère les actions liées à prestataire service prestation.
  */

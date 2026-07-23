@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Client;
 
 use App\Entity\Notification;
 use App\Entity\User;
@@ -13,8 +13,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/notifications', name: 'app_notification_')]
+#[IsGranted('IS_AUTHENTICATED_FULLY')]
 /**
  * Gère les actions liées à notification.
  */
@@ -49,7 +51,7 @@ final class NotificationController extends AbstractController
             10
         );
 
-        return $this->render('notification/index.html.twig', [
+        return $this->render('client/notification/index.html.twig', [
             'notifications' => $pagination,
             'unreadCount' => $notificationRepository->countUnreadForUser($user),
         ]);

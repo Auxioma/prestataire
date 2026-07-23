@@ -399,7 +399,7 @@
 					</section>
 
 					{# Conversation Messagerie #}
-					<section id="quote-conversation" class="tm-client-quotes-detailcard tm-client-quotes-detailcard--conversation" {{ stimulus_controller('realtime-conversation', { url: 'http://localhost:3001', conversationId: conversation ? conversation.id : 0, eventName: 'message_created', joinEventName: 'join_conversation', streamSelector: '.tm-client-quotes-messages--scroll', bodySelector: '.tm-client-quotes-conversation-body', emptySelector: '.tm-client-quotes-empty-state', currentUserType: 'client', layout: 'client', scrollPageToSelf: true } ) }}>
+					<section id="quote-conversation" class="tm-client-quotes-detailcard tm-client-quotes-detailcard--conversation" {{ stimulus_controller('realtime-conversation', { url: 'http://localhost:3001', conversationId: conversation ? conversation.id : 0, authToken: realtimeConversationToken|default(''), eventName: 'message_created', joinEventName: 'join_conversation', streamSelector: '.tm-client-quotes-messages--scroll', bodySelector: '.tm-client-quotes-conversation-body', emptySelector: '.tm-client-quotes-empty-state', currentUserType: 'client', layout: 'client', scrollPageToSelf: true } ) }}>
 						<div class="card-body">
 							<div class="tm-client-quotes-conversation-body">
 								<div class="tm-client-quotes-section-head tm-client-quotes-section-head--conversation">

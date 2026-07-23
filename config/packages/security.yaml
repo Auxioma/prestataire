@@ -55,7 +55,15 @@ security:
     # Note: Only the *first* matching rule is applied
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/notifications, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/signalements, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/favoris, roles: ROLE_CLIENT }
+        - { path: ^/client/parametres, roles: ROLE_CLIENT }
+        - { path: ^/demandes-de-devis, roles: ROLE_CLIENT }
+        - { path: ^/prestataire/abonnements, roles: ROLE_PRESTATAIRE }
+        - { path: ^/prestataire/calendrier, roles: ROLE_PRESTATAIRE }
+        - { path: ^/prestataire/espace-pro, roles: ROLE_PRESTATAIRE }
+        - { path: ^/prestataire/parametres, roles: ROLE_PRESTATAIRE }
 
 when@test:
     security:

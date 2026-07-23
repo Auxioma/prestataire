@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Prestataire;
 
 use App\Entity\Conversation;
 use App\Entity\PrestataireProfile;
@@ -27,8 +27,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/prestataire/devis', name: 'app_prestataire_quote_proposal_')]
+#[IsGranted('ROLE_PRESTATAIRE')]
 /**
  * Gère les actions liées à quote proposal.
  */

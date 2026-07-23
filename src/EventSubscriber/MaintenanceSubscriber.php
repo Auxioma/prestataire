@@ -53,7 +53,14 @@ final class MaintenanceSubscriber implements EventSubscriberInterface
             return false;
         }
 
-        return $request->query->get('maintenance_token') === $this->maintenanceSecret;
+        $headerToken = $request->headers->get('X-Maintenance-Token');
+        if (is_string($headerToken) && hash_equals($this->maintenanceSecret, $headerToken)) {
+            return true;
+        }
+
+        $queryToken = $request->query->get('maintenance_token');
+
+        return is_string($queryToken) && hash_equals($this->maintenanceSecret, $queryToken);
     }
 
     public static function getSubscribedEvents(): array

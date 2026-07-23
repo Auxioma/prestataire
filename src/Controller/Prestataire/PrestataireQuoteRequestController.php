@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Prestataire;
 
 use App\Entity\Conversation;
 use App\Entity\Message;
@@ -24,8 +24,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/prestataire/demandes', name: 'app_prestataire_quote_request_')]
+#[IsGranted('ROLE_PRESTATAIRE')]
 /**
  * Gère les actions liées à prestataire quote request.
  */
@@ -62,7 +64,7 @@ final class PrestataireQuoteRequestController extends AbstractController
             10
         );
 
-        return $this->render('prestataire_quote_request/show.html.twig', [
+        return $this->render('prestataire/quote_request/show.html.twig', [
             'quoteRequests' => $quoteRequests,
         ]);
     }
@@ -110,7 +112,7 @@ final class PrestataireQuoteRequestController extends AbstractController
             }
         }
 
-        return $this->render('prestataire_quote_request/show.html.twig', [
+        return $this->render('prestataire/quote_request/show.html.twig', [
             'quoteRequest' => $quoteRequest,
             'isArchivedView' => $quoteRequest->isArchivedByPrestataire(),
             'linkedProposal' => $linkedProposal,

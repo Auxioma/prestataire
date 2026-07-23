@@ -112,7 +112,7 @@
 				{% endif %}
 
 				{% if app.user %}
-					<div class="nav-item dropdown d-none d-xl-block" data-controller="realtime-notifications" data-realtime-notifications-url-value="http://localhost:3001" data-realtime-notifications-user-id-value="{{ app.user.id }}" data-realtime-notifications-event-name-value="notification_created" data-realtime-notifications-join-event-name-value="join_user" data-realtime-notifications-max-items-value="5" data-realtime-notifications-mark-read-url-pattern-value="/notifications/__ID__/open">
+					<div class="nav-item dropdown d-none d-xl-block" data-controller="realtime-notifications" data-realtime-notifications-url-value="http://localhost:3001" data-realtime-notifications-user-id-value="{{ app.user.id }}" data-realtime-notifications-auth-token-value="{{ navbarRealtimeNotificationsToken|default('') }}" data-realtime-notifications-event-name-value="notification_created" data-realtime-notifications-join-event-name-value="join_user" data-realtime-notifications-max-items-value="5" data-realtime-notifications-mark-read-url-pattern-value="/notifications/__ID__/open">
 
 						<a class="nav-link tm-navbarlink tm-navbar__notif-trigger position-relative" href="#" id="tmNavbarNotificationsDropdown" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
 							<i class="bi bi-bell-fill"></i>
@@ -369,7 +369,7 @@
 					{% endif %}
 
 					{% if app.user %}
-						<li class="nav-item dropdown d-xl-none" data-controller="realtime-notifications" data-realtime-notifications-url-value="http://localhost:3001" data-realtime-notifications-user-id-value="{{ app.user.id }}" data-realtime-notifications-event-name-value="notification_created" data-realtime-notifications-join-event-name-value="join_user" data-realtime-notifications-max-items-value="5" data-realtime-notifications-mark-read-url-pattern-value="/notifications/__ID__/open">
+						<li class="nav-item dropdown d-xl-none" data-controller="realtime-notifications" data-realtime-notifications-url-value="http://localhost:3001" data-realtime-notifications-user-id-value="{{ app.user.id }}" data-realtime-notifications-auth-token-value="{{ navbarRealtimeNotificationsToken|default('') }}" data-realtime-notifications-event-name-value="notification_created" data-realtime-notifications-join-event-name-value="join_user" data-realtime-notifications-max-items-value="5" data-realtime-notifications-mark-read-url-pattern-value="/notifications/__ID__/open">
 
 							<a class="nav-link tm-navbar__link tm-navbar__link--icon position-relative" href="#" id="tmNavbarNotificationsDropdownMobile" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
 								<i class="bi bi-bell-fill"></i>

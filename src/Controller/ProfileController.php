@@ -45,6 +45,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -69,6 +70,7 @@ class ProfileController extends AbstractController
 
     // #region Settings
     #[Route('/prestataire/parametres', name: 'app_prestataire_settings')]
+    #[IsGranted('ROLE_PRESTATAIRE')]
     /**
      * Affiche et traite les paramètres associés à ce contrôleur.
      *
@@ -561,6 +563,7 @@ class ProfileController extends AbstractController
 
     // #region services
     #[Route('/prestataire/service/ajouter', name: 'app_prestataire_add_service', methods: ['POST'])]
+    #[IsGranted('ROLE_PRESTATAIRE')]
     /**
      * Traite l’action "addService" du contrôleur Profile.
      *
@@ -619,6 +622,7 @@ class ProfileController extends AbstractController
 
     // #region Suppression d'un service
     #[Route('/prestataire/service/supprimer/{id}', name: 'app_prestataire_service_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_PRESTATAIRE')]
     /**
      * Supprime la ressource demandée.
      *
@@ -650,6 +654,7 @@ class ProfileController extends AbstractController
 
     // #region Edition d'un service
     #[Route('/prestataire/service/editer/{id}', name: 'app_prestataire_service_edit')]
+    #[IsGranted('ROLE_PRESTATAIRE')]
     /**
      * Affiche et traite le formulaire de modification.
      *
@@ -710,6 +715,7 @@ class ProfileController extends AbstractController
 
     // #region Suppression d'un document
     #[Route('/prestataire/document/{id}/supprimer', name: 'app_prestataire_document_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_PRESTATAIRE')]
     /**
      * Traite l’action "deleteDocument" du contrôleur Profile.
      *
@@ -773,6 +779,7 @@ class ProfileController extends AbstractController
 
     #region Affichage
     #[Route('/client/parametres', name: 'app_client_settings')]
+    #[IsGranted('ROLE_CLIENT')]
     /**
      * Traite l’action "clientSettings" du contrôleur Profile.
      *
@@ -859,6 +866,7 @@ class ProfileController extends AbstractController
 
     #region Affichage des favoris
     #[Route('/client/parametres/favoris', name: 'app_client_settings_favorites', methods: ['GET'])]
+    #[IsGranted('ROLE_CLIENT')]
     /**
      * Traite l’action "clientFavorites" du contrôleur Profile.
      *

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Prestataire;
 
 use App\Entity\Conversation;
 use App\Entity\Message;
@@ -21,6 +21,7 @@ use App\Repository\ReviewRepository;
 use App\Service\ConversationMessageManager;
 use App\Service\NotificationManager;
 use App\Service\PrestataireProfileCompletionService;
+use App\Service\RealtimeAuthTokenManager;
 use App\Service\RealtimeNotifier;
 use App\Service\Subscription\SubscriptionAccessManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,16 +34,19 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Gère les actions liées à prestataire dashboard.
  */
+#[IsGranted('ROLE_PRESTATAIRE')]
 final class PrestataireDashboardController extends AbstractController
 {
     private const DASHBOARD_PAGE_SIZE = 10;
 
     public function __construct(
         private readonly PrestataireProfileCompletionService $prestataireProfileCompletionService,
+        private readonly RealtimeAuthTokenManager $realtimeAuthTokenManager,
     ) {
     }
 
@@ -74,7 +78,7 @@ final class PrestataireDashboardController extends AbstractController
         $user = $this->getAuthenticatedPrestataireUser();
         $prestataireProfile = $this->getPrestataireProfile($user, $prestataireProfileRepository);
 
-        return $this->render('prestataire_dashboard/prestataire_dashboard.html.twig', $this->buildDashboardViewData(
+        return $this->render('prestataire/dashboard/prestataire_dashboard.html.twig', $this->buildDashboardViewData(
             request: $request,
             entityManager: $entityManager,
             user: $user,
@@ -213,7 +217,7 @@ final class PrestataireDashboardController extends AbstractController
         }
 
         return $this->render(
-            'prestataire_dashboard/prestataire_dashboard.html.twig',
+            'prestataire/dashboard/prestataire_dashboard.html.twig',
             $this->buildDashboardViewData(
                 request: $request,
                 entityManager: $entityManager,
@@ -488,6 +492,9 @@ final class PrestataireDashboardController extends AbstractController
             'isConversationArchived' => $isConversationArchived,
             'activeTab' => $activeTab,
             'hasConversationPhotos' => $this->conversationHasPhotos($activeConversation),
+            'realtimeConversationToken' => $activeConversation instanceof Conversation
+                ? $this->realtimeAuthTokenManager->createConversationToken($activeConversation->getId(), $user)
+                : null,
         ];
     }
 

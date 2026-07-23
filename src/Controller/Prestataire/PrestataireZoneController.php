@@ -10,7 +10,7 @@
  * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
  */
 
-namespace App\Controller;
+namespace App\Controller\Prestataire;
 
 use App\Entity\PrestataireInterventionZone;
 use App\Entity\User;
@@ -23,8 +23,10 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/prestataire/zones', name: 'app_prestataire_zone_')]
+#[IsGranted('ROLE_PRESTATAIRE')]
 /**
  * Gère les actions liées à prestataire zone.
  */

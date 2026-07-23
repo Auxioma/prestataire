@@ -28,6 +28,7 @@ use App\Service\QuoteProposalAcceptancePdfGenerator;
 use App\Service\QuoteProposalDocumentResolver;
 use App\Service\QuoteProposalNativePdfGenerator;
 use App\Service\QuoteProposalPdfResponseFactory;
+use App\Service\RealtimeAuthTokenManager;
 use App\Service\RealtimeNotifier;
 use App\Service\ReviewManager;
 use App\Service\Subscription\SubscriptionAccessManager;
@@ -52,6 +53,11 @@ use Vich\UploaderBundle\Storage\StorageInterface;
  */
 final class QuoteRequestController extends AbstractController
 {
+    public function __construct(
+        private readonly RealtimeAuthTokenManager $realtimeAuthTokenManager,
+    ) {
+    }
+
     #[Route('', name: '_index', methods: ['GET'])]
     /**
      * Affiche la page principale de ce contrôleur.
@@ -446,6 +452,9 @@ final class QuoteRequestController extends AbstractController
             'canUseInstantMessaging' => $canUseInstantMessaging,
             'isConversationArchived' => $isConversationArchived,
             'isArchivedView' => false,
+            'realtimeConversationToken' => $conversation instanceof Conversation
+                ? $this->realtimeAuthTokenManager->createConversationToken($conversation->getId(), $user)
+                : null,
         ]);
     }
 

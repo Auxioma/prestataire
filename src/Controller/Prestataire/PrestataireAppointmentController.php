@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Prestataire;
 
 use App\Entity\User;
 use App\Repository\PrestataireAppointmentRepository;
@@ -14,9 +14,11 @@ use App\Form\PrestataireAppointmentType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/prestataire/calendrier', name: 'app_prestataire_appointment_')]
+#[IsGranted('ROLE_PRESTATAIRE')]
 /**
  * Gère les actions liées à prestataire appointment.
  */

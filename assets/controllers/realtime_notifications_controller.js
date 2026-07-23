@@ -6,6 +6,7 @@ export default class extends Controller {
     static values = {
         url: String,
         userId: Number,
+        authToken: { type: String, default: '' },
         joinEventName: { type: String, default: 'join_user' },
         eventName: { type: String, default: 'notification_created' },
         maxItems: { type: Number, default: 5 },
@@ -27,7 +28,10 @@ export default class extends Controller {
         });
 
         this.socket.on('connect', () => {
-            this.socket.emit(this.joinEventNameValue, this.userIdValue);
+            this.socket.emit(this.joinEventNameValue, {
+                userId: this.userIdValue,
+                token: this.authTokenValue,
+            });
         });
 
         this.socket.on('connect_error', (error) => {

@@ -8,6 +8,7 @@ export default class extends Controller {
         setupIntentUrl: String,
         finalizeUrl: String,
         setupIntentCsrfToken: String,
+        finalizeCsrfToken: String,
         returnUrl: String,
         enabled: Boolean,
     };
@@ -201,6 +202,7 @@ export default class extends Controller {
                 'X-Requested-With': 'XMLHttpRequest',
             },
             body: JSON.stringify({
+                _token: this.finalizeCsrfTokenValue,
                 stripeSubscriptionId,
             }),
         });

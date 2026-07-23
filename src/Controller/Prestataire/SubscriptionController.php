@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Prestataire;
 
 use App\Entity\User;
 use App\Enum\SubscriptionBillingPeriodEnum;
@@ -26,9 +26,11 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Route('/prestataire/abonnements', name: 'app_subscription_')]
+#[IsGranted('ROLE_PRESTATAIRE')]
 final class SubscriptionController extends AbstractController
 {
     #[Route('', name: 'index', methods: ['GET'])]
@@ -112,7 +114,7 @@ final class SubscriptionController extends AbstractController
 
         $recentInvoices = $subscriptionInvoiceRepository->findRecentForPrestataire($prestataireProfile);
 
-        return $this->render('subscription/index.html.twig', [
+        return $this->render('prestataire/subscription/index.html.twig', [
             'plans' => $subscriptionPlanRepository->findActiveOrdered(),
             'currentSubscription' => $currentSubscription,
             'subscriptionRenewalDate' => $subscriptionRenewalDate,
@@ -271,6 +273,14 @@ final class SubscriptionController extends AbstractController
         }
 
         $prestataireProfile = $this->getPrestataireProfile();
+        $csrfToken = $this->extractRequestValue($request, '_token');
+
+        if (!$this->isCsrfTokenValid('subscription-finalize', $csrfToken)) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Jeton CSRF invalide.',
+            ], Response::HTTP_FORBIDDEN);
+        }
 
         $stripeSubscriptionId = $this->extractRequestValue($request, 'stripeSubscriptionId');
 

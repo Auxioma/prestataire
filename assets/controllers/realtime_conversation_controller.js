@@ -4,6 +4,7 @@ export default class extends Controller {
     static values = {
         url: String,
         conversationId: Number,
+        authToken: { type: String, default: "" },
         eventName: { type: String, default: "message_created" },
         joinEventName: { type: String, default: "join_conversation" },
         streamSelector: { type: String, default: ".tm-msg-stream" },
@@ -31,7 +32,10 @@ export default class extends Controller {
         });
 
         this.socket.on("connect", () => {
-            this.socket.emit(this.joinEventNameValue, this.conversationIdValue);
+            this.socket.emit(this.joinEventNameValue, {
+                conversationId: this.conversationIdValue,
+                token: this.authTokenValue,
+            });
         });
 
         this.socket.on("connect_error", (error) => {
