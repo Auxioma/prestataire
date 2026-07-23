@@ -3,6 +3,7 @@
 namespace App\Controller\Prestataire;
 
 use App\Entity\Conversation;
+use App\Entity\PrestataireRevenueEntry;
 use App\Entity\Message;
 use App\Entity\MessageAttachment;
 use App\Entity\PrestataireProfile;
@@ -11,16 +12,19 @@ use App\Enum\MessageTypeEnum;
 use App\Enum\NotificationTypeEnum;
 use App\Enum\QuoteRequestStatusEnum;
 use App\Form\MessageType;
+use App\Form\PrestataireRevenueEntryType;
 use App\Repository\ConversationRepository;
 use App\Repository\MessageRepository;
 use App\Repository\PrestataireAppointmentRepository;
 use App\Repository\PrestataireProfileRepository;
+use App\Repository\PrestataireRevenueEntryRepository;
 use App\Repository\PrestataireServiceRepository;
 use App\Repository\QuoteRequestRepository;
 use App\Repository\ReviewRepository;
 use App\Service\ConversationMessageManager;
 use App\Service\NotificationManager;
 use App\Service\PrestataireProfileCompletionService;
+use App\Service\PrestataireRevenueOverviewBuilder;
 use App\Service\RealtimeAuthTokenManager;
 use App\Service\RealtimeNotifier;
 use App\Service\Subscription\SubscriptionAccessManager;
@@ -43,14 +47,16 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class PrestataireDashboardController extends AbstractController
 {
     private const DASHBOARD_PAGE_SIZE = 10;
+    private const REVENUE_PAYOUTS_PAGE_SIZE = 7;
 
     public function __construct(
         private readonly PrestataireProfileCompletionService $prestataireProfileCompletionService,
         private readonly RealtimeAuthTokenManager $realtimeAuthTokenManager,
+        private readonly PrestataireRevenueOverviewBuilder $prestataireRevenueOverviewBuilder,
     ) {
     }
 
-    #[Route('/prestataire/espace-pro', name: 'app_prestataire_dashboard', methods: ['GET'])]
+    #[Route('/prestataire/espace-pro', name: 'app_prestataire_dashboard', methods: ['GET', 'POST'])]
     /**
      * Affiche la page principale de ce contrôleur.
      *
@@ -60,6 +66,7 @@ final class PrestataireDashboardController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         PrestataireProfileRepository $prestataireProfileRepository,
+        PrestataireRevenueEntryRepository $prestataireRevenueEntryRepository,
         PrestataireServiceRepository $prestataireServiceRepository,
         PrestataireAppointmentRepository $prestataireAppointmentRepository,
         QuoteRequestRepository $quoteRequestRepository,
@@ -77,6 +84,59 @@ final class PrestataireDashboardController extends AbstractController
 
         $user = $this->getAuthenticatedPrestataireUser();
         $prestataireProfile = $this->getPrestataireProfile($user, $prestataireProfileRepository);
+        $manualRevenueEntry = $this->resolveEditableRevenueEntry($request, $prestataireProfile, $prestataireRevenueEntryRepository);
+        $isEditingRevenue = null !== $manualRevenueEntry->getId();
+        $activeRevenueSubtab = $this->resolveRevenueSubtab($request);
+        $manualRevenueForm = $this->createRevenueForm($manualRevenueEntry, $prestataireProfile);
+        $manualRevenueForm->handleRequest($request);
+
+        if ($manualRevenueForm->isSubmitted()) {
+            if ($manualRevenueForm->isValid()) {
+                $manualRevenueEntry->setPrestataire($prestataireProfile);
+
+                if (
+                    null === $manualRevenueEntry->getServiceLabel()
+                    && $manualRevenueEntry->getPrestataireService() !== null
+                ) {
+                    $manualRevenueEntry->setServiceLabel($manualRevenueEntry->getPrestataireService()?->getDisplayTitle());
+                }
+
+                $entityManager->persist($manualRevenueEntry);
+                $entityManager->flush();
+
+                $this->addFlash('success', $isEditingRevenue
+                    ? 'Le revenu externe a bien été mis à jour.'
+                    : 'Le revenu externe a bien été ajouté.');
+
+                return $this->redirectToRoute('app_prestataire_dashboard', [
+                    'tab' => 'revenus',
+                    'revenues_subtab' => $activeRevenueSubtab,
+                    '_fragment' => 'revenus-main-panel',
+                ], 303);
+            }
+
+            return $this->render(
+                'prestataire/dashboard/prestataire_dashboard.html.twig',
+                $this->buildDashboardViewData(
+                    request: $request,
+                    entityManager: $entityManager,
+                    user: $user,
+                    prestataireProfile: $prestataireProfile,
+                    prestataireServiceRepository: $prestataireServiceRepository,
+                    prestataireAppointmentRepository: $prestataireAppointmentRepository,
+                    quoteRequestRepository: $quoteRequestRepository,
+                    conversationRepository: $conversationRepository,
+                    messageRepository: $messageRepository,
+                    reviewRepository: $reviewRepository,
+                    paginator: $paginator,
+                    subscriptionAccessManager: $subscriptionAccessManager,
+                    forcedActiveTab: 'revenus',
+                    revenueFormView: $manualRevenueForm->createView(),
+                    revenueFormEntry: $manualRevenueEntry,
+                ),
+                new Response('', Response::HTTP_UNPROCESSABLE_ENTITY)
+            );
+        }
 
         return $this->render('prestataire/dashboard/prestataire_dashboard.html.twig', $this->buildDashboardViewData(
             request: $request,
@@ -91,6 +151,8 @@ final class PrestataireDashboardController extends AbstractController
             reviewRepository: $reviewRepository,
             paginator: $paginator,
             subscriptionAccessManager: $subscriptionAccessManager,
+            revenueFormView: $manualRevenueForm->createView(),
+            revenueFormEntry: $manualRevenueEntry,
         ));
     }
 
@@ -400,6 +462,8 @@ final class PrestataireDashboardController extends AbstractController
         ?FormView $messageFormView = null,
         ?Conversation $forcedActiveConversation = null,
         ?string $forcedActiveTab = null,
+        ?FormView $revenueFormView = null,
+        ?PrestataireRevenueEntry $revenueFormEntry = null,
     ): array {
         $quoteSort = $this->resolveQuoteSort($request);
         $quoteOrderBy = $this->resolveQuoteOrderBy($quoteSort);
@@ -453,6 +517,42 @@ final class PrestataireDashboardController extends AbstractController
             mandatoryChecklist: $mandatoryChecklist,
         );
         $showProfileCompletionModal = 1 === (int) ($user->getLoginCount() ?? 0) && !$mandatoryChecklist['isComplete'];
+        $currentDate = new \DateTimeImmutable();
+        $selectedRevenueMonth = max(1, min(12, $request->query->getInt('revenues_month', (int) $currentDate->format('n'))));
+        $selectedRevenueYear = $request->query->getInt('revenues_year', (int) $currentDate->format('Y'));
+        $activeRevenueSubtab = $this->resolveRevenueSubtab($request);
+        $revenueOverview = $this->prestataireRevenueOverviewBuilder->build(
+            $prestataireProfile,
+            $selectedRevenueMonth,
+            $selectedRevenueYear,
+        );
+        $revenueHistorySort = $this->resolveRevenueHistorySort($request);
+        $revenueHistoryStatus = $this->resolveRevenueHistoryStatus($request);
+        $revenueHistoryItems = $this->buildRevenueHistoryItems(
+            $revenueOverview['history'],
+            $revenueHistorySort,
+            $revenueHistoryStatus,
+        );
+        $revenueHistory = $paginator->paginate(
+            $revenueHistoryItems,
+            $request->query->getInt('revenuePage', 1),
+            self::DASHBOARD_PAGE_SIZE,
+            ['pageParameterName' => 'revenuePage']
+        );
+        $revenuePayouts = $paginator->paginate(
+            $revenueOverview['unpaid'],
+            $request->query->getInt('revenuePayoutPage', 1),
+            self::REVENUE_PAYOUTS_PAGE_SIZE,
+            ['pageParameterName' => 'revenuePayoutPage']
+        );
+
+        if (null === $revenueFormEntry) {
+            $revenueFormEntry = new PrestataireRevenueEntry();
+        }
+
+        if (null === $revenueFormView) {
+            $revenueFormView = $this->createRevenueForm($revenueFormEntry, $prestataireProfile)->createView();
+        }
 
         return [
             'user' => $user,
@@ -488,6 +588,17 @@ final class PrestataireDashboardController extends AbstractController
             'conversations' => $conversations,
             'activeConversation' => $activeConversation,
             'messageForm' => $messageFormView,
+            'revenueForm' => $revenueFormView,
+            'revenueFormEntry' => $revenueFormEntry,
+            'activeRevenueSubtab' => $activeRevenueSubtab,
+            'revenueHistory' => $revenueHistory,
+            'revenueHistoryCount' => \count($revenueHistoryItems),
+            'revenueHistorySort' => $revenueHistorySort,
+            'revenueHistoryStatus' => $revenueHistoryStatus,
+            'revenuePayouts' => $revenuePayouts,
+            'revenueOverview' => $revenueOverview,
+            'selectedRevenueMonth' => $selectedRevenueMonth,
+            'selectedRevenueYear' => $selectedRevenueYear,
             'canUseInstantMessaging' => $canUseInstantMessaging,
             'isConversationArchived' => $isConversationArchived,
             'activeTab' => $activeTab,
@@ -496,6 +607,98 @@ final class PrestataireDashboardController extends AbstractController
                 ? $this->realtimeAuthTokenManager->createConversationToken($activeConversation->getId(), $user)
                 : null,
         ];
+    }
+
+    private function createRevenueForm(
+        PrestataireRevenueEntry $entry,
+        PrestataireProfile $prestataireProfile,
+    ): FormInterface {
+        $routeParameters = [
+            'tab' => 'revenus',
+            '_fragment' => 'revenus-main-panel',
+        ];
+
+        if (null !== $entry->getId()) {
+            $routeParameters['edit_revenue'] = $entry->getId();
+        }
+
+        return $this->createForm(PrestataireRevenueEntryType::class, $entry, [
+            'prestataire' => $prestataireProfile,
+            'action' => $this->generateUrl('app_prestataire_dashboard', $routeParameters),
+            'method' => 'POST',
+        ]);
+    }
+
+    private function resolveEditableRevenueEntry(
+        Request $request,
+        PrestataireProfile $prestataireProfile,
+        PrestataireRevenueEntryRepository $prestataireRevenueEntryRepository,
+    ): PrestataireRevenueEntry {
+        $entryId = $request->query->get('edit_revenue');
+
+        if (!\is_string($entryId) && !\is_numeric($entryId)) {
+            return new PrestataireRevenueEntry();
+        }
+
+        $entry = $prestataireRevenueEntryRepository->find((string) $entryId);
+
+        if (
+            !$entry instanceof PrestataireRevenueEntry
+            || $entry->getPrestataire()?->getId() !== $prestataireProfile->getId()
+        ) {
+            throw $this->createAccessDeniedException('Revenu externe introuvable.');
+        }
+
+        return $entry;
+    }
+
+    private function resolveRevenueHistorySort(Request $request): string
+    {
+        $sort = (string) $request->query->get('revenue_sort', 'date_desc');
+
+        return \in_array($sort, ['date_asc', 'date_desc'], true) ? $sort : 'date_desc';
+    }
+
+    private function resolveRevenueHistoryStatus(Request $request): string
+    {
+        $status = (string) $request->query->get('revenue_status', 'all');
+
+        return \in_array($status, ['all', 'paid', 'unpaid'], true) ? $status : 'all';
+    }
+
+    private function resolveRevenueSubtab(Request $request): string
+    {
+        $subtab = $request->request->get('revenues_subtab');
+
+        if (!\is_string($subtab) || '' === $subtab) {
+            $subtab = (string) $request->query->get('revenues_subtab', 'summary');
+        }
+
+        return \in_array($subtab, ['summary', 'history', 'payouts'], true) ? $subtab : 'summary';
+    }
+
+    /**
+     * @param list<array<string, mixed>> $history
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function buildRevenueHistoryItems(array $history, string $sort, string $status): array
+    {
+        $items = array_values(array_filter($history, static function (array $item) use ($status): bool {
+            return match ($status) {
+                'paid' => true === $item['isPaid'],
+                'unpaid' => false === $item['isPaid'],
+                default => true,
+            };
+        }));
+
+        usort($items, static function (array $left, array $right) use ($sort): int {
+            $comparison = $left['issuedAt']->getTimestamp() <=> $right['issuedAt']->getTimestamp();
+
+            return 'date_asc' === $sort ? $comparison : -$comparison;
+        });
+
+        return $items;
     }
 
     private function markActiveConversationMessagesAsRead(

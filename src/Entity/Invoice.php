@@ -60,6 +60,9 @@ class Invoice
     private ?\DateTimeImmutable $issuedAt = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $paidAt = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $dueAt = null;
 
     #[ORM\Column(type: Types::STRING, length: 3, options: ['default' => 'EUR'])]
@@ -256,6 +259,19 @@ class Invoice
     public function setIssuedAt(?\DateTimeImmutable $issuedAt): self
     {
         $this->issuedAt = $issuedAt;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getPaidAt(): ?\DateTimeImmutable
+    {
+        return $this->paidAt;
+    }
+
+    public function setPaidAt(?\DateTimeImmutable $paidAt): self
+    {
+        $this->paidAt = $paidAt;
         $this->touch();
 
         return $this;
@@ -566,6 +582,11 @@ class Invoice
     public function isIssued(): bool
     {
         return $this->status->isIssued();
+    }
+
+    public function isPaid(): bool
+    {
+        return null !== $this->paidAt;
     }
 
     public function isExternalImport(): bool

@@ -43,9 +43,14 @@ export default class extends Controller {
 
                 if (tabLevel === 'sub') {
                     const mainPane = currentTrigger.closest('.tab-pane');
+                    const revenueSubtab = currentTrigger.dataset.revenueSubtab;
 
                     if (!mainPane || !mainPane.id) {
                         return;
+                    }
+
+                    if (mainPane.id === 'revenus-main-panel' && revenueSubtab) {
+                        this.syncRevenueSubtabState(revenueSubtab);
                     }
 
                     history.replaceState(null, '', `#${mainPane.id}|${currentTarget.replace('#', '')}`);
@@ -126,6 +131,28 @@ export default class extends Controller {
         }
 
         return mainPane.querySelector('[data-bs-toggle="tab"][data-tab-level="sub"]');
+    }
+
+    syncRevenueSubtabState(subtab) {
+        this.element.querySelectorAll('[data-revenue-subtab-input]').forEach((input) => {
+            input.value = subtab;
+        });
+
+        this.element.querySelectorAll('[data-revenue-subtab-link]').forEach((link) => {
+            const url = new URL(link.href, window.location.origin);
+            url.searchParams.set('revenues_subtab', subtab);
+            link.href = `${url.pathname}${url.search}${url.hash}`;
+        });
+
+        this.element.querySelectorAll('[data-revenue-subtab-pagination] a').forEach((link) => {
+            const url = new URL(link.href, window.location.origin);
+            url.searchParams.set('revenues_subtab', subtab);
+            link.href = `${url.pathname}${url.search}${url.hash}`;
+        });
+
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('revenues_subtab', subtab);
+        history.replaceState(null, '', `${currentUrl.pathname}${currentUrl.search}#revenus-main-panel|revenus-${subtab}-panel`);
     }
 
     toggleSidebar() {

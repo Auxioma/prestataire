@@ -85,4 +85,32 @@ class InvoiceRepository extends ServiceEntityRepository
 
         return $maxSequence + 1;
     }
+
+    /**
+     * @return list<Invoice>
+     */
+    public function findIssuedForPrestataireRevenue(PrestataireProfile $prestataire): array
+    {
+        return $this->createQueryBuilder('i')
+            ->leftJoin('i.quoteProposal', 'qp')
+            ->addSelect('qp')
+            ->leftJoin('i.quoteRequest', 'qr')
+            ->addSelect('qr')
+            ->leftJoin('qr.prestation', 'ps')
+            ->addSelect('ps')
+            ->leftJoin('ps.service', 's')
+            ->addSelect('s')
+            ->leftJoin('i.client', 'cp')
+            ->addSelect('cp')
+            ->leftJoin('cp.account', 'cu')
+            ->addSelect('cu')
+            ->andWhere('i.prestataire = :prestataire')
+            ->andWhere('i.status = :status')
+            ->setParameter('prestataire', $prestataire)
+            ->setParameter('status', \App\Enum\InvoiceStatusEnum::ISSUED)
+            ->orderBy('i.issuedAt', 'DESC')
+            ->addOrderBy('i.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

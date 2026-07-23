@@ -1,45 +1,70 @@
+{% set summary = revenueOverview.summary %}
+{% set filters = revenueOverview.filters %}
+{% set monthlyRows = revenueOverview.monthly %}
+{% set yearlyRows = revenueOverview.yearly %}
+{% set serviceRows = revenueOverview.services %}
+{% set revenueHistory = revenueHistory ?? revenueOverview.history %}
+{% set unpaidRows = revenuePayouts ?? revenueOverview.unpaid %}
+{% set activeRevenueSubtab = activeRevenueSubtab ?? 'summary' %}
+
+{% macro revenue_field(field, extraClass) %}
+    <div class="tm-revenue-field {{ extraClass|default('') }}">
+        {{ form_label(field, null, { label_attr: { class: 'tm-revenue-field__label' } }) }}
+        {{ form_widget(field, { attr: { class: 'tm-revenue-field__control' } }) }}
+        {{ form_errors(field) }}
+        {% if field.vars.help %}
+            <div class="tm-revenue-field__help">{{ field.vars.help }}</div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% import _self as revenueFormUi %}
+
 <ul class="nav nav-tabs border-bottom gap-2 mb-4" id="revenusSubTabs" role="tablist">
     <li class="nav-item" role="presentation">
         <button
-            class="nav-link active"
+            class="nav-link {{ activeRevenueSubtab == 'summary' ? 'active' : '' }}"
             id="revenus-summary-tab"
             data-tab-level="sub"
+            data-revenue-subtab="summary"
             data-bs-toggle="tab"
             data-bs-target="#revenus-summary-panel"
             type="button"
             role="tab"
             aria-controls="revenus-summary-panel"
-            aria-selected="true"
+            aria-selected="{{ activeRevenueSubtab == 'summary' ? 'true' : 'false' }}"
         >
             Synthèse
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button
-            class="nav-link"
+            class="nav-link {{ activeRevenueSubtab == 'history' ? 'active' : '' }}"
             id="revenus-history-tab"
             data-tab-level="sub"
+            data-revenue-subtab="history"
             data-bs-toggle="tab"
             data-bs-target="#revenus-history-panel"
             type="button"
             role="tab"
             aria-controls="revenus-history-panel"
-            aria-selected="false"
+            aria-selected="{{ activeRevenueSubtab == 'history' ? 'true' : 'false' }}"
         >
             Historique
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button
-            class="nav-link"
+            class="nav-link {{ activeRevenueSubtab == 'payouts' ? 'active' : '' }}"
             id="revenus-payouts-tab"
             data-tab-level="sub"
+            data-revenue-subtab="payouts"
             data-bs-toggle="tab"
             data-bs-target="#revenus-payouts-panel"
             type="button"
             role="tab"
             aria-controls="revenus-payouts-panel"
-            aria-selected="false"
+            aria-selected="{{ activeRevenueSubtab == 'payouts' ? 'true' : 'false' }}"
         >
             Paiements
         </button>
@@ -48,41 +73,494 @@
 
 <div class="tab-content" id="revenusSubTabsContent">
     <div
-        class="tab-pane fade show active"
+        class="tab-pane fade {{ activeRevenueSubtab == 'summary' ? 'show active' : '' }}"
         id="revenus-summary-panel"
         role="tabpanel"
         aria-labelledby="revenus-summary-tab"
         tabindex="0"
     >
-        <div class="card tm-card p-4">
-            <h4 class="tm-card-title mb-3">Synthèse des revenus</h4>
-            <p class="text-muted mb-0">Cette tab affichera les revenus globaux, les évolutions récentes et les principaux indicateurs financiers.</p>
+        <div class="tm-revenue-filter card tm-card p-4 mb-4">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+                <div>
+                    <h4 class="tm-card-title mb-1">Période d’analyse</h4>
+                    <p class="text-muted mb-0">Les indicateurs ci-dessous se recalculent sur le mois et l’année sélectionnés.</p>
+                </div>
+                <form method="get" action="{{ path('app_prestataire_dashboard') ~ '#revenus-main-panel' }}" class="tm-revenue-filter__form">
+                    <input type="hidden" name="tab" value="revenus">
+                    <input type="hidden" name="revenues_subtab" value="{{ activeRevenueSubtab }}" data-revenue-subtab-input>
+                    <div class="tm-revenue-filter__grid">
+                        <div>
+                            <label for="revenues-month" class="form-label mb-1">Mois</label>
+                            <select id="revenues-month" name="revenues_month" class="form-select">
+                                {% for month in filters.availableMonths %}
+                                    <option value="{{ month.value }}" {{ month.value == filters.selectedMonth ? 'selected' : '' }}>
+                                        {{ month.label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label for="revenues-year" class="form-label mb-1">Année</label>
+                            <select id="revenues-year" name="revenues_year" class="form-select">
+                                {% for year in filters.availableYears %}
+                                    <option value="{{ year.value }}" {{ year.value == filters.selectedYear ? 'selected' : '' }}>
+                                        {{ year.label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="tm-revenue-filter__submit">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Appliquer</button>
+                                <a href="{{ path('app_prestataire_dashboard', { tab: 'revenus', revenues_subtab: activeRevenueSubtab }) ~ '#revenus-main-panel' }}" class="btn btn-outline-secondary" data-revenue-subtab-link>Réinitialiser</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-md-6 col-xl-3">
+                <div class="card tm-card h-100 p-4">
+                    <div class="text-muted small mb-2">Facturé en {{ filters.selectedMonthLabel }}</div>
+                    <div class="fs-3 fw-bold">{{ summary.selectedMonthInvoiced|number_format(2, ',', ' ') }} €</div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+                <div class="card tm-card h-100 p-4">
+                    <div class="text-muted small mb-2">Encaissé en {{ filters.selectedMonthLabel }}</div>
+                    <div class="fs-3 fw-bold text-success">{{ summary.selectedMonthPaid|number_format(2, ',', ' ') }} €</div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+                <div class="card tm-card h-100 p-4">
+                    <div class="text-muted small mb-2">Facturé en {{ filters.selectedYear }}</div>
+                    <div class="fs-3 fw-bold">{{ summary.selectedYearInvoiced|number_format(2, ',', ' ') }} €</div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+                <div class="card tm-card h-100 p-4">
+                    <div class="text-muted small mb-2">Encaissé en {{ filters.selectedYear }}</div>
+                    <div class="fs-3 fw-bold text-success">{{ summary.selectedYearPaid|number_format(2, ',', ' ') }} €</div>
+                    <div class="small text-muted mt-2">{{ summary.paidCount }} élément(s) réglé(s)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card tm-card p-4 mb-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <h4 class="tm-card-title mb-1">Suivi global</h4>
+                    <p class="text-muted mb-0">Ces indicateurs restent calculés sur l’ensemble de vos revenus saisis et factures émises.</p>
+                </div>
+                <div class="d-flex flex-wrap gap-3">
+                    <div>
+                        <div class="small text-muted">Reste à encaisser</div>
+                        <div class="fw-semibold text-warning">{{ summary.outstandingTotal|number_format(2, ',', ' ') }} €</div>
+                    </div>
+                    <div>
+                        <div class="small text-muted">En attente</div>
+                        <div class="fw-semibold">{{ summary.unpaidCount }}</div>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Total éléments</div>
+                        <div class="fw-semibold">{{ summary.invoicedCount }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12 col-xl-6">
+                <div class="card tm-card p-4 h-100">
+                    <h4 class="tm-card-title mb-3">Par mois</h4>
+                    {% if monthlyRows is empty %}
+                        <p class="text-muted mb-0">Aucun revenu facturé pour le moment.</p>
+                    {% else %}
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Mois</th>
+                                        <th>Facturé</th>
+                                        <th>Encaissé</th>
+                                        <th>Nb</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in monthlyRows %}
+                                        <tr>
+                                            <td>{{ row.label }}</td>
+                                            <td>{{ row.invoicedTotal|number_format(2, ',', ' ') }} €</td>
+                                            <td>{{ row.paidTotal|number_format(2, ',', ' ') }} €</td>
+                                            <td>{{ row.count }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-6">
+                <div class="card tm-card p-4 h-100">
+                    <h4 class="tm-card-title mb-3">Par année</h4>
+                    {% if yearlyRows is empty %}
+                        <p class="text-muted mb-0">Aucune donnée annuelle disponible.</p>
+                    {% else %}
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Année</th>
+                                        <th>Facturé</th>
+                                        <th>Encaissé</th>
+                                        <th>Nb</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in yearlyRows %}
+                                        <tr>
+                                            <td>{{ row.label }}</td>
+                                            <td>{{ row.invoicedTotal|number_format(2, ',', ' ') }} €</td>
+                                            <td>{{ row.paidTotal|number_format(2, ',', ' ') }} €</td>
+                                            <td>{{ row.count }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card tm-card p-4">
+                    <h4 class="tm-card-title mb-3">Par service</h4>
+                    {% if serviceRows is empty %}
+                        <p class="text-muted mb-0">Aucun regroupement par service disponible.</p>
+                    {% else %}
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Service</th>
+                                        <th>Facturé</th>
+                                        <th>Encaissé</th>
+                                        <th>Nb</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in serviceRows %}
+                                        <tr>
+                                            <td>{{ row.label }}</td>
+                                            <td>{{ row.invoicedTotal|number_format(2, ',', ' ') }} €</td>
+                                            <td>{{ row.paidTotal|number_format(2, ',', ' ') }} €</td>
+                                            <td>{{ row.count }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 
     <div
-        class="tab-pane fade"
+        class="tab-pane fade {{ activeRevenueSubtab == 'history' ? 'show active' : '' }}"
         id="revenus-history-panel"
         role="tabpanel"
         aria-labelledby="revenus-history-tab"
         tabindex="0"
     >
         <div class="card tm-card p-4">
-            <h4 class="tm-card-title mb-3">Historique</h4>
-            <p class="text-muted mb-0">Cette tab affichera l’historique détaillé des gains, périodes et opérations associées.</p>
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-2 mb-3">
+                <div>
+                    <h4 class="tm-card-title mb-1">Historique détaillé</h4>
+                    <p class="text-muted mb-0">Factures émises via TrouveMoi et revenus externes saisis manuellement.</p>
+                </div>
+                <div class="small text-muted">{{ revenueHistoryCount ?? summary.invoicedCount }} élément(s)</div>
+            </div>
+
+            <form method="get" action="{{ path('app_prestataire_dashboard') ~ '#revenus-main-panel' }}" class="tm-revenue-history-filter mb-3">
+                <input type="hidden" name="tab" value="revenus">
+                <input type="hidden" name="revenues_subtab" value="{{ activeRevenueSubtab }}" data-revenue-subtab-input>
+                <input type="hidden" name="revenues_month" value="{{ filters.selectedMonth }}">
+                <input type="hidden" name="revenues_year" value="{{ filters.selectedYear }}">
+                <div class="tm-revenue-history-filter__grid">
+                    <div>
+                        <label for="revenue-sort" class="form-label mb-1">Trier</label>
+                        <select id="revenue-sort" name="revenue_sort" class="form-select">
+                            <option value="date_desc" {{ (revenueHistorySort ?? 'date_desc') == 'date_desc' ? 'selected' : '' }}>Date décroissante</option>
+                            <option value="date_asc" {{ (revenueHistorySort ?? 'date_desc') == 'date_asc' ? 'selected' : '' }}>Date croissante</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="revenue-status" class="form-label mb-1">Afficher</label>
+                        <select id="revenue-status" name="revenue_status" class="form-select">
+                            <option value="all" {{ (revenueHistoryStatus ?? 'all') == 'all' ? 'selected' : '' }}>Tous les revenus</option>
+                            <option value="paid" {{ (revenueHistoryStatus ?? 'all') == 'paid' ? 'selected' : '' }}>Déjà encaissés</option>
+                            <option value="unpaid" {{ (revenueHistoryStatus ?? 'all') == 'unpaid' ? 'selected' : '' }}>Pas encore encaissés</option>
+                        </select>
+                    </div>
+                    <div class="tm-revenue-history-filter__submit">
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Appliquer</button>
+                            <a href="{{ path('app_prestataire_dashboard', { tab: 'revenus', revenues_subtab: activeRevenueSubtab, revenues_month: filters.selectedMonth, revenues_year: filters.selectedYear }) ~ '#revenus-main-panel' }}" class="btn btn-outline-secondary" data-revenue-subtab-link>Réinitialiser</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            {% if revenueHistory is empty %}
+                <p class="text-muted mb-0">Aucun revenu à afficher pour le moment.</p>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Source</th>
+                                <th>Client</th>
+                                <th>Service</th>
+                                <th>Référence</th>
+                                <th>Montant TTC</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in revenueHistory %}
+                                <tr>
+                                    <td>
+                                        <div class="fw-semibold">{{ item.issuedAt|date('d/m/Y') }}</div>
+                                        <div class="small text-muted">{{ item.label }}</div>
+                                        {% if item.notes %}
+                                            <details class="tm-revenue-note-disclosure mt-2">
+                                                <summary>Voir la note</summary>
+                                                <div class="tm-revenue-note">{{ item.notes }}</div>
+                                            </details>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ item.sourceLabel }}</td>
+                                    <td>{{ item.clientName }}</td>
+                                    <td>{{ item.serviceLabel }}</td>
+                                    <td>{{ item.invoiceNumber ?: 'Sans numéro' }}</td>
+                                    <td>{{ item.totalTtc|number_format(2, ',', ' ') }} €</td>
+                                    <td>
+                                        {% if item.isPaid %}
+                                            <span class="badge bg-success-subtle text-success">Payée</span>
+                                            {% if item.paidAt %}
+                                                <div class="small text-muted mt-1">{{ item.paidAt|date('d/m/Y') }}</div>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="badge bg-warning-subtle text-warning">À encaisser</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                    <div class="tm-revenue-actions">
+                                        {% if item.viewUrl %}
+                                            <a href="{{ path(item.viewUrl.route, item.viewUrl.parameters) }}" class="btn btn-sm btn-outline-secondary">Voir</a>
+                                        {% elseif item.editUrl %}
+                                            <a href="{{ path(item.editUrl.route, item.editUrl.parameters|merge({ revenues_subtab: 'payouts' })) ~ '#revenus-main-panel' }}" class="btn btn-sm btn-outline-primary">Modifier</a>
+                                            {% endif %}
+
+                                            {% if item.markPaidRoute %}
+                                                <form method="post" action="{{ path(item.markPaidRoute.route, item.markPaidRoute.parameters) }}" class="tm-revenue-actions__primary">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token(item.kind == 'invoice' ? 'mark_invoice_paid_' ~ item.id : 'mark_manual_revenue_paid_' ~ item.id) }}">
+                                                    <input type="hidden" name="revenues_subtab" value="{{ activeRevenueSubtab }}" data-revenue-subtab-input>
+                                                    <button type="submit" class="btn btn-sm btn-success">Marquer payée</button>
+                                                </form>
+                                            {% endif %}
+
+                                            {% if item.editUrl or item.markUnpaidRoute or item.deleteRoute %}
+                                                <details class="tm-revenue-actions__more">
+                                                    <summary>Plus</summary>
+                                                    <div class="tm-revenue-actions__menu">
+                                                        {% if item.editUrl %}
+                                                            <a href="{{ path(item.editUrl.route, item.editUrl.parameters|merge({ revenues_subtab: 'payouts' })) ~ '#revenus-main-panel' }}" class="tm-revenue-actions__link">Modifier</a>
+                                                        {% endif %}
+                                                        {% if item.markUnpaidRoute %}
+                                                            <form method="post" action="{{ path(item.markUnpaidRoute.route, item.markUnpaidRoute.parameters) }}">
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('mark_manual_revenue_unpaid_' ~ item.id) }}">
+                                                                <input type="hidden" name="revenues_subtab" value="{{ activeRevenueSubtab }}" data-revenue-subtab-input>
+                                                                <button type="submit" class="tm-revenue-actions__link tm-revenue-actions__link--warning">Annuler le paiement</button>
+                                                            </form>
+                                                        {% endif %}
+                                                        {% if item.deleteRoute %}
+                                                            <form method="post" action="{{ path(item.deleteRoute.route, item.deleteRoute.parameters) }}" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Supprimer ce revenu ?" data-confirm-dialog-text-value="Cette suppression retirera définitivement ce revenu externe de votre historique." data-confirm-dialog-confirm-button-text-value="Supprimer" data-confirm-dialog-cancel-button-text-value="Annuler">
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('delete_manual_revenue_' ~ item.id) }}">
+                                                                <input type="hidden" name="revenues_subtab" value="{{ activeRevenueSubtab }}" data-revenue-subtab-input>
+                                                                <button type="submit" class="tm-revenue-actions__link tm-revenue-actions__link--danger">Supprimer</button>
+                                                            </form>
+                                                        {% endif %}
+                                                    </div>
+                                                </details>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if revenueHistory.pageCount > 1 %}
+                    <div class="mt-3" data-revenue-subtab-pagination>
+                        {{ knp_pagination_render(revenueHistory) }}
+                    </div>
+                {% endif %}
+            {% endif %}
         </div>
     </div>
 
     <div
-        class="tab-pane fade"
+        class="tab-pane fade {{ activeRevenueSubtab == 'payouts' ? 'show active' : '' }}"
         id="revenus-payouts-panel"
         role="tabpanel"
         aria-labelledby="revenus-payouts-tab"
         tabindex="0"
     >
-        <div class="card tm-card p-4">
-            <h4 class="tm-card-title mb-3">Paiements</h4>
-            <p class="text-muted mb-0">Cette tab affichera les versements effectués, en attente et les informations de règlement.</p>
+        <div class="row g-4">
+            <div class="col-12 col-xl-6">
+                <div class="card tm-card p-4 h-100">
+                    <h4 class="tm-card-title mb-3">Éléments à encaisser</h4>
+                    {% if unpaidRows is empty %}
+                        <p class="text-muted mb-0">Tout est marqué comme payé.</p>
+                    {% else %}
+                        <div class="d-flex flex-column gap-3">
+                            {% for item in unpaidRows %}
+                                <div class="border rounded-3 p-3">
+                                    <div class="d-flex justify-content-between align-items-start gap-3">
+                                        <div>
+                                            <div class="fw-semibold">{{ item.label }}</div>
+                                            <div class="small text-muted">{{ item.clientName }} · {{ item.serviceLabel }}</div>
+                                            <div class="small text-muted">Émis le {{ item.issuedAt|date('d/m/Y') }}</div>
+                                            {% if item.notes %}
+                                                <details class="tm-revenue-note-disclosure tm-revenue-note-disclosure--compact mt-2">
+                                                    <summary>Voir la note</summary>
+                                                    <div class="tm-revenue-note tm-revenue-note--compact">{{ item.notes }}</div>
+                                                </details>
+                                            {% endif %}
+                                        </div>
+                                        <div class="text-end">
+                                            <div class="fw-semibold">{{ item.totalTtc|number_format(2, ',', ' ') }} €</div>
+                                            <div class="d-flex flex-wrap gap-2 justify-content-end mt-2">
+                                                {% if item.editUrl %}
+                                                    <a href="{{ path(item.editUrl.route, item.editUrl.parameters|merge({ revenues_subtab: 'payouts' })) ~ '#revenus-main-panel' }}" class="btn btn-sm btn-outline-primary">Modifier</a>
+                                                {% endif %}
+                                                {% if item.markPaidRoute %}
+                                                    <form method="post" action="{{ path(item.markPaidRoute.route, item.markPaidRoute.parameters) }}">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token(item.kind == 'invoice' ? 'mark_invoice_paid_' ~ item.id : 'mark_manual_revenue_paid_' ~ item.id) }}">
+                                                        <input type="hidden" name="revenues_subtab" value="{{ activeRevenueSubtab }}" data-revenue-subtab-input>
+                                                        <button type="submit" class="btn btn-sm btn-success">Marquer payée</button>
+                                                    </form>
+                                                {% endif %}
+                                                {% if item.markUnpaidRoute %}
+                                                    <form method="post" action="{{ path(item.markUnpaidRoute.route, item.markUnpaidRoute.parameters) }}">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('mark_manual_revenue_unpaid_' ~ item.id) }}">
+                                                        <input type="hidden" name="revenues_subtab" value="{{ activeRevenueSubtab }}" data-revenue-subtab-input>
+                                                        <button type="submit" class="btn btn-sm btn-outline-warning">Annuler le paiement</button>
+                                                    </form>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if unpaidRows.pageCount is defined and unpaidRows.pageCount > 1 %}
+                            <div class="mt-3" data-revenue-subtab-pagination>
+                                {{ knp_pagination_render(unpaidRows) }}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-6">
+                <div class="card tm-card p-4 h-100 tm-revenue-manual-card">
+                    <div class="tm-revenue-manual-card__header">
+                        <span class="tm-revenue-manual-card__eyebrow">Saisie manuelle</span>
+                        <h4 class="tm-card-title mb-2">{{ revenueFormEntry.id ? 'Modifier un revenu externe' : 'Ajouter un revenu externe' }}</h4>
+                        <p class="text-muted small mb-0">Ajoutez ici les revenus facturés hors TrouveMoi pour les inclure dans votre synthèse et votre suivi d’encaissement.</p>
+                    </div>
+
+                    {{ form_start(revenueForm, { attr: { 'data-controller': 'revenue-form' } }) }}
+                        <input type="hidden" name="revenues_subtab" value="{{ activeRevenueSubtab }}" data-revenue-subtab-input>
+                        <div class="tm-revenue-manual-form">
+                            <section class="tm-revenue-form-section">
+                                <div class="tm-revenue-form-section__header">
+                                    <div class="tm-revenue-manual-form__section-label">Description</div>
+                                </div>
+                                <div class="tm-revenue-form-grid tm-revenue-form-grid--single">
+                                    {{ revenueFormUi.revenue_field(revenueForm.label, 'tm-revenue-field--full') }}
+                                </div>
+                            </section>
+
+                            <section class="tm-revenue-form-section">
+                                <div class="tm-revenue-form-section__header">
+                                    <div class="tm-revenue-manual-form__section-label">Rattachement commercial</div>
+                                </div>
+                                <div class="tm-revenue-form-grid">
+                                    {{ revenueFormUi.revenue_field(revenueForm.prestataireService) }}
+                                    {{ revenueFormUi.revenue_field(revenueForm.serviceLabel) }}
+                                    {{ revenueFormUi.revenue_field(revenueForm.clientName) }}
+                                    {{ revenueFormUi.revenue_field(revenueForm.invoiceNumber) }}
+                                </div>
+                            </section>
+
+                            <section class="tm-revenue-form-section">
+                                <div class="tm-revenue-form-section__header">
+                                    <div class="tm-revenue-manual-form__section-label">Dates et montants</div>
+                                </div>
+                                <div class="tm-revenue-form-grid">
+                                    {{ revenueFormUi.revenue_field(revenueForm.issuedAt) }}
+                                    {{ revenueFormUi.revenue_field(revenueForm.paidAt) }}
+                                    <div class="tm-revenue-field">
+                                        {{ form_label(revenueForm.subtotalHt, null, { label_attr: { class: 'tm-revenue-field__label' } }) }}
+                                        {{ form_widget(revenueForm.subtotalHt, { attr: { class: 'tm-revenue-field__control', 'data-revenue-form-target': 'subtotal', 'data-action': 'input->revenue-form#updateTotal' } }) }}
+                                        {{ form_errors(revenueForm.subtotalHt) }}
+                                    </div>
+                                    <div class="tm-revenue-field">
+                                        {{ form_label(revenueForm.taxAmount, null, { label_attr: { class: 'tm-revenue-field__label' } }) }}
+                                        {{ form_widget(revenueForm.taxAmount, { attr: { class: 'tm-revenue-field__control', 'data-revenue-form-target': 'tax', 'data-action': 'input->revenue-form#updateTotal' } }) }}
+                                        {{ form_errors(revenueForm.taxAmount) }}
+                                    </div>
+                                    <div class="tm-revenue-field">
+                                        {{ form_label(revenueForm.totalTtc, null, { label_attr: { class: 'tm-revenue-field__label' } }) }}
+                                        {{ form_widget(revenueForm.totalTtc, { attr: { class: 'tm-revenue-field__control', 'data-revenue-form-target': 'total' } }) }}
+                                        {{ form_errors(revenueForm.totalTtc) }}
+                                        <div class="tm-revenue-field__help">Calculé automatiquement à partir du montant HT et de la TVA.</div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="tm-revenue-form-section">
+                                <div class="tm-revenue-form-section__header">
+                                    <div class="tm-revenue-manual-form__section-label">Notes</div>
+                                </div>
+                                <div class="tm-revenue-form-grid tm-revenue-form-grid--single">
+                                    {{ revenueFormUi.revenue_field(revenueForm.notes, 'tm-revenue-field--full') }}
+                                </div>
+                            </section>
+                        </div>
+
+                        <div class="tm-revenue-manual-form__footer">
+                            <div class="small text-muted">Le revenu sera ajouté à l’historique et pourra être marqué comme payé plus tard.</div>
+                            <div class="d-flex gap-2 flex-wrap">
+                                {% if revenueFormEntry.id %}
+                                    <a href="{{ path('app_prestataire_dashboard', { tab: 'revenus', revenues_subtab: activeRevenueSubtab }) ~ '#revenus-main-panel' }}" class="btn btn-outline-secondary" data-revenue-subtab-link>Annuler</a>
+                                {% endif %}
+                                <button type="submit" class="btn btn-primary tm-revenue-manual-form__submit">{{ revenueFormEntry.id ? 'Enregistrer les modifications' : 'Ajouter ce revenu' }}</button>
+                            </div>
+                        </div>
+                    {{ form_end(revenueForm) }}
+                </div>
+            </div>
         </div>
     </div>
 </div>
