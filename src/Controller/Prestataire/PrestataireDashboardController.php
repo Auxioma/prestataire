@@ -534,6 +534,11 @@ final class PrestataireDashboardController extends AbstractController
             $activeConversation = $forcedActiveConversation;
         }
 
+        if ($isMessagesTab && $activeConversation instanceof Conversation) {
+            $activeConversation = $conversationRepository->findThreadForPrestataire($activeConversation, $prestataireProfile)
+                ?? $activeConversation;
+        }
+
         $canUseInstantMessaging = $subscriptionAccessManager->canUseInstantMessaging($prestataireProfile);
         $isConversationArchived = $activeConversation?->getQuoteRequest() instanceof \App\Entity\QuoteRequest
             && (
