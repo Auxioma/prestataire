@@ -6,85 +6,179 @@
     <style>
         body {
             font-family: DejaVu Sans, sans-serif;
-            color: #172033;
-            font-size: 12px;
+            color: #152033;
+            font-size: 11px;
             line-height: 1.45;
             margin: 0;
+            background: #ffffff;
         }
 
         .page {
-            padding: 34px 38px 42px;
+            padding: 18px 24px 22px;
         }
 
-        .topbar {
+        .page-logo {
+            margin-bottom: 10px;
+        }
+
+        .page-logo img {
+            display: block;
+            width: 118px;
+            height: auto;
+        }
+
+        .header-shell {
+            background: #eef1f5;
+            border-radius: 18px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+        }
+
+        .header-table,
+        .two-cols,
+        .meta-table,
+        .summary-table {
             width: 100%;
-            margin-bottom: 28px;
+            border-collapse: collapse;
         }
 
-        .topbar td {
+        .header-table td,
+        .two-cols td {
             vertical-align: top;
         }
 
-        .brand {
-            font-size: 24px;
-            font-weight: 700;
-            color: #0f2d6b;
-            margin-bottom: 8px;
+        .brand-lockup {
+            width: 100%;
         }
 
+        .brand-eyebrow {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #647089;
+            margin-bottom: 2px;
+        }
+
+        .brand-name {
+            font-size: 19px;
+            font-weight: 700;
+            color: #0f295f;
+            margin-bottom: 4px;
+        }
+
+        .brand-meta,
         .muted {
-            color: #657089;
+            color: #687487;
+            font-size: 10px;
         }
 
         .invoice-box {
+            width: 220px;
             text-align: right;
+        }
+
+        .invoice-kicker {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #647089;
+            margin-bottom: 3px;
         }
 
         .invoice-title {
             font-size: 20px;
             font-weight: 700;
-            margin-bottom: 10px;
+            color: #16233c;
+            margin-bottom: 4px;
+        }
+
+        .invoice-number {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .status-pill {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: #d8e6ff;
+            color: #163b83;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
         }
 
         .section {
-            margin-bottom: 24px;
+            margin-bottom: 12px;
         }
 
         .section-title {
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 700;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: #5e6a85;
-            margin-bottom: 8px;
+            color: #647089;
+            margin-bottom: 5px;
         }
 
         .card {
-            border: 1px solid #d9dfeb;
-            border-radius: 10px;
-            padding: 14px 16px;
+            border: 1px solid #dde3eb;
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: #ffffff;
         }
 
-        .two-cols {
-            width: 100%;
+        .card strong {
+            color: #16233c;
         }
 
-        .two-cols td {
-            width: 50%;
-            vertical-align: top;
+        .two-cols td:first-child {
+            padding-right: 6px;
         }
 
-        .summary-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+        .two-cols td:last-child {
+            padding-left: 6px;
+        }
+
+        .meta-table td {
+            padding: 4px 0;
+            border-bottom: 1px solid #ebeff5;
+            font-size: 10px;
+        }
+
+        .meta-table tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .meta-table td:last-child {
+            text-align: right;
+            font-weight: 700;
+            color: #16233c;
+        }
+
+        .summary-wrap {
+            border: 1px solid #d9e0ea;
+            border-radius: 12px;
+            overflow: hidden;
         }
 
         .summary-table th,
         .summary-table td {
-            border-bottom: 1px solid #dde3ee;
-            padding: 10px 8px;
+            padding: 8px 10px;
+            border-bottom: 1px solid #e7ecf3;
             text-align: left;
+            font-size: 10px;
+        }
+
+        .summary-table thead th {
+            background: #f5f7fa;
+            color: #556178;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
         }
 
         .summary-table th:last-child,
@@ -93,95 +187,119 @@
         }
 
         .summary-table tfoot td {
+            background: #f7f9fc;
             font-weight: 700;
-            border-top: 2px solid #c6cfdf;
+            color: #16233c;
             border-bottom: 0;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 999px;
-            background: #eef3ff;
-            color: #23408f;
-            font-size: 11px;
+        .summary-table .line-title {
             font-weight: 700;
+            color: #16233c;
+            margin-bottom: 2px;
+        }
+
+        .summary-table .line-subtitle {
+            color: #6c778c;
+            font-size: 9px;
+        }
+
+        .facturx-note {
+            margin-top: 12px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: #f2f5f9;
+            color: #56627a;
+            font-size: 9px;
         }
 
         .footer {
-            margin-top: 30px;
-            font-size: 10px;
-            color: #6d768c;
+            margin-top: 12px;
+            font-size: 9px;
+            color: #6b768b;
         }
     </style>
 </head>
 <body>
     <div class="page">
-        {% set prestataire = prestataire %}
         {% set account = prestataire ? prestataire.account : null %}
         {% set invoiceNumber = invoice.invoiceNumber ?: ('ABO-' ~ (invoice.id ?: 'draft')) %}
         {% set totalAmount = invoice.totalAmount ?: invoice.amountPaid ?: '0.00' %}
-
-        <table class="topbar">
-            <tr>
-                <td>
-                    <div class="brand">{{ platform.name }}</div>
-                    <div>{{ platform.legal_name }}</div>
-                    <div class="muted">{{ platform.email }}</div>
-                    <div class="muted">{{ platform.website }}</div>
-                </td>
-                <td class="invoice-box">
-                    <div class="invoice-title">Facture d'abonnement</div>
-                    <div><strong>{{ invoiceNumber }}</strong></div>
-                    <div class="muted">
-                        {{ invoice.paidAt ? 'Payée le ' ~ invoice.paidAt|date('d/m/Y') : 'Émise le ' ~ invoice.createdAt|date('d/m/Y') }}
-                    </div>
-                    <div style="margin-top: 8px;">
-                        <span class="badge">{{ invoice.status.label }}</span>
-                    </div>
-                </td>
-            </tr>
-        </table>
+        {% set subtotalAmount = invoice.subtotalAmount ?: totalAmount %}
+        {% if platform.logo_data_uri %}
+            <div class="page-logo">
+                <img src="{{ platform.logo_data_uri }}" alt="TrouveMoi">
+            </div>
+        {% endif %}
+        <div class="header-shell">
+            <table class="header-table">
+                <tr>
+                    <td>
+                        <div class="brand-eyebrow">Facturation plateforme</div>
+                        <div class="brand-name">{{ platform.legal_name }}</div>
+                        <div class="brand-meta">{{ platform.address_line_1 }}, {{ platform.postal_code }} {{ platform.city }}, {{ platform.country }}</div>
+                        <div class="brand-meta">RCS Paris {{ platform.rcs }} · TVA {{ platform.vat_number }}</div>
+                        <div class="brand-meta">{{ platform.email }} · {{ platform.phone }}</div>
+                    </td>
+                    <td class="invoice-box">
+                        <div class="invoice-kicker">Facture d'abonnement</div>
+                        <div class="invoice-title">Abonnement</div>
+                        <div class="invoice-number">{{ invoiceNumber }}</div>
+                        <div class="muted">
+                            {{ invoice.paidAt ? 'Payée le ' ~ invoice.paidAt|date('d/m/Y') : 'Émise le ' ~ invoice.createdAt|date('d/m/Y') }}
+                        </div>
+                        {% if invoice.dueAt %}
+                            <div class="muted">Échéance le {{ invoice.dueAt|date('d/m/Y') }}</div>
+                        {% endif %}
+                        <span class="status-pill">{{ invoice.status.label }}</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
         <table class="two-cols section">
             <tr>
-                <td style="padding-right: 10px;">
+                <td>
                     <div class="section-title">Émetteur</div>
                     <div class="card">
-                        <div><strong>{{ platform.legal_name }}</strong></div>
-                        <div>Facturation plateforme TrouveMoi</div>
-                        <div class="muted">{{ platform.email }}</div>
+                        <strong>{{ platform.legal_name }}</strong><br>
+                        {{ platform.address_line_1 }}<br>
+                        {{ platform.postal_code }} {{ platform.city }}<br>
+                        {{ platform.country }}<br>
+                        RCS Paris {{ platform.rcs }}<br>
+                        TVA : {{ platform.vat_number }}<br>
+                        <span class="muted">{{ platform.email }}</span>
                     </div>
                 </td>
-                <td style="padding-left: 10px;">
+                <td>
                     <div class="section-title">Facturé à</div>
                     <div class="card">
-                        <div><strong>{{ prestataire.companyName ?: prestataire.legalName ?: 'Prestataire' }}</strong></div>
+                        <strong>{{ prestataire.companyName ?: prestataire.legalName ?: 'Prestataire' }}</strong><br>
                         {% if prestataire.legalName and prestataire.legalName != prestataire.companyName %}
-                            <div>{{ prestataire.legalName }}</div>
+                            {{ prestataire.legalName }}<br>
                         {% endif %}
                         {% if prestataire.address %}
-                            <div>{{ prestataire.address }}</div>
+                            {{ prestataire.address }}<br>
                         {% endif %}
                         {% if prestataire.addressComplement %}
-                            <div>{{ prestataire.addressComplement }}</div>
+                            {{ prestataire.addressComplement }}<br>
                         {% endif %}
                         {% if prestataire.postalCode or prestataire.city %}
-                            <div>{{ prestataire.postalCode }} {{ prestataire.city }}</div>
+                            {{ prestataire.postalCode }} {{ prestataire.city }}<br>
                         {% endif %}
                         {% if prestataire.country %}
-                            <div>{{ prestataire.country }}</div>
+                            {{ prestataire.country }}<br>
                         {% endif %}
                         {% if prestataire.siret %}
-                            <div>SIRET : {{ prestataire.siret }}</div>
+                            SIRET : {{ prestataire.siret }}<br>
                         {% endif %}
                         {% if prestataire.vatNumber %}
-                            <div>TVA : {{ prestataire.vatNumber }}</div>
+                            TVA : {{ prestataire.vatNumber }}<br>
                         {% endif %}
                         {% if account and account.email %}
-                            <div class="muted">{{ account.email }}</div>
+                            <span class="muted">{{ account.email }}</span>
                         {% elseif customer and customer.billingEmail %}
-                            <div class="muted">{{ customer.billingEmail }}</div>
+                            <span class="muted">{{ customer.billingEmail }}</span>
                         {% endif %}
                     </div>
                 </td>
@@ -189,55 +307,80 @@
         </table>
 
         <div class="section">
-            <div class="section-title">Détail de l'abonnement</div>
+            <div class="section-title">Références</div>
             <div class="card">
-                <div><strong>{{ subscription and subscription.plan ? subscription.plan.name : 'Abonnement plateforme' }}</strong></div>
-                <div class="muted">
-                    {{ subscription ? subscription.billingPeriod.label : 'Périodicité non disponible' }}
+                <table class="meta-table">
+                    <tr>
+                        <td>Plan</td>
+                        <td>{{ subscription and subscription.plan ? subscription.plan.name : 'Abonnement plateforme' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Périodicité</td>
+                        <td>{{ subscription ? subscription.billingPeriod.label : 'Non disponible' }}</td>
+                    </tr>
                     {% if invoice.periodStart and invoice.periodEnd %}
-                        · période du {{ invoice.periodStart|date('d/m/Y') }} au {{ invoice.periodEnd|date('d/m/Y') }}
+                        <tr>
+                            <td>Période facturée</td>
+                            <td>Du {{ invoice.periodStart|date('d/m/Y') }} au {{ invoice.periodEnd|date('d/m/Y') }}</td>
+                        </tr>
                     {% endif %}
-                </div>
+                    {% if invoice.stripeInvoiceId %}
+                        <tr>
+                            <td>Référence Stripe</td>
+                            <td>{{ invoice.stripeInvoiceId }}</td>
+                        </tr>
+                    {% endif %}
+                </table>
             </div>
         </div>
 
-        <table class="summary-table">
-            <thead>
-                <tr>
-                    <th>Description</th>
-                    <th>Montant</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        {{ subscription and subscription.plan ? subscription.plan.name : 'Abonnement TrouveMoi' }}
-                        {% if invoice.periodStart and invoice.periodEnd %}
-                            <div class="muted">Période : {{ invoice.periodStart|date('d/m/Y') }} - {{ invoice.periodEnd|date('d/m/Y') }}</div>
+        <div class="section">
+            <div class="section-title">Détail facturé</div>
+            <div class="summary-wrap">
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Montant</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="line-title">{{ subscription and subscription.plan ? subscription.plan.name : 'Abonnement TrouveMoi' }}</div>
+                                <div class="line-subtitle">
+                                    {{ subscription ? subscription.billingPeriod.label : 'Périodicité non disponible' }}
+                                    {% if invoice.periodStart and invoice.periodEnd %}
+                                        · période du {{ invoice.periodStart|date('d/m/Y') }} au {{ invoice.periodEnd|date('d/m/Y') }}
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>{{ subtotalAmount|number_format(2, ',', ' ') }} {{ invoice.currencyCode }}</td>
+                        </tr>
+                        {% if invoice.taxAmount and invoice.taxAmount != '0.00' %}
+                            <tr>
+                                <td>TVA</td>
+                                <td>{{ invoice.taxAmount|number_format(2, ',', ' ') }} {{ invoice.currencyCode }}</td>
+                            </tr>
                         {% endif %}
-                    </td>
-                    <td>{{ (invoice.subtotalAmount ?: totalAmount)|number_format(2, ',', ' ') }} {{ invoice.currencyCode }}</td>
-                </tr>
-                {% if invoice.taxAmount and invoice.taxAmount != '0.00' %}
-                    <tr>
-                        <td>TVA</td>
-                        <td>{{ invoice.taxAmount|number_format(2, ',', ' ') }} {{ invoice.currencyCode }}</td>
-                    </tr>
-                {% endif %}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td>Total</td>
-                    <td>{{ totalAmount|number_format(2, ',', ' ') }} {{ invoice.currencyCode }}</td>
-                </tr>
-            </tfoot>
-        </table>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Total TTC</td>
+                            <td>{{ totalAmount|number_format(2, ',', ' ') }} {{ invoice.currencyCode }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div class="facturx-note">
+            Ce PDF est généré par TrouveMoi et embarque un fichier XML de préparation Factur-X pour faciliter l’exploitation documentaire. Stripe reste utilisé pour le paiement et la synchronisation des montants.
+        </div>
 
         <div class="footer">
-            <div>Facture générée par la plateforme TrouveMoi à partir des données de paiement synchronisées avec Stripe.</div>
-            {% if invoice.stripeInvoiceId %}
-                <div>Référence Stripe : {{ invoice.stripeInvoiceId }}</div>
-            {% endif %}
+            <div>Document émis par {{ platform.legal_name }} pour la facturation de l’accès à la plateforme.</div>
+            <div>La transmission réglementaire officielle n’est pas assurée par ce téléchargement seul.</div>
         </div>
     </div>
 </body>
