@@ -111,7 +111,7 @@ class QuoteProposalController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $quoteProposalManager->save($proposal, true);
 
-            $this->addFlash('success', 'Le devis a bien été enregistré.');
+            $this->addFlash('success', 'Le devis a bien été enregistré. Si tout est correct, allez dans l’aperçu puis finalisez-le pour que le client puisse l’étudier.');
 
             return $this->redirectToRoute('app_prestataire_quote_proposal_edit', [
                 'publicReference' => $proposal->getPublicReference(),

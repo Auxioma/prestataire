@@ -107,7 +107,7 @@
 					<span class="tm-quote-edit__alert-dot"></span>
 					<div>
 						<strong>Brouillon de facture.</strong>
-						L’émission reste manuelle. TrouveMoi génère un PDF et un XML de préparation Factur-X, sans prétendre réaliser la transmission réglementaire officielle.
+						Renseignez les lignes, les conditions et les notes, puis passez par l’<span style="font-weight: 700; text-transform: uppercase; background: #fff3a3; padding: 0 4px; border-radius: 4px;">apercu</span> pour <span style="font-weight: 700; text-transform: uppercase; background: #fff3a3; padding: 0 4px; border-radius: 4px;">emettre</span> la facture.
 					</div>
 				</div>
 			{% endif %}
@@ -119,6 +119,9 @@
 							<div>
 								<span class="tm-quote-panel__eyebrow">Document de facture</span>
 								<h2 class="tm-quote-panel__title">Contenu</h2>
+								<div class="alert alert-info border-0 shadow-sm mb-0 mt-4">
+									La génération Factur-X proposée ici correspond à une préparation documentaire. Elle ne remplace pas une plateforme agréée de transmission réglementaire.
+								</div>
 							</div>
 						</div>
 
@@ -139,9 +142,6 @@
 									<div class="tm-quote-field">{{ form_row(form.sourceType) }}</div>
 								</div>
 
-								<div class="alert alert-info border-0 shadow-sm mb-0">
-									La génération Factur-X proposée ici correspond à une préparation documentaire. Elle ne remplace pas une plateforme agréée de transmission réglementaire.
-								</div>
 
 								<div id="invoice-external-panel" class="tm-quote-grid tm-quote-grid--1 mt-3">
 									<div class="tm-quote-field">
@@ -247,19 +247,6 @@
 							{% if not invoice.isIssued %}
 								<div class="tm-quote-form__actions">
 									<button type="submit" form="invoice-draft-form" class="tm-quote-btn tm-quote-btn--success">Enregistrer la facture</button>
-									<button
-										type="submit"
-										form="invoice-draft-form"
-										name="issue_invoice"
-										value="1"
-										class="tm-quote-btn tm-quote-btn--primary"
-										data-confirm-dialog-title-value="Émettre cette facture ?"
-										data-confirm-dialog-text-value="Elle deviendra visible par le client et ne pourra plus être modifiée ensuite."
-										data-confirm-dialog-confirm-button-text-value="Émettre"
-										data-confirm-dialog-cancel-button-text-value="Annuler"
-									>
-										Émettre la facture
-									</button>
 								</div>
 							{% endif %}
 						</div>

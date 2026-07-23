@@ -55,6 +55,25 @@
 					<a href="{{ pdfPath }}" class="qp-btn qp-btn--primary" target="_blank" rel="noopener">Voir le PDF</a>
 					{% if isPrestataireView and not invoice.isIssued %}
 						<a href="{{ path('app_prestataire_invoice_manage', { publicReference: proposal.publicReference }) }}" class="qp-btn qp-btn--secondary">Modifier la facture</a>
+						<form
+							method="post"
+							action="{{ path('app_prestataire_invoice_issue', { publicReference: proposal.publicReference }) }}"
+							class="d-inline"
+							data-controller="confirm-dialog"
+							data-action="submit->confirm-dialog#confirm"
+						>
+							<input type="hidden" name="_token" value="{{ csrf_token('issue_invoice_' ~ proposal.id) }}">
+							<button
+								type="submit"
+								class="qp-btn qp-btn--secondary"
+								data-confirm-dialog-title-value="Émettre cette facture ?"
+								data-confirm-dialog-text-value="Elle deviendra visible par le client et ne pourra plus être modifiée ensuite."
+								data-confirm-dialog-confirm-button-text-value="Émettre"
+								data-confirm-dialog-cancel-button-text-value="Annuler"
+							>
+								Émettre la facture
+							</button>
+						</form>
 					{% endif %}
 				</div>
 			</header>

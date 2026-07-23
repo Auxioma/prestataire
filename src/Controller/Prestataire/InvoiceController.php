@@ -65,19 +65,7 @@ final class InvoiceController extends AbstractInvoiceController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $invoiceManager->saveDraft($invoice, true);
-
-                if ($request->request->has('issue_invoice')) {
-                    $invoiceManager->issue($invoice);
-                    $this->notifyClientInvoiceAvailable($proposal, $invoice, $notificationManager);
-
-                    $this->addFlash('success', 'La facture a bien été émise.');
-
-                    return $this->redirectToRoute('app_prestataire_invoice_show', [
-                        'publicReference' => $proposal->getPublicReference(),
-                    ], 303);
-                }
-
-                $this->addFlash('success', 'La facture a bien été enregistrée.');
+                $this->addFlash('success', 'La facture a bien été enregistrée. Si tout est correct, allez dans l’aperçu puis émettez-la pour la rendre visible au client.');
 
                 return $this->redirectToRoute('app_prestataire_invoice_manage', [
                     'publicReference' => $proposal->getPublicReference(),
@@ -129,7 +117,7 @@ final class InvoiceController extends AbstractInvoiceController
             $this->addFlash('warning', $exception->getMessage());
         }
 
-        return $this->redirectToRoute('app_prestataire_invoice_manage', [
+        return $this->redirectToRoute('app_prestataire_invoice_show', [
             'publicReference' => $proposal->getPublicReference(),
         ], 303);
     }
