@@ -38,6 +38,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -375,15 +376,30 @@ final class QuoteRequestController extends AbstractController
                 );
 
                 if (!$isPrepared) {
+                    if ($this->isAsyncConversationSubmit($request)) {
+                        return new JsonResponse([
+                            'ok' => false,
+                            'message' => 'Vous devez saisir un message ou ajouter au moins une photo.',
+                        ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                    }
+
                     $this->addFlash('danger', 'Vous devez saisir un message ou ajouter au moins une photo.');
 
                     return $this->redirectToRoute('app_quote_request_show', [
                         'slug' => $quoteRequest->getSlug(),
-                        '_fragment' => 'quote-conversation',
+                        'scroll' => $this->resolveReturnScroll($request),
                     ], 303);
                 }
 
                 $entityManager->persist($message);
+
+                if (method_exists($conversation, 'setLastMessageAt')) {
+                    $conversation->setLastMessageAt(new \DateTimeImmutable());
+                }
+
+                if (method_exists($conversation, 'setUpdatedAt')) {
+                    $conversation->setUpdatedAt(new \DateTimeImmutable());
+                }
 
                 $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
                 $entityManager->flush();
@@ -416,9 +432,13 @@ final class QuoteRequestController extends AbstractController
                     );
                 }
 
+                if ($this->isAsyncConversationSubmit($request)) {
+                    return new JsonResponse(['ok' => true]);
+                }
+
                 return $this->redirectToRoute('app_quote_request_show', [
                     'slug' => $quoteRequest->getSlug(),
-                    '_fragment' => 'quote-conversation',
+                    'scroll' => $this->resolveReturnScroll($request),
                 ], 303);
             }
         }
@@ -428,11 +448,18 @@ final class QuoteRequestController extends AbstractController
             && !$canUseInstantMessaging
             && $request->isMethod('POST')
         ) {
+            if ($this->isAsyncConversationSubmit($request)) {
+                return new JsonResponse([
+                    'ok' => false,
+                    'message' => 'La messagerie n’est pas disponible pour cette demande.',
+                ], Response::HTTP_FORBIDDEN);
+            }
+
             $this->addFlash('warning', 'La messagerie n’est pas disponible pour cette demande tant que le prestataire n’a pas souscrit une formule d’abonnement supérieure.');
 
             return $this->redirectToRoute('app_quote_request_show', [
                 'slug' => $quoteRequest->getSlug(),
-                '_fragment' => 'quote-conversation',
+                'scroll' => $this->resolveReturnScroll($request),
             ], 303);
         }
 
@@ -456,6 +483,25 @@ final class QuoteRequestController extends AbstractController
                 ? $this->realtimeAuthTokenManager->createConversationToken($conversation->getId(), $user)
                 : null,
         ]);
+    }
+
+    private function resolveReturnScroll(Request $request): ?int
+    {
+        $raw = $request->request->get('return_scroll');
+
+        if (!\is_string($raw) && !\is_numeric($raw)) {
+            return null;
+        }
+
+        $scroll = (int) $raw;
+
+        return $scroll >= 0 ? $scroll : null;
+    }
+
+    private function isAsyncConversationSubmit(Request $request): bool
+    {
+        return $request->isXmlHttpRequest()
+            || str_contains((string) $request->headers->get('Accept', ''), 'application/json');
     }
 
     #[Route('/{slug}/delete', name: '_delete', methods: ['POST'])]

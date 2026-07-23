@@ -108,26 +108,17 @@ export default class extends Controller {
 
     scrollStreamToBottom(behavior = "smooth") {
         const stream = this.element.querySelector(this.streamSelectorValue);
+        const container = this.resolveScrollContainer();
 
-        if (!stream) {
+        if (!stream || !container) {
             return;
         }
 
         const scroll = () => {
-            const lastMessage = stream.lastElementChild;
-
-            if (lastMessage) {
-                lastMessage.scrollIntoView({
-                    behavior,
-                    block: "end",
-                    inline: "nearest",
-                });
-            } else {
-                stream.scrollTo({
-                    top: stream.scrollHeight,
-                    behavior,
-                });
-            }
+            container.scrollTo({
+                top: container.scrollHeight,
+                behavior,
+            });
         };
 
         requestAnimationFrame(() => {
@@ -144,10 +135,24 @@ export default class extends Controller {
         });
     }
 
-    isNearBottom(stream, threshold = 120) {
+    isNearBottom(_stream, threshold = 120) {
+        const container = this.resolveScrollContainer();
+
+        if (!container) {
+            return true;
+        }
+
         return (
-            stream.scrollHeight - stream.scrollTop - stream.clientHeight <= threshold
+            container.scrollHeight - container.scrollTop - container.clientHeight <= threshold
         );
+    }
+
+    resolveScrollContainer() {
+        if (this.layoutValue === "client") {
+            return this.element.querySelector(this.streamSelectorValue);
+        }
+
+        return this.element.querySelector(this.bodySelectorValue);
     }
 
     buildStreamElement() {

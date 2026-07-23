@@ -1,6 +1,6 @@
 <div class="tm-msg card tm-card p-0 overflow-hidden">
     <div class="row g-0">
-        <div class="col-lg-4 tm-msg-sidebar">
+        <div class="col-lg-4 tm-msg-sidebar" {{ stimulus_controller('messages-sidebar-live', { url: 'http://localhost:3001', userId: app.user.id, authToken: navbarRealtimeNotificationsToken|default(''), activeConversationId: activeConversation ? activeConversation.id : 0 }) }}>
             <div class="tm-msg-sidebar-head">
                 <div class="tm-msg-sidebar-kicker">Messagerie premium</div>
                 <h4 class="tm-card-title mb-1">Toutes les conversations</h4>
@@ -21,8 +21,9 @@
                         {% set quoteRequest = conversation.quoteRequest %}
                         {% set lastMessage = conversation.messages|last %}
                         {% set isActive = activeConversation and activeConversation.id == conversation.id %}
+                        {% set unreadCount = conversationUnreadCounts[conversation.id|default('')] ?? 0 %}
 
-                        <a href="{{ path('app_prestataire_dashboard', { conversation: conversation.id, tab: 'messages' }) }}" class="tm-msg-thread {% if isActive %}is-active{% endif %}">
+                        <a href="{{ path('app_prestataire_dashboard', { conversation: conversation.id, tab: 'messages', conversationPage: conversations.currentPageNumber is defined ? conversations.currentPageNumber : 1 }) }}" class="tm-msg-thread {% if isActive %}is-active{% endif %}{% if unreadCount > 0 %} is-unread{% endif %}" data-conversation-id="{{ conversation.id }}" data-unread-count="{{ unreadCount }}">
                             <div class="tm-msg-thread-main">
                                 <div class="tm-msg-thread-title">
                                     {{ quoteRequest ? quoteRequest.title : 'Conversation sans demande liée' }}
@@ -61,6 +62,13 @@
                                     </span>
                                 {% endif %}
 
+                                {% if unreadCount > 0 %}
+                                    <div class="tm-msg-thread-unread" data-unread-badge aria-label="{{ unreadCount }} message{{ unreadCount > 1 ? 's' : '' }} non lu{{ unreadCount > 1 ? 's' : '' }}">
+                                        <i class="fa-solid fa-envelope"></i>
+                                        <span>{{ unreadCount }}</span>
+                                    </div>
+                                {% endif %}
+
                                 <div class="tm-msg-thread-date">
                                     {{ conversation.lastMessageAt ? conversation.lastMessageAt|date('d/m/Y') : '—' }}
                                 </div>
@@ -68,6 +76,11 @@
                         </a>
                     {% endfor %}
                 </div>
+                {% if conversations.pageCount is defined and conversations.pageCount > 1 %}
+                    <div class="p-3 border-top">
+                        {{ knp_pagination_render(conversations) }}
+                    </div>
+                {% endif %}
             {% endif %}
         </div>
 
@@ -253,7 +266,9 @@
                     {% if messageForm %}
                         {{ form_start(messageForm, {
                             attr: {
-                                class: 'tm-msg-form'
+                                class: 'tm-msg-form',
+                                'data-controller': 'conversation-form',
+                                'data-action': 'submit->conversation-form#submit'
                             }
                         }) }}
 
@@ -262,6 +277,8 @@
                                 {{ form_errors(messageForm) }}
                             </div>
                         {% endif %}
+
+                        <div class="alert alert-danger d-none" data-conversation-form-target="error"></div>
 
                         <div class="tm-msg-compose-field">
                             {{ form_widget(messageForm.content, {
@@ -304,7 +321,7 @@
                         </div>
 
                         <div class="tm-msg-compose-actions">
-                            <button type="submit" class="btn btn-primary tm-msg-submit">
+                            <button type="submit" class="btn btn-primary tm-msg-submit" data-conversation-form-target="submit">
                                 Envoyer
                             </button>
                         </div>

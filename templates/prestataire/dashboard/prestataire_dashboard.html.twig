@@ -77,4 +77,14 @@
 			</div>
 		</div>
 	</div>
+	{% set restoreScroll = app.request.query.get('scroll') %}
+	{% if restoreScroll is not empty %}
+		<script>
+			window.addEventListener('load', function () {
+				window.setTimeout(function () {
+					window.scrollTo(0, {{ restoreScroll|default(0) + 0 }});
+				}, 80);
+			});
+		</script>
+	{% endif %}
 {% endblock %}

@@ -35,6 +35,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -47,6 +48,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class PrestataireDashboardController extends AbstractController
 {
     private const DASHBOARD_PAGE_SIZE = 10;
+    private const CONVERSATION_PAGE_SIZE = 5;
     private const REVENUE_PAYOUTS_PAGE_SIZE = 7;
 
     public function __construct(
@@ -186,12 +188,19 @@ final class PrestataireDashboardController extends AbstractController
         }
 
         if (!$subscriptionAccessManager->canUseInstantMessaging($prestataireProfile)) {
+            if ($this->isAsyncConversationSubmit($request)) {
+                return new JsonResponse([
+                    'ok' => false,
+                    'message' => 'La messagerie instantanee n’est pas incluse dans votre formule actuelle.',
+                ], Response::HTTP_FORBIDDEN);
+            }
+
             $this->addFlash('warning', 'La messagerie instantanée n’est pas incluse dans votre formule actuelle.');
 
             return $this->redirectToRoute('app_prestataire_dashboard', [
                 'conversation' => $conversation->getId(),
                 'tab' => 'messages',
-                '_fragment' => 'messages-main-panel',
+                'scroll' => $this->resolveReturnScroll($request),
             ], 303);
         }
 
@@ -200,12 +209,19 @@ final class PrestataireDashboardController extends AbstractController
             && ($quoteRequest->isArchivedByClient() || $quoteRequest->isArchivedByPrestataire());
 
         if ($isConversationArchived) {
+            if ($this->isAsyncConversationSubmit($request)) {
+                return new JsonResponse([
+                    'ok' => false,
+                    'message' => 'La messagerie est cloturee car cette demande a ete archivee.',
+                ], Response::HTTP_FORBIDDEN);
+            }
+
             $this->addFlash('warning', 'La messagerie est clôturée car cette demande a été archivée.');
 
             return $this->redirectToRoute('app_prestataire_dashboard', [
                 'conversation' => $conversation->getId(),
                 'tab' => 'messages',
-                '_fragment' => 'messages-main-panel',
+                'scroll' => $this->resolveReturnScroll($request),
             ], 303);
         }
 
@@ -229,12 +245,19 @@ final class PrestataireDashboardController extends AbstractController
             );
 
             if (!$isPrepared) {
+                if ($this->isAsyncConversationSubmit($request)) {
+                    return new JsonResponse([
+                        'ok' => false,
+                        'message' => 'Vous devez saisir un message ou ajouter au moins une photo.',
+                    ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                }
+
                 $this->addFlash('danger', 'Vous devez saisir un message ou ajouter au moins une photo.');
 
                 return $this->redirectToRoute('app_prestataire_dashboard', [
                     'conversation' => $conversation->getId(),
                     'tab' => 'messages',
-                    '_fragment' => 'messages-main-panel',
+                    'scroll' => $this->resolveReturnScroll($request),
                 ], 303);
             }
 
@@ -271,11 +294,22 @@ final class PrestataireDashboardController extends AbstractController
                 );
             }
 
+            if ($this->isAsyncConversationSubmit($request)) {
+                return new JsonResponse(['ok' => true]);
+            }
+
             return $this->redirectToRoute('app_prestataire_dashboard', [
                 'conversation' => $conversation->getId(),
                 'tab' => 'messages',
-                '_fragment' => 'messages-main-panel',
-                ], 303);
+                'scroll' => $this->resolveReturnScroll($request),
+            ], 303);
+        }
+
+        if ($this->isAsyncConversationSubmit($request)) {
+            return new JsonResponse([
+                'ok' => false,
+                'message' => 'Le formulaire de message contient des erreurs.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render(
@@ -468,10 +502,16 @@ final class PrestataireDashboardController extends AbstractController
         $quoteSort = $this->resolveQuoteSort($request);
         $quoteOrderBy = $this->resolveQuoteOrderBy($quoteSort);
         $activeTab = $forcedActiveTab ?? (string) $request->query->get('tab', 'dashboard');
-        $conversations = $this->loadConversations($conversationRepository, $prestataireProfile);
+        $allConversations = $this->loadConversations($conversationRepository, $prestataireProfile);
         $activeConversation = $forcedActiveConversation ?? $this->resolveActiveConversation(
-            $conversations,
+            $allConversations,
             $request->query->get('conversation')
+        );
+        $conversations = $paginator->paginate(
+            $allConversations,
+            $request->query->getInt('conversationPage', 1),
+            self::CONVERSATION_PAGE_SIZE,
+            ['pageParameterName' => 'conversationPage']
         );
 
         if (!$activeConversation instanceof Conversation && $forcedActiveConversation instanceof Conversation) {
@@ -497,6 +537,8 @@ final class PrestataireDashboardController extends AbstractController
         if ('messages' === $activeTab) {
             $this->markActiveConversationMessagesAsRead($activeConversation, $user, $entityManager);
         }
+
+        $conversationUnreadCounts = $this->buildConversationUnreadCounts($allConversations, $user);
 
         $completionReport = $this->prestataireProfileCompletionService->buildReport($user, $prestataireProfile);
         $mandatoryChecklist = $this->prestataireProfileCompletionService->buildMandatoryChecklist($user, $prestataireProfile);
@@ -586,6 +628,7 @@ final class PrestataireDashboardController extends AbstractController
             ),
             'quoteSort' => $quoteSort,
             'conversations' => $conversations,
+            'conversationUnreadCounts' => $conversationUnreadCounts,
             'activeConversation' => $activeConversation,
             'messageForm' => $messageFormView,
             'revenueForm' => $revenueFormView,
@@ -963,6 +1006,38 @@ final class PrestataireDashboardController extends AbstractController
         return $conversations[0];
     }
 
+    /**
+     * @param list<Conversation> $conversations
+     *
+     * @return array<string, int>
+     */
+    private function buildConversationUnreadCounts(array $conversations, User $prestataireUser): array
+    {
+        $counts = [];
+
+        foreach ($conversations as $conversation) {
+            $unreadCount = 0;
+
+            foreach ($conversation->getMessages() as $message) {
+                if ($message->isSystem() || null !== $message->getReadAt()) {
+                    continue;
+                }
+
+                $author = $message->getAuthor();
+
+                if (!$author instanceof User || $author->getId() === $prestataireUser->getId()) {
+                    continue;
+                }
+
+                ++$unreadCount;
+            }
+
+            $counts[(string) $conversation->getId()] = $unreadCount;
+        }
+
+        return $counts;
+    }
+
     private function conversationHasPhotos(?Conversation $conversation): bool
     {
         if (!$conversation instanceof Conversation) {
@@ -988,6 +1063,25 @@ final class PrestataireDashboardController extends AbstractController
             ]),
             'method' => 'POST',
         ]);
+    }
+
+    private function resolveReturnScroll(Request $request): ?int
+    {
+        $raw = $request->request->get('return_scroll');
+
+        if (!\is_string($raw) && !\is_numeric($raw)) {
+            return null;
+        }
+
+        $scroll = (int) $raw;
+
+        return $scroll >= 0 ? $scroll : null;
+    }
+
+    private function isAsyncConversationSubmit(Request $request): bool
+    {
+        return $request->isXmlHttpRequest()
+            || str_contains((string) $request->headers->get('Accept', ''), 'application/json');
     }
 
     private function buildSettingsUrlFromChecklist(array $mandatoryChecklist): string
