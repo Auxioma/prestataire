@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\ClientProfile;
 use App\Entity\Conversation;
 use App\Entity\PrestataireProfile;
 use App\Entity\QuoteRequest;
@@ -48,6 +49,33 @@ class ConversationRepository extends ServiceEntityRepository
             ->andWhere('c.prestataire = :prestataire')
             ->setParameter('conversationId', $conversation->getId())
             ->setParameter('prestataire', $prestataireProfile)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findThreadForClient(Conversation $conversation, ClientProfile $clientProfile): ?Conversation
+    {
+        return $this->createQueryBuilder('c')
+            ->addSelect(
+                'quoteRequest',
+                'prestataire',
+                'prestataireAccount',
+                'messages',
+                'author',
+                'authorPrestataireProfile',
+                'attachments'
+            )
+            ->leftJoin('c.quoteRequest', 'quoteRequest')
+            ->leftJoin('c.prestataire', 'prestataire')
+            ->leftJoin('prestataire.account', 'prestataireAccount')
+            ->leftJoin('c.messages', 'messages')
+            ->leftJoin('messages.author', 'author')
+            ->leftJoin('author.prestataireProfile', 'authorPrestataireProfile')
+            ->leftJoin('messages.attachments', 'attachments')
+            ->andWhere('c.id = :conversationId')
+            ->andWhere('c.client = :client')
+            ->setParameter('conversationId', $conversation->getId())
+            ->setParameter('client', $clientProfile)
             ->getQuery()
             ->getOneOrNullResult();
     }

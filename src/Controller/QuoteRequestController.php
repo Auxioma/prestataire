@@ -294,7 +294,13 @@ final class QuoteRequestController extends AbstractController
         // Chargement conversation
         // =========================
         $conversation = $conversationRepository->findOneByQuoteRequest($quoteRequest);
-        $messages = $conversation ? $messageRepository->findByConversationOrderedByCreatedAt($conversation) : [];
+
+        if ($conversation instanceof Conversation) {
+            $conversation = $conversationRepository->findThreadForClient($conversation, $user->getClientProfile())
+                ?? $conversation;
+        }
+
+        $messages = $conversation ? $conversation->getMessages()->toArray() : [];
 
         // =========================
         // Chargement des devis finalisés
@@ -590,6 +596,7 @@ final class QuoteRequestController extends AbstractController
     public function photos(
         string $slug,
         QuoteRequestRepository $quoteRequestRepository,
+        ConversationRepository $conversationRepository,
     ): Response {
         $user = $this->getUser();
 
@@ -611,6 +618,9 @@ final class QuoteRequestController extends AbstractController
         if (!$conversation) {
             throw $this->createNotFoundException('Aucune conversation disponible.');
         }
+
+        $conversation = $conversationRepository->findThreadForClient($conversation, $user->getClientProfile())
+            ?? $conversation;
 
         $mediaItems = [];
 
@@ -948,7 +958,13 @@ final class QuoteRequestController extends AbstractController
         }
 
         $conversation = $conversationRepository->findOneByQuoteRequest($quoteRequest);
-        $messages = $conversation ? $messageRepository->findByConversationOrderedByCreatedAt($conversation) : [];
+
+        if ($conversation instanceof Conversation) {
+            $conversation = $conversationRepository->findThreadForClient($conversation, $user->getClientProfile())
+                ?? $conversation;
+        }
+
+        $messages = $conversation ? $conversation->getMessages()->toArray() : [];
 
 $quoteResponses = $quoteProposalRepository->findBy(
     [
