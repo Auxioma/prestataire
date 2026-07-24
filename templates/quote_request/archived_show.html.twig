@@ -3,6 +3,9 @@
 {% block title %}Demande archivée{% endblock %}
 
 {% block body %}
+{% set provider = quoteRequest.prestataire %}
+{% set providerName = provider and provider.companyName ? provider.companyName : 'Prestataire' %}
+{% set providerProfileUrl = provider and provider.slug ? path('app_prestataire_show', { slug: provider.slug }) : null %}
 <section class="tm-qad-page">
     <div class="tm-qad-shell">
         <a href="{{ path('app_quote_request_history') }}" class="tm-qad-backlink">
@@ -25,6 +28,14 @@
                 <div class="tm-qad-panel__head">
                     <div class="tm-qad-panel__heading">
                         <h2 class="tm-qad-panel__title">Informations générales</h2>
+                        <p class="tm-qad-panel__text mb-0">
+                            Prestataire :
+                            {% if providerProfileUrl %}
+                                <a href="{{ providerProfileUrl }}">{{ providerName }}</a>
+                            {% else %}
+                                {{ providerName }}
+                            {% endif %}
+                        </p>
                     </div>
 
                     <div class="tm-qad-panel__meta-grid">

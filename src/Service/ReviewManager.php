@@ -9,6 +9,7 @@ use App\Entity\Review;
 use App\Enum\NotificationTypeEnum;
 use App\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class ReviewManager
 {
@@ -16,6 +17,7 @@ final class ReviewManager
         private readonly EntityManagerInterface $entityManager,
         private readonly ReviewRepository $reviewRepository,
         private readonly NotificationManager $notificationManager,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -123,7 +125,7 @@ final class ReviewManager
             NotificationTypeEnum::REVIEW_RECEIVED,
             $title,
             $body,
-            '/avis/mes-avis-recus',
+            $this->urlGenerator->generate('app_review_prestataire_reviews') . '#review-' . $review->getId(),
             [
                 'reviewId' => $review->getId(),
                 'quoteRequestId' => $quoteRequest?->getId(),

@@ -138,32 +138,28 @@
 							<div class="tm-navbar-notification-menu__list" data-realtime-notifications-target="list">
 								{% if navbarLatestNotifications is not empty %}
 									{% for notification in navbarLatestNotifications %}
-										<form method="post" action="{{ path('app_notification_mark_read', {id: notification.id}) }}" data-notification-item>
-											<input type="hidden" name="_token" value="{{ csrf_token('mark-notification-read-' ~ notification.id) }}">
+										<a href="{{ path('app_notification_open', {id: notification.id}) }}" class="dropdown-item tm-navbardropdown-link tm-navbar-notification-item {{ not notification.isRead ? 'tm-navbar-notification-item--unread' : '' }}" data-notification-item>
+											<div class="tm-navbar-notification-item__indicator"></div>
 
-											<button type="submit" class="dropdown-item tm-navbardropdown-link tm-navbar-notification-item {{ not notification.isRead ? 'tm-navbar-notification-item--unread' : '' }}">
-												<div class="tm-navbar-notification-item__indicator"></div>
-
-												<div class="tm-navbar-notification-item__body">
-													<div class="tm-navbar-notification-item__top">
-														<span class="tm-navbar-notification-title">
-															{{ notification.title }}
-														</span>
-														<span class="tm-navbar-notification-date">
-															{{ notification.createdAt|date('d/m/Y H:i') }}
-														</span>
-													</div>
-
-													<div class="tm-navbar-notification-content">
-														{{ notification.body|length > 100 ? notification.body|slice(0, 100) ~ '…' : notification.body }}
-													</div>
-
-													{% if not notification.isRead %}
-														<span class="tm-navbar-notification-item__badge">Non lue</span>
-													{% endif %}
+											<div class="tm-navbar-notification-item__body">
+												<div class="tm-navbar-notification-item__top">
+													<span class="tm-navbar-notification-title">
+														{{ notification.title }}
+													</span>
+													<span class="tm-navbar-notification-date">
+														{{ notification.createdAt|date('d/m/Y H:i') }}
+													</span>
 												</div>
-											</button>
-										</form>
+
+												<div class="tm-navbar-notification-content">
+													{{ notification.body|length > 100 ? notification.body|slice(0, 100) ~ '…' : notification.body }}
+												</div>
+
+												{% if not notification.isRead %}
+													<span class="tm-navbar-notification-item__badge">Non lue</span>
+												{% endif %}
+											</div>
+										</a>
 									{% endfor %}
 								{% endif %}
 							</div>
@@ -396,32 +392,28 @@
 								<div class="tm-navbar-notification-menu__list" data-realtime-notifications-target="list">
 									{% if navbarLatestNotifications is not empty %}
 										{% for notification in navbarLatestNotifications %}
-											<form method="post" action="{{ path('app_notification_mark_read', {id: notification.id}) }}" data-notification-item>
-												<input type="hidden" name="_token" value="{{ csrf_token('mark-notification-read-' ~ notification.id) }}">
+											<a href="{{ path('app_notification_open', {id: notification.id}) }}" class="dropdown-item tm-navbardropdown-link tm-navbar-notification-item {{ not notification.isRead ? 'tm-navbar-notification-item--unread' : '' }}" data-notification-item>
+												<div class="tm-navbar-notification-item__indicator"></div>
 
-												<button type="submit" class="dropdown-item tm-navbardropdown-link tm-navbar-notification-item {{ not notification.isRead ? 'tm-navbar-notification-item--unread' : '' }}">
-													<div class="tm-navbar-notification-item__indicator"></div>
-
-													<div class="tm-navbar-notification-item__body">
-														<div class="tm-navbar-notification-item__top">
-															<span class="tm-navbar-notification-title">
-																{{ notification.title }}
-															</span>
-															<span class="tm-navbar-notification-date">
-																{{ notification.createdAt|date('d/m/Y H:i') }}
-															</span>
-														</div>
-
-														<div class="tm-navbar-notification-content">
-															{{ notification.body|length > 100 ? notification.body|slice(0, 100) ~ '…' : notification.body }}
-														</div>
-
-														{% if not notification.isRead %}
-															<span class="tm-navbar-notification-item__badge">Non lue</span>
-														{% endif %}
+												<div class="tm-navbar-notification-item__body">
+													<div class="tm-navbar-notification-item__top">
+														<span class="tm-navbar-notification-title">
+															{{ notification.title }}
+														</span>
+														<span class="tm-navbar-notification-date">
+															{{ notification.createdAt|date('d/m/Y H:i') }}
+														</span>
 													</div>
-												</button>
-											</form>
+
+													<div class="tm-navbar-notification-content">
+														{{ notification.body|length > 100 ? notification.body|slice(0, 100) ~ '…' : notification.body }}
+													</div>
+
+													{% if not notification.isRead %}
+														<span class="tm-navbar-notification-item__badge">Non lue</span>
+													{% endif %}
+												</div>
+											</a>
 										{% endfor %}
 									{% endif %}
 								</div>

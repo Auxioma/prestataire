@@ -37,6 +37,9 @@
         {% if archivedQuoteRequests is not empty %}
             <div class="tm-qa-list">
                 {% for quoteRequest in archivedQuoteRequests %}
+                    {% set provider = quoteRequest.prestataire %}
+                    {% set providerName = provider and provider.companyName ? provider.companyName : 'Prestataire' %}
+                    {% set providerProfileUrl = provider and provider.slug ? path('app_prestataire_show', { slug: provider.slug }) : null %}
                     <article class="tm-qa-card">
                         <div class="tm-qa-card__accent" aria-hidden="true"></div>
 
@@ -46,6 +49,14 @@
                                     <h2 class="tm-qa-card__title">{{ quoteRequest.title }}</h2>
                                     <p class="tm-qa-card__subtitle">
                                         Archivée le {{ quoteRequest.archivedByClientAt ? quoteRequest.archivedByClientAt|date('d/m/Y à H:i') : '—' }}
+                                    </p>
+                                    <p class="tm-qa-card__subtitle">
+                                        Prestataire :
+                                        {% if providerProfileUrl %}
+                                            <a href="{{ providerProfileUrl }}">{{ providerName }}</a>
+                                        {% else %}
+                                            {{ providerName }}
+                                        {% endif %}
                                     </p>
                                 </div>
 

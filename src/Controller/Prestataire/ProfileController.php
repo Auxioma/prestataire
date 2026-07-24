@@ -454,7 +454,7 @@ class ProfileController extends AbstractProfileController
             $this->addFlash('warning', 'Vous proposez déjà ce service !');
         } else {
             $pService = new PrestataireService();
-            $pService->setPrestataire($user->getPrestataireProfile());
+            $user->getPrestataireProfile()->addPrestataireService($pService);
             $pService->setService($service);
             $pService->setIsActive(true);
 
@@ -488,6 +488,7 @@ class ProfileController extends AbstractProfileController
         }
 
         if ($this->isCsrfTokenValid('delete' . $ps->getId(), $request->request->get('_token'))) {
+            $user->getPrestataireProfile()->removePrestataireService($ps);
             $em->remove($ps);
             $this->prestataireProfileCompletionService->syncCompletionScore($user, $user->getPrestataireProfile());
             $em->persist($user->getPrestataireProfile());

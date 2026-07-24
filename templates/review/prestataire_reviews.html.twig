@@ -74,7 +74,7 @@
                                     {% if reviews is not empty %}
                                         <div class="d-grid gap-3">
                                             {% for review in reviews %}
-                                                <article class="border rounded-4 p-4">
+                                                <article id="review-{{ review.id }}" class="border rounded-4 p-4">
                                                     <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
                                                         <div>
                                                             {% set account = review.clientProfile.account %}
