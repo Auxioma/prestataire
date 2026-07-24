@@ -102,4 +102,87 @@ class MessageRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function calculateAverageFirstResponseTimeMinutesForPrestataire(
+        PrestataireProfile $prestataireProfile,
+    ): ?int {
+        $messages = $this->createQueryBuilder('m')
+            ->addSelect('conversation', 'author', 'authorPrestataire', 'authorClient')
+            ->leftJoin('m.conversation', 'conversation')
+            ->leftJoin('m.author', 'author')
+            ->leftJoin('author.prestataireProfile', 'authorPrestataire')
+            ->leftJoin('author.clientProfile', 'authorClient')
+            ->andWhere('conversation.prestataire = :prestataire')
+            ->andWhere('m.type = :messageType')
+            ->andWhere('m.author IS NOT NULL')
+            ->setParameter('prestataire', $prestataireProfile)
+            ->setParameter('messageType', MessageTypeEnum::USER)
+            ->orderBy('conversation.id', 'ASC')
+            ->addOrderBy('m.createdAt', 'ASC')
+            ->addOrderBy('m.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        $firstClientMessageAtByConversation = [];
+        $responseTimesInSeconds = [];
+
+        foreach ($messages as $message) {
+            $conversation = $message->getConversation();
+            $author = $message->getAuthor();
+
+            if (!$message instanceof Message || !$conversation instanceof Conversation || !$author instanceof User) {
+                continue;
+            }
+
+            $conversationId = $conversation->getId();
+
+            if (null === $conversationId) {
+                continue;
+            }
+
+            $authorClientProfile = $author->getClientProfile();
+            $authorPrestataireProfile = $author->getPrestataireProfile();
+
+            if (
+                $authorClientProfile instanceof \App\Entity\ClientProfile
+                && $conversation->getClient()?->getId() === $authorClientProfile->getId()
+            ) {
+                $firstClientMessageAtByConversation[$conversationId] ??= $message->getCreatedAt();
+
+                continue;
+            }
+
+            if (
+                !$authorPrestataireProfile instanceof PrestataireProfile
+                || $authorPrestataireProfile->getId() !== $prestataireProfile->getId()
+            ) {
+                continue;
+            }
+
+            if (!isset($firstClientMessageAtByConversation[$conversationId])) {
+                continue;
+            }
+
+            $firstClientMessageAt = $firstClientMessageAtByConversation[$conversationId];
+
+            if (!$firstClientMessageAt instanceof \DateTimeImmutable || !$message->getCreatedAt() instanceof \DateTimeImmutable) {
+                continue;
+            }
+
+            $responseTimesInSeconds[] = max(
+                0,
+                $message->getCreatedAt()->getTimestamp() - $firstClientMessageAt->getTimestamp()
+            );
+
+            unset($firstClientMessageAtByConversation[$conversationId]);
+        }
+
+        if ([] === $responseTimesInSeconds) {
+            return null;
+        }
+
+        $averageResponseTimeInSeconds = array_sum($responseTimesInSeconds) / count($responseTimesInSeconds);
+
+        return max(1, (int) round($averageResponseTimeInSeconds / 60));
+    }
 }
