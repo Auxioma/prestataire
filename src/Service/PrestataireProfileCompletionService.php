@@ -71,7 +71,9 @@ final class PrestataireProfileCompletionService
                 checks: [
                     'Nom de l’entreprise' => null !== $prestataireProfile->getCompanyName() && '' !== trim((string) $prestataireProfile->getCompanyName()),
                     'SIRET ou SIREN' => $this->hasCompanyIdentifier($prestataireProfile),
+                    'TVA intracommunautaire' => $this->hasText($prestataireProfile->getVatNumber()),
                     'Adresse complète' => $this->hasCompanyAddress($prestataireProfile),
+                    'Signature pour les devis PDF' => $this->hasText($prestataireProfile->getSignatureImage()),
                     'Logo' => null !== $prestataireProfile->getLogo(),
                     'Image de couverture' => null !== $prestataireProfile->getCoverImage(),
                 ],
@@ -200,11 +202,25 @@ final class PrestataireProfileCompletionService
                 'completed' => $this->hasCompanyIdentifier($prestataireProfile),
             ],
             [
+                'key' => 'vat_number',
+                'label' => 'TVA intracommunautaire',
+                'tab' => 'company',
+                'fragment' => null,
+                'completed' => $this->hasText($prestataireProfile->getVatNumber()),
+            ],
+            [
                 'key' => 'company_address',
                 'label' => 'Adresse complète',
                 'tab' => 'company',
                 'fragment' => null,
                 'completed' => $this->hasCompanyAddress($prestataireProfile),
+            ],
+            [
+                'key' => 'signature_image',
+                'label' => 'Signature pour les devis PDF',
+                'tab' => 'company',
+                'fragment' => null,
+                'completed' => $this->hasText($prestataireProfile->getSignatureImage()),
             ],
             [
                 'key' => 'metier',

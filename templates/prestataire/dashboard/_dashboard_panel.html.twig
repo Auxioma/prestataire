@@ -87,6 +87,25 @@
                 {% endif %}
             </div>
 
+            {% if mandatoryChecklist.missingItems is not empty %}
+                <div class="tm-dashboard-widget__subsection mt-3">
+                    <div class="tm-dashboard-widget__subsection-title">Éléments à compléter</div>
+                    <div class="tm-dashboard-widget__list">
+                        {% for item in mandatoryChecklist.missingItems %}
+                            <div class="tm-dashboard-widget__item tm-dashboard-widget__item--stack">
+                                <div class="tm-dashboard-widget__item-main">
+                                    <strong>{{ item.label }}</strong>
+                                    <small>Paramètres {{ item.tab == 'company' ? 'entreprise' : (item.tab == 'services' ? 'services' : (item.tab == 'zones' ? 'zones' : 'profil')) }}</small>
+                                </div>
+                                <div class="tm-dashboard-widget__item-side">
+                                    <a href="{{ path('app_prestataire_settings', { tab: item.tab, _fragment: item.fragment }) }}">Compléter</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
             <div class="tm-dashboard-widget__footer">
                 <a href="{{ path('app_prestataire_settings', { tab: 'profile' }) }}">Ouvrir les paramètres</a>
             </div>
