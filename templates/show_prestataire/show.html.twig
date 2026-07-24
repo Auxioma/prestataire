@@ -116,7 +116,7 @@
                                 {% if prestataire.responseTimeMinutes %}
                                     <div class="tm-profile-show__stat tm-profile-show__stat--soft">
                                         <i class="fa-solid fa-bolt"></i>
-                                        <span>Répond en ~ {{ prestataire.responseTimeMinutes }} min</span>
+                                        <span>Répond en ~ {{ prestataire.responseTimeMinutes|response_time }}</span>
                                     </div>
                                 {% endif %}
                             </div>
@@ -359,7 +359,7 @@
                         <div class="tm-profile-show__sidebar-highlight">
                             <span>Réponse rapide</span>
                             {% if prestataire.responseTimeMinutes %}
-                                <strong>~ {{ prestataire.responseTimeMinutes }} min</strong>
+                                <strong>~ {{ prestataire.responseTimeMinutes|response_time }}</strong>
                             {% else %}
                                 <strong>Disponible</strong>
                             {% endif %}
