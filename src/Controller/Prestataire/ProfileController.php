@@ -514,13 +514,15 @@ class ProfileController extends AbstractProfileController
         }
 
         $oldReduction = $ps->getTauxReduction();
+        $canEditReduction = $ps->hasDisplayablePrice();
 
-        $form = $this->createForm(PrestataireServiceType::class, $ps);
+        $form = $this->createForm(PrestataireServiceType::class, $ps, [
+            'can_edit_reduction' => $canEditReduction,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ('quote' === $ps->getPricingType()) {
-                $ps->setPrixCatalogue('0');
+            if (!$ps->hasDisplayablePrice()) {
                 $ps->setTauxReduction(null);
                 $ps->setPromotionCreatedAt(null);
             } else {
@@ -550,6 +552,7 @@ class ProfileController extends AbstractProfileController
         return $this->render('prestataire/edit_service.html.twig', [
             'form' => $form->createView(),
             'ps' => $ps,
+            'canEditReduction' => $canEditReduction,
         ]);
     }
 

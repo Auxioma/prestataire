@@ -99,6 +99,11 @@ final class PrestataireServicePrestationController extends AbstractController
                 }
             }
 
+            if (!$ps->hasDisplayablePrice()) {
+                $ps->setTauxReduction(null);
+                $ps->setPromotionCreatedAt(null);
+            }
+
             $prestataireProfileCompletionService->syncCompletionScore($user, $user->getPrestataireProfile());
             $em->persist($user->getPrestataireProfile());
             $em->flush();

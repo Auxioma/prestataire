@@ -197,7 +197,7 @@
 								<tr>
 									<th>Prestation</th>
 									<th>Tarif affiché</th>
-									<th>Catalogue</th>
+									<th>Tarif de référence</th>
 									<th>Remise</th>
 									<th>Promo</th>
 									<th>Mise à jour promo</th>
@@ -206,57 +206,9 @@
 							</thead>
 							<tbody>
 								{% for prestation in prestations %}
-									{% set pricingLabel = 'Tarification non renseignée' %}
-
-									{% if prestation.pricingType == 'quote' %}
-										{% set pricingLabel = 'Tarif sur devis' %}
-									{% elseif prestation.pricingType == 'range' %}
-										{% if prestation.priceFrom and prestation.priceTo %}
-											{% set pricingLabel = 'De ' ~ prestation.priceFrom ~ ' à ' ~ prestation.priceTo %}
-											{% if prestation.priceUnit %}
-												{% set pricingLabel = pricingLabel ~ ' / ' ~ prestation.priceUnit %}
-											{% endif %}
-										{% elseif prestation.priceFrom %}
-											{% set pricingLabel = 'À partir de ' ~ prestation.priceFrom %}
-											{% if prestation.priceUnit %}
-												{% set pricingLabel = pricingLabel ~ ' / ' ~ prestation.priceUnit %}
-											{% endif %}
-										{% elseif prestation.priceTo %}
-											{% set pricingLabel = 'Jusqu’à ' ~ prestation.priceTo %}
-											{% if prestation.priceUnit %}
-												{% set pricingLabel = pricingLabel ~ ' / ' ~ prestation.priceUnit %}
-											{% endif %}
-										{% endif %}
-									{% elseif prestation.pricingType == 'from' %}
-										{% if prestation.priceFrom %}
-											{% set pricingLabel = 'À partir de ' ~ prestation.priceFrom %}
-											{% if prestation.priceUnit %}
-												{% set pricingLabel = pricingLabel ~ ' / ' ~ prestation.priceUnit %}
-											{% endif %}
-										{% endif %}
-									{% elseif prestation.pricingType in ['fixed', 'hourly', 'daily'] %}
-										{% if prestation.priceTo %}
-											{% set pricingLabel = prestation.priceTo ~ ' €' %}
-											{% if prestation.priceUnit %}
-												{% set pricingLabel = pricingLabel ~ ' / ' ~ prestation.priceUnit %}
-											{% endif %}
-										{% endif %}
-									{% else %}
-										{% if prestation.priceFrom and prestation.priceTo %}
-											{% set pricingLabel = 'De ' ~ prestation.priceFrom ~ ' à ' ~ prestation.priceTo %}
-										{% elseif prestation.priceFrom %}
-											{% set pricingLabel = 'À partir de ' ~ prestation.priceFrom %}
-										{% elseif prestation.priceTo %}
-											{% set pricingLabel = prestation.priceTo ~ ' €' %}
-										{% endif %}
-
-										{% if prestation.priceUnit %}
-											{% set pricingLabel = pricingLabel ~ ' / ' ~ prestation.priceUnit %}
-										{% endif %}
-									{% endif %}
-
+									{% set pricingLabel = prestation.settingsPricingLabel %}
 									{% set hasPromo = prestation.hasPromotion is defined ? prestation.hasPromotion : false %}
-									{% set reducedPrice = prestation.prixRemise ?? null %}
+									{% set reducedPriceLabel = prestation.discountedSettingsPricingLabel %}
 
 									<tr>
 										<td>
@@ -271,18 +223,17 @@
 
 										<td>
 											<span class="tm-prestations-pricing">
-												{{ pricingLabel }}
+												{% if hasPromo and reducedPriceLabel %}
+													{{ reducedPriceLabel }}
+												{% else %}
+													{{ pricingLabel }}
+												{% endif %}
 											</span>
 										</td>
 
 										<td>
 											<span class="tm-prestations-date">
-												{% if prestation.prixCatalogue %}
-													{{ prestation.prixCatalogue }}
-													€
-												{% else %}
-													—
-												{% endif %}
+												{{ pricingLabel }}
 											</span>
 										</td>
 
@@ -298,10 +249,9 @@
 										</td>
 
 										<td>
-											{% if hasPromo and reducedPrice %}
+											{% if hasPromo and reducedPriceLabel %}
 												<div class="tm-prestations-prestation-title">
-													{{ reducedPrice }}
-													€
+													{{ reducedPriceLabel }}
 												</div>
 												<div class="tm-prestations-prestation-desc">
 													Prix remisé calculé

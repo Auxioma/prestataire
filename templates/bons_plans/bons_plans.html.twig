@@ -180,11 +180,8 @@
                               {% set parentCategory = category and category.parent is defined ? category.parent : null %}
 
                               {% set reduction = bonPlan.tauxReduction|default(0) %}
-                              {% set prixCatalogue = bonPlan.prixCatalogue|default(0) %}
-                              {% set prixRemise = bonPlan.prixRemise is defined and bonPlan.prixRemise is not null
-                                  ? bonPlan.prixRemise
-                                  : (prixCatalogue - (prixCatalogue * reduction / 100))
-                              %}
+                              {% set pricingLabel = bonPlan.settingsPricingLabel %}
+                              {% set discountedPricingLabel = bonPlan.discountedSettingsPricingLabel %}
 
                               {% set prestationTitle = bonPlan.title is defined and bonPlan.title
                                   ? bonPlan.title
@@ -320,8 +317,12 @@
                                       <p class="metier">{{ prestationTitle }}</p>
 
                                       <p class="prix">
-                                          <s>{{ prixCatalogue|number_format(2, ',', ' ') }} €</s>
-                                          <strong>{{ prixRemise|number_format(2, ',', ' ') }} €</strong>
+                                          {% if discountedPricingLabel %}
+                                              <s>{{ pricingLabel }}</s>
+                                              <strong>{{ discountedPricingLabel }}</strong>
+                                          {% else %}
+                                              <strong>{{ pricingLabel }}</strong>
+                                          {% endif %}
                                       </p>
 
                                       <p class="ligne lieu">

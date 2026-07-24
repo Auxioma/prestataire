@@ -30,7 +30,7 @@
 					<tr>
 						<td class="tm-service-name">
 							<div class="fw-semibold">{{ ps.service.name }}</div>
-							{% if ps.pricingType == 'quote' %}
+							{% if not ps.hasDetailedOffer or ps.pricingType == 'quote' %}
 								<div class="small text-muted">Fonctionne sur devis</div>
 							{% endif %}
 						</td>
@@ -40,26 +40,30 @@
 						</td>
 
 						<td class="tm-service-price">
-							{% if ps.pricingType == 'quote' %}
+							{% if not ps.hasDetailedOffer or not ps.hasDisplayablePrice %}
 								<span class="badge bg-light text-dark border">
 									Sur devis
 								</span>
-							{% elseif ps.prixCatalogue is not null and ps.prixCatalogue != '' %}
-								{{ ps.prixCatalogue|number_format(2, ',', ' ') }}
-								€
 							{% else %}
-								<span class="text-muted">Non renseigné</span>
+								{{ ps.settingsPricingLabel }}
 							{% endif %}
 						</td>
 
 						<td class="{{ ps.tauxReduction ? 'tm-service-discount' : 'tm-service-discount--empty' }}">
-							{% if ps.pricingType == 'quote' %}
-								<span class="text-muted">-</span>
-							{% elseif ps.tauxReduction %}
-								{{ ps.tauxReduction }}%
-							{% else %}
-								<span class="text-muted">-</span>
-							{% endif %}
+							<div class="d-inline-flex align-items-center gap-2">
+								<span>
+									{% if not ps.hasDisplayablePrice %}
+										<span class="text-muted">-</span>
+									{% elseif ps.tauxReduction %}
+										{{ ps.tauxReduction }}%
+									{% else %}
+										<span class="text-muted">-</span>
+									{% endif %}
+								</span>
+								<a href="{{ path('app_prestataire_service_edit', { id: ps.id }) }}" class="btn btn-sm btn-outline-primary tm-icon-btn" title="Modifier la réduction" aria-label="Modifier la réduction du service {{ ps.service.name }}" data-turbo="false">
+									<i class="fa-solid fa-pencil" aria-hidden="true"></i>
+								</a>
+							</div>
 						</td>
 
 						<td class="text-end">
@@ -73,9 +77,6 @@
 										Prestation indisponible
 									</span>
 								{% endif %}
-								<a href="{{ path('app_prestataire_service_edit', { id: ps.id }) }}" class="btn btn-sm btn-outline-primary tm-icon-btn" title="Modifier" aria-label="Modifier le service {{ ps.service.name }}" data-turbo="false">
-									<i class="fa-solid fa-pencil" aria-hidden="true"></i>
-								</a>
 
 								<form method="post" action="{{ path('app_prestataire_service_delete', { id: ps.id }) }}" class="d-inline-block" data-turbo="false" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Supprimer ce service ?" data-confirm-dialog-text-value="Cette suppression retirera le service de votre profil." data-confirm-dialog-confirm-button-text-value="Supprimer" data-confirm-dialog-cancel-button-text-value="Annuler">
 									<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ps.id) }}">

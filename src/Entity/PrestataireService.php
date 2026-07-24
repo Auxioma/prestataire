@@ -411,15 +411,83 @@ class PrestataireService
         return null !== $this->tauxReduction && (float) $this->tauxReduction > 0;
     }
 
+    public function hasConfiguredPricing(): bool
+    {
+        return (null !== $this->pricingType && '' !== $this->pricingType)
+            || null !== $this->priceFrom
+            || null !== $this->priceTo
+            || (null !== $this->priceUnit && '' !== $this->priceUnit);
+    }
+
+    public function hasDisplayablePrice(): bool
+    {
+        if (!$this->hasConfiguredPricing()) {
+            return false;
+        }
+
+        if ('quote' === $this->pricingType) {
+            return false;
+        }
+
+        return null !== $this->priceFrom || null !== $this->priceTo;
+    }
+
+    public function getSettingsPricingLabel(): string
+    {
+        if (!$this->hasConfiguredPricing() || 'quote' === $this->pricingType) {
+            return 'Sur devis';
+        }
+
+        $unitSuffix = $this->hasText($this->priceUnit) ? ' / ' . $this->priceUnit : '';
+        $priceFrom = null !== $this->priceFrom ? $this->formatAmount($this->priceFrom) . ' €' : null;
+        $priceTo = null !== $this->priceTo ? $this->formatAmount($this->priceTo) . ' €' : null;
+
+        if (null !== $priceFrom && null !== $priceTo) {
+            return sprintf('De %s à %s%s', $priceFrom, $priceTo, $unitSuffix);
+        }
+
+        if (null !== $priceFrom) {
+            return sprintf('À partir de %s%s', $priceFrom, $unitSuffix);
+        }
+
+        if (null !== $priceTo) {
+            return sprintf('%s%s', $priceTo, $unitSuffix);
+        }
+
+        return 'Sur devis';
+    }
+
+    public function getDiscountedSettingsPricingLabel(): ?string
+    {
+        if (!$this->hasPromotion() || !$this->hasDisplayablePrice()) {
+            return null;
+        }
+
+        $unitSuffix = $this->hasText($this->priceUnit) ? ' / ' . $this->priceUnit : '';
+        $priceFrom = null !== $this->priceFrom ? $this->applyReductionToAmount($this->priceFrom) : null;
+        $priceTo = null !== $this->priceTo ? $this->applyReductionToAmount($this->priceTo) : null;
+
+        if (null !== $priceFrom && null !== $priceTo) {
+            return sprintf('De %s à %s%s', $priceFrom, $priceTo, $unitSuffix);
+        }
+
+        if (null !== $priceFrom) {
+            return sprintf('À partir de %s%s', $priceFrom, $unitSuffix);
+        }
+
+        if (null !== $priceTo) {
+            return sprintf('%s%s', $priceTo, $unitSuffix);
+        }
+
+        return null;
+    }
+
     public function hasDetailedOffer(): bool
     {
         return (null !== $this->title && '' !== $this->title)
             || (null !== $this->shortDescription && '' !== $this->shortDescription)
             || (null !== $this->description && '' !== $this->description)
-            || (null !== $this->pricingType && '' !== $this->pricingType)
-            || null !== $this->priceFrom
-            || null !== $this->priceTo
-            || (null !== $this->priceUnit && '' !== $this->priceUnit)
+            || $this->hasConfiguredPricing()
             || (null !== $this->additionalInfo && '' !== $this->additionalInfo);
     }
 
@@ -448,5 +516,27 @@ class PrestataireService
     public function onPreUpdate(): void
     {
         $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    private function hasText(?string $value): bool
+    {
+        return null !== $value && '' !== trim($value);
+    }
+
+    private function formatAmount(string $value): string
+    {
+        return number_format((float) $value, 2, ',', ' ');
+    }
+
+    private function applyReductionToAmount(string $value): string
+    {
+        $amount = (float) $value;
+        $reduction = (float) ($this->tauxReduction ?? 0);
+
+        if ($reduction <= 0) {
+            return $this->formatAmount($value) . ' €';
+        }
+
+        return number_format(round($amount * (1 - ($reduction / 100)), 2), 2, ',', ' ') . ' €';
     }
 }

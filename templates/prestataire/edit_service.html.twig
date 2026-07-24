@@ -21,43 +21,33 @@
                 <div class="container col-lg-8 col-xl-7 px-0">
                     <div class="card shadow-sm border-0 p-4">
                         <div class="d-flex flex-column gap-1 mb-4">
-                            <span class="text-muted small">Tarification du service</span>
+                            <span class="text-muted small">Réduction du service</span>
                             <h1 class="h4 mb-0 fw-bold">Modifier le service : {{ ps.service.name }}</h1>
                             <p class="text-muted mb-0">
-                                Choisissez si vous souhaitez afficher un prix ou proposer cette prestation uniquement sur devis.
+                                Le tarif affiché dans vos paramètres est repris depuis la proposition de prestation détaillée.
                             </p>
                         </div>
 
                         {{ form_start(form, {
                             attr: {
                                 class: 'needs-validation',
-                                'data-turbo': 'false',
-                                'data-controller': 'service-pricing-toggle'
+                                'data-turbo': 'false'
                             }
                         }) }}
 
+                        <div class="alert alert-light border mb-4" role="status">
+                            <div class="d-flex align-items-start gap-2">
+                                <i class="fa-solid fa-file-signature mt-1 text-primary" aria-hidden="true"></i>
+                                <div>
+                                    <strong>Tarif actuellement affiché : {{ ps.settingsPricingLabel }}</strong>
+                                    <p class="mb-0 small text-muted">
+                                        Modifiez la proposition de prestation si vous souhaitez changer le tarif annoncé.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="mb-3">
-                            {{ form_row(form.pricingType, {
-                                label_attr: { class: 'form-label fw-semibold' },
-                                attr: {
-                                    class: 'form-select',
-                                    'data-service-pricing-toggle-target': 'pricingType',
-                                    'data-action': 'change->service-pricing-toggle#toggle'
-                                }
-                            }) }}
-                        </div>
-
-                        <div class="mb-3" data-service-pricing-toggle-target="priceBlock">
-                            {{ form_row(form.prixCatalogue, {
-                                label_attr: { class: 'form-label fw-semibold' },
-                                attr: {
-                                    class: 'form-control',
-                                    placeholder: 'Ex : 80'
-                                }
-                            }) }}
-                        </div>
-
-                        <div class="mb-3" data-service-pricing-toggle-target="reductionBlock">
                             {{ form_row(form.tauxReduction, {
                                 label_attr: { class: 'form-label fw-semibold' },
                                 attr: {
@@ -67,17 +57,11 @@
                             }) }}
                         </div>
 
-                        <div class="alert alert-light border d-none mb-4" role="status" aria-live="polite" data-service-pricing-toggle-target="quoteInfo">
-                            <div class="d-flex align-items-start gap-2">
-                                <i class="fa-solid fa-file-signature mt-1 text-primary" aria-hidden="true"></i>
-                                <div>
-                                    <strong>Mode sur devis activé</strong>
-                                    <p class="mb-0 small text-muted">
-                                        Aucun prix ni réduction ne sera affiché dans votre liste de services. Le service apparaîtra comme “Sur devis”.
-                                    </p>
-                                </div>
+                        {% if not canEditReduction %}
+                            <div class="alert alert-warning mb-4" role="status">
+                                La réduction est indisponible tant que la proposition de prestation ne contient pas de tarif affichable. Le service reste affiché “Sur devis”.
                             </div>
-                        </div>
+                        {% endif %}
 
                         <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end pt-2">
                             <a href="{{ path('app_prestataire_settings', { tab: 'services', _fragment: 'services-panel' }) }}" class="btn btn-outline-secondary">

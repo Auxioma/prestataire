@@ -14,8 +14,6 @@ namespace App\Form;
 
 use App\Entity\PrestataireService;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -25,24 +23,13 @@ class PrestataireServiceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('pricingType', ChoiceType::class, [
-                'label' => 'Mode tarifaire',
-                'required' => false,
-                'choices' => [
-                    'Prix affiché' => 'fixed',
-                    'Sur devis' => 'quote',
-                ],
-                'placeholder' => 'Choisir un mode tarifaire',
-            ])
-            ->add('prixCatalogue', MoneyType::class, [
-                'label' => 'Votre prix',
-                'currency' => 'EUR',
-                'required' => false,
-                'empty_data' => '',
-            ])
             ->add('tauxReduction', NumberType::class, [
                 'label' => 'Réduction (%)',
                 'required' => false,
+                'disabled' => !$options['can_edit_reduction'],
+                'help' => $options['can_edit_reduction']
+                    ? 'La réduction s’applique au tarif défini dans la proposition de prestation.'
+                    : 'La réduction n’est disponible que si une proposition de prestation contient un tarif affichable.',
             ]);
     }
 
@@ -50,6 +37,9 @@ class PrestataireServiceType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => PrestataireService::class,
+            'can_edit_reduction' => true,
         ]);
+
+        $resolver->setAllowedTypes('can_edit_reduction', 'bool');
     }
 }
