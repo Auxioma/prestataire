@@ -10,7 +10,7 @@
     { key: 'messages', label: 'Messages', icon: 'fa-envelope' },
 ] %}
 
-<div class="tm-app-sidebar tm-dashboard-page__sidebar-inner">
+<div class="tm-app-sidebar tm-dashboard-page__sidebar-inner" {{ stimulus_controller('messages-sidebar-live', { url: 'http://localhost:3001', userId: app.user.id, authToken: navbarRealtimeNotificationsToken|default(''), activeConversationId: activeConversation is defined and activeConversation ? activeConversation.id : 0, activeTab: activeTab|default('') }) }}>
     <div class="tm-app-sidebar-top tm-dashboard-page__sidebar-top">
         <div class="tm-sidebar-profile-card tm-dashboard-page__profile-card">
             <div class="tm-sidebar-profile-avatar-wrap">

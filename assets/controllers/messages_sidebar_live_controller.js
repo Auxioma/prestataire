@@ -72,7 +72,7 @@ export default class extends Controller {
             return;
         }
 
-        const thread = this.element.querySelector(`[data-conversation-id="${conversationId}"]`);
+        const thread = this.findThread(conversationId);
 
         if (!thread) {
             this.incrementSidebarBadge();
@@ -127,7 +127,7 @@ export default class extends Controller {
     }
 
     promoteThread(thread) {
-        const list = this.element.querySelector('.tm-msg-list');
+        const list = this.findThreadList();
 
         if (!list) {
             return;
@@ -167,6 +167,14 @@ export default class extends Controller {
             `${nextCount} message${nextCount > 1 ? 's' : ''} non lu${nextCount > 1 ? 's' : ''}`
         );
         badge.innerHTML = '<i class="fa-solid fa-envelope"></i><span>' + nextCount + '</span>';
+    }
+
+    findThread(conversationId) {
+        return document.querySelector(`[data-conversation-id="${conversationId}"]`);
+    }
+
+    findThreadList() {
+        return document.querySelector('.tm-msg-list');
     }
 
     incrementSidebarBadge() {
