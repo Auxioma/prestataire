@@ -90,6 +90,9 @@ final class InvoiceType extends AbstractType
                 'delete_label' => 'Supprimer le PDF importé',
                 'download_uri' => false,
                 'asset_helper' => false,
+                'attr' => [
+                    'accept' => 'application/pdf,.pdf',
+                ],
                 'constraints' => [
                     new File(
                         maxSize: '10M',

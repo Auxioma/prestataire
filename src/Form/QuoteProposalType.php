@@ -97,6 +97,9 @@ class QuoteProposalType extends AbstractType
                 'delete_label' => 'Supprimer le PDF importé',
                 'download_uri' => false,
                 'asset_helper' => false,
+                'attr' => [
+                    'accept' => 'application/pdf,.pdf',
+                ],
                 'constraints' => [
                     new File(
                         maxSize: '10M',
@@ -105,7 +108,6 @@ class QuoteProposalType extends AbstractType
                         maxSizeMessage: 'Le fichier ne doit pas dépasser 10 Mo.',
                     ),
                 ],
-                'help' => 'Si vous ajoutez un PDF de devis externe, il remplacera le devis généré par la plateforme pour cette proposition.',
             ])
             ->add('items', CollectionType::class, [
                 'label' => 'Lignes du devis',
