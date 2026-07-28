@@ -184,14 +184,23 @@
 												({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }}
 												avis)
 												<br>
-												<span class="tm-profile-preview-location">
+												{# <span class="tm-profile-preview-location">
 													📍
 													{{ user.prestataireProfile.city|default('Libourne') }}
 													et alentours
-												</span>
+												</span> #}
 											</p>
 
-											<a href="#" class="btn btn-outline-secondary btn-sm rounded-3 fw-medium w-100 py-2">
+											<a
+												href="{{ user.prestataireProfile and user.prestataireProfile.slug ? path('app_prestataire_show', { slug: user.prestataireProfile.slug }) : '#' }}"
+												class="btn btn-outline-secondary btn-sm rounded-3 fw-medium w-100 py-2 {{ user.prestataireProfile and user.prestataireProfile.slug ? '' : 'disabled' }}"
+												{% if user.prestataireProfile and user.prestataireProfile.slug %}
+													target="_blank"
+													rel="noopener noreferrer"
+												{% else %}
+													aria-disabled="true"
+												{% endif %}
+											>
 												Voir le profil public ↗
 											</a>
 										</div>

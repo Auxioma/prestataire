@@ -28,7 +28,7 @@ use App\Service\PrestataireProfileCompletionService;
 use App\Service\PrestataireProfileManager;
 use App\Service\PrestataireSearchIndexer;
 use App\Service\PrestataireSettingsFormsFactory;
-use App\Service\SireneClient;
+use App\Service\CompanyRegistryClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -61,7 +61,7 @@ class ProfileController extends AbstractProfileController
         Request $request,
         EntityManagerInterface $entityManager,
         ServiceCategoryRepository $categoryRepository,
-        SireneClient $sireneClient,
+        CompanyRegistryClient $companyRegistryClient,
     ): Response {
         /** @var User|null $user */
         $user = $this->getUser();
@@ -141,7 +141,7 @@ class ProfileController extends AbstractProfileController
             entityManager: $entityManager,
             companyForm: $forms->companyForm,
             prestataireProfile: $prestataireProfile,
-            sireneClient: $sireneClient,
+            companyRegistryClient: $companyRegistryClient,
         );
 
         if ($companyResult['response'] instanceof Response) {
@@ -334,7 +334,7 @@ class ProfileController extends AbstractProfileController
         EntityManagerInterface $entityManager,
         FormInterface $companyForm,
         PrestataireProfile $prestataireProfile,
-        SireneClient $sireneClient,
+        CompanyRegistryClient $companyRegistryClient,
     ): array {
         $companyVerificationPreview = null;
         $openCompanyVerificationModal = false;
@@ -402,7 +402,7 @@ class ProfileController extends AbstractProfileController
 
         if ($isVerifyCompanyAction) {
             try {
-                $preview = $this->companyVerificationManager->buildPreview($prestataireProfile, $sireneClient);
+                $preview = $this->companyVerificationManager->buildPreview($prestataireProfile, $companyRegistryClient);
 
                 return [
                     'response' => null,

@@ -4,11 +4,11 @@ namespace App\Service;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class SireneClient
+final class CompanyRegistryClient
 {
     public function __construct(
         private readonly HttpClientInterface $httpClient,
-        private readonly string $sireneBaseUrl,
+        private readonly string $companyRegistryBaseUrl,
     ) {}
 
     // récupération des données entreprise via l'API ouverte recherche-entreprises.api.gouv.fr
@@ -20,7 +20,7 @@ class SireneClient
             throw new \InvalidArgumentException('Le SIRET doit contenir 14 chiffres.');
         }
 
-        $response = $this->httpClient->request('GET', sprintf('%s/search', rtrim($this->sireneBaseUrl, '/')), [
+        $response = $this->httpClient->request('GET', sprintf('%s/search', rtrim($this->companyRegistryBaseUrl, '/')), [
             'query' => [
                 'q' => $normalizedSiret,
                 'per_page' => 1,

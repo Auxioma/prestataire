@@ -16,7 +16,7 @@ final class CompanyVerificationManager
     ) {
     }
 
-    public function buildPreview(PrestataireProfile $prestataireProfile, SireneClient $sireneClient): array
+    public function buildPreview(PrestataireProfile $prestataireProfile, CompanyRegistryClient $companyRegistryClient): array
     {
         $siret = $prestataireProfile->getSiret();
 
@@ -24,7 +24,7 @@ final class CompanyVerificationManager
             throw new \RuntimeException('Veuillez renseigner un numéro SIRET avant de lancer la vérification.');
         }
 
-        $previewPayload = $sireneClient->buildCompanyPreviewFromSiret($siret);
+        $previewPayload = $companyRegistryClient->buildCompanyPreviewFromSiret($siret);
         $this->getSession()?->set('company_verification_preview', $previewPayload);
 
         return [
