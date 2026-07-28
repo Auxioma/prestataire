@@ -4,6 +4,7 @@ namespace App\Enum;
 
 enum PrestataireDocumentTypeEnum: string
 {
+    case CERTIFICATION = 'CERTIFICATION';
     case KBIS = 'KBIS';
     case RC_PRO = 'RC_PRO';
     case DECENNALE = 'DECENNALE';
@@ -14,6 +15,7 @@ enum PrestataireDocumentTypeEnum: string
     public function getLabel(): string
     {
         return match ($this) {
+            self::CERTIFICATION => 'Certification / Diplôme',
             self::KBIS => 'Extrait Kbis / Justificatif d’entreprise',
             self::RC_PRO => 'Assurance RC Pro',
             self::DECENNALE => 'Attestation décennale',

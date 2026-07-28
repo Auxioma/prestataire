@@ -230,14 +230,6 @@
 												{{ form_row(publicProfileForm.experience) }}
 											</div>
 
-											<div class="mb-3">
-												<label class="form-label mb-2">Certifications</label>
-												<div class="d-flex flex-wrap gap-2 pt-1">
-													<button type="button" class="btn btn-light btn-md border border-dashed text-primary fw-medium px-3">
-														+ Ajouter
-													</button>
-												</div>
-											</div>
 										</div>
 
 										<div class="col-lg-5">
@@ -270,6 +262,137 @@
 									</div>
 
 									{{ form_end(publicProfileForm) }}
+								</div>
+
+								<div class="card tm-card p-4">
+									<div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-2 mb-4">
+										<div>
+											<h4 class="tm-card-title mb-1">Certifications et diplômes</h4>
+											<p class="text-muted small mb-0">Ajoutez vos justificatifs professionnels au format PDF ou image.</p>
+										</div>
+										{% if certificationDocuments is not empty %}
+											<span class="badge rounded-pill bg-light text-dark border">{{ certificationDocuments|length }}</span>
+										{% endif %}
+									</div>
+
+									<div class="row g-4">
+										<div class="col-xl-6">
+											{{ form_start(certificationForm, {
+												attr: {
+													novalidate: 'novalidate',
+													class: 'tm-form-container',
+													'data-turbo': 'false',
+												},
+											}) }}
+
+											<div class="mb-3 tm-form-row">
+												{{ form_row(certificationForm.documentFile) }}
+												<small class="text-muted d-block mt-2 fs-7">Formats acceptés : PDF, JPG, PNG, WEBP. Taille maximale : 8 Mo.</small>
+											</div>
+
+											<div class="row g-3">
+												<div class="col-md-6 tm-form-row">
+													{{ form_row(certificationForm.issuedAt) }}
+												</div>
+												<div class="col-md-6 tm-form-row">
+													{{ form_row(certificationForm.expiresAt) }}
+												</div>
+											</div>
+
+											<div class="mt-3 tm-form-row">
+												{{ form_row(certificationForm.notes) }}
+											</div>
+
+											<div class="row mt-4">
+												<div class="col-12 d-flex justify-content-center justify-content-lg-start">
+													<button type="submit" class="btn tm-btn-service px-4 py-3 fw-bold">
+														Ajouter la certification
+													</button>
+												</div>
+											</div>
+
+											{{ form_end(certificationForm) }}
+										</div>
+
+										<div class="col-xl-6">
+											<div class="border rounded-4 bg-light-subtle p-3 h-100">
+												<h5 class="fw-bold fs-6 mb-3 text-dark">Documents enregistrés</h5>
+
+												{% if certificationDocuments is not empty %}
+													<div class="d-flex flex-column gap-2">
+														{% for document in certificationDocuments %}
+															<div class="border rounded-3 p-3 bg-white">
+																<div class="d-flex justify-content-between align-items-start gap-3">
+																	<div class="min-w-0">
+																		<div class="fw-semibold small mb-1">{{ document.type.label }}</div>
+
+																		{% if document.originalName %}
+																			<div class="small text-muted text-truncate">{{ document.originalName }}</div>
+																		{% endif %}
+
+																		{% if document.issuedAt %}
+																			<div class="small text-muted">Obtenu le {{ document.issuedAt|date('d/m/Y') }}</div>
+																		{% endif %}
+
+																		{% if document.expiresAt %}
+																			<div class="small text-muted">Valide jusqu’au {{ document.expiresAt|date('d/m/Y') }}</div>
+																		{% endif %}
+
+																		{% if document.notes %}
+																			<div class="small text-muted mt-1">{{ document.notes }}</div>
+																		{% endif %}
+																	</div>
+
+																	<div class="d-flex flex-column align-items-end gap-2 shrink">
+																		<span class="badge bg-{{ document.status.badgeClass }}-subtle text-{{ document.status.badgeClass }}">
+																			{{ document.status.label }}
+																		</span>
+
+																		<div class="d-flex align-items-center gap-1">
+																			{% if document.fileName %}
+																				<a
+																					href="{{ asset('uploads/prestataire-documents/' ~ document.fileName) }}"
+																					target="_blank"
+																					rel="noopener noreferrer"
+																					class="btn btn-sm btn-light border"
+																				>
+																					Ouvrir
+																				</a>
+																			{% endif %}
+
+																			<form
+																				method="post"
+																				action="{{ path('app_prestataire_document_delete', { id: document.id }) }}"
+																				class="m-0"
+																				data-controller="confirm-dialog"
+																				data-action="submit->confirm-dialog#confirm"
+																				data-confirm-dialog-title-value="Supprimer cette certification ?"
+																				data-confirm-dialog-text-value="Le document sera retiré de votre profil."
+																				data-confirm-dialog-confirm-button-text-value="Supprimer"
+																				data-confirm-dialog-cancel-button-text-value="Annuler"
+																			>
+																				<input
+																					type="hidden"
+																					name="_token"
+																					value="{{ csrf_token('delete_document_' ~ document.id) }}"
+																				>
+
+																				<button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+																					<i class="fa-solid fa-trash"></i>
+																				</button>
+																			</form>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														{% endfor %}
+													</div>
+												{% else %}
+													<p class="text-muted small mb-0">Aucune certification ou diplôme ajouté pour le moment.</p>
+												{% endif %}
+											</div>
+										</div>
+									</div>
 								</div>
 
 								<div class="row g-4">

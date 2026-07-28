@@ -17,6 +17,7 @@ use App\Entity\PrestataireDocument;
 use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
 use App\Entity\User;
+use App\Enum\PrestataireDocumentTypeEnum;
 use App\Form\PrestataireServiceType;
 use App\Repository\ServiceCategoryRepository;
 use App\Repository\ServiceRepository;
@@ -74,12 +75,21 @@ class ProfileController extends AbstractProfileController
 
         $availabilities = $this->prestataireProfileManager->getSortedAvailabilities($prestataireProfile);
         $documents = $this->prestataireProfileManager->getSortedDocuments($prestataireProfile);
+        $certificationDocuments = array_values(array_filter(
+            $documents,
+            static fn (PrestataireDocument $document): bool => PrestataireDocumentTypeEnum::CERTIFICATION === $document->getType()
+        ));
+        $companyDocuments = array_values(array_filter(
+            $documents,
+            static fn (PrestataireDocument $document): bool => PrestataireDocumentTypeEnum::CERTIFICATION !== $document->getType()
+        ));
         $zones = $prestataireProfile->getPrestataireInterventionZones();
 
         $forms = $this->prestataireSettingsFormsFactory->create($user, $prestataireProfile);
 
         $forms->userForm->handleRequest($request);
         $forms->publicProfileForm->handleRequest($request);
+        $forms->certificationForm->handleRequest($request);
         $forms->companyForm->handleRequest($request);
         $forms->availabilityForm->handleRequest($request);
         $forms->notificationForm->handleRequest($request);
@@ -96,6 +106,15 @@ class ProfileController extends AbstractProfileController
             prestataireProfile: $prestataireProfile,
             documentForm: $forms->documentForm,
             document: $forms->documentEntity,
+        )) {
+            return $response;
+        }
+
+        if ($response = $this->handleCertificationForm(
+            entityManager: $entityManager,
+            prestataireProfile: $prestataireProfile,
+            certificationForm: $forms->certificationForm,
+            certification: $forms->certificationEntity,
         )) {
             return $response;
         }
@@ -171,6 +190,7 @@ class ProfileController extends AbstractProfileController
         return $this->render('profile/prestataire_profile.html.twig', [
             'userForm' => $forms->userForm->createView(),
             'publicProfileForm' => $forms->publicProfileForm->createView(),
+            'certificationForm' => $forms->certificationForm->createView(),
             'companyForm' => $forms->companyForm->createView(),
             'zoneForm' => $forms->zoneForm->createView(),
             'zones' => $zones,
@@ -183,7 +203,8 @@ class ProfileController extends AbstractProfileController
             'companyVerificationPreview' => $companyVerificationPreview,
             'openCompanyVerificationModal' => $openCompanyVerificationModal,
             'documentForm' => $forms->documentForm->createView(),
-            'documents' => $documents,
+            'documents' => $companyDocuments,
+            'certificationDocuments' => $certificationDocuments,
             'passwordForm' => $forms->passwordForm->createView(),
             'deletionForm' => $forms->deletionForm->createView(),
             'activeTab' => $this->resolveActiveTab(
@@ -223,6 +244,41 @@ class ProfileController extends AbstractProfileController
         }
 
         $this->addFlash('danger', 'Le document n’a pas pu être ajouté. Vérifiez les champs du formulaire.');
+
+        return null;
+    }
+
+    private function handleCertificationForm(
+        EntityManagerInterface $entityManager,
+        PrestataireProfile $prestataireProfile,
+        FormInterface $certificationForm,
+        PrestataireDocument $certification,
+    ): ?Response {
+        if (!$certificationForm->isSubmitted()) {
+            return null;
+        }
+
+        if ($certificationForm->isValid()) {
+            $certification
+                ->setPrestataireProfile($prestataireProfile)
+                ->setType(PrestataireDocumentTypeEnum::CERTIFICATION);
+
+            $prestataireProfile->addDocument($certification);
+            $this->prestataireProfileCompletionService->syncCompletionScore($prestataireProfile->getAccount(), $prestataireProfile);
+
+            $entityManager->persist($certification);
+            $entityManager->persist($prestataireProfile);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Votre certification a bien été ajoutée.');
+
+            return $this->redirectToRoute('app_prestataire_settings', [
+                'tab' => 'profile',
+                '_fragment' => 'profile-panel',
+            ]);
+        }
+
+        $this->addFlash('danger', 'La certification n’a pas pu être ajoutée. Vérifiez le fichier et les champs saisis.');
 
         return null;
     }
@@ -575,9 +631,7 @@ class ProfileController extends AbstractProfileController
         if (!$prestataireProfile) {
             $this->addFlash('danger', 'Profil prestataire introuvable.');
 
-            return $this->redirectToRoute('app_prestataire_settings', [
-                '_fragment' => 'company-panel',
-            ]);
+            return $this->redirectToRoute('app_prestataire_settings', $this->getDocumentRedirectParameters(null));
         }
 
         if ($document->getPrestataireProfile()?->getId() !== $prestataireProfile->getId()) {
@@ -587,9 +641,7 @@ class ProfileController extends AbstractProfileController
         if (!$this->isCsrfTokenValid('delete_document_' . $document->getId(), $request->request->get('_token'))) {
             $this->addFlash('danger', 'Le jeton CSRF est invalide. Veuillez réessayer.');
 
-            return $this->redirectToRoute('app_prestataire_settings', [
-                '_fragment' => 'company-panel',
-            ]);
+            return $this->redirectToRoute('app_prestataire_settings', $this->getDocumentRedirectParameters($document));
         }
 
         $prestataireProfile->removeDocument($document);
@@ -600,8 +652,21 @@ class ProfileController extends AbstractProfileController
 
         $this->addFlash('success', 'Le document a bien été supprimé.');
 
-        return $this->redirectToRoute('app_prestataire_settings', [
+        return $this->redirectToRoute('app_prestataire_settings', $this->getDocumentRedirectParameters($document));
+    }
+
+    private function getDocumentRedirectParameters(?PrestataireDocument $document): array
+    {
+        if ($document?->getType() === PrestataireDocumentTypeEnum::CERTIFICATION) {
+            return [
+                'tab' => 'profile',
+                '_fragment' => 'profile-panel',
+            ];
+        }
+
+        return [
+            'tab' => 'company',
             '_fragment' => 'company-panel',
-        ]);
+        ];
     }
 }

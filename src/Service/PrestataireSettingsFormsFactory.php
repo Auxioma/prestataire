@@ -32,6 +32,9 @@ final class PrestataireSettingsFormsFactory
         $document = new PrestataireDocument();
         $document->setPrestataireProfile($prestataireProfile);
 
+        $certification = new PrestataireDocument();
+        $certification->setPrestataireProfile($prestataireProfile);
+
         return new PrestataireSettingsForms(
             userForm: $this->formFactory->createNamed(
                 'user_profile_form',
@@ -47,6 +50,15 @@ final class PrestataireSettingsFormsFactory
                 'public_profile_form',
                 \App\Form\PrestatairePublicProfileTabType::class,
                 $prestataireProfile
+            ),
+            certificationForm: $this->formFactory->createNamed(
+                'certification_form',
+                \App\Form\PrestataireCertificationType::class,
+                $certification,
+                [
+                    'action' => $this->urlGenerator->generate('app_prestataire_settings', ['tab' => 'profile']),
+                    'method' => 'POST',
+                ]
             ),
             availabilityForm: $this->formFactory->create(
                 PrestataireAvailabilityCollectionType::class,
@@ -101,6 +113,7 @@ final class PrestataireSettingsFormsFactory
                     'method' => 'POST',
                 ]
             ),
+            certificationEntity: $certification,
             documentEntity: $document,
         );
     }

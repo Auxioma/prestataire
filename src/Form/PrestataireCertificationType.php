@@ -3,11 +3,8 @@
 namespace App\Form;
 
 use App\Entity\PrestataireDocument;
-use App\Enum\PrestataireDocumentTypeEnum;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,35 +12,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotNull;
 
-class PrestataireDocumentType extends AbstractType
+class PrestataireCertificationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // type de document
-            ->add('type', EnumType::class, [
-                'class' => PrestataireDocumentTypeEnum::class,
-                'required' => true,
-                'label' => 'Type de document',
-                'choices' => array_values(array_filter(
-                    PrestataireDocumentTypeEnum::cases(),
-                    static fn (PrestataireDocumentTypeEnum $type): bool => PrestataireDocumentTypeEnum::CERTIFICATION !== $type
-                )),
-                'choice_label' => static fn(PrestataireDocumentTypeEnum $choice): string => $choice->getLabel(),
-                'placeholder' => 'Choisir un type',
-                'constraints' => [
-                    new NotNull(
-                        message: 'Veuillez sélectionner un type de document.',
-                    ),
-                ],
-            ])
-
-            // fichier réel uploadé
             ->add('documentFile', FileType::class, [
-                'label' => 'Fichier',
+                'label' => 'Certification ou diplôme',
                 'required' => true,
                 'mapped' => true,
                 'constraints' => [
+                    new NotNull(message: 'Veuillez sélectionner un fichier.'),
                     new File(
                         maxSize: '8M',
                         mimeTypes: [
@@ -55,38 +34,28 @@ class PrestataireDocumentType extends AbstractType
                         mimeTypesMessage: 'Veuillez envoyer un PDF, JPG, PNG ou WEBP.',
                     ),
                 ],
+                'attr' => [
+                    'accept' => '.pdf,image/jpeg,image/png,image/webp',
+                ],
             ])
-
-            // visible au client
-            ->add('isVisibleToClient', CheckboxType::class, [
-                'label' => 'Rendre ce document visible au client concerné',
-                'required' => false,
-            ])
-
-            // date d’émission
             ->add('issuedAt', DateType::class, [
-                'label' => 'Date d’émission',
+                'label' => 'Date d’obtention',
                 'required' => false,
                 'widget' => 'single_text',
             ])
-
-            // date d’expiration
             ->add('expiresAt', DateType::class, [
-                'label' => 'Date d’expiration',
+                'label' => 'Date de fin de validité (si applicable)',
                 'required' => false,
                 'widget' => 'single_text',
             ])
-
-            // notes internes éventuelles
             ->add('notes', TextareaType::class, [
-                'label' => 'Notes',
+                'label' => 'Précisions',
                 'required' => false,
                 'attr' => [
                     'rows' => 3,
-                    'placeholder' => 'Informations complémentaires sur ce document',
+                    'placeholder' => 'Exemple : CAP plomberie, Qualibat, RGE, organisme certificateur...',
                 ],
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
