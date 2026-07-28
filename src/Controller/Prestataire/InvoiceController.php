@@ -17,6 +17,7 @@ use App\Repository\QuoteProposalRepository;
 use App\Service\InvoiceDocumentResolver;
 use App\Service\InvoiceManager;
 use App\Service\InvoicePdfGenerator;
+use App\Service\ClientReviewReminderMailer;
 use App\Service\NotificationManager;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -94,6 +95,7 @@ final class InvoiceController extends AbstractInvoiceController
         PrestataireProfileRepository $prestataireProfileRepository,
         InvoiceManager $invoiceManager,
         NotificationManager $notificationManager,
+        ClientReviewReminderMailer $clientReviewReminderMailer,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_PRESTATAIRE');
 
@@ -111,6 +113,7 @@ final class InvoiceController extends AbstractInvoiceController
             $invoice = $invoiceManager->getOrCreateFromAcceptedQuote($proposal);
             $invoiceManager->issue($invoice);
             $this->notifyClientInvoiceAvailable($proposal, $invoice, $notificationManager);
+            $clientReviewReminderMailer->sendIfEligible($invoice);
 
             $this->addFlash('success', 'La facture a bien été émise.');
         } catch (\DomainException $exception) {
