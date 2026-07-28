@@ -32,11 +32,11 @@ export default class extends Controller {
         this.debounceTimer = null;
 
         this.handleDocumentClick = this.handleDocumentClick.bind(this);
-        document.addEventListener('click', this.handleDocumentClick);
+        document.addEventListener('pointerdown', this.handleDocumentClick);
     }
 
     disconnect() {
-        document.removeEventListener('click', this.handleDocumentClick);
+        document.removeEventListener('pointerdown', this.handleDocumentClick);
         this.dropdownListeners.forEach(({ dropdown, showHandler, hideHandler }) => {
             dropdown.removeEventListener('show.bs.dropdown', showHandler);
             dropdown.removeEventListener('hide.bs.dropdown', hideHandler);

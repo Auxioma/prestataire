@@ -18,7 +18,7 @@ export default class extends Controller {
         this.boundClose = this.handleOutsideClick.bind(this);
         this.boundReposition = this.positionPortal.bind(this);
 
-        document.addEventListener('click', this.boundClose);
+        document.addEventListener('pointerdown', this.boundClose);
         window.addEventListener('resize', this.boundReposition);
         window.addEventListener('scroll', this.boundReposition, true);
     }
@@ -32,7 +32,7 @@ export default class extends Controller {
             clearTimeout(this.debounceTimer);
         }
 
-        document.removeEventListener('click', this.boundClose);
+        document.removeEventListener('pointerdown', this.boundClose);
         window.removeEventListener('resize', this.boundReposition);
         window.removeEventListener('scroll', this.boundReposition, true);
 
@@ -222,8 +222,14 @@ export default class extends Controller {
     }
 
     handleOutsideClick(event) {
+        if (!this.hasQueryTarget) {
+            return;
+        }
+
         const clickedInPortal = this.portalEl && this.portalEl.contains(event.target);
-        if (!this.element.contains(event.target) && !clickedInPortal) {
+        const clickedInQuery = this.queryTarget.contains(event.target) || this.queryTarget === event.target;
+
+        if (!clickedInQuery && !clickedInPortal) {
             this.hideSuggestions();
         }
     }
