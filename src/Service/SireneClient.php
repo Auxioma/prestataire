@@ -9,10 +9,9 @@ class SireneClient
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly string $sireneBaseUrl,
-        private readonly string $sireneApiKey,
     ) {}
 
-    // récupération des données officielles d'un établissement via son SIRET
+    // récupération des données entreprise via l'API ouverte recherche-entreprises.api.gouv.fr
     public function getEtablissementBySiret(string $siret): array
     {
         $normalizedSiret = preg_replace('/\D+/', '', $siret ?? '');
@@ -21,98 +20,100 @@ class SireneClient
             throw new \InvalidArgumentException('Le SIRET doit contenir 14 chiffres.');
         }
 
-        $response = $this->httpClient->request('GET', sprintf('%s/siret/%s', rtrim($this->sireneBaseUrl, '/'), $normalizedSiret), [
+        $response = $this->httpClient->request('GET', sprintf('%s/search', rtrim($this->sireneBaseUrl, '/')), [
+            'query' => [
+                'q' => $normalizedSiret,
+                'per_page' => 1,
+                'page' => 1,
+            ],
             'headers' => [
                 'Accept' => 'application/json',
-                'X-INSEE-Api-Key-Integration' => $this->sireneApiKey,
+                'User-Agent' => 'TrouveMoiPrestataires/1.0 (+company-verification)',
             ],
         ]);
 
         $statusCode = $response->getStatusCode();
 
-        if (404 === $statusCode) {
+        if (200 !== $statusCode) {
+            throw new \RuntimeException(sprintf('Erreur API entreprise.data.gouv.fr (HTTP %d).', $statusCode));
+        }
+
+        $data = $response->toArray(false);
+        $results = $data['results'] ?? [];
+
+        if (!is_array($results) || [] === $results) {
             throw new \RuntimeException('Aucun établissement trouvé pour ce SIRET.');
         }
 
-        if (200 !== $statusCode) {
-            throw new \RuntimeException(sprintf('Erreur API Sirene (HTTP %d).', $statusCode));
-        }
-
-        return $response->toArray(false);
-    }
-
-    // mapping simplifié des champs utiles pour ton formulaire entreprise
-    public function buildCompanyPreviewFromSiret(string $siret): array
-    {
-        $data = $this->getEtablissementBySiret($siret);
-        $normalizedSiret = preg_replace('/\D+/', '', $siret);
-
-        $etablissement = $data['etablissement'] ?? [];
-        $uniteLegale = $etablissement['uniteLegale'] ?? [];
-        $adresse = $etablissement['adresseEtablissement'] ?? [];
-        $siren = $etablissement['siren']
-            ?? $uniteLegale['siren']
-            ?? (is_string($normalizedSiret) && strlen($normalizedSiret) >= 9 ? substr($normalizedSiret, 0, 9) : null);
-
-        // période courante de l'établissement
-        $currentPeriodeEtablissement = null;
-        foreach (($etablissement['periodesEtablissement'] ?? []) as $periodeEtablissement) {
-            if (null === ($periodeEtablissement['dateFin'] ?? null)) {
-                $currentPeriodeEtablissement = $periodeEtablissement;
-                break;
+        foreach ($results as $result) {
+            if (($result['siege']['siret'] ?? null) === $normalizedSiret) {
+                return $result;
             }
         }
 
-        // statut administratif de l'établissement
-        $etablissementStatus = $currentPeriodeEtablissement['etatAdministratifEtablissement']
-            ?? $etablissement['etatAdministratifEtablissement']
-            ?? null;
+        return $results[0];
+    }
 
-        // vérification métier du SIRET
-        $isVerified = !empty($etablissement['siret']);
+    // mapping simplifié des champs utiles pour le formulaire entreprise
+    public function buildCompanyPreviewFromSiret(string $siret): array
+    {
+        $company = $this->getEtablissementBySiret($siret);
+        $normalizedSiret = preg_replace('/\D+/', '', $siret);
+        $siege = is_array($company['siege'] ?? null) ? $company['siege'] : [];
+        $siren = $company['siren']
+            ?? (is_string($normalizedSiret) && strlen($normalizedSiret) >= 9 ? substr($normalizedSiret, 0, 9) : null);
+
+        $etablissementStatus = $siege['etat_administratif'] ?? null;
+        $isVerified = !empty($siege['siret']) || !empty($company['siren']);
         $isActive = 'A' === $etablissementStatus;
 
-        $companyName = $uniteLegale['denominationUniteLegale']
-            ?? trim(sprintf(
-                '%s %s %s',
-                $uniteLegale['prenom1UniteLegale'] ?? '',
-                $uniteLegale['nomUsageUniteLegale'] ?? '',
-                $uniteLegale['nomUniteLegale'] ?? ''
-            ));
-
-        $legalName = $uniteLegale['denominationUniteLegale']
-            ?? trim(sprintf(
-                '%s %s',
-                $uniteLegale['prenom1UniteLegale'] ?? '',
-                $uniteLegale['nomUniteLegale'] ?? ''
-            ));
-
-        $streetParts = array_filter([
-            $adresse['numeroVoieEtablissement'] ?? null,
-            $adresse['indiceRepetitionEtablissement'] ?? null,
-            $adresse['typeVoieEtablissement'] ?? null,
-            $adresse['libelleVoieEtablissement'] ?? null,
+        $companyName = $this->firstNonEmptyString([
+            $company['nom_complet'] ?? null,
+            $company['nom_raison_sociale'] ?? null,
+            $company['enseigne'] ?? null,
+            $company['sigle'] ?? null,
         ]);
 
-        $fullAddress = trim(implode(' ', $streetParts));
+        $legalName = $this->firstNonEmptyString([
+            $company['nom_raison_sociale'] ?? null,
+            $company['nom_complet'] ?? null,
+        ]);
+
+        $fullAddress = $this->firstNonEmptyString([
+            $siege['adresse'] ?? null,
+            $company['adresse'] ?? null,
+        ]);
+
+        $postalCode = $this->firstNonEmptyString([
+            $siege['code_postal'] ?? null,
+            $company['code_postal'] ?? null,
+        ]);
+
+        $city = $this->firstNonEmptyString([
+            $siege['libelle_commune'] ?? null,
+            $siege['commune'] ?? null,
+            $company['ville'] ?? null,
+        ]);
+
+        $structureType = $this->firstNonEmptyString([
+            $company['forme_juridique'] ?? null,
+            $company['nature_juridique'] ?? null,
+        ]);
 
         return [
-            'siret' => $etablissement['siret'] ?? $siret,
+            'siret' => $siege['siret'] ?? $siret,
             'siren' => $siren,
-
-            // informations métier sur la vérification
             'etablissementStatus' => $etablissementStatus,
             'isVerified' => $isVerified,
             'isActive' => $isActive,
-
             'fields' => [
                 'siren' => $siren,
                 'companyName' => $companyName ?: null,
                 'legalName' => $legalName ?: null,
-                'structureType' => $uniteLegale['categorieJuridiqueUniteLegale'] ?? null,
+                'structureType' => $structureType,
                 'address' => $fullAddress ?: null,
-                'postalCode' => $adresse['codePostalEtablissement'] ?? null,
-                'city' => $adresse['libelleCommuneEtablissement'] ?? null,
+                'postalCode' => $postalCode,
+                'city' => $city,
                 'country' => 'France',
             ],
             'display' => [
@@ -134,7 +135,7 @@ class SireneClient
                 [
                     'label' => 'Forme juridique',
                     'current' => null,
-                    'incoming' => $uniteLegale['categorieJuridiqueUniteLegale'] ?? null,
+                    'incoming' => $structureType,
                 ],
                 [
                     'label' => 'Adresse',
@@ -144,12 +145,12 @@ class SireneClient
                 [
                     'label' => 'Code postal',
                     'current' => null,
-                    'incoming' => $adresse['codePostalEtablissement'] ?? null,
+                    'incoming' => $postalCode,
                 ],
                 [
                     'label' => 'Ville',
                     'current' => null,
-                    'incoming' => $adresse['libelleCommuneEtablissement'] ?? null,
+                    'incoming' => $city,
                 ],
                 [
                     'label' => 'Pays',
@@ -158,5 +159,25 @@ class SireneClient
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param list<mixed> $values
+     */
+    private function firstNonEmptyString(array $values): ?string
+    {
+        foreach ($values as $value) {
+            if (!is_string($value)) {
+                continue;
+            }
+
+            $trimmedValue = trim($value);
+
+            if ('' !== $trimmedValue) {
+                return $trimmedValue;
+            }
+        }
+
+        return null;
     }
 }
