@@ -17,6 +17,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class AccountSettingsType extends AbstractType
 {
@@ -43,6 +44,20 @@ class AccountSettingsType extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                     'placeholder' => 'Ex: 06 12 34 56 78',
+                ],
+            ])
+            ->add('avatarFile', VichImageType::class, [
+                'label' => false,
+                'required' => false,
+                'allow_delete' => true,
+                'delete_label' => 'Supprimer la photo actuelle',
+                'download_uri' => false,
+                'image_uri' => false,
+                'imagine_pattern' => false,
+                'asset_helper' => true,
+                'attr' => [
+                    'accept' => 'image/png,image/jpeg,image/webp',
+                    'class' => 'form-control',
                 ],
             ]);
 

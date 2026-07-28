@@ -14,8 +14,10 @@ namespace App\Security;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
@@ -26,6 +28,7 @@ class EmailVerifier
         private VerifyEmailHelperInterface $verifyEmailHelper,
         private MailerInterface $mailer,
         private EntityManagerInterface $entityManager,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -48,6 +51,24 @@ class EmailVerifier
         $email->context($context);
 
         $this->mailer->send($email);
+    }
+
+    public function trySendEmailConfirmation(string $verifyEmailRouteName, User $user, TemplatedEmail $email): bool
+    {
+        try {
+            $this->sendEmailConfirmation($verifyEmailRouteName, $user, $email);
+
+            return true;
+        } catch (TransportExceptionInterface $exception) {
+            $this->logger->warning('Unable to send registration verification email.', [
+                'userId' => $user->getId(),
+                'email' => $user->getEmail(),
+                'exception' => $exception::class,
+                'message' => $exception->getMessage(),
+            ]);
+
+            return false;
+        }
     }
 
     /**

@@ -134,9 +134,17 @@
 									<h4 class="tm-cp-card-title text-start mb-4">Photo de profil</h4>
 									<div class="my-auto p-4 rounded-4 tm-cp-avatar-container">
 										<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle mb-3 border-2 border-white shadow-sm tm-cp-avatar-preview" alt="Avatar">
-										<button type="button" class="btn btn-outline-primary btn-md d-block mx-auto fw-medium px-3">
-											Modifier la photo
-										</button>
+
+										<div class="mx-auto" style="max-width: 320px;">
+											<div class="text-start">
+												{{ form_widget(settingsForm.avatarFile) }}
+												{{ form_errors(settingsForm.avatarFile) }}
+											</div>
+
+											<small class="d-block text-muted mt-3">
+												{{ user.avatar ? 'Remplacez votre photo actuelle ou cochez la case pour la supprimer.' : 'Ajoutez une photo au format PNG, JPG ou WEBP.' }}
+											</small>
+										</div>
 									</div>
 								</div>
 							</div>

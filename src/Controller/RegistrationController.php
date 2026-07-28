@@ -115,11 +115,7 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $this->sendRegistrationConfirmationEmail($user);
-            $this->addFlash(
-                'registration_email_confirmation_notice',
-                'Votre compte a bien été créé. Vérifiez votre boîte mail et confirmez votre adresse email pour finaliser votre inscription.'
-            );
+            $this->addRegistrationEmailFlash($user, false);
 
             return $this->redirectToRoute('app_home');
         }
@@ -359,22 +355,36 @@ class RegistrationController extends AbstractController
 
         $entityManager->flush();
 
-        $this->sendRegistrationConfirmationEmail($user);
-
         $session->remove(self::PRESTATAIRE_REGISTRATION_STEP_ONE);
         $session->remove(self::PRESTATAIRE_REGISTRATION_STEP_TWO);
 
-        $this->addFlash(
-            'registration_email_confirmation_notice',
-            'Votre compte prestataire a bien été créé. Vérifiez votre boîte mail et confirmez votre adresse email pour finaliser votre inscription.'
-        );
+        $this->addRegistrationEmailFlash($user, true);
 
         return $this->redirectToRoute('app_home');
     }
 
-    private function sendRegistrationConfirmationEmail(User $user): void
+    private function addRegistrationEmailFlash(User $user, bool $isPrestataire): void
     {
-        $this->emailVerifier->sendEmailConfirmation(
+        if ($this->sendRegistrationConfirmationEmail($user)) {
+            $this->addFlash(
+                'registration_email_confirmation_notice',
+                $isPrestataire
+                    ? 'Votre compte prestataire a bien été créé. Vérifiez votre boîte mail et confirmez votre adresse email pour finaliser votre inscription.'
+                    : 'Votre compte a bien été créé. Vérifiez votre boîte mail et confirmez votre adresse email pour finaliser votre inscription.'
+            );
+
+            return;
+        }
+
+        $this->addFlash(
+            'registration_email_delivery_warning',
+            'Votre compte a bien été créé, mais l’email de confirmation n’a pas pu être envoyé pour le moment. Vous pourrez demander un nouvel envoi depuis la page de connexion.'
+        );
+    }
+
+    private function sendRegistrationConfirmationEmail(User $user): bool
+    {
+        return $this->emailVerifier->trySendEmailConfirmation(
             'app_verify_email',
             $user,
             (new TemplatedEmail())

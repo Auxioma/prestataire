@@ -96,6 +96,13 @@
                         </div>
                     {% endfor %}
 
+                    {% for message in app.flashes('warning') %}
+                        <div class="tm-login-alert tm-login-alert--error" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                    {% endfor %}
+
                     {% if error %}
                         {% set translatedError = error.messageKey|trans(error.messageData, 'security') %}
                         <div class="alert alert-danger">

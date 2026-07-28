@@ -71,7 +71,7 @@ class SecurityController extends AbstractController
             $user = $this->userRepository->findOneBy(['email' => $email]);
 
             if ($user instanceof User && !$user->isVerified()) {
-                $this->emailVerifier->sendEmailConfirmation(
+                $emailWasSent = $this->emailVerifier->trySendEmailConfirmation(
                     'app_verify_email',
                     $user,
                     (new TemplatedEmail())
@@ -80,6 +80,15 @@ class SecurityController extends AbstractController
                         ->subject('Confirmez votre adresse email')
                         ->htmlTemplate('registration/confirmation_email.html.twig')
                 );
+
+                if (!$emailWasSent) {
+                    $this->addFlash(
+                        'warning',
+                        'Si un compte non vérifié existe pour cette adresse, l’email de confirmation n’a pas pu être envoyé pour le moment. Réessayez plus tard.'
+                    );
+
+                    return $this->redirectToRoute('app_login');
+                }
             }
         }
 
