@@ -74,13 +74,32 @@
             <div class="tm-dashboard-widget__list">
                 {% if completionReport.nextSections is not empty %}
                     {% for section in completionReport.nextSections|slice(0, 3) %}
-                        <div class="tm-dashboard-widget__item">
-                            <div class="tm-dashboard-widget__item-main">
-                                <i class="fa-solid {{ section.icon }}" aria-hidden="true"></i>
-                                <span>{{ section.label }}</span>
-                            </div>
-                            <small>{{ section.completed }}/{{ section.total }}</small>
-                        </div>
+                        <details class="tm-dashboard-widget__item tm-dashboard-widget__item--details">
+                            <summary class="tm-dashboard-widget__item-summary">
+                                <div class="tm-dashboard-widget__item-main">
+                                    <i class="fa-solid {{ section.icon }}" aria-hidden="true"></i>
+                                    <span>{{ section.label }}</span>
+                                </div>
+                                <div class="tm-dashboard-widget__item-side tm-dashboard-widget__item-side--inline">
+                                    <small>{{ section.completed }}/{{ section.total }}</small>
+                                    <span class="tm-dashboard-widget__hint">Voir le détail</span>
+                                </div>
+                            </summary>
+
+                            {% if section.missingItems is not empty %}
+                                <div class="tm-dashboard-widget__details-panel">
+                                    <div class="tm-dashboard-widget__details-title">Champs manquants</div>
+                                    <ul class="tm-dashboard-widget__details-list">
+                                        {% for missingItem in section.missingItems %}
+                                            <li>{{ missingItem }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    <a href="{{ path('app_prestataire_settings', { tab: section.tab }) }}" class="tm-dashboard-widget__details-link">
+                                        Compléter cette section
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </details>
                     {% endfor %}
                 {% else %}
                     <div class="tm-dashboard-widget__empty">Profil entièrement complété.</div>

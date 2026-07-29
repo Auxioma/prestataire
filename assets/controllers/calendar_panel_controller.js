@@ -16,6 +16,7 @@ export default class extends Controller {
         this.resizeTimeout = null;
         this.retryCount = 0;
         this.loadPromise = null;
+        this.compactEventIndicators = [];
         this.handleTabShown = this.handleTabShown.bind(this);
         this.handleWindowLoad = this.handleWindowLoad.bind(this);
 
@@ -89,6 +90,7 @@ export default class extends Controller {
             selectable: true,
             editable: true,
             dayMaxEvents: true,
+            eventDisplay: this.compactValue ? "list-item" : "auto",
             headerToolbar: {
                 left: "prev,next today",
                 center: "title",
@@ -102,6 +104,16 @@ export default class extends Controller {
                 list: "Liste",
             },
             events: this.eventsUrlValue,
+            datesSet: () => {
+                if (this.compactValue) {
+                    this.refreshCompactIndicators();
+                }
+            },
+            eventsSet: () => {
+                if (this.compactValue) {
+                    this.refreshCompactIndicators();
+                }
+            },
             eventTimeFormat: {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -118,7 +130,73 @@ export default class extends Controller {
         });
 
         this.calendar.render();
+        if (this.compactValue) {
+            this.refreshCompactIndicators();
+        }
         this.initialized = true;
+    }
+
+    refreshCompactIndicators() {
+        if (!this.calendar || !this.element) {
+            return;
+        }
+
+        this.element
+            .querySelectorAll(".tm-dashboard-widget__calendar-indicators")
+            .forEach((indicator) => indicator.remove());
+
+        const countsByDay = new Map();
+
+        this.calendar.getEvents().forEach((event) => {
+            const start = event.start;
+
+            if (!(start instanceof Date)) {
+                return;
+            }
+
+            const dayKey = this.formatDayKey(start);
+            countsByDay.set(dayKey, (countsByDay.get(dayKey) || 0) + 1);
+        });
+
+        countsByDay.forEach((count, dayKey) => {
+            const dayCell = this.element.querySelector(
+                `.fc-daygrid-day[data-date="${dayKey}"] .fc-daygrid-day-frame`
+            );
+
+            if (!dayCell) {
+                return;
+            }
+
+            const indicators = document.createElement("div");
+            indicators.className = "tm-dashboard-widget__calendar-indicators";
+            indicators.setAttribute("aria-hidden", "true");
+
+            const visibleDots = Math.min(count, 3);
+
+            for (let index = 0; index < visibleDots; index += 1) {
+                const dot = document.createElement("span");
+                dot.className = "tm-dashboard-widget__calendar-indicator";
+                indicators.appendChild(dot);
+            }
+
+            if (count > 3) {
+                const extra = document.createElement("span");
+                extra.className =
+                    "tm-dashboard-widget__calendar-indicator tm-dashboard-widget__calendar-indicator--count";
+                extra.textContent = `+${count - 3}`;
+                indicators.appendChild(extra);
+            }
+
+            dayCell.appendChild(indicators);
+        });
+    }
+
+    formatDayKey(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
     }
 
     async initCalendarWhenReady(force = false) {

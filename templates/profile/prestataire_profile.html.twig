@@ -40,6 +40,8 @@
 										{% endfor %}
 									</ul>
 								{% endif %}
+							{% elseif message is iterable and message.html is defined %}
+								{{ message.html|raw }}
 							{% else %}
 								{{ message }}
 							{% endif %}

@@ -384,7 +384,14 @@ class ProfileController extends AbstractProfileController
             $entityManager->flush();
 
             if ($result['isVerified'] && !$result['isActive']) {
-                $this->addFlash('warning', 'Le SIRET a bien été trouvé, mais l’établissement est indiqué comme fermé dans la base publique. Le profil n’a pas été activé automatiquement.');
+                $helpUrl = $this->generateUrl('app_static_page', ['slug' => 'help']);
+
+                $this->addFlash('warning', [
+                    'html' => sprintf(
+                        'Le SIRET a bien été trouvé, mais l’établissement est indiqué comme fermé dans la base publique. Le profil n’a pas été activé automatiquement et ne sera pas visible par les utilisateurs. Veuillez contacter l’administrateur <a href="%s">ICI</a>.',
+                        htmlspecialchars($helpUrl, ENT_QUOTES, 'UTF-8')
+                    ),
+                ]);
             }
 
             if ($result['isVerified'] && $result['isActive']) {
