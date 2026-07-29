@@ -151,10 +151,31 @@
 															<div class="qp-item-description">{{ item.description }}</div>
 														{% endif %}
 													</td>
-													<td class="is-right">{{ item.quantity|number_format(2, ',', ' ') }}</td>
-													<td class="is-right">{{ item.unitPriceHt|number_format(2, ',', ' ') }} €</td>
-													<td class="is-right">{{ item.vatRate|number_format(2, ',', ' ') }} %</td>
-													<td class="is-right">{{ item.totalHt|number_format(2, ',', ' ') }} €</td>
+
+													<td class="is-right">
+														<span class="qp-nowrap">{{ item.quantity|number_format(2, ',', ' ') }}</span>
+													</td>
+
+													<td class="is-right">
+														<span class="qp-money">
+															<span class="qp-money__value">{{ item.unitPriceHt|number_format(2, ',', ' ') }}</span>
+															<span class="qp-money__currency">€</span>
+														</span>
+													</td>
+
+													<td class="is-right">
+														<span class="qp-percent">
+															<span class="qp-percent__value">{{ item.vatRate|number_format(2, ',', ' ') }}</span>
+															<span class="qp-percent__symbol">%</span>
+														</span>
+													</td>
+
+													<td class="is-right qp-table__amount">
+														<span class="qp-money qp-money--strong">
+															<span class="qp-money__value">{{ item.totalHt|number_format(2, ',', ' ') }}</span>
+															<span class="qp-money__currency">€</span>
+														</span>
+													</td>
 												</tr>
 											{% else %}
 												<tr><td colspan="5" class="qp-empty">Aucune ligne n’a été ajoutée.</td></tr>
@@ -183,15 +204,39 @@
 					<section class="qp-card qp-card--accent">
 						<div class="qp-card__body">
 							<div class="qp-kicker qp-kicker--light">Montants</div>
-							<h2 class="qp-section-title text-white mb-3">Synthèse</h2>
+							<h2 class="qp-section-title qp-section-title--light">Synthèse financière</h2>
 							{% if invoice.isExternalImport %}
 								<p class="mb-0 text-white-50">Les montants restent portés par le PDF externe importé.</p>
 							{% else %}
-								<div class="qp-summary-list">
-									<div class="qp-summary-list__row"><span>HT</span><strong>{{ invoice.subtotalHt|number_format(2, ',', ' ') }} €</strong></div>
-									<div class="qp-summary-list__row"><span>TVA</span><strong>{{ invoice.taxAmount|number_format(2, ',', ' ') }} €</strong></div>
-									<div class="qp-summary-list__row qp-summary-list__row--strong"><span>Total TTC</span><strong>{{ invoice.totalTtc|number_format(2, ',', ' ') }} €</strong></div>
-								</div>
+								<dl class="qp-totals">
+									<div class="qp-totals__row">
+										<dt>Total HT</dt>
+										<dd>
+											<span class="qp-money">
+												<span class="qp-money__value">{{ invoice.subtotalHt|number_format(2, ',', ' ') }}</span>
+												<span class="qp-money__currency">€</span>
+											</span>
+										</dd>
+									</div>
+									<div class="qp-totals__row">
+										<dt>TVA</dt>
+										<dd>
+											<span class="qp-money">
+												<span class="qp-money__value">{{ invoice.taxAmount|number_format(2, ',', ' ') }}</span>
+												<span class="qp-money__currency">€</span>
+											</span>
+										</dd>
+									</div>
+									<div class="qp-totals__row qp-totals__row--grand">
+										<dt>Total TTC</dt>
+										<dd>
+											<span class="qp-money qp-money--strong">
+												<span class="qp-money__value">{{ invoice.totalTtc|number_format(2, ',', ' ') }}</span>
+												<span class="qp-money__currency">€</span>
+											</span>
+										</dd>
+									</div>
+								</dl>
 							{% endif %}
 						</div>
 					</section>
