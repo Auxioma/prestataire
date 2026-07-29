@@ -26,6 +26,8 @@
   color: var(--tmv2-texte);
   background: var(--tmv2-blanc);
   font-family: var(--tmv2-body);
+  position: relative;
+  isolation: isolate;
 }
 
 .tm-homepage-v2 img { max-width: 100%; display: block; }
@@ -1526,3 +1528,34 @@
   margin-right: 0.35rem;
 }
 
+.tm-profile-completion-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1060;
+}
+
+.tm-profile-completion-modal {
+  z-index: 1065;
+}
+
+.tm-profile-completion-modal .modal-content {
+  box-shadow: 0 28px 70px rgba(4, 10, 24, 0.36);
+}
+
+.tm-profile-completion-modal__backdrop {
+  background:
+    radial-gradient(circle at top, rgba(30, 73, 199, 0.08), transparent 34%),
+    rgba(2, 6, 16, 0.92);
+  backdrop-filter: blur(20px) saturate(0.7);
+  -webkit-backdrop-filter: blur(20px) saturate(0.7);
+  opacity: 1;
+}
+
+body:has(.tm-profile-completion-modal.show) .tm-homepage-v2 > :not(.tm-profile-completion-layer) {
+  filter: blur(10px) brightness(0.42) saturate(0.72);
+  transform: scale(1.01);
+  transform-origin: center top;
+  transition: filter 180ms ease, transform 180ms ease;
+  pointer-events: none;
+  user-select: none;
+}

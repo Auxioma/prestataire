@@ -608,8 +608,8 @@
 	</section>
 
 	{% if showProfileCompletionModal and mandatoryChecklist is not null %}
-		<div {{ stimulus_controller('profile-completion-modal') }}>
-			<div class="modal fade show" id="profileCompletionModal" tabindex="-1" aria-labelledby="profileCompletionModalLabel" aria-modal="true" role="dialog" style="display: block;" {{ stimulus_target('profile-completion-modal', 'modal') }}>
+		<div class="tm-profile-completion-layer" {{ stimulus_controller('profile-completion-modal') }}>
+			<div class="modal fade show tm-profile-completion-modal" id="profileCompletionModal" tabindex="-1" aria-labelledby="profileCompletionModalLabel" aria-modal="true" role="dialog" style="display: block;" {{ stimulus_target('profile-completion-modal', 'modal') }}>
 				<div class="modal-dialog modal-dialog-centered">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -636,7 +636,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="modal-backdrop fade show" {{ stimulus_target('profile-completion-modal', 'backdrop') }}></div>
+			<div class="modal-backdrop fade show tm-profile-completion-modal__backdrop" {{ stimulus_target('profile-completion-modal', 'backdrop') }}></div>
 		</div>
 	{% endif %}
 </div>{% endblock %}
