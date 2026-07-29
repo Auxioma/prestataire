@@ -56,14 +56,14 @@ final class InvoiceType extends AbstractType
                 'label' => 'Conditions de règlement',
                 'required' => false,
                 'attr' => [
-                    'rows' => 5,
+                    'rows' => 2,
                 ],
             ])
             ->add('latePaymentPenaltyTerms', TextareaType::class, [
                 'label' => 'Mention pénalités de retard',
                 'required' => false,
                 'attr' => [
-                    'rows' => 3,
+                    'rows' => 1,
                     'placeholder' => 'Ex. pénalités exigibles en cas de retard de paiement au taux légal en vigueur majoré de X points.',
                 ],
             ])
@@ -71,7 +71,7 @@ final class InvoiceType extends AbstractType
                 'label' => 'Mention indemnité forfaitaire de recouvrement',
                 'required' => false,
                 'attr' => [
-                    'rows' => 2,
+                    'rows' => 1,
                     'placeholder' => 'Ex. indemnité forfaitaire de 40 EUR pour frais de recouvrement en cas de retard de paiement.',
                 ],
             ])
@@ -79,7 +79,7 @@ final class InvoiceType extends AbstractType
                 'label' => 'Mention escompte',
                 'required' => false,
                 'attr' => [
-                    'rows' => 2,
+                    'rows' => 1,
                     'placeholder' => 'Ex. pas d’escompte pour paiement anticipé.',
                 ],
             ])
