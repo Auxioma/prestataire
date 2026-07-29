@@ -23,6 +23,7 @@ use App\Repository\QuoteRequestRepository;
 use App\Repository\ReviewRepository;
 use App\Service\ConversationMessageManager;
 use App\Service\NotificationManager;
+use App\Service\AuthenticatedUserProvider;
 use App\Service\PrestataireProfileCompletionService;
 use App\Service\PrestataireRevenueOverviewBuilder;
 use App\Service\RealtimeAuthTokenManager;
@@ -55,6 +56,7 @@ final class PrestataireDashboardController extends AbstractController
         private readonly PrestataireProfileCompletionService $prestataireProfileCompletionService,
         private readonly RealtimeAuthTokenManager $realtimeAuthTokenManager,
         private readonly PrestataireRevenueOverviewBuilder $prestataireRevenueOverviewBuilder,
+        private readonly AuthenticatedUserProvider $authenticatedUserProvider,
     ) {
     }
 
@@ -78,13 +80,11 @@ final class PrestataireDashboardController extends AbstractController
         PaginatorInterface $paginator,
         SubscriptionAccessManager $subscriptionAccessManager,
     ): Response {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
-        if (!$user instanceof User) {
+        if (!$user) {
             return $this->redirectToRoute('app_login');
         }
-
-        $user = $this->getAuthenticatedPrestataireUser();
         $prestataireProfile = $this->getPrestataireProfile($user, $prestataireProfileRepository);
         $manualRevenueEntry = $this->resolveEditableRevenueEntry($request, $prestataireProfile, $prestataireRevenueEntryRepository);
         $isEditingRevenue = null !== $manualRevenueEntry->getId();
@@ -345,9 +345,9 @@ final class PrestataireDashboardController extends AbstractController
         #[MapEntity(id: 'id')] Conversation $conversation,
         Request $request,
     ): Response {
-        $user = $this->getUser();
+        $user = $this->getAuthenticatedPrestataireUser();
 
-        if (!$user instanceof \App\Entity\User || !$user->getPrestataireProfile()) {
+        if (!$user->getPrestataireProfile()) {
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
@@ -450,14 +450,10 @@ final class PrestataireDashboardController extends AbstractController
 
     private function getAuthenticatedPrestataireUser(): User
     {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
         if (!$user instanceof User) {
             throw $this->createAccessDeniedException('Accès refusé.');
-        }
-
-        if (!$this->isGranted('ROLE_PRESTATAIRE')) {
-            throw $this->createAccessDeniedException('Accès réservé aux prestataires.');
         }
 
         if (!$user->getPrestataireProfile()) {

@@ -32,6 +32,7 @@ use Symfony\UX\Map\Point;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Enum\FavoriteTypeEnum;
 use App\Repository\FavoriteRepository;
+use App\Service\AuthenticatedUserProvider;
 use App\Service\PrestataireProfileCompletionService;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Routing\Requirement\Requirement;
@@ -44,6 +45,11 @@ use Symfony\Component\String\Slugger\SluggerInterface;
  */
 final class PrestataireServicePrestationController extends AbstractController
 {
+    public function __construct(
+        private readonly AuthenticatedUserProvider $authenticatedUserProvider,
+    ) {
+    }
+
     #[IsGranted('ROLE_PRESTATAIRE')]
     #[Route('/prestataire/service/{slug}/prestation', name: 'app_prestataire_service_prestation_edit', requirements: ['slug' => Requirement::ASCII_SLUG])]
     /**
@@ -57,10 +63,10 @@ final class PrestataireServicePrestationController extends AbstractController
         EntityManagerInterface $em,
         PrestataireProfileCompletionService $prestataireProfileCompletionService,
     ): Response {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
         if (
-            !$user instanceof User
+            !$user
             || !$user->getPrestataireProfile()
             || $ps->getPrestataire() !== $user->getPrestataireProfile()
         ) {
@@ -197,8 +203,7 @@ final class PrestataireServicePrestationController extends AbstractController
         SluggerInterface $slugger,
         PrestataireProfileCompletionService $prestataireProfileCompletionService,
     ): Response {
-        /** @var User $user */
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
         $prestataire = $user?->getPrestataireProfile();
 
         if (!$prestataire) {
@@ -351,10 +356,10 @@ final class PrestataireServicePrestationController extends AbstractController
         EntityManagerInterface $em,
         PrestataireProfileCompletionService $prestataireProfileCompletionService,
     ): JsonResponse {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
         if (
-            !$user instanceof User
+            !$user
             || !$user->getPrestataireProfile()
             || $ps->getPrestataire() !== $user->getPrestataireProfile()
         ) {

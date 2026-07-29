@@ -8,6 +8,7 @@ use App\Entity\Subscription\SubscriptionInvoice;
 use App\Repository\Subscription\PrestataireSubscriptionRepository;
 use App\Repository\Subscription\SubscriptionInvoiceRepository;
 use App\Repository\Subscription\SubscriptionPlanRepository;
+use App\Service\AuthenticatedUserProvider;
 use App\Service\Subscription\StripeCheckoutSessionSynchronizer;
 use App\Service\Subscription\StripeApiClient;
 use App\Service\Subscription\StripeCustomerManager;
@@ -32,6 +33,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_PRESTATAIRE')]
 final class SubscriptionController extends AbstractController
 {
+    public function __construct(
+        private readonly AuthenticatedUserProvider $authenticatedUserProvider,
+    ) {
+    }
+
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(
         Request $request,
@@ -483,9 +489,9 @@ final class SubscriptionController extends AbstractController
 
     private function getPrestataireProfile(): \App\Entity\PrestataireProfile
     {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
-        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+        if (!$user || !$user->getPrestataireProfile()) {
             throw $this->createAccessDeniedException('Accès réservé aux prestataires.');
         }
 

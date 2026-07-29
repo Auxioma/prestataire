@@ -13,7 +13,7 @@
 namespace App\Controller\Prestataire;
 
 use App\Entity\PrestataireInterventionZone;
-use App\Entity\User;
+use App\Service\AuthenticatedUserProvider;
 use App\Form\PrestataireInterventionZoneType;
 use App\Service\PrestataireProfileCompletionService;
 use App\Service\ZoneGeocoder;
@@ -32,6 +32,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  */
 final class PrestataireZoneController extends AbstractController
 {
+    public function __construct(
+        private readonly AuthenticatedUserProvider $authenticatedUserProvider,
+    ) {
+    }
+
     #[Route('/ajouter', name: 'add', methods: ['POST'])]
     /**
      * Ajoute la ressource demandée.
@@ -45,8 +50,7 @@ final class PrestataireZoneController extends AbstractController
         PrestataireProfileCompletionService $prestataireProfileCompletionService,
         ZoneGeocoder $zoneGeocoder,
     ): Response {
-        /** @var User|null $user */
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
         if (!$user || !$user->getPrestataireProfile()) {
             $this->addFlash('error', 'Profil prestataire introuvable.');
@@ -106,8 +110,7 @@ final class PrestataireZoneController extends AbstractController
         EntityManagerInterface $em,
         PrestataireProfileCompletionService $prestataireProfileCompletionService,
     ): Response {
-        /** @var User|null $user */
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
         if (
             !$user

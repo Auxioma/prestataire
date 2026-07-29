@@ -8,6 +8,7 @@ use App\Entity\PrestataireInterventionZone;
 use App\Entity\PrestataireProfile;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserRepository;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
 use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
@@ -20,12 +21,19 @@ final class PrestataireProfileManager
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly UserRepository $userRepository,
         private readonly SluggerInterface $slugger,
     ) {
     }
 
     public function getOrCreateProfile(User $user): PrestataireProfile
     {
+        if (null === $user->getId()) {
+            throw new \LogicException('Impossible de charger un utilisateur non persiste.');
+        }
+
+        $user = $this->userRepository->findOneWithProfilesById($user->getId()) ?? $user;
+
         if (null === $user->getPrestataireProfile()) {
             $profile = new PrestataireProfile();
             $user->setPrestataireProfile($profile);

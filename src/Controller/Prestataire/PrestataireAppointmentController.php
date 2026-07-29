@@ -2,17 +2,18 @@
 
 namespace App\Controller\Prestataire;
 
+use App\Entity\PrestataireAppointment;
 use App\Entity\User;
+use App\Form\PrestataireAppointmentType;
 use App\Repository\PrestataireAppointmentRepository;
+use App\Service\AuthenticatedUserProvider;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Entity\PrestataireAppointment;
-use App\Form\PrestataireAppointmentType;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -24,6 +25,10 @@ use Symfony\Component\String\Slugger\SluggerInterface;
  */
 final class PrestataireAppointmentController extends AbstractController
 {
+    public function __construct(
+        private readonly AuthenticatedUserProvider $authenticatedUserProvider,
+    ) {
+    }
 
     // RECUPERER LES RENDEZ-VOUS
     #[Route('/events', name: 'events', methods: ['GET'])]
@@ -36,9 +41,9 @@ final class PrestataireAppointmentController extends AbstractController
         Request $request,
         PrestataireAppointmentRepository $appointmentRepository,
     ): JsonResponse {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
-        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+        if (!$user || !$user->getPrestataireProfile()) {
             return $this->json([
                 'success' => false,
                 'message' => 'Accès refusé.',
@@ -130,9 +135,9 @@ final class PrestataireAppointmentController extends AbstractController
         EntityManagerInterface $entityManager,
         SluggerInterface $slugger,
     ): Response {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
-        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+        if (!$user || !$user->getPrestataireProfile()) {
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
@@ -195,9 +200,9 @@ final class PrestataireAppointmentController extends AbstractController
     public function index(
         PrestataireAppointmentRepository $appointmentRepository,
     ): Response {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
-        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+        if (!$user || !$user->getPrestataireProfile()) {
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
@@ -223,9 +228,9 @@ final class PrestataireAppointmentController extends AbstractController
     public function show(
         #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireAppointment $appointment,
     ): Response {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
-        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+        if (!$user || !$user->getPrestataireProfile()) {
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
@@ -252,9 +257,9 @@ final class PrestataireAppointmentController extends AbstractController
         #[MapEntity(id: 'id')] PrestataireAppointment $appointment,
         EntityManagerInterface $entityManager,
     ): Response {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
-        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+        if (!$user || !$user->getPrestataireProfile()) {
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
@@ -295,9 +300,9 @@ final class PrestataireAppointmentController extends AbstractController
         #[MapEntity(id: 'id')] PrestataireAppointment $appointment,
         EntityManagerInterface $entityManager,
     ): Response {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
-        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+        if (!$user || !$user->getPrestataireProfile()) {
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 

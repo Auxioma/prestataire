@@ -43,6 +43,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    public function findOneWithProfilesById(int $id): ?User
+    {
+        return $this->createQueryBuilder('u')
+            ->leftJoin('u.clientProfile', 'clientProfile')
+            ->addSelect('clientProfile')
+            ->leftJoin('u.prestataireProfile', 'prestataireProfile')
+            ->addSelect('prestataireProfile')
+            ->andWhere('u.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */

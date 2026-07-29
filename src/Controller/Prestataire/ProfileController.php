@@ -22,6 +22,7 @@ use App\Form\PrestataireServiceType;
 use App\Repository\ServiceCategoryRepository;
 use App\Repository\ServiceRepository;
 use App\Service\AccountSecurityManager;
+use App\Service\AuthenticatedUserProvider;
 use App\Service\CompanyVerificationManager;
 use App\Service\PrestataireAvailabilityManager;
 use App\Service\PrestataireProfileCompletionService;
@@ -47,6 +48,7 @@ class ProfileController extends AbstractProfileController
         private readonly PrestataireProfileCompletionService $prestataireProfileCompletionService,
         private readonly CompanyVerificationManager $companyVerificationManager,
         private readonly PrestataireSettingsFormsFactory $prestataireSettingsFormsFactory,
+        private readonly AuthenticatedUserProvider $authenticatedUserProvider,
         AccountSecurityManager $accountSecurityManager,
         private readonly PrestataireSearchIndexer $prestataireSearchIndexer,
         TokenStorageInterface $tokenStorage,
@@ -63,8 +65,7 @@ class ProfileController extends AbstractProfileController
         ServiceCategoryRepository $categoryRepository,
         CompanyRegistryClient $companyRegistryClient,
     ): Response {
-        /** @var User|null $user */
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
         if (!$user) {
             return $this->redirectToRoute('app_login');
@@ -499,10 +500,10 @@ class ProfileController extends AbstractProfileController
         }
 
         $serviceId = $request->request->get('service_id');
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
         $service = $serviceRepo->find($serviceId);
 
-        if (!$service || !($user instanceof User) || !$user->getPrestataireProfile()) {
+        if (!$service || !$user || !$user->getPrestataireProfile()) {
             $this->addFlash('error', 'Une erreur est survenue.');
 
             return $this->redirectToRoute('app_prestataire_settings');
@@ -540,10 +541,10 @@ class ProfileController extends AbstractProfileController
     #[IsGranted('ROLE_PRESTATAIRE')]
     public function delete(Request $request, PrestataireService $ps, EntityManagerInterface $em): Response
     {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
         if (
-            !$user instanceof User
+            !$user
             || !$user->getPrestataireProfile()
             || $ps->getPrestataire() !== $user->getPrestataireProfile()
         ) {
@@ -566,10 +567,10 @@ class ProfileController extends AbstractProfileController
     #[IsGranted('ROLE_PRESTATAIRE')]
     public function edit(Request $request, PrestataireService $ps, EntityManagerInterface $em): Response
     {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
         if (
-            !$user instanceof User
+            !$user
             || !$user->getPrestataireProfile()
             || $ps->getPrestataire() !== $user->getPrestataireProfile()
         ) {
@@ -626,8 +627,7 @@ class ProfileController extends AbstractProfileController
         PrestataireDocument $document,
         EntityManagerInterface $entityManager,
     ): Response {
-        /** @var User|null $user */
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
         if (!$user) {
             return $this->redirectToRoute('app_login');

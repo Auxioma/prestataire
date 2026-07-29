@@ -12,6 +12,7 @@ use App\Enum\QuoteRequestStatusEnum;
 use App\Repository\ConversationRepository;
 use App\Repository\QuoteProposalRepository;
 use App\Repository\QuoteRequestRepository;
+use App\Service\AuthenticatedUserProvider;
 use App\Service\NotificationManager;
 use App\Service\Subscription\SubscriptionAccessManager;
 use App\Service\Subscription\SubscriptionCreditManager;
@@ -33,6 +34,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  */
 final class PrestataireQuoteRequestController extends AbstractController
 {
+    public function __construct(
+        private readonly AuthenticatedUserProvider $authenticatedUserProvider,
+    ) {
+    }
+
     #[Route('', name: 'index', methods: ['GET'])]
     /**
      * Affiche la page principale de ce contrôleur.
@@ -44,9 +50,9 @@ final class PrestataireQuoteRequestController extends AbstractController
         QuoteRequestRepository $quoteRequestRepository,
         PaginatorInterface $paginator
     ): Response {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
-        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+        if (!$user || !$user->getPrestataireProfile()) {
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
@@ -79,9 +85,9 @@ final class PrestataireQuoteRequestController extends AbstractController
         #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
         QuoteProposalRepository $quoteProposalRepository
     ): Response {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
-        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+        if (!$user || !$user->getPrestataireProfile()) {
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
@@ -136,9 +142,9 @@ final class PrestataireQuoteRequestController extends AbstractController
         SubscriptionAccessManager $subscriptionAccessManager,
         SubscriptionCreditManager $subscriptionCreditManager,
     ): RedirectResponse {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
-        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+        if (!$user || !$user->getPrestataireProfile()) {
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
@@ -276,13 +282,13 @@ final class PrestataireQuoteRequestController extends AbstractController
         EntityManagerInterface $entityManager,
         NotificationManager $notificationManager
     ): RedirectResponse {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
         if ($quoteRequest->isDeleted()) {
             throw $this->createNotFoundException('Cette demande n’est plus disponible.');
         }
 
-        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+        if (!$user || !$user->getPrestataireProfile()) {
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
@@ -349,9 +355,9 @@ final class PrestataireQuoteRequestController extends AbstractController
         #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
         EntityManagerInterface $entityManager
     ): RedirectResponse {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
-        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+        if (!$user || !$user->getPrestataireProfile()) {
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
@@ -422,9 +428,9 @@ final class PrestataireQuoteRequestController extends AbstractController
         #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
         EntityManagerInterface $entityManager
     ): RedirectResponse {
-        $user = $this->getUser();
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
-        if (!$user instanceof User || !$user->getPrestataireProfile()) {
+        if (!$user || !$user->getPrestataireProfile()) {
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
