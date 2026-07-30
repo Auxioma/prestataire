@@ -3,9 +3,13 @@
 {% block title %}Mes avis{% endblock %}
 
 {% block body %}
+    <div class="container-fluid p-0 tm-cp-page-wrapper">
+        <div class="d-flex flex-column flex-md-row align-items-stretch">
+            {{ include('profile/_client_sidebar.html.twig', { user: app.user }) }}
 
-    <section class="c-client-quotes-page">
-        <div class="c-client-quotes-page__container">
+            <div class="grow p-3 p-md-5 tm-cp-main-content-inner">
+                <section class="c-client-quotes-page">
+                    <div class="c-client-quotes-page__container">
             <a href="{{ path('app_client_settings') }}" class="c-client-quotes-backlink">
                 <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
                 <span>Retour aux paramètres</span>
@@ -33,9 +37,6 @@
                     </div>
                 </div>
             </header>
-
-            {{ include('review/_client_dashboard_nav.html.twig') }}
-
             {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
                 {% for message in messages %}
                     <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show mb-4" role="alert">
@@ -47,31 +48,35 @@
 
             <div class="row g-4">
                 <div class="col-12">
-                    <section class="card shadow-sm border-0">
+                    <section class="card shadow-sm border-0 tm-review-section-card">
                         <div class="card-body p-4">
-                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+                            <div class="tm-review-section-card__header">
                                 <div>
-                                    <span class="text-uppercase small text-muted">Demandes en attente d’avis</span>
-                                    <h2 class="h4 mb-1">Vous pouvez encore laisser un retour</h2>
-                                    <p class="mb-0 text-muted">Chaque demande acceptée peut recevoir un seul avis.</p>
+                                    <span class="tm-review-section-card__eyebrow">Demandes en attente d’avis</span>
+                                    <h2 class="tm-review-section-card__title">Vous pouvez encore laisser un retour</h2>
+                                    <p class="tm-review-section-card__subtitle">Chaque demande acceptée peut recevoir un seul avis.</p>
                                 </div>
+                                <span class="tm-review-section-card__count">{{ pendingQuoteRequests|length }}</span>
                             </div>
 
                             {% if pendingQuoteRequests is not empty %}
                                 <div class="row g-3">
                                     {% for quoteRequest in pendingQuoteRequests %}
                                         <div class="col-12 col-lg-6">
-                                            <article class="border rounded-4 p-3 h-100 bg-light-subtle">
-                                                <h3 class="h6 mb-1">{{ quoteRequest.title }}</h3>
-                                                <p class="text-muted small mb-3">
-                                                    Prestataire : {{ quoteRequest.prestataire.companyName|default('Non renseigné') }}
+                                            <article class="tm-review-pending-card h-100">
+                                                <span class="tm-review-pending-card__eyebrow">Prestation terminée</span>
+                                                <h3 class="tm-review-pending-card__title">{{ quoteRequest.title }}</h3>
+                                                <p class="tm-review-pending-card__subtitle">
+                                                    Prestataire : <strong>{{ quoteRequest.prestataire.companyName|default('Non renseigné') }}</strong>
                                                 </p>
-                                                <div class="d-flex flex-wrap gap-2 align-items-center">
-                                                    <span class="badge text-bg-secondary">{{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y') : '—' }}</span>
-                                                    <a href="{{ path('app_review_create', { quoteRequestSlug: quoteRequest.slug }) }}" class="btn btn-sm btn-primary">
+                                                <div class="tm-review-pending-card__meta">
+                                                    <span class="tm-review-pending-card__badge">{{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y') : '—' }}</span>
+                                                </div>
+                                                <div class="tm-review-pending-card__actions">
+                                                    <a href="{{ path('app_review_create', { quoteRequestSlug: quoteRequest.slug }) }}" class="btn btn-primary tm-review-pending-card__primary">
                                                         Laisser un avis
                                                     </a>
-                                                    <a href="{{ path(quoteRequest.archivedByClientAt ? 'app_quote_request_history_show' : 'app_quote_request_show', { slug: quoteRequest.slug }) }}" class="btn btn-sm btn-outline-secondary">
+                                                    <a href="{{ path(quoteRequest.archivedByClientAt ? 'app_quote_request_history_show' : 'app_quote_request_show', { slug: quoteRequest.slug }) }}" class="btn btn-outline-secondary tm-review-pending-card__secondary">
                                                         Voir la demande
                                                     </a>
                                                 </div>
@@ -90,36 +95,37 @@
                 </div>
 
                 <div class="col-12">
-                    <section class="card shadow-sm border-0">
+                    <section class="card shadow-sm border-0 tm-review-section-card">
                         <div class="card-body p-4">
-                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+                            <div class="tm-review-section-card__header">
                                 <div>
-                                    <span class="text-uppercase small text-muted">Avis laissés</span>
-                                    <h2 class="h4 mb-1">Historique de vos retours</h2>
-                                    <p class="mb-0 text-muted">Supprimez un avis si vous souhaitez retirer votre publication.</p>
+                                    <span class="tm-review-section-card__eyebrow">Avis laissés</span>
+                                    <h2 class="tm-review-section-card__title">Historique de vos retours</h2>
+                                    <p class="tm-review-section-card__subtitle">Modifiez ou supprimez un avis si vous souhaitez ajuster votre publication.</p>
                                 </div>
+                                <span class="tm-review-section-card__count">{{ reviews|length }}</span>
                             </div>
 
                             {% if reviews is not empty %}
                                 <div class="d-grid gap-3">
                                     {% for review in reviews %}
-                                        <article class="border rounded-4 p-4">
-                                            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
-                                                <div>
-                                                    <h3 class="h5 mb-1">{{ review.prestataireProfile.companyName|default('Prestataire') }}</h3>
-                                                    <p class="text-muted mb-2">{{ review.quoteRequest.title|default('Demande associée') }}</p>
-                                                    {{ include('review/_stars.html.twig', { rating: review.rating }) }}
+                                        <article class="tm-review-history-card">
+                                            <div class="tm-review-history-card__header">
+                                                <div class="tm-review-history-card__identity">
+                                                    <h3 class="tm-review-history-card__title">{{ review.prestataireProfile.companyName|default('Prestataire') }}</h3>
+                                                    <p class="tm-review-history-card__subtitle">{{ review.quoteRequest.title|default('Demande associée') }}</p>
+                                                    <div class="tm-review-history-card__stars">{{ include('review/_stars.html.twig', { rating: review.rating }) }}</div>
                                                 </div>
 
-                                                <div class="d-flex flex-column align-items-lg-end gap-2">
-                                                    <span class="text-muted small">{{ review.createdAt|date('d/m/Y à H:i') }}</span>
-                                                    <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-                                                        <a href="{{ path('app_review_edit', { id: review.id }) }}" class="btn btn-sm btn-outline-primary">
+                                                <div class="tm-review-history-card__aside">
+                                                    <span class="tm-review-history-card__date">{{ review.createdAt|date('d/m/Y à H:i') }}</span>
+                                                    <div class="tm-review-history-card__actions">
+                                                        <a href="{{ path('app_review_edit', { id: review.id }) }}" class="btn btn-outline-primary tm-review-history-card__edit">
                                                             Modifier
                                                         </a>
                                                         <button
                                                             type="button"
-                                                            class="btn btn-sm btn-outline-danger"
+                                                            class="btn btn-outline-danger tm-review-history-card__delete"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#deleteReviewModal{{ review.id|e('html_attr') }}"
                                                         >
@@ -129,7 +135,9 @@
                                                 </div>
                                             </div>
 
-                                            <p class="mb-0">{{ review.comment|default('Aucun commentaire ajouté.') }}</p>
+                                            <div class="tm-review-history-card__comment">
+                                                {{ review.comment|default('Aucun commentaire ajouté.') }}
+                                            </div>
                                         </article>
 
                                         <div class="modal fade" id="deleteReviewModal{{ review.id|e('html_attr') }}" tabindex="-1" aria-labelledby="deleteReviewModalLabel{{ review.id|e('html_attr') }}" aria-hidden="true">
@@ -164,6 +172,9 @@
                     </section>
                 </div>
             </div>
+                    </div>
+                </section>
+            </div>
         </div>
-    </section>
+    </div>
 {% endblock %}

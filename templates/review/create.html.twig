@@ -4,130 +4,153 @@
 
 {% block body %}
     {% set isEdit = isEdit|default(false) %}
-    <section class="c-client-quotes-page">
-        <div class="c-client-quotes-page__container">
-            <a href="{{ path(isEdit ? 'app_review_my_reviews' : 'app_quote_request_show', isEdit ? {} : { slug: quoteRequest.slug }) }}" class="c-client-quotes-backlink">
-                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-                <span>{{ isEdit ? 'Retour à mes avis' : 'Retour à la demande' }}</span>
-            </a>
+    <div class="container-fluid p-0 tm-cp-page-wrapper">
+        <div class="d-flex flex-column flex-md-row align-items-stretch">
+            {{ include('profile/_client_sidebar.html.twig', { user: app.user }) }}
 
-            <header class="c-client-quotes-hero">
-                <div class="c-client-quotes-hero__glow" aria-hidden="true"></div>
+            <div class="grow p-3 p-md-5 tm-cp-main-content-inner">
+                <section class="c-client-quotes-page">
+                    <div class="c-client-quotes-page__container">
+                        <a href="{{ path(isEdit ? 'app_review_my_reviews' : 'app_quote_request_show', isEdit ? {} : { slug: quoteRequest.slug }) }}" class="c-client-quotes-backlink">
+                            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                            <span>{{ isEdit ? 'Retour à mes avis' : 'Retour à la demande' }}</span>
+                        </a>
 
-                <div class="c-client-quotes-hero__content">
-                    <span class="c-client-quotes-hero__eyebrow">Espace client</span>
-                    <h1 class="c-client-quotes-hero__title">{{ isEdit ? 'Modifier mon avis' : 'Laisser un avis' }}</h1>
-                    <p class="c-client-quotes-hero__subtitle">
-                        {{ isEdit
-                            ? 'Mettez à jour votre retour après votre mise en relation avec ' ~ prestataire.companyName|default('ce prestataire') ~ '.'
-                            : 'Partagez votre retour après votre mise en relation avec ' ~ prestataire.companyName|default('ce prestataire') ~ '.'
-                        }}
-                    </p>
-                </div>
-            </header>
+                        <header class="c-client-quotes-hero">
+                            <div class="c-client-quotes-hero__glow" aria-hidden="true"></div>
 
-            {{ include('review/_client_dashboard_nav.html.twig') }}
-
-            {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show mb-4" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-                    </div>
-                {% endfor %}
-            {% endfor %}
-
-            <div class="row g-4">
-                <div class="col-lg-8">
-                    <section class="card shadow-sm border-0">
-                        <div class="card-body p-4 p-lg-5">
-                            <div class="d-flex flex-column gap-2 mb-4">
-                                <span class="text-uppercase small text-muted">Avis client</span>
-                                <h2 class="h4 mb-0">{{ quoteRequest.title }}</h2>
-                                <p class="mb-0 text-muted">
-                                    Prestataire concerné : <strong>{{ prestataire.companyName|default('Non renseigné') }}</strong>
+                            <div class="c-client-quotes-hero__content">
+                                <span class="c-client-quotes-hero__eyebrow">Espace client</span>
+                                <h1 class="c-client-quotes-hero__title">{{ isEdit ? 'Modifier mon avis' : 'Laisser un avis' }}</h1>
+                                <p class="c-client-quotes-hero__subtitle">
+                                    {{ isEdit
+                                        ? 'Mettez à jour votre retour après votre mise en relation avec ' ~ prestataire.companyName|default('ce prestataire') ~ '.'
+                                        : 'Partagez votre retour après votre mise en relation avec ' ~ prestataire.companyName|default('ce prestataire') ~ '.'
+                                    }}
                                 </p>
                             </div>
+                        </header>
+                        {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show mb-4" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
 
-                            {{ form_start(form, {
-                                attr: {
-                                    'data-turbo': 'false'
-                                }
-                            }) }}
-                                <div class="mb-4">
-                                    <label class="form-label fw-semibold">Votre note</label>
-                                    <div
-                                        class="d-inline-flex flex-column gap-2"
-                                        data-controller="star-rating"
-                                        data-star-rating-rating-value="{{ form.rating.vars.value|default(0) }}"
-                                    >
-                                        <div
-                                            class="d-flex align-items-center gap-2"
-                                            role="radiogroup"
-                                            aria-label="Sélectionner une note de 0 à 5"
-                                            data-action="mouseleave->star-rating#resetPreview"
-                                        >
-                                            {% for star in 1..5 %}
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-link p-0 fs-2 text-decoration-none"
-                                                    role="radio"
-                                                    aria-label="Attribuer {{ star }} étoile{{ star > 1 ? 's' : '' }}"
-                                                    aria-checked="false"
-                                                    data-star-rating-target="star"
-                                                    data-value="{{ star }}"
-                                                    data-action="click->star-rating#select mouseenter->star-rating#preview focus->star-rating#preview"
-                                                >
-                                                    <span aria-hidden="true">☆</span>
-                                                </button>
-                                            {% endfor %}
+                        <div class="row g-4 align-items-stretch">
+                            <div class="col-12 col-xl-8">
+                                <section class="card shadow-sm border-0 h-100 tm-review-form-card">
+                                    <div class="card-body p-4 p-lg-5">
+                                        <div class="tm-review-form-card__header">
+                                            <span class="tm-review-form-card__eyebrow">Avis client</span>
+                                            <h2 class="tm-review-form-card__title">{{ quoteRequest.title }}</h2>
+                                            <p class="tm-review-form-card__subtitle">
+                                                Prestataire concerné : <strong>{{ prestataire.companyName|default('Non renseigné') }}</strong>
+                                            </p>
                                         </div>
 
-                                        <button
-                                            type="button"
-                                            class="btn btn-sm btn-outline-secondary align-self-start"
-                                            aria-label="Aucune étoile"
-                                            data-action="click->star-rating#select"
-                                            data-value="0"
-                                        >
-                                            Remettre à 0
-                                        </button>
-
-                                        {{ form_widget(form.rating, {
+                                        {{ form_start(form, {
                                             attr: {
-                                                'data-star-rating-target': 'input'
-                                            }
-                                        }) }}
+                                                'data-turbo': 'false'
+                                                }
+                                            }) }}
+                                            <div class="tm-review-rating-box mb-4">
+                                                <div class="tm-review-rating-box__head">
+                                                    <label class="form-label fw-semibold d-block mb-0">Votre note</label>
+                                                    <span class="tm-review-rating-box__hint">Cliquez sur une étoile pour noter l’expérience</span>
+                                                </div>
+
+                                                <div
+                                                    class="tm-review-rating-widget"
+                                                    data-controller="star-rating"
+                                                    data-star-rating-rating-value="{{ form.rating.vars.value|default(0) }}"
+                                                >
+                                                    <div
+                                                        class="tm-review-stars"
+                                                        role="radiogroup"
+                                                        aria-label="Sélectionner une note de 0 à 5"
+                                                        data-action="mouseleave->star-rating#resetPreview"
+                                                    >
+                                                        {% for star in 1..5 %}
+                                                            <button
+                                                                type="button"
+                                                                class="tm-review-stars__button"
+                                                                role="radio"
+                                                                aria-label="Attribuer {{ star }} étoile{{ star > 1 ? 's' : '' }}"
+                                                                aria-checked="false"
+                                                                data-star-rating-target="star"
+                                                                data-value="{{ star }}"
+                                                                data-action="click->star-rating#select mouseenter->star-rating#preview focus->star-rating#preview"
+                                                            >
+                                                                <span aria-hidden="true" class="tm-review-stars__glyph">☆</span>
+                                                            </button>
+                                                        {% endfor %}
+                                                    </div>
+
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-sm btn-outline-secondary tm-review-rating-widget__reset"
+                                                        aria-label="Aucune étoile"
+                                                        data-action="click->star-rating#select"
+                                                        data-value="0"
+                                                    >
+                                                        Remettre à 0
+                                                    </button>
+
+                                                    {{ form_widget(form.rating, {
+                                                        attr: {
+                                                            'data-star-rating-target': 'input'
+                                                        }
+                                                    }) }}
+                                                </div>
+                                                <div class="tm-review-errors mt-2">
+                                                    {{ form_errors(form.rating) }}
+                                                </div>
+                                            </div>
+
+                                            <div class="tm-review-comment-box mb-4">
+                                                <div class="tm-review-comment-box__head">
+                                                    <label for="{{ form.comment.vars.id }}" class="form-label fw-semibold mb-0">Votre commentaire</label>
+                                                    <span class="tm-review-comment-box__hint">Partagez les points utiles : qualité, ponctualité, communication, propreté.</span>
+                                                </div>
+                                                {{ form_widget(form.comment, {
+                                                    attr: {
+                                                        class: 'form-control tm-review-comment-box__textarea'
+                                                    }
+                                                }) }}
+                                                <div class="tm-review-errors mt-2">
+                                                    {{ form_errors(form.comment) }}
+                                                </div>
+                                            </div>
+
+                                            <div class="tm-review-form-actions">
+                                                <button type="submit" class="btn btn-primary tm-review-form-actions__primary">{{ isEdit ? 'Enregistrer les modifications' : 'Publier mon avis' }}</button>
+                                                <a href="{{ path('app_review_my_reviews') }}" class="btn btn-outline-secondary tm-review-form-actions__secondary">Annuler</a>
+                                            </div>
+                                        {{ form_end(form) }}
                                     </div>
-                                    {{ form_errors(form.rating) }}
-                                </div>
+                                </section>
+                            </div>
 
-                                <div class="mb-4">
-                                    {{ form_row(form.comment) }}
-                                </div>
-
-                                <div class="d-flex flex-wrap gap-2">
-                                    <button type="submit" class="btn btn-primary">{{ isEdit ? 'Enregistrer les modifications' : 'Publier mon avis' }}</button>
-                                    <a href="{{ path('app_review_my_reviews') }}" class="btn btn-outline-secondary">Annuler</a>
-                                </div>
-                            {{ form_end(form) }}
+                            <div class="col-12 col-xl-4">
+                                <aside class="card shadow-sm border-0 h-100 tm-review-tips-card">
+                                    <div class="card-body p-4 p-lg-5">
+                                        <span class="tm-review-tips-card__eyebrow">Conseils</span>
+                                        <h2 class="h5 mb-3 tm-review-tips-card__title">Bonnes pratiques</h2>
+                                        <ul class="mb-0 ps-3 tm-review-tips-card__list">
+                                            <li>Notez votre expérience globale de 0 à 5.</li>
+                                            <li>Expliquez ce qui s’est bien passé ou ce qui a manqué.</li>
+                                            <li>Restez factuel pour aider les autres clients.</li>
+                                        </ul>
+                                    </div>
+                                </aside>
+                            </div>
                         </div>
-                    </section>
-                </div>
-
-                <div class="col-lg-4">
-                    <aside class="card shadow-sm border-0 h-100">
-                        <div class="card-body p-4">
-                            <h2 class="h5 mb-3">Bonnes pratiques</h2>
-                            <ul class="mb-0 ps-3 text-muted">
-                                <li>Notez votre expérience globale de 0 à 5.</li>
-                                <li>Expliquez ce qui s’est bien passé ou ce qui a manqué.</li>
-                                <li>Restez factuel pour aider les autres clients.</li>
-                            </ul>
-                        </div>
-                    </aside>
-                </div>
+                    </div>
+                </section>
             </div>
         </div>
-    </section>
+    </div>
 {% endblock %}

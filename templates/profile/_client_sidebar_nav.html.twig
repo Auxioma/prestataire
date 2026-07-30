@@ -29,6 +29,19 @@
 
     <li class="nav-item w-100" style="width: 100%;">
         <a
+            href="{{ path('app_review_my_reviews') }}"
+            class="nav-link w-100 d-flex align-items-center {{ currentRoute starts with 'app_review_' and currentRoute != 'app_review_prestataire_reviews' ? 'active' : '' }}"
+            style="width: 100%; display: flex;"
+        >
+            <span class="me-2">
+                <i class="fa-regular fa-star" aria-hidden="true"></i>
+            </span>
+            Mes Avis
+        </a>
+    </li>
+
+    <li class="nav-item w-100" style="width: 100%;">
+        <a
             href="{{ path('app_quote_request_history') }}"
             class="nav-link w-100 d-flex align-items-center {{ currentRoute in ['app_quote_request_history', 'app_quote_request_history_show'] ? 'active' : '' }}"
             style="width: 100%; display: flex;"
