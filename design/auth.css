@@ -1,0 +1,939 @@
+/* ============================================================
+   TROUVEMOI — MODULE AUTHENTIFICATION — v3 (CSS pur)
+   Design System « Atelier de confiance »
+   Prérequis : Bootstrap 5.3 chargé AVANT ce fichier (CDN)
+   Zéro dépendance image externe — placeholders SVG/CSS intégrés
+   ============================================================ */
+
+/* ============================================================
+   1. TOKENS
+   ============================================================ */
+:root {
+  --encre: #0A1633;
+  --encre-2: #101F45;
+  --safran: #FF8A1E;
+  --safran-fonce: #E8760A;
+  --safran-clair: #FFF2DB;
+  --bleu: #1E49C7;
+  --bleu-vif: #2B5CFF;
+  --bleu-clair: #E6ECFC;
+  --vert: #0E9F6E;
+  --vert-clair: #E2F5EE;
+  --texte: #233047;
+  --texte-doux: #5B6B85;
+  --bordure: #E3E8F1;
+  --papier: #F4F6FA;
+  --ease: cubic-bezier(.2, 0, 0, 1);
+}
+
+/* ============================================================
+   2. BASE & SURCHARGES BOOTSTRAP
+   ============================================================ */
+html, body { height: 100%; }
+
+.auth-body {
+  height: 100dvh;
+  width: 100vw;
+  overflow: hidden;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--texte);
+  background: var(--papier);
+  -webkit-font-smoothing: antialiased;
+}
+
+.auth-body a { color: var(--bleu); text-decoration: none; }
+.auth-body a:hover { color: #1A3DA6; text-decoration: underline; }
+
+.auth-card h2,
+.auth-success h2 {
+  font-family: "Bricolage Grotesque", Inter, system-ui, sans-serif;
+  font-weight: 800;
+  color: var(--encre);
+}
+
+/* Champs */
+.auth-body .form-control {
+  border: 1.5px solid var(--bordure);
+  border-radius: .6875rem;
+  padding: .75rem .875rem;
+  font-size: .9375rem;
+  color: var(--texte);
+  transition: border-color .18s var(--ease), box-shadow .18s var(--ease);
+}
+.auth-body .form-control::placeholder { color: #98A6C3; }
+.auth-body .form-control:focus {
+  border-color: var(--bleu);
+  box-shadow: 0 0 0 .25rem var(--bleu-clair);
+}
+.auth-body .form-control.is-invalid {
+  border-color: #E5484D;
+  box-shadow: none;
+}
+.auth-body .form-control.is-invalid:focus { box-shadow: 0 0 0 .25rem #FDECEA; }
+
+.auth-body .form-label {
+  font-size: .8125rem;
+  font-weight: 700;
+  color: var(--texte);
+  margin-bottom: .5rem;
+}
+
+/* Cases à cocher */
+.auth-body .form-check-input {
+  width: 1.125em;
+  height: 1.125em;
+  border: 1.5px solid #C9D3E8;
+  margin-top: .2em;
+}
+.auth-body .form-check-input:checked {
+  background-color: var(--bleu);
+  border-color: var(--bleu);
+}
+.auth-body .form-check-input:focus {
+  border-color: var(--bleu);
+  box-shadow: 0 0 0 .25rem var(--bleu-clair);
+}
+.auth-body .form-check-label { color: var(--texte-doux); }
+
+/* ============================================================
+   3. LAYOUT — 100dvh × 100vw, zéro scroll
+   ============================================================ */
+.auth-layout {
+  display: grid;
+  grid-template-columns: minmax(440px, 46%) 1fr;
+  height: 100dvh;
+}
+
+/* ============================================================
+   4. PANNEAU DE MARQUE (gauche)
+   ============================================================ */
+.auth-brand {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.25rem, 3vh, 2.5rem) clamp(1.5rem, 3vw, 3rem);
+  background:
+    radial-gradient(760px 560px at 118% -12%, rgba(255,138,30,.17), transparent 62%),
+    radial-gradient(820px 640px at -18% 118%, rgba(43,92,255,.24), transparent 60%),
+    linear-gradient(160deg, var(--encre) 0%, var(--encre-2) 55%, #15285A 100%);
+  color: #fff;
+  overflow: hidden;
+}
+
+/* Trame technique très légère (grille d'atelier) */
+.auth-brand::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 40%, #000 30%, transparent 100%);
+  mask-image: radial-gradient(120% 90% at 50% 40%, #000 30%, transparent 100%);
+  pointer-events: none;
+}
+
+.auth-brand__logo {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: .6875rem;
+  width: fit-content;
+  text-decoration: none;
+}
+.auth-brand__logo:hover { text-decoration: none; }
+
+.auth-brand__name {
+  font-family: "Bricolage Grotesque", Inter, sans-serif;
+  font-weight: 800;
+  font-size: 1.3125rem;
+  line-height: 1;
+  color: #fff;
+  letter-spacing: -.01em;
+}
+.auth-brand__sub {
+  font-family: "Bricolage Grotesque", Inter, sans-serif;
+  font-weight: 700;
+  font-size: .84375rem;
+  line-height: 1.15;
+  color: var(--safran);
+}
+
+.auth-brand__body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  min-height: 0;
+  padding-block: clamp(.75rem, 2vh, 1.5rem);
+}
+
+.auth-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  width: fit-content;
+  font-size: .6875rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--safran);
+  background: rgba(255,138,30,.12);
+  border: 1px solid rgba(255,138,30,.35);
+  border-radius: 999px;
+  padding: .375rem .875rem;
+  margin-bottom: clamp(.75rem, 1.8vh, 1.125rem);
+}
+
+.auth-brand__title {
+  font-family: "Bricolage Grotesque", Inter, sans-serif;
+  font-weight: 800;
+  color: #fff;
+  font-size: clamp(1.5rem, 3.6vh, 2.25rem);
+  line-height: 1.12;
+  letter-spacing: -.025em;
+  max-width: 20ch;
+  margin: 0;
+}
+.auth-brand__title em {
+  font-style: normal;
+  color: var(--safran);
+}
+
+.auth-brand__copy {
+  color: #A9B6D4;
+  font-size: clamp(.8125rem, 1.7vh, .9375rem);
+  line-height: 1.65;
+  max-width: 42ch;
+  margin: clamp(.625rem, 1.6vh, 1rem) 0 0;
+}
+
+/* ---------- Aperçu produit : pile de cartes pur CSS ---------- */
+.auth-preview {
+  position: relative;
+  height: clamp(150px, 24vh, 220px);
+  margin-top: clamp(1rem, 3vh, 2rem);
+}
+
+.preview-card {
+  position: absolute;
+  background: #fff;
+  border-radius: .875rem;
+  box-shadow: 0 24px 60px rgba(4, 10, 28, .45);
+  color: var(--texte);
+  animation: preview-float 6s var(--ease) infinite;
+}
+
+/* Carte « demande » — la plus grande */
+.preview-card--demande {
+  left: 0;
+  top: 8%;
+  width: min(310px, 78%);
+  padding: .875rem;
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: .75rem;
+  align-items: center;
+  transform: rotate(-2deg);
+}
+.preview-card__thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: .625rem;
+  background: linear-gradient(145deg, #EDF0F6, #E3E8F1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #98A6C3;
+}
+.preview-card__lines {
+  display: grid;
+  gap: .4375rem;
+  min-width: 0;
+}
+.preview-card__badge {
+  align-self: start;
+  font-size: .59375rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  color: #D98A00;
+  background: var(--safran-clair);
+  border-radius: 999px;
+  padding: .25rem .5625rem;
+  white-space: nowrap;
+}
+
+/* Carte « note » */
+.preview-card--note {
+  right: 4%;
+  top: 0;
+  padding: .75rem 1rem;
+  text-align: center;
+  transform: rotate(2.5deg);
+  animation-delay: 1.1s;
+}
+.preview-card__note {
+  font-family: "Bricolage Grotesque", Inter, sans-serif;
+  font-weight: 800;
+  font-size: 1.375rem;
+  color: var(--encre);
+  line-height: 1;
+}
+.preview-card__note small {
+  font-size: .75rem;
+  color: var(--texte-doux);
+  font-weight: 700;
+}
+.preview-card__stars {
+  color: var(--safran);
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  margin: .375rem 0 .25rem;
+}
+.preview-card__sub {
+  font-size: .625rem;
+  font-weight: 600;
+  color: var(--texte-doux);
+}
+
+/* Carte « devis accepté » */
+.preview-card--devis {
+  right: 14%;
+  bottom: 0;
+  padding: .6875rem .875rem;
+  display: flex;
+  align-items: center;
+  gap: .625rem;
+  transform: rotate(-1.5deg);
+  animation-delay: .55s;
+}
+.preview-card__icone {
+  width: 34px;
+  height: 34px;
+  border-radius: .5625rem;
+  background: var(--vert-clair);
+  color: var(--vert);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.preview-card--devis b {
+  font-size: .71875rem;
+  color: var(--encre);
+  display: block;
+  line-height: 1.3;
+}
+.preview-card--devis span span {
+  font-size: .625rem;
+  font-weight: 600;
+  color: var(--texte-doux);
+}
+
+/* Lignes de texte factices (placeholder éditorial) */
+.ph-line {
+  height: 7px;
+  border-radius: 999px;
+  background: #E3E8F1;
+}
+.ph-line--fonce { background: #C9D3E8; }
+.ph-line--70 { width: 70%; }
+.ph-line--45 { width: 45%; }
+
+@keyframes preview-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -7px; }
+}
+
+/* ---------- Barre de stats ---------- */
+.auth-brand__stats {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: stretch;
+  gap: clamp(.875rem, 2vw, 1.5rem);
+  padding-top: clamp(.75rem, 2vh, 1.25rem);
+  border-top: 1px solid rgba(255,255,255,.12);
+}
+.auth-stat b {
+  display: block;
+  font-family: "Bricolage Grotesque", Inter, sans-serif;
+  font-weight: 800;
+  font-size: clamp(1rem, 2.3vh, 1.3125rem);
+  color: #fff;
+  line-height: 1.1;
+}
+.auth-stat b em { font-style: normal; color: var(--safran); }
+.auth-stat span {
+  font-size: clamp(.625rem, 1.3vh, .71875rem);
+  font-weight: 600;
+  color: #8E9DC0;
+}
+.auth-stat + .auth-stat {
+  padding-left: clamp(.875rem, 2vw, 1.5rem);
+  border-left: 1px solid rgba(255,255,255,.12);
+}
+
+/* ---------- Témoignage compact ---------- */
+.auth-brand__quote {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  margin: clamp(.75rem, 2vh, 1.25rem) 0 0;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.11);
+  border-radius: .875rem;
+  padding: .75rem .875rem;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.auth-brand__quote .auth-avatar { flex-shrink: 0; }
+.auth-brand__quote p {
+  font-size: clamp(.71875rem, 1.5vh, .78125rem);
+  color: #DCE3F5;
+  line-height: 1.55;
+  margin: 0;
+}
+.auth-brand__quote b { color: #fff; }
+
+/* Avatar à initiales (placeholder) */
+.auth-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: .78125rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: .02em;
+}
+.auth-avatar--safran { background: linear-gradient(135deg, #FF8A1E, #E8760A); }
+.auth-avatar--bleu   { background: linear-gradient(135deg, #2B5CFF, #1E49C7); }
+.auth-avatar--vert   { background: linear-gradient(135deg, #16B981, #0E9F6E); }
+
+/* ============================================================
+   5. PANNEAU FORMULAIRE (droite)
+   ============================================================ */
+.auth-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 3vh, 2.25rem) clamp(1.25rem, 4vw, 3.5rem);
+  background:
+    radial-gradient(640px 420px at 88% -8%, rgba(30,73,199,.06), transparent 60%),
+    var(--papier);
+  overflow: hidden;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 448px;
+  background: #fff;
+  border: 1px solid var(--bordure);
+  border-radius: 1.25rem;
+  box-shadow:
+    0 1px 2px rgba(10,22,51,.04),
+    0 10px 30px rgba(10,22,51,.07),
+    0 32px 64px rgba(10,22,51,.07);
+  padding: clamp(1.25rem, 3.2vh, 2rem) clamp(1.25rem, 2.6vw, 2rem);
+  animation: card-in .45s var(--ease) both;
+}
+
+.auth-card--large { max-width: 500px; }
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(14px) scale(.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+.auth-card__header { margin-bottom: clamp(.875rem, 2.2vh, 1.375rem); }
+.auth-card__header h2 {
+  font-size: clamp(1.25rem, 3vh, 1.5625rem);
+  letter-spacing: -.02em;
+  margin: 0;
+}
+.auth-card__header p {
+  font-size: clamp(.78125rem, 1.7vh, .84375rem);
+  color: var(--texte-doux);
+  margin: .375rem 0 0;
+  line-height: 1.55;
+}
+
+/* ============================================================
+   6. SÉLECTEUR DE PROFIL — curseur coulissant
+   ============================================================ */
+.auth-switch {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--papier);
+  border: 1px solid var(--bordure);
+  border-radius: .875rem;
+  padding: .25rem;
+  margin-bottom: clamp(.875rem, 2.2vh, 1.375rem);
+  isolation: isolate;
+}
+
+/* Curseur */
+.auth-switch::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: .25rem;
+  bottom: .25rem;
+  left: .25rem;
+  width: calc(50% - .25rem);
+  background: #fff;
+  border-radius: .625rem;
+  box-shadow: 0 1px 2px rgba(10,22,51,.08), 0 4px 14px rgba(10,22,51,.1);
+  transition: translate .28s var(--ease);
+}
+.auth-switch[data-profil="pro"]::before { translate: 100% 0; }
+
+.auth-switch__option {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .625rem .5rem;
+  border: none;
+  background: none;
+  border-radius: .625rem;
+  font-size: .8125rem;
+  font-weight: 700;
+  color: var(--texte-doux);
+  cursor: pointer;
+  transition: color .2s var(--ease);
+}
+.auth-switch__option svg { flex-shrink: 0; transition: color .2s var(--ease); }
+.auth-switch__option:focus-visible {
+  outline: 2px solid var(--bleu);
+  outline-offset: 2px;
+}
+.auth-switch__option[aria-pressed="true"] { color: var(--bleu); }
+.auth-switch[data-profil="pro"] .auth-switch__option[aria-pressed="true"] { color: var(--safran-fonce); }
+
+/* ============================================================
+   7. CHAMPS
+   ============================================================ */
+.auth-field { margin-bottom: clamp(.625rem, 1.7vh, .9375rem); }
+.auth-field .form-control { height: 48px; }
+.auth-field textarea.form-control { height: auto; }
+
+.auth-field__label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-bottom: .4375rem;
+}
+.auth-field__label-row .form-label { margin: 0; }
+.auth-field__label-row a { font-size: .71875rem; font-weight: 700; }
+
+.auth-input-group { position: relative; }
+.auth-input-group > .form-control { padding-left: 2.6875rem; }
+.auth-input-group--toggle > .form-control { padding-right: 2.875rem; }
+
+.auth-input-group__icon {
+  position: absolute;
+  left: .9375rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #98A6C3;
+  pointer-events: none;
+  display: flex;
+  transition: color .18s var(--ease);
+}
+.auth-input-group:focus-within .auth-input-group__icon { color: var(--bleu); }
+
+.auth-input-group__toggle {
+  position: absolute;
+  right: .375rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.375rem;
+  height: 2.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: var(--texte-doux);
+  border-radius: .5625rem;
+  cursor: pointer;
+  transition: color .15s, background .15s;
+}
+.auth-input-group__toggle:hover { color: var(--texte); background: var(--papier); }
+.auth-input-group__toggle:focus-visible {
+  outline: 2px solid var(--bleu);
+  outline-offset: 1px;
+}
+
+/* Alerte Verr. Maj */
+.auth-capslock {
+  display: none;
+  align-items: center;
+  gap: .4375rem;
+  font-size: .71875rem;
+  font-weight: 700;
+  color: #D98A00;
+  margin-top: .4375rem;
+}
+.auth-capslock.is-visible { display: inline-flex; }
+
+/* E-mail mis en évidence dans les textes */
+.auth-email {
+  font-weight: 700;
+  color: var(--texte);
+}
+
+/* Message d'erreur de champ */
+.auth-error {
+  display: none;
+  align-items: center;
+  gap: .5rem;
+  font-size: .71875rem;
+  font-weight: 700;
+  color: #D93025;
+  margin-top: .4375rem;
+}
+.auth-error svg { flex-shrink: 0; }
+.auth-error.is-visible { display: inline-flex; }
+
+/* ============================================================
+   8. JAUGE DE ROBUSTESSE + RÈGLES
+   ============================================================ */
+.auth-strength {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: .75rem;
+  margin-top: .5625rem;
+}
+.auth-strength__bars {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: .25rem;
+}
+.auth-strength__bars i {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--bordure);
+  transition: background .25s var(--ease);
+}
+.auth-strength__label {
+  font-size: .65625rem;
+  font-weight: 800;
+  letter-spacing: .03em;
+  color: var(--texte-doux);
+  min-width: 6ch;
+  text-align: right;
+}
+.auth-strength[data-niveau="1"] .auth-strength__bars i:nth-child(-n+1) { background: #E5484D; }
+.auth-strength[data-niveau="2"] .auth-strength__bars i:nth-child(-n+2) { background: var(--safran); }
+.auth-strength[data-niveau="3"] .auth-strength__bars i:nth-child(-n+3) { background: #F0B420; }
+.auth-strength[data-niveau="4"] .auth-strength__bars i                 { background: var(--vert); }
+.auth-strength[data-niveau="4"] .auth-strength__label { color: var(--vert); }
+
+.auth-rules {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .3125rem .875rem;
+  margin-top: .5625rem;
+}
+.auth-rules__item {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: .6875rem;
+  font-weight: 600;
+  color: #98A6C3;
+  transition: color .25s var(--ease);
+}
+.auth-rules__dot {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 1.5px solid #C9D3E8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .25s var(--ease), border-color .25s var(--ease);
+}
+.auth-rules__dot svg {
+  opacity: 0;
+  transform: scale(.4);
+  transition: opacity .25s, transform .25s var(--ease);
+  color: #fff;
+}
+.auth-rules__item.is-valid { color: var(--vert); }
+.auth-rules__item.is-valid .auth-rules__dot {
+  background: var(--vert);
+  border-color: var(--vert);
+}
+.auth-rules__item.is-valid .auth-rules__dot svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ============================================================
+   9. BOUTONS
+   ============================================================ */
+.btn-auth-primary,
+.btn-auth-cta {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .625rem;
+  height: 50px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: .9375rem;
+  border-radius: .8125rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .15s var(--ease), box-shadow .2s var(--ease),
+              background-color .15s var(--ease), border-color .15s var(--ease);
+}
+.btn-auth-primary svg,
+.btn-auth-cta svg { transition: translate .2s var(--ease); }
+.btn-auth-primary:hover svg,
+.btn-auth-cta:hover svg { translate: 3px 0; }
+.btn-auth-primary:active,
+.btn-auth-cta:active { transform: translateY(1px); }
+
+.btn-auth-primary {
+  background: var(--bleu);
+  border-color: var(--bleu);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(10,22,51,.1), 0 8px 20px rgba(30,73,199,.28);
+}
+.btn-auth-primary:hover {
+  background: #1A3DA6;
+  border-color: #1A3DA6;
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(10,22,51,.12), 0 12px 28px rgba(30,73,199,.38);
+  transform: translateY(-1px);
+}
+.btn-auth-primary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 .25rem var(--bleu-clair);
+}
+.btn-auth-primary:active {
+  background: #142F80;
+  border-color: #142F80;
+}
+
+.btn-auth-cta {
+  background: var(--safran);
+  border-color: var(--safran);
+  color: var(--encre);
+  box-shadow: 0 1px 2px rgba(10,22,51,.1), 0 8px 20px rgba(255,138,30,.3);
+}
+.btn-auth-cta:hover {
+  background: var(--safran-fonce);
+  border-color: var(--safran-fonce);
+  color: var(--encre);
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(10,22,51,.12), 0 12px 28px rgba(255,138,30,.4);
+  transform: translateY(-1px);
+}
+.btn-auth-cta:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 .25rem #FFE1B3;
+}
+.btn-auth-cta:active {
+  background: #C25F05;
+  border-color: #C25F05;
+  color: var(--encre);
+}
+
+.btn-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .625rem;
+  width: 100%;
+  height: 46px;
+  background: #fff;
+  border: 1px solid var(--bordure);
+  color: var(--texte);
+  font-family: inherit;
+  font-size: .84375rem;
+  font-weight: 700;
+  border-radius: .75rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color .15s, background .15s, transform .15s var(--ease);
+}
+.btn-social:hover {
+  border-color: #C9D3E8;
+  background: var(--papier);
+  color: var(--texte);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+.btn-social:focus-visible {
+  outline: 2px solid var(--bleu);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   10. DIVERS
+   ============================================================ */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: .875rem;
+  margin: clamp(.625rem, 1.8vh, 1rem) 0;
+  color: #98A6C3;
+  font-size: .65625rem;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--bordure);
+}
+
+.auth-card__footer {
+  text-align: center;
+  font-size: .8125rem;
+  color: var(--texte-doux);
+  margin-top: clamp(.75rem, 2vh, 1.125rem);
+  margin-bottom: 0;
+}
+.auth-card__footer a { font-weight: 700; }
+
+.auth-legal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  text-align: center;
+  font-size: .6875rem;
+  color: #98A6C3;
+  margin: clamp(.625rem, 1.8vh, 1rem) 0 0;
+}
+.auth-legal a { color: var(--texte-doux); text-decoration: underline; }
+.auth-legal svg { color: var(--vert); flex-shrink: 0; }
+
+.auth-back {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: .78125rem;
+  font-weight: 700;
+  color: var(--texte-doux);
+  margin-bottom: .875rem;
+}
+.auth-back svg { transition: translate .2s var(--ease); }
+.auth-back:hover { color: var(--bleu); text-decoration: none; }
+.auth-back:hover svg { translate: -3px 0; }
+
+/* État succès */
+.auth-success { text-align: center; }
+.auth-success__icon {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: var(--vert-clair);
+  color: var(--vert);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.125rem;
+}
+.auth-success__icon::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px solid var(--vert-clair);
+  animation: pulse-ring 2.2s var(--ease) infinite;
+}
+.auth-success h2 { font-size: 1.25rem; margin: 0; }
+.auth-success p {
+  font-size: .8125rem;
+  color: var(--texte-doux);
+  margin-top: .5625rem;
+  line-height: 1.65;
+}
+.auth-success b { color: var(--texte); }
+
+@keyframes pulse-ring {
+  0% { transform: scale(.85); opacity: 1; }
+  70%, 100% { transform: scale(1.18); opacity: 0; }
+}
+
+/* Champs pro conditionnels (accordéon) */
+.auth-pro-fields {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows .3s var(--ease), opacity .25s var(--ease);
+}
+.auth-pro-fields > div { overflow: hidden; }
+.auth-pro-fields.is-visible {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+/* ============================================================
+   11. RESPONSIVE — le no-scroll se défend à toutes les tailles
+   ============================================================ */
+@media (max-width: 991.98px) {
+  .auth-layout { grid-template-columns: 1fr; }
+  .auth-brand { display: none; }
+}
+
+@media (max-height: 820px) {
+  .auth-brand__quote { display: none; }
+}
+@media (max-height: 740px) {
+  .auth-preview { display: none; }
+  .auth-card__header p { display: none; }
+}
+@media (max-height: 620px) {
+  .auth-legal, .auth-brand__stats { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preview-card, .auth-card, .auth-success__icon::after { animation: none !important; }
+  .auth-switch::before,
+  .btn-auth-primary, .btn-auth-cta, .btn-social,
+  .auth-strength__bars i, .auth-rules__dot { transition: none !important; }
+}
+
+/* ============================================================
+   v2.2 — Panneau de marque : photo de fond + voile bleu
+   Empilement : voile dégradé encre→bleu / photo / couleur de secours
+   ============================================================ */
+.auth-brand{
+  background:
+    linear-gradient(160deg, rgba(10,22,51,.94) 0%, rgba(16,31,69,.86) 45%, rgba(30,73,199,.76) 100%),
+    url("https://picsum.photos/seed/artisan-auth-tm/1100/1500") center/cover no-repeat,
+    #0A1633;
+}

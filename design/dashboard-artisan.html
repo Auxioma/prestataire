@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tableau de bord — Plomberie Express — TrouveMoi Prestataires</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dash-body">
+
+<div class="dash-layout">
+
+  <!-- ============ BARRE HAUTE ============ -->
+  <header class="topbar">
+    <button class="topbar__burger" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-label="Ouvrir le menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    <a href="#" class="topbar__logo">
+      <svg width="38" height="38" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 4C14.6 4 7 11.6 7 21c0 11.8 17 23 17 23s17-11.2 17-23C41 11.6 33.4 4 24 4z" fill="#FF8A1E" stroke="#0A1633" stroke-width="3.4" stroke-linejoin="round"/><circle cx="24" cy="20.5" r="6.6" fill="#fff"/></svg>
+      <span><span class="topbar__name">TrouveMoi</span><br><span class="topbar__sub">Prestataires</span></span>
+    </a>
+
+    <div class="topbar__search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="search" placeholder="Rechercher une demande, un client, un devis…" aria-label="Rechercher">
+    </div>
+
+    <div class="topbar__actions">
+      <button class="topbar__icone" type="button" aria-label="Notifications (3 non lues)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="topbar__badge">3</span></button>
+      <button class="topbar__icone" type="button" aria-label="Messages (2 non lus)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg><span class="topbar__badge">2</span></button>
+      <button class="topbar__profil" type="button">
+        <span class="avatar avatar--safran">PE</span>
+        <div class="d-none d-md-block"><b>Plomberie Express</b><span>Compte professionnel</span></div>
+        <span class="d-none d-md-flex text-secondary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ SIDEBAR (offcanvas sous lg) ============ -->
+  <aside class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar" aria-label="Navigation principale">
+    <div class="sidebar__profil">
+      <span class="avatar avatar--lg avatar--safran">PE</span>
+      <div>
+        <b>Plomberie Express</b>
+        <span class="chip chip--verifie"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Vérifié</span>
+      </div>
+    </div>
+
+    <p class="sidebar__label">Principal</p>
+    <nav class="sidebar__nav" aria-label="Sections principales">
+          <a href="#" class="sidebar__link actif" aria-current="page"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Tableau de bord</a>
+          <a href="mes-demandes.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M7 11h10M7 15h6"/></svg>Mes demandes<span class="sidebar__badge">12</span></a>
+          <a href="mes-devis.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg>Mes devis</a>
+          <a href="mes-chantiers.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20M4 20V9l8-6 8 6v11"/><path d="M9 20v-6h6v6"/></svg>Mes chantiers</a>
+          <a href="messages.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Messages<span class="sidebar__badge">3</span></a>
+          <a href="mes-avis.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>Mes avis</a>
+    </nav>
+
+    <p class="sidebar__label">Organisation</p>
+    <nav class="sidebar__nav" aria-label="Organisation">
+          <a href="calendrier.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Calendrier</a>
+          <a href="statistiques.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Statistiques</a>
+    </nav>
+
+    <p class="sidebar__label">Compte</p>
+    <nav class="sidebar__nav" aria-label="Compte">
+          <a href="mon-abonnement.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Mon abonnement</a>
+          <a href="parametres.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.5 1h.2a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Paramètres</a>
+          <a href="connexion.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>Déconnexion</a>
+    </nav>
+
+    <div class="sidebar__aide mt-3 mt-lg-auto">
+      <b>Besoin d'aide ?</b>
+      <p>Notre équipe support répond en moins de 2 h, 7 j/7.</p>
+      <button class="btn-support" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="14" width="5" height="6" rx="2"/><rect x="17" y="14" width="5" height="6" rx="2"/></svg> Contacter le support</button>
+    </div>
+  </aside>
+
+  <!-- ============ PANNEAU PRINCIPAL ============ -->
+  <main class="dash-panel">
+
+    <!-- En-tête -->
+    <div class="dash-header">
+      <div>
+        <h1>Tableau de bord</h1>
+        <p>Bienvenue Plomberie Express — jeudi 16 mai 2024. Voici ce qui se passe aujourd'hui.</p>
+      </div>
+      <div class="dash-header__actions">
+        <button class="btn btn-dash-ghost" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>Exporter</button>
+        <button class="btn btn-dash-primary" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Nouvelle annonce</button>
+      </div>
+    </div>
+
+    <!-- ============ KPI ============ -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-lg-4 col-xxl-2">
+          <div class="kpi">
+            <span class="kpi__icone kpi__icone--bleu"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M7 11h10M7 15h6"/></svg></span>
+            <div>
+              <div class="kpi__valeur">12</div>
+              <div class="kpi__libelle">Nouvelles demandes</div>
+              <span class="kpi__delta"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>+ 3 depuis hier</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4 col-xxl-2">
+          <div class="kpi">
+            <span class="kpi__icone kpi__icone--safran"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg></span>
+            <div>
+              <div class="kpi__valeur">8</div>
+              <div class="kpi__libelle">Devis en attente</div>
+              <span class="kpi__delta"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>+ 2 depuis hier</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4 col-xxl-2">
+          <div class="kpi">
+            <span class="kpi__icone kpi__icone--vert"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20M4 20V9l8-6 8 6v11"/><path d="M9 20v-6h6v6"/></svg></span>
+            <div>
+              <div class="kpi__valeur">5</div>
+              <div class="kpi__libelle">Chantiers en cours</div>
+              <span class="kpi__delta kpi__delta--neutre">= stable</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4 col-xxl-2">
+          <div class="kpi">
+            <span class="kpi__icone kpi__icone--or"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg></span>
+            <div>
+              <div class="kpi__valeur">4,8<small>/5</small></div>
+              <div class="kpi__libelle">Note moyenne</div>
+              <span class="kpi__delta kpi__delta--neutre">56 avis clients</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4 col-xxl-2">
+          <div class="kpi">
+            <span class="kpi__icone kpi__icone--violet"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span>
+            <div>
+              <div class="kpi__valeur">248</div>
+              <div class="kpi__libelle">Vues du profil</div>
+              <span class="kpi__delta"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>+ 32 cette semaine</span>
+            </div>
+          </div>
+        </div>
+      <div class="col-12 col-lg-8 col-xxl-2">
+        <div class="dash-card carte-abo">
+          <div class="carte-abo__haut"><b>Abonnement</b><span class="chip chip--premium">Premium</span></div>
+          <p>Renouvellement le 12/06/2024</p>
+          <div class="carte-abo__liste">
+            <span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Profil mis en avant</span>
+            <span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Demandes en avant-première</span>
+            <span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Badge vérifié</span>
+          </div>
+          <button class="btn btn-dash-primary" type="button">Gérer mon abonnement</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ GRILLE PRINCIPALE ============ -->
+    <div class="row g-3">
+
+      <!-- Colonne 1 : demandes + performance -->
+      <div class="col-12 col-xl-4 d-grid gap-3 align-content-start">
+        <section class="dash-card">
+          <div class="dash-card__header">
+            <h2>Demandes récentes</h2>
+            <a href="#" class="dash-card__lien">Voir toutes</a>
+          </div>
+            <div class="ligne-demande">
+              <div><b>Rénovation salle de bain</b><p>Lyon 3e — Budget 2 500 à 4 000 €</p></div>
+              <div class="ligne-demande__fin">
+                <span class="ligne-demande__quand d-none d-sm-inline">Aujourd'hui</span>
+                <span class="chip chip--nouvelle">NOUVELLE</span>
+                <span class="ligne-demande__chevron"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+              </div>
+            </div>
+            <div class="ligne-demande">
+              <div><b>Fuite d'eau — dépannage urgent</b><p>Villeurbanne — Intervention sous 24 h</p></div>
+              <div class="ligne-demande__fin">
+                <span class="ligne-demande__quand d-none d-sm-inline">Aujourd'hui</span>
+                <span class="chip chip--nouvelle">NOUVELLE</span>
+                <span class="ligne-demande__chevron"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+              </div>
+            </div>
+            <div class="ligne-demande">
+              <div><b>Installation chauffe-eau 200 L</b><p>Lyon 7e — Budget 600 à 900 €</p></div>
+              <div class="ligne-demande__fin">
+                <span class="ligne-demande__quand d-none d-sm-inline">Hier</span>
+                <span class="chip chip--repondue">RÉPONDUE</span>
+                <span class="ligne-demande__chevron"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+              </div>
+            </div>
+            <div class="ligne-demande">
+              <div><b>Remplacement robinetterie cuisine</b><p>Lyon 6e — Budget < 300 €</p></div>
+              <div class="ligne-demande__fin">
+                <span class="ligne-demande__quand d-none d-sm-inline">Hier</span>
+                <span class="chip chip--repondue">RÉPONDUE</span>
+                <span class="ligne-demande__chevron"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+              </div>
+            </div>
+            <div class="ligne-demande">
+              <div><b>Débouchage canalisation</b><p>Lyon 8e — Colonne d'immeuble</p></div>
+              <div class="ligne-demande__fin">
+                <span class="ligne-demande__quand d-none d-sm-inline">12/05</span>
+                <span class="chip chip--repondue">RÉPONDUE</span>
+                <span class="ligne-demande__chevron"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+              </div>
+            </div>
+        </section>
+
+        <section class="dash-card">
+          <div class="dash-card__header">
+            <h2>Performance</h2>
+            <select class="form-select form-select-sm w-auto" aria-label="Période">
+              <option>7 derniers jours</option>
+              <option selected>12 derniers jours</option>
+              <option>30 derniers jours</option>
+            </select>
+          </div>
+          <div class="perf-stats">
+            <div><h3>Vues</h3><b>248</b><small>+ 18 %</small></div>
+            <div><h3>Demandes</h3><b>32</b><small>+ 12 %</small></div>
+            <div><h3>Devis envoyés</h3><b>18</b><small>+ 8 %</small></div>
+            <div><h3>Conversion</h3><b>28 %</b><small>+ 6 %</small></div>
+          </div>
+          <svg viewBox="-4 -4 352 100" class="w-100 d-block" role="img" aria-label="Évolution des vues, demandes et devis sur 12 jours" xmlns="http://www.w3.org/2000/svg">
+              <line x1="0" y1="56" x2="340" y2="56" stroke="#EEF1F7" stroke-width="1"/><line x1="0" y1="39" x2="340" y2="39" stroke="#EEF1F7" stroke-width="1"/><line x1="0" y1="22" x2="340" y2="22" stroke="#EEF1F7" stroke-width="1"/><line x1="0" y1="6" x2="340" y2="6" stroke="#EEF1F7" stroke-width="1"/>
+              <polyline points="4.0,30.2 34.2,23.6 64.4,26.9 94.5,14.8 124.7,20.3 154.9,11.5 185.1,17.0 215.3,21.4 245.5,19.2 275.6,11.5 305.8,14.8 336.0,8.2" fill="none" stroke="#1E49C7" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+              <polyline points="4.0,63.2 34.2,56.6 64.4,52.2 94.5,54.4 124.7,50.0 154.9,53.3 185.1,47.8 215.3,52.2 245.5,45.6 275.6,50.0 305.8,43.4 336.0,47.8" fill="none" stroke="#0E9F6E" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+              <polyline points="4.0,68.7 34.2,65.4 64.4,63.2 94.5,64.3 124.7,62.1 154.9,63.2 185.1,59.9 215.3,62.1 245.5,58.8 275.6,61.0 305.8,56.6 336.0,59.9" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+              <text x="4" y="90" font-size="8" fill="#98A6C3" text-anchor="middle" font-family="Inter,sans-serif">10/05</text><text x="70" y="90" font-size="8" fill="#98A6C3" text-anchor="middle" font-family="Inter,sans-serif">12/05</text><text x="137" y="90" font-size="8" fill="#98A6C3" text-anchor="middle" font-family="Inter,sans-serif">14/05</text><text x="203" y="90" font-size="8" fill="#98A6C3" text-anchor="middle" font-family="Inter,sans-serif">16/05</text><text x="270" y="90" font-size="8" fill="#98A6C3" text-anchor="middle" font-family="Inter,sans-serif">18/05</text><text x="336" y="90" font-size="8" fill="#98A6C3" text-anchor="middle" font-family="Inter,sans-serif">20/05</text>
+            </svg>
+          <div class="perf-legende">
+            <span><i class="l-bleu"></i>Vues</span>
+            <span><i class="l-vert"></i>Demandes</span>
+            <span><i class="l-violet"></i>Devis</span>
+          </div>
+        </section>
+      </div>
+
+      <!-- Colonne 2 : agenda + tâches -->
+      <div class="col-12 col-xl-4 d-grid gap-3 align-content-start">
+        <section class="dash-card">
+          <div class="dash-card__header">
+            <h2>Mon agenda</h2>
+            <a href="#" class="dash-card__lien">Voir tout</a>
+          </div>
+          <div class="mini-cal">
+            <div class="mini-cal__nav">
+              <button class="mini-cal__fleche" type="button" aria-label="Mois précédent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
+              <b>Mai 2024</b>
+              <button class="mini-cal__fleche" type="button" aria-label="Mois suivant"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+            </div>
+            <div class="mini-cal__grille">
+              <span class="jour-sem">L</span><span class="jour-sem">M</span><span class="jour-sem">M</span><span class="jour-sem">J</span><span class="jour-sem">V</span><span class="jour-sem">S</span><span class="jour-sem dim">D</span>
+              <span class="jour hors">29</span><span class="jour hors">30</span><span class="jour ">1</span><span class="jour evenement">2</span><span class="jour ">3</span><span class="jour ">4</span><span class="jour dim">5</span><span class="jour ">6</span><span class="jour ">7</span><span class="jour evenement">8</span><span class="jour ">9</span><span class="jour ">10</span><span class="jour ">11</span><span class="jour dim">12</span><span class="jour ">13</span><span class="jour evenement">14</span><span class="jour ">15</span><span class="jour aujourdhui">16</span><span class="jour ">17</span><span class="jour ">18</span><span class="jour dim">19</span><span class="jour ">20</span><span class="jour ">21</span><span class="jour evenement">22</span><span class="jour ">23</span><span class="jour ">24</span><span class="jour ">25</span><span class="jour dim">26</span><span class="jour ">27</span><span class="jour ">28</span><span class="jour ">29</span><span class="jour ">30</span><span class="jour ">31</span><span class="jour hors">1</span><span class="jour hors dim">2</span>
+            </div>
+          </div>
+          <p class="small fw-bold text-dark mb-2">Aujourd'hui — jeudi 16 mai</p>
+          <div class="rdv">
+            <b>14:00 · Rendez-vous chantier</b>
+            <p>Rénovation salle de bain — Sophie Martin, Lyon 3e</p>
+          </div>
+          <a href="#" class="dash-card__lien d-inline-flex align-items-center gap-2 mt-3">Voir le détail <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </section>
+
+        <section class="dash-card">
+          <div class="dash-card__header">
+            <h2>Mes tâches</h2>
+            <button class="btn btn-dash-ghost btn-sm" type="button" aria-label="Ajouter une tâche"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+            <label class="tache">
+              <input class="form-check-input mt-0" type="checkbox">
+              <div><b>Répondre à 3 nouvelles demandes</b><p class="urgent"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.9.7 1.5 1.3 1.5 2.1h4c0-.8.6-1.4 1.5-2.1A6 6 0 0 0 12 3z"/></svg>Priorité haute</p></div>
+            </label>
+            <label class="tache">
+              <input class="form-check-input mt-0" type="checkbox">
+              <div><b>Établir le devis — fuite d'eau Villeurbanne</b><p class=""><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Aujourd'hui</p></div>
+            </label>
+            <label class="tache">
+              <input class="form-check-input mt-0" type="checkbox">
+              <div><b>Commander le chauffe-eau 200 L</b><p class=""><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Demain</p></div>
+            </label>
+            <label class="tache">
+              <input class="form-check-input mt-0" type="checkbox" checked>
+              <div><b class="fait">Envoyer la facture — chantier Lyon 7e</b><p class=""><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Fait ce matin</p></div>
+            </label>
+        </section>
+      </div>
+
+      <!-- Colonne 3 : messages + avis + conseil -->
+      <div class="col-12 col-xl-4 d-grid gap-3 align-content-start">
+        <section class="dash-card">
+          <div class="dash-card__header">
+            <h2>Messages récents</h2>
+            <a href="#" class="dash-card__lien">Voir tous</a>
+          </div>
+            <div class="ligne-message">
+              <span class="avatar avatar--sm avatar--safran">SM</span>
+              <div class="ligne-message__corps"><b>Sophie Martin</b><p>Bonjour, j'aimerais avoir un devis pour la salle de bain…</p></div>
+              <span class="ligne-message__fin">
+                <span class="ligne-message__quand">10:30</span>
+                <span class="ligne-message__pastille">1</span>
+              </span>
+            </div>
+            <div class="ligne-message">
+              <span class="avatar avatar--sm avatar--bleu">MD</span>
+              <div class="ligne-message__corps"><b>Michel Dupont</b><p>Merci pour votre retour, je vous envoie les photos…</p></div>
+              <span class="ligne-message__fin">
+                <span class="ligne-message__quand">Hier</span>
+                <span class="ligne-message__pastille">2</span>
+              </span>
+            </div>
+            <div class="ligne-message">
+              <span class="avatar avatar--sm avatar--vert">LB</span>
+              <div class="ligne-message__corps"><b>Laura Bernard</b><p>Pouvez-vous intervenir plus tôt que prévu ?</p></div>
+              <span class="ligne-message__fin">
+                <span class="ligne-message__quand">Hier</span>
+                
+              </span>
+            </div>
+            <div class="ligne-message">
+              <span class="avatar avatar--sm avatar--violet">JM</span>
+              <div class="ligne-message__corps"><b>Julien Moreau</b><p>D'accord, merci beaucoup pour tout.</p></div>
+              <span class="ligne-message__fin">
+                <span class="ligne-message__quand">12/05</span>
+                
+              </span>
+            </div>
+        </section>
+
+        <section class="dash-card">
+          <div class="dash-card__header">
+            <h2>Avis clients récents</h2>
+            <a href="#" class="dash-card__lien">Voir tous</a>
+          </div>
+            <div class="ligne-avis">
+              <span class="avatar avatar--sm avatar--bleu">TL</span>
+              <div class="ligne-avis__corps">
+                <div class="ligne-avis__haut"><b>Thomas Legrand</b><span class="etoiles"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></span><span class="ligne-avis__quand">Il y a 2 jours</span></div>
+                <p>Intervention rapide et efficace. Très professionnel, je recommande !</p>
+              </div>
+            </div>
+            <div class="ligne-avis">
+              <span class="avatar avatar--sm avatar--vert">CP</span>
+              <div class="ligne-avis__corps">
+                <div class="ligne-avis__haut"><b>Camille Petit</b><span class="etoiles"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></span><span class="ligne-avis__quand">Il y a 5 jours</span></div>
+                <p>Travail soigné, ponctuel et à l'écoute. Parfait du début à la fin.</p>
+              </div>
+            </div>
+        </section>
+
+        <section class="conseil">
+          <p class="conseil__titre mb-0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.9.7 1.5 1.3 1.5 2.1h4c0-.8.6-1.4 1.5-2.1A6 6 0 0 0 12 3z"/></svg>Conseil du jour</p>
+          <p>Complétez vos réalisations avec des photos : les profils illustrés reçoivent jusqu'à 3× plus de demandes.</p>
+          <a href="#">Ajouter des photos <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </section>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Tâches : rayer / dérayer au clic
+document.querySelectorAll('.tache .form-check-input').forEach(c => c.addEventListener('change', () => {
+  c.closest('.tache').querySelector('b').classList.toggle('fait', c.checked);
+}));
+</script>
+</body>
+</html>

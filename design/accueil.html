@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="TrouveMoi Prestataires — trouvez l'artisan qu'il vous faut parmi 120 000 professionnels vérifiés. Devis gratuits, avis authentiques, 0 % de commission.">
+<title>TrouveMoi Prestataires — Trouvez l'artisan qu'il vous faut</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body class="site-body">
+
+<!-- ==================== EN-TÊTE ==================== -->
+<header class="entete">
+  <div class="conteneur entete__int">
+    <a href="accueil.html" class="entete__logo" aria-label="TrouveMoi Prestataires — accueil">
+      <svg width="40" height="40" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 4C14.6 4 7 11.6 7 21c0 11.8 17 23 17 23s17-11.2 17-23C41 11.6 33.4 4 24 4z" fill="#FF8A1E" stroke="#0A1633" stroke-width="3.4" stroke-linejoin="round"/><circle cx="24" cy="20.5" r="6.6" fill="#fff"/></svg>
+      <span><span class="nom">TrouveMoi</span><br><span class="sous">Prestataires</span></span>
+    </a>
+
+    <form class="entete__recherche" role="search" action="client-trouver-artisan.html">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="search" placeholder="Plombier, électricien, peintre… quel artisan cherchez-vous ?" aria-label="Rechercher un artisan">
+      <button class="btn-rechercher" type="submit" aria-label="Lancer la recherche"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </form>
+
+    <nav class="entete__actions" aria-label="Compte et aide">
+      <a class="entete__lien entete__lien--pro" href="inscription.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M9 8V6a3 3 0 0 1 6 0v2M3 13h18"/></svg><span>Devenir prestataire</span></a>
+      <a class="entete__lien" href="#faq"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.2 9a2.8 2.8 0 0 1 5.5.7c0 1.8-2.7 2.3-2.7 3.8M12 17h.01"/></svg><span>Aide</span></a>
+      <a class="entete__lien" href="connexion.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg><span>Connexion</span></a>
+      <a class="btn-site-cta" href="inscription.html">Publier une demande</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ==================== HERO ==================== -->
+  <section class="hero" aria-labelledby="titre-hero">
+    <div class="conteneur">
+      <div class="hero__int">
+        <div>
+          <span class="eyebrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>120 000 prestataires vérifiés</span>
+          <h1 class="hero__titre" id="titre-hero">L'artisan qu'il vous faut, <span class="trait">en toute confiance</span>.</h1>
+          <p class="hero__texte">Décrivez votre projet, recevez jusqu'à 5 devis d'artisans vérifiés près de chez vous, et choisissez sereinement grâce aux avis authentiques.</p>
+
+          <form class="hero__form" action="client-trouver-artisan.html" aria-label="Rechercher un artisan">
+            <div class="hero__champ">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="search" placeholder="Quel artisan ? (plombier, peintre…)" aria-label="Métier recherché">
+            </div>
+            <div class="hero__champ">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+              <input type="search" placeholder="Où ? (ville, code postal)" aria-label="Localisation">
+            </div>
+            <button class="btn-site-cta" type="submit">Rechercher <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          </form>
+
+          <p class="hero__populaires">Populaire&nbsp;:
+            <a href="client-trouver-artisan.html"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.7 6.6 9.4a6.8 6.8 0 1 0 10.8 0z"/></svg>Salle de bain</a>
+            <a href="client-trouver-artisan.html"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>Tableau électrique</a>
+            <a href="client-trouver-artisan.html"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M18 6h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-8v3"/><rect x="10" y="14" width="4" height="7" rx="1"/></svg>Peinture</a>
+            <a href="client-trouver-artisan.html"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20M4 20V9l8-6 8 6v11"/><path d="M9 20v-6h6v6"/></svg>Rénovation</a>
+          </p>
+        </div>
+
+        <!-- Composition : cartes flottantes -->
+        <div class="hero__visuel" aria-hidden="true">
+          <figure class="hero-carte hero-carte--photo">
+            <img src="https://picsum.photos/seed/chantier-tm/500/375" alt="" loading="lazy">
+            <figcaption><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Chantier livré à Lyon 3e</figcaption>
+          </figure>
+          <div class="hero-carte hero-carte--profil">
+            <div class="haut">
+              <span class="avatar-init">PE</span>
+              <div>
+                <b>Plomberie Express <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg></b>
+                <span class="sous">Plombier-chauffagiste · Lyon 3e</span><br>
+                <span class="note"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg>4,8 <span class="sous">(256 avis)</span></span>
+              </div>
+            </div>
+            <div class="tags"><span>Salle de bain</span><span>Dépannage</span><span>Chauffe-eau</span></div>
+          </div>
+          <div class="hero-carte hero-carte--devis">
+            <span class="ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg></span>
+            <span><b>Devis accepté</b><span>3 450 € · Salle de bain</span></span>
+          </div>
+          <div class="hero-carte hero-carte--reponse">
+            <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
+            <b>5 artisans ont répondu</b>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chiffres clés -->
+      <dl class="hero__stats">
+        <div class="hero__stat"><dt class="visually-hidden">Prestataires vérifiés</dt><dd class="m-0"><b>+ 120 000</b><span>prestataires vérifiés</span></dd></div>
+        <div class="hero__stat"><dt class="visually-hidden">Projets réalisés</dt><dd class="m-0"><b>+ 500 000</b><span>projets réalisés</span></dd></div>
+        <div class="hero__stat"><dt class="visually-hidden">Note moyenne</dt><dd class="m-0"><b>4,8<em>/5</em></b><span>note moyenne des artisans</span></dd></div>
+        <div class="hero__stat"><dt class="visually-hidden">Commission</dt><dd class="m-0"><b>0 %</b><span>de commission sur vos travaux</span></dd></div>
+      </dl>
+    </div>
+
+    <div class="hero__vague"><svg viewBox="0 0 1440 74" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M0 74h1440V26c-140 26-300 40-480 34C752 53 600 8 400 3 250-1 110 12 0 40z" fill="#ffffff"/></svg></div>
+  </section>
+
+  <!-- ==================== ARTISANS À LA UNE ==================== -->
+  <section class="section" id="artisans" aria-labelledby="titre-artisans">
+    <div class="conteneur">
+      <header class="section__entete">
+        <span class="eyebrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg>Sélection du moment</span>
+        <h2 id="titre-artisans">Des artisans <span class="trait">recommandés</span> près de chez vous</h2>
+        <p>Notés par de vrais clients, après de vrais chantiers.</p>
+      </header>
+      <div class="row g-4">
+          <div class="col-12 col-md-4">
+            <article class="carte-pro">
+              <div class="carte-pro__photo">
+                <img src="https://picsum.photos/seed/plombier-tm/640/380" alt="Chantier de plomberie — salle de bain rénovée" loading="lazy">
+                <span class="carte-pro__excellence">EXCELLENCE</span>
+                <span class="carte-pro__note-flottante"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg>4,8 <small>(256)</small></span>
+              </div>
+              <div class="carte-pro__haut">
+                <span class="carte-pro__avatar carte-pro__avatar--encre">PE</span>
+                <div class="carte-pro__id"><b>Plomberie Express <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg></b><span class="carte-pro__metier">Plomberie &amp; chauffage · Lyon 3e</span></div>
+              </div>
+              <p class="carte-pro__desc">Rénovation de salle de bain, dépannage rapide, chauffe-eau. Devis gratuit sous 24 h.</p>
+              <div class="carte-pro__tags"><span>Salle de bain</span><span>Dépannage</span><span>Chauffe-eau</span></div>
+              <div class="carte-pro__pied">
+                <span class="carte-pro__reponse"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>Répond en ~ 1 h</span>
+                <a class="btn-site-ghost" href="fiche-artisan.html">Voir le profil</a>
+              </div>
+            </article>
+          </div>
+          <div class="col-12 col-md-4">
+            <article class="carte-pro">
+              <div class="carte-pro__photo">
+                <img src="https://picsum.photos/seed/peintre-tm/640/380" alt="Chantier de peinture — salon aux murs clairs" loading="lazy">
+                <span class="carte-pro__excellence">EXCELLENCE</span>
+                <span class="carte-pro__note-flottante"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg>4,9 <small>(143)</small></span>
+              </div>
+              <div class="carte-pro__haut">
+                <span class="carte-pro__avatar carte-pro__avatar--vert">AC</span>
+                <div class="carte-pro__id"><b>Atelier Couleurs <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg></b><span class="carte-pro__metier">Peinture &amp; décoration · Lyon 6e</span></div>
+              </div>
+              <p class="carte-pro__desc">Finitions soignées, chantiers propres, conseils couleurs offerts par nos décorateurs.</p>
+              <div class="carte-pro__tags"><span>Peinture intérieure</span><span>Papier peint</span><span>Enduits</span></div>
+              <div class="carte-pro__pied">
+                <span class="carte-pro__reponse"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>Répond en ~ 1 h</span>
+                <a class="btn-site-ghost" href="fiche-artisan.html">Voir le profil</a>
+              </div>
+            </article>
+          </div>
+          <div class="col-12 col-md-4">
+            <article class="carte-pro">
+              <div class="carte-pro__photo">
+                <img src="https://picsum.photos/seed/electricien-tm/640/380" alt="Chantier électrique — tableau aux normes" loading="lazy">
+                
+                <span class="carte-pro__note-flottante"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg>4,9 <small>(178)</small></span>
+              </div>
+              <div class="carte-pro__haut">
+                <span class="carte-pro__avatar carte-pro__avatar--violet">EL</span>
+                <div class="carte-pro__id"><b>Élec+ Lyon <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg></b><span class="carte-pro__metier">Électricité générale · Lyon 7e</span></div>
+              </div>
+              <p class="carte-pro__desc">Mise aux normes, tableaux, domotique. Certifiés Qualifelec, diagnostic gratuit.</p>
+              <div class="carte-pro__tags"><span>Mise aux normes</span><span>Tableau</span><span>Domotique</span></div>
+              <div class="carte-pro__pied">
+                <span class="carte-pro__reponse"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>Répond en ~ 2 h</span>
+                <a class="btn-site-ghost" href="fiche-artisan.html">Voir le profil</a>
+              </div>
+            </article>
+          </div>
+      </div>
+      <div class="text-center mt-4 pt-2">
+        <a class="btn-site-encre" href="client-trouver-artisan.html">Voir tous les artisans <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CATÉGORIES ==================== -->
+  <section class="section section--papier" id="categories" aria-labelledby="titre-categories">
+    <div class="conteneur">
+      <header class="section__entete">
+        <span class="eyebrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Tous les métiers</span>
+        <h2 id="titre-categories">Un artisan pour <em>chaque projet</em></h2>
+        <p>Des petites réparations aux grandes rénovations, tous nos prestataires sont contrôlés : identité, SIRET et assurances.</p>
+      </header>
+      <div class="row g-3">
+          <div class="col-6 col-md-4 col-lg-3">
+            <a class="carte-categorie" href="client-trouver-artisan.html">
+              <span class="carte-categorie__icone carte-categorie__icone--bleu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.7 6.6 9.4a6.8 6.8 0 1 0 10.8 0z"/></svg></span>
+              <b>Plomberie</b>
+              <span>12 400 artisans vérifiés</span>
+              <span class="fleche">Explorer <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </a>
+          </div>
+          <div class="col-6 col-md-4 col-lg-3">
+            <a class="carte-categorie" href="client-trouver-artisan.html">
+              <span class="carte-categorie__icone carte-categorie__icone--safran"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
+              <b>Électricité</b>
+              <span>9 800 artisans vérifiés</span>
+              <span class="fleche">Explorer <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </a>
+          </div>
+          <div class="col-6 col-md-4 col-lg-3">
+            <a class="carte-categorie" href="client-trouver-artisan.html">
+              <span class="carte-categorie__icone carte-categorie__icone--violet"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M18 6h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-8v3"/><rect x="10" y="14" width="4" height="7" rx="1"/></svg></span>
+              <b>Peinture &amp; déco</b>
+              <span>8 200 artisans vérifiés</span>
+              <span class="fleche">Explorer <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </a>
+          </div>
+          <div class="col-6 col-md-4 col-lg-3">
+            <a class="carte-categorie" href="client-trouver-artisan.html">
+              <span class="carte-categorie__icone carte-categorie__icone--vert"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-6l10-10a3 3 0 0 1 4.2 0l1.4 1.4a3 3 0 0 1 0 4.2L11 19H4z"/><path d="M13 7.5 16.5 11"/></svg></span>
+              <b>Menuiserie</b>
+              <span>6 100 artisans vérifiés</span>
+              <span class="fleche">Explorer <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </a>
+          </div>
+          <div class="col-6 col-md-4 col-lg-3">
+            <a class="carte-categorie" href="client-trouver-artisan.html">
+              <span class="carte-categorie__icone carte-categorie__icone--safran"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 9.3h18M3 14.6h18M9 4v5.3M15 9.3v5.3M9 14.6V20"/></svg></span>
+              <b>Maçonnerie</b>
+              <span>5 700 artisans vérifiés</span>
+              <span class="fleche">Explorer <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </a>
+          </div>
+          <div class="col-6 col-md-4 col-lg-3">
+            <a class="carte-categorie" href="client-trouver-artisan.html">
+              <span class="carte-categorie__icone carte-categorie__icone--vert"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z"/><path d="M4 20c3-6 7-10 12-12"/></svg></span>
+              <b>Jardin &amp; paysage</b>
+              <span>7 300 artisans vérifiés</span>
+              <span class="fleche">Explorer <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </a>
+          </div>
+          <div class="col-6 col-md-4 col-lg-3">
+            <a class="carte-categorie" href="client-trouver-artisan.html">
+              <span class="carte-categorie__icone carte-categorie__icone--bleu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8h6v13H8z"/><path d="M9.5 8V5.5h3V8M11 2v2M16 4l1.5-1M16 7h2M16 10l1.5 1"/></svg></span>
+              <b>Ménage &amp; entretien</b>
+              <span>4 900 artisans vérifiés</span>
+              <span class="fleche">Explorer <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </a>
+          </div>
+          <div class="col-6 col-md-4 col-lg-3">
+            <a class="carte-categorie" href="client-trouver-artisan.html">
+              <span class="carte-categorie__icone carte-categorie__icone--violet"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20M4 20V9l8-6 8 6v11"/><path d="M9 20v-6h6v6"/></svg></span>
+              <b>Rénovation complète</b>
+              <span>3 600 artisans vérifiés</span>
+              <span class="fleche">Explorer <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </a>
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== COMMENT ÇA MARCHE ==================== -->
+  <section class="section" id="comment-ca-marche" aria-labelledby="titre-comment">
+    <div class="conteneur">
+      <header class="section__entete">
+        <span class="eyebrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Simple et gratuit</span>
+        <h2 id="titre-comment">Comment <span class="trait">ça marche</span> ?</h2>
+        <p>Quatre étapes entre votre idée et un chantier bien réalisé.</p>
+      </header>
+      <div class="row g-4 etapes">
+          <div class="col-12 col-md-6 col-lg-3">
+            <article class="etape-carte">
+              <span class="etape-carte__num" data-num="1"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg></span>
+              <h3>Décrivez votre projet</h3>
+              <p>Deux minutes suffisent : le besoin, le lieu, vos photos. Gratuit et sans engagement.</p>
+            </article>
+          </div>
+          <div class="col-12 col-md-6 col-lg-3">
+            <article class="etape-carte">
+              <span class="etape-carte__num" data-num="2"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M8 21h8"/><path d="m5 7 3.5 7a3.5 3.5 0 0 1-7 0zM19 7l3.5 7a3.5 3.5 0 0 1-7 0z"/><path d="M5 7h14"/></svg></span>
+              <h3>Comparez les devis</h3>
+              <p>Jusqu'à 5 devis d'artisans vérifiés de votre zone, avec avis clients et délais.</p>
+            </article>
+          </div>
+          <div class="col-12 col-md-6 col-lg-3">
+            <article class="etape-carte">
+              <span class="etape-carte__num" data-num="3"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 17a5 5 0 0 1 0-10h2a5 5 0 0 1 0 10"/><path d="M8 12h8"/></svg></span>
+              <h3>Choisissez en confiance</h3>
+              <p>Échangez par messagerie, posez vos questions, acceptez le devis qui vous convient.</p>
+            </article>
+          </div>
+          <div class="col-12 col-md-6 col-lg-3">
+            <article class="etape-carte">
+              <span class="etape-carte__num" data-num="4"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></span>
+              <h3>Suivez et évaluez</h3>
+              <p>Suivez le chantier depuis votre espace, puis laissez un avis vérifié.</p>
+            </article>
+          </div>
+      </div>
+      <div class="text-center mt-4 pt-2">
+        <a class="btn-site-cta" href="inscription.html">Publier ma demande <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== AVANTAGES ==================== -->
+  <section class="section section--papier" id="avantages" aria-labelledby="titre-avantages">
+    <div class="conteneur">
+      <header class="section__entete">
+        <span class="eyebrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>L'atelier de confiance</span>
+        <h2 id="titre-avantages">Pourquoi choisir <em>TrouveMoi</em> ?</h2>
+        <p>Une plateforme pensée pour protéger les particuliers et valoriser les artisans sérieux.</p>
+      </header>
+      <div class="row g-3">
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="avantage avantage--bleu">
+              <span class="avantage__icone carte-categorie__icone--bleu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+              <div><b>Prestataires 100 % vérifiés</b><p>Identité, SIRET, assurances et qualifications contrôlés avant toute mise en ligne.</p></div>
+            </article>
+          </div>
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="avantage avantage--safran">
+              <span class="avantage__icone carte-categorie__icone--safran"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></span>
+              <div><b>Avis authentiques</b><p>Chaque avis est lié à une prestation réelle : impossible de tricher, facile de choisir.</p></div>
+            </article>
+          </div>
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="avantage avantage--vert">
+              <span class="avantage__icone carte-categorie__icone--vert"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg></span>
+              <div><b>Devis gratuits</b><p>Comparez jusqu'à 5 devis détaillés sans payer ni vous engager.</p></div>
+            </article>
+          </div>
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="avantage avantage--violet">
+              <span class="avantage__icone carte-categorie__icone--violet"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 15 15 9"/><path d="M11 5l1.5-1.5a4 4 0 0 1 5.7 5.7L16.5 11M13 19l-1.5 1.5a4 4 0 0 1-5.7-5.7L7.5 13"/></svg></span>
+              <div><b>Mise en relation directe</b><p>Vous traitez directement avec l'artisan, sans intermédiaire dans la relation.</p></div>
+            </article>
+          </div>
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="avantage avantage--bleu">
+              <span class="avantage__icone carte-categorie__icone--bleu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg></span>
+              <div><b>0 % de commission</b><p>Aucune commission sur vos travaux : le prix du devis est le prix payé.</p></div>
+            </article>
+          </div>
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="avantage avantage--safran">
+              <span class="avantage__icone carte-categorie__icone--safran"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="14" width="5" height="6" rx="2"/><rect x="17" y="14" width="5" height="6" rx="2"/></svg></span>
+              <div><b>Support 7 j/7</b><p>Une question, un litige ? Notre équipe française répond en moins de 2 h.</p></div>
+            </article>
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TÉMOIGNAGES ==================== -->
+  <section class="section" id="temoignages" aria-labelledby="titre-temoignages">
+    <div class="conteneur">
+      <header class="section__entete">
+        <span class="eyebrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Ils nous font confiance</span>
+        <h2 id="titre-temoignages">Ce que disent <span class="trait">nos clients</span></h2>
+      </header>
+      <div class="row g-4">
+          <div class="col-12 col-md-4">
+            <article class="temoignage">
+              <span class="temoignage__etoiles"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></span>
+              <p>J'ai trouvé mon plombier en une soirée, devis le lendemain, chantier impeccable. Je savais exactement à qui j'avais affaire grâce aux avis vérifiés.</p>
+              <footer class="temoignage__auteur">
+                <span class="temoignage__avatar"><img src="https://picsum.photos/seed/portrait-sophie-tm/96/96" alt="Portrait de Sophie M." loading="lazy"></span>
+                <div><b>Sophie M. <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg></b><span>Rénovation de salle de bain · Lyon</span></div>
+              </footer>
+            </article>
+          </div>
+          <div class="col-12 col-md-4">
+            <article class="temoignage">
+              <span class="temoignage__etoiles"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></span>
+              <p>Trois devis reçus en 48 h, des artisans sérieux et disponibles. La messagerie intégrée simplifie vraiment les échanges avant de se décider.</p>
+              <footer class="temoignage__auteur">
+                <span class="temoignage__avatar"><img src="https://picsum.photos/seed/portrait-karim-tm/96/96" alt="Portrait de Karim D." loading="lazy"></span>
+                <div><b>Karim D. <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg></b><span>Installation électrique · Villeurbanne</span></div>
+              </footer>
+            </article>
+          </div>
+          <div class="col-12 col-md-4">
+            <article class="temoignage">
+              <span class="temoignage__etoiles"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></span>
+              <p>Le suivi de chantier étape par étape est rassurant, et le 0 % de commission fait une vraie différence sur le budget final.</p>
+              <footer class="temoignage__auteur">
+                <span class="temoignage__avatar"><img src="https://picsum.photos/seed/portrait-lucie-tm/96/96" alt="Portrait de Lucie R." loading="lazy"></span>
+                <div><b>Lucie R. <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg></b><span>Peinture appartement · Bron</span></div>
+              </footer>
+            </article>
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== BANDE PRO ==================== -->
+  <section class="section section--papier" aria-labelledby="titre-pro">
+    <div class="conteneur">
+      <div class="bande-pro">
+        <div>
+          <span class="eyebrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M9 8V6a3 3 0 0 1 6 0v2M3 13h18"/></svg>Espace professionnels</span>
+          <h2 id="titre-pro">Vous êtes artisan ? <em>Développez votre activité.</em></h2>
+          <p>Recevez des demandes qualifiées de votre zone, gérez devis, chantiers et avis depuis un espace pro complet — et gardez 100 % de votre chiffre d'affaires.</p>
+          <div class="bande-pro__points">
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Demandes qualifiées de votre zone d'intervention</span>
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Badge « Prestataire vérifié » qui inspire confiance</span>
+            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>0 % de commission : la relation client vous appartient</span>
+          </div>
+          <div class="d-flex gap-2 flex-wrap">
+            <a class="btn-site-blanc" href="inscription.html">Créer mon compte pro <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a class="btn-site-cta" href="connexion.html">Voir la démo de l'espace pro</a>
+          </div>
+        </div>
+        <aside class="bande-pro__tarifs" aria-label="Tarifs des abonnements">
+          <b>Abonnements sans engagement</b>
+          <div class="tarif-ligne"><span>Essentiel</span><strong>19 €<small> /mois HT</small></strong></div>
+          <div class="tarif-ligne"><span>Premium</span><span class="pop">LE + CHOISI</span><strong>39 €<small> /mois HT</small></strong></div>
+          <div class="tarif-ligne"><span>Excellence</span><strong>69 €<small> /mois HT</small></strong></div>
+          <p class="mention">Résiliable en un clic depuis votre espace. Essai 30 jours offert.</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FAQ ==================== -->
+  <section class="section faq" id="faq" aria-labelledby="titre-faq">
+    <div class="conteneur">
+      <header class="section__entete">
+        <span class="eyebrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.2 9a2.8 2.8 0 0 1 5.5.7c0 1.8-2.7 2.3-2.7 3.8M12 17h.01"/></svg>Questions fréquentes</span>
+        <h2 id="titre-faq">Vous vous <span class="trait">demandez</span>…</h2>
+      </header>
+      <div class="accordion" id="accordeon-faq">
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq-0" aria-expanded="true" aria-controls="faq-0">Est-ce vraiment gratuit pour les particuliers ?</button>
+            </h3>
+            <div id="faq-0" class="accordion-collapse collapse show" data-bs-parent="#accordeon-faq">
+              <div class="accordion-body">Oui, totalement. Publier une demande, recevoir des devis, échanger avec les artisans et utiliser votre espace de suivi est 100 % gratuit. TrouveMoi ne prend aucune commission sur vos travaux : seul l'abonnement des professionnels finance la plateforme.</div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-1" aria-expanded="false" aria-controls="faq-1">Comment les artisans sont-ils vérifiés ?</button>
+            </h3>
+            <div id="faq-1" class="accordion-collapse collapse" data-bs-parent="#accordeon-faq">
+              <div class="accordion-body">Avant toute mise en ligne, nous contrôlons l'identité du dirigeant, l'immatriculation de l'entreprise (SIRET), les assurances professionnelles (décennale, RC pro) et, selon les métiers, les qualifications requises. Le badge « Prestataire vérifié » atteste de ces contrôles, renouvelés chaque année.</div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-2" aria-expanded="false" aria-controls="faq-2">Combien de devis vais-je recevoir ?</button>
+            </h3>
+            <div id="faq-2" class="accordion-collapse collapse" data-bs-parent="#accordeon-faq">
+              <div class="accordion-body">En moyenne 3 à 5 devis sous 48 h pour une demande bien décrite (photos, budget indicatif, délai souhaité). Vos artisans favoris sont prévenus en priorité.</div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-3" aria-expanded="false" aria-controls="faq-3">Suis-je obligé d'accepter un devis ?</button>
+            </h3>
+            <div id="faq-3" class="accordion-collapse collapse" data-bs-parent="#accordeon-faq">
+              <div class="accordion-body">Non, jamais. Vous comparez librement, posez vos questions par messagerie, et n'acceptez que si une offre vous convient. Aucune obligation, aucun frais caché.</div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-4" aria-expanded="false" aria-controls="faq-4">Que se passe-t-il en cas de litige avec un artisan ?</button>
+            </h3>
+            <div id="faq-4" class="accordion-collapse collapse" data-bs-parent="#accordeon-faq">
+              <div class="accordion-body">Notre équipe support (7 j/7, réponse en moins de 2 h) vous accompagne : médiation, éléments du dossier (devis, échanges horodatés) et, si nécessaire, orientation vers les recours adaptés.</div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CTA FINALE ==================== -->
+  <section class="cta-finale" aria-labelledby="titre-cta">
+    <div class="conteneur cta-finale__int">
+      <div>
+        <h2 id="titre-cta">Prêt à démarrer votre projet ?</h2>
+        <p>Publiez votre demande gratuitement — les artisans de votre zone vous répondent sous 48 h.</p>
+      </div>
+      <div class="cta-finale__boutons">
+        <a class="btn-site-encre" href="inscription.html">Publier ma demande <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn-site-blanc" href="client-trouver-artisan.html">Parcourir les artisans</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="pied">
+  <div class="conteneur">
+    <div class="pied__haut">
+      <div class="pied__marque">
+        <a href="accueil.html" class="entete__logo" aria-label="TrouveMoi Prestataires — accueil">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 4C14.6 4 7 11.6 7 21c0 11.8 17 23 17 23s17-11.2 17-23C41 11.6 33.4 4 24 4z" fill="#FF8A1E" stroke="#0A1633" stroke-width="3.4" stroke-linejoin="round"/><circle cx="24" cy="20.5" r="6.6" fill="#fff"/></svg>
+          <span><span class="nom">TrouveMoi</span><br><span class="sous">Prestataires</span></span>
+        </a>
+        <p>La marketplace française qui met en relation particuliers et artisans vérifiés. Trouvez. Réservez. Réalisez.</p>
+        <div class="pied__reseaux">
+          <a class="pied__reseau" href="#" aria-label="Facebook"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 8h3V4.5h-3c-2.5 0-4.5 2-4.5 4.5v2H7v3.5h2.5V22h3.5v-7.5h3l.5-3.5h-3.5V9c0-.6.4-1 1-1z"/></svg></a>
+          <a class="pied__reseau" href="#" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg></a>
+          <a class="pied__reseau" href="#" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.5 8.5v12H3v-12zM4.75 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4zM10 8.5h3.3v1.7c.5-1 1.8-2 3.7-2 3 0 4 1.9 4 5v7.3h-3.5v-6.5c0-1.6-.4-2.7-1.9-2.7-1.3 0-2.1.9-2.1 2.7v6.5H10z"/></svg></a>
+          <a class="pied__reseau" href="#" aria-label="YouTube"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12c0-2.4-.3-4-.6-4.8a2.5 2.5 0 0 0-1.6-1.6C18.4 5.3 12 5.3 12 5.3s-6.4 0-7.8.3a2.5 2.5 0 0 0-1.6 1.6C2.3 8 2 9.6 2 12s.3 4 .6 4.8c.3.8.8 1.3 1.6 1.6 1.4.3 7.8.3 7.8.3s6.4 0 7.8-.3a2.5 2.5 0 0 0 1.6-1.6c.3-.8.6-2.4.6-4.8zM10 15.5v-7l6 3.5z"/></svg></a>
+        </div>
+      </div>
+
+      <nav class="pied__col" aria-label="Particuliers">
+        <h4>Particuliers</h4>
+        <nav>
+          <a href="#comment-ca-marche">Comment ça marche</a>
+          <a href="#categories">Toutes les catégories</a>
+          <a href="client-trouver-artisan.html">Trouver un artisan</a>
+          <a href="inscription.html">Publier une demande</a>
+          <a href="#temoignages">Avis clients</a>
+        </nav>
+      </nav>
+
+      <nav class="pied__col" aria-label="Professionnels">
+        <h4>Professionnels</h4>
+        <nav>
+          <a href="inscription.html">Devenir prestataire</a>
+          <a href="mon-abonnement.html">Tarifs &amp; abonnements</a>
+          <a href="dashboard-artisan.html">Espace pro</a>
+          <a href="#avantages">Charte qualité</a>
+          <a href="#faq">Centre de ressources</a>
+        </nav>
+      </nav>
+
+      <nav class="pied__col" aria-label="TrouveMoi">
+        <h4>TrouveMoi</h4>
+        <nav>
+          <a href="#">À propos</a>
+          <a href="#">Blog &amp; conseils</a>
+          <a href="#">Presse</a>
+          <a href="#">Carrières</a>
+          <a href="#faq">Besoin d'aide ?</a>
+        </nav>
+      </nav>
+    </div>
+
+    <div class="pied__bas">
+      <span>© 2024 TrouveMoi.com — Trouvez. Réservez. Réalisez.</span>
+      <nav aria-label="Liens légaux">
+        <a href="#">Conditions générales</a>
+        <a href="#">Confidentialité</a>
+        <a href="#">Cookies</a>
+        <a href="#">Mentions légales</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

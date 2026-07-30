@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Messages — Plomberie Express — TrouveMoi Prestataires</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dash-body">
+
+<div class="dash-layout">
+
+<!-- ============ BARRE HAUTE ============ -->
+  <header class="topbar">
+    <button class="topbar__burger" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-label="Ouvrir le menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    <a href="#" class="topbar__logo">
+      <svg width="38" height="38" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 4C14.6 4 7 11.6 7 21c0 11.8 17 23 17 23s17-11.2 17-23C41 11.6 33.4 4 24 4z" fill="#FF8A1E" stroke="#0A1633" stroke-width="3.4" stroke-linejoin="round"/><circle cx="24" cy="20.5" r="6.6" fill="#fff"/></svg>
+      <span><span class="topbar__name">TrouveMoi</span><br><span class="topbar__sub">Prestataires</span></span>
+    </a>
+
+    <div class="topbar__search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="search" placeholder="Rechercher une demande, un client, un devis…" aria-label="Rechercher">
+    </div>
+
+    <div class="topbar__actions">
+      <button class="topbar__icone" type="button" aria-label="Notifications (3 non lues)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="topbar__badge">3</span></button>
+      <button class="topbar__icone" type="button" aria-label="Messages (2 non lus)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg><span class="topbar__badge">2</span></button>
+      <button class="topbar__profil" type="button">
+        <span class="avatar avatar--safran">PE</span>
+        <div class="d-none d-md-block"><b>Plomberie Express</b><span>Compte professionnel</span></div>
+        <span class="d-none d-md-flex text-secondary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+      </button>
+    </div>
+  </header>
+
+<!-- ============ SIDEBAR (offcanvas sous lg) ============ -->
+  <aside class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar" aria-label="Navigation principale">
+    <div class="sidebar__profil">
+      <span class="avatar avatar--lg avatar--safran">PE</span>
+      <div>
+        <b>Plomberie Express</b>
+        <span class="chip chip--verifie"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Vérifié</span>
+      </div>
+    </div>
+
+    <p class="sidebar__label">Principal</p>
+    <nav class="sidebar__nav" aria-label="Sections principales">
+          <a href="dashboard-artisan.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Tableau de bord</a>
+          <a href="mes-demandes.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M7 11h10M7 15h6"/></svg>Mes demandes<span class="sidebar__badge">12</span></a>
+          <a href="mes-devis.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg>Mes devis</a>
+          <a href="mes-chantiers.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20M4 20V9l8-6 8 6v11"/><path d="M9 20v-6h6v6"/></svg>Mes chantiers</a>
+          <a href="messages.html" class="sidebar__link actif" aria-current="page"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Messages<span class="sidebar__badge">3</span></a>
+          <a href="mes-avis.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>Mes avis</a>
+    </nav>
+
+    <p class="sidebar__label">Organisation</p>
+    <nav class="sidebar__nav" aria-label="Organisation">
+          <a href="calendrier.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Calendrier</a>
+          <a href="statistiques.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Statistiques</a>
+    </nav>
+
+    <p class="sidebar__label">Compte</p>
+    <nav class="sidebar__nav" aria-label="Compte">
+          <a href="mon-abonnement.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Mon abonnement</a>
+          <a href="parametres.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.5 1h.2a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Paramètres</a>
+          <a href="connexion.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>Déconnexion</a>
+    </nav>
+
+    <div class="sidebar__aide mt-3 mt-lg-auto">
+      <b>Besoin d'aide ?</b>
+      <p>Notre équipe support répond en moins de 2 h, 7 j/7.</p>
+      <button class="btn-support" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="14" width="5" height="6" rx="2"/><rect x="17" y="14" width="5" height="6" rx="2"/></svg> Contacter le support</button>
+    </div>
+  </aside>
+
+  <!-- ============ PANNEAU PRINCIPAL ============ -->
+  <main class="dash-panel">
+
+    <div class="dash-header">
+      <div>
+        <h1>Messages</h1>
+        <p>2 conversations non lues — temps de réponse moyen : 1 h 45.</p>
+      </div>
+    </div>
+
+    <div class="msg-layout" id="msg-layout">
+
+      <!-- Liste des conversations -->
+      <aside class="msg-liste">
+        <div class="msg-liste__entete">
+          <div class="filtres__recherche">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" placeholder="Rechercher une conversation…" aria-label="Rechercher une conversation">
+          </div>
+        </div>
+        <div class="msg-liste__scroll">
+          <button class="conversation actif non-lu" type="button">
+            <span class="avatar avatar--safran">SM</span>
+            <span class="conversation__corps">
+              <span class="conversation__haut"><b>Sophie Martin</b><span class="conversation__quand">10:30</span></span>
+              <span class="conversation__sujet">Rénovation salle de bain — Lyon 3e</span>
+              <p class="conversation__apercu">Parfait, je vous confirme le rendez-vous de demain 14 h.</p>
+            </span>
+            <span class="conversation__pastille">1</span>
+          </button>
+          <button class="conversation non-lu" type="button">
+            <span class="avatar avatar--bleu">MD</span>
+            <span class="conversation__corps">
+              <span class="conversation__haut"><b>Michel Dupont</b><span class="conversation__quand">09:12</span></span>
+              <span class="conversation__sujet">Fuite d'eau — Villeurbanne</span>
+              <p class="conversation__apercu">Merci pour votre réactivité, voici les photos sous l'évier…</p>
+            </span>
+            <span class="conversation__pastille">2</span>
+          </button>
+          <button class="conversation" type="button">
+            <span class="avatar avatar--vert">NK</span>
+            <span class="conversation__corps">
+              <span class="conversation__haut"><b>Nadia Karim</b><span class="conversation__quand">Hier</span></span>
+              <span class="conversation__sujet">Salle d'eau studio — Bron</span>
+              <p class="conversation__apercu">Le carrelage livré ce matin correspond bien à la référence.</p>
+            </span>
+            
+          </button>
+          <button class="conversation" type="button">
+            <span class="avatar avatar--violet">CP</span>
+            <span class="conversation__corps">
+              <span class="conversation__haut"><b>Camille Petit · Syndic</b><span class="conversation__quand">Hier</span></span>
+              <span class="conversation__sujet">Colonne d'évacuation — Lyon 8e</span>
+              <p class="conversation__apercu">L'accès aux caves sera ouvert dès 8 h lundi.</p>
+            </span>
+            
+          </button>
+          <button class="conversation" type="button">
+            <span class="avatar avatar--encre">JM</span>
+            <span class="conversation__corps">
+              <span class="conversation__haut"><b>Julien Moreau</b><span class="conversation__quand">15/05</span></span>
+              <span class="conversation__sujet">Robinetterie cuisine — Lyon 6e</span>
+              <p class="conversation__apercu">Tout fonctionne parfaitement, merci encore !</p>
+            </span>
+            
+          </button>
+          <button class="conversation" type="button">
+            <span class="avatar avatar--bleu">TL</span>
+            <span class="conversation__corps">
+              <span class="conversation__haut"><b>Thomas Legrand</b><span class="conversation__quand">14/05</span></span>
+              <span class="conversation__sujet">Entretien chaudière — Caluire</span>
+              <p class="conversation__apercu">Bien reçu le certificat, bonne journée.</p>
+            </span>
+            
+          </button>
+        </div>
+      </aside>
+
+      <!-- Fil de discussion -->
+      <section class="msg-fil" aria-label="Conversation avec Sophie Martin">
+        <div class="msg-fil__entete">
+          <button class="btn-icone msg-fil__retour" type="button" id="btn-retour" aria-label="Retour aux conversations"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
+          <span class="avatar avatar--safran">SM</span>
+          <div>
+            <b>Sophie Martin</b>
+            <span>Rénovation salle de bain — Lyon 3e · <span class="en-ligne">En ligne</span></span>
+          </div>
+          <div class="msg-fil__actions">
+            <button class="btn-icone" type="button" aria-label="Appeler"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.8a2 2 0 0 1-.4 2.1L8 10a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.4c.9.3 1.8.5 2.8.7a2 2 0 0 1 1.7 2z"/></svg></button>
+            <button class="btn-icone" type="button" aria-label="Voir la demande"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg></button>
+          </div>
+        </div>
+
+        <div class="msg-fil__scroll" id="fil-messages">
+          <span class="msg-jour">Hier — 15 mai</span>
+
+          <div class="bulle bulle--recu">
+            <div class="bulle__contenu">Bonjour, j'ai bien reçu votre devis pour la salle de bain. Le montant me convient, mais serait-il possible de commencer début juin plutôt que fin mai ?</div>
+            <span class="bulle__meta">17:42</span>
+          </div>
+
+          <div class="bulle bulle--envoye">
+            <div class="bulle__contenu">Bonjour Madame Martin, merci pour votre retour ! Aucun souci : je vous propose un démarrage le lundi 3 juin, pour une livraison le 14 juin. Je vous renvoie le devis mis à jour.</div>
+            <div class="bulle__piece"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg><span><b>Devis DEV-2024-058 — v2.pdf</b><span>3 450,00 € TTC · 2 pages</span></span></div>
+            <span class="bulle__meta">18:05 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 13 4 4L14 9"/><path d="m10 13 4 4 8-8"/></svg></span>
+          </div>
+
+          <span class="msg-jour">Aujourd'hui — 16 mai</span>
+
+          <div class="bulle bulle--recu">
+            <div class="bulle__contenu">C'est parfait pour le 3 juin ! J'ai signé le devis en ligne ce matin. Est-ce qu'on garde le rendez-vous de demain 14 h pour valider les derniers détails techniques ?</div>
+            <span class="bulle__meta">10:28</span>
+          </div>
+
+          <div class="bulle bulle--recu">
+            <div class="bulle__contenu">Parfait, je vous confirme le rendez-vous de demain 14 h.</div>
+            <span class="bulle__meta">10:30</span>
+          </div>
+        </div>
+
+        <div class="msg-composeur">
+          <button class="btn-icone" type="button" aria-label="Joindre un fichier"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 12-8.5 8.5a5 5 0 0 1-7-7L14 5a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L16 7"/></svg></button>
+          <textarea class="form-control" id="champ-message" rows="1" placeholder="Écrivez votre message…" aria-label="Votre message"></textarea>
+          <button class="btn-envoyer" type="button" id="btn-envoyer" aria-label="Envoyer le message"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg></button>
+        </div>
+      </section>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+// ============ Composeur : envoi de message ============
+const fil = document.getElementById('fil-messages');
+const champ = document.getElementById('champ-message');
+const btnEnvoyer = document.getElementById('btn-envoyer');
+
+function envoyerMessage() {
+  const texte = champ.value.trim();
+  if (!texte) return;
+  const bulle = document.createElement('div');
+  bulle.className = 'bulle bulle--envoye';
+  const contenu = document.createElement('div');
+  contenu.className = 'bulle__contenu';
+  contenu.textContent = texte;
+  const meta = document.createElement('span');
+  meta.className = 'bulle__meta';
+  meta.textContent = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  bulle.append(contenu, meta);
+  fil.appendChild(bulle);
+  champ.value = '';
+  champ.style.height = 'auto';
+  fil.scrollTop = fil.scrollHeight;
+}
+btnEnvoyer.addEventListener('click', envoyerMessage);
+champ.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); envoyerMessage(); }
+});
+champ.addEventListener('input', () => {
+  champ.style.height = 'auto';
+  champ.style.height = Math.min(champ.scrollHeight, 110) + 'px';
+});
+fil.scrollTop = fil.scrollHeight;
+
+// ============ Mobile : bascule liste / fil ============
+const layout = document.getElementById('msg-layout');
+document.getElementById('btn-retour').addEventListener('click', () => layout.classList.add('voir-liste'));
+document.querySelectorAll('.conversation').forEach(c => c.addEventListener('click', () => {
+  document.querySelectorAll('.conversation').forEach(x => x.classList.toggle('actif', x === c));
+  layout.classList.remove('voir-liste');
+}));
+
+</script>
+</body>
+</html>

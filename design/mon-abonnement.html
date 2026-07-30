@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon abonnement — Plomberie Express — TrouveMoi Prestataires</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dash-body">
+
+<div class="dash-layout">
+
+<!-- ============ BARRE HAUTE ============ -->
+  <header class="topbar">
+    <button class="topbar__burger" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-label="Ouvrir le menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    <a href="#" class="topbar__logo">
+      <svg width="38" height="38" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 4C14.6 4 7 11.6 7 21c0 11.8 17 23 17 23s17-11.2 17-23C41 11.6 33.4 4 24 4z" fill="#FF8A1E" stroke="#0A1633" stroke-width="3.4" stroke-linejoin="round"/><circle cx="24" cy="20.5" r="6.6" fill="#fff"/></svg>
+      <span><span class="topbar__name">TrouveMoi</span><br><span class="topbar__sub">Prestataires</span></span>
+    </a>
+
+    <div class="topbar__search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="search" placeholder="Rechercher une demande, un client, un devis…" aria-label="Rechercher">
+    </div>
+
+    <div class="topbar__actions">
+      <button class="topbar__icone" type="button" aria-label="Notifications (3 non lues)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="topbar__badge">3</span></button>
+      <button class="topbar__icone" type="button" aria-label="Messages (2 non lus)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg><span class="topbar__badge">2</span></button>
+      <button class="topbar__profil" type="button">
+        <span class="avatar avatar--safran">PE</span>
+        <div class="d-none d-md-block"><b>Plomberie Express</b><span>Compte professionnel</span></div>
+        <span class="d-none d-md-flex text-secondary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+      </button>
+    </div>
+  </header>
+
+<!-- ============ SIDEBAR (offcanvas sous lg) ============ -->
+  <aside class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar" aria-label="Navigation principale">
+    <div class="sidebar__profil">
+      <span class="avatar avatar--lg avatar--safran">PE</span>
+      <div>
+        <b>Plomberie Express</b>
+        <span class="chip chip--verifie"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Vérifié</span>
+      </div>
+    </div>
+
+    <p class="sidebar__label">Principal</p>
+    <nav class="sidebar__nav" aria-label="Sections principales">
+          <a href="dashboard-artisan.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Tableau de bord</a>
+          <a href="mes-demandes.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M7 11h10M7 15h6"/></svg>Mes demandes<span class="sidebar__badge">12</span></a>
+          <a href="mes-devis.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg>Mes devis</a>
+          <a href="mes-chantiers.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20M4 20V9l8-6 8 6v11"/><path d="M9 20v-6h6v6"/></svg>Mes chantiers</a>
+          <a href="messages.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Messages<span class="sidebar__badge">3</span></a>
+          <a href="mes-avis.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>Mes avis</a>
+    </nav>
+
+    <p class="sidebar__label">Organisation</p>
+    <nav class="sidebar__nav" aria-label="Organisation">
+          <a href="calendrier.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Calendrier</a>
+          <a href="statistiques.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Statistiques</a>
+    </nav>
+
+    <p class="sidebar__label">Compte</p>
+    <nav class="sidebar__nav" aria-label="Compte">
+          <a href="mon-abonnement.html" class="sidebar__link actif" aria-current="page"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Mon abonnement</a>
+          <a href="parametres.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.5 1h.2a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Paramètres</a>
+          <a href="connexion.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>Déconnexion</a>
+    </nav>
+
+    <div class="sidebar__aide mt-3 mt-lg-auto">
+      <b>Besoin d'aide ?</b>
+      <p>Notre équipe support répond en moins de 2 h, 7 j/7.</p>
+      <button class="btn-support" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="14" width="5" height="6" rx="2"/><rect x="17" y="14" width="5" height="6" rx="2"/></svg> Contacter le support</button>
+    </div>
+  </aside>
+
+  <!-- ============ PANNEAU PRINCIPAL ============ -->
+  <main class="dash-panel">
+
+    <div class="dash-header">
+      <div>
+        <h1>Mon abonnement</h1>
+        <p>Offre Premium active — prochain renouvellement le 12 juin 2024.</p>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-lg-7">
+        <div class="dash-card h-100">
+          <div class="abo-actuel">
+            <span class="abo-actuel__icone"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 8 4 5 5-7 5 7 4-5v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+            <div class="abo-actuel__infos">
+              <b>Offre Premium</b><span class="chip chip--premium ms-2">ACTIVE</span>
+              <p>Souscrite le 12/11/2023 · Renouvellement automatique le <b>12/06/2024</b></p>
+            </div>
+            <div class="abo-actuel__prix"><b>39 €</b><span>/ mois HT</span></div>
+          </div>
+          <hr class="my-3">
+          <div class="row g-2 text-center">
+            <div class="col-4"><div class="kpi__valeur">248</div><div class="kpi__libelle">Vues ce mois</div></div>
+            <div class="col-4"><div class="kpi__valeur">12</div><div class="kpi__libelle">Demandes en avant-première</div></div>
+            <div class="col-4"><div class="kpi__valeur">+ 34 %</div><div class="kpi__libelle">Visibilité vs offre Essentiel</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-5">
+        <div class="dash-card h-100">
+          <div class="dash-card__header"><h2>Moyen de paiement</h2></div>
+          <div class="moyen-paiement">
+            <span class="moyen-paiement__carte">VISA</span>
+            <div><b>Visa se terminant par 4218</b><span>Expire 08/2026 · Plomberie Express SARL</span></div>
+            <button class="btn btn-dash-ghost btn-sm" type="button">Modifier</button>
+          </div>
+          <p class="small text-secondary mt-3 mb-0">Prochain prélèvement de <b class="text-dark">46,80 € TTC</b> le 12/06/2024. Annulable à tout moment, effectif en fin de période.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="h5 mb-3 mt-2">Changer d'offre</h2>
+    <div class="row g-3 mb-4 pt-2">
+      <div class="col-12 col-md-4">
+        <div class="plan">
+          
+          <span class="plan__nom">Essentiel</span>
+          <p class="plan__desc">Pour démarrer et recevoir vos premières demandes.</p>
+          <div class="plan__prix"><b>19 €</b><span>/ mois HT · sans engagement</span></div>
+          <div class="plan__liste">
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Profil professionnel vérifié</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Réception des demandes de votre zone</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Messagerie clients illimitée</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>5 photos de réalisations</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Devis illimités</span>
+          </div>
+          <button class="btn btn-dash-ghost" type="button">Passer à Essentiel</button>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="plan plan--actif">
+          <span class="plan__badge plan__badge--actuel">VOTRE OFFRE ACTUELLE</span>
+          <span class="plan__nom">Premium</span>
+          <p class="plan__desc">Pour développer votre activité et gagner en visibilité.</p>
+          <div class="plan__prix"><b>39 €</b><span>/ mois HT · sans engagement</span></div>
+          <div class="plan__liste">
+            <span class="inclus-titre">Tout Essentiel, plus :</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Demandes en avant-première (24 h)</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Badge « Prestataire vérifié » renforcé</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Profil mis en avant dans votre catégorie</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Statistiques avancées</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>30 photos de réalisations</span>
+          </div>
+          <button class="btn btn-dash-ghost" type="button" disabled>Votre offre actuelle</button>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="plan">
+          <span class="plan__badge plan__badge--populaire">LE PLUS CHOISI</span>
+          <span class="plan__nom">Excellence</span>
+          <p class="plan__desc">Pour dominer votre secteur et maximiser vos conversions.</p>
+          <div class="plan__prix"><b>69 €</b><span>/ mois HT · sans engagement</span></div>
+          <div class="plan__liste">
+            <span class="inclus-titre">Tout Premium, plus :</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Position en tête de catégorie</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Accès instantané à toutes les demandes</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Support prioritaire 7 j/7</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Prise de rendez-vous en ligne</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Photos et vidéos illimitées</span>
+          </div>
+          <button class="btn btn-dash-primary" type="button">Passer à Excellence</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-card__header"><h2 class="h5 mb-0">Historique de facturation</h2></div>
+    <div class="tableau-wrap mt-2">
+      <table class="table-devis table-devis--compact">
+        <thead>
+          <tr>
+            <th scope="col">N° facture</th>
+            <th scope="col">Date</th>
+            <th scope="col">Libellé</th>
+            <th scope="col">Montant HT</th>
+            <th scope="col">Statut</th>
+            <th scope="col" class="text-end">PDF</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr>
+              <td><span class="devis-ref">F-2024-0512</span></td>
+              <td><span class="devis-date"><b>12/05/2024</b></span></td>
+              <td><span class="devis-prestation">Abonnement Premium — mai 2024</span></td>
+              <td><span class="devis-montant">39,00 €</span></td>
+              <td><span class="chip chip--accepte">PAYÉE</span></td>
+              <td><div class="actions-ligne"><button class="btn-icone" type="button" aria-label="Télécharger la facture F-2024-0512" title="PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 14h6M9 17h4"/></svg></button></div></td>
+            </tr>
+            <tr>
+              <td><span class="devis-ref">F-2024-0412</span></td>
+              <td><span class="devis-date"><b>12/04/2024</b></span></td>
+              <td><span class="devis-prestation">Abonnement Premium — avril 2024</span></td>
+              <td><span class="devis-montant">39,00 €</span></td>
+              <td><span class="chip chip--accepte">PAYÉE</span></td>
+              <td><div class="actions-ligne"><button class="btn-icone" type="button" aria-label="Télécharger la facture F-2024-0412" title="PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 14h6M9 17h4"/></svg></button></div></td>
+            </tr>
+            <tr>
+              <td><span class="devis-ref">F-2024-0312</span></td>
+              <td><span class="devis-date"><b>12/03/2024</b></span></td>
+              <td><span class="devis-prestation">Abonnement Premium — mars 2024</span></td>
+              <td><span class="devis-montant">39,00 €</span></td>
+              <td><span class="chip chip--accepte">PAYÉE</span></td>
+              <td><div class="actions-ligne"><button class="btn-icone" type="button" aria-label="Télécharger la facture F-2024-0312" title="PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 14h6M9 17h4"/></svg></button></div></td>
+            </tr>
+            <tr>
+              <td><span class="devis-ref">F-2024-0212</span></td>
+              <td><span class="devis-date"><b>12/02/2024</b></span></td>
+              <td><span class="devis-prestation">Abonnement Premium — février 2024</span></td>
+              <td><span class="devis-montant">39,00 €</span></td>
+              <td><span class="chip chip--accepte">PAYÉE</span></td>
+              <td><div class="actions-ligne"><button class="btn-icone" type="button" aria-label="Télécharger la facture F-2024-0212" title="PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 14h6M9 17h4"/></svg></button></div></td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="conseil mt-3">
+      <p class="conseil__titre mb-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>Le saviez-vous ?</p>
+      <p>Les prestataires en offre Excellence reçoivent en moyenne 2,4× plus de demandes que l'offre Essentiel. Le passage est immédiat et le prorata calculé automatiquement.</p>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+</script>
+</body>
+</html>

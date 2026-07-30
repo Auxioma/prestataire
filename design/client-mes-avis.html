@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mes avis — Sophie Martin — TrouveMoi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dash-body">
+
+<div class="dash-layout">
+
+<!-- ============ BARRE HAUTE ============ -->
+  <header class="topbar">
+    <button class="topbar__burger" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-label="Ouvrir le menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    <a href="#" class="topbar__logo">
+      <svg width="38" height="38" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 4C14.6 4 7 11.6 7 21c0 11.8 17 23 17 23s17-11.2 17-23C41 11.6 33.4 4 24 4z" fill="#FF8A1E" stroke="#0A1633" stroke-width="3.4" stroke-linejoin="round"/><circle cx="24" cy="20.5" r="6.6" fill="#fff"/></svg>
+      <span><span class="topbar__name">TrouveMoi</span><br><span class="topbar__sub">Prestataires</span></span>
+    </a>
+
+    <div class="topbar__search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="search" placeholder="Rechercher un artisan, une prestation…" aria-label="Rechercher">
+    </div>
+
+    <div class="topbar__actions">
+      <button class="topbar__icone" type="button" aria-label="Notifications (2 non lues)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="topbar__badge">2</span></button>
+      <button class="topbar__icone" type="button" aria-label="Messages (1 non lu)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg><span class="topbar__badge">1</span></button>
+      <button class="topbar__profil" type="button">
+        <span class="avatar avatar--safran">SM</span>
+        <div class="d-none d-md-block"><b>Sophie Martin</b><span>Compte particulier</span></div>
+        <span class="d-none d-md-flex text-secondary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+      </button>
+    </div>
+  </header>
+
+<!-- ============ SIDEBAR (offcanvas sous lg) ============ -->
+  <aside class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar" aria-label="Navigation principale">
+    <div class="sidebar__profil">
+      <span class="avatar avatar--lg avatar--safran">SM</span>
+      <div>
+        <b>Sophie Martin</b>
+        <span class="chip chip--verifie"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Profil vérifié</span>
+      </div>
+    </div>
+
+    <p class="sidebar__label">Principal</p>
+    <nav class="sidebar__nav" aria-label="Sections principales">
+          <a href="dashboard-client.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Tableau de bord</a>
+          <a href="client-mes-demandes.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M7 11h10M7 15h6"/></svg>Mes demandes<span class="sidebar__badge">2</span></a>
+          <a href="client-devis-recus.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg>Devis reçus<span class="sidebar__badge">3</span></a>
+          <a href="client-mes-projets.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20M4 20V9l8-6 8 6v11"/><path d="M9 20v-6h6v6"/></svg>Mes projets</a>
+          <a href="client-messages.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Messages<span class="sidebar__badge">1</span></a>
+          <a href="client-mes-avis.html" class="sidebar__link actif" aria-current="page"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>Mes avis</a>
+    </nav>
+
+    <p class="sidebar__label">Découvrir</p>
+    <nav class="sidebar__nav" aria-label="Découvrir">
+          <a href="client-trouver-artisan.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Trouver un artisan</a>
+          <a href="client-favoris.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21C7 16.5 2 13 2 8.5A4.5 4.5 0 0 1 6.5 4c2 0 3.7 1 5.5 3 1.8-2 3.5-3 5.5-3A4.5 4.5 0 0 1 22 8.5c0 4.5-5 8-10 12.5z"/></svg>Mes favoris</a>
+    </nav>
+
+    <p class="sidebar__label">Compte</p>
+    <nav class="sidebar__nav" aria-label="Compte">
+          <a href="client-parametres.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.5 1h.2a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Paramètres</a>
+          <a href="connexion.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>Déconnexion</a>
+    </nav>
+
+    <div class="sidebar__aide mt-3 mt-lg-auto">
+      <b>Un projet en tête ?</b>
+      <p>Décrivez vos travaux : recevez jusqu'à 5 devis d'artisans vérifiés, gratuitement.</p>
+      <button class="btn-support" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Publier une demande</button>
+    </div>
+  </aside>
+
+  <!-- ============ PANNEAU PRINCIPAL ============ -->
+  <main class="dash-panel">
+
+    <div class="dash-header">
+      <div>
+        <h1>Mes avis</h1>
+        <p>Vous avez publié 2 avis — ils aident la communauté à choisir en confiance.</p>
+      </div>
+    </div>
+
+    <div class="avis-invite mb-4">
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <span class="avatar avatar--encre">PE</span>
+        <div class="flex-grow-1">
+          <b class="d-block">Comment s'est passé votre débouchage avec Plomberie Express ?</b>
+          <span class="small text-secondary">Intervention du 12 mars 2024 — votre avis prend 2 minutes.</span>
+        </div>
+        <div class="saisie-etoiles" role="radiogroup" aria-label="Votre note sur 5">
+          <button type="button" data-note="1" aria-label="1 étoile"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></button>
+          <button type="button" data-note="2" aria-label="2 étoiles"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></button>
+          <button type="button" data-note="3" aria-label="3 étoiles"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></button>
+          <button type="button" data-note="4" aria-label="4 étoiles"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></button>
+          <button type="button" data-note="5" aria-label="5 étoiles"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></button>
+        </div>
+      </div>
+      <div class="avis-invite__zone" id="zone-avis">
+        <textarea class="form-control" rows="3" placeholder="Racontez votre expérience : ponctualité, qualité du travail, propreté du chantier…" aria-label="Votre avis"></textarea>
+        <div class="d-flex gap-2 justify-content-end mt-2">
+          <button class="btn btn-dash-ghost" type="button" id="btn-annuler-avis">Annuler</button>
+          <button class="btn btn-dash-primary" type="button">Publier mon avis</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-card__header"><h2 class="h5 mb-0">Avis publiés</h2></div>
+    <div class="d-grid gap-3 mt-2">
+      <article class="carte-avis-page">
+        <div class="carte-avis-page__haut">
+          <span class="avatar avatar--encre">PE</span>
+          <div class="carte-avis-page__id">
+            <b>Plomberie Express</b>
+            <span>Débouchage évier de cuisine · mars 2024</span>
+          </div>
+          <div class="carte-avis-page__droite">
+            <span class="etoiles"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg></span>
+            <p>14/03/2024</p>
+          </div>
+        </div>
+        <p class="carte-avis-page__texte">&ldquo;Intervention rapide et efficace, moins de 24 h après ma demande. Tarif annoncé respecté, travail propre. Je fais de nouveau appel à eux pour ma salle de bain !&rdquo;</p>
+        <div class="avis-reponse">
+          <b><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 6 6v3"/></svg>Réponse de Plomberie Express</b>
+          <p>Merci Madame Martin pour votre confiance renouvelée, au plaisir de démarrer votre salle de bain !</p>
+        </div>
+        <div class="carte-demande__actions mt-3">
+          <button class="btn btn-dash-ghost btn-sm" type="button"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>Modifier mon avis</button>
+        </div>
+      </article>
+
+      <article class="carte-avis-page">
+        <div class="carte-avis-page__haut">
+          <span class="avatar avatar--bleu">EL</span>
+          <div class="carte-avis-page__id">
+            <b>Élec+ Lyon</b>
+            <span>Remplacement du tableau électrique · janvier 2024</span>
+          </div>
+          <div class="carte-avis-page__droite">
+            <span class="etoiles"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z" fill="currentColor" stroke="none"/></svg><span class="text-secondary opacity-50"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg></span></span>
+            <p>22/01/2024</p>
+          </div>
+        </div>
+        <p class="carte-avis-page__texte">&ldquo;Très bon travail, électricien compétent et pédagogue. Un jour de retard sur la date prévue, mais j'ai été prévenue à l'avance. Je recommande.&rdquo;</p>
+        <div class="carte-demande__actions mt-3">
+          <button class="btn btn-dash-ghost btn-sm" type="button"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>Modifier mon avis</button>
+        </div>
+      </article>
+    </div>
+
+    <div class="conseil mt-3">
+      <p class="conseil__titre mb-0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.9.7 1.5 1.3 1.5 2.1h4c0-.8.6-1.4 1.5-2.1A6 6 0 0 0 12 3z"/></svg>Pourquoi laisser un avis ?</p>
+      <p>Vos avis sont vérifiés et liés à une prestation réelle : ils aident les autres particuliers à choisir, et récompensent les artisans sérieux.</p>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+// ============ Saisie de note à étoiles ============
+const etoilesBtns = document.querySelectorAll('.saisie-etoiles button');
+const zoneAvis = document.getElementById('zone-avis');
+etoilesBtns.forEach(b => b.addEventListener('click', () => {
+  const note = parseInt(b.dataset.note, 10);
+  etoilesBtns.forEach(x => x.classList.toggle('est-actif', parseInt(x.dataset.note, 10) <= note));
+  zoneAvis.classList.add('est-ouvert');
+}));
+document.getElementById('btn-annuler-avis').addEventListener('click', () => {
+  zoneAvis.classList.remove('est-ouvert');
+  etoilesBtns.forEach(x => x.classList.remove('est-actif'));
+});
+
+</script>
+</body>
+</html>

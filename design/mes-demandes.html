@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mes demandes — Plomberie Express — TrouveMoi Prestataires</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dash-body">
+
+<div class="dash-layout">
+
+  <!-- ============ BARRE HAUTE ============ -->
+  <header class="topbar">
+    <button class="topbar__burger" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-label="Ouvrir le menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    <a href="#" class="topbar__logo">
+      <svg width="38" height="38" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 4C14.6 4 7 11.6 7 21c0 11.8 17 23 17 23s17-11.2 17-23C41 11.6 33.4 4 24 4z" fill="#FF8A1E" stroke="#0A1633" stroke-width="3.4" stroke-linejoin="round"/><circle cx="24" cy="20.5" r="6.6" fill="#fff"/></svg>
+      <span><span class="topbar__name">TrouveMoi</span><br><span class="topbar__sub">Prestataires</span></span>
+    </a>
+
+    <div class="topbar__search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="search" placeholder="Rechercher une demande, un client, un devis…" aria-label="Rechercher">
+    </div>
+
+    <div class="topbar__actions">
+      <button class="topbar__icone" type="button" aria-label="Notifications (3 non lues)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="topbar__badge">3</span></button>
+      <button class="topbar__icone" type="button" aria-label="Messages (2 non lus)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg><span class="topbar__badge">2</span></button>
+      <button class="topbar__profil" type="button">
+        <span class="avatar avatar--safran">PE</span>
+        <div class="d-none d-md-block"><b>Plomberie Express</b><span>Compte professionnel</span></div>
+        <span class="d-none d-md-flex text-secondary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ SIDEBAR (offcanvas sous lg) ============ -->
+  <aside class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar" aria-label="Navigation principale">
+    <div class="sidebar__profil">
+      <span class="avatar avatar--lg avatar--safran">PE</span>
+      <div>
+        <b>Plomberie Express</b>
+        <span class="chip chip--verifie"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Vérifié</span>
+      </div>
+    </div>
+
+    <p class="sidebar__label">Principal</p>
+    <nav class="sidebar__nav" aria-label="Sections principales">
+          <a href="dashboard-artisan.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Tableau de bord</a>
+          <a href="#" class="sidebar__link actif" aria-current="page"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M7 11h10M7 15h6"/></svg>Mes demandes<span class="sidebar__badge">12</span></a>
+          <a href="mes-devis.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg>Mes devis</a>
+          <a href="mes-chantiers.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20M4 20V9l8-6 8 6v11"/><path d="M9 20v-6h6v6"/></svg>Mes chantiers</a>
+          <a href="messages.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Messages<span class="sidebar__badge">3</span></a>
+          <a href="mes-avis.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>Mes avis</a>
+    </nav>
+
+    <p class="sidebar__label">Organisation</p>
+    <nav class="sidebar__nav" aria-label="Organisation">
+          <a href="calendrier.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Calendrier</a>
+          <a href="statistiques.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Statistiques</a>
+    </nav>
+
+    <p class="sidebar__label">Compte</p>
+    <nav class="sidebar__nav" aria-label="Compte">
+          <a href="mon-abonnement.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Mon abonnement</a>
+          <a href="parametres.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.5 1h.2a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Paramètres</a>
+          <a href="connexion.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>Déconnexion</a>
+    </nav>
+
+    <div class="sidebar__aide mt-3 mt-lg-auto">
+      <b>Besoin d'aide ?</b>
+      <p>Notre équipe support répond en moins de 2 h, 7 j/7.</p>
+      <button class="btn-support" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="14" width="5" height="6" rx="2"/><rect x="17" y="14" width="5" height="6" rx="2"/></svg> Contacter le support</button>
+    </div>
+  </aside>
+
+  <!-- ============ PANNEAU PRINCIPAL ============ -->
+  <main class="dash-panel">
+
+    <!-- En-tête -->
+    <div class="dash-header">
+      <div>
+        <h1>Mes demandes</h1>
+        <p>3 nouvelles demandes attendent votre réponse — taux de réponse actuel : 92 %.</p>
+      </div>
+      <div class="dash-header__actions">
+        <button class="btn btn-dash-ghost" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>Exporter</button>
+      </div>
+    </div>
+
+    <!-- Onglets de statut -->
+    <div class="tabs-statut" role="tablist" aria-label="Filtrer par statut">
+      <button class="tabs-statut__onglet actif" type="button" data-filtre="tout" role="tab" aria-selected="true">Toutes <span class="tabs-statut__compteur">8</span></button>
+      <button class="tabs-statut__onglet" type="button" data-filtre="nouvelle" role="tab" aria-selected="false">Nouvelles <span class="tabs-statut__compteur">3</span></button>
+      <button class="tabs-statut__onglet" type="button" data-filtre="repondue" role="tab" aria-selected="false">Répondues <span class="tabs-statut__compteur">2</span></button>
+      <button class="tabs-statut__onglet" type="button" data-filtre="devis" role="tab" aria-selected="false">Devis envoyé <span class="tabs-statut__compteur">2</span></button>
+      <button class="tabs-statut__onglet" type="button" data-filtre="expiree" role="tab" aria-selected="false">Expirées <span class="tabs-statut__compteur">1</span></button>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filtres">
+      <div class="filtres__recherche">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" id="recherche-demandes" placeholder="Rechercher par titre, client ou ville…" aria-label="Rechercher dans les demandes">
+      </div>
+      <select class="form-select" aria-label="Filtrer par catégorie">
+        <option>Toutes les catégories</option>
+        <option>Salle de bain</option>
+        <option>Dépannage / fuite</option>
+        <option>Chauffage / chauffe-eau</option>
+        <option>Débouchage</option>
+      </select>
+      <select class="form-select" aria-label="Trier">
+        <option>Plus récentes d'abord</option>
+        <option>Plus anciennes d'abord</option>
+        <option>Urgentes d'abord</option>
+        <option>Budget décroissant</option>
+      </select>
+    </div>
+
+    <!-- Liste des demandes -->
+    <div class="d-grid gap-3" id="liste-demandes">
+        <article class="carte-demande" data-statut="nouvelle" data-texte="rénovation complète de salle de bain sophie martin · cliente vérifiée lyon 3e (69003)">
+          <div class="carte-demande__avatar-col"><span class="avatar avatar--safran">SM</span></div>
+          <div class="carte-demande__corps">
+            <div class="carte-demande__haut">
+              <div>
+                <h2>Rénovation complète de salle de bain</h2>
+                <p class="carte-demande__client">Sophie Martin · Cliente vérifiée</p>
+              </div>
+              <div class="carte-demande__statuts"><span class="chip chip--nouvelle">NOUVELLE</span></div>
+            </div>
+            <p class="carte-demande__description">Salle de bain de 6 m² à rénover entièrement : dépose de l'existant, douche à l'italienne, meuble double vasque et carrelage mural. Photos et plans disponibles. Souhaite démarrer courant juin.</p>
+            <div class="carte-demande__meta">
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Lyon 3e (69003)</span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>Budget&nbsp;: <b>2 500 – 4 000 €</b></span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Aujourd'hui · 10:30</span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="m21 15-4.5-4.5L6 21"/></svg><b>4</b>&nbsp;photos</span>
+            </div>
+            <div class="carte-demande__pied">
+              <span class="carte-demande__delai"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Répondez avant demain 10:30 pour garder votre badge « Réponse rapide »</span>
+              <div class="carte-demande__actions">
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Voir le détail</button>
+              <button class="btn btn-dash-primary" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg>Envoyer un devis</button>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="carte-demande" data-statut="nouvelle" data-texte="fuite d'eau sous évier — dépannage michel dupont · cliente vérifiée villeurbanne (69100)">
+          <div class="carte-demande__avatar-col"><span class="avatar avatar--bleu">MD</span></div>
+          <div class="carte-demande__corps">
+            <div class="carte-demande__haut">
+              <div>
+                <h2>Fuite d'eau sous évier — dépannage</h2>
+                <p class="carte-demande__client">Michel Dupont · Cliente vérifiée</p>
+              </div>
+              <div class="carte-demande__statuts"><span class="chip chip--urgent"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>URGENT</span><span class="chip chip--nouvelle">NOUVELLE</span></div>
+            </div>
+            <p class="carte-demande__description">Fuite active sous l'évier de la cuisine, le compteur tourne. Coupure d'eau générale effectuée. Recherche un plombier disponible aujourd'hui ou demain matin au plus tard.</p>
+            <div class="carte-demande__meta">
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Villeurbanne (69100)</span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>Budget&nbsp;: <b>À définir</b></span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Aujourd'hui · 08:15</span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="m21 15-4.5-4.5L6 21"/></svg><b>2</b>&nbsp;photos</span>
+            </div>
+            <div class="carte-demande__pied">
+              <span class="carte-demande__delai"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Demande urgente — intervention souhaitée sous 24 h</span>
+              <div class="carte-demande__actions">
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Voir le détail</button>
+              <button class="btn btn-dash-primary" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg>Envoyer un devis</button>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="carte-demande" data-statut="nouvelle" data-texte="installation d'un chauffe-eau 200 l laura bernard lyon 7e (69007)">
+          <div class="carte-demande__avatar-col"><span class="avatar avatar--vert">LB</span></div>
+          <div class="carte-demande__corps">
+            <div class="carte-demande__haut">
+              <div>
+                <h2>Installation d'un chauffe-eau 200 L</h2>
+                <p class="carte-demande__client">Laura Bernard</p>
+              </div>
+              <div class="carte-demande__statuts"><span class="chip chip--nouvelle">NOUVELLE</span></div>
+            </div>
+            <p class="carte-demande__description">Remplacement d'un chauffe-eau électrique de 200 L en panne (fuite par le groupe de sécurité). Emplacement en cellier, accès facile. Fourniture et pose souhaitées.</p>
+            <div class="carte-demande__meta">
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Lyon 7e (69007)</span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>Budget&nbsp;: <b>600 – 900 €</b></span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Hier · 17:42</span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="m21 15-4.5-4.5L6 21"/></svg><b>3</b>&nbsp;photos</span>
+            </div>
+            <div class="carte-demande__pied">
+              <span class="carte-demande__delai"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Répondez avant demain 17:42</span>
+              <div class="carte-demande__actions">
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Voir le détail</button>
+              <button class="btn btn-dash-primary" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg>Envoyer un devis</button>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="carte-demande" data-statut="devis" data-texte="remplacement robinetterie de cuisine julien moreau lyon 6e (69006)">
+          <div class="carte-demande__avatar-col"><span class="avatar avatar--violet">JM</span></div>
+          <div class="carte-demande__corps">
+            <div class="carte-demande__haut">
+              <div>
+                <h2>Remplacement robinetterie de cuisine</h2>
+                <p class="carte-demande__client">Julien Moreau</p>
+              </div>
+              <div class="carte-demande__statuts"><span class="chip chip--en-cours">DEVIS ENVOYÉ</span></div>
+            </div>
+            <p class="carte-demande__description">Mitigeur de cuisine à remplacer, modèle déjà acheté (Grohe). Prévoir la dépose de l'ancien et le contrôle des flexibles.</p>
+            <div class="carte-demande__meta">
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Lyon 6e (69006)</span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>Budget&nbsp;: <b>Moins de 300 €</b></span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Hier · 09:10</span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="m21 15-4.5-4.5L6 21"/></svg><b>1</b>&nbsp;photo</span>
+            </div>
+            <div class="carte-demande__pied">
+              <span class="meta-item">Demande traitée</span>
+              <div class="carte-demande__actions">
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Voir la conversation</button>
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Voir le devis</button>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="carte-demande" data-statut="devis" data-texte="entretien annuel chaudière gaz thomas legrand caluire-et-cuire (69300)">
+          <div class="carte-demande__avatar-col"><span class="avatar avatar--bleu">TL</span></div>
+          <div class="carte-demande__corps">
+            <div class="carte-demande__haut">
+              <div>
+                <h2>Entretien annuel chaudière gaz</h2>
+                <p class="carte-demande__client">Thomas Legrand</p>
+              </div>
+              <div class="carte-demande__statuts"><span class="chip chip--en-cours">DEVIS ENVOYÉ</span></div>
+            </div>
+            <p class="carte-demande__description">Entretien annuel obligatoire d'une chaudière gaz murale (Saunier Duval, 2019). Certificat d'entretien demandé pour l'assurance.</p>
+            <div class="carte-demande__meta">
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Caluire-et-Cuire (69300)</span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>Budget&nbsp;: <b>90 – 150 €</b></span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>14/05 · 11:26</span>
+              
+            </div>
+            <div class="carte-demande__pied">
+              <span class="meta-item">Demande traitée</span>
+              <div class="carte-demande__actions">
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Voir la conversation</button>
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Voir le devis</button>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="carte-demande" data-statut="repondue" data-texte="débouchage canalisation d'immeuble camille petit · syndic lyon 8e (69008)">
+          <div class="carte-demande__avatar-col"><span class="avatar avatar--vert">CP</span></div>
+          <div class="carte-demande__corps">
+            <div class="carte-demande__haut">
+              <div>
+                <h2>Débouchage canalisation d'immeuble</h2>
+                <p class="carte-demande__client">Camille Petit · Syndic</p>
+              </div>
+              <div class="carte-demande__statuts"><span class="chip chip--repondue">RÉPONDUE</span></div>
+            </div>
+            <p class="carte-demande__description">Colonne d'évacuation partiellement bouchée au 2e étage d'une copropriété. Intervention haute pression probable, accès par les caves.</p>
+            <div class="carte-demande__meta">
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Lyon 8e (69008)</span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>Budget&nbsp;: <b>À définir</b></span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>12/05 · 15:03</span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="m21 15-4.5-4.5L6 21"/></svg><b>2</b>&nbsp;photos</span>
+            </div>
+            <div class="carte-demande__pied">
+              <span class="meta-item">Demande traitée</span>
+              <div class="carte-demande__actions">
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Voir la conversation</button>
+              <button class="btn btn-dash-primary" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg>Envoyer un devis</button>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="carte-demande" data-statut="repondue" data-texte="création d'une salle d'eau dans un studio nadia karim bron (69500)">
+          <div class="carte-demande__avatar-col"><span class="avatar avatar--safran">NK</span></div>
+          <div class="carte-demande__corps">
+            <div class="carte-demande__haut">
+              <div>
+                <h2>Création d'une salle d'eau dans un studio</h2>
+                <p class="carte-demande__client">Nadia Karim</p>
+              </div>
+              <div class="carte-demande__statuts"><span class="chip chip--repondue">RÉPONDUE</span></div>
+            </div>
+            <p class="carte-demande__description">Studio étudiant à équiper d'une salle d'eau complète (douche, WC, lave-mains) dans un angle de 3 m². Évacuations à créer, faisabilité à confirmer sur place.</p>
+            <div class="carte-demande__meta">
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Bron (69500)</span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>Budget&nbsp;: <b>3 000 – 5 000 €</b></span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>11/05 · 09:47</span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="m21 15-4.5-4.5L6 21"/></svg><b>5</b>&nbsp;photos</span>
+            </div>
+            <div class="carte-demande__pied">
+              <span class="meta-item">Demande traitée</span>
+              <div class="carte-demande__actions">
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Voir la conversation</button>
+              <button class="btn btn-dash-primary" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg>Envoyer un devis</button>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="carte-demande est-expiree" data-statut="expiree" data-texte="installation d'un wc suspendu pierre fabre lyon 2e (69002)">
+          <div class="carte-demande__avatar-col"><span class="avatar avatar--encre">PF</span></div>
+          <div class="carte-demande__corps">
+            <div class="carte-demande__haut">
+              <div>
+                <h2>Installation d'un WC suspendu</h2>
+                <p class="carte-demande__client">Pierre Fabre</p>
+              </div>
+              <div class="carte-demande__statuts"><span class="chip chip--expiree">EXPIRÉE</span></div>
+            </div>
+            <p class="carte-demande__description">Pose d'un WC suspendu avec bâti-support en remplacement d'un WC classique. Habillage plaque + carrelage à prévoir.</p>
+            <div class="carte-demande__meta">
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Lyon 2e (69002)</span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>Budget&nbsp;: <b>800 – 1 200 €</b></span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>09/05 · 18:20</span>
+              <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="m21 15-4.5-4.5L6 21"/></svg><b>1</b>&nbsp;photo</span>
+            </div>
+            <div class="carte-demande__pied">
+              <span class="meta-item">Demande traitée</span>
+              <div class="carte-demande__actions">
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Voir le détail</button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      <!-- État vide (affiché par le JS si aucun résultat) -->
+      <div class="etat-vide d-none" id="etat-vide">
+        <span class="etat-vide__icone"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span>
+        <b>Aucune demande ne correspond</b>
+        <p>Modifiez votre recherche ou changez d'onglet pour retrouver vos demandes.</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <nav class="dash-pagination" aria-label="Pagination des demandes">
+      <p class="dash-pagination__info mb-0">Affichage de <b>1 – 8</b> sur <b>8</b> demandes</p>
+      <div class="dash-pagination__pages">
+        <button class="dash-pagination__page" type="button" disabled aria-label="Page précédente"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
+        <button class="dash-pagination__page actif" type="button" aria-current="page">1</button>
+        <button class="dash-pagination__page" type="button">2</button>
+        <button class="dash-pagination__page" type="button">3</button>
+        <button class="dash-pagination__page" type="button" aria-label="Page suivante"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+      </div>
+    </nav>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============ Filtrage par onglet + recherche ============
+const onglets = document.querySelectorAll('.tabs-statut__onglet');
+const cartes = document.querySelectorAll('.carte-demande');
+const champRecherche = document.getElementById('recherche-demandes');
+const etatVide = document.getElementById('etat-vide');
+let filtreActif = 'tout';
+
+function appliquerFiltres() {
+  const terme = champRecherche.value.trim().toLowerCase();
+  let visibles = 0;
+  cartes.forEach(c => {
+    const okStatut = filtreActif === 'tout' || c.dataset.statut === filtreActif;
+    const okTexte = !terme || c.dataset.texte.includes(terme);
+    const visible = okStatut && okTexte;
+    c.classList.toggle('d-none', !visible);
+    if (visible) visibles++;
+  });
+  etatVide.classList.toggle('d-none', visibles > 0);
+}
+
+onglets.forEach(o => o.addEventListener('click', () => {
+  onglets.forEach(x => { x.classList.toggle('actif', x === o); x.setAttribute('aria-selected', x === o); });
+  filtreActif = o.dataset.filtre;
+  appliquerFiltres();
+}));
+
+champRecherche.addEventListener('input', appliquerFiltres);
+</script>
+</body>
+</html>

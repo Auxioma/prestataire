@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mes devis — Plomberie Express — TrouveMoi Prestataires</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dash-body">
+
+<div class="dash-layout">
+
+  <!-- ============ BARRE HAUTE ============ -->
+  <header class="topbar">
+    <button class="topbar__burger" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-label="Ouvrir le menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    <a href="#" class="topbar__logo">
+      <svg width="38" height="38" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 4C14.6 4 7 11.6 7 21c0 11.8 17 23 17 23s17-11.2 17-23C41 11.6 33.4 4 24 4z" fill="#FF8A1E" stroke="#0A1633" stroke-width="3.4" stroke-linejoin="round"/><circle cx="24" cy="20.5" r="6.6" fill="#fff"/></svg>
+      <span><span class="topbar__name">TrouveMoi</span><br><span class="topbar__sub">Prestataires</span></span>
+    </a>
+
+    <div class="topbar__search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="search" placeholder="Rechercher une demande, un client, un devis…" aria-label="Rechercher">
+    </div>
+
+    <div class="topbar__actions">
+      <button class="topbar__icone" type="button" aria-label="Notifications (3 non lues)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="topbar__badge">3</span></button>
+      <button class="topbar__icone" type="button" aria-label="Messages (2 non lus)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg><span class="topbar__badge">2</span></button>
+      <button class="topbar__profil" type="button">
+        <span class="avatar avatar--safran">PE</span>
+        <div class="d-none d-md-block"><b>Plomberie Express</b><span>Compte professionnel</span></div>
+        <span class="d-none d-md-flex text-secondary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ SIDEBAR (offcanvas sous lg) ============ -->
+  <aside class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar" aria-label="Navigation principale">
+    <div class="sidebar__profil">
+      <span class="avatar avatar--lg avatar--safran">PE</span>
+      <div>
+        <b>Plomberie Express</b>
+        <span class="chip chip--verifie"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Vérifié</span>
+      </div>
+    </div>
+
+    <p class="sidebar__label">Principal</p>
+    <nav class="sidebar__nav" aria-label="Sections principales">
+          <a href="dashboard-artisan.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Tableau de bord</a>
+          <a href="mes-demandes.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M7 11h10M7 15h6"/></svg>Mes demandes<span class="sidebar__badge">12</span></a>
+          <a href="#" class="sidebar__link actif" aria-current="page"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg>Mes devis</a>
+          <a href="mes-chantiers.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20M4 20V9l8-6 8 6v11"/><path d="M9 20v-6h6v6"/></svg>Mes chantiers</a>
+          <a href="messages.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Messages<span class="sidebar__badge">3</span></a>
+          <a href="mes-avis.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>Mes avis</a>
+    </nav>
+
+    <p class="sidebar__label">Organisation</p>
+    <nav class="sidebar__nav" aria-label="Organisation">
+          <a href="calendrier.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Calendrier</a>
+          <a href="statistiques.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Statistiques</a>
+    </nav>
+
+    <p class="sidebar__label">Compte</p>
+    <nav class="sidebar__nav" aria-label="Compte">
+          <a href="mon-abonnement.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Mon abonnement</a>
+          <a href="parametres.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.5 1h.2a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Paramètres</a>
+          <a href="connexion.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>Déconnexion</a>
+    </nav>
+
+    <div class="sidebar__aide mt-3 mt-lg-auto">
+      <b>Besoin d'aide ?</b>
+      <p>Notre équipe support répond en moins de 2 h, 7 j/7.</p>
+      <button class="btn-support" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="14" width="5" height="6" rx="2"/><rect x="17" y="14" width="5" height="6" rx="2"/></svg> Contacter le support</button>
+    </div>
+  </aside>
+
+  <!-- ============ PANNEAU PRINCIPAL ============ -->
+  <main class="dash-panel">
+
+    <!-- En-tête -->
+    <div class="dash-header">
+      <div>
+        <h1>Mes devis</h1>
+        <p>4 devis en attente de réponse — 2 expirent dans moins de 3 jours.</p>
+      </div>
+      <div class="dash-header__actions">
+        <button class="btn btn-dash-ghost" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>Exporter</button>
+        <button class="btn btn-dash-primary" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Créer un devis</button>
+      </div>
+    </div>
+
+    <!-- KPI -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3">
+        <div class="kpi">
+          <span class="kpi__icone kpi__icone--bleu"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg></span>
+          <div>
+            <div class="kpi__valeur">18</div>
+            <div class="kpi__libelle">Devis envoyés ce mois</div>
+            <span class="kpi__delta"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>+ 4 vs avril</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="kpi">
+          <span class="kpi__icone kpi__icone--safran"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
+          <div>
+            <div class="kpi__valeur">4</div>
+            <div class="kpi__libelle">En attente de réponse</div>
+            <span class="kpi__delta kpi__delta--neutre">2 expirent bientôt</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="kpi">
+          <span class="kpi__icone kpi__icone--vert"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg></span>
+          <div>
+            <div class="kpi__valeur">62 %</div>
+            <div class="kpi__libelle">Taux d'acceptation</div>
+            <span class="kpi__delta"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>+ 6 pts vs avril</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="kpi">
+          <span class="kpi__icone kpi__icone--violet"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg></span>
+          <div>
+            <div class="kpi__valeur">18 560 €</div>
+            <div class="kpi__libelle">Montant accepté (mois)</div>
+            <span class="kpi__delta"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>+ 16 % vs avril</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onglets de statut -->
+    <div class="tabs-statut" role="tablist" aria-label="Filtrer par statut">
+      <button class="tabs-statut__onglet actif" type="button" data-filtre="tout" role="tab" aria-selected="true">Tous <span class="tabs-statut__compteur">9</span></button>
+      <button class="tabs-statut__onglet" type="button" data-filtre="brouillon" role="tab" aria-selected="false">Brouillons <span class="tabs-statut__compteur">1</span></button>
+      <button class="tabs-statut__onglet" type="button" data-filtre="attente" role="tab" aria-selected="false">En attente <span class="tabs-statut__compteur">4</span></button>
+      <button class="tabs-statut__onglet" type="button" data-filtre="accepte" role="tab" aria-selected="false">Acceptés <span class="tabs-statut__compteur">2</span></button>
+      <button class="tabs-statut__onglet" type="button" data-filtre="refuse" role="tab" aria-selected="false">Refusés <span class="tabs-statut__compteur">1</span></button>
+      <button class="tabs-statut__onglet" type="button" data-filtre="expire" role="tab" aria-selected="false">Expirés <span class="tabs-statut__compteur">1</span></button>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filtres">
+      <div class="filtres__recherche">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" id="recherche-devis" placeholder="Rechercher par n°, client, ville ou prestation…" aria-label="Rechercher dans les devis">
+      </div>
+      <select class="form-select" aria-label="Filtrer par période">
+        <option>30 derniers jours</option>
+        <option>Ce mois-ci</option>
+        <option>3 derniers mois</option>
+        <option>Année 2024</option>
+      </select>
+      <select class="form-select" aria-label="Trier">
+        <option>Plus récents d'abord</option>
+        <option>Montant décroissant</option>
+        <option>Montant croissant</option>
+        <option>Expiration proche d'abord</option>
+      </select>
+    </div>
+
+    <!-- Tableau -->
+    <div class="tableau-wrap">
+      <table class="table-devis">
+        <thead>
+          <tr>
+            <th scope="col">N° devis</th>
+            <th scope="col">Client</th>
+            <th scope="col">Prestation</th>
+            <th scope="col">Montant TTC</th>
+            <th scope="col">Envoyé</th>
+            <th scope="col">Validité</th>
+            <th scope="col">Statut</th>
+            <th scope="col" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="corps-devis">
+            <tr data-statut="brouillon" data-texte="dev-2024-058 sophie martin lyon 3e rénovation complète salle de bain 6 m²">
+              <td><span class="devis-ref">DEV-2024-058</span></td>
+              <td><div class="devis-client"><span class="avatar avatar--sm avatar--safran">SM</span><span><b>Sophie Martin</b><span>Lyon 3e</span></span></div></td>
+              <td><span class="devis-prestation" title="Rénovation complète salle de bain 6 m²">Rénovation complète salle de bain 6 m²</span></td>
+              <td><span class="devis-montant">3 450,00 €</span></td>
+              <td><span class="devis-date">Brouillon</span></td>
+              <td><span class="devis-date">—</span></td>
+              <td><span class="chip chip--brouillon">BROUILLON</span></td>
+              <td><div class="actions-ligne"><button class="btn-icone" type="button" aria-label="Modifier le brouillon" title="Modifier"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg></button><button class="btn-icone" type="button" aria-label="Voir le devis" title="Voir"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="btn-icone" type="button" aria-label="Dupliquer" title="Dupliquer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="btn-icone" type="button" aria-label="Télécharger en PDF" title="PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 14h6M9 17h4"/></svg></button></div></td>
+            </tr>
+            <tr data-statut="attente" data-texte="dev-2024-057 michel dupont villeurbanne réparation fuite + remplacement flexibles">
+              <td><span class="devis-ref">DEV-2024-057</span></td>
+              <td><div class="devis-client"><span class="avatar avatar--sm avatar--bleu">MD</span><span><b>Michel Dupont</b><span>Villeurbanne</span></span></div></td>
+              <td><span class="devis-prestation" title="Réparation fuite + remplacement flexibles">Réparation fuite + remplacement flexibles</span></td>
+              <td><span class="devis-montant">285,00 €</span></td>
+              <td><span class="devis-date">Aujourd'hui</span></td>
+              <td><span class="devis-date">J+30</span></td>
+              <td><span class="chip chip--attente">EN ATTENTE</span></td>
+              <td><div class="actions-ligne"><button class="btn-icone" type="button" aria-label="Voir le devis" title="Voir"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="btn-icone btn-icone--relance" type="button" aria-label="Relancer le client" title="Relancer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button><button class="btn-icone" type="button" aria-label="Dupliquer" title="Dupliquer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="btn-icone" type="button" aria-label="Télécharger en PDF" title="PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 14h6M9 17h4"/></svg></button></div></td>
+            </tr>
+            <tr data-statut="attente" data-texte="dev-2024-056 laura bernard lyon 7e chauffe-eau 200 l — fourniture et pose">
+              <td><span class="devis-ref">DEV-2024-056</span></td>
+              <td><div class="devis-client"><span class="avatar avatar--sm avatar--vert">LB</span><span><b>Laura Bernard</b><span>Lyon 7e</span></span></div></td>
+              <td><span class="devis-prestation" title="Chauffe-eau 200 L — fourniture et pose">Chauffe-eau 200 L — fourniture et pose</span></td>
+              <td><span class="devis-montant">890,00 €</span></td>
+              <td><span class="devis-date">Hier</span></td>
+              <td><span class="devis-date">J+29</span></td>
+              <td><span class="chip chip--attente">EN ATTENTE</span></td>
+              <td><div class="actions-ligne"><button class="btn-icone" type="button" aria-label="Voir le devis" title="Voir"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="btn-icone btn-icone--relance" type="button" aria-label="Relancer le client" title="Relancer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button><button class="btn-icone" type="button" aria-label="Dupliquer" title="Dupliquer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="btn-icone" type="button" aria-label="Télécharger en PDF" title="PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 14h6M9 17h4"/></svg></button></div></td>
+            </tr>
+            <tr data-statut="attente" data-texte="dev-2024-053 camille petit lyon 8e débouchage colonne haute pression">
+              <td><span class="devis-ref">DEV-2024-053</span></td>
+              <td><div class="devis-client"><span class="avatar avatar--sm avatar--vert">CP</span><span><b>Camille Petit</b><span>Lyon 8e</span></span></div></td>
+              <td><span class="devis-prestation" title="Débouchage colonne haute pression">Débouchage colonne haute pression</span></td>
+              <td><span class="devis-montant">380,00 €</span></td>
+              <td><span class="devis-date">12/05/2024</span></td>
+              <td><span class="devis-date est-bientot">Expire dans 3 j</span></td>
+              <td><span class="chip chip--attente">EN ATTENTE</span></td>
+              <td><div class="actions-ligne"><button class="btn-icone" type="button" aria-label="Voir le devis" title="Voir"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="btn-icone btn-icone--relance" type="button" aria-label="Relancer le client" title="Relancer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button><button class="btn-icone" type="button" aria-label="Dupliquer" title="Dupliquer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="btn-icone" type="button" aria-label="Télécharger en PDF" title="PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 14h6M9 17h4"/></svg></button></div></td>
+            </tr>
+            <tr data-statut="attente" data-texte="dev-2024-052 nadia karim bron création salle d'eau complète studio">
+              <td><span class="devis-ref">DEV-2024-052</span></td>
+              <td><div class="devis-client"><span class="avatar avatar--sm avatar--safran">NK</span><span><b>Nadia Karim</b><span>Bron</span></span></div></td>
+              <td><span class="devis-prestation" title="Création salle d'eau complète studio">Création salle d'eau complète studio</span></td>
+              <td><span class="devis-montant">4 750,00 €</span></td>
+              <td><span class="devis-date">11/05/2024</span></td>
+              <td><span class="devis-date est-bientot">Expire dans 2 j</span></td>
+              <td><span class="chip chip--attente">EN ATTENTE</span></td>
+              <td><div class="actions-ligne"><button class="btn-icone" type="button" aria-label="Voir le devis" title="Voir"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="btn-icone btn-icone--relance" type="button" aria-label="Relancer le client" title="Relancer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button><button class="btn-icone" type="button" aria-label="Dupliquer" title="Dupliquer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="btn-icone" type="button" aria-label="Télécharger en PDF" title="PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 14h6M9 17h4"/></svg></button></div></td>
+            </tr>
+            <tr data-statut="accepte" data-texte="dev-2024-055 julien moreau lyon 6e remplacement robinetterie cuisine">
+              <td><span class="devis-ref">DEV-2024-055</span></td>
+              <td><div class="devis-client"><span class="avatar avatar--sm avatar--violet">JM</span><span><b>Julien Moreau</b><span>Lyon 6e</span></span></div></td>
+              <td><span class="devis-prestation" title="Remplacement robinetterie cuisine">Remplacement robinetterie cuisine</span></td>
+              <td><span class="devis-montant">195,00 €</span></td>
+              <td><span class="devis-date">14/05/2024</span></td>
+              <td><span class="devis-date">Accepté le 15/05</span></td>
+              <td><span class="chip chip--accepte">ACCEPTÉ</span></td>
+              <td><div class="actions-ligne"><button class="btn-icone" type="button" aria-label="Voir le devis" title="Voir"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="btn-icone" type="button" aria-label="Dupliquer" title="Dupliquer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="btn-icone" type="button" aria-label="Télécharger en PDF" title="PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 14h6M9 17h4"/></svg></button></div></td>
+            </tr>
+            <tr data-statut="accepte" data-texte="dev-2024-054 thomas legrand caluire entretien annuel chaudière gaz">
+              <td><span class="devis-ref">DEV-2024-054</span></td>
+              <td><div class="devis-client"><span class="avatar avatar--sm avatar--bleu">TL</span><span><b>Thomas Legrand</b><span>Caluire</span></span></div></td>
+              <td><span class="devis-prestation" title="Entretien annuel chaudière gaz">Entretien annuel chaudière gaz</span></td>
+              <td><span class="devis-montant">120,00 €</span></td>
+              <td><span class="devis-date">14/05/2024</span></td>
+              <td><span class="devis-date">Accepté le 14/05</span></td>
+              <td><span class="chip chip--accepte">ACCEPTÉ</span></td>
+              <td><div class="actions-ligne"><button class="btn-icone" type="button" aria-label="Voir le devis" title="Voir"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="btn-icone" type="button" aria-label="Dupliquer" title="Dupliquer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="btn-icone" type="button" aria-label="Télécharger en PDF" title="PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 14h6M9 17h4"/></svg></button></div></td>
+            </tr>
+            <tr data-statut="refuse" data-texte="dev-2024-051 pierre fabre lyon 2e wc suspendu avec bâti-support">
+              <td><span class="devis-ref">DEV-2024-051</span></td>
+              <td><div class="devis-client"><span class="avatar avatar--sm avatar--encre">PF</span><span><b>Pierre Fabre</b><span>Lyon 2e</span></span></div></td>
+              <td><span class="devis-prestation" title="WC suspendu avec bâti-support">WC suspendu avec bâti-support</span></td>
+              <td><span class="devis-montant">1 020,00 €</span></td>
+              <td><span class="devis-date">08/05/2024</span></td>
+              <td><span class="devis-date">Refusé le 10/05</span></td>
+              <td><span class="chip chip--refuse">REFUSÉ</span></td>
+              <td><div class="actions-ligne"><button class="btn-icone" type="button" aria-label="Voir le devis" title="Voir"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="btn-icone" type="button" aria-label="Dupliquer" title="Dupliquer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="btn-icone" type="button" aria-label="Télécharger en PDF" title="PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 14h6M9 17h4"/></svg></button></div></td>
+            </tr>
+            <tr data-statut="expire" data-texte="dev-2024-050 marc olivier lyon 5e recherche de fuite encastrée" class="est-expire">
+              <td><span class="devis-ref">DEV-2024-050</span></td>
+              <td><div class="devis-client"><span class="avatar avatar--sm avatar--violet">MO</span><span><b>Marc Olivier</b><span>Lyon 5e</span></span></div></td>
+              <td><span class="devis-prestation" title="Recherche de fuite encastrée">Recherche de fuite encastrée</span></td>
+              <td><span class="devis-montant">240,00 €</span></td>
+              <td><span class="devis-date">05/05/2024</span></td>
+              <td><span class="devis-date">Expiré le 08/05</span></td>
+              <td><span class="chip chip--expiree">EXPIRÉ</span></td>
+              <td><div class="actions-ligne"><button class="btn-icone" type="button" aria-label="Voir le devis" title="Voir"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="btn-icone" type="button" aria-label="Dupliquer" title="Dupliquer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="btn-icone" type="button" aria-label="Télécharger en PDF" title="PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 14h6M9 17h4"/></svg></button></div></td>
+            </tr>
+          <tr class="ligne-vide d-none" id="ligne-vide">
+            <td colspan="8">
+              <div class="etat-vide border-0 p-0">
+                <span class="etat-vide__icone"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span>
+                <b>Aucun devis ne correspond</b>
+                <p>Modifiez votre recherche ou changez d'onglet pour retrouver vos devis.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination + résumé -->
+    <nav class="dash-pagination" aria-label="Pagination des devis">
+      <div class="devis-resume">
+        <span>Affichage de <b>1 – 9</b> sur <b>9</b></span>
+        <span class="separateur"></span>
+        <span>En attente&nbsp;: <b>6 305,00 €</b></span>
+        <span class="separateur"></span>
+        <span>Accepté ce mois&nbsp;: <b>18 560,00 €</b></span>
+      </div>
+      <div class="dash-pagination__pages">
+        <button class="dash-pagination__page" type="button" disabled aria-label="Page précédente"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
+        <button class="dash-pagination__page actif" type="button" aria-current="page">1</button>
+        <button class="dash-pagination__page" type="button">2</button>
+        <button class="dash-pagination__page" type="button" aria-label="Page suivante"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+      </div>
+    </nav>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============ Filtrage par onglet + recherche ============
+const onglets = document.querySelectorAll('.tabs-statut__onglet');
+const lignes = document.querySelectorAll('#corps-devis tr[data-statut]');
+const champRecherche = document.getElementById('recherche-devis');
+const ligneVide = document.getElementById('ligne-vide');
+let filtreActif = 'tout';
+
+function appliquerFiltres() {
+  const terme = champRecherche.value.trim().toLowerCase();
+  let visibles = 0;
+  lignes.forEach(l => {
+    const okStatut = filtreActif === 'tout' || l.dataset.statut === filtreActif;
+    const okTexte = !terme || l.dataset.texte.includes(terme);
+    const visible = okStatut && okTexte;
+    l.classList.toggle('d-none', !visible);
+    if (visible) visibles++;
+  });
+  ligneVide.classList.toggle('d-none', visibles > 0);
+}
+
+onglets.forEach(o => o.addEventListener('click', () => {
+  onglets.forEach(x => { x.classList.toggle('actif', x === o); x.setAttribute('aria-selected', x === o); });
+  filtreActif = o.dataset.filtre;
+  appliquerFiltres();
+}));
+
+champRecherche.addEventListener('input', appliquerFiltres);
+</script>
+</body>
+</html>

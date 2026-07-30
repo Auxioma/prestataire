@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mes chantiers — Plomberie Express — TrouveMoi Prestataires</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dash-body">
+
+<div class="dash-layout">
+
+<!-- ============ BARRE HAUTE ============ -->
+  <header class="topbar">
+    <button class="topbar__burger" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-label="Ouvrir le menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    <a href="#" class="topbar__logo">
+      <svg width="38" height="38" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 4C14.6 4 7 11.6 7 21c0 11.8 17 23 17 23s17-11.2 17-23C41 11.6 33.4 4 24 4z" fill="#FF8A1E" stroke="#0A1633" stroke-width="3.4" stroke-linejoin="round"/><circle cx="24" cy="20.5" r="6.6" fill="#fff"/></svg>
+      <span><span class="topbar__name">TrouveMoi</span><br><span class="topbar__sub">Prestataires</span></span>
+    </a>
+
+    <div class="topbar__search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="search" placeholder="Rechercher une demande, un client, un devis…" aria-label="Rechercher">
+    </div>
+
+    <div class="topbar__actions">
+      <button class="topbar__icone" type="button" aria-label="Notifications (3 non lues)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="topbar__badge">3</span></button>
+      <button class="topbar__icone" type="button" aria-label="Messages (2 non lus)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg><span class="topbar__badge">2</span></button>
+      <button class="topbar__profil" type="button">
+        <span class="avatar avatar--safran">PE</span>
+        <div class="d-none d-md-block"><b>Plomberie Express</b><span>Compte professionnel</span></div>
+        <span class="d-none d-md-flex text-secondary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+      </button>
+    </div>
+  </header>
+
+<!-- ============ SIDEBAR (offcanvas sous lg) ============ -->
+  <aside class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar" aria-label="Navigation principale">
+    <div class="sidebar__profil">
+      <span class="avatar avatar--lg avatar--safran">PE</span>
+      <div>
+        <b>Plomberie Express</b>
+        <span class="chip chip--verifie"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Vérifié</span>
+      </div>
+    </div>
+
+    <p class="sidebar__label">Principal</p>
+    <nav class="sidebar__nav" aria-label="Sections principales">
+          <a href="dashboard-artisan.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Tableau de bord</a>
+          <a href="mes-demandes.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M7 11h10M7 15h6"/></svg>Mes demandes<span class="sidebar__badge">12</span></a>
+          <a href="mes-devis.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg>Mes devis</a>
+          <a href="mes-chantiers.html" class="sidebar__link actif" aria-current="page"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20M4 20V9l8-6 8 6v11"/><path d="M9 20v-6h6v6"/></svg>Mes chantiers</a>
+          <a href="messages.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Messages<span class="sidebar__badge">3</span></a>
+          <a href="mes-avis.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>Mes avis</a>
+    </nav>
+
+    <p class="sidebar__label">Organisation</p>
+    <nav class="sidebar__nav" aria-label="Organisation">
+          <a href="calendrier.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Calendrier</a>
+          <a href="statistiques.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Statistiques</a>
+    </nav>
+
+    <p class="sidebar__label">Compte</p>
+    <nav class="sidebar__nav" aria-label="Compte">
+          <a href="mon-abonnement.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Mon abonnement</a>
+          <a href="parametres.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.5 1h.2a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Paramètres</a>
+          <a href="connexion.html" class="sidebar__link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>Déconnexion</a>
+    </nav>
+
+    <div class="sidebar__aide mt-3 mt-lg-auto">
+      <b>Besoin d'aide ?</b>
+      <p>Notre équipe support répond en moins de 2 h, 7 j/7.</p>
+      <button class="btn-support" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="14" width="5" height="6" rx="2"/><rect x="17" y="14" width="5" height="6" rx="2"/></svg> Contacter le support</button>
+    </div>
+  </aside>
+
+  <!-- ============ PANNEAU PRINCIPAL ============ -->
+  <main class="dash-panel">
+
+    <div class="dash-header">
+      <div>
+        <h1>Mes chantiers</h1>
+        <p>3 chantiers en cours — prochain démarrage le 3 juin (Sophie Martin).</p>
+      </div>
+      <div class="dash-header__actions">
+        <button class="btn btn-dash-ghost" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>Exporter</button>
+        <button class="btn btn-dash-primary" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Nouveau chantier</button>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3">
+        <div class="kpi">
+          <span class="kpi__icone kpi__icone--bleu"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20M4 20V9l8-6 8 6v11"/><path d="M9 20v-6h6v6"/></svg></span>
+          <div>
+            <div class="kpi__valeur">3</div>
+            <div class="kpi__libelle">Chantiers en cours</div>
+            <span class="kpi__delta"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>+ 1 cette semaine</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="kpi">
+          <span class="kpi__icone kpi__icone--violet"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+          <div>
+            <div class="kpi__valeur">1</div>
+            <div class="kpi__libelle">Planifiés</div>
+            <span class="kpi__delta kpi__delta--neutre">Démarrage 03/06</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="kpi">
+          <span class="kpi__icone kpi__icone--vert"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg></span>
+          <div>
+            <div class="kpi__valeur">12</div>
+            <div class="kpi__libelle">Terminés (3 mois)</div>
+            <span class="kpi__delta"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>+ 3 vs trimestre préc.</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="kpi">
+          <span class="kpi__icone kpi__icone--safran"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg></span>
+          <div>
+            <div class="kpi__valeur">15 460 €</div>
+            <div class="kpi__libelle">CA en cours</div>
+            <span class="kpi__delta kpi__delta--neutre">4 chantiers actifs</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs-statut" role="tablist" aria-label="Filtrer par statut">
+      <button class="tabs-statut__onglet actif" type="button" data-filtre="tout" role="tab" aria-selected="true">Tous <span class="tabs-statut__compteur">7</span></button>
+      <button class="tabs-statut__onglet" type="button" data-filtre="cours" role="tab" aria-selected="false">En cours <span class="tabs-statut__compteur">3</span></button>
+      <button class="tabs-statut__onglet" type="button" data-filtre="planifie" role="tab" aria-selected="false">Planifiés <span class="tabs-statut__compteur">1</span></button>
+      <button class="tabs-statut__onglet" type="button" data-filtre="attente" role="tab" aria-selected="false">En attente <span class="tabs-statut__compteur">1</span></button>
+      <button class="tabs-statut__onglet" type="button" data-filtre="termine" role="tab" aria-selected="false">Terminés <span class="tabs-statut__compteur">2</span></button>
+    </div>
+
+    <div class="filtres">
+      <div class="filtres__recherche">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" id="recherche" placeholder="Rechercher par référence, client ou ville…" aria-label="Rechercher dans les chantiers">
+      </div>
+      <select class="form-select" aria-label="Trier">
+        <option>Progression croissante</option>
+        <option>Progression décroissante</option>
+        <option>Montant décroissant</option>
+        <option>Date de début</option>
+      </select>
+    </div>
+
+    <div class="d-grid gap-3">
+        <article class="carte-chantier" data-statut="planifie" data-texte="ch-2024-015 rénovation complète salle de bain sophie martin lyon 3e">
+          <div class="carte-chantier__haut">
+            <div>
+              <span class="carte-chantier__ref">CH-2024-015</span>
+              <h2>Rénovation complète salle de bain</h2>
+            </div>
+            <div class="carte-chantier__statuts"><span class="chip chip--planifie">PLANIFIÉ</span></div>
+          </div>
+          <div class="carte-chantier__infos">
+            <span class="meta-item"><span class="avatar avatar--sm avatar--safran">SM</span>Sophie Martin</span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Lyon 3e</span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg><b>3 450 €</b></span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>03/06 → 14/06</span>
+          </div>
+          <div class="barre-prog">
+            <div class="barre-prog__rail"><span class="barre-prog__inner p-1"></span></div>
+            <span class="barre-prog__pct">0 %</span>
+          </div>
+          <div class="carte-chantier__pied">
+            <span class="carte-chantier__etape"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22V3"/><path d="M4 4h13l-2.5 4L17 12H4"/></svg>Démarrage prévu le 3 juin — matériel commandé</span>
+            <div class="carte-demande__actions">
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Contacter</button>
+              <button class="btn btn-dash-primary" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Voir le chantier</button>
+            </div>
+          </div>
+        </article>
+        <article class="carte-chantier" data-statut="cours" data-texte="ch-2024-014 création salle d'eau studio étudiant nadia karim bron">
+          <div class="carte-chantier__haut">
+            <div>
+              <span class="carte-chantier__ref">CH-2024-014</span>
+              <h2>Création salle d'eau studio étudiant</h2>
+            </div>
+            <div class="carte-chantier__statuts"><span class="chip chip--en-cours">EN COURS</span></div>
+          </div>
+          <div class="carte-chantier__infos">
+            <span class="meta-item"><span class="avatar avatar--sm avatar--vert">NK</span>Nadia Karim</span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Bron</span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg><b>4 750 €</b></span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>13/05 → 31/05</span>
+          </div>
+          <div class="barre-prog">
+            <div class="barre-prog__rail"><span class="barre-prog__inner p-65"></span></div>
+            <span class="barre-prog__pct">65 %</span>
+          </div>
+          <div class="carte-chantier__pied">
+            <span class="carte-chantier__etape"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22V3"/><path d="M4 4h13l-2.5 4L17 12H4"/></svg>Étape en cours : pose du receveur et carrelage mural</span>
+            <div class="carte-demande__actions">
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Contacter</button>
+              <button class="btn btn-dash-primary" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Voir le chantier</button>
+            </div>
+          </div>
+        </article>
+        <article class="carte-chantier" data-statut="cours" data-texte="ch-2024-013 remplacement colonne d'évacuation camille petit · syndic lyon 8e">
+          <div class="carte-chantier__haut">
+            <div>
+              <span class="carte-chantier__ref">CH-2024-013</span>
+              <h2>Remplacement colonne d'évacuation</h2>
+            </div>
+            <div class="carte-chantier__statuts"><span class="chip chip--en-cours">EN COURS</span></div>
+          </div>
+          <div class="carte-chantier__infos">
+            <span class="meta-item"><span class="avatar avatar--sm avatar--bleu">CP</span>Camille Petit · Syndic</span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Lyon 8e</span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg><b>2 180 €</b></span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>06/05 → 24/05</span>
+          </div>
+          <div class="barre-prog">
+            <div class="barre-prog__rail"><span class="barre-prog__inner p-80"></span></div>
+            <span class="barre-prog__pct">80 %</span>
+          </div>
+          <div class="carte-chantier__pied">
+            <span class="carte-chantier__etape"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22V3"/><path d="M4 4h13l-2.5 4L17 12H4"/></svg>Étape en cours : raccordements des 2e et 3e étages</span>
+            <div class="carte-demande__actions">
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Contacter</button>
+              <button class="btn btn-dash-primary" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Voir le chantier</button>
+            </div>
+          </div>
+        </article>
+        <article class="carte-chantier" data-statut="cours" data-texte="ch-2024-012 installation chauffe-eau thermodynamique laura bernard lyon 7e">
+          <div class="carte-chantier__haut">
+            <div>
+              <span class="carte-chantier__ref">CH-2024-012</span>
+              <h2>Installation chauffe-eau thermodynamique</h2>
+            </div>
+            <div class="carte-chantier__statuts"><span class="chip chip--en-cours">EN COURS</span></div>
+          </div>
+          <div class="carte-chantier__infos">
+            <span class="meta-item"><span class="avatar avatar--sm avatar--violet">LB</span>Laura Bernard</span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Lyon 7e</span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg><b>2 890 €</b></span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>29/04 → 17/05</span>
+          </div>
+          <div class="barre-prog">
+            <div class="barre-prog__rail"><span class="barre-prog__inner p-45"></span></div>
+            <span class="barre-prog__pct">45 %</span>
+          </div>
+          <div class="carte-chantier__pied">
+            <span class="carte-chantier__etape"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22V3"/><path d="M4 4h13l-2.5 4L17 12H4"/></svg>Étape en cours : ligne électrique dédiée avec l'électricien</span>
+            <div class="carte-demande__actions">
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Contacter</button>
+              <button class="btn btn-dash-primary" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Voir le chantier</button>
+            </div>
+          </div>
+        </article>
+        <article class="carte-chantier" data-statut="attente" data-texte="ch-2024-011 mise aux normes plomberie cuisine pro restaurant le bouchon lyon 2e">
+          <div class="carte-chantier__haut">
+            <div>
+              <span class="carte-chantier__ref">CH-2024-011</span>
+              <h2>Mise aux normes plomberie cuisine pro</h2>
+            </div>
+            <div class="carte-chantier__statuts"><span class="chip chip--attente">EN ATTENTE</span></div>
+          </div>
+          <div class="carte-chantier__infos">
+            <span class="meta-item"><span class="avatar avatar--sm avatar--encre">RB</span>Restaurant Le Bouchon</span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Lyon 2e</span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg><b>5 640 €</b></span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>22/04 → 10/05</span>
+          </div>
+          <div class="barre-prog">
+            <div class="barre-prog__rail"><span class="barre-prog__inner p-30"></span></div>
+            <span class="barre-prog__pct">30 %</span>
+          </div>
+          <div class="carte-chantier__pied">
+            <span class="carte-chantier__etape"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22V3"/><path d="M4 4h13l-2.5 4L17 12H4"/></svg>En attente : validation du bureau de contrôle</span>
+            <div class="carte-demande__actions">
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Contacter</button>
+              <button class="btn btn-dash-primary" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Voir le chantier</button>
+            </div>
+          </div>
+        </article>
+        <article class="carte-chantier" data-statut="termine" data-texte="ch-2024-010 remplacement robinetterie cuisine julien moreau lyon 6e">
+          <div class="carte-chantier__haut">
+            <div>
+              <span class="carte-chantier__ref">CH-2024-010</span>
+              <h2>Remplacement robinetterie cuisine</h2>
+            </div>
+            <div class="carte-chantier__statuts"><span class="chip chip--termine">TERMINÉ</span></div>
+          </div>
+          <div class="carte-chantier__infos">
+            <span class="meta-item"><span class="avatar avatar--sm avatar--bleu">JM</span>Julien Moreau</span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Lyon 6e</span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg><b>195 €</b></span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>15/05</span>
+          </div>
+          <div class="barre-prog">
+            <div class="barre-prog__rail"><span class="barre-prog__inner p-100 est-termine"></span></div>
+            <span class="barre-prog__pct">100 %</span>
+          </div>
+          <div class="carte-chantier__pied">
+            <span class="carte-chantier__etape"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Terminé le 15/05 — facture envoyée</span>
+            <div class="carte-demande__actions">
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Contacter</button>
+              <button class="btn btn-dash-primary" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Voir le chantier</button>
+            </div>
+          </div>
+        </article>
+        <article class="carte-chantier" data-statut="termine" data-texte="ch-2024-009 entretien annuel chaudière gaz thomas legrand caluire">
+          <div class="carte-chantier__haut">
+            <div>
+              <span class="carte-chantier__ref">CH-2024-009</span>
+              <h2>Entretien annuel chaudière gaz</h2>
+            </div>
+            <div class="carte-chantier__statuts"><span class="chip chip--termine">TERMINÉ</span></div>
+          </div>
+          <div class="carte-chantier__infos">
+            <span class="meta-item"><span class="avatar avatar--sm avatar--vert">TL</span>Thomas Legrand</span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>Caluire</span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg><b>120 €</b></span>
+            <span class="meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>14/05</span>
+          </div>
+          <div class="barre-prog">
+            <div class="barre-prog__rail"><span class="barre-prog__inner p-100 est-termine"></span></div>
+            <span class="barre-prog__pct">100 %</span>
+          </div>
+          <div class="carte-chantier__pied">
+            <span class="carte-chantier__etape"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>Terminé le 14/05 — certificat d'entretien remis</span>
+            <div class="carte-demande__actions">
+              <button class="btn btn-dash-ghost" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>Contacter</button>
+              <button class="btn btn-dash-primary" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Voir le chantier</button>
+            </div>
+          </div>
+        </article>
+      <div class="etat-vide d-none" id="etat-vide">
+        <span class="etat-vide__icone"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span>
+        <b>Aucun chantier ne correspond</b>
+        <p>Modifiez votre recherche ou changez d'onglet.</p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+// ============ Filtrage par onglet + recherche ============
+const onglets = document.querySelectorAll('.tabs-statut__onglet');
+const elements = document.querySelectorAll('[data-statut]');
+const champRecherche = document.getElementById('recherche');
+const etatVide = document.getElementById('etat-vide');
+let filtreActif = 'tout';
+
+function appliquerFiltres() {
+  const terme = champRecherche ? champRecherche.value.trim().toLowerCase() : '';
+  let visibles = 0;
+  elements.forEach(e => {
+    const okStatut = filtreActif === 'tout' || e.dataset.statut.split(' ').includes(filtreActif);
+    const okTexte = !terme || e.dataset.texte.includes(terme);
+    const visible = okStatut && okTexte;
+    e.classList.toggle('d-none', !visible);
+    if (visible) visibles++;
+  });
+  if (etatVide) etatVide.classList.toggle('d-none', visibles > 0);
+}
+
+onglets.forEach(o => o.addEventListener('click', () => {
+  onglets.forEach(x => { x.classList.toggle('actif', x === o); x.setAttribute('aria-selected', x === o); });
+  filtreActif = o.dataset.filtre;
+  appliquerFiltres();
+}));
+if (champRecherche) champRecherche.addEventListener('input', appliquerFiltres);
+
+</script>
+</body>
+</html>
