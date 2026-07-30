@@ -85,6 +85,56 @@ final class ReviewController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}/modifier', name: 'edit', methods: ['GET', 'POST'])]
+    public function edit(
+        Request $request,
+        Review $review,
+        ReviewManager $reviewManager,
+    ): Response {
+        $user = $this->getAuthenticatedClientUser();
+        $client = $user->getClientProfile();
+
+        if ($review->getClientProfile()?->getId() !== $client->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas modifier cet avis.');
+        }
+
+        $prestataire = $review->getPrestataireProfile();
+        $quoteRequest = $review->getQuoteRequest();
+
+        if (!$prestataire instanceof PrestataireProfile || !$quoteRequest instanceof QuoteRequest) {
+            throw $this->createNotFoundException('Cet avis n’est pas modifiable.');
+        }
+
+        $form = $this->createForm(ReviewType::class, $review);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $reviewManager->updateReview(
+                    $review,
+                    (int) $review->getRating(),
+                    $review->getComment()
+                );
+            } catch (\DomainException $exception) {
+                $this->addFlash('danger', $exception->getMessage());
+
+                return $this->redirectToRoute('app_review_my_reviews');
+            }
+
+            $this->addFlash('success', 'Votre avis a bien été modifié.');
+
+            return $this->redirectToRoute('app_review_my_reviews');
+        }
+
+        return $this->render('review/create.html.twig', [
+            'form' => $form->createView(),
+            'quoteRequest' => $quoteRequest,
+            'prestataire' => $prestataire,
+            'review' => $review,
+            'isEdit' => true,
+        ]);
+    }
+
     #[Route('/{id}/supprimer', name: 'delete', methods: ['POST'])]
     public function delete(
         Request $request,

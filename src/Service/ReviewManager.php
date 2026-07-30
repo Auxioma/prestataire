@@ -83,6 +83,25 @@ final class ReviewManager
         $this->refreshAverageRating($prestataire);
     }
 
+    public function updateReview(Review $review, int $rating, ?string $comment): Review
+    {
+        $prestataire = $review->getPrestataireProfile();
+
+        if (!$prestataire instanceof PrestataireProfile) {
+            throw new \DomainException('Impossible de mettre à jour cet avis.');
+        }
+
+        $review
+            ->setRating($rating)
+            ->setComment($this->normalizeComment($comment))
+            ->setUpdatedAt(new \DateTimeImmutable());
+
+        $this->entityManager->flush();
+        $this->refreshAverageRating($prestataire);
+
+        return $review;
+    }
+
     public function refreshAverageRating(PrestataireProfile $prestataire): void
     {
         $averageRating = $this->reviewRepository->computeAverageRating($prestataire);

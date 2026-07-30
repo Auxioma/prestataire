@@ -113,14 +113,19 @@
 
                                                 <div class="d-flex flex-column align-items-lg-end gap-2">
                                                     <span class="text-muted small">{{ review.createdAt|date('d/m/Y à H:i') }}</span>
-                                                    <button
-                                                        type="button"
-                                                        class="btn btn-sm btn-outline-danger"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#deleteReviewModal{{ review.id|e('html_attr') }}"
-                                                    >
-                                                        Supprimer
-                                                    </button>
+                                                    <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                                                        <a href="{{ path('app_review_edit', { id: review.id }) }}" class="btn btn-sm btn-outline-primary">
+                                                            Modifier
+                                                        </a>
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn-sm btn-outline-danger"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#deleteReviewModal{{ review.id|e('html_attr') }}"
+                                                        >
+                                                            Supprimer
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
 

@@ -1,13 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Laisser un avis{% endblock %}
+{% block title %}{{ (isEdit|default(false)) ? 'Modifier mon avis' : 'Laisser un avis' }}{% endblock %}
 
 {% block body %}
+    {% set isEdit = isEdit|default(false) %}
     <section class="c-client-quotes-page">
         <div class="c-client-quotes-page__container">
-            <a href="{{ path('app_quote_request_show', { slug: quoteRequest.slug }) }}" class="c-client-quotes-backlink">
+            <a href="{{ path(isEdit ? 'app_review_my_reviews' : 'app_quote_request_show', isEdit ? {} : { slug: quoteRequest.slug }) }}" class="c-client-quotes-backlink">
                 <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-                <span>Retour à la demande</span>
+                <span>{{ isEdit ? 'Retour à mes avis' : 'Retour à la demande' }}</span>
             </a>
 
             <header class="c-client-quotes-hero">
@@ -15,9 +16,12 @@
 
                 <div class="c-client-quotes-hero__content">
                     <span class="c-client-quotes-hero__eyebrow">Espace client</span>
-                    <h1 class="c-client-quotes-hero__title">Laisser un avis</h1>
+                    <h1 class="c-client-quotes-hero__title">{{ isEdit ? 'Modifier mon avis' : 'Laisser un avis' }}</h1>
                     <p class="c-client-quotes-hero__subtitle">
-                        Partagez votre retour après votre mise en relation avec {{ prestataire.companyName|default('ce prestataire') }}.
+                        {{ isEdit
+                            ? 'Mettez à jour votre retour après votre mise en relation avec ' ~ prestataire.companyName|default('ce prestataire') ~ '.'
+                            : 'Partagez votre retour après votre mise en relation avec ' ~ prestataire.companyName|default('ce prestataire') ~ '.'
+                        }}
                     </p>
                 </div>
             </header>
@@ -45,7 +49,11 @@
                                 </p>
                             </div>
 
-                            {{ form_start(form) }}
+                            {{ form_start(form, {
+                                attr: {
+                                    'data-turbo': 'false'
+                                }
+                            }) }}
                                 <div class="mb-4">
                                     <label class="form-label fw-semibold">Votre note</label>
                                     <div
@@ -99,7 +107,7 @@
                                 </div>
 
                                 <div class="d-flex flex-wrap gap-2">
-                                    <button type="submit" class="btn btn-primary">Publier mon avis</button>
+                                    <button type="submit" class="btn btn-primary">{{ isEdit ? 'Enregistrer les modifications' : 'Publier mon avis' }}</button>
                                     <a href="{{ path('app_review_my_reviews') }}" class="btn btn-outline-secondary">Annuler</a>
                                 </div>
                             {{ form_end(form) }}

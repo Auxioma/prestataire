@@ -34,7 +34,24 @@
     padding: 1.5rem !important;
 }
 
+.tm-cp-nav-menu {
+    width: 100%;
+}
+
+.tm-cp-nav-menu .nav-item,
 .tm-cp-nav-menu .nav-link {
+    width: 100%;
+}
+
+.tm-cp-nav-menu .nav-item {
+    display: flex;
+    flex: 1 1 100%;
+}
+
+.tm-cp-nav-menu .nav-link {
+    display: flex !important;
+    align-items: center;
+    flex: 1 1 auto;
     color: var(--tm-cp-text) !important;
     font-weight: 500;
     padding: 12px 16px !important;
@@ -264,6 +281,9 @@
 
 /* Contenu Principal */
 .tm-cp-main-content-inner {
+    flex: 1 1 0;
+    min-width: 0;
+    width: 100%;
     overflow-x: hidden;
     background-color: var(--tm-cp-background);
 }
