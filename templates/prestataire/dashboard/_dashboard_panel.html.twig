@@ -2,374 +2,389 @@
 {% set circumference = 2 * 3.141592653589793 * radius %}
 {% set progressOffset = circumference - (completionReport.score / 100) * circumference %}
 {% set quoteStatusClasses = {
-    submitted: 'is-neutral',
-    accepted: 'is-info',
-    answered: 'is-warning',
-    closed: 'is-success'
+    submitted: 'chip--nouvelle',
+    accepted: 'chip--en-cours',
+    answered: 'chip--repondue',
+    closed: 'chip--repondue'
 } %}
+{% set appointmentStatusClasses = {
+    scheduled: 'chip--en-cours',
+    confirmed: 'chip--en-cours',
+    completed: 'chip--repondue',
+    cancelled: 'chip--refuse'
+} %}
+{% set avatarClasses = ['avatar--safran', 'avatar--bleu', 'avatar--vert', 'avatar--violet'] %}
+{% set welcomeName = app.user and app.user.prestataireProfile and app.user.prestataireProfile.companyName
+    ? app.user.prestataireProfile.companyName
+    : (app.user ? ((app.user.firstName|default('') ~ ' ' ~ app.user.lastName|default(''))|trim ?: 'prestataire') : 'prestataire')
+%}
+{% set unreadMessagesCount = 0 %}
+{% for message in recentMessages %}
+    {% if not message.readAt %}
+        {% set unreadMessagesCount = unreadMessagesCount + 1 %}
+    {% endif %}
+{% endfor %}
+{% set nextActions = [] %}
+{% for section in completionReport.nextSections|slice(0, 2) %}
+    {% set nextActions = nextActions|merge([{
+        title: section.label,
+        subtitle: section.completed ~ '/' ~ section.total ~ ' complétés',
+        href: path('app_prestataire_settings', { tab: section.tab })
+    }]) %}
+{% endfor %}
+{% for item in mandatoryChecklist.missingItems|slice(0, 2) %}
+    {% set nextActions = nextActions|merge([{
+        title: item.label,
+        subtitle: 'Paramètres ' ~ (item.tab == 'company' ? 'entreprise' : (item.tab == 'services' ? 'services' : (item.tab == 'zones' ? 'zones' : 'profil'))),
+        href: path('app_prestataire_settings', { tab: item.tab, _fragment: item.fragment })
+    }]) %}
+{% endfor %}
 
-{% if priorityAlerts is not empty %}
-    <section class="tm-dashboard-priority-band" aria-label="Priorités du moment">
-        {% for alert in priorityAlerts %}
-            <article class="tm-dashboard-priority-band__item is-{{ alert.tone }}">
-                <div class="tm-dashboard-priority-band__content">
-                    <span class="tm-dashboard-priority-band__eyebrow">Priorité</span>
-                    <h3>{{ alert.title }}</h3>
-                    <p>{{ alert.text }}</p>
-                    {% if alert.items is defined and alert.items is not empty %}
-                        <ul class="mb-0 ps-3">
-                            {% for item in alert.items %}
-                                <li>{{ item }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </div>
-                <a href="{{ alert.href }}" class="tm-dashboard-priority-band__link">{{ alert.label }}</a>
-            </article>
-        {% endfor %}
-    </section>
-{% endif %}
-
-<div class="row g-3 tm-dashboard-widgets-grid">
-    <div class="col-12 col-md-6 col-xl-4">
-        <article class="card tm-card p-3 tm-dashboard-widget tm-dashboard-widget--profile h-100">
-            <div class="tm-dashboard-widget__topline">
-                <span class="tm-dashboard-widget__eyebrow">Profil</span>
-                <span class="tm-dashboard-widget__meta">{{ completionReport.completedSections }}/{{ completionReport.totalSections }} sections</span>
-            </div>
-
-            <div class="tm-dashboard-widget__completion">
-                <div class="tm-dashboard-widget__ring" aria-label="Profil complété à {{ completionReport.score }}%">
-                    <svg viewBox="0 0 84 84" width="84" height="84" aria-hidden="true">
-                        <circle cx="42" cy="42" r="{{ radius }}" fill="none" stroke="#e5ebf5" stroke-width="8"></circle>
-                        <circle
-                            cx="42"
-                            cy="42"
-                            r="{{ radius }}"
-                            fill="none"
-                            stroke="#0b2c78"
-                            stroke-width="8"
-                            stroke-linecap="round"
-                            transform="rotate(-90 42 42)"
-                            stroke-dasharray="{{ circumference }}"
-                            stroke-dashoffset="{{ progressOffset }}"
-                            style="transition: stroke-dashoffset .35s ease;"
-                        ></circle>
-                    </svg>
-                    <div class="tm-dashboard-widget__ring-center">
-                        <strong>{{ completionReport.score }}%</strong>
-                    </div>
-                </div>
-
-                <div class="tm-dashboard-widget__completion-copy">
-                    <h4 class="tm-card-title mb-1">Complétion du profil</h4>
-                    <p class="text-muted small mb-2">Un site web ou un seul réseau social suffit pour la présence publique.</p>
-                    <div class="tm-dashboard-widget__chips">
-                        <span>{{ completionReport.completedChecks }}/{{ completionReport.totalChecks }} critères</span>
-                        <span>{{ mandatoryChecklist.completed }}/{{ mandatoryChecklist.total }} indispensables</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tm-dashboard-widget__list">
-                {% if completionReport.nextSections is not empty %}
-                    {% for section in completionReport.nextSections|slice(0, 3) %}
-                        <details class="tm-dashboard-widget__item tm-dashboard-widget__item--details">
-                            <summary class="tm-dashboard-widget__item-summary">
-                                <div class="tm-dashboard-widget__item-main">
-                                    <i class="fa-solid {{ section.icon }}" aria-hidden="true"></i>
-                                    <span>{{ section.label }}</span>
-                                </div>
-                                <div class="tm-dashboard-widget__item-side tm-dashboard-widget__item-side--inline">
-                                    <small>{{ section.completed }}/{{ section.total }}</small>
-                                    <span class="tm-dashboard-widget__hint">Voir le détail</span>
-                                </div>
-                            </summary>
-
-                            {% if section.missingItems is not empty %}
-                                <div class="tm-dashboard-widget__details-panel">
-                                    <div class="tm-dashboard-widget__details-title">Champs manquants</div>
-                                    <ul class="tm-dashboard-widget__details-list">
-                                        {% for missingItem in section.missingItems %}
-                                            <li>{{ missingItem }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                    <a href="{{ path('app_prestataire_settings', { tab: section.tab }) }}" class="tm-dashboard-widget__details-link">
-                                        Compléter cette section
-                                    </a>
-                                </div>
-                            {% endif %}
-                        </details>
-                    {% endfor %}
-                {% else %}
-                    <div class="tm-dashboard-widget__empty">Profil entièrement complété.</div>
-                {% endif %}
-            </div>
-
-            {% if mandatoryChecklist.missingItems is not empty %}
-                <div class="tm-dashboard-widget__subsection mt-3">
-                    <div class="tm-dashboard-widget__subsection-title">Éléments à compléter</div>
-                    <div class="tm-dashboard-widget__list">
-                        {% for item in mandatoryChecklist.missingItems %}
-                            <div class="tm-dashboard-widget__item tm-dashboard-widget__item--stack">
-                                <div class="tm-dashboard-widget__item-main">
-                                    <strong>{{ item.label }}</strong>
-                                    <small>Paramètres {{ item.tab == 'company' ? 'entreprise' : (item.tab == 'services' ? 'services' : (item.tab == 'zones' ? 'zones' : 'profil')) }}</small>
-                                </div>
-                                <div class="tm-dashboard-widget__item-side">
-                                    <a href="{{ path('app_prestataire_settings', { tab: item.tab, _fragment: item.fragment }) }}">Compléter</a>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
-
-            <div class="tm-dashboard-widget__footer">
-                <a href="{{ path('app_prestataire_settings', { tab: 'profile' }) }}">Ouvrir les paramètres</a>
-            </div>
-        </article>
+<div class="tm-dashboard-artisan">
+    <div class="dash-header">
+        <div>
+            <h1>Tableau de bord</h1>
+            <p>
+                Bienvenue {{ welcomeName }}
+                — {{ 'now'|date('l d F Y') }}. Voici ce qui se passe aujourd'hui.
+            </p>
+        </div>
+        <div class="dash-header__actions">
+            <a href="{{ path('app_prestataire_settings', { tab: 'profile' }) }}" class="btn btn-dash-ghost">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+                Compléter mon profil
+            </a>
+            <a href="{{ path('app_subscription_index') }}" class="btn btn-dash-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                Gérer l'abonnement
+            </a>
+        </div>
     </div>
 
-    <div class="col-12 col-md-6 col-xl-4">
-        <article class="card tm-card p-3 tm-dashboard-widget tm-dashboard-widget--quotes h-100">
-            <div class="tm-dashboard-widget__topline">
-                <span class="tm-dashboard-widget__eyebrow">Devis</span>
-                <span class="tm-dashboard-widget__meta">{{ recentQuoteRequests|length }} / 5</span>
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-lg-4 col-xxl-2">
+            <div class="kpi">
+                <span class="kpi__icone kpi__icone--bleu">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M7 11h10M7 15h6"/></svg>
+                </span>
+                <div>
+                    <div class="kpi__valeur">{{ recentQuoteRequests|length }}</div>
+                    <div class="kpi__libelle">Demandes récentes</div>
+                    <span class="kpi__delta">{{ priorityAlerts|length }} priorité{{ priorityAlerts|length > 1 ? 's' : '' }}</span>
+                </div>
             </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4 col-xxl-2">
+            <div class="kpi">
+                <span class="kpi__icone kpi__icone--safran">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H6v18h12V8z"/><path d="M13 3v5h5M9 13h6M9 17h4"/></svg>
+                </span>
+                <div>
+                    <div class="kpi__valeur">{{ mandatoryChecklist.missingItems|length }}</div>
+                    <div class="kpi__libelle">Éléments manquants</div>
+                    <span class="kpi__delta kpi__delta--neutre">{{ mandatoryChecklist.completed }}/{{ mandatoryChecklist.total }} indispensables</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4 col-xxl-2">
+            <div class="kpi">
+                <span class="kpi__icone kpi__icone--vert">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20M4 20V9l8-6 8 6v11"/><path d="M9 20v-6h6v6"/></svg>
+                </span>
+                <div>
+                    <div class="kpi__valeur">{{ upcomingAppointments|length }}</div>
+                    <div class="kpi__libelle">Rendez-vous à venir</div>
+                    <span class="kpi__delta kpi__delta--neutre">{{ 'now'|date('F Y')|capitalize }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4 col-xxl-2">
+            <div class="kpi">
+                <span class="kpi__icone kpi__icone--or">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>
+                </span>
+                <div>
+                    <div class="kpi__valeur">{{ prestataireProfile.averageRating|default(0)|number_format(1, ',', ' ') }}<small>/5</small></div>
+                    <div class="kpi__libelle">Note moyenne</div>
+                    <span class="kpi__delta kpi__delta--neutre">{{ prestataireProfile.reviewsCount|default(0) }} avis clients</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4 col-xxl-2">
+            <div class="kpi">
+                <span class="kpi__icone kpi__icone--violet">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 0-3.6 6.7L21 20z"/></svg>
+                </span>
+                <div>
+                    <div class="kpi__valeur">{{ unreadMessagesCount }}</div>
+                    <div class="kpi__libelle">Messages non lus</div>
+                    <span class="kpi__delta kpi__delta--neutre">{{ recentMessages|length }} conversation{{ recentMessages|length > 1 ? 's' : '' }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-8 col-xxl-2">
+            <div class="dash-card carte-abo">
+                <div class="carte-abo__haut">
+                    <b>Abonnement</b>
+                    {% if currentSubscription and currentSubscription.plan %}
+                        <span class="chip chip--premium">{{ currentSubscription.plan.name }}</span>
+                    {% else %}
+                        <span class="chip chip--attente">Inactif</span>
+                    {% endif %}
+                </div>
+                <p>
+                    {% if currentSubscription and currentSubscription.currentPeriodEnd %}
+                        Renouvellement le {{ currentSubscription.currentPeriodEnd|date('d/m/Y') }}
+                    {% else %}
+                        Souscrivez une formule pour répondre aux demandes et activer la messagerie.
+                    {% endif %}
+                </p>
+                <div class="carte-abo__liste">
+                    <span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>{{ remainingCredits }} crédit{{ remainingCredits > 1 ? 's' : '' }} disponible{{ remainingCredits > 1 ? 's' : '' }}</span>
+                    <span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>{{ currentSubscription ? currentSubscription.creditsConsumedCurrentPeriod : 0 }} consommé{{ currentSubscription and currentSubscription.creditsConsumedCurrentPeriod > 1 ? 's' : '' }}</span>
+                    <span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg>{{ currentSubscription ? currentSubscription.creditsGrantedCurrentPeriod : 0 }} accordé{{ currentSubscription and currentSubscription.creditsGrantedCurrentPeriod > 1 ? 's' : '' }}</span>
+                </div>
+                <a href="{{ path('app_subscription_index') }}" class="btn btn-dash-primary">Gérer mon abonnement</a>
+            </div>
+        </div>
+    </div>
 
-            <h4 class="tm-card-title mb-2">Demandes récentes</h4>
-            <div class="tm-dashboard-widget__list">
+    <div class="row g-3">
+        <div class="col-12 col-xl-4 d-grid gap-3 align-content-start">
+            <section class="dash-card">
+                <div class="dash-card__header">
+                    <h2>Demandes récentes</h2>
+                    <a href="{{ path('app_prestataire_dashboard', { tab: 'demandes' }) ~ '#demandes-main-panel' }}" class="dash-card__lien">Voir toutes</a>
+                </div>
                 {% if recentQuoteRequests is empty %}
-                    <div class="tm-dashboard-widget__empty">Aucune demande reçue récemment.</div>
+                    <div class="dash-empty-state">Aucune demande reçue récemment.</div>
                 {% else %}
                     {% for quoteRequest in recentQuoteRequests %}
-                        <div class="tm-dashboard-widget__item tm-dashboard-widget__item--stack">
-                            <div class="tm-dashboard-widget__item-main">
-                                <strong>{{ quoteRequest.title }}</strong>
-                                <small>
-                                    {{ quoteRequest.client and quoteRequest.client.account
-                                        ? quoteRequest.client.account.firstName ~ ' ' ~ quoteRequest.client.account.lastName
-                                        : 'Client non renseigné' }}
-                                </small>
+                        <a href="{{ path('app_prestataire_dashboard', { tab: 'demandes' }) ~ '#demandes-main-panel' }}" class="ligne-demande">
+                            <div>
+                                <b>{{ quoteRequest.title }}</b>
+                                <p>
+                                    {% if quoteRequest.client and quoteRequest.client.account %}
+                                        {{ quoteRequest.client.account.firstName }} {{ quoteRequest.client.account.lastName }}
+                                    {% else %}
+                                        Client non renseigné
+                                    {% endif %}
+                                    {% if quoteRequest.createdAt %} — {{ quoteRequest.createdAt|date('d/m/Y à H:i') }}{% endif %}
+                                </p>
                             </div>
-                            <div class="tm-dashboard-widget__item-side">
-                                <span class="tm-dashboard-widget__status {{ attribute(quoteStatusClasses, quoteRequest.status.value)|default('is-neutral') }}">{{ quoteRequest.status.label }}</span>
-                                <small>{{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m H:i') : '—' }}</small>
+                            <div class="ligne-demande__fin">
+                                <span class="ligne-demande__quand">{{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m') : '—' }}</span>
+                                <span class="chip {{ attribute(quoteStatusClasses, quoteRequest.status.value)|default('chip--attente') }}">{{ quoteRequest.status.label }}</span>
+                                <span class="ligne-demande__chevron"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
                             </div>
+                        </a>
+                    {% endfor %}
+                {% endif %}
+            </section>
+
+            <section class="dash-card">
+                <div class="dash-card__header">
+                    <h2>Complétion du profil</h2>
+                    <a href="{{ path('app_prestataire_settings', { tab: 'profile' }) }}" class="dash-card__lien">Voir le détail</a>
+                </div>
+                <div class="tm-completion-card">
+                    <div class="tm-completion-card__ring" aria-label="Profil complété à {{ completionReport.score }}%">
+                        <svg viewBox="0 0 84 84" width="84" height="84" aria-hidden="true">
+                            <circle cx="42" cy="42" r="{{ radius }}" fill="none" stroke="#e5ebf5" stroke-width="8"></circle>
+                            <circle
+                                cx="42"
+                                cy="42"
+                                r="{{ radius }}"
+                                fill="none"
+                                stroke="#1e49c7"
+                                stroke-width="8"
+                                stroke-linecap="round"
+                                transform="rotate(-90 42 42)"
+                                stroke-dasharray="{{ circumference }}"
+                                stroke-dashoffset="{{ progressOffset }}"
+                            ></circle>
+                        </svg>
+                        <span><strong>{{ completionReport.score }}%</strong>profil</span>
+                    </div>
+                    <div class="perf-stats">
+                        <div><h3>Sections</h3><b>{{ completionReport.completedSections }}/{{ completionReport.totalSections }}</b><small>terminées</small></div>
+                        <div><h3>Critères</h3><b>{{ completionReport.completedChecks }}/{{ completionReport.totalChecks }}</b><small>validés</small></div>
+                        <div><h3>Indispensables</h3><b>{{ mandatoryChecklist.completed }}/{{ mandatoryChecklist.total }}</b><small>renseignés</small></div>
+                        <div><h3>Reste</h3><b>{{ mandatoryChecklist.missingItems|length }}</b><small>à compléter</small></div>
+                    </div>
+                    {% if nextActions is not empty %}
+                        <div class="tm-completion-card__actions">
+                            {% for action in nextActions|slice(0, 4) %}
+                                <a href="{{ action.href }}" class="tm-completion-card__action">
+                                    <span>
+                                        <strong>{{ action.title }}</strong>
+                                        <small>{{ action.subtitle }}</small>
+                                    </span>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="dash-empty-state dash-empty-state--soft">Profil entièrement complété.</div>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+
+        <div class="col-12 col-xl-4 d-grid gap-3 align-content-start">
+            <section class="dash-card">
+                <div class="dash-card__header">
+                    <h2>Mon agenda</h2>
+                    <a href="{{ path('app_prestataire_dashboard', { tab: 'calendrier' }) ~ '#calendrier-main-panel' }}" class="dash-card__lien">Voir tout</a>
+                </div>
+                <div
+                    class="mini-cal"
+                    data-controller="calendar-panel"
+                    data-calendar-panel-events-url-value="{{ path('app_prestataire_appointment_events') }}"
+                    data-calendar-panel-update-url-value="{{ path('app_prestataire_appointment_move') }}"
+                    data-calendar-panel-csrf-token-value="{{ csrf_token('move_appointment') }}"
+                    data-calendar-panel-script-url-value="{{ asset('vendor/fullcalendar/index.global.min.js') }}"
+                    data-calendar-panel-compact-value="true"
+                    data-calendar-panel-height-value="290"
+                >
+                    <div class="mini-cal__nav">
+                        <button class="mini-cal__fleche" type="button" aria-label="Mois précédent" data-action="click->calendar-panel#previousMonth"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
+                        <b data-calendar-panel-target="monthLabel">{{ 'now'|date('F Y')|capitalize }}</b>
+                        <button class="mini-cal__fleche" type="button" aria-label="Mois suivant" data-action="click->calendar-panel#nextMonth"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+                    </div>
+                    <div
+                        class="tm-dashboard-calendar-embed"
+                        data-calendar-panel-target="calendar"
+                    ></div>
+                </div>
+                <p class="small fw-bold text-dark mb-2">Prochains rendez-vous</p>
+                {% if upcomingAppointments is empty %}
+                    <div class="dash-empty-state">Aucun rendez-vous programmé prochainement.</div>
+                {% else %}
+                    {% for appointment in upcomingAppointments %}
+                        <div class="rdv">
+                            <b>
+                                {{ appointment.startsAt ? appointment.startsAt|date('d/m H:i') : '—' }}
+                                {% if appointment.title %} · {{ appointment.title }}{% endif %}
+                            </b>
+                            <p>
+                                {% if appointment.client and appointment.client.account %}
+                                    {{ appointment.client.account.firstName }} {{ appointment.client.account.lastName }}
+                                {% elseif appointment.prestation and appointment.prestation.service %}
+                                    {{ appointment.prestation.service.name }}
+                                {% else %}
+                                    Rendez-vous planifié
+                                {% endif %}
+                                {% if appointment.locationLabel %} — {{ appointment.locationLabel }}{% endif %}
+                            </p>
+                            <span class="chip {{ attribute(appointmentStatusClasses, appointment.status.value)|default('chip--attente') }}">{{ appointment.status.label }}</span>
                         </div>
                     {% endfor %}
                 {% endif %}
-            </div>
+            </section>
 
-            <div class="tm-dashboard-widget__footer">
-                <a href="{{ path('app_prestataire_dashboard', { tab: 'demandes' }) ~ '#demandes-main-panel' }}">Voir toutes les demandes</a>
-            </div>
-        </article>
-    </div>
+        </div>
 
-    <div class="col-12 col-md-6 col-xl-4">
-        <article class="card tm-card p-3 tm-dashboard-widget tm-dashboard-widget--calendar h-100">
-            <div class="tm-dashboard-widget__topline">
-                <span class="tm-dashboard-widget__eyebrow">Agenda</span>
-                <span class="tm-dashboard-widget__meta">{{ "now"|date('F Y')|capitalize }}</span>
-            </div>
-
-            <h4 class="tm-card-title mb-2">Agenda</h4>
-            <div
-                class="tm-dashboard-widget__calendar"
-                data-controller="calendar-panel"
-                data-calendar-panel-events-url-value="{{ path('app_prestataire_appointment_events') }}"
-                data-calendar-panel-update-url-value="{{ path('app_prestataire_appointment_move') }}"
-                data-calendar-panel-csrf-token-value="{{ csrf_token('move_appointment') }}"
-                data-calendar-panel-script-url-value="{{ asset('vendor/fullcalendar/index.global.min.js') }}"
-                data-calendar-panel-compact-value="true"
-                data-calendar-panel-height-value="290"
-            ></div>
-
-            <div class="tm-dashboard-widget__subsection">
-                <div class="tm-dashboard-widget__subsection-title">Prochains rendez-vous</div>
-                <div class="tm-dashboard-widget__list">
-                    {% if upcomingAppointments is empty %}
-                        <div class="tm-dashboard-widget__empty">Aucun rendez-vous programmé prochainement.</div>
-                    {% else %}
-                        {% for appointment in upcomingAppointments %}
-                            <div class="tm-dashboard-widget__item tm-dashboard-widget__item--stack">
-                                <div class="tm-dashboard-widget__item-main">
-                                    <strong>{{ appointment.title }}</strong>
-                                    <span class="tm-dashboard-widget__status tm-dashboard-widget__status--appointment is-{{ appointment.status.value }}">
-                                        {{ appointment.status.label }}
-                                    </span>
-                                </div>
-                                <div class="tm-dashboard-widget__message-preview">
-                                    {{ appointment.startsAt ? appointment.startsAt|date('d/m/Y \\à H:i') : '—' }}
-                                    {% if appointment.locationLabel %}
-                                        · {{ appointment.locationLabel }}
-                                    {% endif %}
-                                </div>
-                                <small>
-                                    {% if appointment.client and appointment.client.account %}
-                                        {{ appointment.client.account.firstName }} {{ appointment.client.account.lastName }}
-                                    {% elseif appointment.prestation and appointment.prestation.service %}
-                                        {{ appointment.prestation.service.name }}
-                                    {% else %}
-                                        Rendez-vous planifié
-                                    {% endif %}
-                                </small>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
+        <div class="col-12 col-xl-4 d-grid gap-3 align-content-start">
+            <section class="dash-card">
+                <div class="dash-card__header">
+                    <h2>Messages récents</h2>
+                    <a href="{{ path('app_prestataire_dashboard', { tab: 'messages' }) ~ '#messages-main-panel' }}" class="dash-card__lien">Voir tous</a>
                 </div>
-            </div>
-
-            <div class="tm-dashboard-widget__footer">
-                <a href="{{ path('app_prestataire_dashboard', { tab: 'calendrier' }) ~ '#calendrier-main-panel' }}">Ouvrir le calendrier complet</a>
-            </div>
-        </article>
-    </div>
-
-    <div class="col-12 col-md-6 col-xl-4">
-        <article class="card tm-card p-3 tm-dashboard-widget tm-dashboard-widget--subscription h-100">
-            <div class="tm-dashboard-widget__topline">
-                <span class="tm-dashboard-widget__eyebrow">Abonnement</span>
-                <span class="tm-dashboard-widget__meta">{{ remainingCredits }} crédit{{ remainingCredits > 1 ? 's' : '' }}</span>
-            </div>
-
-            <h4 class="tm-card-title mb-2">Crédits et formule</h4>
-
-            <div class="tm-dashboard-widget__subscription">
-                <div class="tm-dashboard-widget__subscription-number">{{ remainingCredits }}</div>
-                <div class="tm-dashboard-widget__subscription-copy">
-                    <strong>
-                        {{ currentSubscription and currentSubscription.plan ? currentSubscription.plan.name : 'Aucun abonnement actif' }}
-                    </strong>
-                    <small>
-                        {% if currentSubscription %}
-                            {{ currentSubscription.billingPeriod.label }}
-                            {% if currentSubscription.currentPeriodEnd %}
-                                · jusqu’au {{ currentSubscription.currentPeriodEnd|date('d/m/Y') }}
-                            {% endif %}
-                        {% else %}
-                            Souscrivez une formule pour répondre aux demandes et activer la messagerie.
-                        {% endif %}
-                    </small>
-                </div>
-            </div>
-
-            <div class="tm-dashboard-widget__chips">
-                {% if currentSubscription %}
-                    <span>{{ currentSubscription.creditsConsumedCurrentPeriod }} consommé{{ currentSubscription.creditsConsumedCurrentPeriod > 1 ? 's' : '' }}</span>
-                    <span>{{ currentSubscription.creditsGrantedCurrentPeriod }} accordé{{ currentSubscription.creditsGrantedCurrentPeriod > 1 ? 's' : '' }}</span>
-                {% else %}
-                    <span>0 crédit disponible</span>
-                {% endif %}
-            </div>
-
-            <div class="tm-dashboard-widget__footer">
-                <a href="{{ path('app_subscription_index') }}">Gérer l’abonnement</a>
-            </div>
-        </article>
-    </div>
-
-    <div class="col-12 col-md-6 col-xl-4">
-        <article class="card tm-card p-3 tm-dashboard-widget tm-dashboard-widget--messages h-100">
-            <div class="tm-dashboard-widget__topline">
-                <span class="tm-dashboard-widget__eyebrow">Messagerie</span>
-                <span class="tm-dashboard-widget__meta">{{ recentMessages|length }} / 5</span>
-            </div>
-
-            <h4 class="tm-card-title mb-2">Messages récents</h4>
-            <div class="tm-dashboard-widget__list">
                 {% if recentMessages is empty %}
-                    <div class="tm-dashboard-widget__empty">Aucun message récent.</div>
+                    <div class="dash-empty-state">Aucun message récent.</div>
                 {% else %}
                     {% for message in recentMessages %}
                         {% set conversation = message.conversation %}
                         {% set quoteRequest = conversation ? conversation.quoteRequest : null %}
-                        <div class="tm-dashboard-widget__item tm-dashboard-widget__item--stack">
-                            <div class="tm-dashboard-widget__item-main">
-                                <strong>{{ quoteRequest ? quoteRequest.title : 'Conversation' }}</strong>
-                                <small>
-                                    {% if message.author %}
-                                        {{ message.author.firstName }} {{ message.author.lastName }}
+                        {% set messageHref = conversation
+                            ? path('app_prestataire_dashboard', { tab: 'messages', conversation: conversation.id }) ~ '#messages-main-panel'
+                            : path('app_prestataire_dashboard', { tab: 'messages' }) ~ '#messages-main-panel'
+                        %}
+                        {% set senderName = message.author ? message.author.firstName ~ ' ' ~ message.author.lastName : 'Système' %}
+                        {% set senderParts = senderName|trim|split(' ') %}
+                        {% set senderInitials = '' %}
+                        {% for part in senderParts %}
+                            {% if part is not empty and senderInitials|length < 2 %}
+                                {% set senderInitials = senderInitials ~ part|first|upper %}
+                            {% endif %}
+                        {% endfor %}
+                        <a href="{{ messageHref }}" class="ligne-message">
+                            <span class="avatar avatar--sm {{ attribute(avatarClasses, loop.index0 % 4) }}">{{ senderInitials ?: 'SY' }}</span>
+                            <div class="ligne-message__corps">
+                                <b>{{ senderName }}</b>
+                                <p>
+                                    {{ quoteRequest ? quoteRequest.title ~ ' — ' : '' }}
+                                    {% if message.content %}
+                                        {{ message.content|length > 72 ? message.content|slice(0, 72) ~ '…' : message.content }}
                                     {% else %}
-                                        Système
+                                        Message sans texte.
                                     {% endif %}
-                                </small>
+                                </p>
                             </div>
-                            <div class="tm-dashboard-widget__message-preview">
-                                {% if message.content %}
-                                    {{ message.content|length > 72 ? message.content|slice(0, 72) ~ '…' : message.content }}
-                                {% else %}
-                                    Message sans texte.
+                            <span class="ligne-message__fin">
+                                <span class="ligne-message__quand">{{ message.createdAt ? message.createdAt|date('d/m H:i') : '—' }}</span>
+                                {% if not message.readAt %}
+                                    <span class="ligne-message__pastille">1</span>
                                 {% endif %}
-                            </div>
-                            <div class="tm-dashboard-widget__item-side tm-dashboard-widget__item-side--inline">
-                                <span class="tm-dashboard-widget__status {{ message.readAt ? 'is-success' : 'is-gold' }}">
-                                    {{ message.readAt ? 'Lu' : 'Non lu' }}
-                                </span>
-                                <small>{{ message.createdAt ? message.createdAt|date('d/m H:i') : '—' }}</small>
-                            </div>
-                        </div>
+                            </span>
+                        </a>
                     {% endfor %}
                 {% endif %}
-            </div>
+            </section>
 
-            <div class="tm-dashboard-widget__footer">
-                <a href="{{ path('app_prestataire_dashboard', { tab: 'messages' }) ~ '#messages-main-panel' }}">Ouvrir la messagerie</a>
-            </div>
-        </article>
-    </div>
-
-    <div class="col-12 col-md-6 col-xl-4">
-        <article class="card tm-card p-3 tm-dashboard-widget tm-dashboard-widget--reviews h-100">
-            <div class="tm-dashboard-widget__topline">
-                <span class="tm-dashboard-widget__eyebrow">Avis</span>
-                <span class="tm-dashboard-widget__meta">{{ prestataireProfile.reviewsCount|default(0) }} avis</span>
-            </div>
-
-            <div class="tm-dashboard-widget__reviews-head">
-                <div>
-                    <h4 class="tm-card-title mb-1">Avis clients</h4>
-                    <p class="text-muted small mb-0">Note globale {{ prestataireProfile.averageRating|default('0')|number_format(1, ',', ' ') }}/5</p>
+            <section class="dash-card">
+                <div class="dash-card__header">
+                    <h2>Avis clients récents</h2>
+                    <a href="{{ path('app_review_prestataire_reviews') }}" class="dash-card__lien">Voir tous</a>
                 </div>
-                <div class="tm-dashboard-widget__rating-badge">
-                    {{ prestataireProfile.averageRating|default('0')|number_format(1, ',', ' ') }}
-                </div>
-            </div>
-
-            <div class="tm-dashboard-widget__list">
                 {% if recentReviews is empty %}
-                    <div class="tm-dashboard-widget__empty">Aucun avis reçu pour le moment.</div>
+                    <div class="dash-empty-state">Aucun avis reçu pour le moment.</div>
                 {% else %}
                     {% for review in recentReviews %}
-                        <div class="tm-dashboard-widget__item tm-dashboard-widget__item--stack">
-                            <div class="tm-dashboard-widget__item-main">
-                                <strong>
-                                    {{ review.clientProfile and review.clientProfile.account
-                                        ? review.clientProfile.account.firstName ~ ' ' ~ review.clientProfile.account.lastName
-                                        : 'Client' }}
-                                </strong>
-                                <small>{{ review.createdAt ? review.createdAt|date('d/m/Y') : '—' }}</small>
-                            </div>
-                            <div class="tm-dashboard-widget__review-line">
-                                <span class="tm-dashboard-widget__stars">
-                                    {% for i in 1..5 %}{{ i <= review.rating ? '★' : '☆' }}{% endfor %}
-                                </span>
-                                <span>{{ review.rating }}/5</span>
-                            </div>
-                            <div class="tm-dashboard-widget__message-preview">
-                                {{ review.comment ? (review.comment|length > 88 ? review.comment|slice(0, 88) ~ '…' : review.comment) : 'Aucun commentaire rédigé.' }}
+                        {% set reviewerName = review.clientProfile and review.clientProfile.account ? review.clientProfile.account.firstName ~ ' ' ~ review.clientProfile.account.lastName : 'Client' %}
+                        {% set reviewerParts = reviewerName|trim|split(' ') %}
+                        {% set reviewerInitials = '' %}
+                        {% for part in reviewerParts %}
+                            {% if part is not empty and reviewerInitials|length < 2 %}
+                                {% set reviewerInitials = reviewerInitials ~ part|first|upper %}
+                            {% endif %}
+                        {% endfor %}
+                        <div class="ligne-avis">
+                            <span class="avatar avatar--sm {{ attribute(avatarClasses, loop.index0 % 4) }}">{{ reviewerInitials ?: 'CL' }}</span>
+                            <div class="ligne-avis__corps">
+                                <div class="ligne-avis__haut">
+                                    <b>{{ reviewerName }}</b>
+                                    <span class="etoiles">{% for i in 1..5 %}{{ i <= review.rating ? '★' : '☆' }}{% endfor %}</span>
+                                    <span class="ligne-avis__quand">{{ review.createdAt ? review.createdAt|date('d/m/Y') : '—' }}</span>
+                                </div>
+                                <p>{{ review.comment ? (review.comment|length > 120 ? review.comment|slice(0, 120) ~ '…' : review.comment) : 'Aucun commentaire rédigé.' }}</p>
                             </div>
                         </div>
                     {% endfor %}
                 {% endif %}
-            </div>
+            </section>
 
-            <div class="tm-dashboard-widget__footer">
-                <a href="{{ path('app_review_prestataire_reviews') }}">Voir tous les avis</a>
-            </div>
-        </article>
+            <section class="conseil">
+                <p class="conseil__titre mb-0">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.9.7 1.5 1.3 1.5 2.1h4c0-.8.6-1.4 1.5-2.1A6 6 0 0 0 12 3z"/></svg>
+                    Conseil du jour
+                </p>
+                <p>
+                    {% if completionReport.score < 100 %}
+                        Complétez votre profil : les sections finalisées renforcent la confiance et améliorent votre visibilité.
+                    {% elseif mandatoryChecklist.missingItems is not empty %}
+                        Finalisez les éléments indispensables manquants pour fluidifier la réception de nouvelles demandes.
+                    {% else %}
+                        Votre profil est bien avancé : gardez vos disponibilités et votre abonnement à jour pour rester réactif.
+                    {% endif %}
+                </p>
+                <a href="{{ path('app_prestataire_settings', { tab: completionReport.score < 100 ? 'profile' : 'services' }) }}">
+                    Ouvrir les paramètres
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
+            </section>
+        </div>
     </div>
 </div>
 

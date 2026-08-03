@@ -1,6 +1,8 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
+    static targets = ["calendar", "monthLabel"];
+
     static values = {
         eventsUrl: String,
         updateUrl: String,
@@ -74,23 +76,27 @@ export default class extends Controller {
     initCalendar() {
         if (
             this.initialized ||
-            !this.element ||
+            !this.calendarElement ||
             typeof FullCalendar === "undefined"
         ) {
             return;
         }
 
-        this.calendar = new FullCalendar.Calendar(this.element, {
+        this.calendar = new FullCalendar.Calendar(this.calendarElement, {
             locale: "fr",
             timeZone: "local",
             initialView: "dayGridMonth",
             firstDay: 1,
-            height: this.heightValue,
+            height: this.compactValue ? "auto" : this.heightValue,
+            fixedWeekCount: false,
+            showNonCurrentDates: true,
+            aspectRatio: this.compactValue ? 1.05 : undefined,
             nowIndicator: true,
             selectable: true,
             editable: true,
-            dayMaxEvents: true,
-            eventDisplay: this.compactValue ? "list-item" : "auto",
+            dayMaxEvents: !this.compactValue,
+            dayMaxEventRows: !this.compactValue,
+            eventDisplay: this.compactValue ? "none" : "auto",
             headerToolbar: {
                 left: "prev,next today",
                 center: "title",
@@ -104,7 +110,9 @@ export default class extends Controller {
                 list: "Liste",
             },
             events: this.eventsUrlValue,
-            datesSet: () => {
+            datesSet: (info) => {
+                this.updateMonthLabel(info.view.currentStart);
+
                 if (this.compactValue) {
                     this.refreshCompactIndicators();
                 }
@@ -130,6 +138,7 @@ export default class extends Controller {
         });
 
         this.calendar.render();
+        this.updateMonthLabel(this.calendar.getDate());
         if (this.compactValue) {
             this.refreshCompactIndicators();
         }
@@ -137,11 +146,11 @@ export default class extends Controller {
     }
 
     refreshCompactIndicators() {
-        if (!this.calendar || !this.element) {
+        if (!this.calendar || !this.calendarElement) {
             return;
         }
 
-        this.element
+        this.calendarElement
             .querySelectorAll(".tm-dashboard-widget__calendar-indicators")
             .forEach((indicator) => indicator.remove());
 
@@ -159,7 +168,7 @@ export default class extends Controller {
         });
 
         countsByDay.forEach((count, dayKey) => {
-            const dayCell = this.element.querySelector(
+            const dayCell = this.calendarElement.querySelector(
                 `.fc-daygrid-day[data-date="${dayKey}"] .fc-daygrid-day-frame`
             );
 
@@ -171,24 +180,45 @@ export default class extends Controller {
             indicators.className = "tm-dashboard-widget__calendar-indicators";
             indicators.setAttribute("aria-hidden", "true");
 
-            const visibleDots = Math.min(count, 3);
-
-            for (let index = 0; index < visibleDots; index += 1) {
+            if (count > 0) {
                 const dot = document.createElement("span");
                 dot.className = "tm-dashboard-widget__calendar-indicator";
                 indicators.appendChild(dot);
             }
 
-            if (count > 3) {
-                const extra = document.createElement("span");
-                extra.className =
-                    "tm-dashboard-widget__calendar-indicator tm-dashboard-widget__calendar-indicator--count";
-                extra.textContent = `+${count - 3}`;
-                indicators.appendChild(extra);
-            }
-
             dayCell.appendChild(indicators);
         });
+    }
+
+    previousMonth() {
+        if (!this.calendar) {
+            return;
+        }
+
+        this.calendar.prev();
+    }
+
+    nextMonth() {
+        if (!this.calendar) {
+            return;
+        }
+
+        this.calendar.next();
+    }
+
+    updateMonthLabel(date) {
+        if (!this.hasMonthLabelTarget || !(date instanceof Date)) {
+            return;
+        }
+
+        this.monthLabelTarget.textContent = new Intl.DateTimeFormat("fr-FR", {
+            month: "long",
+            year: "numeric",
+        }).format(date).replace(/^./, (letter) => letter.toUpperCase());
+    }
+
+    get calendarElement() {
+        return this.hasCalendarTarget ? this.calendarTarget : this.element;
     }
 
     formatDayKey(date) {
