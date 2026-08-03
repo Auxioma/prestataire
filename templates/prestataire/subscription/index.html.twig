@@ -51,9 +51,7 @@
                                 <div>
                                     <p class="subscription-eyebrow">Abonnements et facturation</p>
                                     <h1>Mon abonnement</h1>
-                                    <p>
-                                        Gérez votre abonnement, vos moyens de paiement et vos factures directement depuis l’espace prestataire.
-                                    </p>
+                                    <p>Abonnement, paiement et factures au même endroit.</p>
                                 </div>
                             </header>
 
@@ -132,9 +130,6 @@
                                                 <div class="plan plan--actif subscription-sidecard">
                                                     <span class="plan__badge plan__badge--actuel">OFFRE ACTIVE</span>
                                                     <span class="plan__nom">{{ currentSubscription.plan.name }}</span>
-                                                    <p class="plan__desc">
-                                                        Votre abonnement reste accessible jusqu’au prochain renouvellement et vous pouvez ajuster son statut à tout moment.
-                                                    </p>
                                                     <div class="plan__liste">
                                                         <span>Périodicité : {{ currentSubscription.billingPeriod.label }}</span>
                                                         <span>Crédits restants : {{ currentSubscription.remainingCredits }}</span>
@@ -196,9 +191,6 @@
                                             <h2>Monter en gamme</h2>
                                         </div>
                                     </div>
-                                    <p class="subscription-lead">
-                                        Sélectionnez une formule supérieure avant de confirmer la carte bancaire.
-                                    </p>
 
                                     <div class="row g-4">
                                         {% for plan in plans %}
@@ -211,32 +203,45 @@
                                                     <span class="plan__nom">{{ plan.name }}</span>
                                                     <p class="plan__desc">{{ plan.description ?: 'Abonnement à reconduction tacite pour prestataires.' }}</p>
 
-                                                    <div class="subscription-prices">
-                                                        <div class="subscription-price-card">
-                                                            <span class="subscription-price-card__label">Mensuel</span>
-                                                            <div class="plan__prix">
-                                                                <b>{{ plan.monthlyAmount ?: '—' }} €</b>
-                                                                <span>{{ plan.monthlyCredits }} crédit{{ plan.monthlyCredits > 1 ? 's' : '' }}</span>
-                                                            </div>
+                                                    <div class="subscription-plan-prices">
+                                                        <div class="plan__prix">
+                                                            <b>{{ plan.monthlyAmount ?: '—' }} €</b>
+                                                            <span>/ mois · {{ plan.monthlyCredits }} crédit{{ plan.monthlyCredits > 1 ? 's' : '' }}</span>
                                                         </div>
-                                                        <div class="subscription-price-card">
-                                                            <span class="subscription-price-card__label">Annuel</span>
-                                                            <div class="plan__prix subscription-price-card__annual">
-                                                                <b>{{ plan.annualAmount ?: '—' }} €</b>
-                                                                <span>{{ plan.annualCredits }} crédit{{ plan.annualCredits > 1 ? 's' : '' }}</span>
-                                                            </div>
+                                                        <div class="subscription-plan-secondary-price">
+                                                            Annuel : <strong>{{ plan.annualAmount ?: '—' }} €</strong> · {{ plan.annualCredits }} crédit{{ plan.annualCredits > 1 ? 's' : '' }}
                                                         </div>
                                                     </div>
 
                                                     <div class="plan__liste">
-                                                        <span>{{ plan.quoteResponsesEnabled ? 'Réponse aux devis incluse' : 'Réponse aux devis désactivée' }}</span>
-                                                        <span>{{ plan.instantMessagingEnabled ? 'Messagerie instantanée incluse' : 'Messagerie instantanée désactivée' }}</span>
+                                                        <span class="inclus-titre">Comprend :</span>
+                                                        <span>
+                                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                                <circle cx="12" cy="12" r="9"/>
+                                                                <path d="m8.5 12.5 2.5 2.5 5-5.5"/>
+                                                            </svg>
+                                                            {{ plan.quoteResponsesEnabled ? 'Réponse aux devis' : 'Réponse aux devis indisponible' }}
+                                                        </span>
+                                                        <span>
+                                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                                <circle cx="12" cy="12" r="9"/>
+                                                                <path d="m8.5 12.5 2.5 2.5 5-5.5"/>
+                                                            </svg>
+                                                            {{ plan.instantMessagingEnabled ? 'Messagerie instantanée' : 'Messagerie indisponible' }}
+                                                        </span>
+                                                        <span>
+                                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                                <circle cx="12" cy="12" r="9"/>
+                                                                <path d="m8.5 12.5 2.5 2.5 5-5.5"/>
+                                                            </svg>
+                                                            {{ plan.monthlyCredits }} crédit{{ plan.monthlyCredits > 1 ? 's mensuels' : ' mensuel' }}
+                                                        </span>
                                                     </div>
 
-                                                    <div class="subscription-plan-actions">
+                                                    <div class="subscription-plan-toggle" role="group" aria-label="Choisir la périodicité pour {{ plan.name }}">
                                                         <button
                                                             type="button"
-                                                            class="btn btn-dash-primary"
+                                                            class="btn subscription-toggle-btn subscription-toggle-btn--primary"
                                                             data-action="click->subscription-checkout#selectPlan"
                                                             data-subscription-checkout-plan-code-param="{{ plan.code }}"
                                                             data-subscription-checkout-plan-period-param="monthly"
@@ -252,7 +257,7 @@
 
                                                         <button
                                                             type="button"
-                                                            class="btn btn-dash-ghost"
+                                                            class="btn subscription-toggle-btn subscription-toggle-btn--ghost"
                                                             data-action="click->subscription-checkout#selectPlan"
                                                             data-subscription-checkout-plan-code-param="{{ plan.code }}"
                                                             data-subscription-checkout-plan-period-param="annual"
@@ -285,19 +290,13 @@
                                                 <div class="subscription-payment-intro">
                                                     <span class="chip chip--nouvelle">Paiement sécurisé</span>
                                                     <h2>Confirmer la carte et l’abonnement</h2>
-                                                    <p>
-                                                        La carte sera enregistrée pour les renouvellements automatiques. Seule la carte bancaire est acceptée sur cet écran.
-                                                    </p>
                                                     <div class="subscription-selection-card">
                                                         <div class="subscription-selection-card__label">Offre sélectionnée</div>
                                                         <div class="subscription-selection-card__name" data-subscription-checkout-target="selectionName">Choisissez une formule</div>
                                                         <div class="subscription-selection-card__meta" data-subscription-checkout-target="selectionMeta">
-                                                            Sélectionnez d’abord un abonnement mensuel ou annuel dans la liste ci-dessus.
+                                                            Choisissez une formule ci-dessus.
                                                         </div>
                                                     </div>
-                                                    <p class="subscription-payment-note">
-                                                        En validant, vous autorisez la facturation récurrente. Les futures factures resteront accessibles ci-dessous depuis votre espace prestataire.
-                                                    </p>
                                                 </div>
                                             </div>
 
@@ -335,9 +334,6 @@
                                             <h2>Historique de facturation</h2>
                                         </div>
                                     </div>
-                                    <p class="subscription-lead">
-                                        Retrouvez ici l’historique de vos factures d’abonnement et téléchargez-les directement depuis votre espace.
-                                    </p>
 
                                     {% if recentInvoices is not empty %}
                                         <div class="tableau-wrap">
@@ -408,9 +404,7 @@
                                     </svg>
                                     Le saviez-vous ?
                                 </p>
-                                <p>
-                                    Les prestataires disposant d’une offre supérieure gagnent en visibilité plus tôt dans le parcours client et centralisent toute leur facturation au même endroit.
-                                </p>
+                                <p>Une offre supérieure améliore généralement la visibilité et l’accès aux demandes.</p>
                             </div>
                         </div>
                     </div>
