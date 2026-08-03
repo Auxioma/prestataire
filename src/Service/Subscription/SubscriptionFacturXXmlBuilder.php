@@ -68,7 +68,7 @@ final class SubscriptionFacturXXmlBuilder
             $document,
             self::NS_RAM,
             'ram:Content',
-            'Facture d’abonnement générée par TrouveMoi à partir des données de paiement synchronisées avec Stripe.'
+            'Facture d’abonnement générée par TrouveMoi à partir des données de paiement synchronisées avec la plateforme.'
         ));
         $header->appendChild($note);
         $this->appendFrenchPaymentNotice($document, $header, self::PLATFORM_RECOVERY_TERMS, 'PMT');
@@ -218,7 +218,7 @@ final class SubscriptionFacturXXmlBuilder
 
         if ($invoice->getDueAt() instanceof \DateTimeInterface) {
             $terms = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedTradePaymentTerms');
-            $terms->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Description', 'Paiement de l’abonnement traite via Stripe.'));
+            $terms->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Description', 'Paiement de l’abonnement.'));
             $dueDate = $document->createElementNS(self::NS_RAM, 'ram:DueDateDateTime');
             $dateTimeString = $this->createTextElementNS($document, self::NS_UDT, 'udt:DateTimeString', $invoice->getDueAt()->format('Ymd'));
             $dateTimeString->setAttribute('format', '102');

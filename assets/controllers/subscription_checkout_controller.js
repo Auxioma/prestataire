@@ -34,7 +34,7 @@ export default class extends Controller {
             return;
         }
 
-        this.setSubmitState(true, 'Initialisation du formulaire Stripe...');
+        this.setSubmitState(true, 'Initialisation du paiement...');
         this.hideAlerts();
 
         try {
@@ -186,7 +186,7 @@ export default class extends Controller {
         }
 
         if (!result.setupIntent || result.setupIntent.status !== 'succeeded') {
-            throw new Error('Le moyen de paiement n’a pas ete confirme par Stripe.');
+            throw new Error('Le moyen de paiement n’a pas ete confirme par la plateforme de paiement.');
         }
 
         this.confirmedSetupIntentId = result.setupIntent.id;
