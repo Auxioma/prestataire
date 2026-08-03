@@ -402,6 +402,11 @@
 					<section id="quote-conversation" class="tm-client-quotes-detailcard tm-client-quotes-detailcard--conversation" {{ stimulus_controller('realtime-conversation', { url: 'http://localhost:3001', conversationId: conversation ? conversation.id : 0, authToken: realtimeConversationToken|default(''), eventName: 'message_created', joinEventName: 'join_conversation', streamSelector: '.tm-client-quotes-messages--scroll', bodySelector: '.tm-client-quotes-conversation-body', emptySelector: '.tm-client-quotes-empty-state', currentUserType: 'client', layout: 'client', scrollPageToSelf: false } ) }}>
 						<div class="card-body">
 							<div class="tm-client-quotes-conversation-body">
+                                {% set providerName = quoteRequest.prestataire.companyName ?: quoteRequest.prestataire.legalName ?: 'Prestataire' %}
+                                {% set providerAvatarSeed = providerName|split(' ') %}
+                                {% set providerInitials = ((providerAvatarSeed[0]|default('P'))|slice(0, 1) ~ (providerAvatarSeed[1]|default('R'))|slice(0, 1))|upper %}
+                                {% set providerAvatarClasses = ['avatar--safran', 'avatar--bleu', 'avatar--vert', 'avatar--violet', 'avatar--encre'] %}
+                                {% set providerAvatarClass = providerAvatarClasses[(conversation ? conversation.id : quoteRequest.id)|default(0) % providerAvatarClasses|length] %}
 								<div class="tm-client-quotes-section-head tm-client-quotes-section-head--conversation">
 									<div>
 										<h2 class="tm-client-quotes-section-title">Messagerie liée</h2>
@@ -433,8 +438,18 @@
 								</div>
 
 								{% if conversation is defined and conversation %}
+                                    <div class="tm-client-quotes-conversation-thread-head">
+                                        <span class="tm-client-quotes-conversation-avatar {{ providerAvatarClass }}">{{ providerInitials ?: 'PR' }}</span>
+                                        <div class="tm-client-quotes-conversation-thread-copy">
+                                            <span class="tm-client-quotes-conversation-thread-kicker">Conversation active</span>
+                                            <b>{{ providerName }}</b>
+                                            <span>{{ quoteRequest.title }}</span>
+                                        </div>
+                                    </div>
+
 									{% if messages is defined and messages is not empty %}
 										<div class="tm-client-quotes-messages tm-client-quotes-messages--scroll">
+                                            {% set currentDayKey = null %}
 											{% for message in messages %}
 												{% set isSystemMessage = message.type is defined and message.type and message.type.value == 'system' %}
 												{% set isClientMessage = not isSystemMessage and message.author is defined and message.author and app.user and message.author.id == app.user.id %}
@@ -442,6 +457,14 @@
                                                     ? 'Système'
                                                     : (isClientMessage ? 'Vous' : (quoteRequest.prestataire.companyName ?: quoteRequest.prestataire.legalName ?: 'Prestataire'))
                                                 %}
+                                                {% set dayKey = message.createdAt ? message.createdAt|date('Y-m-d') : 'unknown' %}
+
+                                                {% if dayKey != currentDayKey %}
+                                                    <span class="tm-client-quotes-message-day">
+                                                        {{ message.createdAt ? message.createdAt|date('d/m/Y') : 'Date inconnue' }}
+                                                    </span>
+                                                    {% set currentDayKey = dayKey %}
+                                                {% endif %}
 
 												<article class="tm-client-quotes-message
 																																																																																																		                                                    {% if isSystemMessage %}
@@ -452,10 +475,11 @@
 																																																																																																		                                                        tm-client-quotes-message--incoming
 																																																																																																		                                                    {% endif %}
 																																																																																																		                                                ">
-													<div class="tm-client-quotes-message__meta">
-														<strong>{{ authorLabel }}</strong>
-														<span>{{ message.createdAt ? message.createdAt|date('d/m/Y H:i') : '—' }}</span>
-													</div>
+                                                    {% if not isSystemMessage %}
+													    <div class="tm-client-quotes-message__meta">
+														    <strong>{{ authorLabel }}</strong>
+													    </div>
+                                                    {% endif %}
 
 													{% if (message.content ?? '') is not empty %}
 														<div class="tm-client-quotes-message__content">
@@ -474,6 +498,10 @@
 															{% endfor %}
 														</div>
 													{% endif %}
+
+                                                    {% if not isSystemMessage %}
+													    <span class="tm-client-quotes-message__time">{{ message.createdAt ? message.createdAt|date('H:i') : '—' }}</span>
+                                                    {% endif %}
 												</article>
 											{% endfor %}
 										</div>
@@ -493,8 +521,6 @@
 
 									{% if messageForm is defined and messageForm %}
 										<div id="quote-message-form" class="tm-client-quotes-message-composer">
-											
-
 											{{ form_start(messageForm, {
                                                 attr: {
                                                     class: 'tm-client-quotes-message-composer__form',
@@ -505,20 +531,28 @@
                                             }) }}
                                             <div class="alert alert-danger d-none" data-conversation-form-target="error"></div>
 
-											<div class="tm-client-quotes-message-composer__field">
-												{{ form_label(messageForm.content, 'Votre message', {
-                                                    label_attr: { class: 'tm-client-quotes-message-composer__label' }
-                                                }) }}
-
+											<div class="tm-client-quotes-message-composer__field tm-client-quotes-message-composer__field--main">
+                                                <label class="tm-client-quotes-message-composer__attach" for="{{ messageForm.attachments.vars.id }}" aria-label="Joindre des photos">
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                        <path d="m21 12-8.5 8.5a5 5 0 0 1-7-7L14 5a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L16 7"/>
+                                                    </svg>
+                                                </label>
 												{{ form_widget(messageForm.content, {
                                                     attr: {
                                                         class: 'tm-client-quotes-message-composer__textarea' ~ (messageForm.content.vars.errors|length > 0 ? ' is-invalid' : ''),
                                                         placeholder: messages is defined and messages is not empty
                                                             ? 'Décrivez votre question ou ajoutez une précision utile…'
                                                             : 'Bonjour, je souhaite vous apporter une précision sur ma demande…',
-                                                        rows: 6
+                                                        rows: 1
                                                     }
                                                 }) }}
+
+                                                <button type="submit" class="tm-client-quotes-message-composer__send" data-conversation-form-target="submit" aria-label="Envoyer le message">
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                        <path d="m22 2-7 20-4-9-9-4z"/>
+                                                        <path d="M22 2 11 13"/>
+                                                    </svg>
+                                                </button>
 
 												{% if messageForm.content.vars.errors|length > 0 %}
 													<div class="invalid-feedback d-block tm-client-quotes-message-composer__error">
@@ -527,21 +561,17 @@
 												{% endif %}
 											</div>
 
-											<div class="tm-client-quotes-message-composer__field">
-												<label class="tm-client-quotes-message-composer__label" for="{{ messageForm.attachments.vars.id }}">
-													Photos
-												</label>
-
+											<div class="tm-client-quotes-message-composer__field tm-client-quotes-message-composer__field--attachments">
 												{{ form_widget(messageForm.attachments, {
                                                     attr: {
-                                                        class: 'form-control' ~ (messageForm.attachments.vars.errors|length > 0 ? ' is-invalid' : ''),
+                                                        class: 'form-control tm-client-quotes-message-composer__file' ~ (messageForm.attachments.vars.errors|length > 0 ? ' is-invalid' : ''),
                                                         accept: 'image/jpeg,image/png,image/webp',
                                                         multiple: 'multiple'
                                                     }
                                                 }) }}
 
 												<div class="form-text">
-													Vous pouvez sélectionner jusqu’à 5 photos.
+													Jusqu’à 5 photos.
 												</div>
 
 												{% if messageForm.attachments.vars.errors|length > 0 %}
@@ -551,16 +581,9 @@
 												{% endif %}
 											</div>
 
-											<div class="tm-client-quotes-message-composer__footer">
-												<p class="tm-client-quotes-message-composer__hint mb-0">
-													Vous pouvez envoyer un texte, des photos, ou les deux.
-												</p>
-
-												<button type="submit" class="btn tm-client-quotes-btn tm-client-quotes-btn--primary" data-conversation-form-target="submit">
-													<i class="fa-regular fa-paper-plane"></i>
-													<span>Envoyer le message</span>
-												</button>
-											</div>
+                                            <p class="tm-client-quotes-message-composer__hint mb-0">
+                                                Vous pouvez envoyer un texte, des photos, ou les deux.
+                                            </p>
 
 											{{ form_widget(messageForm._token) }}
 											{{ form_end(messageForm, { render_rest: false }) }}
