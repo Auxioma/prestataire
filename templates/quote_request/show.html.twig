@@ -9,6 +9,11 @@
 		<div class="container py-4 py-lg-5">
 			{% set statusValue = quoteRequest.status.value %}
             {% set providerProfileUrl = quoteRequest.prestataire and quoteRequest.prestataire.slug ? path('app_prestataire_show', { slug: quoteRequest.prestataire.slug }) : null %}
+            {% set providerName = quoteRequest.prestataire.companyName ?: quoteRequest.prestataire.legalName ?: 'Prestataire' %}
+            {% set providerAvatarSeed = providerName|split(' ') %}
+            {% set providerInitials = ((providerAvatarSeed[0]|default('P'))|slice(0, 1) ~ (providerAvatarSeed[1]|default('R'))|slice(0, 1))|upper %}
+            {% set providerAvatarClasses = ['avatar--safran', 'avatar--bleu', 'avatar--vert', 'avatar--violet', 'avatar--encre'] %}
+            {% set providerAvatarClass = providerAvatarClasses[(conversation ? conversation.id : quoteRequest.id)|default(0) % providerAvatarClasses|length] %}
 
 			{% set timelineSteps = [
                 {
@@ -60,7 +65,7 @@
 					<h1 class="tm-client-quotes-title tm-client-quotes-title--wide">{{ quoteRequest.title }}</h1>
 
 					<p class="tm-client-quotes-subtitle">
-						Suivez l’avancement de votre demande, consultez les informations transmises au prestataire et échangez directement depuis cette page lorsque la conversation est ouverte.
+						Suivez l’avancement, consultez le devis et échangez avec le prestataire depuis un seul écran.
 					</p>
 
 					<div class="tm-client-quotes-hero__meta">
@@ -69,10 +74,10 @@
 							<strong class="tm-client-quotes-hero-metric__value">
                                 {% if providerProfileUrl %}
                                     <a href="{{ providerProfileUrl }}" class="tm-client-quotes-profile-link tm-client-quotes-profile-link--hero">
-								    {{ quoteRequest.prestataire.companyName ?? 'Non renseigné' }}
+								    {{ providerName }}
                                     </a>
                                 {% else %}
-								    {{ quoteRequest.prestataire.companyName ?? 'Non renseigné' }}
+								    {{ providerName }}
                                 {% endif %}
 							</strong>
 						</article>
@@ -92,7 +97,24 @@
 						</article>
 					</div>
 				</div>
-
+				<div class="tm-client-quotes-hero__side">
+					<div class="tm-client-quotes-hero-status-card">
+						<span class="tm-client-quotes-hero-status-card__label">Statut actuel</span>
+						<span class="tm-client-quotes-status tm-client-quotes-status--{{ quoteRequest.status.getBadgeClass() }}">
+							{{ quoteRequest.status.getLabel() }}
+						</span>
+						<div class="tm-client-quotes-hero-status-card__meta">
+							<div>
+								<span>Date souhaitée</span>
+								<strong>{{ quoteRequest.desiredDate ? quoteRequest.desiredDate|date('d/m/Y') : 'Non renseignée' }}</strong>
+							</div>
+							<div>
+								<span>Budget</span>
+								<strong>{{ quoteRequest.budgetAmount is not null ? quoteRequest.budgetAmount|number_format(2, ',', ' ') ~ ' €' : 'Non renseigné' }}</strong>
+							</div>
+						</div>
+					</div>
+				</div>
 
 			</section>
 
@@ -105,15 +127,12 @@
 				{% endfor %}
 			{% endfor %}
 
-			<div class="row g-4">
-				<div class="col-xl-8">
+			<div class="row g-4 tm-client-quotes-layout">
+				<div class="col-xl-8 tm-client-quotes-main">
 					<section class="tm-client-quotes-detailcard tm-client-quotes-detailcard--description mb-4">
 						<div class="card-body">
 							<div class="tm-client-quotes-section-head">
 								<h2 class="tm-client-quotes-section-title">Description du besoin</h2>
-								<p class="tm-client-quotes-section-text mb-0">
-									Le besoin formulé lors de la création de votre demande.
-								</p>
 							</div>
 
 							<div class="tm-client-quotes-description">
@@ -126,9 +145,6 @@
 						<div class="card-body">
 							<div class="tm-client-quotes-section-head">
 								<h2 class="tm-client-quotes-section-title">Détails de la demande</h2>
-								<p class="tm-client-quotes-section-text mb-0">
-									Les informations principales liées à cette demande.
-								</p>
 							</div>
 
 							<div class="tm-client-quotes-infos-grid">
@@ -137,10 +153,10 @@
 									<strong class="tm-client-quotes-info__value">
                                         {% if providerProfileUrl %}
                                             <a href="{{ providerProfileUrl }}" class="tm-client-quotes-profile-link">
-										    {{ quoteRequest.prestataire.companyName ?? 'Non renseigné' }}
+										    {{ providerName }}
                                             </a>
                                         {% else %}
-										    {{ quoteRequest.prestataire.companyName ?? 'Non renseigné' }}
+										    {{ providerName }}
                                         {% endif %}
 									</strong>
 								</article>
@@ -229,15 +245,13 @@
 									{{ hasQuoteResponses ? 'Un devis est arrivé !' : 'Aucun devis pour le moment' }}
 								</h2>
 
-								<p class="tm-client-quotes-section-text mb-0">
-									{{ hasQuoteResponses
-                    ? 'Consultez le devis transmis par le prestataire.'
-                    : 'Dès qu’un prestataire vous transmettra un devis, il apparaîtra ici.' }}
-								</p>
+								{% if not hasQuoteResponses %}
+									<p class="tm-client-quotes-section-text mb-0">Le prochain devis finalisé apparaîtra ici.</p>
+								{% endif %}
 							</div>
 
 							{% if hasQuoteResponses %}
-								<div class="d-grid gap-3">
+								<div class="d-grid gap-3 tm-client-quotes-responses">
 									{% for quoteResponse in quoteResponses %}
 										{% set isExternalPdfDocument = quoteResponse.documentMode.value == 'external_pdf' %}
 										<article class="tm-client-quote-response-card">
@@ -402,17 +416,9 @@
 					<section id="quote-conversation" class="tm-client-quotes-detailcard tm-client-quotes-detailcard--conversation" {{ stimulus_controller('realtime-conversation', { url: 'http://localhost:3001', conversationId: conversation ? conversation.id : 0, authToken: realtimeConversationToken|default(''), eventName: 'message_created', joinEventName: 'join_conversation', streamSelector: '.tm-client-quotes-messages--scroll', bodySelector: '.tm-client-quotes-conversation-body', emptySelector: '.tm-client-quotes-empty-state', currentUserType: 'client', layout: 'client', scrollPageToSelf: false } ) }}>
 						<div class="card-body">
 							<div class="tm-client-quotes-conversation-body">
-                                {% set providerName = quoteRequest.prestataire.companyName ?: quoteRequest.prestataire.legalName ?: 'Prestataire' %}
-                                {% set providerAvatarSeed = providerName|split(' ') %}
-                                {% set providerInitials = ((providerAvatarSeed[0]|default('P'))|slice(0, 1) ~ (providerAvatarSeed[1]|default('R'))|slice(0, 1))|upper %}
-                                {% set providerAvatarClasses = ['avatar--safran', 'avatar--bleu', 'avatar--vert', 'avatar--violet', 'avatar--encre'] %}
-                                {% set providerAvatarClass = providerAvatarClasses[(conversation ? conversation.id : quoteRequest.id)|default(0) % providerAvatarClasses|length] %}
 								<div class="tm-client-quotes-section-head tm-client-quotes-section-head--conversation">
 									<div>
 										<h2 class="tm-client-quotes-section-title">Messagerie liée</h2>
-										<p class="tm-client-quotes-section-text mb-0">
-											La conversation associée à cette demande pour échanger avec le prestataire.
-										</p>
 									</div>
 
 									<div class="tm-client-quotes-conversation-head-actions">
@@ -455,7 +461,7 @@
 												{% set isClientMessage = not isSystemMessage and message.author is defined and message.author and app.user and message.author.id == app.user.id %}
 												{% set authorLabel = isSystemMessage
                                                     ? 'Système'
-                                                    : (isClientMessage ? 'Vous' : (quoteRequest.prestataire.companyName ?: quoteRequest.prestataire.legalName ?: 'Prestataire'))
+                                                    : (isClientMessage ? 'Vous' : providerName)
                                                 %}
                                                 {% set dayKey = message.createdAt ? message.createdAt|date('Y-m-d') : 'unknown' %}
 
@@ -615,13 +621,10 @@
 					</section>
 				</div>
 
-				<div class="col-xl-4">
+				<div class="col-xl-4 tm-client-quotes-sidebar">
 					<aside class="tm-client-quotes-sidecard tm-client-quotes-sidecard--status mb-4">
 						<div class="card-body">
 							<h2 class="tm-client-quotes-sidecard__title">Statut</h2>
-							<p class="tm-client-quotes-sidecard__text">
-								Voici l’état actuel de votre demande de devis.
-							</p>
 
 							<span class="tm-client-quotes-status tm-client-quotes-status--{{ quoteRequest.status.getBadgeClass() }}">
 								{{ quoteRequest.status.getLabel() }}
@@ -632,9 +635,6 @@
 					<aside class="tm-client-quotes-sidecard tm-client-quotes-sidecard--timeline mb-4">
 						<div class="card-body">
 							<h2 class="tm-client-quotes-sidecard__title">Suivi de la demande</h2>
-							<p class="tm-client-quotes-sidecard__text">
-								Visualisez rapidement l’avancement de votre dossier.
-							</p>
 
 							<div class="tm-client-quotes-timeline">
 								{% for step in timelineSteps %}
@@ -705,7 +705,7 @@
 
 								        <div class="tm-client-quotes-provider__body">
 									        <h3 class="tm-client-quotes-provider__name">
-										        {{ quoteRequest.prestataire.companyName ?? 'Prestataire' }}
+										        {{ providerName }}
 									        </h3>
 
 									        <p class="tm-client-quotes-provider__meta mb-0">
@@ -728,7 +728,7 @@
 
 								    <div class="tm-client-quotes-provider__body">
 									    <h3 class="tm-client-quotes-provider__name">
-										    {{ quoteRequest.prestataire.companyName ?? 'Prestataire' }}
+										    {{ providerName }}
 									    </h3>
 
 									    <p class="tm-client-quotes-provider__meta mb-0">
@@ -769,9 +769,6 @@
 					<aside class="tm-client-quotes-sidecard">
 						<div class="card-body">
 							<h2 class="tm-client-quotes-sidecard__title">Actions</h2>
-							<p class="tm-client-quotes-sidecard__text">
-								Revenir à votre liste ou relancer facilement une demande proche de celle-ci.
-							</p>
 
 							<div class="d-grid gap-2">
 								<a href="{{ path('app_quote_request_index') }}" class="btn tm-client-quotes-btn tm-client-quotes-btn--ghost">

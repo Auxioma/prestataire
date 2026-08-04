@@ -1265,6 +1265,243 @@
     gap: 1rem;
 }
 
+/* ---------------------------------------------------------
+   AVIS PRESTATAIRE
+   --------------------------------------------------------- */
+
+.tm-dashboard-page .tm-dashboard-reviews {
+    min-width: 0;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .dash-card {
+    border: 1px solid var(--bordure);
+    border-radius: 1.125rem;
+    background: #fff;
+    box-shadow: var(--ombre);
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .tm-prestataire-reviews-hero {
+    padding: 1.375rem 1.25rem;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .tm-prestataire-reviews-hero__title {
+    margin: 0;
+    font-family: "Bricolage Grotesque", Inter, sans-serif;
+    font-size: clamp(1.9rem, 1.5rem + 1.2vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.02;
+    color: var(--encre);
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .tm-prestataire-reviews-hero__text,
+.tm-dashboard-page .tm-dashboard-reviews .tm-prestataire-reviews-listtext {
+    margin: 0.45rem 0 0;
+    color: var(--texte-doux);
+    font-size: 0.875rem;
+    line-height: 1.65;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .tm-prestataire-reviews-eyebrow {
+    margin: 0 0 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bleu);
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .tm-prestataire-reviews-summary {
+    display: grid;
+    grid-template-columns: minmax(180px, 240px) 1fr;
+    gap: 1rem;
+    align-items: stretch;
+    margin-top: 1.25rem;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .avis-resume {
+    background: #f8faff;
+    border: 1px solid var(--bordure);
+    border-radius: 1rem;
+    padding: 1rem;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .avis-resume__note {
+    text-align: center;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .avis-resume__note b {
+    display: block;
+    font-family: "Bricolage Grotesque", Inter, sans-serif;
+    font-size: 2.35rem;
+    line-height: 1;
+    color: var(--encre);
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .avis-resume__note b small {
+    font-size: 1rem;
+    color: var(--texte-doux);
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .avis-resume__note .etoiles {
+    color: var(--safran);
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin: 0.4rem 0 0.25rem;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .avis-resume__note .etoiles > div {
+    display: inline-flex;
+    gap: 2px;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .avis-resume__note p {
+    margin: 0;
+    color: var(--texte-doux);
+    font-size: 0.6875rem;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .tm-prestataire-reviews-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 0;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .tm-prestataire-reviews-stats > div {
+    border: 1px solid var(--bordure);
+    border-radius: 0.95rem;
+    background: #fff;
+    padding: 0.95rem 0.9rem;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .tm-prestataire-reviews-listhead {
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .tm-prestataire-reviews-listhead h2 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .tm-prestataire-reviews-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 0.95rem;
+    background: var(--bleu-clair);
+    color: var(--bleu);
+    font-size: 0.875rem;
+    font-weight: 800;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .carte-avis-page {
+    border: 1px solid var(--bordure);
+    border-radius: 1rem;
+    background: #fff;
+    box-shadow: var(--ombre);
+    padding: 1rem 1.05rem;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .carte-avis-page__haut {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .carte-avis-page__id {
+    min-width: 0;
+    flex: 1;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .carte-avis-page__id b {
+    display: block;
+    color: var(--encre);
+    font-size: 0.8125rem;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .carte-avis-page__id span {
+    display: block;
+    margin-top: 0.15rem;
+    color: var(--texte-doux);
+    font-size: 0.65625rem;
+    line-height: 1.5;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .carte-avis-page__droite {
+    margin-left: auto;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .carte-avis-page__droite .etoiles {
+    color: var(--safran);
+    display: inline-flex;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .carte-avis-page__droite .etoiles > div {
+    display: inline-flex;
+    gap: 1px;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .carte-avis-page__droite p {
+    margin: 0.2rem 0 0;
+    color: var(--texte-doux);
+    font-size: 0.625rem;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .carte-avis-page__texte {
+    margin: 0.7rem 0 0;
+    color: var(--texte);
+    font-size: 0.78125rem;
+    line-height: 1.65;
+    white-space: pre-line;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .tm-prestataire-review-card__actions {
+    margin-top: 0.8rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .tm-prestataire-reviews-empty {
+    min-height: 220px;
+    display: grid;
+    place-items: center;
+    gap: 0.5rem;
+    border: 1.5px dashed var(--bordure);
+    border-radius: 1rem;
+    background: #f8faff;
+    color: var(--texte-doux);
+    text-align: center;
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .tm-prestataire-reviews-empty i {
+    font-size: 1.8rem;
+    color: var(--bleu);
+}
+
+.tm-dashboard-page .tm-dashboard-reviews .tm-prestataire-reviews-tip {
+    background: linear-gradient(135deg, #0a1633 0%, #1e49c7 100%);
+    border-radius: 1rem;
+    padding: 1rem 1.125rem;
+    color: #fff;
+    box-shadow: var(--ombre-md);
+}
+
+@media (max-width: 991.98px) {
+    .tm-dashboard-page .tm-dashboard-reviews .tm-prestataire-reviews-summary {
+        grid-template-columns: 1fr;
+    }
+}
+
 .tm-dashboard-page .tm-dashboard-artisan .tm-completion-card__ring {
     position: relative;
     display: inline-grid;
