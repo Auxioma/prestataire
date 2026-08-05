@@ -366,7 +366,10 @@
                                                             </td>
                                                             <td>
                                                                 <span class="devis-prestation">
-                                                                    {% if invoice.subscription and invoice.subscription.plan %}
+                                                                    {% set invoiceLabel = invoice.getStripeDescription() %}
+                                                                    {% if invoiceLabel %}
+                                                                        {{ invoiceLabel }}
+                                                                    {% elseif invoice.subscription and invoice.subscription.plan %}
                                                                         {{ invoice.subscription.plan.name }} — {{ invoice.subscription.billingPeriod.label }}
                                                                     {% else %}
                                                                         Abonnement synchronisé

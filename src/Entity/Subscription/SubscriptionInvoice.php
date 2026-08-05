@@ -326,6 +326,52 @@ class SubscriptionInvoice
         return $this;
     }
 
+    public function getStripeDescription(): ?string
+    {
+        $payload = $this->stripePayload;
+        if (!\is_array($payload)) {
+            return null;
+        }
+
+        $lines = $payload['lines'] ?? null;
+        if (!\is_array($lines)) {
+            return null;
+        }
+
+        $data = $lines['data'] ?? null;
+        if (!\is_array($data) || [] === $data) {
+            return null;
+        }
+
+        $firstLine = $data[0];
+        if (!\is_array($firstLine)) {
+            return null;
+        }
+
+        $description = trim((string) ($firstLine['description'] ?? ''));
+        if ('' !== $description) {
+            return $description;
+        }
+
+        $price = $firstLine['price'] ?? null;
+        if (\is_array($price)) {
+            $nickname = trim((string) ($price['nickname'] ?? ''));
+            if ('' !== $nickname) {
+                return $nickname;
+            }
+
+            $product = $price['product'] ?? null;
+            if (\is_array($product)) {
+                $productName = trim((string) ($product['name'] ?? ''));
+                if ('' !== $productName) {
+                    return $productName;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;

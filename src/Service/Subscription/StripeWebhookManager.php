@@ -858,10 +858,24 @@ final class StripeWebhookManager
         }
 
         $planCredits = $currentPlan->getCreditsForPeriod($subscription->getBillingPeriod());
-        $targetRemainingCredits = $this->subscriptionUpgradePolicy->calculateCappedRemainingCredits(
-            $previousRemainingCredits,
-            $planCredits
-        );
+        $isUpgrade = $hasPlanChanged || $hasBillingPeriodChanged
+            ? $this->subscriptionUpgradePolicy->isStrictlyHigherPlan(
+                $currentPlan,
+                $subscription->getBillingPeriod(),
+                $previousPlan,
+                $previousBillingPeriod,
+            )
+            : false;
+
+        $targetRemainingCredits = $isUpgrade
+            ? $this->subscriptionUpgradePolicy->calculateCappedTransferableRemainingCredits(
+                $previousRemainingCredits,
+                $planCredits
+            )
+            : $this->subscriptionUpgradePolicy->calculateCappedRemainingCredits(
+                $previousRemainingCredits,
+                $planCredits
+            );
 
         if ($targetRemainingCredits <= $subscription->getRemainingCredits()) {
             return;
