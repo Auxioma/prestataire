@@ -325,6 +325,20 @@ class StripeApiClient
         return $this->extractSubscriptionPaymentMethodLast4($subscription);
     }
 
+    public function retrieveSubscriptionCardExpiry(string $stripeSubscriptionId): ?string
+    {
+        $subscription = $this->retrieveSubscription($stripeSubscriptionId);
+
+        return $this->extractSubscriptionPaymentMethodExpiry($subscription);
+    }
+
+    public function retrieveSubscriptionCardBrand(string $stripeSubscriptionId): ?string
+    {
+        $subscription = $this->retrieveSubscription($stripeSubscriptionId);
+
+        return $this->extractSubscriptionPaymentMethodBrand($subscription);
+    }
+
     /**
      * @param array<string, mixed> $subscription
      */
@@ -341,7 +355,7 @@ class StripeApiClient
 
         $paymentIntent = $latestInvoice['payment_intent'] ?? null;
         if (is_string($paymentIntent) && '' !== trim($paymentIntent)) {
-            $paymentIntent = $this->retrieveInvoice(trim($paymentIntent))['payment_intent'] ?? null;
+            $paymentIntent = $this->retrievePaymentIntent(trim($paymentIntent));
         }
 
         if (!\is_array($paymentIntent)) {
@@ -363,6 +377,51 @@ class StripeApiClient
                 $last4 = $this->extractCardLast4FromPaymentIntent($charge);
                 if (null !== $last4) {
                     return $last4;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array<string, mixed> $subscription
+     */
+    private function extractSubscriptionPaymentMethodExpiry(array $subscription): ?string
+    {
+        $latestInvoice = $subscription['latest_invoice'] ?? null;
+        if (is_string($latestInvoice) && '' !== trim($latestInvoice)) {
+            $latestInvoice = $this->retrieveInvoice(trim($latestInvoice));
+        }
+
+        if (!\is_array($latestInvoice)) {
+            return null;
+        }
+
+        $paymentIntent = $latestInvoice['payment_intent'] ?? null;
+        if (is_string($paymentIntent) && '' !== trim($paymentIntent)) {
+            $paymentIntent = $this->retrievePaymentIntent(trim($paymentIntent));
+        }
+
+        if (!\is_array($paymentIntent)) {
+            return null;
+        }
+
+        $expiry = $this->extractCardExpiryFromPaymentIntent($paymentIntent);
+        if (null !== $expiry) {
+            return $expiry;
+        }
+
+        $charges = $paymentIntent['charges']['data'] ?? null;
+        if (\is_array($charges)) {
+            foreach ($charges as $charge) {
+                if (!\is_array($charge)) {
+                    continue;
+                }
+
+                $expiry = $this->extractCardExpiryFromPaymentIntent($charge);
+                if (null !== $expiry) {
+                    return $expiry;
                 }
             }
         }
@@ -400,6 +459,131 @@ class StripeApiClient
         return null;
     }
 
+    private function extractSubscriptionPaymentMethodBrand(array $subscription): ?string
+    {
+        $latestInvoice = $subscription['latest_invoice'] ?? null;
+        if (is_string($latestInvoice) && '' !== trim($latestInvoice)) {
+            $latestInvoice = $this->retrieveInvoice(trim($latestInvoice));
+        }
+
+        if (!\is_array($latestInvoice)) {
+            return null;
+        }
+
+        $paymentIntent = $latestInvoice['payment_intent'] ?? null;
+        if (is_string($paymentIntent) && '' !== trim($paymentIntent)) {
+            $paymentIntent = $this->retrievePaymentIntent(trim($paymentIntent));
+        }
+
+        if (!\is_array($paymentIntent)) {
+            return null;
+        }
+
+        $brand = $this->extractCardBrandFromPaymentIntent($paymentIntent);
+        if (null !== $brand) {
+            return $brand;
+        }
+
+        $charges = $paymentIntent['charges']['data'] ?? null;
+        if (\is_array($charges)) {
+            foreach ($charges as $charge) {
+                if (!\is_array($charge)) {
+                    continue;
+                }
+
+                $brand = $this->extractCardBrandFromPaymentIntent($charge);
+                if (null !== $brand) {
+                    return $brand;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private function extractCardBrandFromPaymentIntent(array $paymentIntent): ?string
+    {
+        $paymentMethodDetails = $paymentIntent['payment_method_details'] ?? null;
+        if (\is_array($paymentMethodDetails)) {
+            $card = $paymentMethodDetails['card'] ?? null;
+            if (\is_array($card)) {
+                $brand = trim((string) ($card['brand'] ?? ''));
+                if ('' !== $brand) {
+                    return $this->normalizeCardBrand($brand);
+                }
+            }
+        }
+
+        $paymentMethod = $paymentIntent['payment_method'] ?? null;
+        if (\is_array($paymentMethod)) {
+            $card = $paymentMethod['card'] ?? null;
+            if (\is_array($card)) {
+                $brand = trim((string) ($card['brand'] ?? ''));
+                if ('' !== $brand) {
+                    return $this->normalizeCardBrand($brand);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private function normalizeCardBrand(string $brand): string
+    {
+        $brand = trim(strtolower($brand));
+        return match ($brand) {
+            'american express', 'american_express' => 'amex',
+            'unionpay', 'union_pay' => 'unionpay',
+            'diners club', 'dinersclub', 'diners_club' => 'dinersclub',
+            'jcb' => 'jcb',
+            'discover' => 'discover',
+            'visa' => 'visa',
+            'mastercard', 'master card' => 'mastercard',
+            default => $brand,
+        };
+    }
+
+    private function extractCardExpiryFromPaymentIntent(array $paymentIntent): ?string
+    {
+        $paymentMethodDetails = $paymentIntent['payment_method_details'] ?? null;
+        if (\is_array($paymentMethodDetails)) {
+            $card = $paymentMethodDetails['card'] ?? null;
+            if (\is_array($card)) {
+                $expMonth = $card['exp_month'] ?? null;
+                $expYear = $card['exp_year'] ?? null;
+                if (is_int($expMonth) || is_string($expMonth)) {
+                    $expMonth = (int) $expMonth;
+                }
+                if (is_int($expYear) || is_string($expYear)) {
+                    $expYear = (int) $expYear;
+                }
+                if (is_int($expMonth) && is_int($expYear)) {
+                    return sprintf('%02d/%02d', $expMonth, $expYear % 100);
+                }
+            }
+        }
+
+        $paymentMethod = $paymentIntent['payment_method'] ?? null;
+        if (\is_array($paymentMethod)) {
+            $card = $paymentMethod['card'] ?? null;
+            if (\is_array($card)) {
+                $expMonth = $card['exp_month'] ?? null;
+                $expYear = $card['exp_year'] ?? null;
+                if (is_int($expMonth) || is_string($expMonth)) {
+                    $expMonth = (int) $expMonth;
+                }
+                if (is_int($expYear) || is_string($expYear)) {
+                    $expYear = (int) $expYear;
+                }
+                if (is_int($expMonth) && is_int($expYear)) {
+                    return sprintf('%02d/%02d', $expMonth, $expYear % 100);
+                }
+            }
+        }
+
+        return null;
+    }
+
     /**
      * @throws ClientExceptionInterface
      * @throws DecodingExceptionInterface
@@ -411,6 +595,14 @@ class StripeApiClient
     {
         return $this->request('GET', sprintf('/invoices/%s', $stripeInvoiceId), [
             'expand[0]' => 'payment_intent',
+        ]);
+    }
+
+    public function retrievePaymentIntent(string $paymentIntentId): array
+    {
+        return $this->request('GET', sprintf('/payment_intents/%s', $paymentIntentId), [
+            'expand[0]' => 'charges.data.payment_method',
+            'expand[1]' => 'charges.data.payment_method_details',
         ]);
     }
 
@@ -436,6 +628,36 @@ class StripeApiClient
 
         $last4 = trim((string) ($card['last4'] ?? ''));
         return '' !== $last4 ? $last4 : null;
+    }
+
+    public function retrievePaymentMethodCardExpiry(string $paymentMethodId): ?string
+    {
+        $paymentMethod = $this->retrievePaymentMethod($paymentMethodId);
+        $card = $paymentMethod['card'] ?? null;
+        if (!\is_array($card)) {
+            return null;
+        }
+
+        $expMonth = $card['exp_month'] ?? null;
+        $expYear = $card['exp_year'] ?? null;
+
+        if ((is_int($expMonth) || is_string($expMonth)) && (is_int($expYear) || is_string($expYear))) {
+            return sprintf('%02d/%02d', (int) $expMonth, (int) $expYear % 100);
+        }
+
+        return null;
+    }
+
+    public function retrievePaymentMethodCardBrand(string $paymentMethodId): ?string
+    {
+        $paymentMethod = $this->retrievePaymentMethod($paymentMethodId);
+        $card = $paymentMethod['card'] ?? null;
+        if (!\is_array($card)) {
+            return null;
+        }
+
+        $brand = trim((string) ($card['brand'] ?? ''));
+        return '' !== $brand ? $this->normalizeCardBrand($brand) : null;
     }
 
     /**

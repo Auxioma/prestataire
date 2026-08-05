@@ -121,19 +121,30 @@ final class SubscriptionController extends AbstractController
         $recentInvoices = $subscriptionInvoiceRepository->findRecentForPrestataire($prestataireProfile);
 
         $cardLast4 = null;
+        $cardExpiry = null;
+        $cardBrand = null;
+
         if ($stripeApiClient->isConfigured() && $stripeReferenceHelper->isManagedSubscriptionId($currentSubscription?->getStripeSubscriptionId())) {
             try {
                 $cardLast4 = $stripeApiClient->retrieveSubscriptionCardLast4($currentSubscription->getStripeSubscriptionId());
+                $cardExpiry = $stripeApiClient->retrieveSubscriptionCardExpiry($currentSubscription->getStripeSubscriptionId());
+                $cardBrand = $stripeApiClient->retrieveSubscriptionCardBrand($currentSubscription->getStripeSubscriptionId());
             } catch (\Throwable) {
                 $cardLast4 = null;
+                $cardExpiry = null;
+                $cardBrand = null;
             }
         }
 
         if (null === $cardLast4 && $currentSubscription?->getCustomer()?->getStripeDefaultPaymentMethodId()) {
             try {
                 $cardLast4 = $stripeApiClient->retrievePaymentMethodCardLast4($currentSubscription->getCustomer()->getStripeDefaultPaymentMethodId());
+                $cardExpiry = $stripeApiClient->retrievePaymentMethodCardExpiry($currentSubscription->getCustomer()->getStripeDefaultPaymentMethodId());
+                $cardBrand = $stripeApiClient->retrievePaymentMethodCardBrand($currentSubscription->getCustomer()->getStripeDefaultPaymentMethodId());
             } catch (\Throwable) {
                 $cardLast4 = null;
+                $cardExpiry = null;
+                $cardBrand = null;
             }
         }
 
@@ -145,6 +156,8 @@ final class SubscriptionController extends AbstractController
             'stripeConfigured' => $stripeApiClient->isConfigured(),
             'stripePublicKey' => $stripePublicKey,
             'cardLast4' => $cardLast4,
+            'cardExpiry' => $cardExpiry,
+            'cardBrand' => $cardBrand,
         ]);
     }
 
@@ -323,6 +336,55 @@ final class SubscriptionController extends AbstractController
 
         return $this->json([
             'success' => true,
+            'redirectUrl' => $this->generateUrl('app_subscription_index'),
+        ]);
+    }
+
+    #[Route('/payment-method/update', name: 'update_payment_method', methods: ['POST'])]
+    public function updatePaymentMethod(
+        Request $request,
+        StripeApiClient $stripeApiClient,
+        StripeSubscriptionCheckoutManager $stripeSubscriptionCheckoutManager,
+        StripeCheckoutSessionSynchronizer $stripeCheckoutSessionSynchronizer,
+    ): JsonResponse {
+        if (!$stripeApiClient->isConfigured()) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Stripe n’est pas configuré sur cet environnement.',
+            ], Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+
+        $prestataireProfile = $this->getPrestataireProfile();
+        $csrfToken = $this->extractRequestValue($request, '_token');
+
+        if (!$this->isCsrfTokenValid('subscription-payment-method-update', $csrfToken)) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Jeton CSRF invalide.',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $setupIntentId = $this->extractRequestValue($request, 'setupIntentId');
+        if ('' === $setupIntentId) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Aucun identifiant de setup intent n’a été fourni.',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $stripeSubscriptionCheckoutManager->applySetupIntentPaymentMethod($prestataireProfile, $setupIntentId);
+            $stripeCheckoutSessionSynchronizer->syncLatestSubscriptionForPrestataire($prestataireProfile);
+        } catch (\Throwable $exception) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Impossible de mettre à jour la carte : ' . $exception->getMessage(),
+            ], Response::HTTP_BAD_GATEWAY);
+        }
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Votre moyen de paiement a bien été mis à jour.',
             'redirectUrl' => $this->generateUrl('app_subscription_index'),
         ]);
     }

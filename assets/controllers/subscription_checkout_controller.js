@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['paymentElement', 'selectionName', 'selectionMeta', 'submitButton', 'submitHelp', 'errorBox', 'successBox'];
+    static targets = ['paymentElement', 'selectionName', 'selectionMeta', 'submitButton', 'updateButton', 'submitHelp', 'errorBox', 'successBox'];
 
     static values = {
         stripePublicKey: String,
@@ -9,6 +9,8 @@ export default class extends Controller {
         finalizeUrl: String,
         setupIntentCsrfToken: String,
         finalizeCsrfToken: String,
+        updatePaymentMethodUrl: String,
+        paymentMethodUpdateCsrfToken: String,
         returnUrl: String,
         enabled: Boolean,
     };
@@ -21,9 +23,15 @@ export default class extends Controller {
         this.setupIntentClientSecret = null;
         this.confirmedSetupIntentId = null;
         this.isSubmitting = false;
+        this.isUpdateMode = false;
 
         if (!this.enabledValue) {
             return;
+        }
+
+        if (this.hasUpdateButtonTarget) {
+            this.updateButtonTarget.disabled = true;
+            this.updateButtonTarget.classList.add('d-none');
         }
 
         this.initializeStripeForm();
@@ -170,6 +178,80 @@ export default class extends Controller {
         }
     }
 
+    async startUpdatePaymentMethod(event) {
+        event.preventDefault();
+
+        if (this.isSubmitting) {
+            return;
+        }
+
+        if (!this.stripe || !this.cardElement || !this.setupIntentClientSecret) {
+            this.showError('Le formulaire de carte n’est pas encore prêt.');
+            return;
+        }
+
+        this.isUpdateMode = true;
+        this.selectedPlan = null;
+        this.hideAlerts();
+        this.setSubmitState(true, 'Entrez les nouvelles informations de carte puis cliquez sur Mettre à jour la carte.');
+
+        if (this.hasUpdateButtonTarget) {
+            this.updateButtonTarget.classList.remove('d-none');
+            this.updateButtonTarget.disabled = false;
+        }
+
+        if (this.hasSubmitButtonTarget) {
+            this.submitButtonTarget.disabled = true;
+        }
+
+        this.paymentElementTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    async submitPaymentMethodUpdate(event) {
+        event.preventDefault();
+
+        if (!this.isUpdateMode || !this.stripe || !this.cardElement || this.isSubmitting) {
+            return;
+        }
+
+        this.isSubmitting = true;
+        this.hideAlerts();
+        this.setSubmitState(true, 'Validation de la nouvelle carte...');
+
+        try {
+            const setupIntentId = await this.confirmSetupIntent();
+            const updateResponse = await fetch(this.updatePaymentMethodUrlValue, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({
+                    _token: this.paymentMethodUpdateCsrfTokenValue,
+                    setupIntentId,
+                }),
+            });
+
+            const updatePayload = await updateResponse.json();
+            if (!updateResponse.ok || !updatePayload.success) {
+                throw new Error(updatePayload.message || 'Impossible de mettre a jour le moyen de paiement.');
+            }
+
+            this.showSuccess(updatePayload.message || 'La carte a bien été mise à jour.');
+            window.location.assign(updatePayload.redirectUrl || this.returnUrlValue);
+        } catch (error) {
+            this.showError(error.message || 'Impossible de mettre a jour la carte.');
+        } finally {
+            this.isSubmitting = false;
+            this.isUpdateMode = false;
+            if (this.hasUpdateButtonTarget) {
+                this.updateButtonTarget.disabled = true;
+                this.updateButtonTarget.classList.add('d-none');
+            }
+            this.refreshSubmitState();
+        }
+    }
+
     async confirmSetupIntent() {
         if (this.confirmedSetupIntentId) {
             return this.confirmedSetupIntentId;
@@ -222,17 +304,28 @@ export default class extends Controller {
             return;
         }
 
+        const stripeReady = Boolean(this.stripe && this.cardElement && this.setupIntentClientSecret);
+
         if (!this.selectedPlan) {
             this.setSubmitState(true, 'Choisissez une formule pour continuer.');
+            if (this.hasUpdateButtonTarget) {
+                this.updateButtonTarget.disabled = !stripeReady;
+            }
             return;
         }
 
-        if (!this.stripe || !this.cardElement || !this.setupIntentClientSecret) {
+        if (!stripeReady) {
             this.setSubmitState(true, 'Le formulaire Stripe est en cours d’initialisation.');
+            if (this.hasUpdateButtonTarget) {
+                this.updateButtonTarget.disabled = true;
+            }
             return;
         }
 
         this.setSubmitState(false, `Confirmer ${this.selectedPlan.name} - ${this.selectedPlan.label}.`);
+        if (this.hasUpdateButtonTarget) {
+            this.updateButtonTarget.disabled = false;
+        }
     }
 
     setSubmitState(disabled, helpText) {

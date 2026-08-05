@@ -61,135 +61,152 @@
                                 </div>
                             {% endif %}
 
-                            {% if currentSubscription %}
-                                <section class="dash-card subscription-section">
-                                    <div class="dash-card__header">
-                                        <h2>Offre actuelle</h2>
-                                    </div>
-
-                                    <div class="row g-4 align-items-stretch">
-                                        <div class="col-12 col-xl-8">
-                                            <div class="subscription-current">
-                                                <div class="subscription-current__top">
-                                                    <div>
-                                                        <div class="subscription-badges">
-                                                            <span class="chip chip--premium">Abonnement actif</span>
-                                                            {% if currentSubscription.isCancelAtPeriodEnd %}
-                                                                <span class="chip chip--attente">Résiliation programmée</span>
-                                                            {% endif %}
-                                                        </div>
-                                                        <h2 class="subscription-current__title">
-                                                            {{ currentSubscription.plan ? currentSubscription.plan.name : 'Abonnement actif' }}
-                                                        </h2>
-                                                        <p class="subscription-current__meta">
-                                                            {{ currentSubscription.billingPeriod.label }}
-                                                            {% if currentSubscription.status is defined %}
-                                                                · {{ currentSubscription.status.label }}
-                                                            {% endif %}
-                                                            · Renouvellement le
-                                                            <strong>{{ subscriptionRenewalDate ? subscriptionRenewalDate|date('d/m/Y') : 'à confirmer' }}</strong>
-                                                        </p>
-
-                                                        {% if cardLast4 is defined and cardLast4 %}
-                                                            <p class="subscription-current__payment-method">
-                                                                Carte utilisée : <strong>**** {{ cardLast4|e }}</strong>
-                                                            </p>
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-
-                                                {% if currentSubscription.isCancelAtPeriodEnd %}
-                                                    <div class="subscription-inline-alert" role="alert">
-                                                        La résiliation de cet abonnement est programmée pour le
-                                                        <strong>{{ subscriptionRenewalDate ? subscriptionRenewalDate|date('d/m/Y') : 'prochain renouvellement' }}</strong>.
-                                                        Jusqu’à cette date, l’abonnement et ses crédits restent utilisables.
-                                                    </div>
-                                                {% endif %}
-
-                                                <div class="perf-stats subscription-stats">
-                                                    <div>
-                                                        <h3>Crédits restants</h3>
-                                                        <b>{{ currentSubscription.remainingCredits }}</b>
-                                                        <small>Disponibles</small>
-                                                    </div>
-                                                    <div>
-                                                        <h3>Crédits attribués</h3>
-                                                        <b>{{ currentSubscription.creditsGrantedCurrentPeriod }}</b>
-                                                        <small>Période en cours</small>
-                                                    </div>
-                                                    <div>
-                                                        <h3>Crédits consommés</h3>
-                                                        <b>{{ currentSubscription.creditsConsumedCurrentPeriod }}</b>
-                                                        <small>Déjà utilisés</small>
-                                                    </div>
-                                                    <div>
-                                                        <h3>Échéance</h3>
-                                                        <b>{{ subscriptionRenewalDate ? subscriptionRenewalDate|date('d/m') : '—' }}</b>
-                                                        <small>{{ currentSubscription.billingPeriod.label }}</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {% if currentSubscription.plan and currentSubscription.plan.code != 'free' %}
-                                            <div class="col-12 col-xl-4">
-                                                <div class="plan plan--actif subscription-sidecard">
-                                                    <span class="plan__badge plan__badge--actuel">OFFRE ACTIVE</span>
-                                                    <span class="plan__nom">{{ currentSubscription.plan.name }}</span>
-                                                    <div class="plan__liste">
-                                                        <span>Périodicité : {{ currentSubscription.billingPeriod.label }}</span>
-                                                        <span>Crédits restants : {{ currentSubscription.remainingCredits }}</span>
-                                                        <span>Statut : {{ currentSubscription.status is defined ? currentSubscription.status.label : 'Actif' }}</span>
-                                                    </div>
-
-                                                    {% if currentSubscription.isCancelAtPeriodEnd %}
-                                                        <form
-                                                            method="post"
-                                                            action="{{ path('app_subscription_resume') }}"
-                                                            data-controller="confirm-dialog"
-                                                            data-action="submit->confirm-dialog#confirm"
-                                                            data-confirm-dialog-title-value="Annuler la résiliation programmée ?"
-                                                            data-confirm-dialog-text-value="Votre abonnement restera actif et sera renouvelé normalement à la prochaine échéance."
-                                                            data-confirm-dialog-confirm-button-text-value="Conserver l’abonnement"
-                                                            data-confirm-dialog-cancel-button-text-value="Garder la résiliation"
-                                                            class="subscription-form-stack"
-                                                        >
-                                                            <input type="hidden" name="_token" value="{{ csrf_token('subscription-resume') }}">
-                                                            <button type="submit" class="btn btn-dash-primary">Conserver l’abonnement</button>
-                                                        </form>
-                                                    {% else %}
-                                                        <form
-                                                            method="post"
-                                                            action="{{ path('app_subscription_cancel') }}"
-                                                            data-controller="confirm-dialog"
-                                                            data-action="submit->confirm-dialog#confirm"
-                                                            data-confirm-dialog-title-value="Programmer la résiliation ?"
-                                                            data-confirm-dialog-text-value="Votre abonnement restera actif jusqu’à la fin de la période déjà payée. Les crédits restants resteront utilisables jusque-là."
-                                                            data-confirm-dialog-confirm-button-text-value="Programmer la résiliation"
-                                                            data-confirm-dialog-cancel-button-text-value="Conserver l’abonnement"
-                                                            class="subscription-form-stack"
-                                                        >
-                                                            <input type="hidden" name="_token" value="{{ csrf_token('subscription-cancel') }}">
-                                                            <button type="submit" class="btn btn-dash-ghost">Programmer la résiliation</button>
-                                                        </form>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </section>
-                            {% endif %}
-
                             <div
                                 data-controller="subscription-checkout"
                                 data-subscription-checkout-stripe-public-key-value="{{ stripePublicKey }}"
                                 data-subscription-checkout-setup-intent-url-value="{{ path('app_subscription_setup_intent') }}"
-                                data-subscription-checkout-finalize-url-value="{{ path('app_subscription_finalize') }}"
+                                data-subscription-checkout-update-payment-method-url-value="{{ path('app_subscription_update_payment_method') }}"
                                 data-subscription-checkout-setup-intent-csrf-token-value="{{ csrf_token('subscription-setup-intent') }}"
+                                data-subscription-checkout-payment-method-update-csrf-token-value="{{ csrf_token('subscription-payment-method-update') }}"
+                                data-subscription-checkout-finalize-url-value="{{ path('app_subscription_finalize') }}"
                                 data-subscription-checkout-finalize-csrf-token-value="{{ csrf_token('subscription-finalize') }}"
                                 data-subscription-checkout-enabled-value="{{ stripeConfigured and stripePublicKey ? 'true' : 'false' }}"
                                 data-subscription-checkout-return-url-value="{{ path('app_subscription_index') }}"
                             >
+                                {% if currentSubscription %}
+                                    <section class="dash-card subscription-section">
+                                        <div class="dash-card__header">
+                                            <h2>Offre actuelle</h2>
+                                        </div>
+
+                                        <div class="row g-4 align-items-stretch">
+                                            <div class="col-12 col-xl-8">
+                                                <div class="subscription-current">
+                                                    <div class="subscription-current__top">
+                                                        <div>
+                                                            <div class="subscription-badges">
+                                                                <span class="chip chip--premium">Abonnement actif</span>
+                                                                {% if currentSubscription.isCancelAtPeriodEnd %}
+                                                                    <span class="chip chip--attente">Résiliation programmée</span>
+                                                                {% endif %}
+                                                            </div>
+                                                            <h2 class="subscription-current__title">
+                                                                {{ currentSubscription.plan ? currentSubscription.plan.name : 'Abonnement actif' }}
+                                                            </h2>
+                                                            <p class="subscription-current__meta">
+                                                                {{ currentSubscription.billingPeriod.label }}
+                                                                {% if currentSubscription.status is defined %}
+                                                                    · {{ currentSubscription.status.label }}
+                                                                {% endif %}
+                                                                · Renouvellement le
+                                                                <strong>{{ subscriptionRenewalDate ? subscriptionRenewalDate|date('d/m/Y') : 'à confirmer' }}</strong>
+                                                            </p>
+
+                                                            {% if stripeConfigured %}
+                                                                <p class="subscription-current__payment-method">
+                                                                    Carte utilisée :
+                                                                    <strong>
+                                                                        {% if cardLast4 is defined and cardLast4 %}
+                                                                            **** {{ cardLast4|e }}
+                                                                        {% else %}
+                                                                            non renseignée
+                                                                        {% endif %}
+                                                                    </strong>
+                                                                    {% if cardBrand is defined and cardBrand %}
+                                                                        <span class="subscription-current__payment-card-brand">{{ cardBrand|upper }}</span>
+                                                                    {% endif %}
+                                                                    {% if cardExpiry is defined and cardExpiry %}
+                                                                        <span>— Exp. {{ cardExpiry }}</span>
+                                                                    {% endif %}
+                                                                    <button type="button" class="btn btn-link btn-sm subscription-current__payment-method-link" data-action="subscription-checkout#startUpdatePaymentMethod">
+                                                                        Modifier
+                                                                    </button>
+                                                                </p>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+
+                                                    {% if currentSubscription.isCancelAtPeriodEnd %}
+                                                        <div class="subscription-inline-alert" role="alert">
+                                                            La résiliation de cet abonnement est programmée pour le
+                                                            <strong>{{ subscriptionRenewalDate ? subscriptionRenewalDate|date('d/m/Y') : 'prochain renouvellement' }}</strong>.
+                                                            Jusqu’à cette date, l’abonnement et ses crédits restent utilisables.
+                                                        </div>
+                                                    {% endif %}
+
+                                                    <div class="perf-stats subscription-stats">
+                                                        <div>
+                                                            <h3>Crédits restants</h3>
+                                                            <b>{{ currentSubscription.remainingCredits }}</b>
+                                                            <small>Disponibles</small>
+                                                        </div>
+                                                        <div>
+                                                            <h3>Crédits attribués</h3>
+                                                            <b>{{ currentSubscription.creditsGrantedCurrentPeriod }}</b>
+                                                            <small>Période en cours</small>
+                                                        </div>
+                                                        <div>
+                                                            <h3>Crédits consommés</h3>
+                                                            <b>{{ currentSubscription.creditsConsumedCurrentPeriod }}</b>
+                                                            <small>Déjà utilisés</small>
+                                                        </div>
+                                                        <div>
+                                                            <h3>Échéance</h3>
+                                                            <b>{{ subscriptionRenewalDate ? subscriptionRenewalDate|date('d/m') : '—' }}</b>
+                                                            <small>{{ currentSubscription.billingPeriod.label }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {% if currentSubscription.plan and currentSubscription.plan.code != 'free' %}
+                                                <div class="col-12 col-xl-4">
+                                                    <div class="plan plan--actif subscription-sidecard">
+                                                        <span class="plan__badge plan__badge--actuel">OFFRE ACTIVE</span>
+                                                        <span class="plan__nom">{{ currentSubscription.plan.name }}</span>
+                                                        <div class="plan__liste">
+                                                            <span>Périodicité : {{ currentSubscription.billingPeriod.label }}</span>
+                                                            <span>Crédits restants : {{ currentSubscription.remainingCredits }}</span>
+                                                            <span>Statut : {{ currentSubscription.status is defined ? currentSubscription.status.label : 'Actif' }}</span>
+                                                        </div>
+
+                                                        {% if currentSubscription.isCancelAtPeriodEnd %}
+                                                            <form
+                                                                method="post"
+                                                                action="{{ path('app_subscription_resume') }}"
+                                                                data-controller="confirm-dialog"
+                                                                data-action="submit->confirm-dialog#confirm"
+                                                                data-confirm-dialog-title-value="Annuler la résiliation programmée ?"
+                                                                data-confirm-dialog-text-value="Votre abonnement restera actif et sera renouvelé normalement à la prochaine échéance."
+                                                                data-confirm-dialog-confirm-button-text-value="Conserver l’abonnement"
+                                                                data-confirm-dialog-cancel-button-text-value="Garder la résiliation"
+                                                                class="subscription-form-stack"
+                                                            >
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('subscription-resume') }}">
+                                                                <button type="submit" class="btn btn-dash-primary">Conserver l’abonnement</button>
+                                                            </form>
+                                                        {% else %}
+                                                            <form
+                                                                method="post"
+                                                                action="{{ path('app_subscription_cancel') }}"
+                                                                data-controller="confirm-dialog"
+                                                                data-action="submit->confirm-dialog#confirm"
+                                                                data-confirm-dialog-title-value="Programmer la résiliation ?"
+                                                                data-confirm-dialog-text-value="Votre abonnement restera actif jusqu’à la fin de la période déjà payée. Les crédits restants resteront utilisables jusque-là."
+                                                                data-confirm-dialog-confirm-button-text-value="Programmer la résiliation"
+                                                                data-confirm-dialog-cancel-button-text-value="Conserver l’abonnement"
+                                                                class="subscription-form-stack"
+                                                            >
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('subscription-cancel') }}">
+                                                                <button type="submit" class="btn btn-dash-ghost">Programmer la résiliation</button>
+                                                            </form>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </section>
+                                {% endif %}
                                 <section class="dash-card subscription-section">
                                     <div class="dash-card__header">
                                         <div>
@@ -323,6 +340,16 @@
                                                     disabled
                                                 >
                                                     Régler et activer l’abonnement
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-dash-ghost subscription-update d-none"
+                                                    data-action="click->subscription-checkout#submitPaymentMethodUpdate"
+                                                    data-subscription-checkout-target="updateButton"
+                                                    disabled
+                                                >
+                                                    Mettre à jour la carte
                                                 </button>
 
                                                 <div class="subscription-submit-help" data-subscription-checkout-target="submitHelp">
