@@ -202,11 +202,22 @@ final class StripeSubscriptionCheckoutManager
             return $paymentMethodId;
         }
 
+        $expirationMonth = trim((string) ($paymentMethod['card']['exp_month'] ?? ''));
+        $expirationYear = trim((string) ($paymentMethod['card']['exp_year'] ?? ''));
+
         foreach ($this->stripeApiClient->listCustomerPaymentMethods($stripeCustomerId, 'card') as $candidate) {
             $candidateId = trim((string) ($candidate['id'] ?? ''));
             $candidateFingerprint = trim((string) ($candidate['card']['fingerprint'] ?? ''));
+            $candidateExpMonth = trim((string) ($candidate['card']['exp_month'] ?? ''));
+            $candidateExpYear = trim((string) ($candidate['card']['exp_year'] ?? ''));
 
-            if ('' === $candidateId || $candidateId === $paymentMethodId || $candidateFingerprint !== $fingerprint) {
+            if (
+                '' === $candidateId
+                || $candidateId === $paymentMethodId
+                || $candidateFingerprint !== $fingerprint
+                || $candidateExpMonth !== $expirationMonth
+                || $candidateExpYear !== $expirationYear
+            ) {
                 continue;
             }
 
