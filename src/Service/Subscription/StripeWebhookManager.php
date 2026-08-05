@@ -20,6 +20,7 @@ use App\Repository\Subscription\SubscriptionInvoiceRepository;
 use App\Repository\Subscription\SubscriptionPlanRepository;
 use App\Repository\Subscription\SubscriptionPlanPriceRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 final class StripeWebhookManager
 {
@@ -65,7 +66,11 @@ final class StripeWebhookManager
             default => null,
         };
 
-        $this->entityManager->flush();
+        try {
+            $this->entityManager->flush();
+        } catch (UniqueConstraintViolationException $e) {
+            // Concurrent processing created the same credit movement; ignore duplicate constraint.
+        }
     }
 
     /**
@@ -76,7 +81,11 @@ final class StripeWebhookManager
         $this->syncSubscriptionFromStripePayload($payload);
 
         if ($flush) {
-            $this->entityManager->flush();
+            try {
+                $this->entityManager->flush();
+            } catch (UniqueConstraintViolationException $e) {
+                // Ignore duplicate movement created by concurrent process.
+            }
         }
     }
 
@@ -88,7 +97,11 @@ final class StripeWebhookManager
         $subscription = $this->syncSubscriptionFromStripePayload($payload);
 
         if ($flush) {
-            $this->entityManager->flush();
+            try {
+                $this->entityManager->flush();
+            } catch (UniqueConstraintViolationException $e) {
+                // Ignore duplicate movement created by concurrent process.
+            }
         }
 
         return $subscription;
@@ -160,6 +173,7 @@ final class StripeWebhookManager
 
         $subscription = $this->prestataireSubscriptionRepository->findOneByStripeSubscriptionId($stripeSubscriptionId)
             ?? new PrestataireSubscription();
+        $isNewSubscription = null === $subscription->getId();
         $previousPlan = $subscription->getPlan();
         $previousBillingPeriod = $subscription->getBillingPeriod();
         $previousCurrentPeriodStart = $subscription->getCurrentPeriodStart();
@@ -193,21 +207,34 @@ final class StripeWebhookManager
             ->setEndedAt($this->createDateTimeFromTimestamp($payload['ended_at'] ?? null))
             ->setUpdatedAt(new \DateTimeImmutable());
 
+        $hasLatestInvoice = $this->hasLatestInvoiceForSubscriptionPayload($payload);
+
         if (
-            $subscription->getPlan() instanceof \App\Entity\Subscription\SubscriptionPlan
+            $isNewSubscription
+            && $subscription->getPlan() instanceof \App\Entity\Subscription\SubscriptionPlan
             && $subscription->getStatus()->isUsable()
             && 0 === $subscription->getCreditsGrantedCurrentPeriod()
+            && !$hasLatestInvoice
         ) {
             $subscription->syncCreditsWithPlan();
         }
 
-        $this->applySubscriptionCycleCreditSnapshot(
-            $subscription,
-            $previousPlan,
-            $previousBillingPeriod,
-            $previousCurrentPeriodStart,
-            $previousRemainingCredits,
-        );
+        $hasPlanChanged = 
+            $previousPlan instanceof \App\Entity\Subscription\SubscriptionPlan
+            && $subscription->getPlan() instanceof \App\Entity\Subscription\SubscriptionPlan
+            && $previousPlan->getId() !== $subscription->getPlan()->getId();
+
+        $hasBillingPeriodChanged = $previousBillingPeriod !== $subscription->getBillingPeriod();
+
+        if (!$hasPlanChanged && !$hasBillingPeriodChanged) {
+            $this->applySubscriptionCycleCreditSnapshot(
+                $subscription,
+                $previousPlan,
+                $previousBillingPeriod,
+                $previousCurrentPeriodStart,
+                $previousRemainingCredits,
+            );
+        }
 
         if ($this->subscriptionFallbackManager->shouldFallbackToFree($subscription)) {
             $this->subscriptionFallbackManager->fallbackToFree(
@@ -220,6 +247,20 @@ final class StripeWebhookManager
         $this->entityManager->persist($subscription);
 
         return $subscription;
+    }
+
+    private function hasLatestInvoiceForSubscriptionPayload(array $payload): bool
+    {
+        $latestInvoice = $payload['latest_invoice'] ?? null;
+        if (is_string($latestInvoice)) {
+            return '' !== trim($latestInvoice);
+        }
+
+        if (!is_array($latestInvoice)) {
+            return false;
+        }
+
+        return '' !== trim((string) ($latestInvoice['id'] ?? ''));
     }
 
     /**
@@ -279,6 +320,9 @@ final class StripeWebhookManager
         }
 
         $existingMovement = $this->subscriptionCreditMovementRepository->findOneByInvoice($invoice);
+        if (!$existingMovement instanceof SubscriptionCreditMovement && '' !== $stripeInvoiceId) {
+            $existingMovement = $this->subscriptionCreditMovementRepository->findOneByStripeInvoiceId($stripeInvoiceId);
+        }
         if ($existingMovement instanceof SubscriptionCreditMovement) {
             return;
         }
@@ -292,14 +336,20 @@ final class StripeWebhookManager
         }
 
         if ('subscription_cycle' === $billingReason) {
+            $previousRemainingCredits = $subscription->getRemainingCredits();
             $subscription->syncCreditsWithPlan()->setUpdatedAt(new \DateTimeImmutable());
+
+            $renewalDelta = max(0, $subscription->getRemainingCredits() - $previousRemainingCredits);
+            if ($renewalDelta <= 0) {
+                return;
+            }
 
             $movement = (new SubscriptionCreditMovement())
                 ->setPrestataireProfile($subscription->getPrestataireProfile())
                 ->setSubscription($subscription)
                 ->setInvoice($invoice)
                 ->setType(SubscriptionCreditMovementTypeEnum::RENEWAL_GRANT)
-                ->setCreditsDelta($planCredits)
+                ->setCreditsDelta($renewalDelta)
                 ->setBalanceAfter($subscription->getRemainingCredits())
                 ->setDescription('Attribution automatique des crédits à la validation du paiement Stripe.');
 
@@ -310,7 +360,7 @@ final class StripeWebhookManager
 
         if ('subscription_update' === $billingReason) {
             $currentRemainingCredits = $subscription->getRemainingCredits();
-            $targetRemainingCredits = $this->subscriptionUpgradePolicy->calculateCappedRemainingCredits(
+            $targetRemainingCredits = $this->subscriptionUpgradePolicy->calculateCappedTransferableRemainingCredits(
                 $currentRemainingCredits,
                 $planCredits
             );
@@ -601,6 +651,25 @@ final class StripeWebhookManager
     ): void {
         $sourceSubscription = $this->findUpgradeSourceSubscription($subscription);
 
+        // Idempotency: if a movement already exists for this Stripe invoice, skip.
+        $stripeInvoiceId = (string) ($invoice->getStripeInvoiceId() ?? '');
+        if ('' !== $stripeInvoiceId) {
+            $existing = $this->subscriptionCreditMovementRepository->findOneByStripeInvoiceId($stripeInvoiceId);
+            if ($existing instanceof SubscriptionCreditMovement) {
+                return;
+            }
+        }
+
+        // If there's no source subscription and the subscription already has the
+        // plan's credits and none consumed, assume credits were already set earlier.
+        if (
+            !$sourceSubscription instanceof PrestataireSubscription
+            && $subscription->getCreditsGrantedCurrentPeriod() === $planCredits
+            && 0 === $subscription->getCreditsConsumedCurrentPeriod()
+        ) {
+            return;
+        }
+
         $subscription
             ->setCreditsGrantedCurrentPeriod(0)
             ->setCreditsConsumedCurrentPeriod(0)
@@ -631,11 +700,15 @@ final class StripeWebhookManager
 
         $sourceRemainingCredits = $sourceSubscription->getRemainingCredits();
         $targetRemainingCredits = $subscription->getRemainingCredits();
-        $cappedRemainingCredits = $this->subscriptionUpgradePolicy->calculateCappedRemainingCredits(
+        $cappedRemainingCredits = $this->subscriptionUpgradePolicy->calculateCappedTransferableRemainingCredits(
             $sourceRemainingCredits,
             $planCredits
         );
-        $transferableCredits = max(0, $cappedRemainingCredits - $targetRemainingCredits);
+
+        // Transfer only the remaining credits from the source subscription,
+        // plus the base plan credits for the new subscription, up to the cap.
+        $requestedTransfer = max(0, $cappedRemainingCredits - $targetRemainingCredits);
+        $transferableCredits = (int) min($requestedTransfer, $sourceRemainingCredits);
 
         if ($transferableCredits > 0) {
             $this->subscriptionCreditManager->debitCredits(

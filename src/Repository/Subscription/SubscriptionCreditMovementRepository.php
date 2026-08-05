@@ -64,6 +64,17 @@ class SubscriptionCreditMovementRepository extends ServiceEntityRepository
         return $this->findOneBy(['invoice' => $invoice]);
     }
 
+    public function findOneByStripeInvoiceId(string $stripeInvoiceId): ?SubscriptionCreditMovement
+    {
+        return $this->createQueryBuilder('scm')
+            ->join('scm.invoice', 'i')
+            ->andWhere('i.stripeInvoiceId = :stripeInvoiceId')
+            ->setParameter('stripeInvoiceId', $stripeInvoiceId)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function getConsumedCreditsForSubscription(PrestataireSubscription $subscription): int
     {
         $consumed = $this->createQueryBuilder('scm')

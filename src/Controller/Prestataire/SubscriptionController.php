@@ -2,7 +2,6 @@
 
 namespace App\Controller\Prestataire;
 
-use App\Entity\User;
 use App\Enum\SubscriptionBillingPeriodEnum;
 use App\Entity\Subscription\SubscriptionInvoice;
 use App\Repository\Subscription\PrestataireSubscriptionRepository;
@@ -14,6 +13,7 @@ use App\Service\Subscription\StripeApiClient;
 use App\Service\Subscription\StripeCustomerManager;
 use App\Service\Subscription\SubscriptionInvoicePdfGenerator;
 use App\Service\Subscription\StripeSubscriptionCheckoutManager;
+use App\Service\Subscription\StripeReferenceHelper;
 use App\Service\Subscription\SubscriptionAccessManager;
 use App\Service\Subscription\SubscriptionFallbackManager;
 use App\Service\Subscription\SubscriptionUpgradePolicy;
@@ -48,6 +48,7 @@ final class SubscriptionController extends AbstractController
         SubscriptionFallbackManager $subscriptionFallbackManager,
         StripeApiClient $stripeApiClient,
         StripeCheckoutSessionSynchronizer $stripeCheckoutSessionSynchronizer,
+        StripeReferenceHelper $stripeReferenceHelper,
         EntityManagerInterface $entityManager,
         #[Autowire('%app.stripe.public_key%')] string $stripePublicKey,
     ): Response {
@@ -119,6 +120,23 @@ final class SubscriptionController extends AbstractController
 
         $recentInvoices = $subscriptionInvoiceRepository->findRecentForPrestataire($prestataireProfile);
 
+        $cardLast4 = null;
+        if ($stripeApiClient->isConfigured() && $stripeReferenceHelper->isManagedSubscriptionId($currentSubscription?->getStripeSubscriptionId())) {
+            try {
+                $cardLast4 = $stripeApiClient->retrieveSubscriptionCardLast4($currentSubscription->getStripeSubscriptionId());
+            } catch (\Throwable) {
+                $cardLast4 = null;
+            }
+        }
+
+        if (null === $cardLast4 && $currentSubscription?->getCustomer()?->getStripeDefaultPaymentMethodId()) {
+            try {
+                $cardLast4 = $stripeApiClient->retrievePaymentMethodCardLast4($currentSubscription->getCustomer()->getStripeDefaultPaymentMethodId());
+            } catch (\Throwable) {
+                $cardLast4 = null;
+            }
+        }
+
         return $this->render('prestataire/subscription/index.html.twig', [
             'plans' => $subscriptionPlanRepository->findActiveOrdered(),
             'currentSubscription' => $currentSubscription,
@@ -126,6 +144,7 @@ final class SubscriptionController extends AbstractController
             'recentInvoices' => $recentInvoices,
             'stripeConfigured' => $stripeApiClient->isConfigured(),
             'stripePublicKey' => $stripePublicKey,
+            'cardLast4' => $cardLast4,
         ]);
     }
 

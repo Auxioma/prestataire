@@ -89,6 +89,12 @@
                                                             · Renouvellement le
                                                             <strong>{{ subscriptionRenewalDate ? subscriptionRenewalDate|date('d/m/Y') : 'à confirmer' }}</strong>
                                                         </p>
+
+                                                        {% if cardLast4 is defined and cardLast4 %}
+                                                            <p class="subscription-current__payment-method">
+                                                                Carte utilisée : <strong>**** {{ cardLast4|e }}</strong>
+                                                            </p>
+                                                        {% endif %}
                                                     </div>
                                                 </div>
 

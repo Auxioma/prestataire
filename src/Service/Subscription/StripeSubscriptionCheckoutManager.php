@@ -8,6 +8,7 @@ use App\Entity\Subscription\SubscriptionCustomer;
 use App\Entity\Subscription\SubscriptionPlan;
 use App\Enum\SubscriptionBillingPeriodEnum;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 final class StripeSubscriptionCheckoutManager
 {
@@ -272,7 +273,11 @@ final class StripeSubscriptionCheckoutManager
             }
 
             $this->stripeWebhookManager->cleanupDemoSubscriptionsForPrestataire($prestataireProfile, false);
-            $this->entityManager->flush();
+            try {
+                $this->entityManager->flush();
+            } catch (UniqueConstraintViolationException $e) {
+                // Ignore duplicate movement created by concurrent process.
+            }
         }
 
         return [

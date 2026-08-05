@@ -318,11 +318,124 @@ class StripeApiClient
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
+    public function retrieveSubscriptionCardLast4(string $stripeSubscriptionId): ?string
+    {
+        $subscription = $this->retrieveSubscription($stripeSubscriptionId);
+
+        return $this->extractSubscriptionPaymentMethodLast4($subscription);
+    }
+
+    /**
+     * @param array<string, mixed> $subscription
+     */
+    private function extractSubscriptionPaymentMethodLast4(array $subscription): ?string
+    {
+        $latestInvoice = $subscription['latest_invoice'] ?? null;
+        if (is_string($latestInvoice) && '' !== trim($latestInvoice)) {
+            $latestInvoice = $this->retrieveInvoice(trim($latestInvoice));
+        }
+
+        if (!\is_array($latestInvoice)) {
+            return null;
+        }
+
+        $paymentIntent = $latestInvoice['payment_intent'] ?? null;
+        if (is_string($paymentIntent) && '' !== trim($paymentIntent)) {
+            $paymentIntent = $this->retrieveInvoice(trim($paymentIntent))['payment_intent'] ?? null;
+        }
+
+        if (!\is_array($paymentIntent)) {
+            return null;
+        }
+
+        $last4 = $this->extractCardLast4FromPaymentIntent($paymentIntent);
+        if (null !== $last4) {
+            return $last4;
+        }
+
+        $charges = $paymentIntent['charges']['data'] ?? null;
+        if (\is_array($charges)) {
+            foreach ($charges as $charge) {
+                if (!\is_array($charge)) {
+                    continue;
+                }
+
+                $last4 = $this->extractCardLast4FromPaymentIntent($charge);
+                if (null !== $last4) {
+                    return $last4;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array<string, mixed> $paymentIntent
+     */
+    private function extractCardLast4FromPaymentIntent(array $paymentIntent): ?string
+    {
+        $paymentMethodDetails = $paymentIntent['payment_method_details'] ?? null;
+        if (\is_array($paymentMethodDetails)) {
+            $card = $paymentMethodDetails['card'] ?? null;
+            if (\is_array($card)) {
+                $last4 = trim((string) ($card['last4'] ?? ''));
+                if ('' !== $last4) {
+                    return $last4;
+                }
+            }
+        }
+
+        $paymentMethod = $paymentIntent['payment_method'] ?? null;
+        if (\is_array($paymentMethod)) {
+            $card = $paymentMethod['card'] ?? null;
+            if (\is_array($card)) {
+                $last4 = trim((string) ($card['last4'] ?? ''));
+                if ('' !== $last4) {
+                    return $last4;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
     public function retrieveInvoice(string $stripeInvoiceId): array
     {
         return $this->request('GET', sprintf('/invoices/%s', $stripeInvoiceId), [
             'expand[0]' => 'payment_intent',
         ]);
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function retrievePaymentMethod(string $paymentMethodId): array
+    {
+        return $this->request('GET', sprintf('/payment_methods/%s', $paymentMethodId));
+    }
+
+    public function retrievePaymentMethodCardLast4(string $paymentMethodId): ?string
+    {
+        $paymentMethod = $this->retrievePaymentMethod($paymentMethodId);
+        $card = $paymentMethod['card'] ?? null;
+        if (!\is_array($card)) {
+            return null;
+        }
+
+        $last4 = trim((string) ($card['last4'] ?? ''));
+        return '' !== $last4 ? $last4 : null;
     }
 
     /**

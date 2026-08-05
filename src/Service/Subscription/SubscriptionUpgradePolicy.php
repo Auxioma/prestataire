@@ -49,7 +49,23 @@ final class SubscriptionUpgradePolicy
             return 0;
         }
 
-        return min($currentRemainingCredits + $includedCredits, $includedCredits * 2);
+        return min(max($currentRemainingCredits, $includedCredits), $includedCredits * 2);
+    }
+
+    public function calculateCappedTransferableRemainingCredits(int $sourceRemainingCredits, int $includedCredits): int
+    {
+        $includedCredits = max(0, $includedCredits);
+        $sourceRemainingCredits = max(0, $sourceRemainingCredits);
+
+        if (0 === $includedCredits) {
+            return 0;
+        }
+
+        if ($sourceRemainingCredits > $includedCredits) {
+            return $sourceRemainingCredits;
+        }
+
+        return min($sourceRemainingCredits + $includedCredits, $includedCredits * 2);
     }
 
     private function getPlanRank(SubscriptionPlan $plan, SubscriptionBillingPeriodEnum $billingPeriod): int
