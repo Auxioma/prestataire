@@ -7,6 +7,217 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('styles/prestataire/subscription.css') }}">
+    <style>
+        .subscription-pricing-section {
+            --subscription-purple: #6200ff;
+            --subscription-border: #e5e5e5;
+            --subscription-text: #0b0b0b;
+            --subscription-muted: #7d7784;
+            margin-bottom: 1rem;
+            padding: 0;
+            background: transparent;
+            border: 0;
+            box-shadow: none;
+            font-family: Inter, sans-serif;
+        }
+
+        .subscription-pricing-section__heading {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .subscription-pricing-section__heading h2 {
+            grid-column: 1;
+            margin: 0;
+            color: var(--subscription-text);
+            font-size: 1rem;
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.025em;
+        }
+
+        .subscription-period-switch {
+            grid-column: 2;
+            display: inline-flex;
+            align-items: center;
+            width: 247px;
+            min-height: 37px;
+            padding: 4px;
+            border: 1px solid var(--subscription-border);
+            border-radius: 999px;
+            background: #fff;
+        }
+
+        .subscription-period-switch__button {
+            flex: 1 1 50%;
+            min-height: 25px;
+            padding: 0.25rem 0.85rem;
+            border: 0;
+            border-radius: 999px;
+            background: transparent;
+            color: #817a72;
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1;
+            transition: background-color 0.18s ease, color 0.18s ease;
+        }
+
+        .subscription-period-switch__button.is-active {
+            background: var(--subscription-purple);
+            color: #fff;
+        }
+
+        .subscription-period-switch__button:focus-visible {
+            outline: 3px solid rgba(98, 0, 255, 0.2);
+            outline-offset: 2px;
+        }
+
+        .subscription-pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .subscription-pricing-card {
+            display: flex;
+            min-width: 0;
+            min-height: 336px;
+            flex-direction: column;
+            padding: 1.2rem 1.25rem;
+            border: 1px solid var(--subscription-border);
+            border-radius: 15px;
+            background: #fff;
+        }
+
+        .subscription-pricing-card__name {
+            margin: 0 0 1rem;
+            color: var(--subscription-text);
+            font-size: 1rem;
+            font-weight: 800;
+            line-height: 1.15;
+        }
+
+        .subscription-pricing-card__price {
+            display: flex;
+            min-height: 31px;
+            align-items: baseline;
+            gap: 0.35rem;
+            margin-bottom: 0.85rem;
+            color: var(--subscription-text);
+        }
+
+        .subscription-pricing-card__price strong {
+            font-size: 1.5rem;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -0.035em;
+        }
+
+        .subscription-pricing-card__price span {
+            color: #746e7b;
+            font-size: 0.76rem;
+            font-weight: 500;
+        }
+
+        .subscription-pricing-card__description {
+            min-height: 2.25rem;
+            margin: 0 0 0.15rem;
+            color: var(--subscription-muted);
+            font-size: 0.71rem;
+            line-height: 1.35;
+        }
+
+        .subscription-pricing-card__features {
+            display: flex;
+            flex-direction: column;
+            margin-top: 0;
+            color: #625d67;
+            font-size: 0.72rem;
+            line-height: 1.35;
+        }
+
+        .subscription-pricing-card__feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.22rem;
+        }
+
+        .subscription-pricing-card__check {
+            flex: 0 0 auto;
+            color: #625d67;
+            font-weight: 800;
+        }
+
+        .subscription-pricing-card__action {
+            width: 100%;
+            min-height: 35px;
+            margin-top: auto;
+            padding: 0.55rem 1rem;
+            border: 0;
+            border-radius: 999px;
+            background: var(--subscription-purple);
+            color: #fff;
+            font-size: 0.76rem;
+            font-weight: 800;
+            line-height: 1;
+            transition: transform 0.16s ease, box-shadow 0.16s ease;
+        }
+
+        .subscription-pricing-card__action:not(:disabled):hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(98, 0, 255, 0.2);
+        }
+
+        .subscription-pricing-card__action:focus-visible {
+            outline: 3px solid rgba(98, 0, 255, 0.2);
+            outline-offset: 2px;
+        }
+
+        .subscription-pricing-card__action:disabled {
+            background: #e9e9e9;
+            color: #908b86;
+            cursor: default;
+            opacity: 1;
+        }
+
+        [data-price-period][hidden],
+        [data-credit-period][hidden] {
+            display: none !important;
+        }
+
+        @media (max-width: 991.98px) {
+            .subscription-pricing-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .subscription-pricing-section__heading {
+                display: flex;
+                align-items: stretch;
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            .subscription-period-switch {
+                width: 100%;
+                max-width: 310px;
+                align-self: center;
+            }
+
+            .subscription-pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .subscription-pricing-card {
+                min-height: 315px;
+            }
+        }
+    </style>
+
 {% endblock %}
 
 {% block javascripts %}
@@ -14,6 +225,80 @@
     {% if stripeConfigured and stripePublicKey %}
         <script src="https://js.stripe.com/v3/"></script>
     {% endif %}
+    <script>
+        (() => {
+            const initializeSubscriptionPricing = () => {
+                document.querySelectorAll('[data-subscription-pricing]').forEach((section) => {
+                    if (section.dataset.subscriptionPricingInitialized === 'true') {
+                        return;
+                    }
+
+                    section.dataset.subscriptionPricingInitialized = 'true';
+
+                    const periodButtons = Array.from(
+                        section.querySelectorAll('[data-subscription-period]')
+                    );
+                    const planButtons = Array.from(
+                        section.querySelectorAll('[data-subscription-plan-action]')
+                    );
+
+                    const updatePeriod = (period) => {
+                        const periodLabel = period === 'annual' ? 'Annuel' : 'Mensuel';
+
+                        periodButtons.forEach((button) => {
+                            const isActive = button.dataset.subscriptionPeriod === period;
+                            button.classList.toggle('is-active', isActive);
+                            button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                        });
+
+                        section.querySelectorAll('[data-price-period]').forEach((price) => {
+                            price.hidden = price.dataset.pricePeriod !== period;
+                        });
+
+                        section.querySelectorAll('[data-credit-period]').forEach((credits) => {
+                            credits.hidden = credits.dataset.creditPeriod !== period;
+                        });
+
+                        planButtons.forEach((button) => {
+                            if (button.dataset.planLocked === 'true') {
+                                return;
+                            }
+
+                            const price = button.getAttribute(`data-plan-${period}-price`) || '0.00';
+                            const submitUrl = button.getAttribute(`data-plan-${period}-submit-url`) || '';
+                            const csrfToken = button.getAttribute(`data-plan-${period}-csrf-token`) || '';
+                            const available = button.getAttribute(`data-plan-${period}-available`) === 'true';
+
+                            button.setAttribute('data-subscription-checkout-plan-period-param', period);
+                            button.setAttribute('data-subscription-checkout-plan-price-param', price);
+                            button.setAttribute('data-subscription-checkout-plan-label-param', periodLabel);
+                            button.setAttribute('data-subscription-checkout-plan-submit-url-param', submitUrl);
+                            button.setAttribute('data-subscription-checkout-plan-csrf-token-param', csrfToken);
+                            button.disabled = !available;
+                        });
+
+                        section.dataset.activePeriod = period;
+                    };
+
+                    periodButtons.forEach((button) => {
+                        button.addEventListener('click', () => {
+                            updatePeriod(button.dataset.subscriptionPeriod);
+                        });
+                    });
+
+                    updatePeriod(section.dataset.defaultPeriod || 'annual');
+                });
+            };
+
+            document.addEventListener('DOMContentLoaded', initializeSubscriptionPricing);
+            document.addEventListener('turbo:load', initializeSubscriptionPricing);
+
+            if (document.readyState !== 'loading') {
+                initializeSubscriptionPricing();
+            }
+        })();
+    </script>
+
 {% endblock %}
 
 {% block body %}
@@ -207,100 +492,145 @@
                                         </div>
                                     </section>
                                 {% endif %}
-                                <section class="dash-card subscription-section">
-                                    <div class="dash-card__header">
-                                        <div>
-                                            <p class="subscription-eyebrow">Choix du forfait</p>
-                                            <h2>Monter en gamme</h2>
+                                <section
+                                    class="subscription-pricing-section"
+                                    data-subscription-pricing
+                                    data-default-period="annual"
+                                    aria-labelledby="subscription-pricing-title"
+                                >
+                                    <div class="subscription-pricing-section__heading">
+                                        <h2 id="subscription-pricing-title">Choisissez votre abonnement</h2>
+
+                                        <div class="subscription-period-switch" role="group" aria-label="Périodicité de l’abonnement">
+                                            <button
+                                                type="button"
+                                                class="subscription-period-switch__button is-active"
+                                                data-subscription-period="annual"
+                                                aria-pressed="true"
+                                            >
+                                                Annuel
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="subscription-period-switch__button"
+                                                data-subscription-period="monthly"
+                                                aria-pressed="false"
+                                            >
+                                                Mensuel
+                                            </button>
                                         </div>
                                     </div>
 
-                                    <div class="row g-4">
+                                    <div class="subscription-pricing-grid">
                                         {% for plan in plans %}
-                                            <div class="col-12 col-md-6 col-xl-4">
-                                                <article class="plan{{ currentSubscription and currentSubscription.plan and currentSubscription.plan.code == plan.code ? ' plan--actif' : '' }}">
-                                                    {% if currentSubscription and currentSubscription.plan and currentSubscription.plan.code == plan.code %}
-                                                        <span class="plan__badge plan__badge--actuel">OFFRE ACTUELLE</span>
+                                            {% set isCurrentPlan = currentSubscription and currentSubscription.plan and currentSubscription.plan.code == plan.code %}
+                                            {% set isFreePlan = plan.code == 'free' %}
+
+                                            <article class="subscription-pricing-card{{ isCurrentPlan ? ' is-current' : '' }}">
+                                                <h3 class="subscription-pricing-card__name">{{ plan.name }}</h3>
+
+                                                <div
+                                                    class="subscription-pricing-card__price"
+                                                    data-price-period="annual"
+                                                >
+                                                    {% if isFreePlan %}
+                                                        <strong>Gratuit</strong>
+                                                    {% else %}
+                                                        <strong>{{ plan.annualAmount ? plan.annualAmount|number_format(2, ',', ' ') : '—' }} €</strong>
+                                                        <span>/ an</span>
                                                     {% endif %}
-
-                                                    <span class="plan__nom">{{ plan.name }}</span>
-                                                    <p class="plan__desc">{{ plan.description ?: 'Abonnement à reconduction tacite pour prestataires.' }}</p>
-
-                                                    <div class="subscription-plan-prices">
-                                                        <div class="plan__prix">
-                                                            <b>{{ plan.monthlyAmount ?: '—' }} €</b>
-                                                            <span>/ mois · {{ plan.monthlyCredits }} crédit{{ plan.monthlyCredits > 1 ? 's' : '' }}</span>
-                                                        </div>
-                                                        <div class="subscription-plan-secondary-price">
-                                                            Annuel : <strong>{{ plan.annualAmount ?: '—' }} €</strong> · {{ plan.annualCredits }} crédit{{ plan.annualCredits > 1 ? 's' : '' }}
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="plan__liste">
-                                                        <span class="inclus-titre">Comprend :</span>
-                                                        <span>
-                                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                                                <circle cx="12" cy="12" r="9"/>
-                                                                <path d="m8.5 12.5 2.5 2.5 5-5.5"/>
-                                                            </svg>
-                                                            {{ plan.quoteResponsesEnabled ? 'Réponse aux devis' : 'Réponse aux devis indisponible' }}
-                                                        </span>
-                                                        <span>
-                                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                                                <circle cx="12" cy="12" r="9"/>
-                                                                <path d="m8.5 12.5 2.5 2.5 5-5.5"/>
-                                                            </svg>
-                                                            {{ plan.instantMessagingEnabled ? 'Messagerie instantanée' : 'Messagerie indisponible' }}
-                                                        </span>
-                                                        <span>
-                                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                                                <circle cx="12" cy="12" r="9"/>
-                                                                <path d="m8.5 12.5 2.5 2.5 5-5.5"/>
-                                                            </svg>
-                                                            {{ plan.monthlyCredits }} crédit{{ plan.monthlyCredits > 1 ? 's mensuels' : ' mensuel' }}
-                                                        </span>
-                                                    </div>
-
-                                                    <div class="subscription-plan-toggle" role="group" aria-label="Choisir la périodicité pour {{ plan.name }}">
-                                                        <button
-                                                            type="button"
-                                                            class="btn subscription-toggle-btn subscription-toggle-btn--primary"
-                                                            data-action="click->subscription-checkout#selectPlan"
-                                                            data-subscription-checkout-plan-code-param="{{ plan.code }}"
-                                                            data-subscription-checkout-plan-period-param="monthly"
-                                                            data-subscription-checkout-plan-name-param="{{ plan.name }}"
-                                                            data-subscription-checkout-plan-price-param="{{ plan.monthlyAmount ?: '0.00' }}"
-                                                            data-subscription-checkout-plan-label-param="Mensuel"
-                                                            data-subscription-checkout-plan-submit-url-param="{{ path('app_subscription_checkout', { code: plan.code, period: 'monthly' }) }}"
-                                                            data-subscription-checkout-plan-csrf-token-param="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-monthly') }}"
-                                                            {{ not stripeConfigured or not stripePublicKey or not plan.monthlyStripePriceId ? 'disabled' : '' }}
-                                                        >
-                                                            Choisir le mensuel
-                                                        </button>
-
-                                                        <button
-                                                            type="button"
-                                                            class="btn subscription-toggle-btn subscription-toggle-btn--ghost"
-                                                            data-action="click->subscription-checkout#selectPlan"
-                                                            data-subscription-checkout-plan-code-param="{{ plan.code }}"
-                                                            data-subscription-checkout-plan-period-param="annual"
-                                                            data-subscription-checkout-plan-name-param="{{ plan.name }}"
-                                                            data-subscription-checkout-plan-price-param="{{ plan.annualAmount ?: '0.00' }}"
-                                                            data-subscription-checkout-plan-label-param="Annuel"
-                                                            data-subscription-checkout-plan-submit-url-param="{{ path('app_subscription_checkout', { code: plan.code, period: 'annual' }) }}"
-                                                            data-subscription-checkout-plan-csrf-token-param="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-annual') }}"
-                                                            {{ not stripeConfigured or not stripePublicKey or not plan.annualStripePriceId ? 'disabled' : '' }}
-                                                        >
-                                                            Choisir l’annuel
-                                                        </button>
-                                                    </div>
-                                                </article>
-                                            </div>
-                                        {% else %}
-                                            <div class="col-12">
-                                                <div class="subscription-alert subscription-alert--muted" role="alert">
-                                                    Aucun plan d’abonnement actif n’est configuré dans l’administration.
                                                 </div>
+
+                                                <div
+                                                    class="subscription-pricing-card__price"
+                                                    data-price-period="monthly"
+                                                    hidden
+                                                >
+                                                    {% if isFreePlan %}
+                                                        <strong>Gratuit</strong>
+                                                    {% else %}
+                                                        <strong>{{ plan.monthlyAmount ? plan.monthlyAmount|number_format(2, ',', ' ') : '—' }} €</strong>
+                                                        <span>/ mois</span>
+                                                    {% endif %}
+                                                </div>
+
+                                                <p class="subscription-pricing-card__description">
+                                                    {{ plan.description ?: 'Une offre adaptée aux professionnels qui souhaitent développer leur activité.' }}
+                                                </p>
+
+                                                <div class="subscription-pricing-card__features">
+                                                    <span class="subscription-pricing-card__feature" data-credit-period="annual">
+                                                        <span class="subscription-pricing-card__check" aria-hidden="true">✓</span>
+                                                        {{ plan.annualCredits }} crédit{{ plan.annualCredits > 1 ? 's inclus' : ' inclus' }}
+                                                    </span>
+
+                                                    <span class="subscription-pricing-card__feature" data-credit-period="monthly" hidden>
+                                                        <span class="subscription-pricing-card__check" aria-hidden="true">✓</span>
+                                                        {{ plan.monthlyCredits }} crédit{{ plan.monthlyCredits > 1 ? 's inclus' : ' inclus' }}
+                                                    </span>
+
+                                                    <span class="subscription-pricing-card__feature">
+                                                        <span class="subscription-pricing-card__check" aria-hidden="true">✓</span>
+                                                        {{ plan.quoteResponsesEnabled ? 'Réponse aux demandes incluse' : 'Réponse aux demandes limitée' }}
+                                                    </span>
+
+                                                    <span class="subscription-pricing-card__feature">
+                                                        <span class="subscription-pricing-card__check" aria-hidden="true">✓</span>
+                                                        {{ plan.instantMessagingEnabled ? 'Messagerie instantanée incluse' : 'Messagerie instantanée non incluse' }}
+                                                    </span>
+                                                </div>
+
+                                                {% if isCurrentPlan %}
+                                                    <button
+                                                        type="button"
+                                                        class="subscription-pricing-card__action"
+                                                        data-subscription-plan-action
+                                                        data-plan-locked="true"
+                                                        disabled
+                                                    >
+                                                        Abonnement actuel
+                                                    </button>
+                                                {% elseif isFreePlan %}
+                                                    <button
+                                                        type="button"
+                                                        class="subscription-pricing-card__action"
+                                                        data-subscription-plan-action
+                                                        data-plan-locked="true"
+                                                        disabled
+                                                    >
+                                                        Souscrire
+                                                    </button>
+                                                {% else %}
+                                                    <button
+                                                        type="button"
+                                                        class="subscription-pricing-card__action"
+                                                        data-action="click->subscription-checkout#selectPlan"
+                                                        data-subscription-plan-action
+                                                        data-plan-locked="false"
+                                                        data-subscription-checkout-plan-code-param="{{ plan.code }}"
+                                                        data-subscription-checkout-plan-period-param="annual"
+                                                        data-subscription-checkout-plan-name-param="{{ plan.name }}"
+                                                        data-subscription-checkout-plan-price-param="{{ plan.annualAmount ?: '0.00' }}"
+                                                        data-subscription-checkout-plan-label-param="Annuel"
+                                                        data-subscription-checkout-plan-submit-url-param="{{ path('app_subscription_checkout', { code: plan.code, period: 'annual' }) }}"
+                                                        data-subscription-checkout-plan-csrf-token-param="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-annual') }}"
+                                                        data-plan-monthly-price="{{ plan.monthlyAmount ?: '0.00' }}"
+                                                        data-plan-monthly-submit-url="{{ path('app_subscription_checkout', { code: plan.code, period: 'monthly' }) }}"
+                                                        data-plan-monthly-csrf-token="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-monthly') }}"
+                                                        data-plan-monthly-available="{{ stripeConfigured and stripePublicKey and plan.monthlyStripePriceId ? 'true' : 'false' }}"
+                                                        data-plan-annual-price="{{ plan.annualAmount ?: '0.00' }}"
+                                                        data-plan-annual-submit-url="{{ path('app_subscription_checkout', { code: plan.code, period: 'annual' }) }}"
+                                                        data-plan-annual-csrf-token="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-annual') }}"
+                                                        data-plan-annual-available="{{ stripeConfigured and stripePublicKey and plan.annualStripePriceId ? 'true' : 'false' }}"
+                                                        {{ not stripeConfigured or not stripePublicKey or not plan.annualStripePriceId ? 'disabled' : '' }}
+                                                    >
+                                                        Souscrire
+                                                    </button>
+                                                {% endif %}
+                                            </article>
+                                        {% else %}
+                                            <div class="subscription-alert subscription-alert--muted" role="alert">
+                                                Aucun plan d’abonnement actif n’est configuré dans l’administration.
                                             </div>
                                         {% endfor %}
                                     </div>
