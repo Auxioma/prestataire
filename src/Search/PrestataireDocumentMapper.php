@@ -3,6 +3,7 @@
 namespace App\Search;
 
 use App\Entity\PrestataireProfile;
+use App\Entity\PrestataireInterventionZone;
 use App\Entity\PrestataireService;
 
 final class PrestataireDocumentMapper
@@ -13,12 +14,36 @@ final class PrestataireDocumentMapper
         $categories = [];
         $subCategories = [];
         $zones = [];
+        $primaryZone = null;
+
+        foreach ($prestataire->getPrestataireInterventionZones() as $zone) {
+            if (
+                !$zone instanceof PrestataireInterventionZone
+                || !$zone->isActive()
+            ) {
+                continue;
+            }
+
+            if (null === $primaryZone) {
+                $primaryZone = $zone;
+            }
+
+            if ($zone->isMainZone()) {
+                $primaryZone = $zone;
+                break;
+            }
+        }
+
+        $indexedCity = $this->resolveIndexedCity($prestataire, $primaryZone);
+        $indexedPostalCode = $this->resolveIndexedPostalCode($prestataire, $primaryZone);
         $searchParts = [
             $prestataire->getCompanyName(),
             $prestataire->getMetier(),
             $prestataire->getShortDescription(),
             $prestataire->getDescription(),
             $prestataire->getLongDescription(),
+            $indexedCity,
+            $indexedPostalCode,
             $prestataire->getCity(),
             $prestataire->getPostalCode(),
         ];
@@ -131,8 +156,8 @@ final class PrestataireDocumentMapper
             'shortDescription' => $prestataire->getShortDescription(),
             'description' => $prestataire->getDescription(),
             'longDescription' => $prestataire->getLongDescription(),
-            'city' => $prestataire->getCity(),
-            'postalCode' => $prestataire->getPostalCode(),
+            'city' => $indexedCity,
+            'postalCode' => $indexedPostalCode,
             'averageRating' => (float) ($prestataire->getAverageRating() ?? 0),
             'reviewsCount' => $prestataire->getReviewsCount() ?? 0,
             'profileStatus' => $prestataire->getProfileStatus()?->value,
@@ -144,5 +169,35 @@ final class PrestataireDocumentMapper
             'zones' => $zones,
             'searchText' => $searchText,
         ];
+    }
+
+    private function resolveIndexedCity(
+        PrestataireProfile $prestataire,
+        ?PrestataireInterventionZone $primaryZone,
+    ): ?string {
+        $zoneCity = trim((string) $primaryZone?->getCity());
+
+        if ('' !== $zoneCity) {
+            return $zoneCity;
+        }
+
+        $profileCity = trim((string) $prestataire->getCity());
+
+        return '' !== $profileCity ? $profileCity : null;
+    }
+
+    private function resolveIndexedPostalCode(
+        PrestataireProfile $prestataire,
+        ?PrestataireInterventionZone $primaryZone,
+    ): ?string {
+        $zonePostalCode = trim((string) $primaryZone?->getPostalCode());
+
+        if ('' !== $zonePostalCode) {
+            return $zonePostalCode;
+        }
+
+        $profilePostalCode = trim((string) $prestataire->getPostalCode());
+
+        return '' !== $profilePostalCode ? $profilePostalCode : null;
     }
 }
