@@ -300,6 +300,9 @@
 											<div class="tm-prestation-show__availability-values">
 												<span class="tm-prestation-show__availability-chip">
 													En vacances
+													{% if prestation.prestataire.vacationReturnDate %}
+														· retour le {{ prestation.prestataire.vacationReturnDate|date('d/m/Y') }}
+													{% endif %}
 												</span>
 											</div>
 										</div>

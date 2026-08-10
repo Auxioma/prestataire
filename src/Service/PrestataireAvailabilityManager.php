@@ -14,6 +14,10 @@ final class PrestataireAvailabilityManager
 
     public function prepareForPersistence(PrestataireProfile $prestataireProfile): void
     {
+        if (!$prestataireProfile->isOnVacation()) {
+            $prestataireProfile->setVacationReturnDate(null);
+        }
+
         foreach ($prestataireProfile->getAvailabilities() as $availability) {
             $this->applySlotDefaults($availability);
             $availability->setUpdatedAt(new \DateTime());

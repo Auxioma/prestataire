@@ -407,7 +407,12 @@
                                 {% if prestataire.isOnVacation %}
                                     <div class="tm-profile-show__sidebar-availability-vacation" role="status" aria-live="polite">
                                         <i class="fa-solid fa-umbrella-beach" aria-hidden="true"></i>
-                                        <span>En vacances</span>
+                                        <span>
+                                            En vacances
+                                            {% if prestataire.vacationReturnDate %}
+                                                · retour le {{ prestataire.vacationReturnDate|date('d/m/Y') }}
+                                            {% endif %}
+                                        </span>
                                     </div>
                                 {% else %}
                                     <div class="tm-profile-show__sidebar-availability-list">

@@ -29,7 +29,8 @@
                 {{ form_widget(availabilityForm.isOnVacation, {
                     attr: {
                         class: 'form-check-input',
-                        role: 'switch'
+                        role: 'switch',
+                        'data-action': 'change->availability-toggle#toggleVacation'
                     }
                 }) }}
                 <div class="tm-availability-vacation-copy">
@@ -46,6 +47,22 @@
                 </div>
             </div>
             {{ form_errors(availabilityForm.isOnVacation) }}
+
+            <div class="tm-availability-vacation-return mt-3{% if not availabilityForm.isOnVacation.vars.checked %} is-hidden{% endif %}"
+                 data-availability-toggle-target="vacationPanel">
+                <div class="tm-form-row mb-0">
+                    {{ form_label(availabilityForm.vacationReturnDate) }}
+                    {{ form_widget(availabilityForm.vacationReturnDate, {
+                        attr: {
+                            min: 'now'|date('Y-m-d')
+                        }
+                    }) }}
+                    {{ form_errors(availabilityForm.vacationReturnDate) }}
+                    <p class="mb-0 text-muted small">
+                        Renseignez une date si vous souhaitez indiquer quand vous serez de nouveau disponible.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 

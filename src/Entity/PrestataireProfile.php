@@ -210,6 +210,9 @@ class PrestataireProfile
     #[ORM\Column(options: ['default' => false])]
     private bool $isOnVacation = false;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $vacationReturnDate = null;
+
     /**
      * @var Collection<int, PrestataireService>
      */
@@ -939,6 +942,18 @@ class PrestataireProfile
     public function setIsOnVacation(bool $isOnVacation): static
     {
         $this->isOnVacation = $isOnVacation;
+
+        return $this;
+    }
+
+    public function getVacationReturnDate(): ?\DateTimeImmutable
+    {
+        return $this->vacationReturnDate;
+    }
+
+    public function setVacationReturnDate(?\DateTimeImmutable $vacationReturnDate): static
+    {
+        $this->vacationReturnDate = $vacationReturnDate;
 
         return $this;
     }

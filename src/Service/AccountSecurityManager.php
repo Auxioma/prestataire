@@ -117,6 +117,7 @@ final class AccountSecurityManager
             ->setCompletionScore(0)
             ->setResponseTimeMinutes(null)
             ->setIsFeatured(false)
+            ->setVacationReturnDate(null)
             ->setFeaturedUntil(null)
             ->setSearchVisibility(SearchVisibilityEnum::HIDDEN)
             ->setVerifiedAt(null)
