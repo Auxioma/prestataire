@@ -8,6 +8,16 @@ use App\Enum\SubscriptionBillingPeriodEnum;
 
 final class SubscriptionUpgradePolicy
 {
+    /**
+     * Ordre métier attendu :
+     * free < pro monthly < pro annual < premium monthly < premium annual
+     */
+    private const PLAN_TIER_RANKS = [
+        'free' => 0,
+        'pro' => 1,
+        'premium' => 2,
+    ];
+
     public function assertCanPurchasePlan(
         ?PrestataireSubscription $currentSubscription,
         SubscriptionPlan $targetPlan,
@@ -70,11 +80,13 @@ final class SubscriptionUpgradePolicy
 
     private function getPlanRank(SubscriptionPlan $plan, SubscriptionBillingPeriodEnum $billingPeriod): int
     {
+        $tierRank = self::PLAN_TIER_RANKS[$plan->getCode() ?? ''] ?? max(0, $plan->getSortOrder());
+
         $periodRank = match ($billingPeriod) {
             SubscriptionBillingPeriodEnum::MONTHLY => 0,
             SubscriptionBillingPeriodEnum::ANNUAL => 1,
         };
 
-        return (max(0, $plan->getSortOrder()) * 10) + $periodRank;
+        return ($tierRank * 10) + $periodRank;
     }
 }

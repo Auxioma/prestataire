@@ -268,6 +268,7 @@
                             const submitUrl = button.getAttribute(`data-plan-${period}-submit-url`) || '';
                             const csrfToken = button.getAttribute(`data-plan-${period}-csrf-token`) || '';
                             const available = button.getAttribute(`data-plan-${period}-available`) === 'true';
+                            const isCurrent = button.getAttribute(`data-plan-${period}-current`) === 'true';
 
                             button.setAttribute('data-subscription-checkout-plan-period-param', period);
                             button.setAttribute('data-subscription-checkout-plan-price-param', price);
@@ -275,6 +276,7 @@
                             button.setAttribute('data-subscription-checkout-plan-submit-url-param', submitUrl);
                             button.setAttribute('data-subscription-checkout-plan-csrf-token-param', csrfToken);
                             button.disabled = !available;
+                            button.textContent = isCurrent ? 'Abonnement actuel' : 'Souscrire';
                         });
 
                         section.dataset.activePeriod = period;
@@ -523,10 +525,12 @@
 
                                     <div class="subscription-pricing-grid">
                                         {% for plan in plans %}
-                                            {% set isCurrentPlan = currentSubscription and currentSubscription.plan and currentSubscription.plan.code == plan.code %}
+                                            {% set isCurrentPlanCode = currentSubscription and currentSubscription.plan and currentSubscription.plan.code == plan.code %}
+                                            {% set isCurrentMonthlyPlan = isCurrentPlanCode and currentSubscription.billingPeriod.value == 'monthly' %}
+                                            {% set isCurrentAnnualPlan = isCurrentPlanCode and currentSubscription.billingPeriod.value == 'annual' %}
                                             {% set isFreePlan = plan.code == 'free' %}
 
-                                            <article class="subscription-pricing-card{{ isCurrentPlan ? ' is-current' : '' }}">
+                                            <article class="subscription-pricing-card{{ isCurrentPlanCode ? ' is-current' : '' }}">
                                                 <h3 class="subscription-pricing-card__name">{{ plan.name }}</h3>
 
                                                 <div
@@ -580,17 +584,7 @@
                                                     </span>
                                                 </div>
 
-                                                {% if isCurrentPlan %}
-                                                    <button
-                                                        type="button"
-                                                        class="subscription-pricing-card__action"
-                                                        data-subscription-plan-action
-                                                        data-plan-locked="true"
-                                                        disabled
-                                                    >
-                                                        Abonnement actuel
-                                                    </button>
-                                                {% elseif isFreePlan %}
+                                                {% if isFreePlan %}
                                                     <button
                                                         type="button"
                                                         class="subscription-pricing-card__action"
@@ -617,14 +611,16 @@
                                                         data-plan-monthly-price="{{ plan.monthlyAmount ?: '0.00' }}"
                                                         data-plan-monthly-submit-url="{{ path('app_subscription_checkout', { code: plan.code, period: 'monthly' }) }}"
                                                         data-plan-monthly-csrf-token="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-monthly') }}"
-                                                        data-plan-monthly-available="{{ stripeConfigured and stripePublicKey and plan.monthlyStripePriceId ? 'true' : 'false' }}"
+                                                        data-plan-monthly-available="{{ (not isCurrentMonthlyPlan) and stripeConfigured and stripePublicKey and plan.monthlyStripePriceId ? 'true' : 'false' }}"
+                                                        data-plan-monthly-current="{{ isCurrentMonthlyPlan ? 'true' : 'false' }}"
                                                         data-plan-annual-price="{{ plan.annualAmount ?: '0.00' }}"
                                                         data-plan-annual-submit-url="{{ path('app_subscription_checkout', { code: plan.code, period: 'annual' }) }}"
                                                         data-plan-annual-csrf-token="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-annual') }}"
-                                                        data-plan-annual-available="{{ stripeConfigured and stripePublicKey and plan.annualStripePriceId ? 'true' : 'false' }}"
-                                                        {{ not stripeConfigured or not stripePublicKey or not plan.annualStripePriceId ? 'disabled' : '' }}
+                                                        data-plan-annual-available="{{ (not isCurrentAnnualPlan) and stripeConfigured and stripePublicKey and plan.annualStripePriceId ? 'true' : 'false' }}"
+                                                        data-plan-annual-current="{{ isCurrentAnnualPlan ? 'true' : 'false' }}"
+                                                        {{ isCurrentAnnualPlan or not stripeConfigured or not stripePublicKey or not plan.annualStripePriceId ? 'disabled' : '' }}
                                                     >
-                                                        Souscrire
+                                                        {{ isCurrentAnnualPlan ? 'Abonnement actuel' : 'Souscrire' }}
                                                     </button>
                                                 {% endif %}
                                             </article>
