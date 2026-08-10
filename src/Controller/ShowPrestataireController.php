@@ -26,6 +26,7 @@ use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
 use App\Entity\User;
 use App\Enum\FavoriteTypeEnum;
 use App\Repository\FavoriteRepository;
+use App\Service\PrestataireResponseTimeManager;
 use App\Service\Subscription\SubscriptionAccessManager;
 
 /**
@@ -47,10 +48,15 @@ class ShowPrestataireController extends AbstractController
     public function __invoke(
         #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireProfile $prestataire,
         FavoriteRepository $favoriteRepository,
+        PrestataireResponseTimeManager $prestataireResponseTimeManager,
         SubscriptionAccessManager $subscriptionAccessManager,
     ): Response {
         if (!$prestataire->getCompanyName()) {
             throw $this->createNotFoundException('Ce profil professionnel n\'est pas encore actif.');
+        }
+
+        if (null === $prestataire->getResponseTimeMinutes()) {
+            $prestataireResponseTimeManager->refreshForPrestataire($prestataire);
         }
 
         $zones = array_values(array_filter(
