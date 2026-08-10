@@ -246,7 +246,7 @@
                         <div class="invoice-title">Abonnement</div>
                         <div class="invoice-number">{{ invoiceNumber }}</div>
                         <div class="muted">
-                            {{ invoice.paidAt ? 'Payée le ' ~ invoice.paidAt|date('d/m/Y') : 'Émise le ' ~ invoice.createdAt|date('d/m/Y') }}
+                            {{ invoice.paidAt ? 'Payée le ' ~ invoice.paidAt|date('d/m/Y à H:i') : 'Émise le ' ~ invoice.createdAt|date('d/m/Y à H:i') }}
                         </div>
                         {% if invoice.dueAt %}
                             <div class="muted">Échéance le {{ invoice.dueAt|date('d/m/Y') }}</div>
