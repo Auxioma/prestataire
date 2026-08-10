@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['paymentElement', 'selectionName', 'selectionMeta', 'submitButton', 'updateButton', 'submitHelp', 'errorBox', 'successBox'];
+    static targets = ['paymentElement', 'selectionCard', 'selectionName', 'selectionMeta', 'submitButton', 'submitButtonLabel', 'updateButton', 'submitHelp', 'errorBox', 'successBox', 'loadingOverlay', 'loadingText'];
 
     static values = {
         stripePublicKey: String,
@@ -43,6 +43,7 @@ export default class extends Controller {
         }
 
         this.setSubmitState(true, 'Initialisation du paiement...');
+        this.setLoadingState(false);
         this.hideAlerts();
 
         try {
@@ -124,6 +125,12 @@ export default class extends Controller {
 
         this.selectionNameTarget.textContent = `${this.selectedPlan.name} - ${this.selectedPlan.label}`;
         this.selectionMetaTarget.textContent = `${this.selectedPlan.price} EUR - paiement recurrent ${this.selectedPlan.period === 'annual' ? 'annuel' : 'mensuel'}.`;
+        if (this.hasSelectionCardTarget) {
+            this.selectionCardTarget.classList.add('is-active');
+            this.selectionCardTarget.dataset.planPeriod = this.selectedPlan.period;
+            this.selectionCardTarget.dataset.planCode = this.selectedPlan.code;
+        }
+        this.setLoadingState(false);
         this.hideAlerts();
         this.refreshSubmitState();
     }
@@ -137,10 +144,12 @@ export default class extends Controller {
 
         this.isSubmitting = true;
         this.hideAlerts();
+        this.setLoadingState(true, 'Validation de votre carte...');
         this.setSubmitState(true, 'Validation de la carte et creation de l’abonnement...');
 
         try {
             const setupIntentId = await this.confirmSetupIntent();
+            this.setLoadingState(true, 'Création de votre abonnement...');
             const checkoutResponse = await fetch(this.selectedPlan.submitUrl, {
                 method: 'POST',
                 headers: {
@@ -159,6 +168,7 @@ export default class extends Controller {
             }
 
             if (checkoutPayload.requiresAction && checkoutPayload.paymentIntentClientSecret) {
+                this.setLoadingState(true, 'Validation bancaire en cours...');
                 const paymentResult = await this.stripe.confirmCardPayment(checkoutPayload.paymentIntentClientSecret);
 
                 if (paymentResult.error) {
@@ -166,14 +176,17 @@ export default class extends Controller {
                 }
             }
 
+            this.setLoadingState(true, 'Activation de votre abonnement...');
             await this.finalizeSubscriptionSync(checkoutPayload.stripeSubscriptionId || null);
 
             this.showSuccess(checkoutPayload.message || 'L’abonnement a ete cree.');
+            this.setLoadingState(true, 'Abonnement activé, redirection...');
             window.location.assign(checkoutPayload.redirectUrl || this.returnUrlValue);
         } catch (error) {
             this.showError(error.message || 'Impossible de finaliser l’abonnement.');
         } finally {
             this.isSubmitting = false;
+            this.setLoadingState(false);
             this.refreshSubmitState();
         }
     }
@@ -193,6 +206,7 @@ export default class extends Controller {
         this.isUpdateMode = true;
         this.selectedPlan = null;
         this.hideAlerts();
+        this.setLoadingState(false);
         this.setSubmitState(true, 'Entrez les nouvelles informations de carte puis cliquez sur Mettre à jour la carte.');
 
         if (this.hasUpdateButtonTarget) {
@@ -216,6 +230,7 @@ export default class extends Controller {
 
         this.isSubmitting = true;
         this.hideAlerts();
+        this.setLoadingState(true, 'Validation de la nouvelle carte...');
         this.setSubmitState(true, 'Validation de la nouvelle carte...');
 
         try {
@@ -238,12 +253,14 @@ export default class extends Controller {
             }
 
             this.showSuccess(updatePayload.message || 'La carte a bien été mise à jour.');
+            this.setLoadingState(true, 'Carte mise à jour, redirection...');
             window.location.assign(updatePayload.redirectUrl || this.returnUrlValue);
         } catch (error) {
             this.showError(error.message || 'Impossible de mettre a jour la carte.');
         } finally {
             this.isSubmitting = false;
             this.isUpdateMode = false;
+            this.setLoadingState(false);
             if (this.hasUpdateButtonTarget) {
                 this.updateButtonTarget.disabled = true;
                 this.updateButtonTarget.classList.add('d-none');
@@ -335,6 +352,29 @@ export default class extends Controller {
 
         this.submitButtonTarget.disabled = disabled;
         this.submitHelpTarget.textContent = helpText;
+    }
+
+    setLoadingState(active, message = 'Traitement en cours...') {
+        if (this.hasLoadingOverlayTarget) {
+            this.loadingOverlayTarget.classList.toggle('d-none', !active);
+            this.loadingOverlayTarget.setAttribute('aria-hidden', active ? 'false' : 'true');
+        }
+
+        if (this.hasLoadingTextTarget) {
+            this.loadingTextTarget.textContent = message;
+        }
+
+        if (this.hasSubmitButtonTarget) {
+            this.submitButtonTarget.classList.toggle('is-loading', active);
+        }
+
+        if (this.hasSubmitButtonLabelTarget) {
+            this.submitButtonLabelTarget.textContent = active ? 'Traitement en cours...' : 'Régler et activer l’abonnement';
+        }
+
+        if (this.hasUpdateButtonTarget) {
+            this.updateButtonTarget.disabled = active || this.updateButtonTarget.disabled;
+        }
     }
 
     hideAlerts() {
