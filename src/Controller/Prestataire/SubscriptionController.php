@@ -13,7 +13,6 @@ use App\Service\Subscription\StripeApiClient;
 use App\Service\Subscription\StripeCustomerManager;
 use App\Service\Subscription\SubscriptionInvoicePdfGenerator;
 use App\Service\Subscription\StripeSubscriptionCheckoutManager;
-use App\Service\Subscription\StripeReferenceHelper;
 use App\Service\Subscription\SubscriptionAccessManager;
 use App\Service\Subscription\SubscriptionFallbackManager;
 use App\Service\Subscription\SubscriptionUpgradePolicy;
@@ -48,7 +47,6 @@ final class SubscriptionController extends AbstractController
         SubscriptionFallbackManager $subscriptionFallbackManager,
         StripeApiClient $stripeApiClient,
         StripeCheckoutSessionSynchronizer $stripeCheckoutSessionSynchronizer,
-        StripeReferenceHelper $stripeReferenceHelper,
         EntityManagerInterface $entityManager,
         #[Autowire('%app.stripe.public_key%')] string $stripePublicKey,
     ): Response {
@@ -79,15 +77,6 @@ final class SubscriptionController extends AbstractController
         }
 
         $currentSubscription = $subscriptionAccessManager->getCurrentUsableSubscription($prestataireProfile);
-
-        if ($stripeApiClient->isConfigured()) {
-            try {
-                if ($stripeCheckoutSessionSynchronizer->syncLatestSubscriptionForPrestataire($prestataireProfile)) {
-                    $currentSubscription = $subscriptionAccessManager->getCurrentUsableSubscription($prestataireProfile);
-                }
-            } catch (\Throwable) {
-            }
-        }
 
         if (null === $currentSubscription) {
             $latestSubscription = $prestataireSubscriptionRepository->findLatestForPrestataire($prestataireProfile);
@@ -123,30 +112,7 @@ final class SubscriptionController extends AbstractController
         $cardLast4 = null;
         $cardExpiry = null;
         $cardBrand = null;
-
-        if ($stripeApiClient->isConfigured() && $stripeReferenceHelper->isManagedSubscriptionId($currentSubscription?->getStripeSubscriptionId())) {
-            try {
-                $cardLast4 = $stripeApiClient->retrieveSubscriptionCardLast4($currentSubscription->getStripeSubscriptionId());
-                $cardExpiry = $stripeApiClient->retrieveSubscriptionCardExpiry($currentSubscription->getStripeSubscriptionId());
-                $cardBrand = $stripeApiClient->retrieveSubscriptionCardBrand($currentSubscription->getStripeSubscriptionId());
-            } catch (\Throwable) {
-                $cardLast4 = null;
-                $cardExpiry = null;
-                $cardBrand = null;
-            }
-        }
-
-        if (null === $cardLast4 && $currentSubscription?->getCustomer()?->getStripeDefaultPaymentMethodId()) {
-            try {
-                $cardLast4 = $stripeApiClient->retrievePaymentMethodCardLast4($currentSubscription->getCustomer()->getStripeDefaultPaymentMethodId());
-                $cardExpiry = $stripeApiClient->retrievePaymentMethodCardExpiry($currentSubscription->getCustomer()->getStripeDefaultPaymentMethodId());
-                $cardBrand = $stripeApiClient->retrievePaymentMethodCardBrand($currentSubscription->getCustomer()->getStripeDefaultPaymentMethodId());
-            } catch (\Throwable) {
-                $cardLast4 = null;
-                $cardExpiry = null;
-                $cardBrand = null;
-            }
-        }
+        $hasStoredPaymentMethod = null !== $currentSubscription?->getCustomer()?->getStripeDefaultPaymentMethodId();
 
         return $this->render('prestataire/subscription/index.html.twig', [
             'plans' => $subscriptionPlanRepository->findActiveOrdered(),
@@ -158,6 +124,7 @@ final class SubscriptionController extends AbstractController
             'cardLast4' => $cardLast4,
             'cardExpiry' => $cardExpiry,
             'cardBrand' => $cardBrand,
+            'hasStoredPaymentMethod' => $hasStoredPaymentMethod,
         ]);
     }
 

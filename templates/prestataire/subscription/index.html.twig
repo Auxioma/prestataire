@@ -395,6 +395,8 @@
                                                                     <strong>
                                                                         {% if cardLast4 is defined and cardLast4 %}
                                                                             **** {{ cardLast4|e }}
+                                                                        {% elseif hasStoredPaymentMethod|default(false) %}
+                                                                            carte enregistrée
                                                                         {% else %}
                                                                             non renseignée
                                                                         {% endif %}
