@@ -97,24 +97,7 @@
 						</article>
 					</div>
 				</div>
-				<div class="tm-client-quotes-hero__side">
-					<div class="tm-client-quotes-hero-status-card">
-						<span class="tm-client-quotes-hero-status-card__label">Statut actuel</span>
-						<span class="tm-client-quotes-status tm-client-quotes-status--{{ quoteRequest.status.getBadgeClass() }}">
-							{{ quoteRequest.status.getLabel() }}
-						</span>
-						<div class="tm-client-quotes-hero-status-card__meta">
-							<div>
-								<span>Date souhaitée</span>
-								<strong>{{ quoteRequest.desiredDate ? quoteRequest.desiredDate|date('d/m/Y') : 'Non renseignée' }}</strong>
-							</div>
-							<div>
-								<span>Budget</span>
-								<strong>{{ quoteRequest.budgetAmount is not null ? quoteRequest.budgetAmount|number_format(2, ',', ' ') ~ ' €' : 'Non renseigné' }}</strong>
-							</div>
-						</div>
-					</div>
-				</div>
+
 
 			</section>
 
