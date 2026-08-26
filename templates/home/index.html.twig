@@ -34,80 +34,94 @@
 		</div>
 
 		{# HERO #}
-		<section class="tmv2-hero">
-			<div class="container tmv2-hero__inner mb-4">
-				<div class="tmv2-hero__content">
-					<span class="tmv2-eyebrow">TrouveMoi</span>
+<section class="tmv2-hero">
+    <img
+        src="{{ asset('images/img_presta_homepage04.png') }}"
+        alt=""
+        class="tmv2-hero__background-image"
+        aria-hidden="true"
+    >
 
-					<h1 class="tmv2-hero__title">
-						Le bon prestataire, trouvé en
-						<span>
-							une phrase</span>
-					</h1>
+    <div class="container tmv2-hero__inner mb-4">
+        <div class="tmv2-hero__content">
+            <span class="tmv2-eyebrow">TrouveMoi</span>
 
-					<p class="tmv2-hero__lead">
-						Des professionnels de confiance pour vous accompagner dans tous vos besoins, partout en France.
-					</p>
+            <h1 class="tmv2-hero__title">
+                Le bon prestataire, trouvé en
+                <span>une phrase</span>
+            </h1>
 
-					<div class="tmv2-hero__badges">
-						<span class="tmv2-pill">
-							<i class="fa-solid fa-circle-plus"></i>
-							Prestataires Vérifiés
-						</span>
+            <p class="tmv2-hero__lead">
+                Des professionnels de confiance pour vous accompagner dans tous vos besoins, partout en France.
+            </p>
 
-						<span class="tmv2-pill">
-							<i class="fa-solid fa-file-invoice"></i>
-							Devis gratuits
-						</span>
+            <div class="tmv2-hero__badges">
+                <span class="tmv2-pill">
+                    <i class="fa-solid fa-circle-plus" aria-hidden="true"></i>
+                    Prestataires Vérifiés
+                </span>
 
-						<span class="tmv2-pill">
-							<i class="fa-solid fa-shield-halved"></i>
-							Paiement sécurisé
-						</span>
-					</div>
-				</div>
+                <span class="tmv2-pill">
+                    <i class="fa-solid fa-file-invoice" aria-hidden="true"></i>
+                    Devis gratuits
+                </span>
 
-				<div class="tmv2-hero__visual d-none d-lg-flex" aria-hidden="true">
-					<div class="tmv2-pro-card">
-						<div class="tmv2-pro-card__avatar">TM</div>
-						<h3>Prestataires vérifiés</h3>
-						<p>Comparez les profils, les avis et les disponibilités en quelques clics.</p>
-						<ul class="tmv2-pro-card__tags" role="list">
-							<li>Rapide</li>
-							<li>Fiable</li>
-							<li>Sécurisé</li>
-						</ul>
-					</div>
+                <span class="tmv2-pill">
+                    <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                    Paiement sécurisé
+                </span>
+            </div>
+        </div>
 
-					<div class="tmv2-floating tmv2-floating--top">
-						<span class="tmv2-floating__icon">
-							<i class="fa-solid fa-check"></i>
-						</span>
-						<div>
-							<strong>Devis acceptés</strong>
-							<small>en temps réel</small>
-						</div>
-					</div>
+        <div class="tmv2-hero__visual d-none d-lg-flex" aria-hidden="true">
+            <div class="tmv2-pro-card">
+                <div class="tmv2-pro-card__avatar">TM</div>
 
-					<div class="tmv2-floating tmv2-floating--bottom">
-						<span class="tmv2-floating__icon tmv2-floating__icon--blue">
-							<i class="fa-solid fa-bolt"></i>
-						</span>
-						<div>
-							<strong>Demandes traitées</strong>
-							<small>partout en France</small>
-						</div>
-					</div>
-				</div>
-			</div>
-			{# RECHERCHE #}
-			<div class="container tmv2-search-wrap mt-auto">
-				{% include 'search/_homepage_search_toolbar.html.twig' with {
-                formView: homepageSearchForm,
-                toolbarClass: 'tm-homepage-search-toolbar--home'
-            } only %}
-			</div>
-		</section>
+                <h3>Prestataires vérifiés</h3>
+
+                <p>Comparez les profils, les avis et les disponibilités en quelques clics.</p>
+
+                <ul class="tmv2-pro-card__tags" role="list">
+                    <li>Rapide</li>
+                    <li>Fiable</li>
+                    <li>Sécurisé</li>
+                </ul>
+            </div>
+
+            <div class="tmv2-floating tmv2-floating--top">
+                <span class="tmv2-floating__icon">
+                    <i class="fa-solid fa-check" aria-hidden="true"></i>
+                </span>
+
+                <div>
+                    <strong>Devis acceptés</strong>
+                    <small>en temps réel</small>
+                </div>
+            </div>
+
+            <div class="tmv2-floating tmv2-floating--bottom">
+                <span class="tmv2-floating__icon tmv2-floating__icon--blue">
+                    <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+                </span>
+
+                <div>
+                    <strong>Demandes traitées</strong>
+                    <small>partout en France</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# RECHERCHE #}
+    <div class="container tmv2-search-wrap mt-auto">
+        {% include 'search/_homepage_search_toolbar.html.twig' with {
+            formView: homepageSearchForm,
+            toolbarClass: 'tm-homepage-search-toolbar--home'
+        } only %}
+    </div>
+
+	<div class="tmv2-hero__wave" aria-hidden="true"></div>
+</section>
 
 
 		{# CHIFFRES CLÉS #}

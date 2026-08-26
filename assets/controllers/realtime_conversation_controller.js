@@ -17,6 +17,11 @@ export default class extends Controller {
 
     connect() {
         this.scrollTimeout = null;
+        this.boundLocalMessageHandler = this.handleLocalMessage.bind(this);
+        this.element.addEventListener(
+            "conversation:message-created",
+            this.boundLocalMessageHandler
+        );
 
         if (typeof io === "undefined") {
             console.error("Socket.IO non chargé");
@@ -59,6 +64,11 @@ export default class extends Controller {
     }
 
     disconnect() {
+        this.element.removeEventListener(
+            "conversation:message-created",
+            this.boundLocalMessageHandler
+        );
+
         if (this.scrollTimeout) {
             clearTimeout(this.scrollTimeout);
             this.scrollTimeout = null;
@@ -75,6 +85,18 @@ export default class extends Controller {
             !payload ||
             Number(payload.conversationId) !== Number(this.conversationIdValue)
         ) {
+            return;
+        }
+
+        this.appendMessage(payload.message || {});
+    }
+
+    handleLocalMessage(event) {
+        this.appendMessage(event.detail?.message || {});
+    }
+
+    appendMessage(message) {
+        if (!message || this.hasRenderedMessage(message.id)) {
             return;
         }
 
@@ -96,7 +118,6 @@ export default class extends Controller {
         }
 
         const shouldStickToBottom = this.isNearBottom(stream);
-        const message = payload.message || {};
         const row = this.buildMessageElement(message);
 
         stream.appendChild(row);
@@ -104,6 +125,14 @@ export default class extends Controller {
         if (shouldStickToBottom) {
             this.scrollStreamToBottom("smooth");
         }
+    }
+
+    hasRenderedMessage(messageId) {
+        if (!messageId) {
+            return false;
+        }
+
+        return this.element.querySelector(`[data-message-id="${CSS.escape(String(messageId))}"]`) !== null;
     }
 
     scrollStreamToBottom(behavior = "smooth") {
@@ -187,6 +216,7 @@ export default class extends Controller {
         row.className = `tm-msg-row ${
             isSystem ? "is-system" : (isOwn ? "is-own" : "is-other")
         }`;
+        this.setMessageIdentifier(row, message.id);
 
         if (isSystem) {
             row.innerHTML = `
@@ -232,6 +262,7 @@ export default class extends Controller {
         }
 
         article.className = `tm-client-quotes-message ${variantClass}`;
+        this.setMessageIdentifier(article, message.id);
         article.innerHTML = `
             <div class="tm-client-quotes-message__meta">
                 <strong>${this.escapeHtml(authorLabel)}</strong>
@@ -242,6 +273,14 @@ export default class extends Controller {
         `;
 
         return article;
+    }
+
+    setMessageIdentifier(element, messageId) {
+        if (!messageId) {
+            return;
+        }
+
+        element.dataset.messageId = String(messageId);
     }
 
     buildDashboardAttachmentsHtml(attachments) {

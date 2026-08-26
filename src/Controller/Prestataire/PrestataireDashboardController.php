@@ -295,7 +295,10 @@ final class PrestataireDashboardController extends AbstractController
             }
 
             if ($this->isAsyncConversationSubmit($request)) {
-                return new JsonResponse(['ok' => true]);
+                return new JsonResponse([
+                    'ok' => true,
+                    'message' => $realtimeNotifier->buildMessagePayload($message),
+                ]);
             }
 
             return $this->redirectToRoute('app_prestataire_dashboard', [

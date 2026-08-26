@@ -21,6 +21,34 @@ final class RealtimeNotifier
 
     public function notifyMessageCreated(int $conversationId, Message $message): void
     {
+        $payload = $this->buildMessagePayload($message);
+
+        try {
+            $response = $this->httpClient->request('POST', rtrim($this->realtimeBaseUrl, '/') . '/emit/message', [
+                'headers' => [
+                    'x-internal-token' => $this->internalToken,
+                ],
+                'json' => [
+                    'conversationId' => $conversationId,
+                    'message' => $payload,
+                ],
+            ]);
+
+            $response->getStatusCode();
+        } catch (\Throwable $e) {
+            $this->logger->error('Realtime message broadcast failed', [
+                'conversationId' => $conversationId,
+                'messageId' => $message->getId(),
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function buildMessagePayload(Message $message): array
+    {
         $author = $message->getAuthor();
 
         $authorName = $author
@@ -53,32 +81,14 @@ final class RealtimeNotifier
             ];
         }
 
-        try {
-            $response = $this->httpClient->request('POST', rtrim($this->realtimeBaseUrl, '/') . '/emit/message', [
-                'headers' => [
-                    'x-internal-token' => $this->internalToken,
-                ],
-                'json' => [
-                    'conversationId' => $conversationId,
-                    'message' => [
-                        'id' => $message->getId(),
-                        'content' => $message->getContent(),
-                        'authorName' => $authorName,
-                        'authorType' => $authorType,
-                        'createdAt' => $message->getCreatedAt()?->format('Y-m-d H:i:s'),
-                        'attachments' => $attachments,
-                    ],
-                ],
-            ]);
-
-            $response->getStatusCode();
-        } catch (\Throwable $e) {
-            $this->logger->error('Realtime message broadcast failed', [
-                'conversationId' => $conversationId,
-                'messageId' => $message->getId(),
-                'error' => $e->getMessage(),
-            ]);
-        }
+        return [
+            'id' => $message->getId(),
+            'content' => $message->getContent(),
+            'authorName' => $authorName,
+            'authorType' => $authorType,
+            'createdAt' => $message->getCreatedAt()?->format('Y-m-d H:i:s'),
+            'attachments' => $attachments,
+        ];
     }
 
     public function notifyNotificationCreated(User $recipient, Notification $notification): void

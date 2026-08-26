@@ -346,10 +346,13 @@
                                 attr: {
                                     class: 'visually-hidden tm-msg-file-input' ~ (messageForm.attachments.vars.errors|length > 0 ? ' is-invalid' : ''),
                                     accept: 'image/jpeg,image/png,image/webp',
-                                    multiple: 'multiple'
+                                    multiple: 'multiple',
+                                    'data-conversation-form-target': 'files',
+                                    'data-action': 'change->conversation-form#filesChanged'
                                 }
                             }) }}
-                            <div class="form-text">Jusqu’à 5 photos.</div>
+                            <div class="form-text" data-conversation-form-target="summary">Jusqu’à 5 photos.</div>
+                            <div class="tm-conversation-preview" data-conversation-form-target="preview" hidden></div>
                         </div>
 
                         {% if messageForm.content.vars.errors|length > 0 %}

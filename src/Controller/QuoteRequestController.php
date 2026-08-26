@@ -439,7 +439,10 @@ final class QuoteRequestController extends AbstractController
                 }
 
                 if ($this->isAsyncConversationSubmit($request)) {
-                    return new JsonResponse(['ok' => true]);
+                    return new JsonResponse([
+                        'ok' => true,
+                        'message' => $realtimeNotifier->buildMessagePayload($message),
+                    ]);
                 }
 
                 return $this->redirectToRoute('app_quote_request_show', [

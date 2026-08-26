@@ -617,6 +617,43 @@
     color: var(--msg-texte-doux);
 }
 
+.tm-conversation-preview[hidden] {
+    display: none !important;
+}
+
+.tm-conversation-preview {
+    margin-top: 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(52px, 52px));
+    gap: 0.45rem;
+}
+
+.tm-conversation-preview-item {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.tm-conversation-preview-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 0.6rem;
+    border: 1px solid rgba(10, 22, 51, 0.1);
+    background: linear-gradient(180deg, #ffffff 0%, #eef3ff 100%);
+}
+
+.tm-conversation-preview-caption {
+    max-width: 52px;
+    font-size: 0.5625rem;
+    line-height: 1.2;
+    color: var(--msg-texte-doux);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .tm-msg-file-input.form-control,
 .tm-msg-compose-field .form-control[type="file"] {
     border: 1px dashed rgba(10, 22, 51, 0.16);
