@@ -9,6 +9,7 @@ use App\Entity\Review;
 use App\Entity\User;
 use App\Form\ReportType;
 use App\Service\ReportManager;
+use App\Security\Voter\ReportAccessVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +24,7 @@ final class ReportController extends AbstractController
     public function quoteRequest(Request $request, QuoteRequest $quoteRequest, ReportManager $reportManager): Response
     {
         $user = $this->getAuthenticatedUser();
+        $this->denyAccessUnlessGranted(ReportAccessVoter::ACCESS, $quoteRequest);
         $report = new Report();
         $form = $this->createForm(ReportType::class, $report);
         $form->handleRequest($request);
@@ -53,6 +55,7 @@ final class ReportController extends AbstractController
     public function conversation(Request $request, Conversation $conversation, ReportManager $reportManager): Response
     {
         $user = $this->getAuthenticatedUser();
+        $this->denyAccessUnlessGranted(ReportAccessVoter::ACCESS, $conversation);
         $report = new Report();
         $form = $this->createForm(ReportType::class, $report);
         $form->handleRequest($request);
@@ -83,6 +86,7 @@ final class ReportController extends AbstractController
     public function review(Request $request, Review $review, ReportManager $reportManager): Response
     {
         $user = $this->getAuthenticatedUser();
+        $this->denyAccessUnlessGranted(ReportAccessVoter::ACCESS, $review);
         $report = new Report();
         $form = $this->createForm(ReportType::class, $report);
         $form->handleRequest($request);

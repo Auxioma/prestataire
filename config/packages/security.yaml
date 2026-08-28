@@ -37,6 +37,9 @@ security:
                 csrf_token_id: 'authenticate'
                 success_handler: App\Security\LoginSuccessHandler
 
+            login_throttling:
+                max_attempts: 5
+
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 604800
