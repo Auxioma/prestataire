@@ -15,9 +15,10 @@ final class ElasticsearchClient
         private readonly string $username,
         private readonly string $password,
         private readonly bool $verifyTls = false,
+        private readonly ?string $caCertPath = null,
     ) {
         $httpClient = new GuzzleClient([
-            'verify' => $this->verifyTls,
+            'verify' => $this->verifyTls ? $this->caCertPath ?? true : false,
             'auth' => [$this->username, $this->password],
         ]);
 
