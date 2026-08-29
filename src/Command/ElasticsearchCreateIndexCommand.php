@@ -77,6 +77,7 @@ final class ElasticsearchCreateIndexCommand extends Command
                             'postalCode' => ['type' => 'keyword'],
                             'averageRating' => ['type' => 'float'],
                             'reviewsCount' => ['type' => 'integer'],
+                            'profileStatus' => ['type' => 'keyword'],
                             'verificationStatus' => ['type' => 'keyword'],
                             'isFeatured' => ['type' => 'boolean'],
                             'searchText' => ['type' => 'text'],

@@ -34,7 +34,7 @@ final class PrestataireSearchService
 
         $filter[] = [
             'term' => [
-                'profileStatus.keyword' => self::ACTIVE_PROFILE_STATUS,
+                'profileStatus' => self::ACTIVE_PROFILE_STATUS,
             ],
         ];
 
@@ -236,9 +236,9 @@ final class PrestataireSearchService
             ],
             'sort' => [
                 ['_score' => ['order' => 'desc']],
-                ['isFeatured' => ['order' => 'desc']],
-                ['averageRating' => ['order' => 'desc']],
-                ['reviewsCount' => ['order' => 'desc']],
+                ['isFeatured' => ['order' => 'desc', 'unmapped_type' => 'boolean']],
+                ['averageRating' => ['order' => 'desc', 'unmapped_type' => 'float']],
+                ['reviewsCount' => ['order' => 'desc', 'unmapped_type' => 'integer']],
             ],
         ];
 
