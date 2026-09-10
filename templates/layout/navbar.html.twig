@@ -44,6 +44,9 @@
 						<i class="fa-regular fa-user"></i>
 						<span>Connexion</span>
 					</a>
+					<a class="btn tm-navbar__btn-cta d-none d-xl-inline-flex" href="{{ path('app_register_choice') }}">
+						Inscription gratuite
+					</a>
 				{% endif %}
 
 				{% if app.user %}
@@ -248,6 +251,12 @@
 								</div>
 							</div>
 						</div>
+					</li>
+
+					<li class="nav-item">
+						<a class="nav-link tm-navbar__link" href="{{ path('app_static_page', {slug: 'demander-un-devis'}) }}">
+							Devis gratuits
+						</a>
 					</li>
 
 					<li class="nav-item">
