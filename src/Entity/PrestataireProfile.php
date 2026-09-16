@@ -76,6 +76,9 @@ class PrestataireProfile
     )]
     private ?string $siret = null;
 
+    #[ORM\Column(length: 6, nullable: true)]
+    private ?string $nafCode = null;
+
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $vatNumber = null;
 
@@ -378,6 +381,18 @@ class PrestataireProfile
     public function setSiren(?string $siren): static
     {
         $this->siren = $siren;
+
+        return $this;
+    }
+
+    public function getNafCode(): ?string
+    {
+        return $this->nafCode;
+    }
+
+    public function setNafCode(?string $nafCode): static
+    {
+        $this->nafCode = $nafCode;
 
         return $this;
     }
