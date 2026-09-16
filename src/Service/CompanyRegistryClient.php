@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Service;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -9,23 +19,25 @@ final class CompanyRegistryClient
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly string $companyRegistryBaseUrl,
-    ) {}
+    ) {
+    }
 
     // récupération des données entreprise via l'API ouverte recherche-entreprises.api.gouv.fr
     public function getEtablissementBySiret(string $siret): array
     {
         $normalizedSiret = preg_replace('/\D+/', '', $siret ?? '');
 
-        if (!$normalizedSiret || 14 !== strlen($normalizedSiret)) {
+        if (!$normalizedSiret || 14 !== mb_strlen($normalizedSiret)) {
             throw new \InvalidArgumentException('Le SIRET doit contenir 14 chiffres.');
         }
 
-        $response = $this->httpClient->request('GET', sprintf('%s/search', rtrim($this->companyRegistryBaseUrl, '/')), [
+        $response = $this->httpClient->request('GET', \sprintf('%s/search', mb_rtrim($this->companyRegistryBaseUrl, '/')), [
             'query' => [
                 'q' => $normalizedSiret,
                 'per_page' => 1,
                 'page' => 1,
             ],
+            'timeout' => 10,
             'headers' => [
                 'Accept' => 'application/json',
                 'User-Agent' => 'TrouveMoiPrestataires/1.0 (+company-verification)',
@@ -35,23 +47,34 @@ final class CompanyRegistryClient
         $statusCode = $response->getStatusCode();
 
         if (200 !== $statusCode) {
-            throw new \RuntimeException(sprintf('Erreur API entreprise.data.gouv.fr (HTTP %d).', $statusCode));
+            throw new \RuntimeException(\sprintf('Erreur API entreprise.data.gouv.fr (HTTP %d).', $statusCode));
         }
 
         $data = $response->toArray(false);
         $results = $data['results'] ?? [];
 
-        if (!is_array($results) || [] === $results) {
+        if (!\is_array($results) || [] === $results) {
             throw new \RuntimeException('Aucun établissement trouvé pour ce SIRET.');
         }
 
         foreach ($results as $result) {
+            if (!\is_array($result) || (string) ($result['siren'] ?? '') !== mb_substr($normalizedSiret, 0, 9)) {
+                continue;
+            }
             if (($result['siege']['siret'] ?? null) === $normalizedSiret) {
                 return $result;
             }
+            foreach ($result['matching_etablissements'] ?? [] as $etablissement) {
+                if (\is_array($etablissement) && ($etablissement['siret'] ?? null) === $normalizedSiret) {
+                    // Use the requested establishment's address and status, not those of its headquarters.
+                    $result['siege'] = $etablissement;
+
+                    return $result;
+                }
+            }
         }
 
-        return $results[0];
+        throw new \RuntimeException('L’API ne confirme pas cet établissement exact. Vérifiez le SIRET.');
     }
 
     // mapping simplifié des champs utiles pour le formulaire entreprise
@@ -59,12 +82,12 @@ final class CompanyRegistryClient
     {
         $company = $this->getEtablissementBySiret($siret);
         $normalizedSiret = preg_replace('/\D+/', '', $siret);
-        $siege = is_array($company['siege'] ?? null) ? $company['siege'] : [];
+        $siege = \is_array($company['siege'] ?? null) ? $company['siege'] : [];
         $siren = $company['siren']
-            ?? (is_string($normalizedSiret) && strlen($normalizedSiret) >= 9 ? substr($normalizedSiret, 0, 9) : null);
+            ?? (\is_string($normalizedSiret) && mb_strlen($normalizedSiret) >= 9 ? mb_substr($normalizedSiret, 0, 9) : null);
 
         $etablissementStatus = $siege['etat_administratif'] ?? null;
-        $isVerified = !empty($siege['siret']) || !empty($company['siren']);
+        $isVerified = ($siege['siret'] ?? null) === $normalizedSiret;
         $isActive = 'A' === $etablissementStatus;
 
         $companyName = $this->firstNonEmptyString([
@@ -167,11 +190,11 @@ final class CompanyRegistryClient
     private function firstNonEmptyString(array $values): ?string
     {
         foreach ($values as $value) {
-            if (!is_string($value)) {
+            if (!\is_string($value)) {
                 continue;
             }
 
-            $trimmedValue = trim($value);
+            $trimmedValue = mb_trim($value);
 
             if ('' !== $trimmedValue) {
                 return $trimmedValue;

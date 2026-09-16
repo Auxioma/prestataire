@@ -23,13 +23,12 @@ use App\Repository\ServiceCategoryRepository;
 use App\Repository\ServiceRepository;
 use App\Service\AccountSecurityManager;
 use App\Service\AuthenticatedUserProvider;
+use App\Service\CompanyRegistryClient;
 use App\Service\CompanyVerificationManager;
 use App\Service\PrestataireAvailabilityManager;
 use App\Service\PrestataireProfileCompletionService;
 use App\Service\PrestataireProfileManager;
-use App\Service\PrestataireSearchIndexer;
 use App\Service\PrestataireSettingsFormsFactory;
-use App\Service\CompanyRegistryClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,7 +49,6 @@ class ProfileController extends AbstractProfileController
         private readonly PrestataireSettingsFormsFactory $prestataireSettingsFormsFactory,
         private readonly AuthenticatedUserProvider $authenticatedUserProvider,
         AccountSecurityManager $accountSecurityManager,
-        private readonly PrestataireSearchIndexer $prestataireSearchIndexer,
         TokenStorageInterface $tokenStorage,
         RequestStack $requestStack,
     ) {
@@ -321,7 +319,6 @@ class ProfileController extends AbstractProfileController
 
         $entityManager->persist($prestataireProfile);
         $entityManager->flush();
-        $this->reindexPrestataireSearchProfile($prestataireProfile);
 
         $this->addFlash('success', 'Votre profil public a été enregistré.');
 
@@ -352,7 +349,7 @@ class ProfileController extends AbstractProfileController
 
         $companyFormData = $request->request->all('company_form');
 
-        $isVerifyCompanyAction = is_array($companyFormData) && array_key_exists('verifyCompany', $companyFormData);
+        $isVerifyCompanyAction = \is_array($companyFormData) && \array_key_exists('verifyCompany', $companyFormData);
         $isAcceptCompanyVerificationAction = $request->request->has('acceptCompanyVerification');
         $isRejectCompanyVerificationAction = $request->request->has('rejectCompanyVerification');
 
@@ -388,17 +385,12 @@ class ProfileController extends AbstractProfileController
                 $helpUrl = $this->generateUrl('app_static_page', ['slug' => 'help']);
 
                 $this->addFlash('warning', [
-                    'html' => sprintf(
+                    'html' => \sprintf(
                         'Le SIRET a bien été trouvé, mais l’établissement est indiqué comme fermé dans la base publique. Le profil n’a pas été activé automatiquement et ne sera pas visible par les utilisateurs. Veuillez contacter l’administrateur <a href="%s">ICI</a>.',
-                        htmlspecialchars($helpUrl, ENT_QUOTES, 'UTF-8')
+                        htmlspecialchars($helpUrl, \ENT_QUOTES, 'UTF-8')
                     ),
                 ]);
             }
-
-            if ($result['isVerified'] && $result['isActive']) {
-                $this->reindexPrestataireSearchProfile($prestataireProfile);
-            }
-
             $this->addFlash('success', 'Les informations officielles de l’entreprise ont été injectées dans votre fiche.');
 
             return [
@@ -431,7 +423,6 @@ class ProfileController extends AbstractProfileController
         $this->prestataireProfileCompletionService->syncCompletionScore($prestataireProfile->getAccount(), $prestataireProfile);
         $entityManager->persist($prestataireProfile);
         $entityManager->flush();
-        $this->reindexPrestataireSearchProfile($prestataireProfile);
 
         $this->addFlash('success', 'Les informations de l’entreprise ont été enregistrées.');
 
@@ -467,22 +458,6 @@ class ProfileController extends AbstractProfileController
         return $this->redirectToRoute('app_prestataire_settings', [
             'tab' => 'dispo',
         ]);
-    }
-
-    private function reindexPrestataireSearchProfile(PrestataireProfile $prestataireProfile): void
-    {
-        if (
-            $prestataireProfile->getProfileStatus()?->value !== 'ACTIVE'
-            || $prestataireProfile->getVerificationStatus()?->value !== 'COMPANY_VERIFIED'
-        ) {
-            return;
-        }
-
-        try {
-            $this->prestataireSearchIndexer->indexProfile($prestataireProfile);
-        } catch (\Throwable) {
-            $this->addFlash('warning', 'L’entreprise a bien été enregistrée, mais la mise en visibilité peut prendre quelques instants.');
-        }
     }
 
     #[Route('/prestataire/service/ajouter', name: 'app_prestataire_add_service', methods: ['POST'])]
@@ -523,7 +498,7 @@ class ProfileController extends AbstractProfileController
             $pService->setIsActive(true);
 
             $baseSlug = (string) $slugger->slug($service->getName() ?: 'prestation')->lower();
-            $uniqueSlug = sprintf('%s-%s', $baseSlug, substr(bin2hex(random_bytes(4)), 0, 8));
+            $uniqueSlug = \sprintf('%s-%s', $baseSlug, mb_substr(bin2hex(random_bytes(4)), 0, 8));
             $pService->setSlug($uniqueSlug);
 
             $em->persist($pService);
@@ -551,7 +526,7 @@ class ProfileController extends AbstractProfileController
             throw $this->createAccessDeniedException();
         }
 
-        if ($this->isCsrfTokenValid('delete' . $ps->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$ps->getId(), $request->request->get('_token'))) {
             $user->getPrestataireProfile()->removePrestataireService($ps);
             $em->remove($ps);
             $this->prestataireProfileCompletionService->syncCompletionScore($user, $user->getPrestataireProfile());
@@ -645,7 +620,7 @@ class ProfileController extends AbstractProfileController
             throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer ce document.');
         }
 
-        if (!$this->isCsrfTokenValid('delete_document_' . $document->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete_document_'.$document->getId(), $request->request->get('_token'))) {
             $this->addFlash('danger', 'Le jeton CSRF est invalide. Veuillez réessayer.');
 
             return $this->redirectToRoute('app_prestataire_settings', $this->getDocumentRedirectParameters($document));
@@ -664,7 +639,7 @@ class ProfileController extends AbstractProfileController
 
     private function getDocumentRedirectParameters(?PrestataireDocument $document): array
     {
-        if ($document?->getType() === PrestataireDocumentTypeEnum::CERTIFICATION) {
+        if (PrestataireDocumentTypeEnum::CERTIFICATION === $document?->getType()) {
             return [
                 'tab' => 'profile',
                 '_fragment' => 'profile-panel',

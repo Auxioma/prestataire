@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Service;
 
 use Elastic\Elasticsearch\Client;
@@ -14,28 +24,24 @@ final class ElasticsearchClient
         private readonly string $host,
         private readonly string $username,
         private readonly string $password,
-        private readonly bool $verifyTls = false,
+        private readonly bool $verifyTls = true,
         private readonly ?string $caCertPath = null,
     ) {
         $verification = false;
 
         if ($this->verifyTls) {
             $hasReadableCaBundle = null !== $this->caCertPath && is_readable($this->caCertPath);
-            $hostName = parse_url($this->host, PHP_URL_HOST);
-            $isLocalElasticsearch = \in_array($hostName, ['localhost', '127.0.0.1', '::1'], true);
-
-            // Elasticsearch enables a self-signed certificate by default for a
-            // local installation. A readable CA bundle is always preferred.
-            // Without one, only the local development instance bypasses TLS
-            // verification; remote instances keep using the system CA bundle.
+            // Never silently disable certificate verification, even on localhost.
             $verification = $hasReadableCaBundle
                 ? $this->caCertPath
-                : !$isLocalElasticsearch;
+                : true;
         }
 
         $httpClient = new GuzzleClient([
             'verify' => $verification,
             'auth' => [$this->username, $this->password],
+            'connect_timeout' => 2,
+            'timeout' => 10,
         ]);
 
         $this->client = ClientBuilder::create()

@@ -1,12 +1,22 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Service;
 
 use App\Entity\PrestataireProfile;
 use App\Enum\PrestataireProfileStatusEnum;
 use App\Enum\VerificationStatusEnum;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 final class CompanyVerificationManager
 {
@@ -25,6 +35,7 @@ final class CompanyVerificationManager
         }
 
         $previewPayload = $companyRegistryClient->buildCompanyPreviewFromSiret($siret);
+        $previewPayload['profileId'] = $prestataireProfile->getId();
         $this->getSession()?->set('company_verification_preview', $previewPayload);
 
         return [
@@ -82,8 +93,15 @@ final class CompanyVerificationManager
     {
         $previewPayload = $this->getSession()?->get('company_verification_preview');
 
-        if (!is_array($previewPayload) || empty($previewPayload['fields'])) {
+        if (!\is_array($previewPayload) || empty($previewPayload['fields'])) {
             throw new \RuntimeException('La prévisualisation a expiré. Veuillez relancer la vérification.');
+        }
+
+        if (($previewPayload['profileId'] ?? null) !== $prestataireProfile->getId()
+            || ($previewPayload['siret'] ?? null) !== $prestataireProfile->getSiret()) {
+            $this->clearPreview();
+
+            throw new \RuntimeException('Le SIRET a changé. Veuillez relancer la vérification.');
         }
 
         $fields = $previewPayload['fields'];
@@ -127,6 +145,8 @@ final class CompanyVerificationManager
 
         if ($isVerified) {
             $prestataireProfile->setVerificationStatus(VerificationStatusEnum::COMPANY_VERIFIED);
+            $prestataireProfile->setVerifiedAt(new \DateTimeImmutable());
+            $prestataireProfile->setCompanyVerificationSource('recherche-entreprises.api.gouv.fr');
         }
 
         if ($isVerified && $isActive) {
