@@ -18,6 +18,7 @@ use App\Entity\User;
 use App\Enum\ClientTypeEnum;
 use App\Repository\PrestataireProfileRepository;
 use App\Service\PrestataireProfileCompletionService;
+use App\Service\PrestataireRegistrationAdmission;
 use App\Service\UserLoginTracker;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
@@ -47,6 +48,7 @@ class GoogleAuthenticator extends OAuth2Authenticator
     private PrestataireProfileRepository $prestataireProfileRepository;
 
     public function __construct(
+        private readonly PrestataireRegistrationAdmission $admission,
         ClientRegistry $clientRegistry,
         EntityManagerInterface $entityManager,
         RouterInterface $router,
@@ -88,14 +90,24 @@ class GoogleAuthenticator extends OAuth2Authenticator
                         throw new CustomUserMessageAuthenticationException("Aucun compte n'est associé à cette adresse email. Veuillez d'abord vous inscrire.");
                     }
 
+                    $company = null;
+                    if ('prestataire' === $chosenRole) {
+                        try {
+                            $company = $this->admission->getApprovedCompany($session, true);
+                        } catch (\App\Exception\RegistrationAdmissionException $exception) {
+                            throw new CustomUserMessageAuthenticationException($exception->getMessage());
+                        }
+                        if (null === $company) {
+                            throw new CustomUserMessageAuthenticationException('Veuillez vérifier votre SIRET avant de créer votre compte prestataire.');
+                        }
+                    }
+
                     $user = new User();
                     $user->setEmail($email);
                     $user->setPassword('');
                     $user->setIsVerified(true);
                     $user->setCreatedAt(new \DateTimeImmutable());
                     $user->setUpdatedAt(new \DateTimeImmutable());
-
-                    $session->remove('oauth_registration_role');
 
                     if ('prestataire' === $chosenRole) {
                         $user->setRoles(['ROLE_PRESTATAIRE']);
@@ -104,6 +116,8 @@ class GoogleAuthenticator extends OAuth2Authenticator
                         $prestataireProfile->setCompanyName('Nouveau Prestataire (Google)');
                         $prestataireProfile->setSlug('profil-'.uniqid());
                         $prestataireProfile->setAccount($user);
+                        $this->admission->applyToProfile($prestataireProfile, $company);
+                        $user->setPrestataireProfile($prestataireProfile);
 
                         $this->entityManager->persist($prestataireProfile);
                     } else {
@@ -117,7 +131,13 @@ class GoogleAuthenticator extends OAuth2Authenticator
                     }
 
                     $this->entityManager->persist($user);
-                    $this->entityManager->flush();
+                    try {
+                        $this->entityManager->flush();
+                    } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException) {
+                        throw new CustomUserMessageAuthenticationException('Ce SIRET ou cette adresse email est déjà utilisé. Connectez-vous ou contactez notre assistance.');
+                    }
+                    $session->remove('oauth_registration_role');
+                    $session->remove(PrestataireRegistrationAdmission::SESSION_KEY);
                 }
 
                 return $user;
@@ -176,6 +196,9 @@ class GoogleAuthenticator extends OAuth2Authenticator
         $flashBag = $request->getSession()->getBag('flashes');
         $flashBag->add('danger', 'Erreur d\'authentification Google : '.$message);
 
-        return new RedirectResponse($this->router->generate('app_register_choice'));
+        $route = 'prestataire' === $request->getSession()->get('oauth_registration_role')
+            ? 'app_register_prestataire_siret' : 'app_register_choice';
+
+        return new RedirectResponse($this->router->generate($route));
     }
 }

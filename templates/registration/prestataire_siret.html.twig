@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vérification SIRET - TrouveMoi Prestataires{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/register/siret.css') }}">
+{% endblock %}
+
+{% block body %}
+    {% set siretInvalid = not siretForm.siret.vars.valid %}
+    <div class="tm-register-page tm-siret-page">
+        <div class="tm-register-layout tm-siret-layout">
+            <aside class="tm-register-hero tm-siret-hero" aria-labelledby="siret-welcome-title">
+                <div class="tm-register-hero__content tm-siret-hero__content">
+                    <span class="tm-siret-eyebrow"><i class="bi bi-tools" aria-hidden="true"></i> L’espace des professionnels</span>
+                    <div>
+                        <h1 id="siret-welcome-title" class="tm-register-hero__title">Votre savoir-faire.<br><span>De nouvelles opportunités.</span></h1>
+                        <p class="tm-register-hero__subtitle">Rejoignez TrouveMoi Prestataires et faites découvrir vos services à de futurs clients.</p>
+                    </div>
+                    <div class="tm-siret-reassurance">
+                        <span class="tm-siret-reassurance__icon"><i class="bi bi-shield-check" aria-hidden="true"></i></span>
+                        <div><strong>Un premier pas pour la confiance</strong><p>Commençons par vérifier les informations de votre entreprise.</p></div>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="tm-register-panel tm-siret-panel" aria-labelledby="siret-form-title">
+                <div class="tm-siret-panel__content">
+                    <div class="tm-register-role-switch">
+                        <span><i class="bi bi-briefcase" aria-hidden="true"></i> Professionnel</span>
+                        <a href="{{ path('app_register_choice') }}">Changer</a>
+                    </div>
+                    <div class="tm-siret-symbol" aria-hidden="true"><i class="bi bi-building-check"></i></div>
+                    <p class="tm-siret-step">Avant de commencer</p>
+                    <h2 id="siret-form-title" class="tm-register-panel__title">Votre entreprise,<br>votre point de départ.</h2>
+                    <p class="tm-register-panel__subtitle">Renseignez votre SIRET pour vérifier que votre activité est proposée sur TrouveMoi Prestataires.</p>
+
+                    {% for type, messages in app.flashes(['warning', 'danger']) %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ type|e('html_attr') }} tm-siret-alert" role="alert">{{ message }}</div>
+                        {% endfor %}
+                    {% endfor %}
+
+                    {{ form_start(siretForm, {attr: {'data-turbo': 'false', class: 'tm-siret-form'}}) }}
+                        {{ form_errors(siretForm) }}
+                        {{ form_label(siretForm.siret, null, {label_attr: {class: 'tm-siret-label'}}) }}
+                        <div class="tm-siret-field{{ siretInvalid ? ' tm-siret-field--invalid' : '' }}">
+                            <i class="bi bi-building tm-siret-field__icon" aria-hidden="true"></i>
+                            {{ form_widget(siretForm.siret, {attr: {
+                                class: 'tm-siret-input',
+                                'aria-describedby': siretInvalid ? 'siret-help siret-errors' : 'siret-help',
+                                'aria-invalid': siretInvalid ? 'true' : 'false'
+                            }}) }}
+                        </div>
+                        <div id="siret-errors" class="tm-siret-errors">{{ form_errors(siretForm.siret) }}</div>
+                        <p id="siret-help" class="tm-siret-help">14 chiffres, disponibles sur vos documents d’entreprise.</p>
+                        <button type="submit" class="tm-register-submit-btn tm-siret-submit">Vérifier et poursuivre <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+                    {{ form_end(siretForm) }}
+
+                    <div class="tm-siret-note"><i class="bi bi-info-circle" aria-hidden="true"></i><p>Votre code d’activité est récupéré automatiquement. Vous n’avez rien d’autre à renseigner à cette étape.</p></div>
+                    <a href="{{ path('app_register_choice') }}" class="tm-siret-back"><i class="bi bi-arrow-left" aria-hidden="true"></i> Retour au choix du compte</a>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}

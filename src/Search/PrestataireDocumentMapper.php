@@ -1,9 +1,19 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Search;
 
-use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireInterventionZone;
+use App\Entity\PrestataireProfile;
 use App\Entity\PrestataireService;
 
 final class PrestataireDocumentMapper
@@ -38,6 +48,8 @@ final class PrestataireDocumentMapper
         $indexedPostalCode = $this->resolveIndexedPostalCode($prestataire, $primaryZone);
         $searchParts = [
             $prestataire->getCompanyName(),
+            $prestataire->getLegalName(),
+            $prestataire->getSiret(),
             $prestataire->getMetier(),
             $prestataire->getShortDescription(),
             $prestataire->getDescription(),
@@ -144,7 +156,7 @@ final class PrestataireDocumentMapper
         }
 
         $searchText = implode(' ', array_filter(array_map(
-            static fn(mixed $value): ?string => is_string($value) && '' !== trim($value) ? trim($value) : null,
+            static fn (mixed $value): ?string => \is_string($value) && '' !== mb_trim($value) ? mb_trim($value) : null,
             $searchParts
         )));
 
@@ -152,6 +164,9 @@ final class PrestataireDocumentMapper
             'id' => $prestataire->getId(),
             'slug' => $prestataire->getSlug(),
             'companyName' => $prestataire->getCompanyName(),
+            'legalName' => $prestataire->getLegalName(),
+            'siret' => $prestataire->getSiret(),
+            'searchVisibility' => $prestataire->getSearchVisibility()?->value,
             'metier' => $prestataire->getMetier(),
             'shortDescription' => $prestataire->getShortDescription(),
             'description' => $prestataire->getDescription(),
@@ -175,13 +190,13 @@ final class PrestataireDocumentMapper
         PrestataireProfile $prestataire,
         ?PrestataireInterventionZone $primaryZone,
     ): ?string {
-        $zoneCity = trim((string) $primaryZone?->getCity());
+        $zoneCity = mb_trim((string) $primaryZone?->getCity());
 
         if ('' !== $zoneCity) {
             return $zoneCity;
         }
 
-        $profileCity = trim((string) $prestataire->getCity());
+        $profileCity = mb_trim((string) $prestataire->getCity());
 
         return '' !== $profileCity ? $profileCity : null;
     }
@@ -190,13 +205,13 @@ final class PrestataireDocumentMapper
         PrestataireProfile $prestataire,
         ?PrestataireInterventionZone $primaryZone,
     ): ?string {
-        $zonePostalCode = trim((string) $primaryZone?->getPostalCode());
+        $zonePostalCode = mb_trim((string) $primaryZone?->getPostalCode());
 
         if ('' !== $zonePostalCode) {
             return $zonePostalCode;
         }
 
-        $profilePostalCode = trim((string) $prestataire->getPostalCode());
+        $profilePostalCode = mb_trim((string) $prestataire->getPostalCode());
 
         return '' !== $profilePostalCode ? $profilePostalCode : null;
     }

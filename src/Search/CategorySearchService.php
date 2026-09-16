@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Search;
 
 use App\Entity\ServiceCategory;
@@ -8,8 +18,7 @@ use App\Service\ElasticsearchClient;
 
 final class CategorySearchService
 {
-    private const INDEX_NAME = 'prestataires_search_v1';
-    private const ACTIVE_PROFILE_STATUS = 'ACTIVE';
+    private const INDEX_NAME = PrestataireIndexDefinition::ALIAS;
 
     public function __construct(
         private readonly ElasticsearchClient $elasticsearchClient,
@@ -27,13 +36,13 @@ final class CategorySearchService
         int $radiusKm = 25,
         string $sort = 'providers',
     ): array {
-        $query = null !== $query ? trim($query) : '';
-        $location = null !== $location ? trim($location) : null;
+        $query = null !== $query ? mb_trim($query) : '';
+        $location = null !== $location ? mb_trim($location) : null;
         $radiusKm = max(5, min(100, $radiusKm));
         $sort = \in_array($sort, ['providers', 'alphabetical', 'recent'], true) ? $sort : 'providers';
 
         $categories = $this->categoryRepository->findTopLevelWithActiveSubCategories();
-        $providerCounts = $this->getProviderCounts($query !== '' ? $query : null, $location, $searchedLocation, $radiusKm);
+        $providerCounts = $this->getProviderCounts('' !== $query ? $query : null, $location, $searchedLocation, $radiusKm);
         $hasLocationFilter = null !== $searchedLocation
             && isset($searchedLocation['latitude'], $searchedLocation['longitude']);
 
@@ -47,7 +56,7 @@ final class CategorySearchService
                 continue;
             }
 
-            if (!$hasLocationFilter && $query !== '' && !$matchesText && $providerCount <= 0) {
+            if (!$hasLocationFilter && '' !== $query && !$matchesText && $providerCount <= 0) {
                 continue;
             }
 
@@ -170,11 +179,7 @@ final class CategorySearchService
         }
 
         $filter = [
-            [
-                'term' => [
-                    'profileStatus.keyword' => self::ACTIVE_PROFILE_STATUS,
-                ],
-            ],
+            PrestataireSearchEligibility::filter(),
         ];
         $must = [];
 
@@ -302,8 +307,7 @@ final class CategorySearchService
         ?string $location,
         array $searchedLocation,
         int $radiusKm,
-    ): array
-    {
+    ): array {
         $must = [];
 
         if (null !== $query && '' !== $query) {
@@ -396,11 +400,7 @@ final class CategorySearchService
                 'query' => [
                     'bool' => array_filter([
                         'filter' => [
-                            [
-                                'term' => [
-                                    'profileStatus.keyword' => self::ACTIVE_PROFILE_STATUS,
-                                ],
-                            ],
+                            PrestataireSearchEligibility::filter(),
                             $locationFilter,
                         ],
                         'must' => $must,
@@ -447,8 +447,7 @@ final class CategorySearchService
         ?string $location,
         array $searchedLocation,
         int $radiusKm,
-    ): array
-    {
+    ): array {
         $must = [];
 
         if (null !== $query && '' !== $query) {
@@ -532,11 +531,7 @@ final class CategorySearchService
                     'query' => [
                         'bool' => array_filter([
                             'filter' => [
-                                [
-                                    'term' => [
-                                        'profileStatus.keyword' => self::ACTIVE_PROFILE_STATUS,
-                                    ],
-                                ],
+                                PrestataireSearchEligibility::filter(),
                             ],
                             'must' => $must,
                         ], static fn (mixed $value): bool => [] !== $value),
@@ -610,7 +605,7 @@ final class CategorySearchService
      */
     private function matchesLocationFilter(array $source, ?string $location, array $searchedLocation, int $radiusKm): bool
     {
-        $zones = is_array($source['zones'] ?? null) ? $source['zones'] : [];
+        $zones = \is_array($source['zones'] ?? null) ? $source['zones'] : [];
 
         if ($this->isProviderReachableForLocation($zones, $searchedLocation, $radiusKm)) {
             return true;
@@ -626,19 +621,19 @@ final class CategorySearchService
         }
 
         $candidates = [
-            is_scalar($source['city'] ?? null) ? (string) $source['city'] : null,
-            is_scalar($source['postalCode'] ?? null) ? (string) $source['postalCode'] : null,
+            \is_scalar($source['city'] ?? null) ? (string) $source['city'] : null,
+            \is_scalar($source['postalCode'] ?? null) ? (string) $source['postalCode'] : null,
         ];
 
         foreach ($zones as $zone) {
-            if (!is_array($zone)) {
+            if (!\is_array($zone)) {
                 continue;
             }
 
-            $candidates[] = is_scalar($zone['city'] ?? null) ? (string) $zone['city'] : null;
-            $candidates[] = is_scalar($zone['postalCode'] ?? null) ? (string) $zone['postalCode'] : null;
-            $candidates[] = is_scalar($zone['department'] ?? null) ? (string) $zone['department'] : null;
-            $candidates[] = is_scalar($zone['region'] ?? null) ? (string) $zone['region'] : null;
+            $candidates[] = \is_scalar($zone['city'] ?? null) ? (string) $zone['city'] : null;
+            $candidates[] = \is_scalar($zone['postalCode'] ?? null) ? (string) $zone['postalCode'] : null;
+            $candidates[] = \is_scalar($zone['department'] ?? null) ? (string) $zone['department'] : null;
+            $candidates[] = \is_scalar($zone['region'] ?? null) ? (string) $zone['region'] : null;
         }
 
         foreach ($candidates as $candidate) {
@@ -756,7 +751,7 @@ PAINLESS,
 
     private function normalizeText(?string $value): string
     {
-        $value = mb_strtolower(trim((string) $value));
+        $value = mb_strtolower(mb_trim((string) $value));
         if ('' === $value) {
             return '';
         }
@@ -764,11 +759,11 @@ PAINLESS,
         if (\function_exists('transliterator_transliterate')) {
             $transliterated = transliterator_transliterate('Any-Latin; Latin-ASCII;', $value);
 
-            return is_string($transliterated) ? $transliterated : $value;
+            return \is_string($transliterated) ? $transliterated : $value;
         }
 
         $transliterated = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $value);
 
-        return is_string($transliterated) ? $transliterated : $value;
+        return \is_string($transliterated) ? $transliterated : $value;
     }
 }

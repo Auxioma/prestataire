@@ -242,7 +242,7 @@
                             </div>
                         </div>
 
-                        <div class="mb-3 mt-3">
+                        <div class="mb-3 mt-3" data-controller="password">
                             <div class="tm-register-field tm-register-field--password {% if not registrationForm.plainPassword.second.vars.valid %}border border-danger rounded-3{% endif %}">
                                 <span class="tm-register-field__icon">
                                     <i class="bi bi-shield-lock-fill"></i>
@@ -252,8 +252,11 @@
                                     attr: {
                                         placeholder: 'Confirmer le mot de passe',
                                         class: 'tm-register-field__input',
+                                        'data-password-target': 'input',
                                     },
                                 }) }}
+
+                                <button type="button" class="tm-register-password-toggle" data-password-target="toggle" data-action="click->password#toggleVisibility" aria-label="Afficher ou masquer la confirmation du mot de passe"><i class="bi bi-eye-slash-fill" aria-hidden="true"></i></button>
                             </div>
 
                             {% if registrationForm.plainPassword.second.vars.errors|length > 0 %}

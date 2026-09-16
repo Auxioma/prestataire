@@ -1,13 +1,22 @@
 <?php
 
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
 namespace App\Search;
 
 use App\Service\ElasticsearchClient;
 
 final class PrestataireSearchService
 {
-    private const INDEX_NAME = 'prestataires_search_v1';
-    private const ACTIVE_PROFILE_STATUS = 'ACTIVE';
+    private const INDEX_NAME = PrestataireIndexDefinition::ALIAS;
 
     public function __construct(
         private readonly ElasticsearchClient $elasticsearchClient,
@@ -23,20 +32,16 @@ final class PrestataireSearchService
         ?array $searchedLocation = null,
         int $radiusKm = 25,
     ): array {
-        $query = null !== $query ? trim($query) : null;
-        $location = null !== $location ? trim($location) : null;
-        $subCategorySlug = null !== $subCategorySlug ? trim($subCategorySlug) : null;
+        $query = null !== $query ? mb_trim($query) : null;
+        $location = null !== $location ? mb_trim($location) : null;
+        $subCategorySlug = null !== $subCategorySlug ? mb_trim($subCategorySlug) : null;
         $radiusKm = max(5, min(100, $radiusKm));
 
         $must = [];
         $filter = [];
         $should = [];
 
-        $filter[] = [
-            'term' => [
-                'profileStatus' => self::ACTIVE_PROFILE_STATUS,
-            ],
-        ];
+        $filter[] = PrestataireSearchEligibility::filter();
 
         if ($subCategorySlug) {
             $filter[] = [
@@ -347,7 +352,7 @@ PAINLESS,
 
     public function autocomplete(string $query, int $size = 5): array
     {
-        $query = trim($query);
+        $query = mb_trim($query);
         $query = mb_substr($query, 0, 100);
 
         if (mb_strlen($query) < 2) {
@@ -375,11 +380,7 @@ PAINLESS,
                 'query' => [
                     'bool' => [
                         'filter' => [
-                            [
-                                'term' => [
-                                    'profileStatus.keyword' => self::ACTIVE_PROFILE_STATUS,
-                                ],
-                            ],
+                            PrestataireSearchEligibility::filter(),
                         ],
                         'must' => [
                             [
@@ -477,19 +478,15 @@ PAINLESS,
         ?array $searchedLocation = null,
         int $radiusKm = 25,
     ): array {
-        $query = null !== $query ? trim($query) : null;
-        $location = null !== $location ? trim($location) : null;
-        $categorySlug = null !== $categorySlug ? trim($categorySlug) : null;
-        $subCategorySlug = null !== $subCategorySlug ? trim($subCategorySlug) : null;
+        $query = null !== $query ? mb_trim($query) : null;
+        $location = null !== $location ? mb_trim($location) : null;
+        $categorySlug = null !== $categorySlug ? mb_trim($categorySlug) : null;
+        $subCategorySlug = null !== $subCategorySlug ? mb_trim($subCategorySlug) : null;
         $radiusKm = max(5, min(100, $radiusKm));
         $sort = \in_array($sort, ['relevance', 'rating', 'reviews', 'alphabetical'], true) ? $sort : 'relevance';
 
         $filter = [
-            [
-                'term' => [
-                    'profileStatus.keyword' => self::ACTIVE_PROFILE_STATUS,
-                ],
-            ],
+            PrestataireSearchEligibility::filter(),
         ];
         $must = [];
 
