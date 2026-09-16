@@ -125,6 +125,7 @@ final class CompanyRegistryClient
 
         return [
             'siret' => $siege['siret'] ?? $siret,
+            'nafCode' => $this->normalizeNafCode($siege['activite_principale'] ?? null),
             'siren' => $siren,
             'etablissementStatus' => $etablissementStatus,
             'isVerified' => $isVerified,
@@ -202,5 +203,15 @@ final class CompanyRegistryClient
         }
 
         return null;
+    }
+
+    private function normalizeNafCode(mixed $value): ?string
+    {
+        if (!\is_string($value)) {
+            return null;
+        }
+        $code = mb_strtoupper(str_replace('.', '', mb_trim($value)));
+
+        return preg_match('/^\d{4}[A-Z]$/', $code) ? mb_substr($code, 0, 2).'.'.mb_substr($code, 2) : null;
     }
 }

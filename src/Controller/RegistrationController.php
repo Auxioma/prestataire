@@ -24,6 +24,7 @@ use App\Repository\ServiceRepository;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use App\Service\PrestataireProfileCompletionService;
+use App\Service\PrestataireRegistrationAdmission;
 use App\Service\Subscription\PrestataireSubscriptionOnboardingManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -45,15 +46,13 @@ class RegistrationController extends AbstractController
     private const PRESTATAIRE_REGISTRATION_STEP_ONE = 'prestataire_registration.step_one';
     private const PRESTATAIRE_REGISTRATION_STEP_TWO = 'prestataire_registration.step_two';
 
-    public function __construct(private EmailVerifier $emailVerifier)
+    public function __construct(private EmailVerifier $emailVerifier, private readonly PrestataireRegistrationAdmission $admission)
     {
     }
 
     #[Route('/register/choice', name: 'app_register_choice')]
     /**
      * Traite l’action "choice" du contrôleur Registration.
-     *
-     * @return Response
      */
     public function choice(): Response
     {
@@ -63,8 +62,6 @@ class RegistrationController extends AbstractController
     #[Route('/register', name: 'app_register')]
     /**
      * Traite l’action "register" du contrôleur Registration.
-     *
-     * @return Response
      */
     public function register(
         Request $request,
@@ -133,8 +130,6 @@ class RegistrationController extends AbstractController
     #[Route('/verify/email', name: 'app_verify_email')]
     /**
      * Traite l’action "verifyUserEmail" du contrôleur Registration.
-     *
-     * @return Response
      */
     public function verifyUserEmail(
         Request $request,
@@ -184,6 +179,12 @@ class RegistrationController extends AbstractController
         PrestataireSubscriptionOnboardingManager $prestataireSubscriptionOnboardingManager,
     ): Response {
         $session = $request->getSession();
+        if ('1' === $request->query->get('reset')) {
+            $session->remove(PrestataireRegistrationAdmission::SESSION_KEY);
+        }
+        if (null === $this->admission->getApprovedCompany($session)) {
+            return $this->redirectToRoute('app_register_prestataire_siret');
+        }
         $step = max(1, min(3, (int) $request->query->get('step', $request->request->get('step', 1))));
         $stepOneData = $session->get(self::PRESTATAIRE_REGISTRATION_STEP_ONE);
         $stepTwoData = $session->get(self::PRESTATAIRE_REGISTRATION_STEP_TWO);
@@ -224,10 +225,10 @@ class RegistrationController extends AbstractController
                 $plainPassword = $form->get('plainPassword')->getData();
 
                 $session->set(self::PRESTATAIRE_REGISTRATION_STEP_ONE, [
-                    'firstName' => trim((string) $user->getFirstName()),
-                    'lastName' => trim((string) $user->getLastName()),
-                    'phoneNumber' => trim((string) $user->getPhoneNumber()),
-                    'email' => mb_strtolower(trim((string) $user->getEmail())),
+                    'firstName' => mb_trim((string) $user->getFirstName()),
+                    'lastName' => mb_trim((string) $user->getLastName()),
+                    'phoneNumber' => mb_trim((string) $user->getPhoneNumber()),
+                    'email' => mb_strtolower(mb_trim((string) $user->getEmail())),
                     'plainPassword' => $plainPassword,
                 ]);
                 $session->remove(self::PRESTATAIRE_REGISTRATION_STEP_TWO);
@@ -246,7 +247,7 @@ class RegistrationController extends AbstractController
         }
 
         if (2 === $step) {
-            $serviceId = trim((string) $request->request->get('service_id'));
+            $serviceId = mb_trim((string) $request->request->get('service_id'));
             $activityError = null;
             $selectedService = null;
 
@@ -314,6 +315,19 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_register', ['role' => 'prestataire', 'step' => 2]);
         }
 
+        try {
+            $company = $this->admission->getApprovedCompany($session, true);
+        } catch (\App\Exception\RegistrationAdmissionException $exception) {
+            $this->addFlash('warning', $exception->getMessage());
+
+            return $this->redirectToRoute('app_register_prestataire_siret');
+        }
+        if (null === $company) {
+            $this->addFlash('warning', 'La vérification SIRET a expiré. Veuillez la relancer.');
+
+            return $this->redirectToRoute('app_register_prestataire_siret');
+        }
+
         $user = new User();
         $user
             ->setFirstName($stepOneData['firstName'] ?? null)
@@ -330,6 +344,7 @@ class RegistrationController extends AbstractController
             ->setCompanyName('Nouveau Prestataire')
             ->setSlug($this->generateProfileSlug())
             ->setAccount($user);
+        $this->admission->applyToProfile($prestataireProfile, $company);
         $user->setPrestataireProfile($prestataireProfile);
 
         $prestataireService = new PrestataireService();
@@ -353,8 +368,15 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_register', ['role' => 'prestataire', 'step' => 3]);
         }
 
-        $entityManager->flush();
+        try {
+            $entityManager->flush();
+        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException) {
+            $this->addFlash('warning', 'Ce SIRET ou cette adresse email est déjà utilisé. Connectez-vous ou contactez notre assistance.');
 
+            return $this->redirectToRoute('app_register_prestataire_siret');
+        }
+
+        $session->remove(PrestataireRegistrationAdmission::SESSION_KEY);
         $session->remove(self::PRESTATAIRE_REGISTRATION_STEP_ONE);
         $session->remove(self::PRESTATAIRE_REGISTRATION_STEP_TWO);
 
@@ -402,13 +424,13 @@ class RegistrationController extends AbstractController
 
     private function generateProfileSlug(): string
     {
-        return sprintf('profil-%s', substr(bin2hex(random_bytes(8)), 0, 12));
+        return \sprintf('profil-%s', mb_substr(bin2hex(random_bytes(8)), 0, 12));
     }
 
     private function generateServiceSlug(SluggerInterface $slugger, Service $service): string
     {
         $baseSlug = (string) $slugger->slug($service->getName() ?: 'prestation')->lower();
 
-        return sprintf('%s-%s', $baseSlug, substr(bin2hex(random_bytes(4)), 0, 8));
+        return \sprintf('%s-%s', $baseSlug, mb_substr(bin2hex(random_bytes(4)), 0, 8));
     }
 }

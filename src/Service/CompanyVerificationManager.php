@@ -104,6 +104,7 @@ final class CompanyVerificationManager
             throw new \RuntimeException('Le SIRET a changé. Veuillez relancer la vérification.');
         }
 
+        $prestataireProfile->setNafCode($previewPayload['nafCode'] ?? null);
         $fields = $previewPayload['fields'];
 
         if (!empty($fields['siren'])) {

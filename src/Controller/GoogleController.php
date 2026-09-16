@@ -12,6 +12,7 @@
 
 namespace App\Controller;
 
+use App\Service\PrestataireRegistrationAdmission;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -26,12 +27,14 @@ class GoogleController extends AbstractController
     #[Route('/connect/google', name: 'connect_google_start')]
     /**
      * Traite l’action "connectAction" du contrôleur Google.
-     *
-     * @return RedirectResponse
      */
-    public function connectAction(Request $request, ClientRegistry $clientRegistry): RedirectResponse
+    public function connectAction(Request $request, ClientRegistry $clientRegistry, PrestataireRegistrationAdmission $admission): RedirectResponse
     {
         $role = $request->query->get('role');
+
+        if ('prestataire' === $role && null === $admission->getApprovedCompany($request->getSession())) {
+            return $this->redirectToRoute('app_register_prestataire_siret');
+        }
 
         if ($role) {
             $request->getSession()->set('oauth_registration_role', $role);
@@ -47,8 +50,6 @@ class GoogleController extends AbstractController
     #[Route('/connect/google/check', name: 'connect_google_check')]
     /**
      * Traite l’action "connectCheckAction" du contrôleur Google.
-     *
-     * @return void
      */
     public function connectCheckAction(Request $request): void
     {
