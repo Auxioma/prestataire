@@ -82,6 +82,20 @@
                         </div>
                     {% endfor %}
 
+                    {% for message in app.flashes('registration_email_confirmation_notice') %}
+                        <div class="tm-login-alert tm-login-alert--success" role="alert">
+                            <i class="bi bi-envelope-check-fill"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                    {% endfor %}
+
+                    {% for message in app.flashes('registration_email_delivery_warning') %}
+                        <div class="tm-login-alert tm-login-alert--error" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                    {% endfor %}
+
                     {% for message in app.flashes('reset_password_error') %}
                         <div class="tm-login-alert tm-login-alert--error" role="alert">
                             <i class="bi bi-exclamation-triangle-fill"></i>
