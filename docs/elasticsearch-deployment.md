@@ -15,11 +15,17 @@ Les changements sont appliqués et testés localement. La session ne dispose pas
 
 ```bash
 php bin/console doctrine:migrations:execute 'DoctrineMigrations\Version20260916120000' --up --no-interaction --env=prod --no-debug
+php bin/console doctrine:migrations:execute 'DoctrineMigrations\Version20260916130000' --up --no-interaction --env=prod --no-debug
 php bin/console cache:clear --env=prod --no-debug
+php bin/console list app:elasticsearch --env=prod --no-debug
 php bin/console app:elasticsearch:ping --env=prod --no-debug
 php bin/console app:elasticsearch:reindex-prestataires --env=prod --no-debug
 php bin/console app:elasticsearch:process-queue --env=prod --no-debug
 ```
+
+La liste doit décrire `reindex-prestataires` par « Reconstruit un index correct depuis la base et bascule atomiquement l’alias de recherche » et afficher `process-queue`. Si elle montre encore « Réindexe les prestataires actifs dans Elasticsearch » ou si `process-queue` est absent, le serveur utilise l’ancien cache Symfony : vider le cache dans le répertoire exact de la version déployée, puis redémarrer les processus PHP persistants (PHP-FPM ou FrankenPHP et les workers) avant de relancer la reconstruction.
+
+La reconstruction réussie doit terminer par `Alias prestataires_search → prestataires_search_v2_...`. Le 404 `no such index [prestataires_search]` signifie que cette bascule n’a pas encore eu lieu sur le cluster Elasticsearch réellement utilisé par l’application. Sur un cluster à un seul nœud, ajouter `--replicas=0` à la commande de reconstruction.
 
 La reconstruction crée un index `prestataires_search_v2_*`, le remplit depuis la base, vérifie son compteur puis bascule l’alias `prestataires_search` en une opération. Les anciens index sont conservés. Le nombre de répliques vaut 1 par défaut ; `--replicas=0` convient au développement avec un seul nœud. Les traitements individuels sont suspendus pendant la reconstruction, et leurs tâches restent en attente. Prévoir une courte fenêtre de maintenance lors de la première activation, car l’ancien code utilise un index physique et le nouveau code utilise l’alias.
 
