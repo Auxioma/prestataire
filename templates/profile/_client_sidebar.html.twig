@@ -36,14 +36,17 @@
             <div class="position-relative d-inline-block mb-3">
                 <img
                     src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80' }}"
-                    class="rounded-circle border-3 shadow-sm tm-cp-sidebar-avatar"
-                    alt="Avatar de {{ user.firstName|default('') }} {{ user.lastName|default('') }}"
+                class="rounded-circle border-3 shadow-sm tm-cp-sidebar-avatar"
+                alt="Avatar de {{ user.firstName|default('') }} {{ user.lastName|default('') }}"
+                width="150"
+                height="150"
+                loading="lazy"
                 >
             </div>
-            <h5 class="mb-1 fw-semibold fs-5 tm-cp-sidebar-username">
+            <p class="mb-1 fw-semibold fs-5 tm-cp-sidebar-username">
                 {{ user.firstName }}
                 {{ user.lastName }}
-            </h5>
+            </p>
             <p class="small mb-2 tm-cp-sidebar-date">
                 Membre depuis {{ user.createdAt|date('Y') }}
             </p>
@@ -65,7 +68,7 @@
     aria-labelledby="clientAccountSidebarLabel"
 >
     <div class="offcanvas-header border-bottom">
-        <h2 class="offcanvas-title fs-5 fw-bold mb-0" id="clientAccountSidebarLabel">Mon espace client</h2>
+        <div class="offcanvas-title fs-5 fw-bold mb-0" id="clientAccountSidebarLabel">Mon espace client</div>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fermer"></button>
     </div>
     <div class="offcanvas-body d-flex flex-column">
@@ -74,8 +77,11 @@
                 src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80' }}"
                 class="rounded-circle border-3 shadow-sm tm-cp-sidebar-avatar mb-3"
                 alt="Avatar de {{ user.firstName|default('') }} {{ user.lastName|default('') }}"
+                width="150"
+                height="150"
+                loading="lazy"
             >
-            <h3 class="h6 mb-1 tm-cp-sidebar-username">{{ user.firstName }} {{ user.lastName }}</h3>
+            <p class="h6 mb-1 tm-cp-sidebar-username">{{ user.firstName }} {{ user.lastName }}</p>
             <p class="small mb-0 tm-cp-sidebar-date">Membre depuis {{ user.createdAt|date('Y') }}</p>
         </div>
 

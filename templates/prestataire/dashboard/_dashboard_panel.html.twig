@@ -43,7 +43,7 @@
 <div class="tm-dashboard-artisan">
     <div class="dash-header">
         <div>
-            <h1>Tableau de bord</h1>
+            <h2>Tableau de bord</h2>
             <p>
                 Bienvenue {{ welcomeName }}
                 — {{ 'now'|date('l d F Y') }}. Voici ce qui se passe aujourd'hui.
@@ -188,7 +188,7 @@
                     <a href="{{ path('app_prestataire_settings', { tab: 'profile' }) }}" class="dash-card__lien">Voir le détail</a>
                 </div>
                 <div class="tm-completion-card">
-                    <div class="tm-completion-card__ring" aria-label="Profil complété à {{ completionReport.score }}%">
+                    <div class="tm-completion-card__ring" role="progressbar" aria-label="Profil complété" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ completionReport.score }}">
                         <svg viewBox="0 0 84 84" width="84" height="84" aria-hidden="true">
                             <circle cx="42" cy="42" r="{{ radius }}" fill="none" stroke="#e5ebf5" stroke-width="8"></circle>
                             <circle
@@ -388,4 +388,4 @@
     </div>
 </div>
 
-<script src="{{ asset('vendor/fullcalendar/index.global.min.js') }}"></script>
+<script src="{{ asset('vendor/fullcalendar/index.global.min.js') }}" defer></script>

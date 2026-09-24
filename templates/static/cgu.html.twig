@@ -2,6 +2,8 @@
 
 {% block title %}Conditions générales d'utilisation - TrouveMoi.com{% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/static/staticpage.css') }}">{% endblock %}
+
 {% block body %}
 <div class="container py-5">
     {# Fil d'ariane #}
@@ -37,7 +39,7 @@
         <div class="col-md-6 d-flex flex-column gap-4">
             {% for item in cgu_points|slice(0, 4) %}
                 <div>
-                    <h3 class="fw-bold fs-5 text-dark"><span class="badge bg-primary rounded-circle me-2">{{ item.n }}</span> {{ item.t }}</h3>
+                    <h2 class="fw-bold fs-5 text-dark"><span class="badge bg-primary rounded-circle me-2">{{ item.n }}</span> {{ item.t }}</h2>
                     <p class="text-muted small ps-5">{{ item.d }}</p>
                 </div>
             {% endfor %}
@@ -46,7 +48,7 @@
         <div class="col-md-6 d-flex flex-column gap-4">
             {% for item in cgu_points|slice(4, 5) %}
                 <div>
-                    <h3 class="fw-bold fs-5 text-dark"><span class="badge bg-primary rounded-circle me-2">{{ item.n }}</span> {{ item.t }}</h3>
+                    <h2 class="fw-bold fs-5 text-dark"><span class="badge bg-primary rounded-circle me-2">{{ item.n }}</span> {{ item.t }}</h2>
                     <p class="text-muted small ps-5">{{ item.d }}</p>
                 </div>
             {% endfor %}
@@ -56,7 +58,7 @@
     {# Bloc Contact bas de page #}
     <div class="bg-primary-subtle p-4 rounded-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
         <div>
-            <h4 class="fw-bold fs-5 text-dark mb-1">Une question sur nos conditions d'utilisation ?</h4>
+            <h2 class="fw-bold fs-5 text-dark mb-1">Une question sur nos conditions d'utilisation ?</h2>
             <p class="text-muted small mb-0">Notre équipe est à votre disposition pour vous accompagner.</p>
         </div>
         <a href="#" class="btn btn-white border shadow-sm px-4 fw-semibold text-primary">Nous contacter</a>

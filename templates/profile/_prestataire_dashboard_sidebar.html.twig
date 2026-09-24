@@ -16,8 +16,11 @@
             <div class="tm-sidebar-profile-avatar-wrap">
                 <img
                     src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}"
-                    alt="Avatar de {{ user.firstName|default('') }} {{ user.lastName|default('') }}"
-                    class="tm-sidebar-profile-avatar"
+                alt="Avatar de {{ user.firstName|default('') }} {{ user.lastName|default('') }}"
+                class="tm-sidebar-profile-avatar"
+                width="100"
+                height="100"
+                loading="lazy"
                 >
             </div>
 
@@ -62,7 +65,7 @@
         <a
             href="{{ path('app_review_prestataire_reviews') }}"
             class="tm-sidebar-link {{ currentRoute == 'app_review_prestataire_reviews' ? 'active' : '' }}"
-            aria-current="{{ currentRoute == 'app_review_prestataire_reviews' ? 'page' : 'false' }}"
+            {% if currentRoute == 'app_review_prestataire_reviews' %}aria-current="page"{% endif %}
         >
             <span class="tm-sidebar-link-icon"><i class="fa-solid fa-star" aria-hidden="true"></i></span>
             <span>Mes avis reçus</span>

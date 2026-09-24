@@ -29,7 +29,7 @@
 		<div class="header">
 			<div class="header__left">
 				{% if prestataireLogoUrl %}
-					<img src="{{ prestataireLogoUrl }}" alt="Logo" class="logo">
+					<img src="{{ prestataireLogoUrl }}" alt="Logo" class="logo" width="160" height="80" loading="eager">
 				{% endif %}
 				<div><strong>{{ quote.prestataireCompanyName ?: quote.prestataireLegalName ?: 'Prestataire' }}</strong></div>
 				<div>{{ quote.prestataireAddress ?: '' }}</div>
@@ -129,7 +129,7 @@
 		<div class="signature">
 			<div>Fait le {{ (invoice.updatedAt ?: invoice.createdAt)|date('d/m/Y à H:i') }}</div>
 			{% if prestataireSignatureUrl and not invoice.isExternalImport %}
-				<img src="{{ prestataireSignatureUrl }}" alt="Signature du prestataire">
+				<img src="{{ prestataireSignatureUrl }}" alt="Signature du prestataire" width="180" height="80" loading="eager">
 			{% endif %}
 		</div>
 	</body>

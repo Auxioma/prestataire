@@ -2,6 +2,8 @@
 
 {% block title %}TrouveMoi - Toutes les catégories{% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/category/category.css') }}">{% endblock %}
+
 {% block body %}
     {% set activeQuery = activeQuery|default('') %}
     {% set activeLocation = activeLocation|default('') %}
@@ -12,9 +14,12 @@
         <section class="tmc-hero">
             <div class="tmc-hero__media" aria-hidden="true">
                 <img
-                    src="{{ asset('images/img_presta_homepage04.png') }}"
+                    src="{{ asset('images/img_presta_homepage04.webp') }}"
                     alt=""
                     class="tmc-hero__bg-image"
+                    width="1935"
+                    height="813"
+                    fetchpriority="high"
                 >
             </div>
 
@@ -80,7 +85,7 @@
                 } only %}
 
                 {% if hasActiveFilters|default(false) %}
-                    <div class="tmc-filter-chips" aria-label="Filtres actifs">
+                    <div class="tmc-filter-chips" role="group" aria-label="Filtres actifs">
                         {% if activeQuery is not empty %}
                             <span class="tmc-filter-chip">
                                 <span class="tmc-filter-chip__label">Recherche</span>
@@ -145,6 +150,9 @@
                                         src="{{ asset('uploads/service-categories/' ~ category.image) }}"
                                         alt="{{ category.name }}"
                                         class="tmc-card__cover tmc-card__cover-image"
+                                        width="640"
+                                        height="360"
+                                        loading="lazy"
                                     >
                                 {% else %}
                                     <div class="tmc-card__cover tmc-card__cover--{{ colorVariant }}"></div>
@@ -258,8 +266,8 @@
                 </div>
 
                 <div class="tmc-pro-cta__actions">
-                    <a href="#" class="tmc-btn tmc-btn--light-outline">En savoir plus</a>
-                    <a href="#" class="tmc-btn tmc-btn--light">Devenir prestataire</a>
+                    <a href="{{ path('app_static_page', {slug: 'avantages'}) }}" class="tmc-btn tmc-btn--light-outline">En savoir plus</a>
+                    <a href="{{ path('app_register_choice') }}" class="tmc-btn tmc-btn--light">Devenir prestataire</a>
                 </div>
             </section>
         </div>

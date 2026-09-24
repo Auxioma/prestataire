@@ -4,12 +4,14 @@
 
 {% block json_ld %}{% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/static/staticpage.css') }}">{% endblock %}
+
 {% block body %}
 <div class="bg-light py-3 border-bottom">
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0 small">
-                <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_home') }}" class="text-decoration-none text-muted">Accueil</a></li>
                 <li class="breadcrumb-item active text-dark fw-medium" aria-current="page">Inscription prestataire</li>
             </ol>
         </nav>
@@ -31,7 +33,7 @@
                         <i class="fa-solid fa-users fs-5"></i>
                     </div>
                     <div>
-                        <h3 class="h6 fw-bold text-dark mb-1">Plus de visibilité</h3>
+                        <h2 class="h6 fw-bold text-dark mb-1">Plus de visibilité</h2>
                         <p class="text-muted tm-static-text-xs mb-0">Présentez votre activité à des milliers de clients partout en France.</p>
                     </div>
                 </div>
@@ -41,7 +43,7 @@
                         <i class="fa-regular fa-star fs-5"></i>
                     </div>
                     <div>
-                        <h3 class="h6 fw-bold text-dark mb-1">Des demandes qualifiées</h3>
+                        <h2 class="h6 fw-bold text-dark mb-1">Des demandes qualifiées</h2>
                         <p class="text-muted tm-static-text-xs mb-0">Recevez des demandes de devis ciblées et augmentez vos chances de conversion.</p>
                     </div>
                 </div>
@@ -51,7 +53,7 @@
                         <i class="fa-solid fa-shield-halved fs-5"></i>
                     </div>
                     <div>
-                        <h3 class="h6 fw-bold text-dark mb-1">Paiements sécurisés</h3>
+                        <h2 class="h6 fw-bold text-dark mb-1">Paiements sécurisés</h2>
                         <p class="text-muted tm-static-text-xs mb-0">Soyez payé en toute sécurité pour vos missions grâce à notre système de paiement sécurisé.</p>
                     </div>
                 </div>
@@ -61,7 +63,7 @@
                         <i class="fa-solid fa-chart-simple fs-5"></i>
                     </div>
                     <div>
-                        <h3 class="h6 fw-bold text-dark mb-1">Outils de gestion</h3>
+                        <h2 class="h6 fw-bold text-dark mb-1">Outils de gestion</h2>
                         <p class="text-muted tm-static-text-xs mb-0">Gérez vos prestations, devis, clients et avis depuis votre espace dédié.</p>
                     </div>
                 </div>
@@ -75,7 +77,7 @@
                 <div class="d-flex align-items-center gap-3">
                     <div class="rounded-circle bg-secondary text-white fw-bold d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100') center/cover;"></div>
                     <div>
-                        <h4 class="h6 fw-bold text-dark mb-0" style="font-size: 13px;">Thomas D.</h4>
+                        <h3 class="h6 fw-bold text-dark mb-0" style="font-size: 13px;">Thomas D.</h3>
                         <span class="text-muted tm-static-text-xs">Plombier chauffagiste</span>
                     </div>
                 </div>

@@ -1,9 +1,9 @@
 <div class="tm-cp-favorites-hero mb-4">
 	<div class="tm-cp-favorites-hero-main">
 		<span class="tm-cp-favorites-hero-eyebrow">Sélection personnelle</span>
-		<h3 class="tm-cp-favorites-hero-title">
+		<h2 class="tm-cp-favorites-hero-title">
 			Vos favoris, réunis dans un espace plus élégant et plus rapide à parcourir
-		</h3>
+		</h2>
 		<p class="tm-cp-favorites-hero-subtitle mb-0">
 			Retrouvez vos artisans, prestations et bons plans enregistrés, puis revenez en un clic vers les profils et offres qui comptent pour vous.
 		</p>
@@ -37,7 +37,7 @@
 			<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 tm-cp-favorites-section-head">
 				<div class="tm-cp-favorites-section-copy">
 					<span class="tm-cp-favorites-kicker">Sélection client</span>
-					<h4 class="tm-cp-card-title tm-cp-favorites-title mb-1">Mes artisans favoris</h4>
+					<h3 class="tm-cp-card-title tm-cp-favorites-title mb-1">Mes artisans favoris</h3>
 					<p class="tm-cp-favorites-subtitle mb-0">
 						Retrouvez les prestataires que vous avez enregistrés.
 					</p>
@@ -56,9 +56,9 @@
 							<article class="tm-cp-favorite-provider-card h-100">
 								<div class="tm-cp-favorite-provider-card-cover">
 									{% if provider.coverImage is defined and provider.coverImage %}
-										<img src="{{ asset('uploads/covers/' ~ provider.coverImage) }}" alt="{{ provider.companyName }}">
+										<img src="{{ asset('uploads/covers/' ~ provider.coverImage) }}" alt="{{ provider.companyName }}" width="1200" height="896" loading="lazy">
 									{% else %}
-										<img src="{{ asset('images/img_par_defaut.png') }}" alt="{{ provider.companyName }}" class="tm-cp-favorite-provider-card-cover-default">
+										<img src="{{ asset('images/img_par_defaut.webp') }}" alt="{{ provider.companyName }}" class="tm-cp-favorite-provider-card-cover-default" width="1200" height="896" loading="lazy">
 									{% endif %}
 
 									<div class="tm-cp-favorite-provider-card-overlay"></div>
@@ -81,13 +81,13 @@
 								<div class="tm-cp-favorite-provider-card-body">
 									<div class="tm-cp-favorite-provider-card-identity">
 										<div class="tm-cp-favorite-provider-card-logo">
-											<img src="{{ provider.logo ? asset('uploads/logos/' ~ provider.logo) : asset('images/logo_trouvemoipresta_black.png') }}" alt="{{ provider.companyName }}">
+											<img src="{{ provider.logo ? asset('uploads/logos/' ~ provider.logo) : asset('images/logo_trouvemoipresta_black.png') }}" alt="{{ provider.companyName }}" width="160" height="160" loading="lazy">
 										</div>
 
 										<div class="tm-cp-favorite-provider-card-identity-text">
-											<h5 class="tm-cp-favorite-provider-card-title">
+											<h4 class="tm-cp-favorite-provider-card-title">
 												{{ provider.companyName }}
-											</h5>
+											</h4>
 
 											<div class="tm-cp-favorite-provider-card-meta">
 												<span>
@@ -141,9 +141,9 @@
 									<article class="tm-cp-favorite-provider-card h-100">
 										<div class="tm-cp-favorite-provider-card-cover">
 											{% if provider.coverImage is defined and provider.coverImage %}
-												<img src="{{ asset('uploads/covers/' ~ provider.coverImage) }}" alt="{{ provider.companyName }}">
+												<img src="{{ asset('uploads/covers/' ~ provider.coverImage) }}" alt="{{ provider.companyName }}" width="1200" height="896" loading="lazy">
 											{% else %}
-												<img src="{{ asset('images/img_par_defaut.png') }}" alt="{{ provider.companyName }}" class="tm-cp-favorite-provider-card-cover-default">
+												<img src="{{ asset('images/img_par_defaut.webp') }}" alt="{{ provider.companyName }}" class="tm-cp-favorite-provider-card-cover-default" width="1200" height="896" loading="lazy">
 											{% endif %}
 
 											<div class="tm-cp-favorite-provider-card-overlay"></div>
@@ -169,13 +169,13 @@
 										<div class="tm-cp-favorite-provider-card-body">
 											<div class="tm-cp-favorite-provider-card-identity">
 												<div class="tm-cp-favorite-provider-card-logo">
-													<img src="{{ provider.logo ? asset('uploads/logos/' ~ provider.logo) : asset('images/logo_trouvemoipresta_black.png') }}" alt="{{ provider.companyName }}">
+													<img src="{{ provider.logo ? asset('uploads/logos/' ~ provider.logo) : asset('images/logo_trouvemoipresta_black.png') }}" alt="{{ provider.companyName }}" width="160" height="160" loading="lazy">
 												</div>
 
 												<div class="tm-cp-favorite-provider-card-identity-text">
-													<h5 class="tm-cp-favorite-provider-card-title">
+													<h4 class="tm-cp-favorite-provider-card-title">
 														{{ provider.companyName }}
-													</h5>
+													</h4>
 
 													<div class="tm-cp-favorite-provider-card-meta">
 														<span>
@@ -252,7 +252,7 @@
 			<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 tm-cp-favorites-section-head">
 				<div class="tm-cp-favorites-section-copy">
 					<span class="tm-cp-favorites-kicker">Prestations suivies</span>
-					<h4 class="tm-cp-card-title tm-cp-favorites-title mb-1">Mes prestations favorites</h4>
+					<h3 class="tm-cp-card-title tm-cp-favorites-title mb-1">Mes prestations favorites</h3>
 					<p class="tm-cp-favorites-subtitle mb-0">
 						Gardez sous la main les prestations qui vous intéressent.
 					</p>
@@ -281,9 +281,9 @@
 										</button>
 									</div>
 
-									<h5 class="tm-cp-favorite-name tm-cp-favorite-name--service mb-2">
+									<h4 class="tm-cp-favorite-name tm-cp-favorite-name--service mb-2">
 										{{ prestation.title ?: prestation.service.name }}
-									</h5>
+									</h4>
 
 									<p class="tm-cp-favorite-meta mb-2">
 										<i class="fa-solid fa-building"></i>
@@ -330,9 +330,9 @@
 												</button>
 											</div>
 
-											<h5 class="tm-cp-favorite-name tm-cp-favorite-name--service mb-2">
+											<h4 class="tm-cp-favorite-name tm-cp-favorite-name--service mb-2">
 												{{ prestation.title ?: prestation.service.name }}
-											</h5>
+											</h4>
 
 											<p class="tm-cp-favorite-meta mb-2">
 												<i class="fa-solid fa-building"></i>
@@ -392,7 +392,7 @@
 			<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 tm-cp-favorites-section-head">
 				<div class="tm-cp-favorites-section-copy">
 					<span class="tm-cp-favorites-kicker">Offres enregistrées</span>
-					<h4 class="tm-cp-card-title tm-cp-favorites-title mb-1">Mes bons plans favoris</h4>
+					<h3 class="tm-cp-card-title tm-cp-favorites-title mb-1">Mes bons plans favoris</h3>
 					<p class="tm-cp-favorites-subtitle mb-0">
 						Retrouvez les offres promotionnelles enregistrées.
 					</p>
@@ -421,9 +421,9 @@
 										</button>
 									</div>
 
-									<h5 class="tm-cp-favorite-name tm-cp-favorite-name--service mb-2">
+									<h4 class="tm-cp-favorite-name tm-cp-favorite-name--service mb-2">
 										{{ bonPlan.title ?: bonPlan.service.name }}
-									</h5>
+									</h4>
 
 									<p class="tm-cp-favorite-meta mb-2">
 										<i class="fa-solid fa-building"></i>
@@ -472,9 +472,9 @@
 												</button>
 											</div>
 
-											<h5 class="tm-cp-favorite-name tm-cp-favorite-name--service mb-2">
+											<h4 class="tm-cp-favorite-name tm-cp-favorite-name--service mb-2">
 												{{ bonPlan.title ?: bonPlan.service.name }}
-											</h5>
+											</h4>
 
 											<p class="tm-cp-favorite-meta mb-2">
 												<i class="fa-solid fa-building"></i>

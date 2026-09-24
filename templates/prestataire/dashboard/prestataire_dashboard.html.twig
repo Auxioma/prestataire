@@ -3,6 +3,17 @@
 {% block title %}Espace Pro - TrouveMoi
 {% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/profile/settings_prestataire.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/prestataire_dashboard/prestataire_dashboard.css') }}">
+    {% if activeTab == 'prestations' %}<link rel="stylesheet" href="{{ asset('styles/prestataire_dashboard/_prestation_panel.css') }}">{% endif %}
+    {% if activeTab == 'revenus' %}<link rel="stylesheet" href="{{ asset('styles/prestataire_dashboard/_revenus_panel.css') }}">{% endif %}
+    {% if activeTab == 'calendrier' %}<link rel="stylesheet" href="{{ asset('styles/prestataire_dashboard/_calendrier_panel.css') }}">{% endif %}
+    {% if activeTab == 'demandes' %}<link rel="stylesheet" href="{{ asset('styles/prestataire_dashboard/_demandes_panel.css') }}">{% endif %}
+    {% if activeTab == 'archives' %}<link rel="stylesheet" href="{{ asset('styles/prestataire_dashboard/_archives_panel.css') }}">{% endif %}
+    {% if activeTab == 'messages' %}<link rel="stylesheet" href="{{ asset('styles/prestataire_dashboard/_messages_panel.css') }}">{% endif %}
+{% endblock %}
+
 {% block body %}
 	<div class="tm-dashboard-page" {{ stimulus_controller('prestataire-dashboard-tabs') }}>
 		<div class="tm-settings-container tm-dashboard-page__shell">
@@ -18,7 +29,7 @@
 
 				<div class="tm-settings-sidebar-backdrop tm-dashboard-page__backdrop" {{ stimulus_target('prestataire-dashboard-tabs', 'backdrop') }} {{ stimulus_action('prestataire-dashboard-tabs', 'closeSidebar', 'click') }}></div>
 
-				<main class="tm-settings-content tm-dashboard-page__content">
+				<div class="tm-settings-content tm-dashboard-page__content">
 					<button type="button" class="tm-sidebar-toggle d-lg-none tm-dashboard-page__toggle" aria-label="Ouvrir la navigation du dashboard" {{ stimulus_target('prestataire-dashboard-tabs', 'toggle') }} {{ stimulus_action('prestataire-dashboard-tabs', 'toggleSidebar', 'click') }}>
 						☰
 					</button>
@@ -90,7 +101,7 @@
 							{% endif %}
 						</section>
 					</div>
-				</main>
+				</div>
 			</div>
 		</div>
 	</div>

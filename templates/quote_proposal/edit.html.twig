@@ -5,6 +5,7 @@
 
 {% block stylesheets %}
 	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('styles/quote_proposal/edit.css') }}">
 	<style>
 		#quote-proposal-edit-form #quote-proposal-external-panel {
 			display: none;
@@ -140,7 +141,7 @@
 			{% endif %}
 
 			<div class="tm-quote-edit__layout">
-				<main class="tm-quote-edit__main">
+				<div class="tm-quote-edit__main">
 					<section class="tm-quote-panel tm-quote-panel--main">
 						<div class="tm-quote-panel__head tm-quote-panel__head--split">
 							<div>
@@ -331,7 +332,7 @@
 							{{ form_end(form) }}
 						</div>
 					</section>
-				</main>
+				</div>
 
 				<aside class="tm-quote-edit__aside">
 					<section class="tm-quote-panel tm-quote-panel--aside">

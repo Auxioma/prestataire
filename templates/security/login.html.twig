@@ -3,13 +3,15 @@
 {% block title %}Connexion - TrouveMoi Prestataires
 {% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/login/login.css') }}">{% endblock %}
+
 {% block body %}
     <div class="tm-login-page">
         <div class="tm-login-layout">
 
             <section class="tm-login-hero">
                 <a class="tm-login-brand" href="{{ path('app_home') }}">
-                    <img src="{{ asset('images/logo_trouvemoipresta_black.png') }}" alt="Logo TrouveMoi" class="tm-login-brand__logo">
+                    <img src="{{ asset('images/logo_trouvemoipresta_black.png') }}" alt="Logo TrouveMoi" class="tm-login-brand__logo" width="677" height="369" loading="eager">
                     <div class="tm-login-brand__text">
                         <span class="tm-login-brand__title">TrouveMoi</span>
                         <span class="tm-login-brand__subtitle">PRESTATAIRES</span>
@@ -28,7 +30,7 @@
                 <div class="tm-login-feature-list">
                     <div class="tm-login-feature">
                         <div class="tm-login-feature__icon tm-login-feature__icon--blue">
-                            <img src="{{ asset('images/categories/icons/shield-halved-solid.png') }}" alt="Icône sécurité">
+                            <img src="{{ asset('images/categories/icons/shield-halved-solid.png') }}" alt="" width="640" height="640" loading="eager" aria-hidden="true">
                         </div>
                         <div class="tm-login-feature__content">
                             <strong>Prestataires vérifiés</strong>
@@ -38,7 +40,7 @@
 
                     <div class="tm-login-feature">
                         <div class="tm-login-feature__icon tm-login-feature__icon--yellow">
-                            <img src="{{ asset('images/categories/icons/star-regular.png') }}" alt="Icône avis">
+                            <img src="{{ asset('images/categories/icons/star-regular.png') }}" alt="" width="640" height="640" loading="eager" aria-hidden="true">
                         </div>
                         <div class="tm-login-feature__content">
                             <strong>Avis clients authentiques</strong>
@@ -48,7 +50,7 @@
 
                     <div class="tm-login-feature">
                         <div class="tm-login-feature__icon tm-login-feature__icon--green">
-                            <img src="{{ asset('images/categories/icons/lock-solid.png') }}" alt="Icône cadenas">
+                            <img src="{{ asset('images/categories/icons/lock-solid.png') }}" alt="" width="640" height="640" loading="eager" aria-hidden="true">
                         </div>
                         <div class="tm-login-feature__content">
                             <strong>Paiement sécurisé</strong>
@@ -58,7 +60,7 @@
                 </div>
 
                 <div class="tm-login-hero__image-wrap">
-                    <img src="{{ asset('images/categories/img/worker2.png') }}" alt="Prestataire" class="tm-login-hero__image">
+                    <img src="{{ asset('images/categories/img/worker2.webp') }}" alt="Prestataire" class="tm-login-hero__image" width="546" height="390" fetchpriority="high">
                 </div>
             </section>
 
@@ -162,12 +164,12 @@
                         </div>
 
                         <a href="{{ path('connect_google_start') }}" class="tm-login-social-btn" data-turbo="false" data-turbo-prefetch="false">
-                            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
+                            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="" width="24" height="24" loading="eager" aria-hidden="true">
                             Continuer avec Google
                         </a>
 
                         <button type="button" class="tm-login-social-btn">
-                            <img src="{{ asset('images/categories/icons/apple.png') }}" alt="Apple">
+                            <img src="{{ asset('images/categories/icons/apple.png') }}" alt="" width="640" height="640" loading="eager" aria-hidden="true">
                             Continuer avec Apple
                         </button>
 
@@ -182,7 +184,7 @@
                     <div class="tm-login-benefit-card">
                         <div class="tm-login-benefit-card__head">
                             <div class="tm-login-benefit-card__icon tm-login-benefit-card__icon--blue">
-                                <img src="{{ asset('images/categories/icons/shield-halved-solid.png') }}" alt="Sécurité">
+                                <img src="{{ asset('images/categories/icons/shield-halved-solid.png') }}" alt="" width="640" height="640" loading="lazy" aria-hidden="true">
                             </div>
                             <strong>Données sécurisées</strong>
                         </div>
@@ -192,7 +194,7 @@
                     <div class="tm-login-benefit-card">
                         <div class="tm-login-benefit-card__head">
                             <div class="tm-login-benefit-card__icon tm-login-benefit-card__icon--green">
-                                <img src="{{ asset('images/categories/icons/circle-check-regular-full.svg') }}" alt="Validation">
+                                <img src="{{ asset('images/categories/icons/circle-check-regular-full.svg') }}" alt="" width="32" height="32" loading="lazy" aria-hidden="true">
                             </div>
                             <strong>Gratuit</strong>
                         </div>
@@ -202,7 +204,7 @@
                     <div class="tm-login-benefit-card">
                         <div class="tm-login-benefit-card__head">
                             <div class="tm-login-benefit-card__icon tm-login-benefit-card__icon--yellow">
-                                <img src="{{ asset('images/categories/icons/headset-solid-full.svg') }}" alt="Support">
+                                <img src="{{ asset('images/categories/icons/headset-solid-full.svg') }}" alt="" width="32" height="32" loading="lazy" aria-hidden="true">
                             </div>
                             <strong>Support 7j/7</strong>
                         </div>
@@ -212,7 +214,7 @@
                     <div class="tm-login-benefit-card">
                         <div class="tm-login-benefit-card__head">
                             <div class="tm-login-benefit-card__icon tm-login-benefit-card__icon--purple">
-                                <img src="{{ asset('images/categories/icons/star-regular.png') }}" alt="Satisfaction">
+                                <img src="{{ asset('images/categories/icons/star-regular.png') }}" alt="" width="640" height="640" loading="lazy" aria-hidden="true">
                             </div>
                             <strong>Satisfaction garantie</strong>
                         </div>

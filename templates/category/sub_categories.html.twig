@@ -2,15 +2,20 @@
 
 {% block title %}TrouveMoi - {{ category.name }}{% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/category/sub_categories.css') }}">{% endblock %}
+
 {% block body %}
     <div class="tm-subcatx-page">
 
         <section class="tm-subcatx-hero">
             <div class="tm-subcatx-hero__media" aria-hidden="true">
                 <img
-                    src="{{ asset('images/img_presta_homepage.png') }}"
+                    src="{{ asset('images/img_presta_homepage04.webp') }}"
                     alt=""
                     class="tm-subcatx-hero__bg-image"
+                    width="1935"
+                    height="813"
+                    fetchpriority="high"
                 >
             </div>
 
@@ -185,8 +190,8 @@
                 </div>
 
                 <div class="tm-subcatx-banner__actions">
-                    <a href="#" class="tm-subcatx-btn tm-subcatx-btn--outline">En savoir plus</a>
-                    <a href="#" class="tm-subcatx-btn tm-subcatx-btn--primary">Devenir prestataire</a>
+                    <a href="{{ path('app_static_page', {slug: 'avantages'}) }}" class="tm-subcatx-btn tm-subcatx-btn--outline">En savoir plus</a>
+                    <a href="{{ path('app_register_choice') }}" class="tm-subcatx-btn tm-subcatx-btn--primary">Devenir prestataire</a>
                 </div>
             </section>
         </div>

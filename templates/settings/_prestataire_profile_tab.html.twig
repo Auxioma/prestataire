@@ -4,7 +4,7 @@
         {# ================= COLONNE GAUCHE : INFOS PERSONNELLES ================= #}
         <div class="col-lg-4 d-flex flex-column gap-4">
             <div class="card tm-card p-4">
-                <h4 class="tm-card-title mb-4">Informations personnelles</h4>
+                <h2 class="tm-card-title mb-4">Informations personnelles</h2>
 
                 {{ form_start(userForm, {
                     attr: {
@@ -19,8 +19,11 @@
                         <img
                             src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}"
                             class="rounded-circle mb-3 border-2 border-white shadow-sm"
-                            style="width: 90px; height: 90px; object-fit: cover;"
-                            alt="Avatar"
+                        style="width: 90px; height: 90px; object-fit: cover;"
+                        alt="Avatar"
+                        width="90"
+                        height="90"
+                        loading="lazy"
                         >
                         <button type="button" class="btn btn-outline-primary btn-sm d-block mx-auto fw-medium px-3">
                             Modifier la photo
@@ -53,7 +56,7 @@
 
             {# Card Aperçu Profil Public #}
             <div class="card tm-card p-4">
-                <h4 class="tm-card-title mb-3">Aperçu de votre profil public</h4>
+                <h2 class="tm-card-title mb-3">Aperçu de votre profil public</h2>
                 <div class="p-3 border rounded-4 bg-white shadow-sm text-center position-relative overflow-hidden">
 
                     {% if user.prestataireProfile and user.prestataireProfile.coverImage %}
@@ -64,15 +67,15 @@
 
                     <div class="position-relative pt-4">
                         {% if user.prestataireProfile and user.prestataireProfile.logo %}
-                            <img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" class="rounded-circle border-3 border-white shadow-sm mb-2" style="width: 70px; height: 70px; object-fit: cover;" alt="Logo entreprise">
+                            <img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" class="rounded-circle border-3 border-white shadow-sm mb-2" style="width: 70px; height: 70px; object-fit: cover;" alt="Logo entreprise" width="70" height="70" loading="lazy">
                         {% else %}
-                            <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80' }}" class="rounded-circle border-3 border-white shadow-sm mb-2" style="width: 70px; height: 70px; object-fit: cover;" alt="Aperçu avatar">
+                            <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80' }}" class="rounded-circle border-3 border-white shadow-sm mb-2" style="width: 70px; height: 70px; object-fit: cover;" alt="Aperçu avatar" width="70" height="70" loading="lazy">
                         {% endif %}
 
-                        <h5 class="mb-1 fw-bold text-dark">
+                        <h3 class="mb-1 fw-bold text-dark">
                             {{ user.prestataireProfile.companyName|default(user.firstName ~ ' ' ~ user.lastName) }}
                             <span class="badge bg-primary ms-1 fs-7">Vérifié</span>
-                        </h5>
+                        </h3>
 
                         <p class="text-muted mb-3 fs-6">
                             <span style="color: var(--tm-text); font-weight: 500;">
@@ -103,7 +106,7 @@
             <div class="row g-4">
                 <div class="col-lg-6">
                     <div class="card tm-card p-4 h-100">
-                        <h4 class="tm-card-title mb-4">À propos de vous</h4>
+                        <h2 class="tm-card-title mb-4">À propos de vous</h2>
 
                         <div class="mb-3 tm-form-row">
                             {{ form_row(publicProfileForm.metier) }}
@@ -134,7 +137,7 @@
 
                 <div class="col-lg-6 d-flex flex-column gap-4">
                     <div class="card tm-card p-4">
-                        <h4 class="tm-card-title mb-4">Réseaux sociaux & liens</h4>
+                        <h2 class="tm-card-title mb-4">Réseaux sociaux & liens</h2>
                         <div class="row g-3">
                             <div class="col-12 tm-form-row">
                                 {{ form_row(publicProfileForm.website) }}
@@ -152,7 +155,7 @@
                     </div>
 
                     <div class="card tm-card p-4">
-                        <h5 class="fw-bold mb-3 fs-5" style="color: var(--tm-text);">Statut du compte</h5>
+                        <h2 class="fw-bold mb-3 fs-5" style="color: var(--tm-text);">Statut du compte</h2>
                         <div class="p-3 rounded-3 mb-0" style="background-color: rgba(22, 163, 74, 0.08); border: 1px solid rgba(22, 163, 74, 0.15);">
                             <div class="fw-bold small" style="color: var(--tm-success);">✓ Compte vérifié</div>
                             <div class="fs-7 text-muted mt-1">Félicitations ! Votre compte est validé.</div>
@@ -160,7 +163,7 @@
                     </div>
 
                     <div class="card tm-card p-4">
-                        <h5 class="fw-bold mb-2 fs-5" style="color: var(--tm-text);">Note moyenne</h5>
+                        <h2 class="fw-bold mb-2 fs-5" style="color: var(--tm-text);">Note moyenne</h2>
                         <div class="d-flex align-items-baseline gap-2">
                             <span class="display-5 fw-bold" style="color: var(--tm-text);">
                                 {{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0' }}

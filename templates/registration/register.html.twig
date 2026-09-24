@@ -3,6 +3,8 @@
 {% block title %}Inscription - TrouveMoi Prestataires
 {% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/register/register.css') }}">{% endblock %}
+
 {% block body %}
     {% set currentRole = accountType|default(app.request.query.get('role', 'client')) %}
     {% set isPrestataire = currentRole == 'prestataire' %}
@@ -108,7 +110,7 @@
                     </p>
 
                     {% if isPrestataire %}
-                        <div class="d-flex align-items-center gap-2 mb-4" aria-label="Progression de l'inscription prestataire">
+                        <div class="d-flex align-items-center gap-2 mb-4" role="group" aria-label="Progression de l'inscription prestataire">
                             <span class="badge rounded-pill {{ currentStep == 1 ? 'bg-primary' : 'bg-light text-dark border' }}">1. Sécurité</span>
                             <span class="badge rounded-pill {{ currentStep == 2 ? 'bg-primary' : 'bg-light text-dark border' }}">2. Activité</span>
                             <span class="badge rounded-pill {{ currentStep == 3 ? 'bg-primary' : 'bg-light text-dark border' }}">3. Validation</span>

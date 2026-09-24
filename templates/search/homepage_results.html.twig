@@ -4,6 +4,8 @@
     {{ pageTitle }} - TrouveMoi
 {% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/search/homepage_results.css') }}">{% endblock %}
+
 {% block body %}
 {% set currentPage = currentPage|default(1) %}
 {% set totalPages = totalPages|default(1) %}
@@ -27,10 +29,12 @@
         <div class="tm-search-results-card__inner">
             <div class="tm-search-results-card__cover-wrap">
                 <img
-                    src="{{ profile.coverImage ? asset('uploads/covers/' ~ profile.coverImage) : asset('images/img_par_defaut.png') }}"
+                    src="{{ profile.coverImage ? asset('uploads/covers/' ~ profile.coverImage) : asset('images/img_par_defaut.webp') }}"
                     alt="{{ profile.companyName|default(profile.account.userIdentifier) }}"
                     class="tm-search-results-card__cover"
                     loading="lazy"
+                    width="1200"
+                    height="896"
                 >
             </div>
 
@@ -61,7 +65,7 @@
                     </div>
                 </div>
 
-                <div class="tm-search-results-card__rating" aria-label="Note moyenne">
+                <div class="tm-search-results-card__rating" role="img" aria-label="Note moyenne : {{ profile.averageRating|default('0.0') }} sur 5">
                     <i class="fa-solid fa-star"></i>
                     <span>{{ profile.averageRating|default('0.0') }}</span>
                 </div>

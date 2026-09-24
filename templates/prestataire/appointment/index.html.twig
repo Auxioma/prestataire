@@ -2,6 +2,8 @@
 
 {% block title %}Mes rendez-vous{% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/prestataire/appointment_index.css') }}">{% endblock %}
+
 {% block body %}
     {% set totalAppointments = appointments|length %}
     {% set upcomingAppointments = 0 %}

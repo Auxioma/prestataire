@@ -3,6 +3,8 @@
 {% block title %}TrouveMoi Prestataires - Accueil
 {% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/home/accueil.css') }}">{% endblock %}
+
 {% block body %}
 	<div
 		class="tm-homepage-v2">
@@ -10,10 +12,13 @@
         {# HERO #}
 <section class="tmv2-hero">
     <img
-        src="{{ asset('images/img_presta_homepage04.png') }}"
+        src="{{ asset('images/img_presta_homepage04.webp') }}"
         alt=""
         class="tmv2-hero__background-image"
         aria-hidden="true"
+        width="1935"
+        height="813"
+        fetchpriority="high"
     >
 
     <div class="container tmv2-hero__inner">
@@ -68,7 +73,7 @@
             <div class="tmv2-pro-card">
                 <div class="tmv2-pro-card__icon"><i class="fa-solid fa-users"></i></div>
 
-                <h3>Professionnels vérifiés</h3>
+                <h2>Professionnels vérifiés</h2>
 
                 <p>Comparez les profils, les avis et les disponibilités en quelques clics.</p>
 
@@ -249,7 +254,7 @@
             <div class="col-md-6 col-xl-3" data-scroll-reveal-target="element">
                 <article class="tmv2-provider-card h-100 position-relative">
                     {% if canShowProvider %}
-                        <a href="{{ path('app_prestataire_show', {slug: provider.slug}) }}" class="stretched-link"></a>
+                        <a href="{{ path('app_prestataire_show', {slug: provider.slug}) }}" class="stretched-link" aria-label="Consulter le profil de {{ provider.companyName }}"></a>
                     {% endif %}
 
                     {% set isFavorite = provider.id in (favoriteProviderIds|default([])) %}
@@ -272,9 +277,12 @@
 
                     <div class="tmv2-provider-card__cover">
                         <img
-    src="{{ provider.coverImage ? vich_uploader_asset(provider, 'coverImageFile') : asset('images/img_par_defaut.png') }}"
+    src="{{ provider.coverImage ? vich_uploader_asset(provider, 'coverImageFile') : asset('images/img_par_defaut.webp') }}"
     alt="{{ provider.companyName }}"
     class="tmv2-provider-card__cover-image"
+    width="1200"
+    height="896"
+    loading="lazy"
 >
 
                         <div class="tmv2-provider-card__cover-overlay"></div>
@@ -388,7 +396,7 @@
 							4,8<span>/5</span>
 						</div>
 
-						<div class="tmv2-trust-stars" aria-label="4,8 étoiles sur 5">
+						<div class="tmv2-trust-stars" role="img" aria-label="4,8 étoiles sur 5">
 							<svg width="22" height="22" viewbox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>
 							<svg width="22" height="22" viewbox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>
 							<svg width="22" height="22" viewbox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.6 7 .8-5.2 4.8L18.3 21 12 17.4 5.7 21l1.5-6.8L2 9.4l7-.8z"/></svg>
@@ -432,9 +440,9 @@
 								<span class="tmv2-review-card__quote">“</span>
 								<p class="tmv2-review-card__text">Une expérience exceptionnelle ! J'ai trouvé un plombier en moins de 30 minutes. Service rapide, efficace et très professionnel.</p>
 								<div class="tmv2-review-card__footer">
-									<img src="https://ui-avatars.com/api/?name=User+{{ i }}&background=random" class="tmv2-review-card__avatar" alt="Utilisateur">
+									<img src="https://ui-avatars.com/api/?name=User+{{ i }}&background=random" class="tmv2-review-card__avatar" alt="Utilisateur" width="64" height="64" loading="lazy">
 									<div>
-										<h5>Jean D.</h5>
+										<h3>Jean D.</h3>
 										<small>Prestation : Plomberie</small>
 									</div>
 									<div class="tmv2-review-card__stars">

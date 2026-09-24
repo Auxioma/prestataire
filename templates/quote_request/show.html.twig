@@ -4,6 +4,8 @@
 	{{ quoteRequest.title }}
 {% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/quote_request/show.css') }}">{% endblock %}
+
 {% block body %}
 	<div class="tm-client-quotes-page">
 		<div class="container py-4 py-lg-5">
@@ -480,8 +482,8 @@
 														<div class="tm-client-quotes-message__attachments">
 															{% for attachment in message.attachments %}
 																{% if attachment.fileName %}
-																	<a href="{{ asset('uploads/messages/' ~ attachment.fileName) }}" target="_blank" rel="noopener noreferrer" class="tm-client-quotes-message__attachment">
-																		<img src="{{ asset('uploads/messages/' ~ attachment.fileName) }}" alt="{{ attachment.originalName ?: 'Photo jointe' }}" loading="lazy">
+																			<a href="{{ asset('uploads/messages/' ~ attachment.fileName) }}" target="_blank" rel="noopener noreferrer" class="tm-client-quotes-message__attachment" aria-label="Ouvrir la pièce jointe {{ attachment.originalName ?: 'Photo jointe' }}">
+																				<img src="{{ asset('uploads/messages/' ~ attachment.fileName) }}" alt="{{ attachment.originalName ?: 'Photo jointe' }}" width="640" height="480" loading="lazy">
 																	</a>
 																{% endif %}
 															{% endfor %}

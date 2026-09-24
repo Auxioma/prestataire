@@ -4,7 +4,7 @@
             <div class="card tm-card p-4 h-100">
                 <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
                     <div>
-                        <h4 class="tm-card-title mb-1">Mes zones d’intervention</h4>
+                        <h2 class="tm-card-title mb-1">Mes zones d’intervention</h2>
                         <p class="text-muted mb-0 small">
                             Ajoutez, modifiez ou supprimez les zones où vous intervenez.
                         </p>
@@ -82,7 +82,7 @@
 
         <div class="col-xl-6">
             <div class="card tm-card p-4 h-100">
-                <h4 class="tm-card-title mb-3">Aperçu de vos zones d’intervention</h4>
+                <h2 class="tm-card-title mb-3">Aperçu de vos zones d’intervention</h2>
 
                 <div class="tm-zone-real-map-wrapper" data-controller="zone-map" data-zone-map-zones-value="{{ zones|map(zone => {city: zone.city, latitude: zone.latitude, longitude: zone.longitude, radiusKm: zone.radiusKm})|json_encode|e('html_attr') }}">
                     {% if zoneMap is defined and zoneMap %}
@@ -105,7 +105,7 @@
     </div>
 
     <div class="card tm-card p-4">
-        <h4 class="tm-card-title mb-4">Ajouter une zone d’intervention</h4>
+        <h2 class="tm-card-title mb-4">Ajouter une zone d’intervention</h2>
 
         <div class="row g-3 mb-4">
             <div class="col-lg-6">

@@ -2,6 +2,11 @@
 
 {% block title %}Mes avis reçus{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/profile/settings_prestataire.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/prestataire_dashboard/prestataire_dashboard.css') }}">
+{% endblock %}
+
 {% block body %}
     <section class="tm-dashboard-page" {{ stimulus_controller('prestataire-dashboard-tabs') }}>
         <div class="tm-settings-container tm-dashboard-page__shell">
@@ -16,7 +21,7 @@
 
                 <div class="tm-settings-sidebar-backdrop tm-dashboard-page__backdrop" {{ stimulus_target('prestataire-dashboard-tabs', 'backdrop') }} {{ stimulus_action('prestataire-dashboard-tabs', 'closeSidebar', 'click') }}></div>
 
-                <main class="tm-settings-content tm-dashboard-page__content tm-dashboard-reviews">
+                <div class="tm-settings-content tm-dashboard-page__content tm-dashboard-reviews">
                     <button type="button" class="tm-sidebar-toggle d-lg-none tm-dashboard-page__toggle" aria-label="Ouvrir la navigation du dashboard" {{ stimulus_target('prestataire-dashboard-tabs', 'toggle') }} {{ stimulus_action('prestataire-dashboard-tabs', 'toggleSidebar', 'click') }}>
                         ☰
                     </button>
@@ -54,12 +59,12 @@
 
                                     <div class="perf-stats tm-prestataire-reviews-stats">
                                         <div>
-                                            <h3>Avis publiés</h3>
+                                            <h2>Avis publiés</h2>
                                             <b>{{ prestataire.reviewsCount|default(0) }}</b>
                                             <small>Clients vérifiés</small>
                                         </div>
                                         <div>
-                                            <h3>Note moyenne</h3>
+                                            <h2>Note moyenne</h2>
                                             <b>{{ prestataire.averageRating|default('0.00')|number_format(1, ',', ' ') }}</b>
                                             <small>Sur 5</small>
                                         </div>
@@ -129,7 +134,7 @@
                             </div>
                         </div>
                     </div>
-                </main>
+                </div>
             </div>
         </div>
     </section>

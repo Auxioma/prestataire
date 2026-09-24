@@ -9,7 +9,7 @@
 
 			<div class="tm-navbar__topline-left">
 				<a class="navbar-brand tm-navbar__brand" href="{{ path('app_home') }}">
-					<img src="{{ asset('images/logo_trouvemoipresta.png') }}" alt="Logo TrouveMoi" class="tm-navbar__brand-logo">
+					<img src="{{ asset('images/logo_trouvemoipresta.png') }}" alt="Logo TrouveMoi" class="tm-navbar__brand-logo" width="446" height="117" loading="eager">
 				</a>
 
                 {% if app.user %}
@@ -51,10 +51,10 @@
 
 				{% if app.user %}
 					<div class="nav-item dropdown d-none d-xl-block">
-						<a class="nav-link dropdown-toggle tm-navbar__link tm-navbar__link--account tm-navbar__top-action" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<button class="nav-link dropdown-toggle tm-navbar__link tm-navbar__link--account tm-navbar__top-action border-0 bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false">
 							<i class="fa-solid fa-circle-user"></i>
 							<span>Mon Compte</span>
-						</a>
+						</button>
 
 						<ul class="dropdown-menu dropdown-menu-end tm-navbar__dropdown">
 							<li>
@@ -117,16 +117,16 @@
 				{% if app.user %}
 					<div class="nav-item dropdown d-none d-xl-block" data-controller="realtime-notifications" data-realtime-notifications-url-value="http://localhost:3001" data-realtime-notifications-user-id-value="{{ app.user.id }}" data-realtime-notifications-auth-token-value="{{ navbarRealtimeNotificationsToken|default('') }}" data-realtime-notifications-event-name-value="notification_created" data-realtime-notifications-join-event-name-value="join_user" data-realtime-notifications-max-items-value="5" data-realtime-notifications-mark-read-url-pattern-value="/notifications/__ID__/open">
 
-						<a class="nav-link tm-navbarlink tm-navbar__notif-trigger position-relative" href="#" id="tmNavbarNotificationsDropdown" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+						<button class="nav-link tm-navbarlink tm-navbar__notif-trigger position-relative border-0 bg-transparent" type="button" id="tmNavbarNotificationsDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Ouvrir les notifications">
 							<i class="bi bi-bell-fill"></i>
 
 							<span data-realtime-notifications-target="badge" data-count-value="{{ navbarUnreadNotificationCount }}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger tm-navbar-notification-badge {{ navbarUnreadNotificationCount > 0 ? '' : 'd-none' }}">
 								{{ navbarUnreadNotificationCount > 99 ? '99+' : navbarUnreadNotificationCount }}
 								<span class="visually-hidden">notifications non lues</span>
 							</span>
-						</a>
+						</button>
 
-						<div class="dropdown-menu dropdown-menu-end tm-navbardropdown tm-navbar-notification-menu" aria-labelledby="tmNavbarNotificationsDropdown">
+						<div class="dropdown-menu dropdown-menu-end tm-navbardropdown tm-navbar-notification-menu">
 
 							<div class="tm-navbar-notification-menu__head">
 								<div>
@@ -218,9 +218,9 @@
 					</li>
 
 					<li class="nav-item dropdown position-static">
-						<a class="nav-link dropdown-toggle tm-navbar__link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<button class="nav-link dropdown-toggle tm-navbar__link border-0 bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false">
 							Catégories
-						</a>
+						</button>
 
 						<div class="dropdown-menu tm-navbar__megamenu">
 							<div class="container">
@@ -308,10 +308,10 @@
 
 					{% if app.user %}
 						<li class="nav-item dropdown d-xl-none">
-							<a class="nav-link dropdown-toggle tm-navbar__link tm-navbar__link--account" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<button class="nav-link dropdown-toggle tm-navbar__link tm-navbar__link--account border-0 bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="fa-solid fa-circle-user"></i>
 								<span>Mon Compte</span>
-							</a>
+							</button>
 
 							<ul class="dropdown-menu tm-navbar__dropdown">
 								<li>
@@ -376,7 +376,7 @@
 					{% if app.user %}
 						<li class="nav-item dropdown d-xl-none" data-controller="realtime-notifications" data-realtime-notifications-url-value="http://localhost:3001" data-realtime-notifications-user-id-value="{{ app.user.id }}" data-realtime-notifications-auth-token-value="{{ navbarRealtimeNotificationsToken|default('') }}" data-realtime-notifications-event-name-value="notification_created" data-realtime-notifications-join-event-name-value="join_user" data-realtime-notifications-max-items-value="5" data-realtime-notifications-mark-read-url-pattern-value="/notifications/__ID__/open">
 
-							<a class="nav-link tm-navbar__link tm-navbar__link--icon position-relative" href="#" id="tmNavbarNotificationsDropdownMobile" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+							<button class="nav-link tm-navbar__link tm-navbar__link--icon position-relative border-0 bg-transparent" type="button" id="tmNavbarNotificationsDropdownMobile" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
 								<i class="bi bi-bell-fill"></i>
 								<span>Notifications</span>
 
@@ -384,9 +384,9 @@
 									{{ navbarUnreadNotificationCount > 99 ? '99+' : navbarUnreadNotificationCount }}
 									<span class="visually-hidden">notifications non lues</span>
 								</span>
-							</a>
+							</button>
 
-							<div class="dropdown-menu dropdown-menu-end tm-navbardropdown tm-navbar-notification-menu" aria-labelledby="tmNavbarNotificationsDropdownMobile">
+							<div class="dropdown-menu dropdown-menu-end tm-navbardropdown tm-navbar-notification-menu">
 
 								<div class="tm-navbar-notification-menu__head">
 									<div>

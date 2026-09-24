@@ -2,10 +2,7 @@
 
 {% block title %}Vérification SIRET - TrouveMoi Prestataires{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('styles/register/siret.css') }}">
-{% endblock %}
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/register/siret.css') }}">{% endblock %}
 
 {% block body %}
     {% set siretInvalid = not siretForm.siret.vars.valid %}

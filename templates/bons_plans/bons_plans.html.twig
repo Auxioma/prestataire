@@ -2,6 +2,8 @@
 
   {% block title %}Bons plans - TrouveMoi{% endblock %}
 
+  {% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/bons_plans/bons_plans.css') }}">{% endblock %}
+
   {% block body %}
       {% set totalBonsPlans = bonsPlans.getTotalItemCount|default(bonsPlans|length) %}
       {% set activeCategoryLabel = 'Toutes les catégories' %}
@@ -28,7 +30,7 @@
               class="fond"
               role="img"
               aria-label="Sélection de bons plans TrouveMoi"
-              style="background-image:url('{{ asset('images/worker-bricolage.png')|e('html_attr') }}')"
+              style="background-image:url('{{ asset('images/worker-bricolage.webp')|e('html_attr') }}')"
           ></div>
           <div class="voile"></div>
 
@@ -255,11 +257,11 @@
                                       {% endif %}
 
                                       {% if bonPlan.coverImage is defined and bonPlan.coverImage %}
-                                          <img src="{{ asset('uploads/bons-plans/' ~ bonPlan.coverImage) }}" alt="{{ prestationTitle }}">
+                                          <img src="{{ asset('uploads/bons-plans/' ~ bonPlan.coverImage) }}" alt="{{ prestationTitle }}" width="1200" height="896" loading="lazy">
                                       {% elseif prestataire and prestataire.coverImage is defined and prestataire.coverImage %}
-                                          <img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="{{ prestationTitle }}">
+                                          <img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="{{ prestationTitle }}" width="1200" height="896" loading="lazy">
                                       {% else %}
-                                          <img src="{{ asset('images/img_par_defaut.png') }}" alt="{{ prestationTitle }}">
+                                          <img src="{{ asset('images/img_par_defaut.webp') }}" alt="{{ prestationTitle }}" width="1200" height="896" loading="lazy">
                                       {% endif %}
 
                                       {% if cardUrl %}

@@ -3,6 +3,8 @@
 {% block title %}TrouveMoi - Trouver un professionnel
 {% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/search/searchPresta_category_service.css') }}">{% endblock %}
+
 {% block body %}
 	{% set directPrestataires = directPrestataires|default([]) %}
 	{% set fallbackPrestataires = fallbackPrestataires|default([]) %}
@@ -358,11 +360,11 @@
     <article class="tm-flow-provider-card tm-flow-provider-card--interactive">
         <div class="tm-flow-provider-card__cover">
             {% if prestataire.coverImage %}
-                <img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="{{ prestataire.companyName }}">
+                <img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="{{ prestataire.companyName }}" width="1200" height="896" loading="lazy">
             {% elseif prestataire.logo %}
-                <img src="{{ prestataire.logo }}" alt="{{ prestataire.companyName }}">
+                <img src="{{ prestataire.logo }}" alt="{{ prestataire.companyName }}" width="160" height="160" loading="lazy">
             {% else %}
-                <img src="{{ asset('images/img_par_defaut.png') }}" alt="{{ prestataire.companyName }}">
+                <img src="{{ asset('images/img_par_defaut.webp') }}" alt="{{ prestataire.companyName }}" width="1200" height="896" loading="lazy">
             {% endif %}
         </div>
 
@@ -457,11 +459,11 @@
 									<article class="tm-flow-provider-card tm-flow-provider-card--interactive">
 										<div class="tm-flow-provider-card__cover">
 											{% if prestataire.coverImage %}
-												<img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="{{ prestataire.companyName }}">
+												<img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="{{ prestataire.companyName }}" width="1200" height="896" loading="lazy">
 											{% elseif prestataire.logo %}
-												<img src="{{ prestataire.logo }}" alt="{{ prestataire.companyName }}">
+												<img src="{{ prestataire.logo }}" alt="{{ prestataire.companyName }}" width="160" height="160" loading="lazy">
 											{% else %}
-												<img src="{{ asset('images/img_par_defaut.png') }}" alt="{{ prestataire.companyName }}">
+												<img src="{{ asset('images/img_par_defaut.webp') }}" alt="{{ prestataire.companyName }}" width="1200" height="896" loading="lazy">
 											{% endif %}
 										</div>
 
@@ -540,7 +542,7 @@
 									</a>
 								{% endif %}
 
-								<a href="#" class="tm-flow-btn tm-flow-btn--primary">
+								<a href="{{ path('app_home') }}" class="tm-flow-btn tm-flow-btn--primary">
 									Déposer un projet global
 								</a>
 							</div>
@@ -565,7 +567,7 @@
 					<div class="tm-flow-editorial__grid">
 						<article class="tm-flow-editorial-card">
 							<div class="tm-flow-editorial-card__media">
-								<img src="{{ asset('images/worker-group.png') }}" alt="Client comparant plusieurs profils de professionnels">
+								<img src="{{ asset('images/worker-group.webp') }}" alt="Client comparant plusieurs profils de professionnels" width="1408" height="768" loading="lazy">
 							</div>
 							<div class="tm-flow-editorial-card__content">
 								<span class="tm-flow-editorial-card__label">Visibilité</span>
@@ -578,7 +580,7 @@
 
 						<article class="tm-flow-editorial-card">
 							<div class="tm-flow-editorial-card__media">
-								<img src="{{ asset('images/footer/footer-conversation.jpg') }}" alt="Échange entre un client et un prestataire">
+								<img src="{{ asset('images/footer/footer-conversation.jpg') }}" alt="Échange entre un client et un prestataire" width="1408" height="768" loading="lazy">
 							</div>
 							<div class="tm-flow-editorial-card__content">
 								<span class="tm-flow-editorial-card__label">Conversion</span>
@@ -591,7 +593,7 @@
 
 						<article class="tm-flow-editorial-card">
 							<div class="tm-flow-editorial-card__media">
-								<img src="{{ asset('images/footer/footer-local-search.jpg') }}" alt="Professionnel intervenant localement">
+								<img src="{{ asset('images/footer/footer-local-search.jpg') }}" alt="Professionnel intervenant localement" width="1408" height="768" loading="lazy">
 							</div>
 							<div class="tm-flow-editorial-card__content">
 								<span class="tm-flow-editorial-card__label">Local</span>
@@ -604,8 +606,8 @@
 					</div>
 
 					<div class="tm-flow-editorial__actions">
-						<a href="#" class="tm-flow-btn tm-flow-btn--ghost">En savoir plus</a>
-						<a href="#" class="tm-flow-btn tm-flow-btn--primary">Devenir prestataire</a>
+						<a href="{{ path('app_static_page', {slug: 'avantages'}) }}" class="tm-flow-btn tm-flow-btn--ghost">En savoir plus</a>
+						<a href="{{ path('app_register_choice') }}" class="tm-flow-btn tm-flow-btn--primary">Devenir prestataire</a>
 					</div>
 				</section>
 			{% endif %}
@@ -623,7 +625,7 @@
 				<div class="tm-flow-trust__list">
 					<article class="tm-flow-trust-story">
 						<div class="tm-flow-trust-story__media">
-							<img src="{{ asset('images/worker-group.png') }}" alt="Comparaison de profils professionnels">
+							<img src="{{ asset('images/worker-group.webp') }}" alt="Comparaison de profils professionnels" width="1408" height="768" loading="lazy">
 						</div>
 
 						<div class="tm-flow-trust-story__content">
@@ -650,7 +652,7 @@
 
 					<article class="tm-flow-trust-story">
 						<div class="tm-flow-trust-story__media">
-							<img src="{{ asset('images/etoile-avis.png') }}" alt="Client en échange avec un professionnel">
+							<img src="{{ asset('images/etoile-avis.webp') }}" alt="Client en échange avec un professionnel" width="1408" height="768" loading="lazy">
 						</div>
 
 						<div class="tm-flow-trust-story__content">
@@ -677,7 +679,7 @@
 
 					<article class="tm-flow-trust-story">
 						<div class="tm-flow-trust-story__media">
-							<img src="{{ asset('images/img_par_defaut.png') }}" alt="Intervention locale d'un professionnel">
+							<img src="{{ asset('images/img_par_defaut.webp') }}" alt="Intervention locale d'un professionnel" width="1200" height="896" loading="lazy">
 						</div>
 
 						<div class="tm-flow-trust-story__content">

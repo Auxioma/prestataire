@@ -2,6 +2,8 @@
 
 {% block title %}Demande archivée{% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/quote_request/archived_show.css') }}">{% endblock %}
+
 {% block body %}
 {% set provider = quoteRequest.prestataire %}
 {% set providerName = provider and provider.companyName ? provider.companyName : 'Prestataire' %}

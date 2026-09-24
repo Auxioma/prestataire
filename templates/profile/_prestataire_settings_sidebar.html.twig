@@ -6,8 +6,11 @@
             <div class="tm-sidebar-profile-avatar-wrap">
                 <img
                     src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}"
-                    alt="Avatar de {{ user.firstName|default('') }} {{ user.lastName|default('') }}"
-                    class="tm-sidebar-profile-avatar"
+                alt="Avatar de {{ user.firstName|default('') }} {{ user.lastName|default('') }}"
+                class="tm-sidebar-profile-avatar"
+                width="100"
+                height="100"
+                loading="lazy"
                 >
             </div>
 

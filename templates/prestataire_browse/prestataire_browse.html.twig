@@ -4,6 +4,8 @@
     {{ page_title }} - TrouveMoi
 {% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/prestataire_browse/prestataire_browse.css') }}">{% endblock %}
+
 {% block body %}
     {% set profiles = profiles|default([]) %}
     {% set directResults = directResults|default([]) %}
@@ -25,9 +27,9 @@
             >
                 <div class="tm-browse-card__cover">
                     {% if profile.coverImage %}
-                        <img src="{{ asset('uploads/covers/' ~ profile.coverImage) }}" alt="{{ profile.companyName|default('Prestataire') }}">
+                        <img src="{{ asset('uploads/covers/' ~ profile.coverImage) }}" alt="{{ profile.companyName|default('Prestataire') }}" width="1200" height="896" loading="lazy">
                     {% else %}
-                        <img src="{{ asset('images/img_par_defaut.png') }}" alt="{{ profile.companyName|default('Prestataire') }}">
+                        <img src="{{ asset('images/img_par_defaut.webp') }}" alt="{{ profile.companyName|default('Prestataire') }}" width="1200" height="896" loading="lazy">
                     {% endif %}
                     <div class="tm-browse-card__cover-overlay"></div>
 
@@ -53,7 +55,7 @@
                     <div class="tm-browse-card__identity">
                         <div class="tm-browse-card__logo">
                             {% if profile.logo %}
-                                <img src="{{ asset('uploads/logos/' ~ profile.logo) }}" alt="{{ profile.companyName }}">
+                                <img src="{{ asset('uploads/logos/' ~ profile.logo) }}" alt="{{ profile.companyName }}" width="160" height="160" loading="lazy">
                             {% else %}
                                 <i class="fa-solid fa-building"></i>
                             {% endif %}
@@ -277,7 +279,7 @@
             {{ form_end(browseForm) }}
 
             {% if query is not empty or location is not empty or selectedCategory is not null or selectedSubCategory is not null or radiusKm != 25 %}
-                <div class="tm-browse-filters__chips" aria-label="Filtres actifs">
+                <div class="tm-browse-filters__chips" role="group" aria-label="Filtres actifs">
                     {% if query is not empty %}
                         <span class="tm-browse-filter-chip">{{ query }}</span>
                     {% endif %}

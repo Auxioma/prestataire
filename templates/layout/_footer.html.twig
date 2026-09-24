@@ -8,7 +8,10 @@
                     <a class="tmv2-footer__logo-link" href="{{ path('app_home') }}" aria-label="TrouveMoi.com">
                         <img src="{{ asset('images/logo_trouvemoipresta.png') }}"
                              alt="Logo TrouveMoi"
-                             class="tmv2-footer__logo-image">
+                            class="tmv2-footer__logo-image"
+                            width="446"
+                            height="117"
+                            loading="lazy">
                     </a>
                 </div>
 
@@ -18,11 +21,9 @@
 
                 <div class="tmv2-footer__socials">
                     {% for icon in ['facebook-f', 'instagram', 'linkedin-in'] %}
-                        <a href="#"
-                           class="tmv2-footer__social-btn"
-                           aria-label="{{ icon }}">
+                        <span class="tmv2-footer__social-btn" aria-hidden="true">
                             <i class="fa-brands fa-{{ icon }}"></i>
-                        </a>
+                        </span>
                     {% endfor %}
                 </div>
             </div>
@@ -52,7 +53,7 @@
             {% for title, links in footer_links %}
                 <div class="col-xl-auto col-lg-2 col-md-6 col-12">
                     <div class="tmv2-footer__col">
-                        <h3 class="tmv2-footer__title">{{ title }}</h3>
+                        <h2 class="tmv2-footer__title">{{ title }}</h2>
                         <ul class="tmv2-footer__links">
                             {% for link in links %}
                                 <li>
@@ -70,7 +71,7 @@
             {# Contact #}
             <div class="col-xl-2 col-lg-3 col-md-6 col-12">
                 <div class="tmv2-footer__contact-wrap">
-                    <h3 class="tmv2-footer__title">Besoin d'aide ?</h3>
+                    <h2 class="tmv2-footer__title">Besoin d'aide ?</h2>
                     <ul class="tmv2-footer__contact">
                         <li>
                             <i class="fa-solid fa-phone"></i>

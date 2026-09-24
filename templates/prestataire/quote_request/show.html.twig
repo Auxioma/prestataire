@@ -3,6 +3,8 @@
 {% block title %}Demande reçue
 {% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/prestataire/quote_request.css') }}">{% endblock %}
+
 {% block body %}
 	<div class="container py-4 tm-quote-detail">
         {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}

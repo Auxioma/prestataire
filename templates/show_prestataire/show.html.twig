@@ -5,6 +5,8 @@
     - TrouveMoi
 {% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/show_profile/show_prestataire_profile.css') }}">{% endblock %}
+
 {% block body %}
     <div class="container py-5 tm-profile-show">
         <div class="tm-profile-show__page-shell">
@@ -18,9 +20,9 @@
             <section class="tm-profile-show__hero mb-4">
                 <div class="tm-profile-show__hero-cover">
                     {% if prestataire.coverImage %}
-                        <img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="{{ prestataire.companyName }}">
+                        <img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="{{ prestataire.companyName }}" width="1200" height="896" fetchpriority="high">
                     {% else %}
-                        <img src="{{ asset('images/img_par_defaut.png') }}" alt="{{ prestataire.companyName }}">
+                        <img src="{{ asset('images/img_par_defaut.webp') }}" alt="{{ prestataire.companyName }}" width="1200" height="896" fetchpriority="high">
                     {% endif %}
 
                     <div class="tm-profile-show__hero-overlay"></div>
@@ -48,7 +50,7 @@
                     <div class="tm-profile-show__hero-top">
                         <div class="tm-profile-show__logo-wrapper">
                             {% if prestataire.logo %}
-                                <img src="{{ asset('uploads/logos/' ~ prestataire.logo) }}" alt="{{ prestataire.companyName }}" class="tm-profile-show__logo-img">
+                                <img src="{{ asset('uploads/logos/' ~ prestataire.logo) }}" alt="{{ prestataire.companyName }}" class="tm-profile-show__logo-img" width="160" height="160" loading="eager">
                             {% else %}
                                 <i class="fa-solid fa-building tm-profile-show__logo-placeholder"></i>
                             {% endif %}

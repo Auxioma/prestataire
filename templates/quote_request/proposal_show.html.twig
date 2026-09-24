@@ -4,6 +4,8 @@
     {{ proposal.proposalNumber ?: 'Devis' }}
 {% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/quote_request/proposal_show.css') }}">{% endblock %}
+
 {% block body %}
 {% set quoteRequest = proposal.quoteRequest %}
 {% set isArchivedView = quoteRequest and quoteRequest.archivedByClientAt is not null %}
@@ -101,7 +103,7 @@
 			{% endif %}
 
 			<div class="qp-layout">
-				<main class="qp-main">
+				<div class="qp-main">
 					<section class="qp-card qp-card--hero">
 						<div class="qp-card__body">
 							<div class="qp-section-head qp-section-head--spread">
@@ -254,7 +256,7 @@
 							</div>
 						</section>
 					{% endif %}
-				</main>
+				</div>
 
 				<aside class="qp-sidebar">
 					{% if renderNativeDetails %}

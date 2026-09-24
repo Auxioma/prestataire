@@ -4,12 +4,14 @@
 
 {% block json_ld %}{% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/static/staticpage.css') }}">{% endblock %}
+
 {% block body %}
 <div class="bg-light py-4 border-bottom">
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0 small">
-                <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_home') }}" class="text-decoration-none text-muted">Accueil</a></li>
                 <li class="breadcrumb-item active text-dark fw-medium" aria-current="page">Comment ça marche ?</li>
             </ol>
         </nav>

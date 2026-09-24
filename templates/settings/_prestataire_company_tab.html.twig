@@ -114,7 +114,7 @@
 							<div class="d-flex align-items-center gap-3 w-100">
 								<div class="tm-company-logo-mark m-0 shrink-0">
 									{% if user.prestataireProfile and user.prestataireProfile.logo %}
-										<img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
+										<img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" alt="Logo" width="160" height="160" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
 									{% else %}
 										⚡
 									{% endif %}
@@ -137,7 +137,7 @@
 							<div class="d-flex align-items-center gap-3 w-100">
 								<div class="tm-company-cover-mark m-0 shrink-0">
 									{% if user.prestataireProfile and user.prestataireProfile.coverImage %}
-										<img src="{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}" alt="Couverture" style="width: 100%; height: 100%; object-fit: cover;">
+										<img src="{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}" alt="Couverture" width="1200" height="896" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
 									{% else %}
 										🖼️
 									{% endif %}
@@ -160,7 +160,7 @@
 							<div class="d-flex align-items-center gap-3 w-100">
 								<div class="tm-company-cover-mark m-0 shrink-0">
 									{% if user.prestataireProfile and user.prestataireProfile.signatureImage %}
-										<img src="{{ asset('uploads/signatures/' ~ user.prestataireProfile.signatureImage) }}" alt="Signature" style="width: 100%; height: 100%; object-fit: contain; background: #fff;">
+										<img src="{{ asset('uploads/signatures/' ~ user.prestataireProfile.signatureImage) }}" alt="Signature" width="600" height="240" loading="lazy" style="width: 100%; height: 100%; object-fit: contain; background: #fff;">
 									{% else %}
 										✍️
 									{% endif %}
@@ -253,9 +253,9 @@
 				<div class="modal-content border-0 shadow-lg">
 					<div class="modal-header">
 						<div>
-							<h5 class="modal-title fw-bold" id="companyVerificationPreviewModalLabel">
+							<h2 class="modal-title fw-bold" id="companyVerificationPreviewModalLabel">
 								Vérification de l'entreprise
-							</h5>
+							</h2>
 							<div class="text-muted small mt-1">
 								SIRET analysé :
 								{{ companyVerificationPreview.siret }}
@@ -523,7 +523,7 @@
                                                         value="{{ csrf_token('delete_document_' ~ document.id) }}"
                                                     >
 
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer" aria-label="Supprimer ce document">
                                                         <i class="fa-solid fa-trash"></i>
                                                     </button>
                                                 </form>

@@ -2,12 +2,14 @@
 
 {% block title %}Demander un devis - TrouveMoi.com{% block json_ld %}{% endblock %}{% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/static/staticpage.css') }}">{% endblock %}
+
 {% block body %}
 <div class="bg-light py-4 border-bottom">
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0 small">
-                <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_home') }}" class="text-decoration-none text-muted">Accueil</a></li>
                 <li class="breadcrumb-item active text-dark fw-medium" aria-current="page">Demander un devis</li>
             </ol>
         </nav>
@@ -35,7 +37,7 @@
                                 <i class="fa-solid fa-pen-to-square text-primary fs-3"></i>
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-primary d-flex align-items-center justify-content-center tm-static-step-badge">1</span>
                             </div>
-                            <h3 class="h6 fw-bold text-dark mb-2">Décrivez votre projet</h3>
+                            <h2 class="h6 fw-bold text-dark mb-2">Décrivez votre projet</h2>
                             <p class="text-muted small mb-0">Expliquez votre besoin, indiquez les détails importants et vos préférences.</p>
                         </div>
                         <div class="bg-light rounded-3 p-2 mt-3">
@@ -52,7 +54,7 @@
                                 <i class="fa-solid fa-envelope-open-text text-primary fs-3"></i>
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-primary d-flex align-items-center justify-content-center tm-static-step-badge">2</span>
                             </div>
-                            <h3 class="h6 fw-bold text-dark mb-2">Recevez des devis</h3>
+                            <h2 class="h6 fw-bold text-dark mb-2">Recevez des devis</h2>
                             <p class="text-muted small mb-0">Les professionnels intéressés par votre projet vous envoient leur proposition.</p>
                         </div>
                         <div class="bg-light rounded-3 p-2 mt-3">

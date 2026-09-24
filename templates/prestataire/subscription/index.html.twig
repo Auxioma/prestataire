@@ -3,10 +3,11 @@
 {% block title %}Abonnements prestataire - TrouveMoi{% endblock %}
 
 {% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/profile/settings_prestataire.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/prestataire/subscription.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('styles/prestataire/subscription.css') }}">
     <style>
         .subscription-pricing-section {
             --subscription-purple: #6200ff;
@@ -223,7 +224,7 @@
 {% block javascripts %}
     {{ parent() }}
     {% if stripeConfigured and stripePublicKey %}
-        <script src="https://js.stripe.com/v3/"></script>
+        <script src="https://js.stripe.com/v3/" defer></script>
     {% endif %}
     <script>
         (() => {
@@ -318,7 +319,7 @@
 
                 <div class="tm-settings-sidebar-backdrop tm-dashboard-page__backdrop" {{ stimulus_target('prestataire-dashboard-tabs', 'backdrop') }} {{ stimulus_action('prestataire-dashboard-tabs', 'closeSidebar', 'click') }}></div>
 
-                <main class="tm-settings-content tm-dashboard-page__content">
+                <div class="tm-settings-content tm-dashboard-page__content">
                     <button type="button" class="tm-sidebar-toggle d-lg-none tm-dashboard-page__toggle" aria-label="Ouvrir la navigation du dashboard" {{ stimulus_target('prestataire-dashboard-tabs', 'toggle') }} {{ stimulus_action('prestataire-dashboard-tabs', 'toggleSidebar', 'click') }}>
                         ☰
                     </button>
@@ -790,7 +791,7 @@
                             </div>
                         </div>
                     </div>
-                </main>
+                </div>
             </div>
         </div>
     </div>

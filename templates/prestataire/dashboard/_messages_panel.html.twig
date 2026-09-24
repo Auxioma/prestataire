@@ -5,7 +5,7 @@
         <aside class="msg-liste tm-msg-sidebar">
             <div class="msg-liste__entete tm-msg-sidebar-head">
                 <div class="tm-msg-sidebar-kicker">Messagerie premium</div>
-                <h4 class="tm-card-title mb-1">Toutes les conversations</h4>
+                <h2 class="tm-card-title mb-1">Toutes les conversations</h2>
                 <p class="text-muted mb-0">
                     Retrouvez ici les échanges liés aux demandes de devis acceptées.
                 </p>
@@ -234,6 +234,8 @@
                                                                     src="{{ asset('uploads/messages/' ~ attachment.fileName) }}"
                                                                     alt="{{ attachment.originalName ?: 'Photo jointe' }}"
                                                                     loading="lazy"
+                                                                    width="640"
+                                                                    height="480"
                                                                 >
                                                             </button>
                                                             {% set attachmentIndex = attachmentIndex + 1 %}
@@ -282,6 +284,9 @@
                                     src=""
                                     alt=""
                                     class="tm-msg-lightbox-image"
+                                    width="1200"
+                                    height="900"
+                                    loading="lazy"
                                     data-image-lightbox-target="image"
                                 >
 
@@ -385,13 +390,13 @@
                         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="quoteRequestDetailsModalLabel">Détails de la demande</h5>
+                                    <h2 class="modal-title" id="quoteRequestDetailsModalLabel">Détails de la demande</h2>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                                 </div>
 
                                 <div class="modal-body">
                                     <div class="mb-3">
-                                        <h6 class="mb-1">{{ quoteRequest.title }}</h6>
+                                        <h3 class="mb-1">{{ quoteRequest.title }}</h3>
                                         <div class="text-muted small">
                                             Reçue le
                                             {{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y à H:i') : '—' }}

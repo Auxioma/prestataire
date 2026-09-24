@@ -2,10 +2,7 @@
 
 {% block title %}Photos de la conversation{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('styles/conversation-gallery.css') }}">
-{% endblock %}
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/conversation/gallery.css') }}">{% endblock %}
 
 {% block body %}
     <section
@@ -56,6 +53,9 @@
                                     src="{{ mediaItems[0].url }}"
                                     alt="{{ mediaItems[0].attachment.originalName ?: 'Photo de la conversation' }}"
                                     class="c-conversation-gallery__main-image"
+                                    width="1200"
+                                    height="900"
+                                    loading="lazy"
                                     data-conversation-gallery-target="mainImage"
                                     data-action="click->conversation-gallery#openLightbox"
                                 >
@@ -150,6 +150,8 @@
                                     alt="{{ item.attachment.originalName ?: 'Miniature de la photo' }}"
                                     class="c-conversation-gallery__thumb-image"
                                     loading="lazy"
+                                    width="160"
+                                    height="120"
                                 >
                             </button>
                         {% endfor %}
@@ -187,6 +189,9 @@
                                 src="{{ mediaItems[0].url }}"
                                 alt="{{ mediaItems[0].attachment.originalName ?: 'Photo de la conversation' }}"
                                 class="c-conversation-gallery-lightbox__image"
+                                width="1200"
+                                height="900"
+                                loading="lazy"
                                 data-conversation-gallery-target="lightboxImage"
                             >
 

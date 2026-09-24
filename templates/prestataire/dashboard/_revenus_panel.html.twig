@@ -82,7 +82,7 @@
         <div class="tm-revenue-filter card tm-card p-4 mb-4">
             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
                 <div>
-                    <h4 class="tm-card-title mb-1">Période d’analyse</h4>
+                    <h2 class="tm-card-title mb-1">Période d’analyse</h2>
                     <p class="text-muted mb-0">Les indicateurs ci-dessous se recalculent sur le mois et l’année sélectionnés.</p>
                 </div>
                 <form method="get" action="{{ path('app_prestataire_dashboard') ~ '#revenus-main-panel' }}" class="tm-revenue-filter__form">
@@ -151,7 +151,7 @@
         <div class="card tm-card p-4 mb-4">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
                 <div>
-                    <h4 class="tm-card-title mb-1">Suivi global</h4>
+                    <h2 class="tm-card-title mb-1">Suivi global</h2>
                     <p class="text-muted mb-0">Ces indicateurs restent calculés sur l’ensemble de vos revenus saisis et factures émises.</p>
                 </div>
                 <div class="d-flex flex-wrap gap-3">
@@ -174,7 +174,7 @@
         <div class="row g-4">
             <div class="col-12 col-xl-6">
                 <div class="card tm-card p-4 h-100">
-                    <h4 class="tm-card-title mb-3">Par mois</h4>
+                    <h2 class="tm-card-title mb-3">Par mois</h2>
                     {% if monthlyRows is empty %}
                         <p class="text-muted mb-0">Aucun revenu facturé pour le moment.</p>
                     {% else %}
@@ -206,7 +206,7 @@
 
             <div class="col-12 col-xl-6">
                 <div class="card tm-card p-4 h-100">
-                    <h4 class="tm-card-title mb-3">Par année</h4>
+                    <h2 class="tm-card-title mb-3">Par année</h2>
                     {% if yearlyRows is empty %}
                         <p class="text-muted mb-0">Aucune donnée annuelle disponible.</p>
                     {% else %}
@@ -238,7 +238,7 @@
 
             <div class="col-12">
                 <div class="card tm-card p-4">
-                    <h4 class="tm-card-title mb-3">Par service</h4>
+                    <h2 class="tm-card-title mb-3">Par service</h2>
                     {% if serviceRows is empty %}
                         <p class="text-muted mb-0">Aucun regroupement par service disponible.</p>
                     {% else %}
@@ -280,7 +280,7 @@
         <div class="card tm-card p-4">
             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-2 mb-3">
                 <div>
-                    <h4 class="tm-card-title mb-1">Historique détaillé</h4>
+                    <h2 class="tm-card-title mb-1">Historique détaillé</h2>
                     <p class="text-muted mb-0">Factures émises via TrouveMoi et revenus externes saisis manuellement.</p>
                 </div>
                 <div class="small text-muted">{{ revenueHistoryCount ?? summary.invoicedCount }} élément(s)</div>
@@ -427,7 +427,7 @@
         <div class="row g-4">
             <div class="col-12 col-xl-6">
                 <div class="card tm-card p-4 h-100">
-                    <h4 class="tm-card-title mb-3">Éléments à encaisser</h4>
+                    <h2 class="tm-card-title mb-3">Éléments à encaisser</h2>
                     {% if unpaidRows is empty %}
                         <p class="text-muted mb-0">Tout est marqué comme payé.</p>
                     {% else %}
@@ -485,7 +485,7 @@
                 <div class="card tm-card p-4 h-100 tm-revenue-manual-card">
                     <div class="tm-revenue-manual-card__header">
                         <span class="tm-revenue-manual-card__eyebrow">Saisie manuelle</span>
-                        <h4 class="tm-card-title mb-2">{{ revenueFormEntry.id ? 'Modifier un revenu externe' : 'Ajouter un revenu externe' }}</h4>
+                        <h2 class="tm-card-title mb-2">{{ revenueFormEntry.id ? 'Modifier un revenu externe' : 'Ajouter un revenu externe' }}</h2>
                         <p class="text-muted small mb-0">Ajoutez ici les revenus facturés hors TrouveMoi pour les inclure dans votre synthèse et votre suivi d’encaissement.</p>
                     </div>
 

@@ -2,6 +2,11 @@
 
 {% block title %}{{ (isEdit|default(false)) ? 'Modifier mon avis' : 'Laisser un avis' }}{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/profile/settings_client_profile.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/quote_request/index.css') }}">
+{% endblock %}
+
 {% block body %}
     {% set isEdit = isEdit|default(false) %}
     <div class="container-fluid p-0 tm-cp-page-wrapper">

@@ -1,5 +1,10 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/profile/settings_prestataire.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/settings/_prestataire_service_tab.css') }}">
+{% endblock %}
+
 {% block body %}
     <div class="tm-settings-container" {{ stimulus_controller('settings-tabs') }}>
         <div class="tm-main-layout">
@@ -13,7 +18,7 @@
 
             <div class="tm-settings-sidebar-backdrop" {{ stimulus_target('settings-tabs', 'backdrop') }} {{ stimulus_action('settings-tabs', 'closeSidebar', 'click') }}></div>
 
-            <main class="tm-settings-content">
+            <div class="tm-settings-content">
                 <button type="button" class="tm-sidebar-toggle d-lg-none" aria-label="Ouvrir la navigation des paramètres" {{ stimulus_target('settings-tabs', 'toggle') }} {{ stimulus_action('settings-tabs', 'toggleSidebar', 'click') }}>
                     ☰
                 </button>
@@ -76,7 +81,7 @@
                         {{ form_end(form) }}
                     </div>
                 </div>
-            </main>
+            </div>
         </div>
     </div>
 {% endblock %}

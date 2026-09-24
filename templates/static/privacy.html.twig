@@ -2,6 +2,8 @@
 
 {% block title %}Politique de confidentialité - TrouveMoi.com{% endblock %}
 
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/static/staticpage.css') }}">{% endblock %}
+
 {% block body %}
 <div class="container py-5">
     {# Fil d'ariane #}
@@ -48,7 +50,7 @@
                     <div class="d-flex align-items-center gap-2 mb-3">
                         <span class="badge bg-primary rounded-circle">{{ item.n }}</span>
                         <i class="{{ item.icon }} text-primary fs-5"></i>
-                        <h3 class="fw-bold fs-6 text-dark mb-0">{{ item.t }}</h3>
+                        <h2 class="fw-bold fs-6 text-dark mb-0">{{ item.t }}</h2>
                     </div>
                     <p class="text-muted small mb-0 lh-sm">{{ item.d }}</p>
                 </div>
@@ -59,7 +61,7 @@
     {# Bloc Contact #}
     <div class="bg-primary-subtle p-4 rounded-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
         <div>
-            <h4 class="fw-bold fs-5 text-dark mb-1">Une question sur la confidentialité de vos données ?</h4>
+            <h2 class="fw-bold fs-5 text-dark mb-1">Une question sur la confidentialité de vos données ?</h2>
             <p class="text-muted small mb-0">Notre équipe est à votre disposition pour répondre à toutes vos questions.</p>
         </div>
         <a href="#" class="btn btn-white border shadow-sm px-4 fw-semibold text-primary">Nous contacter</a>

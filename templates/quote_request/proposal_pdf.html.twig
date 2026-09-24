@@ -274,7 +274,7 @@
 					<tr>
 						<td class="brand-cell">
 							{% if prestataireLogoUrl %}
-								<img src="{{ prestataireLogoUrl }}" alt="Logo de {{ proposal.prestataireCompanyName ?: 'l’entreprise' }}" class="logo">
+								<img src="{{ prestataireLogoUrl }}" alt="Logo de {{ proposal.prestataireCompanyName ?: 'l’entreprise' }}" class="logo" width="130" height="54" loading="eager">
 							{% endif %}
 
 							<div class="brand-name">
@@ -557,7 +557,7 @@
 					<div class="signature-label">
 						Fait le {{ proposal.updatedAt ? proposal.updatedAt|date('d/m/Y à H:i') : (proposal.finalizedAt ? proposal.finalizedAt|date('d/m/Y à H:i') : '—') }}
 					</div>
-					<img src="{{ prestataireSignatureUrl }}" alt="Signature du prestataire" class="signature-image">
+					<img src="{{ prestataireSignatureUrl }}" alt="Signature du prestataire" class="signature-image" width="180" height="72" loading="eager">
 				</div>
 			{% endif %}
 

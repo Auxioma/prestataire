@@ -3,12 +3,9 @@
 {% block title %}Paramètres Client - TrouveMoi
 {% endblock %}
 
-{% block body %}
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkR4j8tbtPom9A1z+0ItcQYfL0WLaRZ/7k8w==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/profile/settings_client_profile.css') }}">{% endblock %}
 
+{% block body %}
 	<div class="container-fluid p-0 tm-cp-page-wrapper" data-controller="client-profile">
 		<div
 			class="d-flex flex-column flex-md-row align-items-stretch">
@@ -93,7 +90,7 @@
 							<div class="col-lg-8">
 								<div class="card tm-cp-card p-4 h-100 d-flex flex-column justify-content-between">
 									<div>
-										<h4 class="tm-cp-card-title mb-4">Informations personnelles</h4>
+										<h2 class="tm-cp-card-title mb-4">Informations personnelles</h2>
 
 										<div class="row g-3">
 											<div class="col-md-6 tm-cp-form-row">
@@ -111,7 +108,7 @@
 										</div>
 
 										<div id="pro-fields-wrapper" class="row g-3 mt-2 pt-3 border-top tm-cp-pro-fields-wrapper" data-client-profile-target="proFieldsWrapper">
-											<h5 class="fw-semibold text-primary mb-2 fs-6">Détails de l'entreprise</h5>
+											<h3 class="fw-semibold text-primary mb-2 fs-6">Détails de l'entreprise</h3>
 											<div class="col-md-6 tm-cp-form-row">
 												{{ form_row(settingsForm.clientProfile.companyName) }}
 											</div>
@@ -131,9 +128,9 @@
 
 							<div class="col-lg-4">
 								<div class="card tm-cp-card p-4 text-center h-100">
-									<h4 class="tm-cp-card-title text-start mb-4">Photo de profil</h4>
+									<h2 class="tm-cp-card-title text-start mb-4">Photo de profil</h2>
 									<div class="my-auto p-4 rounded-4 tm-cp-avatar-container">
-										<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle mb-3 border-2 border-white shadow-sm tm-cp-avatar-preview" alt="Avatar">
+										<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle mb-3 border-2 border-white shadow-sm tm-cp-avatar-preview" alt="Avatar" width="100" height="100" loading="lazy">
 
 										<div class="mx-auto" style="max-width: 320px;">
 											<div class="text-start">
@@ -156,9 +153,9 @@
 						<div class="row g-4">
 							<div class="col-12">
 								<div class="card tm-cp-card p-4">
-									<h4 class="tm-cp-card-title mb-4">
+									<h2 class="tm-cp-card-title mb-4">
 										<i class="fa-solid fa-location-dot me-2"></i>Adresse principale (Lieu des interventions)
-									</h4>
+									</h2>
 									<div class="row g-3">
 										<div class="col-md-6 col-lg-6 tm-cp-form-row">
 											{{ form_row(settingsForm.clientProfile.defaultAddress) }}
@@ -175,9 +172,9 @@
 
 							<div class="col-12">
 								<div class="card tm-cp-card p-4">
-									<h4 class="tm-cp-card-title mb-4">
+									<h2 class="tm-cp-card-title mb-4">
 										<i class="fa-regular fa-file-lines me-2"></i>Adresse de facturation
-									</h4>
+									</h2>
 									<div class="row g-3">
 										<div class="col-md-5 col-lg-5 tm-cp-form-row">
 											{{ form_row(settingsForm.clientProfile.billingAddress) }}
@@ -215,7 +212,7 @@
 						<div class="row g-4">
 							<div class="col-xl-7">
 								<div class="card tm-cp-card p-4 h-100">
-									<h4 class="tm-cp-card-title mb-4">Changer le mot de passe</h4>
+									<h2 class="tm-cp-card-title mb-4">Changer le mot de passe</h2>
 									{{ form_start(passwordForm, {attr: {novalidate: 'novalidate'}}) }}
 										<div class="row g-3">
 											<div class="col-12 tm-cp-form-row">
@@ -239,7 +236,7 @@
 
 							<div class="col-xl-5">
 								<div class="card tm-cp-card p-4 border-danger-subtle">
-									<h4 class="tm-cp-card-title mb-3 text-danger">Désinscription</h4>
+									<h2 class="tm-cp-card-title mb-3 text-danger">Désinscription</h2>
 									<p class="text-muted mb-4">Votre compte sera désactivé par soft delete et vous serez immédiatement déconnecté.</p>
 									{{ form_start(deletionForm, {attr: {novalidate: 'novalidate'}}) }}
 										<div class="row g-3">
