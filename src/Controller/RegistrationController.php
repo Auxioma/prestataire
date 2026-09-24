@@ -114,7 +114,7 @@ class RegistrationController extends AbstractController
 
             $this->addRegistrationEmailFlash($user, false);
 
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('registration/register.html.twig', [
@@ -382,7 +382,7 @@ class RegistrationController extends AbstractController
 
         $this->addRegistrationEmailFlash($user, true);
 
-        return $this->redirectToRoute('app_home');
+        return $this->redirectToRoute('app_login');
     }
 
     private function addRegistrationEmailFlash(User $user, bool $isPrestataire): void
