@@ -185,40 +185,6 @@
     pointer-events: none;
 }
 
-/*
- * Vague blanche : très visible.
- * Utilise clip-path pour former une courbe plus expressive
- * qu'un simple border-radius.
- */
-.tmv2-hero__wave {
-    position: absolute;
-    z-index: 0;
-    right: -5%;
-    bottom: -1px;
-    left: -5%;
-
-    height: 8rem;
-    background: #fff;
-
-    clip-path: ellipse(62% 55% at 50% 100%);
-    pointer-events: none;
-}
-
-/*
- * Alternative, si tu veux une vague asymétrique comme une vague de mer :
- *
- * clip-path: polygon(
- *   0 58%,
- *   14% 45%,
- *   30% 30%,
- *   48% 42%,
- *   65% 64%,
- *   82% 53%,
- *   100% 26%,
- *   100% 100%,
- *   0 100%
- * );
- */
 
 .tmv2-hero__inner,
 .tmv2-search-wrap {
@@ -292,13 +258,6 @@
         opacity: 0.22;
         object-position: 65% center;
     }
-
-    .tmv2-hero__wave {
-        right: -25%;
-        left: -25%;
-        height: 5rem;
-        clip-path: ellipse(70% 60% at 50% 100%);
-    }
 }
 .tmv2-pill {
     display: inline-flex;
@@ -316,11 +275,6 @@
     color: var(--tmv2-vert);
 }
 
-.tmv2-hero__visual {
-    position: relative;
-    justify-content: center;
-    min-height: 340px;
-}
 .tmv2-pro-card {
     width: 320px;
     padding: 1.6rem;
@@ -330,18 +284,6 @@
     box-shadow: var(--tmv2-shadow-strong);
     transform: rotate(2deg);
 }
-.tmv2-pro-card__avatar {
-    width: 64px;
-    height: 64px;
-    border-radius: 18px;
-    display: grid;
-    place-items: center;
-    background: linear-gradient(135deg, var(--tmv2-bleu), #4a74e8);
-    color: #fff;
-    font-weight: 800;
-    font-size: 1.4rem;
-    font-family: var(--tmv2-display);
-}
 .tmv2-pro-card h2 {
     margin: 1rem 0 0.45rem;
     font-size: 1.2rem;
@@ -349,23 +291,6 @@
 .tmv2-pro-card p {
     margin: 0;
     color: var(--tmv2-texte-doux);
-}
-.tmv2-pro-card__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-    margin: 1rem 0 0;
-    padding: 0;
-    list-style: none;
-}
-.tmv2-pro-card__tags li {
-    padding: 0.35rem 0.65rem;
-    border-radius: 999px;
-    background: var(--tmv2-papier);
-    border: 1px solid var(--tmv2-bordure);
-    color: var(--tmv2-texte-doux);
-    font-size: 0.78rem;
-    font-weight: 700;
 }
 .tmv2-floating {
     position: absolute;
@@ -411,7 +336,7 @@
 
 .tmv2-search-wrap {
     position: relative;
-    z-index: 2;
+    z-index: 20;
     margin-top: 2rem;
 }
 .tmv2-search-wrap .tm-homepage-search-toolbar--home {
@@ -445,9 +370,6 @@
     color: #fff;
 }
 
-.tmv2-stats-section {
-    padding-top: 6.5rem;
-}
 .tmv2-intro-card,
 .tmv2-stat-card,
 .tmv2-category-card,
@@ -940,21 +862,10 @@
     font-size: 1.4rem;
 }
 
-@media (max-width: 1024px) {
-    .tmv2-hero__inner {
-        grid-template-columns: 1fr;
-    }
-    .tmv2-hero__visual {
-        display: none !important;
-    }
-}
 
 @media (max-width: 768px) {
     .tmv2-section {
         padding: 4rem 0;
-    }
-    .tmv2-hero {
-        padding: 4rem 0 6rem;
     }
     .tmv2-search-wrap {
         margin-top: 1.5rem;
@@ -2049,15 +1960,6 @@ body:has(.tm-profile-completion-modal.show)
     bottom: 0.8rem;
 }
 
-.tmv2-search-wrap {
-    margin-top: 2rem;
-}
-.tmv2-search-wrap .tm-homepage-search-toolbar--home {
-    border-radius: 24px;
-}
-.tmv2-search-wrap {
-    z-index: 20;
-}
 .tmv2-chiffres-strip {
     position: relative;
     z-index: 1;
@@ -2101,9 +2003,6 @@ body:has(.tm-profile-completion-modal.show)
     .tmv2-pill i {
         font-size: 1.2rem;
     }
-    .tmv2-search-wrap {
-        margin-top: 1.5rem;
-    }
 }
 
 /* Composition de la première vue, calée sur la maquette desktop. */
@@ -2122,9 +2021,9 @@ body:has(.tm-profile-completion-modal.show)
 
     .tmv2-hero__inner {
         min-height: 480px;
-        grid-template-columns: minmax(0, 1fr) 560px;
-        gap: 2.5rem;
-        align-items: start;
+        grid-template-columns: minmax(0, 1fr) minmax(380px, 0.7fr);
+        gap: clamp(3.5rem, 5vw, 5.5rem);
+        align-items: center;
     }
 
     .tmv2-hero__title {
@@ -2148,33 +2047,25 @@ body:has(.tm-profile-completion-modal.show)
     }
 
     .tmv2-hero__visual {
-        min-height: 480px;
-        padding-top: 0.5rem;
+        min-height: 440px;
+        padding-top: 0;
+        justify-content: center;
+        transform: translateX(-9rem);
     }
 
     .tmv2-pro-card {
-        margin-left: -6.2rem;
-        margin-top: -3.65rem;
+        margin: 0 auto;
     }
 
     .tmv2-floating--top {
-        left: -1.15rem;
+        top: 1.25rem;
+        left: 1rem;
     }
     .tmv2-floating--bottom {
-        right: -1.5rem;
-        bottom: 0;
+        right: 1rem;
+        bottom: 1.25rem;
     }
 
-    .tmv2-search-wrap {
-        position: relative;
-        z-index: 20;
-        margin-top: 2rem;
-    }
-
-    .tmv2-search-wrap .tm-homepage-search-toolbar--home,
-    .tmv2-search-form {
-        border-radius: 24px;
-    }
 
     .tmv2-chiffres-strip {
         position: relative;
