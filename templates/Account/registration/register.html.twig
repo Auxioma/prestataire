@@ -223,7 +223,7 @@
                             {% endif %}
                         </div>
 
-                        <div class="tm-register-password-block" data-controller="password">
+                        <div class="tm-register-password-block" data-controller="account--password">
                             <div class="tm-register-field tm-register-field--password {% if not registrationForm.plainPassword.first.vars.valid %}border border-danger rounded-3{% endif %}">
                                 <span class="tm-register-field__icon">
                                     <i class="bi bi-lock-fill" aria-hidden="true"></i>
@@ -234,14 +234,14 @@
                                     attr: {
                                         placeholder: 'Mot de passe',
                                         class: 'tm-register-field__input',
-                                        'data-password-target': 'input',
-                                        'data-action': 'input->password#checkPassword',
+                                        'data-account--password-target': 'input',
+                                        'data-action': 'input->account--password#checkPassword',
                                         'aria-invalid': registrationForm.plainPassword.first.vars.errors|length > 0 ? 'true' : 'false',
                                         'aria-describedby': registrationForm.plainPassword.first.vars.errors|length > 0 ? registrationForm.plainPassword.first.vars.id ~ '-errors ' ~ registrationForm.plainPassword.first.vars.id ~ '-rules' : registrationForm.plainPassword.first.vars.id ~ '-rules',
                                     },
                                 }) }}
 
-                                <button type="button" class="tm-register-password-toggle" data-password-target="toggle" data-action="click->password#toggleVisibility" aria-label="Afficher ou masquer le mot de passe"></button>
+                                <button type="button" class="tm-register-password-toggle" data-account--password-target="toggle" data-action="click->account--password#toggleVisibility" aria-label="Afficher ou masquer le mot de passe"></button>
                             </div>
 
                             {% if registrationForm.plainPassword.first.vars.errors|length > 0 %}
@@ -252,14 +252,14 @@
                             {% endif %}
 
                             <div id="{{ registrationForm.plainPassword.first.vars.id }}-rules" class="tm-register-password-rules" aria-live="polite">
-                                <div class="is-invalid" data-password-target="length">❌ Au moins 8 caractères</div>
-                                <div class="is-invalid" data-password-target="uppercase">❌ Au moins une majuscule</div>
-                                <div class="is-invalid" data-password-target="number">❌ Au moins un chiffre</div>
-                                <div class="is-invalid" data-password-target="special">❌ Au moins un caractère spécial</div>
+                                <div class="is-invalid" data-account--password-target="length">❌ Au moins 8 caractères</div>
+                                <div class="is-invalid" data-account--password-target="uppercase">❌ Au moins une majuscule</div>
+                                <div class="is-invalid" data-account--password-target="number">❌ Au moins un chiffre</div>
+                                <div class="is-invalid" data-account--password-target="special">❌ Au moins un caractère spécial</div>
                             </div>
                         </div>
 
-                        <div class="mb-3 mt-3" data-controller="password">
+                        <div class="mb-3 mt-3" data-controller="account--password">
                             <div class="tm-register-field tm-register-field--password {% if not registrationForm.plainPassword.second.vars.valid %}border border-danger rounded-3{% endif %}">
                                 <span class="tm-register-field__icon">
                                     <i class="bi bi-shield-lock-fill" aria-hidden="true"></i>
@@ -270,13 +270,13 @@
                                     attr: {
                                         placeholder: 'Confirmer le mot de passe',
                                         class: 'tm-register-field__input',
-                                        'data-password-target': 'input',
+                                        'data-account--password-target': 'input',
                                         'aria-invalid': registrationForm.plainPassword.second.vars.errors|length > 0 ? 'true' : 'false',
                                         'aria-describedby': registrationForm.plainPassword.second.vars.errors|length > 0 ? registrationForm.plainPassword.second.vars.id ~ '-errors' : null,
                                     },
                                 }) }}
 
-                                <button type="button" class="tm-register-password-toggle" data-password-target="toggle" data-action="click->password#toggleVisibility" aria-label="Afficher ou masquer la confirmation du mot de passe"><i class="bi bi-eye-slash-fill" aria-hidden="true"></i></button>
+                                <button type="button" class="tm-register-password-toggle" data-account--password-target="toggle" data-action="click->account--password#toggleVisibility" aria-label="Afficher ou masquer la confirmation du mot de passe"><i class="bi bi-eye-slash-fill" aria-hidden="true"></i></button>
                             </div>
 
                             {% if registrationForm.plainPassword.second.vars.errors|length > 0 %}
@@ -331,12 +331,12 @@
                             </div>
                         {% endif %}
 
-                        <form method="post" action="{{ path('app_register', {role: 'prestataire', step: 2}) }}" data-controller="chained-selects" data-turbo="false">
+                        <form method="post" action="{{ path('app_register', {role: 'prestataire', step: 2}) }}" data-controller="core--chained-selects" data-turbo="false">
                             <input type="hidden" name="_token" value="{{ csrf_token('prestataire_registration_activity') }}">
 
                             <div class="mb-3">
                                 <label class="form-label fw-semibold" for="registration-category">Catégorie</label>
-                                <select id="registration-category" class="form-select" data-chained-selects-target="category" data-action="change->chained-selects#loadSubCategories" required>
+                                <select id="registration-category" class="form-select" data-core--chained-selects-target="category" data-action="change->core--chained-selects#loadSubCategories" required>
                                     <option value="">Choisir une catégorie principale</option>
                                     {% for category in categories %}
                                         <option value="{{ category.id }}">{{ category.name }}</option>
@@ -346,14 +346,14 @@
 
                             <div class="mb-3">
                                 <label class="form-label fw-semibold" for="registration-subcategory">Sous-catégorie</label>
-                                <select id="registration-subcategory" class="form-select" data-chained-selects-target="subcategory" data-action="change->chained-selects#loadServices" disabled required>
+                                <select id="registration-subcategory" class="form-select" data-core--chained-selects-target="subcategory" data-action="change->core--chained-selects#loadServices" disabled required>
                                     <option value="">Choisir une sous-catégorie…</option>
                                 </select>
                             </div>
 
                             <div class="mb-4">
                                 <label class="form-label fw-semibold" for="registration-service">Service</label>
-                                <select id="registration-service" class="form-select" data-chained-selects-target="service" name="service_id" disabled required>
+                                <select id="registration-service" class="form-select" data-core--chained-selects-target="service" name="service_id" disabled required>
                                     <option value="">Choisir un service…</option>
                                 </select>
                             </div>

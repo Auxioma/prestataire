@@ -28,9 +28,9 @@
         <div class="col-12 col-md-6 col-xl-4">
             <article
                 class="tm-browse-card h-100"
-                data-controller="card-hover"
-                data-card-hover-hovered-class="tm-browse-card--hovered"
-                data-action="mouseenter->card-hover#mouseEnter mouseleave->card-hover#mouseLeave"
+                data-controller="core--card-hover"
+                data-core--card-hover-hovered-class="tm-browse-card--hovered"
+                data-action="mouseenter->core--card-hover#mouseEnter mouseleave->core--card-hover#mouseLeave"
             >
                 <div class="tm-browse-card__cover">
                     {% if profile.coverImage %}
@@ -194,8 +194,8 @@
                 attr: {
                     class: 'tm-browse-filters__form',
                     novalidate: 'novalidate',
-                    'data-controller': 'chained-selects homepage-search',
-                    'data-homepage-search-default-radius-value': radiusKm,
+                    'data-controller': 'core--chained-selects search--homepage-search',
+                    'data-search--homepage-search-default-radius-value': radiusKm,
                 },
             }) }}
                 <div class="tm-browse-filters__grid">
@@ -231,11 +231,11 @@
                             {{ form_widget(browseForm.radiusKm, {
                                 attr: {
                                     class: 'form-range tm-browse-filter-field__range',
-                                    'data-homepage-search-target': 'range',
-                                    'data-action': 'input->homepage-search#update change->homepage-search#update',
+                                    'data-search--homepage-search-target': 'range',
+                                    'data-action': 'input->search--homepage-search#update change->search--homepage-search#update',
                                 },
                             }) }}
-                            <span class="tm-browse-filter-field__range-value" data-homepage-search-target="value">{{ radiusKm }} km</span>
+                            <span class="tm-browse-filter-field__range-value" data-search--homepage-search-target="value">{{ radiusKm }} km</span>
                         </div>
                     </div>
 
@@ -246,8 +246,8 @@
                         {{ form_widget(browseForm.category, {
                             attr: {
                                 class: 'form-select tm-browse-filter-field__control',
-                                'data-chained-selects-target': 'category',
-                                'data-action': 'change->chained-selects#loadSubCategories',
+                                'data-core--chained-selects-target': 'category',
+                                'data-action': 'change->core--chained-selects#loadSubCategories',
                             },
                         }) }}
                     </div>
@@ -259,7 +259,7 @@
                         {{ form_widget(browseForm.subCategory, {
                             attr: {
                                 class: 'form-select tm-browse-filter-field__control',
-                                'data-chained-selects-target': 'subcategory',
+                                'data-core--chained-selects-target': 'subcategory',
                             },
                         }) }}
                     </div>

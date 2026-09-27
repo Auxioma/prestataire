@@ -8,7 +8,7 @@
     <section
         class="c-conversation-gallery-page"
         {% if mediaItems is not empty %}
-            data-controller="conversation-gallery"
+            data-controller="messaging--conversation-gallery"
         {% endif %}
     >
         <div class="c-conversation-gallery-page__container">
@@ -36,13 +36,13 @@
                     </a>
                 </div>
             {% else %}
-                <div class="c-conversation-gallery" data-conversation-gallery-target="root">
+                <div class="c-conversation-gallery" data-messaging--conversation-gallery-target="root">
                     <div class="c-conversation-gallery__viewer">
                         <div class="c-conversation-gallery__stage">
                             <button
                                 type="button"
                                 class="c-conversation-gallery__nav c-conversation-gallery__nav--prev"
-                                data-action="click->conversation-gallery#prev"
+                                data-action="click->messaging--conversation-gallery#prev"
                                 aria-label="Photo précédente"
                             >
                                 ‹
@@ -56,25 +56,25 @@
                                     width="1200"
                                     height="900"
                                     loading="lazy"
-                                    data-conversation-gallery-target="mainImage"
+                                    data-messaging--conversation-gallery-target="mainImage"
                                     role="button"
                                     tabindex="0"
                                     aria-label="Agrandir la photo : {{ mediaItems[0].attachment.originalName ?: 'Photo de la conversation' }}"
-                                    data-action="click->conversation-gallery#openLightbox keydown.enter->conversation-gallery#openLightbox keydown.space->conversation-gallery#openLightbox"
+                                    data-action="click->messaging--conversation-gallery#openLightbox keydown.enter->messaging--conversation-gallery#openLightbox keydown.space->messaging--conversation-gallery#openLightbox"
                                 >
 
                                 <figcaption class="c-conversation-gallery__caption">
                                     <div class="c-conversation-gallery__caption-meta">
                                         <strong
                                             class="c-conversation-gallery__author"
-                                            data-conversation-gallery-target="author"
+                                            data-messaging--conversation-gallery-target="author"
                                         >
                                             {{ mediaItems[0].authorName ?: 'Utilisateur' }}
                                         </strong>
 
                                         <span
                                             class="c-conversation-gallery__date"
-                                            data-conversation-gallery-target="date"
+                                            data-messaging--conversation-gallery-target="date"
                                         >
                                             {{ mediaItems[0].createdAt ? mediaItems[0].createdAt|date('d/m/Y H:i') : '—' }}
                                         </span>
@@ -82,19 +82,19 @@
 
                                     <div
                                         class="c-conversation-gallery__delete-wrap"
-                                        data-conversation-gallery-target="deleteWrapper"
+                                        data-messaging--conversation-gallery-target="deleteWrapper"
                                         {% if not mediaItems[0].canDelete %}hidden{% endif %}
                                     >
                                         <form
                                             method="post"
                                             action="{{ path(deleteRouteName, {id: mediaItems[0].attachment.id}) }}"
-                                            data-conversation-gallery-target="deleteForm"
-                                            data-controller="confirm-dialog"
-                                            data-action="submit->confirm-dialog#confirm"
-                                            data-confirm-dialog-title-value="Supprimer cette photo ?"
-                                            data-confirm-dialog-text-value="Cette photo sera retirée de la conversation."
-                                            data-confirm-dialog-confirm-button-text-value="Supprimer"
-                                            data-confirm-dialog-cancel-button-text-value="Annuler"
+                                            data-messaging--conversation-gallery-target="deleteForm"
+                                            data-controller="core--confirm-dialog"
+                                            data-action="submit->core--confirm-dialog#confirm"
+                                            data-core--confirm-dialog-title-value="Supprimer cette photo ?"
+                                            data-core--confirm-dialog-text-value="Cette photo sera retirée de la conversation."
+                                            data-core--confirm-dialog-confirm-button-text-value="Supprimer"
+                                            data-core--confirm-dialog-cancel-button-text-value="Annuler"
                                         >
                                             <input
                                                 type="hidden"
@@ -121,7 +121,7 @@
                             <button
                                 type="button"
                                 class="c-conversation-gallery__nav c-conversation-gallery__nav--next"
-                                data-action="click->conversation-gallery#next"
+                                data-action="click->messaging--conversation-gallery#next"
                                 aria-label="Photo suivante"
                             >
                                 ›
@@ -131,13 +131,13 @@
 
                     <div
                         class="c-conversation-gallery__thumbs"
-                        data-conversation-gallery-target="thumbs"
+                        data-messaging--conversation-gallery-target="thumbs"
                     >
                         {% for item in mediaItems %}
                             <button
                                 type="button"
                                 class="c-conversation-gallery__thumb{% if loop.first %} is-active{% endif %}"
-                                data-action="click->conversation-gallery#select"
+                                data-action="click->messaging--conversation-gallery#select"
                                 data-index="{{ loop.index0 }}"
                                 data-url="{{ item.url }}"
                                 data-alt="{{ item.attachment.originalName ?: 'Photo de la conversation' }}"
@@ -162,18 +162,18 @@
 
                     <div
                         class="c-conversation-gallery-lightbox"
-                        data-conversation-gallery-target="lightbox"
-                        data-action="click->conversation-gallery#closeLightbox"
+                        data-messaging--conversation-gallery-target="lightbox"
+                        data-action="click->messaging--conversation-gallery#closeLightbox"
                         hidden
                     >
                         <div
                             class="c-conversation-gallery-lightbox__dialog"
-                            data-action="click->conversation-gallery#stopPropagation"
+                            data-action="click->messaging--conversation-gallery#stopPropagation"
                         >
                             <button
                                 type="button"
                                 class="c-conversation-gallery-lightbox__close"
-                                data-action="click->conversation-gallery#closeLightbox"
+                                data-action="click->messaging--conversation-gallery#closeLightbox"
                                 aria-label="Fermer l’aperçu plein écran"
                             >
                                 ×
@@ -182,7 +182,7 @@
                             <button
                                 type="button"
                                 class="c-conversation-gallery-lightbox__nav c-conversation-gallery-lightbox__nav--prev"
-                                data-action="click->conversation-gallery#prevFromLightbox"
+                                data-action="click->messaging--conversation-gallery#prevFromLightbox"
                                 aria-label="Photo précédente"
                             >
                                 ‹
@@ -195,13 +195,13 @@
                                 width="1200"
                                 height="900"
                                 loading="lazy"
-                                data-conversation-gallery-target="lightboxImage"
+                                data-messaging--conversation-gallery-target="lightboxImage"
                             >
 
                             <button
                                 type="button"
                                 class="c-conversation-gallery-lightbox__nav c-conversation-gallery-lightbox__nav--next"
-                                data-action="click->conversation-gallery#nextFromLightbox"
+                                data-action="click->messaging--conversation-gallery#nextFromLightbox"
                                 aria-label="Photo suivante"
                             >
                                 ›

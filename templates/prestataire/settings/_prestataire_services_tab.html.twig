@@ -79,7 +79,7 @@
                                     </span>
                                 {% endif %}
 
-                                <form method="post" action="{{ path('app_prestataire_service_delete', {id: ps.id}) }}" class="d-inline-block" data-turbo="false" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Supprimer ce service ?" data-confirm-dialog-text-value="Cette suppression retirera le service de votre profil." data-confirm-dialog-confirm-button-text-value="Supprimer" data-confirm-dialog-cancel-button-text-value="Annuler">
+                                <form method="post" action="{{ path('app_prestataire_service_delete', {id: ps.id}) }}" class="d-inline-block" data-turbo="false" data-controller="core--confirm-dialog" data-action="submit->core--confirm-dialog#confirm" data-core--confirm-dialog-title-value="Supprimer ce service ?" data-core--confirm-dialog-text-value="Cette suppression retirera le service de votre profil." data-core--confirm-dialog-confirm-button-text-value="Supprimer" data-core--confirm-dialog-cancel-button-text-value="Annuler">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ps.id) }}">
                                     <button type="submit" class="btn btn-sm btn-outline-danger tm-icon-btn" title="Supprimer" aria-label="Supprimer le service {{ ps.service.name }}">
                                         <i class="fa-solid fa-trash" aria-hidden="true"></i>
@@ -115,13 +115,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
 
-            <div class="modal-body" data-controller="chained-selects">
+            <div class="modal-body" data-controller="core--chained-selects">
                 <form action="{{ path('app_prestataire_add_service') }}" method="POST" data-turbo="false" class="tm-add-service-form">
                     <input type="hidden" name="_token" value="{{ csrf_token('add_service') }}">
 
                     <div class="tm-field-group">
                         <label class="form-label" for="add-service-category">Catégorie</label>
-                        <select id="add-service-category" data-chained-selects-target="category" data-action="change->chained-selects#loadSubCategories" data-controller="symfony--ux-autocomplete--autocomplete" data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false}}' required>
+                        <select id="add-service-category" data-core--chained-selects-target="category" data-action="change->core--chained-selects#loadSubCategories" data-controller="symfony--ux-autocomplete--autocomplete" data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false}}' required>
                             <option value="">Choisir une catégorie principale</option>
                             {% for category in categories %}
                                 <option value="{{ category.id }}">{{ category.name }}</option>
@@ -131,14 +131,14 @@
 
                     <div class="tm-field-group">
                         <label class="form-label" for="add-service-subcategory">Sous-catégorie</label>
-                        <select id="add-service-subcategory" data-chained-selects-target="subcategory" data-action="change->chained-selects#loadServices" data-controller="symfony--ux-autocomplete--autocomplete" data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false}}' disabled required>
+                        <select id="add-service-subcategory" data-core--chained-selects-target="subcategory" data-action="change->core--chained-selects#loadServices" data-controller="symfony--ux-autocomplete--autocomplete" data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false}}' disabled required>
                             <option value="">Choisir une sous-catégorie…</option>
                         </select>
                     </div>
 
                     <div class="tm-field-group">
                         <label class="form-label" for="add-service-service">Service</label>
-                        <select id="add-service-service" data-chained-selects-target="service" data-controller="symfony--ux-autocomplete--autocomplete" data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false}}' name="service_id" disabled required>
+                        <select id="add-service-service" data-core--chained-selects-target="service" data-controller="symfony--ux-autocomplete--autocomplete" data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false}}' name="service_id" disabled required>
                             <option value="">Choisir un service…</option>
                         </select>
                     </div>

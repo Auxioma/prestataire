@@ -1,10 +1,10 @@
 <div
     class="card tm-card tm-availability-card p-4"
-    data-controller="availability-toggle"
-    data-availability-toggle-morning-start-value="08:30"
-    data-availability-toggle-morning-end-value="12:00"
-    data-availability-toggle-afternoon-start-value="13:30"
-    data-availability-toggle-afternoon-end-value="17:00"
+    data-controller="prestataire--availability-toggle"
+    data-prestataire--availability-toggle-morning-start-value="08:30"
+    data-prestataire--availability-toggle-morning-end-value="12:00"
+    data-prestataire--availability-toggle-afternoon-start-value="13:30"
+    data-prestataire--availability-toggle-afternoon-end-value="17:00"
 >
     <div class="tm-availability-topbar">
         <div>
@@ -30,7 +30,7 @@
                     attr: {
                         class: 'form-check-input',
                         role: 'switch',
-                        'data-action': 'change->availability-toggle#toggleVacation',
+                        'data-action': 'change->prestataire--availability-toggle#toggleVacation',
                     },
                 }) }}
                 <div class="tm-availability-vacation-copy">
@@ -49,7 +49,7 @@
             {{ form_errors(availabilityForm.isOnVacation) }}
 
             <div class="tm-availability-vacation-return mt-3{% if not availabilityForm.isOnVacation.vars.checked %} is-hidden{% endif %}"
-                 data-availability-toggle-target="vacationPanel">
+                 data-prestataire--availability-toggle-target="vacationPanel">
                 <div class="tm-form-row mb-0">
                     {{ form_label(availabilityForm.vacationReturnDate) }}
                     {{ form_widget(availabilityForm.vacationReturnDate, {
@@ -84,7 +84,7 @@
 
                     <div class="tm-availability-col tm-availability-col--slot" role="cell">
                         <div class="tm-availability-slot"
-                             data-availability-toggle-target="slot">
+                             data-prestataire--availability-toggle-target="slot">
                             <div class="tm-availability-slot-top">
                                 <div class="tm-availability-slot-title">Matin</div>
 
@@ -92,9 +92,9 @@
                                     {{ form_widget(availabilityFormRow.morningEnabled, {
                                         attr: {
                                             class: 'tm-availability-switch-input',
-                                            'data-availability-toggle-target': 'checkbox',
-                                            'data-availability-toggle-panel-selector-value': '.js-morning-panel',
-                                            'data-action': 'change->availability-toggle#toggle',
+                                            'data-prestataire--availability-toggle-target': 'checkbox',
+                                            'data-prestataire--availability-toggle-panel-selector-value': '.js-morning-panel',
+                                            'data-action': 'change->prestataire--availability-toggle#toggle',
                                         },
                                     }) }}
                                     <span class="tm-availability-switch-slider"></span>
@@ -122,7 +122,7 @@
 
                     <div class="tm-availability-col tm-availability-col--slot" role="cell">
                         <div class="tm-availability-slot"
-                             data-availability-toggle-target="slot">
+                             data-prestataire--availability-toggle-target="slot">
                             <div class="tm-availability-slot-top">
                                 <div class="tm-availability-slot-title">Après-midi</div>
 
@@ -130,9 +130,9 @@
                                     {{ form_widget(availabilityFormRow.afternoonEnabled, {
                                         attr: {
                                             class: 'tm-availability-switch-input',
-                                            'data-availability-toggle-target': 'checkbox',
-                                            'data-availability-toggle-panel-selector-value': '.js-afternoon-panel',
-                                            'data-action': 'change->availability-toggle#toggle',
+                                            'data-prestataire--availability-toggle-target': 'checkbox',
+                                            'data-prestataire--availability-toggle-panel-selector-value': '.js-afternoon-panel',
+                                            'data-action': 'change->prestataire--availability-toggle#toggle',
                                         },
                                     }) }}
                                     <span class="tm-availability-switch-slider"></span>

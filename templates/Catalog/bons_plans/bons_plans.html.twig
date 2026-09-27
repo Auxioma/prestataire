@@ -294,19 +294,19 @@
                                       <button
                                           type="button"
                                           class="favori favorite-btn"
-                                          data-controller="favorite-toggle"
-                                          data-action="click->favorite-toggle#toggle"
-                                          data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}"
-                                          data-favorite-toggle-type-value="bon_plan"
-                                          data-favorite-toggle-target-id-value="{{ bonPlan.id }}"
-                                          data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}"
-                                          data-favorite-toggle-is-favorite-value="{{ isFavoriteBonPlan ? 'true' : 'false' }}"
-                                          data-favorite-toggle-login-url-value="{{ path('app_login') }}"
+                                          data-controller="review--favorite-toggle"
+                                          data-action="click->review--favorite-toggle#toggle"
+                                          data-review--favorite-toggle-url-value="{{ path('app_favorite_toggle') }}"
+                                          data-review--favorite-toggle-type-value="bon_plan"
+                                          data-review--favorite-toggle-target-id-value="{{ bonPlan.id }}"
+                                          data-review--favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}"
+                                          data-review--favorite-toggle-is-favorite-value="{{ isFavoriteBonPlan ? 'true' : 'false' }}"
+                                          data-review--favorite-toggle-login-url-value="{{ path('app_login') }}"
                                           aria-pressed="{{ isFavoriteBonPlan ? 'true' : 'false' }}"
                                           aria-label="{{ isFavoriteBonPlan ? 'Retirer ' ~ prestationTitle ~ ' des favoris' : 'Ajouter ' ~ prestationTitle ~ ' aux favoris' }}"
                                       >
                                           <i
-                                              data-favorite-toggle-target="icon"
+                                              data-review--favorite-toggle-target="icon"
                                               class="{{ isFavoriteBonPlan ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"
                                               aria-hidden="true"
                                           ></i>

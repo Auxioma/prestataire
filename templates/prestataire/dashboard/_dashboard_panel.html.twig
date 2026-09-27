@@ -239,22 +239,22 @@
                 </div>
                 <div
                     class="mini-cal"
-                    data-controller="calendar-panel"
-                    data-calendar-panel-events-url-value="{{ path('app_prestataire_appointment_events') }}"
-                    data-calendar-panel-update-url-value="{{ path('app_prestataire_appointment_move') }}"
-                    data-calendar-panel-csrf-token-value="{{ csrf_token('move_appointment') }}"
-                    data-calendar-panel-script-url-value="{{ asset('vendor/fullcalendar/index.global.min.js') }}"
-                    data-calendar-panel-compact-value="true"
-                    data-calendar-panel-height-value="290"
+                    data-controller="prestataire--calendar-panel"
+                    data-prestataire--calendar-panel-events-url-value="{{ path('app_prestataire_appointment_events') }}"
+                    data-prestataire--calendar-panel-update-url-value="{{ path('app_prestataire_appointment_move') }}"
+                    data-prestataire--calendar-panel-csrf-token-value="{{ csrf_token('move_appointment') }}"
+                    data-prestataire--calendar-panel-script-url-value="{{ asset('vendor/fullcalendar/index.global.min.js') }}"
+                    data-prestataire--calendar-panel-compact-value="true"
+                    data-prestataire--calendar-panel-height-value="290"
                 >
                     <div class="mini-cal__nav">
-                        <button class="mini-cal__fleche" type="button" aria-label="Mois précédent" data-action="click->calendar-panel#previousMonth"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
-                        <b data-calendar-panel-target="monthLabel">{{ 'now'|date('F Y')|capitalize }}</b>
-                        <button class="mini-cal__fleche" type="button" aria-label="Mois suivant" data-action="click->calendar-panel#nextMonth"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+                        <button class="mini-cal__fleche" type="button" aria-label="Mois précédent" data-action="click->prestataire--calendar-panel#previousMonth"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
+                        <b data-prestataire--calendar-panel-target="monthLabel">{{ 'now'|date('F Y')|capitalize }}</b>
+                        <button class="mini-cal__fleche" type="button" aria-label="Mois suivant" data-action="click->prestataire--calendar-panel#nextMonth"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
                     </div>
                     <div
                         class="tm-dashboard-calendar-embed"
-                        data-calendar-panel-target="calendar"
+                        data-prestataire--calendar-panel-target="calendar"
                     ></div>
                 </div>
                 <p class="small fw-bold text-dark mb-2">Prochains rendez-vous</p>

@@ -89,8 +89,8 @@
                                     <h1 class="tm-profile-show__title mb-0">{{ prestataire.companyName }}</h1>
                                 </div>
 
-                                <button type="button" class="btn tm-profile-show__favorite-btn favorite-btn" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="prestataire" data-favorite-toggle-target-id-value="{{ prestataire.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="{{ isFavoriteProvider ? 'true' : 'false' }}" data-favorite-toggle-login-url-value="{{ path('app_login') }}" aria-pressed="{{ isFavoriteProvider ? 'true' : 'false' }}" aria-label="{{ isFavoriteProvider ? 'Retirer ' ~ prestataire.companyName ~ ' des favoris' : 'Ajouter ' ~ prestataire.companyName ~ ' aux favoris' }}">
-                                    <i data-favorite-toggle-target="icon" class="{{ isFavoriteProvider ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"></i>
+                                <button type="button" class="btn tm-profile-show__favorite-btn favorite-btn" data-controller="review--favorite-toggle" data-action="click->review--favorite-toggle#toggle" data-review--favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-review--favorite-toggle-type-value="prestataire" data-review--favorite-toggle-target-id-value="{{ prestataire.id }}" data-review--favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-review--favorite-toggle-is-favorite-value="{{ isFavoriteProvider ? 'true' : 'false' }}" data-review--favorite-toggle-login-url-value="{{ path('app_login') }}" aria-pressed="{{ isFavoriteProvider ? 'true' : 'false' }}" aria-label="{{ isFavoriteProvider ? 'Retirer ' ~ prestataire.companyName ~ ' des favoris' : 'Ajouter ' ~ prestataire.companyName ~ ' aux favoris' }}">
+                                    <i data-review--favorite-toggle-target="icon" class="{{ isFavoriteProvider ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"></i>
                                 </button>
                             </div>
 
@@ -184,9 +184,9 @@
                                     <article
                                         class="tm-profile-show__service-item{% if ps.isActive %} tm-profile-show__service-item--link{% else %} tm-profile-show__service-item--disabled{% endif %}"
                                         {% if ps.isActive %}
-                                            data-controller="clickable-card"
-                                            data-clickable-card-url-value="{{ path('app_prestataire_service_prestation_show', {slug: ps.slug}) }}"
-                                            data-action="click->clickable-card#open keydown->clickable-card#keydown"
+                                            data-controller="core--clickable-card"
+                                            data-core--clickable-card-url-value="{{ path('app_prestataire_service_prestation_show', {slug: ps.slug}) }}"
+                                            data-action="click->core--clickable-card#open keydown->core--clickable-card#keydown"
                                             tabindex="0"
                                             role="link"
                                             aria-label="Découvrir la prestation {{ ps.title ?: ps.service.name }}"
@@ -200,8 +200,8 @@
                                             {% if ps.isActive %}
                                                 <div class="tm-profile-show__service-actions">
                                                     {% if app.user and is_granted('ROLE_CLIENT') %}
-                                                        <button type="button" class="btn tm-profile-show__service-favorite-btn favorite-btn" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="prestation" data-favorite-toggle-target-id-value="{{ ps.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="{{ isFavoritePrestation ? 'true' : 'false' }}" data-favorite-toggle-login-url-value="{{ path('app_login') }}" aria-pressed="{{ isFavoritePrestation ? 'true' : 'false' }}" aria-label="{{ isFavoritePrestation ? 'Retirer ' ~ (ps.title ?: ps.service.name) ~ ' des favoris' : 'Ajouter ' ~ (ps.title ?: ps.service.name) ~ ' aux favoris' }}">
-                                                            <i data-favorite-toggle-target="icon" class="{{ isFavoritePrestation ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart" aria-hidden="true"></i>
+                                                        <button type="button" class="btn tm-profile-show__service-favorite-btn favorite-btn" data-controller="review--favorite-toggle" data-action="click->review--favorite-toggle#toggle" data-review--favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-review--favorite-toggle-type-value="prestation" data-review--favorite-toggle-target-id-value="{{ ps.id }}" data-review--favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-review--favorite-toggle-is-favorite-value="{{ isFavoritePrestation ? 'true' : 'false' }}" data-review--favorite-toggle-login-url-value="{{ path('app_login') }}" aria-pressed="{{ isFavoritePrestation ? 'true' : 'false' }}" aria-label="{{ isFavoritePrestation ? 'Retirer ' ~ (ps.title ?: ps.service.name) ~ ' des favoris' : 'Ajouter ' ~ (ps.title ?: ps.service.name) ~ ' aux favoris' }}">
+                                                            <i data-review--favorite-toggle-target="icon" class="{{ isFavoritePrestation ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart" aria-hidden="true"></i>
                                                         </button>
                                                     {% endif %}
 
@@ -353,7 +353,7 @@
                             <h2 class="tm-profile-show__section-title">Zones d’intervention</h2>
 
                             <div class="tm-profile-show__map-layout">
-                                <div class="tm-profile-show__map-wrapper" data-controller="zone-map" data-zone-map-zones-value="{{ zones|map(zone => {city: zone.city, latitude: zone.latitude, longitude: zone.longitude, radiusKm: zone.radiusKm})|json_encode|e('html_attr') }}">
+                                <div class="tm-profile-show__map-wrapper" data-controller="prestataire--zone-map" data-prestataire--zone-map-zones-value="{{ zones|map(zone => {city: zone.city, latitude: zone.latitude, longitude: zone.longitude, radiusKm: zone.radiusKm})|json_encode|e('html_attr') }}">
                                     {% if zoneMap is defined and zoneMap %}
                                         {{ ux_map(zoneMap, {style: 'height: 360px; width: 100%; border-radius: 18px;'}) }}
                                     {% else %}

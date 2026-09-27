@@ -142,12 +142,12 @@
                                     <form
                                         method="post"
                                         action="{{ path('app_prestataire_quote_request_deny', {slug: quoteRequest.slug}) }}"
-                                        data-controller="confirm-dialog"
-                                        data-action="submit->confirm-dialog#confirm"
-                                        data-confirm-dialog-title-value="Refuser cette demande ?"
-                                        data-confirm-dialog-text-value="Le client sera informé de votre refus."
-                                        data-confirm-dialog-confirm-button-text-value="Oui, refuser"
-                                        data-confirm-dialog-cancel-button-text-value="Annuler"
+                                        data-controller="core--confirm-dialog"
+                                        data-action="submit->core--confirm-dialog#confirm"
+                                        data-core--confirm-dialog-title-value="Refuser cette demande ?"
+                                        data-core--confirm-dialog-text-value="Le client sera informé de votre refus."
+                                        data-core--confirm-dialog-confirm-button-text-value="Oui, refuser"
+                                        data-core--confirm-dialog-cancel-button-text-value="Annuler"
                                     >
                                         <input type="hidden" name="_token" value="{{ csrf_token('deny-quote-request-' ~ quoteRequest.id) }}">
                                         <button type="submit" class="btn btn-outline-danger">
@@ -180,12 +180,12 @@
                                         <form method="post"
                                               action="{{ path('app_prestataire_quote_proposal_archive', {publicReference: linkedProposal.publicReference}) }}"
                                               class="mt-3"
-                                              data-controller="confirm-dialog"
-                                              data-action="submit->confirm-dialog#confirm"
-                                              data-confirm-dialog-title-value="Archiver ce dossier ?"
-                                              data-confirm-dialog-text-value="Le devis et la demande passeront dans vos archives. La facture restera consultable."
-                                              data-confirm-dialog-confirm-button-text-value="Archiver"
-                                              data-confirm-dialog-cancel-button-text-value="Annuler">
+                                              data-controller="core--confirm-dialog"
+                                              data-action="submit->core--confirm-dialog#confirm"
+                                              data-core--confirm-dialog-title-value="Archiver ce dossier ?"
+                                              data-core--confirm-dialog-text-value="Le devis et la demande passeront dans vos archives. La facture restera consultable."
+                                              data-core--confirm-dialog-confirm-button-text-value="Archiver"
+                                              data-core--confirm-dialog-cancel-button-text-value="Annuler">
                                             <input type="hidden" name="_token" value="{{ csrf_token('archive_quote_proposal_' ~ linkedProposal.id) }}">
                                             <button type="submit" class="btn btn-outline-secondary w-100">
                                                 Archiver

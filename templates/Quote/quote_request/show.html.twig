@@ -289,7 +289,7 @@
                                                     {% endif %}
 
                                                     {% if not quoteResponse.acceptedAt and quoteResponse.status.value == 'finalized' and not isArchivedView %}
-                                                        <form method="post" action="{{ path('app_quote_request_quote_proposal_accept', {publicReference: quoteResponse.publicReference}) }}" class="d-inline-flex" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Accepter ce devis ?" data-confirm-dialog-text-value="Cette action est irréversible et aucune modification ne pourra ensuite être effectuée par le prestataire ou par vous-même." data-confirm-dialog-confirm-button-text-value="Accepter" data-confirm-dialog-cancel-button-text-value="Annuler">
+                                                        <form method="post" action="{{ path('app_quote_request_quote_proposal_accept', {publicReference: quoteResponse.publicReference}) }}" class="d-inline-flex" data-controller="core--confirm-dialog" data-action="submit->core--confirm-dialog#confirm" data-core--confirm-dialog-title-value="Accepter ce devis ?" data-core--confirm-dialog-text-value="Cette action est irréversible et aucune modification ne pourra ensuite être effectuée par le prestataire ou par vous-même." data-core--confirm-dialog-confirm-button-text-value="Accepter" data-core--confirm-dialog-cancel-button-text-value="Annuler">
                                                             <input type="hidden" name="_token" value="{{ csrf_token('accept_quote_proposal_' ~ quoteResponse.id) }}">
                                                             <button type="submit" class="tm-client-quote-icon-btn tm-client-quote-icon-btn--accept">
                                                                 <i class="fas fa-circle-check" aria-hidden="true"></i>
@@ -397,7 +397,7 @@
                     </section>
 
                     {# Conversation Messagerie #}
-                    <section id="quote-conversation" class="tm-client-quotes-detailcard tm-client-quotes-detailcard--conversation" {{ stimulus_controller('realtime-conversation', {url: 'http://localhost:3001', conversationId: conversation ? conversation.id : 0, authToken: realtimeConversationToken|default(''), eventName: 'message_created', joinEventName: 'join_conversation', streamSelector: '.tm-client-quotes-messages--scroll', bodySelector: '.tm-client-quotes-conversation-body', emptySelector: '.tm-client-quotes-empty-state', currentUserType: 'client', layout: 'client', scrollPageToSelf: false}) }}>
+                    <section id="quote-conversation" class="tm-client-quotes-detailcard tm-client-quotes-detailcard--conversation" {{ stimulus_controller('messaging--realtime-conversation', {url: 'http://localhost:3001', conversationId: conversation ? conversation.id : 0, authToken: realtimeConversationToken|default(''), eventName: 'message_created', joinEventName: 'join_conversation', streamSelector: '.tm-client-quotes-messages--scroll', bodySelector: '.tm-client-quotes-conversation-body', emptySelector: '.tm-client-quotes-empty-state', currentUserType: 'client', layout: 'client', scrollPageToSelf: false}) }}>
                         <div class="card-body">
                             <div class="tm-client-quotes-conversation-body">
                                 <div class="tm-client-quotes-section-head tm-client-quotes-section-head--conversation">
@@ -515,11 +515,11 @@
                                                 attr: {
                                                     class: 'tm-client-quotes-message-composer__form',
                                                     'data-turbo': 'false',
-                                                    'data-controller': 'conversation-form',
-                                                    'data-action': 'submit->conversation-form#submit',
+                                                    'data-controller': 'messaging--conversation-form',
+                                                    'data-action': 'submit->messaging--conversation-form#submit',
                                                 },
                                             }) }}
-                                            <div class="alert alert-danger d-none" data-conversation-form-target="error" role="alert" aria-live="assertive"></div>
+                                            <div class="alert alert-danger d-none" data-messaging--conversation-form-target="error" role="alert" aria-live="assertive"></div>
 
                                             <div class="tm-client-quotes-message-composer__field tm-client-quotes-message-composer__field--main">
                                                 <label class="tm-client-quotes-message-composer__attach" for="{{ messageForm.attachments.vars.id }}">
@@ -541,7 +541,7 @@
                                                 }) }}
                                                 {{ form_label(messageForm.content, 'Votre message', {label_attr: {class: 'visually-hidden'}}) }}
 
-                                                <button type="submit" class="tm-client-quotes-message-composer__send" data-conversation-form-target="submit" aria-label="Envoyer le message">
+                                                <button type="submit" class="tm-client-quotes-message-composer__send" data-messaging--conversation-form-target="submit" aria-label="Envoyer le message">
                                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                                         <path d="m22 2-7 20-4-9-9-4z"/>
                                                         <path d="M22 2 11 13"/>
@@ -561,17 +561,17 @@
                                                         class: 'visually-hidden-focusable tm-client-quotes-message-composer__file' ~ (messageForm.attachments.vars.errors|length > 0 ? ' is-invalid' : ''),
                                                         accept: 'image/jpeg,image/png,image/webp',
                                                         multiple: 'multiple',
-                                                        'data-conversation-form-target': 'files',
-                                                        'data-action': 'change->conversation-form#filesChanged',
+                                                        'data-messaging--conversation-form-target': 'files',
+                                                        'data-action': 'change->messaging--conversation-form#filesChanged',
                                                         'aria-invalid': messageForm.attachments.vars.errors|length > 0 ? 'true' : 'false',
                                                         'aria-describedby': messageForm.attachments.vars.errors|length > 0 ? messageForm.attachments.vars.id ~ '-errors' : null,
                                                     },
                                                 }) }}
 
-                                                <div class="form-text" data-conversation-form-target="summary" aria-live="polite">
+                                                <div class="form-text" data-messaging--conversation-form-target="summary" aria-live="polite">
                                                     Jusqu’à 5 photos.
                                                 </div>
-                                                <div class="tm-conversation-preview" data-conversation-form-target="preview" aria-live="polite" hidden></div>
+                                                <div class="tm-conversation-preview" data-messaging--conversation-form-target="preview" aria-live="polite" hidden></div>
 
                                                 {% if messageForm.attachments.vars.errors|length > 0 %}
                                                     <div id="{{ messageForm.attachments.vars.id }}-errors" class="invalid-feedback d-block tm-client-quotes-message-composer__error" role="alert">
@@ -778,12 +778,12 @@
                                 {% if hasIssuedInvoice and not isArchivedView %}
                                     <form method="post"
                                           action="{{ path('app_quote_request_mark_as_archived', {slug: quoteRequest.slug}) }}"
-                                          data-controller="confirm-dialog"
-                                          data-action="submit->confirm-dialog#confirm"
-                                          data-confirm-dialog-title-value="Archiver cette demande ?"
-                                          data-confirm-dialog-text-value="Vous pourrez toujours consulter le devis et la facture dans vos archives."
-                                          data-confirm-dialog-confirm-button-text-value="Archiver"
-                                          data-confirm-dialog-cancel-button-text-value="Annuler">
+                                          data-controller="core--confirm-dialog"
+                                          data-action="submit->core--confirm-dialog#confirm"
+                                          data-core--confirm-dialog-title-value="Archiver cette demande ?"
+                                          data-core--confirm-dialog-text-value="Vous pourrez toujours consulter le devis et la facture dans vos archives."
+                                          data-core--confirm-dialog-confirm-button-text-value="Archiver"
+                                          data-core--confirm-dialog-cancel-button-text-value="Annuler">
                                         <input type="hidden" name="_token" value="{{ csrf_token('archive-quote-request-' ~ quoteRequest.id) }}">
                                         <button type="submit" class="btn tm-client-quotes-btn tm-client-quotes-btn--ghost w-100">
                                             Archiver

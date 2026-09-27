@@ -396,7 +396,7 @@
                                                             </form>
                                                         {% endif %}
                                                         {% if item.deleteRoute %}
-                                                            <form method="post" action="{{ path(item.deleteRoute.route, item.deleteRoute.parameters) }}" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Supprimer ce revenu ?" data-confirm-dialog-text-value="Cette suppression retirera définitivement ce revenu externe de votre historique." data-confirm-dialog-confirm-button-text-value="Supprimer" data-confirm-dialog-cancel-button-text-value="Annuler">
+                                                            <form method="post" action="{{ path(item.deleteRoute.route, item.deleteRoute.parameters) }}" data-controller="core--confirm-dialog" data-action="submit->core--confirm-dialog#confirm" data-core--confirm-dialog-title-value="Supprimer ce revenu ?" data-core--confirm-dialog-text-value="Cette suppression retirera définitivement ce revenu externe de votre historique." data-core--confirm-dialog-confirm-button-text-value="Supprimer" data-core--confirm-dialog-cancel-button-text-value="Annuler">
                                                                 <input type="hidden" name="_token" value="{{ csrf_token('delete_manual_revenue_' ~ item.id) }}">
                                                                 <input type="hidden" name="revenues_subtab" value="{{ activeRevenueSubtab }}" data-revenue-subtab-input>
                                                                 <button type="submit" class="tm-revenue-actions__link tm-revenue-actions__link--danger">Supprimer</button>
@@ -493,7 +493,7 @@
                         <p class="text-muted small mb-0">Ajoutez ici les revenus facturés hors TrouveMoi pour les inclure dans votre synthèse et votre suivi d’encaissement.</p>
                     </div>
 
-                    {{ form_start(revenueForm, {attr: {'data-controller': 'revenue-form'}}) }}
+                    {{ form_start(revenueForm, {attr: {'data-controller': 'prestataire--revenue-form'}}) }}
                         <input type="hidden" name="revenues_subtab" value="{{ activeRevenueSubtab }}" data-revenue-subtab-input>
                         <div class="tm-revenue-manual-form">
                             <section class="tm-revenue-form-section">
@@ -526,17 +526,17 @@
                                     {{ revenueFormUi.revenue_field(revenueForm.paidAt) }}
                                     <div class="tm-revenue-field">
                                         {{ form_label(revenueForm.subtotalHt, null, {label_attr: {class: 'tm-revenue-field__label'}}) }}
-                                        {{ form_widget(revenueForm.subtotalHt, {attr: {class: 'tm-revenue-field__control', 'data-revenue-form-target': 'subtotal', 'data-action': 'input->revenue-form#updateTotal'}}) }}
+                                        {{ form_widget(revenueForm.subtotalHt, {attr: {class: 'tm-revenue-field__control', 'data-prestataire--revenue-form-target': 'subtotal', 'data-action': 'input->prestataire--revenue-form#updateTotal'}}) }}
                                         {{ form_errors(revenueForm.subtotalHt) }}
                                     </div>
                                     <div class="tm-revenue-field">
                                         {{ form_label(revenueForm.taxAmount, null, {label_attr: {class: 'tm-revenue-field__label'}}) }}
-                                        {{ form_widget(revenueForm.taxAmount, {attr: {class: 'tm-revenue-field__control', 'data-revenue-form-target': 'tax', 'data-action': 'input->revenue-form#updateTotal'}}) }}
+                                        {{ form_widget(revenueForm.taxAmount, {attr: {class: 'tm-revenue-field__control', 'data-prestataire--revenue-form-target': 'tax', 'data-action': 'input->prestataire--revenue-form#updateTotal'}}) }}
                                         {{ form_errors(revenueForm.taxAmount) }}
                                     </div>
                                     <div class="tm-revenue-field">
                                         {{ form_label(revenueForm.totalTtc, null, {label_attr: {class: 'tm-revenue-field__label'}}) }}
-                                        {{ form_widget(revenueForm.totalTtc, {attr: {class: 'tm-revenue-field__control', 'data-revenue-form-target': 'total'}}) }}
+                                        {{ form_widget(revenueForm.totalTtc, {attr: {class: 'tm-revenue-field__control', 'data-prestataire--revenue-form-target': 'total'}}) }}
                                         {{ form_errors(revenueForm.totalTtc) }}
                                         <div class="tm-revenue-field__help">Calculé automatiquement à partir du montant HT et de la TVA.</div>
                                     </div>

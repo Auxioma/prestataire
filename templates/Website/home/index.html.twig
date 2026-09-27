@@ -260,10 +260,10 @@
         </a>
     </div>
 
-    <div class="row g-3" data-controller="scroll-reveal">
+    <div class="row g-3" data-controller="website--scroll-reveal">
         {% for provider in providers|slice(0, 4) %}
             {% set canShowProvider = provider.slug is not empty and provider.slug matches '/^(?!abonnements$)[a-z0-9-]+$/' %}
-            <div class="col-md-6 col-xl-3" data-scroll-reveal-target="element">
+            <div class="col-md-6 col-xl-3" data-website--scroll-reveal-target="element">
                 <article class="tmv2-provider-card h-100 position-relative">
                     {% if canShowProvider %}
                         <a href="{{ path('app_prestataire_show', {slug: provider.slug}) }}" class="stretched-link" aria-label="Consulter le profil de {{ provider.companyName }}"></a>
@@ -273,18 +273,18 @@
                     <button
                         type="button"
                         class="btn btn-light favorite-btn border-0 shadow-sm"
-                        data-controller="favorite-toggle"
-                        data-action="click->favorite-toggle#toggle"
-                        data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}"
-                        data-favorite-toggle-type-value="prestataire"
-                        data-favorite-toggle-target-id-value="{{ provider.id }}"
-                        data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}"
-                        data-favorite-toggle-is-favorite-value="{{ isFavorite ? 'true' : 'false' }}"
-                        data-favorite-toggle-login-url-value="{{ path('app_login') }}"
+                        data-controller="review--favorite-toggle"
+                        data-action="click->review--favorite-toggle#toggle"
+                        data-review--favorite-toggle-url-value="{{ path('app_favorite_toggle') }}"
+                        data-review--favorite-toggle-type-value="prestataire"
+                        data-review--favorite-toggle-target-id-value="{{ provider.id }}"
+                        data-review--favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}"
+                        data-review--favorite-toggle-is-favorite-value="{{ isFavorite ? 'true' : 'false' }}"
+                        data-review--favorite-toggle-login-url-value="{{ path('app_login') }}"
                         aria-pressed="{{ isFavorite ? 'true' : 'false' }}"
                         aria-label="{{ isFavorite ? 'Retirer ' ~ provider.companyName ~ ' des favoris' : 'Ajouter ' ~ provider.companyName ~ ' aux favoris' }}"
                     >
-                        <i data-favorite-toggle-target="icon" class="{{ isFavorite ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart" aria-hidden="true"></i>
+                        <i data-review--favorite-toggle-target="icon" class="{{ isFavorite ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart" aria-hidden="true"></i>
                     </button>
 
                     <div class="tmv2-provider-card__cover">
@@ -438,8 +438,8 @@
             </section>
 
             {# AVIS #}
-            <section class="container tmv2-section mb-4" data-controller="scroll-reveal">
-                <div class="tmv2-section-head tmv2-section-head--center" data-scroll-reveal-target="element">
+            <section class="container tmv2-section mb-4" data-controller="website--scroll-reveal">
+                <div class="tmv2-section-head tmv2-section-head--center" data-website--scroll-reveal-target="element">
                     <span class="tmv2-eyebrow tmv2-eyebrow--blue">Ils nous font confiance</span>
                     <h2 class="tmv2-section-title">Ce que nos utilisateurs pensent de nous</h2>
                     <p class="tmv2-section-subtitle">Plus de 10 000 avis certifiés pour vous aider à choisir en toute sérénité.</p>
@@ -447,7 +447,7 @@
 
                 <div class="row g-4">
                     {% for i in 1..3 %}
-                        <div class="col-md-4" data-scroll-reveal-target="element">
+                        <div class="col-md-4" data-website--scroll-reveal-target="element">
                             <article class="tmv2-review-card h-100">
                                 <span class="tmv2-review-card__quote">“</span>
                                 <p class="tmv2-review-card__text">Une expérience exceptionnelle ! J'ai trouvé un plombier en moins de 30 minutes. Service rapide, efficace et très professionnel.</p>
@@ -472,8 +472,8 @@
             </section>
 
 {# CTA PROS #}
-<section class="container tmv2-cta-pros-section mb-4" data-controller="scroll-reveal">
-    <div class="tmv2-cta-pros" data-scroll-reveal-target="element">
+<section class="container tmv2-cta-pros-section mb-4" data-controller="website--scroll-reveal">
+    <div class="tmv2-cta-pros" data-website--scroll-reveal-target="element">
         <div class="tmv2-cta-pros__content">
             <span class="tmv2-eyebrow tmv2-eyebrow--light">Espace prestataire</span>
             <h2 class="tmv2-cta-pros__title">
@@ -522,7 +522,7 @@
             {# FAQ #}
             <section class="tmv2-faq-section" style="padding-top:0">
                 <div class="container">
-                    <div class="tmv2-faq-head" data-scroll-reveal-target="element">
+                    <div class="tmv2-faq-head" data-website--scroll-reveal-target="element">
                         <div class="tmv2-faq-head__inner">
                             <span class="tmv2-eyebrow tmv2-eyebrow--center">Questions fréquentes</span>
                             <h2 class="tmv2-faq-title">On répond à tout</h2>
@@ -609,14 +609,14 @@
             </section>
 
             {# FAQ CTA #}
-            <section class="container tmv2-faq-banner" data-controller="scroll-reveal">
+            <section class="container tmv2-faq-banner" data-controller="website--scroll-reveal">
                 <div class="row align-items-center">
-                    <div class="col-lg-8" data-scroll-reveal-target="element">
+                    <div class="col-lg-8" data-website--scroll-reveal-target="element">
                         <span class="tmv2-eyebrow tmv2-eyebrow--gold">Besoin d'aide</span>
                         <h3 class="tmv2-faq-banner__title">Besoin d'aide pour bien démarrer ?</h3>
                         <p class="tmv2-faq-banner__desc">Notre équipe est là pour vous accompagner à chaque étape de votre projet.</p>
                     </div>
-                    <div class="col-lg-4 mt-4 mt-lg-0 tmv2-faq-banner__actions" data-scroll-reveal-target="element">
+                    <div class="col-lg-4 mt-4 mt-lg-0 tmv2-faq-banner__actions" data-website--scroll-reveal-target="element">
                         <a href="{{ path('app_static_page', {slug: 'aide-faq'}) }}" class="tmv2-outline-btn">
                             <i class="fa-solid fa-book-open"></i>
                             FAQ
@@ -633,13 +633,13 @@
     </section>
 
     {% if showProfileCompletionModal and mandatoryChecklist is not null %}
-        <div class="tm-profile-completion-layer" {{ stimulus_controller('profile-completion-modal') }}>
-            <div class="modal fade show tm-profile-completion-modal" id="profileCompletionModal" tabindex="-1" aria-labelledby="profileCompletionModalLabel" aria-modal="true" role="dialog" style="display: block;" {{ stimulus_target('profile-completion-modal', 'modal') }}>
+        <div class="tm-profile-completion-layer" {{ stimulus_controller('prestataire--profile-completion-modal') }}>
+            <div class="modal fade show tm-profile-completion-modal" id="profileCompletionModal" tabindex="-1" aria-labelledby="profileCompletionModalLabel" aria-modal="true" role="dialog" style="display: block;" {{ stimulus_target('prestataire--profile-completion-modal', 'modal') }}>
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h2 class="modal-title fs-5" id="profileCompletionModalLabel">Complétez vos paramètres prestataire</h2>
-                            <button type="button" class="btn-close" aria-label="Fermer" {{ stimulus_action('profile-completion-modal', 'close', 'click') }}></button>
+                            <button type="button" class="btn-close" aria-label="Fermer" {{ stimulus_action('prestataire--profile-completion-modal', 'close', 'click') }}></button>
                         </div>
                         <div class="modal-body">
                             <p class="mb-3">Bienvenue. Pour partir sur de bonnes bases, prenez une minute pour compléter les informations essentielles de votre profil.</p>
@@ -655,13 +655,13 @@
                             {% endif %}
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" {{ stimulus_action('profile-completion-modal', 'close', 'click') }}>Plus tard</button>
+                            <button type="button" class="btn btn-outline-secondary" {{ stimulus_action('prestataire--profile-completion-modal', 'close', 'click') }}>Plus tard</button>
                             <a href="{{ profileCompletionSettingsUrl }}" class="btn btn-primary">Ouvrir mes paramètres</a>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-backdrop fade show tm-profile-completion-modal__backdrop" {{ stimulus_target('profile-completion-modal', 'backdrop') }}></div>
+            <div class="modal-backdrop fade show tm-profile-completion-modal__backdrop" {{ stimulus_target('prestataire--profile-completion-modal', 'backdrop') }}></div>
         </div>
     {% endif %}
 </div>{% endblock %}

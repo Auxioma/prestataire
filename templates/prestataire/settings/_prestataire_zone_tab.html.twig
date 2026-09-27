@@ -53,7 +53,7 @@
                                     <span class="tm-zone-toggle-state tm-zone-toggle-state--inactive">Inactive</span>
                                 {% endif %}
 
-                                <form method="post" action="{{ path('app_prestataire_zone_delete', {id: zone.id}) }}#zones-panel" data-turbo="false" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Supprimer cette zone ?" data-confirm-dialog-text-value="Elle sera retirée de vos zones d’intervention." data-confirm-dialog-confirm-button-text-value="Supprimer" data-confirm-dialog-cancel-button-text-value="Annuler">
+                                <form method="post" action="{{ path('app_prestataire_zone_delete', {id: zone.id}) }}#zones-panel" data-turbo="false" data-controller="core--confirm-dialog" data-action="submit->core--confirm-dialog#confirm" data-core--confirm-dialog-title-value="Supprimer cette zone ?" data-core--confirm-dialog-text-value="Elle sera retirée de vos zones d’intervention." data-core--confirm-dialog-confirm-button-text-value="Supprimer" data-core--confirm-dialog-cancel-button-text-value="Annuler">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete_zone_' ~ zone.id) }}">
                                     <button type="submit" class="tm-zone-delete-btn" title="Supprimer" aria-label="Supprimer la zone {{ zone.city ?: 'sans nom' }}">
                                         <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
@@ -84,7 +84,7 @@
             <div class="card tm-card p-4 h-100">
                 <h2 class="tm-card-title mb-3">Aperçu de vos zones d’intervention</h2>
 
-                <div class="tm-zone-real-map-wrapper" data-controller="zone-map" data-zone-map-zones-value="{{ zones|map(zone => {city: zone.city, latitude: zone.latitude, longitude: zone.longitude, radiusKm: zone.radiusKm})|json_encode|e('html_attr') }}">
+                <div class="tm-zone-real-map-wrapper" data-controller="prestataire--zone-map" data-prestataire--zone-map-zones-value="{{ zones|map(zone => {city: zone.city, latitude: zone.latitude, longitude: zone.longitude, radiusKm: zone.radiusKm})|json_encode|e('html_attr') }}">
                     {% if zoneMap is defined and zoneMap %}
                         {{ ux_map(zoneMap, {
             style: 'height: 420px; width: 100%; border-radius: 18px;',

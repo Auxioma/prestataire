@@ -69,15 +69,15 @@
 
                                                 <div
                                                     class="tm-review-rating-widget"
-                                                    data-controller="star-rating"
-                                                    data-star-rating-rating-value="{{ form.rating.vars.value|default(0) }}"
+                                                    data-controller="review--star-rating"
+                                                    data-review--star-rating-rating-value="{{ form.rating.vars.value|default(0) }}"
                                                 >
                                                     <div
                                                         class="tm-review-stars"
                                                         role="radiogroup"
                                                         aria-labelledby="review-rating-label"
                                                         {% if form.rating.vars.errors|length > 0 %}aria-invalid="true" aria-describedby="{{ form.rating.vars.id }}-errors"{% endif %}
-                                                        data-action="mouseleave->star-rating#resetPreview"
+                                                        data-action="mouseleave->review--star-rating#resetPreview"
                                                     >
                                                         {% for star in 1..5 %}
                                                             <button
@@ -86,9 +86,9 @@
                                                                 role="radio"
                                                                 aria-label="Attribuer {{ star }} étoile{{ star > 1 ? 's' : '' }}"
                                                                 aria-checked="false"
-                                                                data-star-rating-target="star"
+                                                                data-review--star-rating-target="star"
                                                                 data-value="{{ star }}"
-                                                                data-action="click->star-rating#select mouseenter->star-rating#preview focus->star-rating#preview"
+                                                                data-action="click->review--star-rating#select mouseenter->review--star-rating#preview focus->review--star-rating#preview"
                                                             >
                                                                 <span aria-hidden="true" class="tm-review-stars__glyph">☆</span>
                                                             </button>
@@ -99,7 +99,7 @@
                                                         type="button"
                                                         class="btn btn-sm btn-outline-secondary tm-review-rating-widget__reset"
                                                         aria-label="Aucune étoile"
-                                                        data-action="click->star-rating#select"
+                                                        data-action="click->review--star-rating#select"
                                                         data-value="0"
                                                     >
                                                         Remettre à 0
@@ -107,7 +107,7 @@
 
                                                     {{ form_widget(form.rating, {
                                                         attr: {
-                                                            'data-star-rating-target': 'input',
+                                                            'data-review--star-rating-target': 'input',
                                                         },
                                                     }) }}
                                                 </div>

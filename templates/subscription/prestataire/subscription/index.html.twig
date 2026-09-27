@@ -271,11 +271,11 @@
                             const available = button.getAttribute(`data-plan-${period}-available`) === 'true';
                             const isCurrent = button.getAttribute(`data-plan-${period}-current`) === 'true';
 
-                            button.setAttribute('data-subscription-checkout-plan-period-param', period);
-                            button.setAttribute('data-subscription-checkout-plan-price-param', price);
-                            button.setAttribute('data-subscription-checkout-plan-label-param', periodLabel);
-                            button.setAttribute('data-subscription-checkout-plan-submit-url-param', submitUrl);
-                            button.setAttribute('data-subscription-checkout-plan-csrf-token-param', csrfToken);
+                            button.setAttribute('data-subscription--subscription-checkout-plan-period-param', period);
+                            button.setAttribute('data-subscription--subscription-checkout-plan-price-param', price);
+                            button.setAttribute('data-subscription--subscription-checkout-plan-label-param', periodLabel);
+                            button.setAttribute('data-subscription--subscription-checkout-plan-submit-url-param', submitUrl);
+                            button.setAttribute('data-subscription--subscription-checkout-plan-csrf-token-param', csrfToken);
                             button.disabled = !available;
                             button.textContent = isCurrent ? 'Abonnement actuel' : 'Souscrire';
                         });
@@ -305,10 +305,10 @@
 {% endblock %}
 
 {% block body %}
-    <div class="tm-dashboard-page subscription-dashboard-page" {{ stimulus_controller('prestataire-dashboard-tabs') }}>
+    <div class="tm-dashboard-page subscription-dashboard-page" {{ stimulus_controller('prestataire--prestataire-dashboard-tabs') }}>
         <div class="tm-settings-container tm-dashboard-page__shell">
             <div class="tm-main-layout tm-dashboard-page__layout">
-                <aside class="tm-settings-sidebar tm-dashboard-page__sidebar" {{ stimulus_target('prestataire-dashboard-tabs', 'sidebar') }}>
+                <aside class="tm-settings-sidebar tm-dashboard-page__sidebar" {{ stimulus_target('prestataire--prestataire-dashboard-tabs', 'sidebar') }}>
                     {{ include('Prestataire/profile/_prestataire_dashboard_sidebar.html.twig', {
                         user: app.user,
                         activeTab: '__subscription__',
@@ -317,10 +317,10 @@
                     }) }}
                 </aside>
 
-                <div class="tm-settings-sidebar-backdrop tm-dashboard-page__backdrop" {{ stimulus_target('prestataire-dashboard-tabs', 'backdrop') }} {{ stimulus_action('prestataire-dashboard-tabs', 'closeSidebar', 'click') }}></div>
+                <div class="tm-settings-sidebar-backdrop tm-dashboard-page__backdrop" {{ stimulus_target('prestataire--prestataire-dashboard-tabs', 'backdrop') }} {{ stimulus_action('prestataire--prestataire-dashboard-tabs', 'closeSidebar', 'click') }}></div>
 
                 <div class="tm-settings-content tm-dashboard-page__content">
-                    <button type="button" class="tm-sidebar-toggle d-lg-none tm-dashboard-page__toggle" aria-label="Ouvrir la navigation du dashboard" {{ stimulus_target('prestataire-dashboard-tabs', 'toggle') }} {{ stimulus_action('prestataire-dashboard-tabs', 'toggleSidebar', 'click') }}>
+                    <button type="button" class="tm-sidebar-toggle d-lg-none tm-dashboard-page__toggle" aria-label="Ouvrir la navigation du dashboard" {{ stimulus_target('prestataire--prestataire-dashboard-tabs', 'toggle') }} {{ stimulus_action('prestataire--prestataire-dashboard-tabs', 'toggleSidebar', 'click') }}>
                         ☰
                     </button>
 
@@ -350,16 +350,16 @@
                             {% endif %}
 
                             <div
-                                data-controller="subscription-checkout"
-                                data-subscription-checkout-stripe-public-key-value="{{ stripePublicKey }}"
-                                data-subscription-checkout-setup-intent-url-value="{{ path('app_subscription_setup_intent') }}"
-                                data-subscription-checkout-update-payment-method-url-value="{{ path('app_subscription_update_payment_method') }}"
-                                data-subscription-checkout-setup-intent-csrf-token-value="{{ csrf_token('subscription-setup-intent') }}"
-                                data-subscription-checkout-payment-method-update-csrf-token-value="{{ csrf_token('subscription-payment-method-update') }}"
-                                data-subscription-checkout-finalize-url-value="{{ path('app_subscription_finalize') }}"
-                                data-subscription-checkout-finalize-csrf-token-value="{{ csrf_token('subscription-finalize') }}"
-                                data-subscription-checkout-enabled-value="{{ stripeConfigured and stripePublicKey ? 'true' : 'false' }}"
-                                data-subscription-checkout-return-url-value="{{ path('app_subscription_index') }}"
+                                data-controller="subscription--subscription-checkout"
+                                data-subscription--subscription-checkout-stripe-public-key-value="{{ stripePublicKey }}"
+                                data-subscription--subscription-checkout-setup-intent-url-value="{{ path('app_subscription_setup_intent') }}"
+                                data-subscription--subscription-checkout-update-payment-method-url-value="{{ path('app_subscription_update_payment_method') }}"
+                                data-subscription--subscription-checkout-setup-intent-csrf-token-value="{{ csrf_token('subscription-setup-intent') }}"
+                                data-subscription--subscription-checkout-payment-method-update-csrf-token-value="{{ csrf_token('subscription-payment-method-update') }}"
+                                data-subscription--subscription-checkout-finalize-url-value="{{ path('app_subscription_finalize') }}"
+                                data-subscription--subscription-checkout-finalize-csrf-token-value="{{ csrf_token('subscription-finalize') }}"
+                                data-subscription--subscription-checkout-enabled-value="{{ stripeConfigured and stripePublicKey ? 'true' : 'false' }}"
+                                data-subscription--subscription-checkout-return-url-value="{{ path('app_subscription_index') }}"
                             >
                                 {% if currentSubscription %}
                                     <section class="dash-card subscription-section">
@@ -408,7 +408,7 @@
                                                                     {% if cardExpiry is defined and cardExpiry %}
                                                                         <span>— Exp. {{ cardExpiry }}</span>
                                                                     {% endif %}
-                                                                    <button type="button" class="btn btn-link btn-sm subscription-current__payment-method-link" data-action="subscription-checkout#startUpdatePaymentMethod">
+                                                                    <button type="button" class="btn btn-link btn-sm subscription-current__payment-method-link" data-action="subscription--subscription-checkout#startUpdatePaymentMethod">
                                                                         Modifier
                                                                     </button>
                                                                 </p>
@@ -464,12 +464,12 @@
                                                             <form
                                                                 method="post"
                                                                 action="{{ path('app_subscription_resume') }}"
-                                                                data-controller="confirm-dialog"
-                                                                data-action="submit->confirm-dialog#confirm"
-                                                                data-confirm-dialog-title-value="Annuler la résiliation programmée ?"
-                                                                data-confirm-dialog-text-value="Votre abonnement restera actif et sera renouvelé normalement à la prochaine échéance."
-                                                                data-confirm-dialog-confirm-button-text-value="Conserver l’abonnement"
-                                                                data-confirm-dialog-cancel-button-text-value="Garder la résiliation"
+                                                                data-controller="core--confirm-dialog"
+                                                                data-action="submit->core--confirm-dialog#confirm"
+                                                                data-core--confirm-dialog-title-value="Annuler la résiliation programmée ?"
+                                                                data-core--confirm-dialog-text-value="Votre abonnement restera actif et sera renouvelé normalement à la prochaine échéance."
+                                                                data-core--confirm-dialog-confirm-button-text-value="Conserver l’abonnement"
+                                                                data-core--confirm-dialog-cancel-button-text-value="Garder la résiliation"
                                                                 class="subscription-form-stack"
                                                             >
                                                                 <input type="hidden" name="_token" value="{{ csrf_token('subscription-resume') }}">
@@ -479,12 +479,12 @@
                                                             <form
                                                                 method="post"
                                                                 action="{{ path('app_subscription_cancel') }}"
-                                                                data-controller="confirm-dialog"
-                                                                data-action="submit->confirm-dialog#confirm"
-                                                                data-confirm-dialog-title-value="Programmer la résiliation ?"
-                                                                data-confirm-dialog-text-value="Votre abonnement restera actif jusqu’à la fin de la période déjà payée. Les crédits restants resteront utilisables jusque-là."
-                                                                data-confirm-dialog-confirm-button-text-value="Programmer la résiliation"
-                                                                data-confirm-dialog-cancel-button-text-value="Conserver l’abonnement"
+                                                                data-controller="core--confirm-dialog"
+                                                                data-action="submit->core--confirm-dialog#confirm"
+                                                                data-core--confirm-dialog-title-value="Programmer la résiliation ?"
+                                                                data-core--confirm-dialog-text-value="Votre abonnement restera actif jusqu’à la fin de la période déjà payée. Les crédits restants resteront utilisables jusque-là."
+                                                                data-core--confirm-dialog-confirm-button-text-value="Programmer la résiliation"
+                                                                data-core--confirm-dialog-cancel-button-text-value="Conserver l’abonnement"
                                                                 class="subscription-form-stack"
                                                             >
                                                                 <input type="hidden" name="_token" value="{{ csrf_token('subscription-cancel') }}">
@@ -612,16 +612,16 @@
                                                     <button
                                                         type="button"
                                                         class="subscription-pricing-card__action"
-                                                        data-action="click->subscription-checkout#selectPlan"
+                                                        data-action="click->subscription--subscription-checkout#selectPlan"
                                                         data-subscription-plan-action
                                                         data-plan-locked="false"
-                                                        data-subscription-checkout-plan-code-param="{{ plan.code }}"
-                                                        data-subscription-checkout-plan-period-param="annual"
-                                                        data-subscription-checkout-plan-name-param="{{ plan.name }}"
-                                                        data-subscription-checkout-plan-price-param="{{ plan.annualAmount ?: '0.00' }}"
-                                                        data-subscription-checkout-plan-label-param="Annuel"
-                                                        data-subscription-checkout-plan-submit-url-param="{{ path('app_subscription_checkout', {code: plan.code, period: 'annual'}) }}"
-                                                        data-subscription-checkout-plan-csrf-token-param="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-annual') }}"
+                                                        data-subscription--subscription-checkout-plan-code-param="{{ plan.code }}"
+                                                        data-subscription--subscription-checkout-plan-period-param="annual"
+                                                        data-subscription--subscription-checkout-plan-name-param="{{ plan.name }}"
+                                                        data-subscription--subscription-checkout-plan-price-param="{{ plan.annualAmount ?: '0.00' }}"
+                                                        data-subscription--subscription-checkout-plan-label-param="Annuel"
+                                                        data-subscription--subscription-checkout-plan-submit-url-param="{{ path('app_subscription_checkout', {code: plan.code, period: 'annual'}) }}"
+                                                        data-subscription--subscription-checkout-plan-csrf-token-param="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-annual') }}"
                                                         data-plan-monthly-price="{{ plan.monthlyAmount ?: '0.00' }}"
                                                         data-plan-monthly-submit-url="{{ path('app_subscription_checkout', {code: plan.code, period: 'monthly'}) }}"
                                                         data-plan-monthly-csrf-token="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-monthly') }}"
@@ -653,10 +653,10 @@
                                                 <div class="subscription-payment-intro">
                                                     <span class="chip chip--nouvelle">Paiement sécurisé</span>
                                                     <h2>Confirmer la carte et l’abonnement</h2>
-                                                    <div class="subscription-selection-card" data-subscription-checkout-target="selectionCard">
+                                                    <div class="subscription-selection-card" data-subscription--subscription-checkout-target="selectionCard">
                                                         <div class="subscription-selection-card__label">Offre sélectionnée</div>
-                                                        <div class="subscription-selection-card__name" data-subscription-checkout-target="selectionName">Choisissez une formule</div>
-                                                        <div class="subscription-selection-card__meta" data-subscription-checkout-target="selectionMeta">
+                                                        <div class="subscription-selection-card__name" data-subscription--subscription-checkout-target="selectionName">Choisissez une formule</div>
+                                                        <div class="subscription-selection-card__meta" data-subscription--subscription-checkout-target="selectionMeta">
                                                             Choisissez une formule ci-dessus.
                                                         </div>
                                                     </div>
@@ -664,42 +664,42 @@
                                             </div>
 
                                             <div class="col-12 col-lg-7">
-                                                <div class="subscription-alert subscription-alert--danger d-none" data-subscription-checkout-target="errorBox"></div>
-                                                <div class="subscription-alert subscription-alert--success d-none" data-subscription-checkout-target="successBox"></div>
+                                                <div class="subscription-alert subscription-alert--danger d-none" data-subscription--subscription-checkout-target="errorBox"></div>
+                                                <div class="subscription-alert subscription-alert--success d-none" data-subscription--subscription-checkout-target="successBox"></div>
 
-                                                <div class="subscription-loading-overlay d-none" data-subscription-checkout-target="loadingOverlay" aria-hidden="true">
+                                                <div class="subscription-loading-overlay d-none" data-subscription--subscription-checkout-target="loadingOverlay" aria-hidden="true">
                                                     <div class="subscription-loading-overlay__spinner" aria-hidden="true"></div>
-                                                    <div class="subscription-loading-overlay__text" data-subscription-checkout-target="loadingText">
+                                                    <div class="subscription-loading-overlay__text" data-subscription--subscription-checkout-target="loadingText">
                                                         Préparation du paiement sécurisé...
                                                     </div>
                                                 </div>
 
                                                 <div class="subscription-payment-card">
                                                     <div class="subscription-payment-card__title">Carte bancaire</div>
-                                                    <div data-subscription-checkout-target="paymentElement"></div>
+                                                    <div data-subscription--subscription-checkout-target="paymentElement"></div>
                                                 </div>
 
                                                 <button
                                                     type="button"
                                                     class="btn btn-dash-primary subscription-submit"
-                                                    data-action="click->subscription-checkout#submit"
-                                                    data-subscription-checkout-target="submitButton"
+                                                    data-action="click->subscription--subscription-checkout#submit"
+                                                    data-subscription--subscription-checkout-target="submitButton"
                                                     disabled
                                                 >
-                                                    <span data-subscription-checkout-target="submitButtonLabel">Régler et activer l’abonnement</span>
+                                                    <span data-subscription--subscription-checkout-target="submitButtonLabel">Régler et activer l’abonnement</span>
                                                 </button>
 
                                                 <button
                                                     type="button"
                                                     class="btn btn-dash-ghost subscription-update d-none"
-                                                    data-action="click->subscription-checkout#submitPaymentMethodUpdate"
-                                                    data-subscription-checkout-target="updateButton"
+                                                    data-action="click->subscription--subscription-checkout#submitPaymentMethodUpdate"
+                                                    data-subscription--subscription-checkout-target="updateButton"
                                                     disabled
                                                 >
                                                     Mettre à jour la carte
                                                 </button>
 
-                                                <div class="subscription-submit-help" data-subscription-checkout-target="submitHelp">
+                                                <div class="subscription-submit-help" data-subscription--subscription-checkout-target="submitHelp">
                                                     Le bouton sera activé dès qu’une formule est choisie et que le formulaire de carte est prêt.
                                                 </div>
                                             </div>

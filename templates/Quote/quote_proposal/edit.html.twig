@@ -22,7 +22,7 @@
                 <h4 class="tm-quote-item-card__title">Nouvelle ligne</h4>
             </div>
 
-            <button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="collection#remove">
+            <button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="core--collection#remove">
                 Supprimer la ligne
             </button>
         </div>
@@ -104,7 +104,7 @@
                         Aperçu
                     </a>
 
-                    <form method="post" action="{{ path('app_prestataire_quote_proposal_delete', {publicReference: proposal.publicReference}) }}" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Supprimer ce devis ?" data-confirm-dialog-text-value="Il ne sera plus visible par le client, mais vous pourrez créer un nouveau devis pour cette demande." data-confirm-dialog-confirm-button-text-value="Supprimer" data-confirm-dialog-cancel-button-text-value="Annuler">
+                    <form method="post" action="{{ path('app_prestataire_quote_proposal_delete', {publicReference: proposal.publicReference}) }}" data-controller="core--confirm-dialog" data-action="submit->core--confirm-dialog#confirm" data-core--confirm-dialog-title-value="Supprimer ce devis ?" data-core--confirm-dialog-text-value="Il ne sera plus visible par le client, mais vous pourrez créer un nouveau devis pour cette demande." data-core--confirm-dialog-confirm-button-text-value="Supprimer" data-core--confirm-dialog-cancel-button-text-value="Annuler">
                         <input type="hidden" name="_token" value="{{ csrf_token('delete_quote_proposal_' ~ proposal.id) }}">
                         <button type="submit" class="tm-quote-btn tm-quote-btn--danger">
                             Supprimer
@@ -253,7 +253,7 @@
                             </section>
 
                             <section id="quote-proposal-native-items" class="tm-quote-form-section tm-quote-form-section--items">
-                                <div data-controller="collection" data-collection-index-value="{{ form.items|length }}" data-collection-prototype-value="{{ itemPrototype|e('html_attr') }}">
+                                <div data-controller="core--collection" data-core--collection-index-value="{{ form.items|length }}" data-core--collection-prototype-value="{{ itemPrototype|e('html_attr') }}">
                                     <div class="tm-quote-form-section__head tm-quote-form-section__head--items">
                                         <div>
                                             <h3 class="tm-quote-form-section__title">Lignes du devis</h3>
@@ -261,7 +261,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="tm-quote-items" data-collection-target="items">
+                                    <div class="tm-quote-items" data-core--collection-target="items">
                                         {% for itemForm in form.items %}
                                             <article class="tm-quote-item-card tm-quote-item-card--line" data-collection-item>
                                                 <div class="tm-quote-item-card__top">
@@ -271,7 +271,7 @@
                                                             {{ loop.index }}</h4>
                                                     </div>
 
-                                                    <button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="collection#remove">
+                                                    <button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="core--collection#remove">
                                                         Supprimer la ligne
                                                     </button>
                                                 </div>
@@ -312,7 +312,7 @@
                                     </div>
 
                                     <div class="tm-quote-add-line-wrap">
-                                        <button type="button" class="tm-quote-btn tm-quote-btn--mini-primary" data-action="collection#add">
+                                        <button type="button" class="tm-quote-btn tm-quote-btn--mini-primary" data-action="core--collection#add">
                                             Ajouter une ligne
                                         </button>
                                     </div>

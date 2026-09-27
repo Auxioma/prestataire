@@ -8,9 +8,9 @@
 {% endblock %}
 
 {% block body %}
-    <div class="tm-settings-container" {{ stimulus_controller('settings-tabs') }}>
+    <div class="tm-settings-container" {{ stimulus_controller('prestataire--settings-tabs') }}>
         <div class="tm-main-layout">
-            <aside class="tm-settings-sidebar" {{ stimulus_target('settings-tabs', 'sidebar') }}>
+            <aside class="tm-settings-sidebar" {{ stimulus_target('prestataire--settings-tabs', 'sidebar') }}>
                 {{ include('Prestataire/profile/_prestataire_settings_sidebar.html.twig', {
                     user: app.user,
                     activeTab: 'services',
@@ -18,10 +18,10 @@
                 }) }}
             </aside>
 
-            <div class="tm-settings-sidebar-backdrop" {{ stimulus_target('settings-tabs', 'backdrop') }} {{ stimulus_action('settings-tabs', 'closeSidebar', 'click') }}></div>
+            <div class="tm-settings-sidebar-backdrop" {{ stimulus_target('prestataire--settings-tabs', 'backdrop') }} {{ stimulus_action('prestataire--settings-tabs', 'closeSidebar', 'click') }}></div>
 
             <div class="tm-settings-content">
-                <button type="button" class="tm-sidebar-toggle d-lg-none" aria-label="Ouvrir la navigation des paramètres" {{ stimulus_target('settings-tabs', 'toggle') }} {{ stimulus_action('settings-tabs', 'toggleSidebar', 'click') }}>
+                <button type="button" class="tm-sidebar-toggle d-lg-none" aria-label="Ouvrir la navigation des paramètres" {{ stimulus_target('prestataire--settings-tabs', 'toggle') }} {{ stimulus_action('prestataire--settings-tabs', 'toggleSidebar', 'click') }}>
                     ☰
                 </button>
 

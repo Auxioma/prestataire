@@ -1,5 +1,5 @@
 {# NAVBAR #}
-<nav class="navbar navbar-expand-xl navbar-dark sticky-top tm-navbar tm-navbar--v2" aria-label="Navigation principale" data-controller="navbar" data-navbar-autocomplete-url-value="{{ path('app_search_autocomplete') }}">
+<nav class="navbar navbar-expand-xl navbar-dark sticky-top tm-navbar tm-navbar--v2" aria-label="Navigation principale" data-controller="website--navbar" data-website--navbar-autocomplete-url-value="{{ path('app_search_autocomplete') }}">
 
     <div
         class="container tm-navbar__container tm-navbar__container--v2">
@@ -26,10 +26,10 @@
                                         <input type="text"
                                                class="form-control tm-navbarsearch-input"
                                                placeholder="Rechercher un prestataire..."
-                                               data-navbar-target="input"
-                                               data-action="input->navbar#onInput focus->navbar#onInput" />
+                                               data-website--navbar-target="input"
+                                               data-action="input->website--navbar#onInput focus->website--navbar#onInput" />
                                         <div class="tm-navbarsearch-results d-none"
-                                             data-navbar-target="results desktopResults"></div>
+                                             data-website--navbar-target="results desktopResults"></div>
                                         <span class="tm-navbar__search-icon">
                                             <i class="fa-solid fa-magnifying-glass"></i>
                                         </span>
@@ -115,12 +115,12 @@
                 {% endif %}
 
                 {% if app.user %}
-                    <div class="nav-item dropdown d-none d-xl-block" data-controller="realtime-notifications" data-realtime-notifications-url-value="http://localhost:3001" data-realtime-notifications-user-id-value="{{ app.user.id }}" data-realtime-notifications-auth-token-value="{{ navbarRealtimeNotificationsToken|default('') }}" data-realtime-notifications-event-name-value="notification_created" data-realtime-notifications-join-event-name-value="join_user" data-realtime-notifications-max-items-value="5" data-realtime-notifications-mark-read-url-pattern-value="/notifications/__ID__/open">
+                    <div class="nav-item dropdown d-none d-xl-block" data-controller="messaging--realtime-notifications" data-messaging--realtime-notifications-url-value="http://localhost:3001" data-messaging--realtime-notifications-user-id-value="{{ app.user.id }}" data-messaging--realtime-notifications-auth-token-value="{{ navbarRealtimeNotificationsToken|default('') }}" data-messaging--realtime-notifications-event-name-value="notification_created" data-messaging--realtime-notifications-join-event-name-value="join_user" data-messaging--realtime-notifications-max-items-value="5" data-messaging--realtime-notifications-mark-read-url-pattern-value="/notifications/__ID__/open">
 
                         <button class="nav-link tm-navbarlink tm-navbar__notif-trigger position-relative border-0 bg-transparent" type="button" id="tmNavbarNotificationsDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Notifications" aria-controls="tmNavbarNotificationsMenu">
                             <i class="bi bi-bell-fill" aria-hidden="true"></i>
 
-                            <span data-realtime-notifications-target="badge" data-count-value="{{ navbarUnreadNotificationCount }}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger tm-navbar-notification-badge {{ navbarUnreadNotificationCount > 0 ? '' : 'd-none' }}">
+                            <span data-messaging--realtime-notifications-target="badge" data-count-value="{{ navbarUnreadNotificationCount }}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger tm-navbar-notification-badge {{ navbarUnreadNotificationCount > 0 ? '' : 'd-none' }}">
                                 {{ navbarUnreadNotificationCount > 99 ? '99+' : navbarUnreadNotificationCount }}
                                 <span class="visually-hidden">notifications non lues</span>
                             </span>
@@ -131,14 +131,14 @@
                             <div class="tm-navbar-notification-menu__head">
                                 <div>
                                     <div class="tm-navbar-notification-menu__title">Notifications</div>
-                                    <div class="tm-navbar-notification-menu__count" data-realtime-notifications-target="countText" data-count-value="{{ navbarUnreadNotificationCount }}" aria-live="polite" aria-atomic="true">
+                                    <div class="tm-navbar-notification-menu__count" data-messaging--realtime-notifications-target="countText" data-count-value="{{ navbarUnreadNotificationCount }}" aria-live="polite" aria-atomic="true">
                                         {{ navbarUnreadNotificationCount }}
                                         non lue{{ navbarUnreadNotificationCount > 1 ? 's' : '' }}
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="tm-navbar-notification-menu__list" data-realtime-notifications-target="list">
+                            <div class="tm-navbar-notification-menu__list" data-messaging--realtime-notifications-target="list">
                                 {% if navbarLatestNotifications is not empty %}
                                     {% for notification in navbarLatestNotifications %}
                                         <a href="{{ path('app_notification_open', {id: notification.id}) }}" class="dropdown-item tm-navbardropdown-link tm-navbar-notification-item {{ not notification.isRead ? 'tm-navbar-notification-item--unread' : '' }}" data-notification-item>
@@ -167,7 +167,7 @@
                                 {% endif %}
                             </div>
 
-                            <div class="tm-navbar-notification-empty {{ navbarLatestNotifications is not empty ? 'd-none' : '' }}" data-realtime-notifications-target="empty">
+                            <div class="tm-navbar-notification-empty {{ navbarLatestNotifications is not empty ? 'd-none' : '' }}" data-messaging--realtime-notifications-target="empty">
                                 <i class="bi bi-bell-slash"></i>
                                 <span>Aucune notification pour le moment.</span>
                             </div>
@@ -201,8 +201,8 @@
 
                 <div class="tm-navbar__search tm-navbar__search--mobile">
                     <div class="tm-navbar__search-wrap">
-                        <input type="search" class="form-control tm-navbarsearch-input" placeholder="Rechercher un prestataire..." aria-label="Rechercher un prestataire" data-navbar-target="input" data-action="input->navbar#onInput focus->navbar#onInput"/>
-                        <div class="tm-navbarsearch-results d-none" data-navbar-target="results mobileResults" aria-live="polite" aria-atomic="true"></div>
+                        <input type="search" class="form-control tm-navbarsearch-input" placeholder="Rechercher un prestataire..." aria-label="Rechercher un prestataire" data-website--navbar-target="input" data-action="input->website--navbar#onInput focus->website--navbar#onInput"/>
+                        <div class="tm-navbarsearch-results d-none" data-website--navbar-target="results mobileResults" aria-live="polite" aria-atomic="true"></div>
                         <span class="tm-navbar__search-icon" aria-hidden="true">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </span>
@@ -374,13 +374,13 @@
                     {% endif %}
 
                     {% if app.user %}
-                        <li class="nav-item dropdown d-xl-none" data-controller="realtime-notifications" data-realtime-notifications-url-value="http://localhost:3001" data-realtime-notifications-user-id-value="{{ app.user.id }}" data-realtime-notifications-auth-token-value="{{ navbarRealtimeNotificationsToken|default('') }}" data-realtime-notifications-event-name-value="notification_created" data-realtime-notifications-join-event-name-value="join_user" data-realtime-notifications-max-items-value="5" data-realtime-notifications-mark-read-url-pattern-value="/notifications/__ID__/open">
+                        <li class="nav-item dropdown d-xl-none" data-controller="messaging--realtime-notifications" data-messaging--realtime-notifications-url-value="http://localhost:3001" data-messaging--realtime-notifications-user-id-value="{{ app.user.id }}" data-messaging--realtime-notifications-auth-token-value="{{ navbarRealtimeNotificationsToken|default('') }}" data-messaging--realtime-notifications-event-name-value="notification_created" data-messaging--realtime-notifications-join-event-name-value="join_user" data-messaging--realtime-notifications-max-items-value="5" data-messaging--realtime-notifications-mark-read-url-pattern-value="/notifications/__ID__/open">
 
                             <button class="nav-link tm-navbar__link tm-navbar__link--icon position-relative border-0 bg-transparent" type="button" id="tmNavbarNotificationsDropdownMobile" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-controls="tmNavbarNotificationsMenuMobile">
                                 <i class="bi bi-bell-fill" aria-hidden="true"></i>
                                 <span>Notifications</span>
 
-                                <span data-realtime-notifications-target="badge" data-count-value="{{ navbarUnreadNotificationCount }}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger tm-navbar-notification-badge {{ navbarUnreadNotificationCount > 0 ? '' : 'd-none' }}">
+                                <span data-messaging--realtime-notifications-target="badge" data-count-value="{{ navbarUnreadNotificationCount }}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger tm-navbar-notification-badge {{ navbarUnreadNotificationCount > 0 ? '' : 'd-none' }}">
                                     {{ navbarUnreadNotificationCount > 99 ? '99+' : navbarUnreadNotificationCount }}
                                     <span class="visually-hidden">notifications non lues</span>
                                 </span>
@@ -391,14 +391,14 @@
                                 <div class="tm-navbar-notification-menu__head">
                                     <div>
                                         <div class="tm-navbar-notification-menu__title">Notifications</div>
-                                        <div class="tm-navbar-notification-menu__count" data-realtime-notifications-target="countText" data-count-value="{{ navbarUnreadNotificationCount }}" aria-live="polite" aria-atomic="true">
+                                        <div class="tm-navbar-notification-menu__count" data-messaging--realtime-notifications-target="countText" data-count-value="{{ navbarUnreadNotificationCount }}" aria-live="polite" aria-atomic="true">
                                             {{ navbarUnreadNotificationCount }}
                                             non lue{{ navbarUnreadNotificationCount > 1 ? 's' : '' }}
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="tm-navbar-notification-menu__list" data-realtime-notifications-target="list">
+                                <div class="tm-navbar-notification-menu__list" data-messaging--realtime-notifications-target="list">
                                     {% if navbarLatestNotifications is not empty %}
                                         {% for notification in navbarLatestNotifications %}
                                             <a href="{{ path('app_notification_open', {id: notification.id}) }}" class="dropdown-item tm-navbardropdown-link tm-navbar-notification-item {{ not notification.isRead ? 'tm-navbar-notification-item--unread' : '' }}" data-notification-item>
@@ -427,7 +427,7 @@
                                     {% endif %}
                                 </div>
 
-                                <div class="tm-navbar-notification-empty {{ navbarLatestNotifications is not empty ? 'd-none' : '' }}" data-realtime-notifications-target="empty">
+                                <div class="tm-navbar-notification-empty {{ navbarLatestNotifications is not empty ? 'd-none' : '' }}" data-messaging--realtime-notifications-target="empty">
                                     <i class="bi bi-bell-slash"></i>
                                     <span>Aucune notification pour le moment.</span>
                                 </div>

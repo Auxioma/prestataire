@@ -38,7 +38,7 @@ class PrestataireAppointmentType extends AbstractType
                 'model_timezone' => 'Europe/Paris',
                 'view_timezone' => 'Europe/Paris',
                 'attr' => [
-                    'data-appointment-form-target' => 'startsAt',
+                    'data-prestataire--appointment-form-target' => 'startsAt',
                 ],
                 'help' => 'Date et heure de début du rendez-vous.',
             ])
@@ -48,7 +48,7 @@ class PrestataireAppointmentType extends AbstractType
                 'model_timezone' => 'Europe/Paris',
                 'view_timezone' => 'Europe/Paris',
                 'attr' => [
-                    'data-appointment-form-target' => 'endsAt',
+                    'data-prestataire--appointment-form-target' => 'endsAt',
                 ],
                 'help' => 'Date et heure de fin du rendez-vous.',
             ])

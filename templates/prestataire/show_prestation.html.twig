@@ -87,8 +87,8 @@
                             {% endif %}
                         </div>
 
-                        <button type="button" class="btn btn-light favorite-btn border-0 shadow-sm flex-shrink-0" data-controller="favorite-toggle" data-action="click->favorite-toggle#toggle" data-favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-favorite-toggle-type-value="prestation" data-favorite-toggle-target-id-value="{{ prestation.id }}" data-favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-favorite-toggle-is-favorite-value="{{ isFavoritePrestation ? 'true' : 'false' }}" data-favorite-toggle-login-url-value="{{ path('app_login') }}" aria-pressed="{{ isFavoritePrestation ? 'true' : 'false' }}" aria-label="{{ isFavoritePrestation ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
-                            <i data-favorite-toggle-target="icon" class="{{ isFavoritePrestation ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"></i>
+                        <button type="button" class="btn btn-light favorite-btn border-0 shadow-sm flex-shrink-0" data-controller="review--favorite-toggle" data-action="click->review--favorite-toggle#toggle" data-review--favorite-toggle-url-value="{{ path('app_favorite_toggle') }}" data-review--favorite-toggle-type-value="prestation" data-review--favorite-toggle-target-id-value="{{ prestation.id }}" data-review--favorite-toggle-csrf-token-value="{{ csrf_token('favorite_toggle') }}" data-review--favorite-toggle-is-favorite-value="{{ isFavoritePrestation ? 'true' : 'false' }}" data-review--favorite-toggle-login-url-value="{{ path('app_login') }}" aria-pressed="{{ isFavoritePrestation ? 'true' : 'false' }}" aria-label="{{ isFavoritePrestation ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
+                            <i data-review--favorite-toggle-target="icon" class="{{ isFavoritePrestation ? 'fa-solid text-danger' : 'fa-regular text-muted' }} fa-heart"></i>
                         </button>
                     </div>
 
@@ -145,7 +145,7 @@
                     </section>
 
                     {% if prestationMedias|length > 0 %}
-                        <section class="tm-prestation-show__panel" data-controller="image-lightbox">
+                        <section class="tm-prestation-show__panel" data-controller="core--image-lightbox">
                             <div class="tm-prestation-show__panel-head">
                                 <span class="tm-prestation-show__panel-kicker">Photos</span>
                                 <h2 class="tm-prestation-show__panel-title">Galerie de la prestation</h2>
@@ -156,32 +156,32 @@
                                 {% for media in prestationMedias %}
                                     {% if media.fileName is defined and media.fileName %}
                                         <figure class="tm-prestation-show__gallery-item">
-                                            <img src="{{ asset('uploads/prestations/' ~ media.fileName) }}" alt="{{ prestation.title ?: serviceName }}" class="tm-prestation-show__gallery-image" width="1200" height="900" loading="lazy" data-action="click->image-lightbox#open" data-image-lightbox-target="trigger" data-index="{{ galleryIndex }}" data-src="{{ asset('uploads/prestations/' ~ media.fileName) }}" data-alt="{{ prestation.title ?: serviceName }}">
+                                            <img src="{{ asset('uploads/prestations/' ~ media.fileName) }}" alt="{{ prestation.title ?: serviceName }}" class="tm-prestation-show__gallery-image" width="1200" height="900" loading="lazy" data-action="click->core--image-lightbox#open" data-core--image-lightbox-target="trigger" data-index="{{ galleryIndex }}" data-src="{{ asset('uploads/prestations/' ~ media.fileName) }}" data-alt="{{ prestation.title ?: serviceName }}">
                                         </figure>
                                         {% set galleryIndex = galleryIndex + 1 %}
                                     {% endif %}
                                 {% endfor %}
                             </div>
 
-                            <div class="tm-image-lightbox" data-image-lightbox-target="modal" hidden>
-                                <button type="button" class="tm-image-lightbox__backdrop" data-action="click->image-lightbox#close" aria-label="Fermer"></button>
+                            <div class="tm-image-lightbox" data-core--image-lightbox-target="modal" hidden>
+                                <button type="button" class="tm-image-lightbox__backdrop" data-action="click->core--image-lightbox#close" aria-label="Fermer"></button>
 
                                 <div class="tm-image-lightbox__dialog" role="dialog" aria-modal="true" aria-label="Galerie d’images">
-                                    <button type="button" class="tm-image-lightbox__close" data-action="click->image-lightbox#close" aria-label="Fermer">
+                                    <button type="button" class="tm-image-lightbox__close" data-action="click->core--image-lightbox#close" aria-label="Fermer">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
 
-                                    <button type="button" class="tm-image-lightbox__nav tm-image-lightbox__nav--prev" data-action="click->image-lightbox#previous" aria-label="Image précédente">
+                                    <button type="button" class="tm-image-lightbox__nav tm-image-lightbox__nav--prev" data-action="click->core--image-lightbox#previous" aria-label="Image précédente">
                                         <i class="fa-solid fa-chevron-left"></i>
                                     </button>
 
-                                    <img src="" alt="" class="tm-image-lightbox__image" width="1200" height="900" loading="lazy" data-image-lightbox-target="image">
+                                    <img src="" alt="" class="tm-image-lightbox__image" width="1200" height="900" loading="lazy" data-core--image-lightbox-target="image">
 
-                                    <button type="button" class="tm-image-lightbox__nav tm-image-lightbox__nav--next" data-action="click->image-lightbox#next" aria-label="Image suivante">
+                                    <button type="button" class="tm-image-lightbox__nav tm-image-lightbox__nav--next" data-action="click->core--image-lightbox#next" aria-label="Image suivante">
                                         <i class="fa-solid fa-chevron-right"></i>
                                     </button>
 
-                                    <div class="tm-image-lightbox__counter" data-image-lightbox-target="counter"></div>
+                                    <div class="tm-image-lightbox__counter" data-core--image-lightbox-target="counter"></div>
                                 </div>
                             </div>
                         </section>
@@ -246,7 +246,7 @@
                                 {% endif %}
                             </div>
 
-                            <div class="tm-prestation-show__map-card" data-controller="zone-map" data-zone-map-zones-value="{{ mapZones|json_encode|e('html_attr') }}">
+                            <div class="tm-prestation-show__map-card" data-controller="prestataire--zone-map" data-prestataire--zone-map-zones-value="{{ mapZones|json_encode|e('html_attr') }}">
                                 <div class="tm-prestation-show__map-shell">
                                     {% if prestationMap is defined and prestationMap %}
                                         {{ ux_map(prestationMap, {

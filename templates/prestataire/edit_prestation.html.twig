@@ -15,9 +15,9 @@
 
     {# CSS => /assets/styles/prestataire/prestation_service_wizard.css #}
 
-    <div class="tm-settings-container" {{ stimulus_controller('settings-tabs') }}>
+    <div class="tm-settings-container" {{ stimulus_controller('prestataire--settings-tabs') }}>
         <div class="tm-main-layout">
-            <aside class="tm-settings-sidebar" {{ stimulus_target('settings-tabs', 'sidebar') }}>
+            <aside class="tm-settings-sidebar" {{ stimulus_target('prestataire--settings-tabs', 'sidebar') }}>
                 {{ include('Prestataire/profile/_prestataire_settings_sidebar.html.twig', {
                     user: app.user,
                     activeTab: 'services',
@@ -25,16 +25,16 @@
                 }) }}
             </aside>
 
-            <div class="tm-settings-sidebar-backdrop" {{ stimulus_target('settings-tabs', 'backdrop') }} {{ stimulus_action('settings-tabs', 'closeSidebar', 'click') }}></div>
+            <div class="tm-settings-sidebar-backdrop" {{ stimulus_target('prestataire--settings-tabs', 'backdrop') }} {{ stimulus_action('prestataire--settings-tabs', 'closeSidebar', 'click') }}></div>
 
             <div class="tm-settings-content">
-                <button type="button" class="tm-sidebar-toggle d-lg-none" aria-label="Ouvrir la navigation des paramètres" {{ stimulus_target('settings-tabs', 'toggle') }} {{ stimulus_action('settings-tabs', 'toggleSidebar', 'click') }}>
+                <button type="button" class="tm-sidebar-toggle d-lg-none" aria-label="Ouvrir la navigation des paramètres" {{ stimulus_target('prestataire--settings-tabs', 'toggle') }} {{ stimulus_action('prestataire--settings-tabs', 'toggleSidebar', 'click') }}>
                     ☰
                 </button>
 
                 <div class="tm-prestation-wizard-page">
                     <div class="tm-prestation-wizard">
-                        <div class="tm-prestation-wizard-card" data-controller="prestation-wizard">
+                        <div class="tm-prestation-wizard-card" data-controller="prestataire--prestation-wizard">
                 <div class="tm-prestation-wizard-hero">
                     <span class="tm-prestation-wizard-eyebrow">
                         <i class="bi bi-magic"></i>
@@ -53,7 +53,7 @@
                         <p class="tm-prestation-wizard-progress-label">
                             Étape
                             <span class="tm-prestation-wizard-progress-count">
-                                <span data-prestation-wizard-target="stepCurrent">1</span>/<span data-prestation-wizard-target="stepTotal">6</span>
+                                <span data-prestataire--prestation-wizard-target="stepCurrent">1</span>/<span data-prestataire--prestation-wizard-target="stepTotal">6</span>
                             </span>
                         </p>
                         <p class="tm-prestation-wizard-progress-note mb-0">
@@ -62,42 +62,42 @@
                     </div>
 
                     <div class="tm-prestation-wizard-progress-track">
-                        <div class="tm-prestation-wizard-progress-bar" data-prestation-wizard-target="progressBar"></div>
+                        <div class="tm-prestation-wizard-progress-bar" data-prestataire--prestation-wizard-target="progressBar"></div>
                     </div>
                 </div>
 
                 <div class="tm-prestation-wizard-steps-nav">
-                    <button type="button" class="tm-prestation-wizard-step-indicator is-active" data-prestation-wizard-target="indicator" data-step-index-value="0" data-action="click->prestation-wizard#goToStep">
+                    <button type="button" class="tm-prestation-wizard-step-indicator is-active" data-prestataire--prestation-wizard-target="indicator" data-step-index-value="0" data-action="click->prestataire--prestation-wizard#goToStep">
                         <span class="tm-prestation-wizard-step-number">1</span>
                         <span class="tm-prestation-wizard-step-name">Informations</span>
                         <span class="tm-prestation-wizard-step-desc">Titre, service et résumé SEO.</span>
                     </button>
 
-                    <button type="button" class="tm-prestation-wizard-step-indicator" data-prestation-wizard-target="indicator" data-step-index-value="1" data-action="click->prestation-wizard#goToStep">
+                    <button type="button" class="tm-prestation-wizard-step-indicator" data-prestataire--prestation-wizard-target="indicator" data-step-index-value="1" data-action="click->prestataire--prestation-wizard#goToStep">
                         <span class="tm-prestation-wizard-step-number">2</span>
                         <span class="tm-prestation-wizard-step-name">Détails</span>
                         <span class="tm-prestation-wizard-step-desc">Description longue de l’offre.</span>
                     </button>
 
-                    <button type="button" class="tm-prestation-wizard-step-indicator" data-prestation-wizard-target="indicator" data-step-index-value="2" data-action="click->prestation-wizard#goToStep">
+                    <button type="button" class="tm-prestation-wizard-step-indicator" data-prestataire--prestation-wizard-target="indicator" data-step-index-value="2" data-action="click->prestataire--prestation-wizard#goToStep">
                         <span class="tm-prestation-wizard-step-number">3</span>
                         <span class="tm-prestation-wizard-step-name">Tarifs</span>
                         <span class="tm-prestation-wizard-step-desc">Type, prix et unité.</span>
                     </button>
 
-                    <button type="button" class="tm-prestation-wizard-step-indicator" data-prestation-wizard-target="indicator" data-step-index-value="3" data-action="click->prestation-wizard#goToStep">
+                    <button type="button" class="tm-prestation-wizard-step-indicator" data-prestataire--prestation-wizard-target="indicator" data-step-index-value="3" data-action="click->prestataire--prestation-wizard#goToStep">
                         <span class="tm-prestation-wizard-step-number">4</span>
                         <span class="tm-prestation-wizard-step-name">Zone</span>
                         <span class="tm-prestation-wizard-step-desc">Zones du prestataire et infos utiles.</span>
                     </button>
 
-                    <button type="button" class="tm-prestation-wizard-step-indicator" data-prestation-wizard-target="indicator" data-step-index-value="4" data-action="click->prestation-wizard#goToStep">
+                    <button type="button" class="tm-prestation-wizard-step-indicator" data-prestataire--prestation-wizard-target="indicator" data-step-index-value="4" data-action="click->prestataire--prestation-wizard#goToStep">
                         <span class="tm-prestation-wizard-step-number">5</span>
                         <span class="tm-prestation-wizard-step-name">Photos & docs</span>
                         <span class="tm-prestation-wizard-step-desc">Étape préparée pour plus tard.</span>
                     </button>
 
-                    <button type="button" class="tm-prestation-wizard-step-indicator" data-prestation-wizard-target="indicator" data-step-index-value="5" data-action="click->prestation-wizard#goToStep">
+                    <button type="button" class="tm-prestation-wizard-step-indicator" data-prestataire--prestation-wizard-target="indicator" data-step-index-value="5" data-action="click->prestataire--prestation-wizard#goToStep">
                         <span class="tm-prestation-wizard-step-number">6</span>
                         <span class="tm-prestation-wizard-step-name">Prévisualisation</span>
                         <span class="tm-prestation-wizard-step-desc">Résumé final avant enregistrement.</span>
@@ -114,7 +114,7 @@
                 <div
                     class="tm-prestation-wizard-body">
                     {# SECTION INFORMATIONS #}
-                    <section class="tm-prestation-wizard-panel is-active" data-prestation-wizard-target="step">
+                    <section class="tm-prestation-wizard-panel is-active" data-prestataire--prestation-wizard-target="step">
                         <div class="tm-prestation-wizard-panel-head">
                             <h2 class="tm-prestation-wizard-panel-title">Informations générales</h2>
                             <p class="tm-prestation-wizard-panel-subtitle">
@@ -192,7 +192,7 @@
                                         attr: {
                                             class: 'form-control',
                                             placeholder: 'Ex. Pose de carrelage intérieur haut de gamme',
-                                            'data-prestation-wizard-target': 'sourceTitle',
+                                            'data-prestataire--prestation-wizard-target': 'sourceTitle',
                                         },
                                     }) }}
                                     {{ form_errors(form.title) }}
@@ -209,7 +209,7 @@
                                                 class: 'form-control',
                                                 rows: 4,
                                                 placeholder: 'Résumez la prestation en une ou deux phrases claires.',
-                                                'data-prestation-wizard-target': 'sourceShortDescription',
+                                                'data-prestataire--prestation-wizard-target': 'sourceShortDescription',
                                             },
                                         }) }}
                                         {{ form_errors(form.shortDescription) }}
@@ -221,7 +221,7 @@
                     </section>
 
                     {# SECTION DESCRIPTION #}
-                    <section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
+                    <section class="tm-prestation-wizard-panel d-none" data-prestataire--prestation-wizard-target="step">
                         <div class="tm-prestation-wizard-panel-head">
                             <h2 class="tm-prestation-wizard-panel-title">Détails de la prestation</h2>
                             <p class="tm-prestation-wizard-panel-subtitle">
@@ -238,7 +238,7 @@
                                             class: 'form-control',
                                             rows: 10,
                                             placeholder: 'Décrivez le contenu de votre prestation, les étapes, les livrables, les conditions ou les spécificités.',
-                                            'data-prestation-wizard-target': 'sourceDescription',
+                                            'data-prestataire--prestation-wizard-target': 'sourceDescription',
                                         },
                                     }) }}
                                     {{ form_errors(form.description) }}
@@ -249,7 +249,7 @@
                     </section>
 
                     {# SECTION TARIFS #}
-                    <section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
+                    <section class="tm-prestation-wizard-panel d-none" data-prestataire--prestation-wizard-target="step">
                         <div class="tm-prestation-wizard-panel-head">
                             <h2 class="tm-prestation-wizard-panel-title">Tarifs</h2>
                             <p class="tm-prestation-wizard-panel-subtitle">
@@ -264,7 +264,7 @@
                                     {{ form_widget(form.pricingType, {
                     attr: {
                         class: 'form-select',
-                        'data-prestation-wizard-target': 'sourcePricingType',
+                        'data-prestataire--prestation-wizard-target': 'sourcePricingType',
                     },
                 }) }}
                                     {{ form_errors(form.pricingType) }}
@@ -272,7 +272,7 @@
                                 </div>
                             </div>
 
-                            <div class="tm-prestation-wizard-col-12" data-prestation-wizard-target="pricingQuoteBlock">
+                            <div class="tm-prestation-wizard-col-12" data-prestataire--prestation-wizard-target="pricingQuoteBlock">
                                 <div class="tm-prestation-wizard-note d-none">
                                     Ce mode de tarification n’affiche pas de montant chiffré. La prévisualisation indiquera automatiquement « Tarif sur devis ».
                                 </div>
@@ -285,7 +285,7 @@
                     attr: {
                         class: 'form-control',
                         placeholder: 'Ex. 80',
-                        'data-prestation-wizard-target': 'sourcePriceFrom',
+                        'data-prestataire--prestation-wizard-target': 'sourcePriceFrom',
                     },
                 }) }}
                                     {{ form_errors(form.priceFrom) }}
@@ -299,7 +299,7 @@
                     attr: {
                         class: 'form-control',
                         placeholder: 'Ex. 120',
-                        'data-prestation-wizard-target': 'sourcePriceTo',
+                        'data-prestataire--prestation-wizard-target': 'sourcePriceTo',
                     },
                 }) }}
                                     {{ form_errors(form.priceTo) }}
@@ -313,7 +313,7 @@
                     attr: {
                         class: 'form-control',
                         placeholder: 'Ex. heure, jour, forfait',
-                        'data-prestation-wizard-target': 'sourcePriceUnit',
+                        'data-prestataire--prestation-wizard-target': 'sourcePriceUnit',
                     },
                 }) }}
                                     {{ form_errors(form.priceUnit) }}
@@ -323,7 +323,7 @@
                     </section>
 
                     {# SECTION ZONES #}
-                    <section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
+                    <section class="tm-prestation-wizard-panel d-none" data-prestataire--prestation-wizard-target="step">
                         <div class="tm-prestation-wizard-panel-head">
                             <h2 class="tm-prestation-wizard-panel-title">Zone et informations utiles</h2>
                             <p class="tm-prestation-wizard-panel-subtitle">
@@ -381,7 +381,7 @@
                                                 class: 'form-control',
                                                 rows: 6,
                                                 placeholder: 'Ex. déplacement inclus sous 20 km, devis gratuit, matériel fourni selon besoin...',
-                                                'data-prestation-wizard-target': 'sourceAdditionalInfo',
+                                                'data-prestataire--prestation-wizard-target': 'sourceAdditionalInfo',
                                             },
                                         }) }}
                                         {{ form_errors(form.additionalInfo) }}
@@ -393,7 +393,7 @@
                     </section>
 
                     {# SECTION PHOTOS #}
-                    <section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
+                    <section class="tm-prestation-wizard-panel d-none" data-prestataire--prestation-wizard-target="step">
                         <div class="tm-prestation-wizard-panel-head">
                             <h2 class="tm-prestation-wizard-panel-title">Photos et documents</h2>
                             <p class="tm-prestation-wizard-panel-subtitle">
@@ -409,10 +409,10 @@
 
                                 <article
                                     class="tm-prestation-wizard-media-card"
-                                    data-controller="media-preview"
-                                    data-media-preview-has-existing-value="{{ existingFile ? 'true' : 'false' }}"
+                                    data-controller="core--media-preview"
+                                    data-core--media-preview-has-existing-value="{{ existingFile ? 'true' : 'false' }}"
                                     {% if existingFile %}
-                                        data-media-preview-existing-src-value="{{ asset('uploads/prestations/' ~ existingFile) }}"
+                                        data-core--media-preview-existing-src-value="{{ asset('uploads/prestations/' ~ existingFile) }}"
                                     {% endif %}
                                 >
                                     <div class="tm-prestation-wizard-media-card-head">
@@ -428,7 +428,7 @@
                                                     {{ form_widget(mediaForm.delete, {
                                     attr: {
                                         class: 'tm-prestation-wizard-media-delete-input',
-                                        'data-media-preview-target': 'deleteCheckbox',
+                                        'data-core--media-preview-target': 'deleteCheckbox',
                                     },
                                 }) }}
                                                     {{ form_errors(mediaForm.delete) }}
@@ -437,8 +437,8 @@
                                                 <button
                                                     type="button"
                                                     class="tm-prestation-wizard-media-delete-button {{ existingFile ? '' : 'd-none' }}"
-                                                    data-media-preview-target="clearButton"
-                                                    data-action="click->media-preview#clear"
+                                                    data-core--media-preview-target="clearButton"
+                                                    data-action="click->core--media-preview#clear"
                                                 >
                                                     <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
                                                     <span>Retirer la photo</span>
@@ -448,7 +448,7 @@
                                     </div>
 
                                     <div class="tm-media-preview">
-                                        <img data-media-preview-target="preview"
+                                        <img data-core--media-preview-target="preview"
                                         class="tm-media-preview__image {{ existingFile ? '' : 'd-none' }}"
                                         src="{{ existingFile ? asset('uploads/prestations/' ~ existingFile) : '' }}"
                                         alt="Aperçu de l’image sélectionnée"
@@ -458,7 +458,7 @@
                                         data-existing-media-preview
                                         >
 
-                                        <div data-media-preview-target="placeholder" class="tm-media-preview__placeholder {{ existingFile ? 'd-none' : '' }}">
+                                        <div data-core--media-preview-target="placeholder" class="tm-media-preview__placeholder {{ existingFile ? 'd-none' : '' }}">
                                             <div class="tm-media-preview__placeholder-icon">
                                                 <i class="fa-regular fa-image"></i>
                                             </div>
@@ -479,8 +479,8 @@
                                             {{ form_widget(mediaForm.imageFile, {
                             attr: {
                                 class: 'form-control',
-                                'data-media-preview-target': 'input',
-                                'data-action': 'change->media-preview#update',
+                                'data-core--media-preview-target': 'input',
+                                'data-action': 'change->core--media-preview#update',
                             },
                         }) }}
                                             {{ form_errors(mediaForm.imageFile) }}
@@ -520,7 +520,7 @@
                     </section>
 
                     {# SECTION PREVIEW #}
-                    <section class="tm-prestation-wizard-panel d-none" data-prestation-wizard-target="step">
+                    <section class="tm-prestation-wizard-panel d-none" data-prestataire--prestation-wizard-target="step">
                         <div class="tm-prestation-wizard-panel-head">
                             <h2 class="tm-prestation-wizard-panel-title">Prévisualisation</h2>
                             <p class="tm-prestation-wizard-panel-subtitle">
@@ -532,27 +532,27 @@
                             <article class="tm-prestation-wizard-preview-card">
                                 <span class="tm-prestation-wizard-preview-eyebrow">Aperçu prestation</span>
 
-                                <h3 class="tm-prestation-wizard-preview-title" data-prestation-wizard-target="previewTitle">Titre de la prestation</h3>
+                                <h3 class="tm-prestation-wizard-preview-title" data-prestataire--prestation-wizard-target="previewTitle">Titre de la prestation</h3>
 
-                                <p class="tm-prestation-wizard-preview-short" data-prestation-wizard-target="previewShortDescription">
+                                <p class="tm-prestation-wizard-preview-short" data-prestataire--prestation-wizard-target="previewShortDescription">
                                     Ajoutez une description courte pour résumer votre prestation en quelques mots.
                                 </p>
 
                                 <div class="tm-prestation-wizard-preview-meta">
-                                    <span class="tm-prestation-wizard-badge" data-prestation-wizard-target="previewCategory">
+                                    <span class="tm-prestation-wizard-badge" data-prestataire--prestation-wizard-target="previewCategory">
                                         {{ parentCategoryEntity ? parentCategoryEntity.name : 'Catégorie' }}
                                     </span>
-                                    <span class="tm-prestation-wizard-badge" data-prestation-wizard-target="previewSubcategory">
+                                    <span class="tm-prestation-wizard-badge" data-prestataire--prestation-wizard-target="previewSubcategory">
                                         {{ categoryEntity ? categoryEntity.name : 'Sous-catégorie' }}
                                     </span>
-                                    <span class="tm-prestation-wizard-badge" data-prestation-wizard-target="previewService">
+                                    <span class="tm-prestation-wizard-badge" data-prestataire--prestation-wizard-target="previewService">
                                         {{ serviceEntity ? serviceEntity.name : 'Service' }}
                                     </span>
                                 </div>
 
                                 <div class="tm-prestation-wizard-preview-section">
                                     <h4 class="tm-prestation-wizard-preview-section-title">Description détaillée</h4>
-                                    <p class="tm-prestation-wizard-preview-section-text" data-prestation-wizard-target="previewDescription">
+                                    <p class="tm-prestation-wizard-preview-section-text" data-prestataire--prestation-wizard-target="previewDescription">
                                         Ajoutez une description détaillée pour expliquer clairement votre offre.
                                     </p>
                                 </div>
@@ -561,7 +561,7 @@
     <h4 class="tm-prestation-wizard-preview-section-title">Photos</h4>
     <div
         class="tm-prestation-wizard-preview-media-grid"
-        data-prestation-wizard-target="previewMedia"
+        data-prestataire--prestation-wizard-target="previewMedia"
     >
         <div class="tm-prestation-wizard-preview-media-empty">
             Aucune image sélectionnée pour le moment.
@@ -571,14 +571,14 @@
 
                                 <div class="tm-prestation-wizard-preview-section">
                                     <h4 class="tm-prestation-wizard-preview-section-title">Tarification</h4>
-                                    <p class="tm-prestation-wizard-preview-section-text" data-prestation-wizard-target="previewPricing">
+                                    <p class="tm-prestation-wizard-preview-section-text" data-prestataire--prestation-wizard-target="previewPricing">
                                         Tarification non renseignée
                                     </p>
                                 </div>
 
                                 <div class="tm-prestation-wizard-preview-section">
                                     <h4 class="tm-prestation-wizard-preview-section-title">Zones d’intervention</h4>
-                                    <div class="tm-prestation-wizard-preview-zones" data-prestation-wizard-target="previewZones">
+                                    <div class="tm-prestation-wizard-preview-zones" data-prestataire--prestation-wizard-target="previewZones">
                                         <div class="tm-prestation-wizard-preview-zone-item is-empty">
                                             <strong>Aucune zone affichée</strong>
                                             <span>Les zones configurées sur le profil apparaîtront ici.</span>
@@ -588,7 +588,7 @@
 
                                 <div class="tm-prestation-wizard-preview-section">
                                     <h4 class="tm-prestation-wizard-preview-section-title">Carte d’intervention</h4>
-                                    <div class="tm-prestation-wizard-preview-map-wrapper" data-controller="zone-map" data-zone-map-zones-value="{{ zones|map(zone => {city: zone.city, latitude: zone.latitude, longitude: zone.longitude, radiusKm: zone.radiusKm})|json_encode|e('html_attr') }}">
+                                    <div class="tm-prestation-wizard-preview-map-wrapper" data-controller="prestataire--zone-map" data-prestataire--zone-map-zones-value="{{ zones|map(zone => {city: zone.city, latitude: zone.latitude, longitude: zone.longitude, radiusKm: zone.radiusKm})|json_encode|e('html_attr') }}">
                                         {% if zoneMap is defined and zoneMap %}
                                             {{ ux_map(zoneMap, {
             style: 'height: 320px; width: 100%; border-radius: 18px;',
@@ -603,7 +603,7 @@
 
                                 <div class="tm-prestation-wizard-preview-section">
                                     <h4 class="tm-prestation-wizard-preview-section-title">Informations complémentaires</h4>
-                                    <p class="tm-prestation-wizard-preview-section-text" data-prestation-wizard-target="previewAdditionalInfo">
+                                    <p class="tm-prestation-wizard-preview-section-text" data-prestataire--prestation-wizard-target="previewAdditionalInfo">
                                         Aucune information complémentaire renseignée pour le moment.
                                     </p>
                                 </div>
@@ -620,17 +620,17 @@
                             Retour au dashboard
                         </a>
 
-                        <button type="button" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-outline d-none" data-prestation-wizard-target="prevButton" data-action="click->prestation-wizard#previous">
+                        <button type="button" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-outline d-none" data-prestataire--prestation-wizard-target="prevButton" data-action="click->prestataire--prestation-wizard#previous">
                             Étape précédente
                         </button>
                     </div>
 
                     <div class="tm-prestation-wizard-footer-right">
-                        <button type="button" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-primary" data-prestation-wizard-target="nextButton" data-action="click->prestation-wizard#next">
+                        <button type="button" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-primary" data-prestataire--prestation-wizard-target="nextButton" data-action="click->prestataire--prestation-wizard#next">
                             Étape suivante
                         </button>
 
-                        <button type="submit" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-primary d-none" data-prestation-wizard-target="submitButton">
+                        <button type="submit" class="btn tm-prestation-wizard-btn tm-prestation-wizard-btn-primary d-none" data-prestataire--prestation-wizard-target="submitButton">
                             Enregistrer la prestation
                         </button>
                     </div>

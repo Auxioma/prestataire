@@ -29,7 +29,7 @@ export default class extends Controller {
             return
         }
 
-        const slot = checkbox.closest('[data-availability-toggle-target="slot"]')
+        const slot = checkbox.closest('[data-prestataire--availability-toggle-target="slot"]')
         if (!slot) {
             return
         }

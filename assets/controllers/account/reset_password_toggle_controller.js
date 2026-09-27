@@ -8,9 +8,9 @@ export default class extends Controller {
 
         this.inputTarget.type = isHidden ? 'text' : 'password'
 
-        this.element.setAttribute('data-password-toggle-visible', isHidden ? 'true' : 'false')
+        this.element.setAttribute('data-account--password-toggle-visible', isHidden ? 'true' : 'false')
 
-        const button = this.element.querySelector('[data-action*="password-toggle#toggle"]')
+        const button = this.element.querySelector('[data-action*="account--reset-password-toggle#toggle"]')
         if (button) {
             button.setAttribute('aria-pressed', isHidden ? 'true' : 'false')
             button.setAttribute(

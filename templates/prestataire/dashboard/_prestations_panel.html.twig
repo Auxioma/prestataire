@@ -395,10 +395,10 @@
                                         </td>
 
                                         <td>
-                                            <div class="tm-prestations-toggle-wrap" data-controller="prestation-visibility-toggle" data-prestation-visibility-toggle-url-value="{{ path('app_prestataire_service_toggle_active', {id: prestation.id}) }}" data-prestation-visibility-toggle-token-value="{{ csrf_token('toggle_prestation_' ~ prestation.id) }}" data-prestation-visibility-toggle-is-complete-value="{{ isComplete ? 'true' : 'false' }}" data-prestation-visibility-toggle-status-selector-value="#prestation-publication-status-{{ prestation.id }}">
+                                            <div class="tm-prestations-toggle-wrap" data-controller="prestataire--prestation-visibility-toggle" data-prestataire--prestation-visibility-toggle-url-value="{{ path('app_prestataire_service_toggle_active', {id: prestation.id}) }}" data-prestataire--prestation-visibility-toggle-token-value="{{ csrf_token('toggle_prestation_' ~ prestation.id) }}" data-prestataire--prestation-visibility-toggle-is-complete-value="{{ isComplete ? 'true' : 'false' }}" data-prestataire--prestation-visibility-toggle-status-selector-value="#prestation-publication-status-{{ prestation.id }}">
                                                 <div class="form-check form-switch mb-0">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="prestation-active-{{ prestation.id }}" data-prestation-visibility-toggle-target="checkbox" data-action="change->prestation-visibility-toggle#toggle" {% if isActive %} checked {% endif %}>
-                                                    <label class="form-check-label" for="prestation-active-{{ prestation.id }}" data-prestation-visibility-toggle-target="label">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="prestation-active-{{ prestation.id }}" data-prestataire--prestation-visibility-toggle-target="checkbox" data-action="change->prestataire--prestation-visibility-toggle#toggle" {% if isActive %} checked {% endif %}>
+                                                    <label class="form-check-label" for="prestation-active-{{ prestation.id }}" data-prestataire--prestation-visibility-toggle-target="label">
                                                         {{ isActive ? 'Active' : 'Inactive' }}
                                                     </label>
                                                 </div>

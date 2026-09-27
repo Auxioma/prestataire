@@ -13,11 +13,11 @@
 {% endblock %}
 
 {% block body %}
-    <div class="tm-settings-container" {{ stimulus_controller('settings-tabs') }}>
+    <div class="tm-settings-container" {{ stimulus_controller('prestataire--settings-tabs') }}>
         <div
             class="tm-main-layout">
             {# ================= SIDEBAR ================= #}
-            <aside class="tm-settings-sidebar" {{ stimulus_target('settings-tabs', 'sidebar') }}>
+            <aside class="tm-settings-sidebar" {{ stimulus_target('prestataire--settings-tabs', 'sidebar') }}>
                 {{ include('Prestataire/profile/_prestataire_settings_sidebar.html.twig', {
                     user: user,
                     activeTab: activeTab,
@@ -25,11 +25,11 @@
                 }) }}
             </aside>
 
-            <div class="tm-settings-sidebar-backdrop" {{ stimulus_target('settings-tabs', 'backdrop') }} {{ stimulus_action('settings-tabs', 'closeSidebar', 'click') }}></div>
+            <div class="tm-settings-sidebar-backdrop" {{ stimulus_target('prestataire--settings-tabs', 'backdrop') }} {{ stimulus_action('prestataire--settings-tabs', 'closeSidebar', 'click') }}></div>
 
             {# ================= CONTENU ================= #}
             <div class="tm-settings-content">
-                <button type="button" class="tm-sidebar-toggle d-lg-none" aria-label="Ouvrir la navigation des paramètres" {{ stimulus_target('settings-tabs', 'toggle') }} {{ stimulus_action('settings-tabs', 'toggleSidebar', 'click') }}>
+                <button type="button" class="tm-sidebar-toggle d-lg-none" aria-label="Ouvrir la navigation des paramètres" {{ stimulus_target('prestataire--settings-tabs', 'toggle') }} {{ stimulus_action('prestataire--settings-tabs', 'toggleSidebar', 'click') }}>
                     ☰
                 </button>
 
@@ -386,12 +386,12 @@
                                                                                 method="post"
                                                                                 action="{{ path('app_prestataire_document_delete', {id: document.id}) }}"
                                                                                 class="m-0"
-                                                                                data-controller="confirm-dialog"
-                                                                                data-action="submit->confirm-dialog#confirm"
-                                                                                data-confirm-dialog-title-value="Supprimer cette certification ?"
-                                                                                data-confirm-dialog-text-value="Le document sera retiré de votre profil."
-                                                                                data-confirm-dialog-confirm-button-text-value="Supprimer"
-                                                                                data-confirm-dialog-cancel-button-text-value="Annuler"
+                                                                                data-controller="core--confirm-dialog"
+                                                                                data-action="submit->core--confirm-dialog#confirm"
+                                                                                data-core--confirm-dialog-title-value="Supprimer cette certification ?"
+                                                                                data-core--confirm-dialog-text-value="Le document sera retiré de votre profil."
+                                                                                data-core--confirm-dialog-confirm-button-text-value="Supprimer"
+                                                                                data-core--confirm-dialog-cancel-button-text-value="Annuler"
                                                                             >
                                                                                 <input
                                                                                     type="hidden"

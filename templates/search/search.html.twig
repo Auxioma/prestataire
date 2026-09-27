@@ -254,8 +254,8 @@
                         <form
                             method="GET"
                             class="tm-homepage-search-form tm-flow-filterbar__form"
-                            data-controller="homepage-search"
-                            data-homepage-search-default-radius-value="{{ radiusKm }}"
+                            data-controller="search--homepage-search"
+                            data-search--homepage-search-default-radius-value="{{ radiusKm }}"
                         >
                             <div class="tm-homepage-search-field tm-homepage-search-field--location">
                                 <span class="tm-homepage-search-field-icon" aria-hidden="true">
@@ -292,7 +292,7 @@
                                 <div class="tm-homepage-search-field-body tm-homepage-search-field-body--radius">
                                     <div class="tm-homepage-search-radius-head">
                                         <label for="tm-flow-radius" class="tm-homepage-search-label mb-0">Rayon</label>
-                                        <span class="tm-homepage-search-radius-value" data-homepage-search-target="value">{{ radiusKm }} km</span>
+                                        <span class="tm-homepage-search-radius-value" data-search--homepage-search-target="value">{{ radiusKm }} km</span>
                                     </div>
 
                                     <div class="tm-homepage-search-radius-wrap">
@@ -305,8 +305,8 @@
                                             step="5"
                                             value="{{ radiusKm }}"
                                             class="tm-homepage-search-range"
-                                            data-homepage-search-target="range"
-                                            data-action="input->homepage-search#update change->homepage-search#update"
+                                            data-search--homepage-search-target="range"
+                                            data-action="input->search--homepage-search#update change->search--homepage-search#update"
                                         >
                                     </div>
                                 </div>

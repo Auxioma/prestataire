@@ -8,10 +8,10 @@
 {% endblock %}
 
 {% block body %}
-    <section class="tm-dashboard-page" {{ stimulus_controller('prestataire-dashboard-tabs') }}>
+    <section class="tm-dashboard-page" {{ stimulus_controller('prestataire--prestataire-dashboard-tabs') }}>
         <div class="tm-settings-container tm-dashboard-page__shell">
             <div class="tm-main-layout tm-dashboard-page__layout">
-                <aside class="tm-settings-sidebar tm-dashboard-page__sidebar" {{ stimulus_target('prestataire-dashboard-tabs', 'sidebar') }}>
+                <aside class="tm-settings-sidebar tm-dashboard-page__sidebar" {{ stimulus_target('prestataire--prestataire-dashboard-tabs', 'sidebar') }}>
                     {{ include('Prestataire/profile/_prestataire_dashboard_sidebar.html.twig', {
                         user: app.user,
                         activeTab: 'avis',
@@ -19,10 +19,10 @@
                     }) }}
                 </aside>
 
-                <div class="tm-settings-sidebar-backdrop tm-dashboard-page__backdrop" {{ stimulus_target('prestataire-dashboard-tabs', 'backdrop') }} {{ stimulus_action('prestataire-dashboard-tabs', 'closeSidebar', 'click') }}></div>
+                <div class="tm-settings-sidebar-backdrop tm-dashboard-page__backdrop" {{ stimulus_target('prestataire--prestataire-dashboard-tabs', 'backdrop') }} {{ stimulus_action('prestataire--prestataire-dashboard-tabs', 'closeSidebar', 'click') }}></div>
 
                 <div class="tm-settings-content tm-dashboard-page__content tm-dashboard-reviews">
-                    <button type="button" class="tm-sidebar-toggle d-lg-none tm-dashboard-page__toggle" aria-label="Ouvrir la navigation du dashboard" {{ stimulus_target('prestataire-dashboard-tabs', 'toggle') }} {{ stimulus_action('prestataire-dashboard-tabs', 'toggleSidebar', 'click') }}>
+                    <button type="button" class="tm-sidebar-toggle d-lg-none tm-dashboard-page__toggle" aria-label="Ouvrir la navigation du dashboard" {{ stimulus_target('prestataire--prestataire-dashboard-tabs', 'toggle') }} {{ stimulus_action('prestataire--prestataire-dashboard-tabs', 'toggleSidebar', 'click') }}>
                         ☰
                     </button>
 

@@ -21,7 +21,7 @@
                 <h4 class="tm-quote-item-card__title">Nouvelle ligne</h4>
             </div>
 
-            <button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="collection#remove">
+            <button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="core--collection#remove">
                 Supprimer la ligne
             </button>
         </div>
@@ -127,7 +127,7 @@
                         </div>
 
                         <div class="tm-quote-panel__body">
-                            {{ form_start(form, {attr: {id: 'invoice-draft-form', class: 'tm-quote-form', 'data-controller': 'confirm-dialog', 'data-action': 'submit->confirm-dialog#confirm'}}) }}
+                            {{ form_start(form, {attr: {id: 'invoice-draft-form', class: 'tm-quote-form', 'data-controller': 'core--confirm-dialog', 'data-action': 'submit->core--confirm-dialog#confirm'}}) }}
 
                             {% if form.vars.errors|length > 0 %}
                                 <div class="tm-quote-form__global-errors">{{ form_errors(form) }}</div>
@@ -194,7 +194,7 @@
                             </section>
 
                             <section id="invoice-items-panel" class="tm-quote-form-section tm-quote-form-section--items">
-                                <div data-controller="collection" data-collection-index-value="{{ form.items|length }}" data-collection-prototype-value="{{ itemPrototype|e('html_attr') }}">
+                                <div data-controller="core--collection" data-core--collection-index-value="{{ form.items|length }}" data-core--collection-prototype-value="{{ itemPrototype|e('html_attr') }}">
                                     <div class="tm-quote-form-section__head tm-quote-form-section__head--items">
                                         <div>
                                             <h3 class="tm-quote-form-section__title">Lignes de facture</h3>
@@ -208,7 +208,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="tm-quote-items" data-collection-target="items">
+                                    <div class="tm-quote-items" data-core--collection-target="items">
                                         {% for itemForm in form.items %}
                                             <article class="tm-quote-item-card tm-quote-item-card--line" data-collection-item>
                                                 <div class="tm-quote-item-card__top">
@@ -216,7 +216,7 @@
                                                         <span class="tm-quote-item-card__eyebrow">Ligne</span>
                                                         <h4 class="tm-quote-item-card__title">Ligne {{ loop.index }}</h4>
                                                     </div>
-                                                    <button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="collection#remove">Supprimer la ligne</button>
+                                                    <button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="core--collection#remove">Supprimer la ligne</button>
                                                 </div>
 
                                                 <div class="tm-quote-item-card__body tm-quote-item-card__body--compact">
@@ -235,7 +235,7 @@
                                     </div>
 
                                     <div class="tm-quote-add-line-wrap">
-                                        <button type="button" class="tm-quote-btn tm-quote-btn--mini-primary" data-action="collection#add">
+                                        <button type="button" class="tm-quote-btn tm-quote-btn--mini-primary" data-action="core--collection#add">
                                             Ajouter une ligne
                                         </button>
                                     </div>

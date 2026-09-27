@@ -9,9 +9,9 @@
 {% endblock %}
 
 {% block body %}
-    <div class="tm-settings-container" {{ stimulus_controller('settings-tabs') }}>
+    <div class="tm-settings-container" {{ stimulus_controller('prestataire--settings-tabs') }}>
         <div class="tm-main-layout">
-            <aside class="tm-settings-sidebar" {{ stimulus_target('settings-tabs', 'sidebar') }}>
+            <aside class="tm-settings-sidebar" {{ stimulus_target('prestataire--settings-tabs', 'sidebar') }}>
                 {{ include('Prestataire/profile/_prestataire_settings_sidebar.html.twig', {
                     user: app.user,
                     activeTab: 'services',
@@ -19,10 +19,10 @@
                 }) }}
             </aside>
 
-            <div class="tm-settings-sidebar-backdrop" {{ stimulus_target('settings-tabs', 'backdrop') }} {{ stimulus_action('settings-tabs', 'closeSidebar', 'click') }}></div>
+            <div class="tm-settings-sidebar-backdrop" {{ stimulus_target('prestataire--settings-tabs', 'backdrop') }} {{ stimulus_action('prestataire--settings-tabs', 'closeSidebar', 'click') }}></div>
 
             <div class="tm-settings-content">
-                <button type="button" class="tm-sidebar-toggle d-lg-none" aria-label="Ouvrir la navigation des paramètres" {{ stimulus_target('settings-tabs', 'toggle') }} {{ stimulus_action('settings-tabs', 'toggleSidebar', 'click') }}>
+                <button type="button" class="tm-sidebar-toggle d-lg-none" aria-label="Ouvrir la navigation des paramètres" {{ stimulus_target('prestataire--settings-tabs', 'toggle') }} {{ stimulus_action('prestataire--settings-tabs', 'toggleSidebar', 'click') }}>
                     ☰
                 </button>
 
@@ -52,15 +52,15 @@
                                         </p>
                                     </div>
 
-                                    <form method="POST" action="{{ path('app_prestataire_service_new') }}" class="tm-prestation-create-form" data-controller="chained-selects" data-turbo="false">
+                                    <form method="POST" action="{{ path('app_prestataire_service_new') }}" class="tm-prestation-create-form" data-controller="core--chained-selects" data-turbo="false">
                                         <div class="tm-prestation-create-grid">
                                             <div class="tm-prestation-create-field">
                                                 <label for="category" class="form-label">Catégorie</label>
                                                 <select
                                                     id="category"
                                                     class="tm-prestation-create-select"
-                                                    data-chained-selects-target="category"
-                                                    data-action="change->chained-selects#loadSubCategories"
+                                                    data-core--chained-selects-target="category"
+                                                    data-action="change->core--chained-selects#loadSubCategories"
                                                     data-controller="symfony--ux-autocomplete--autocomplete"
                                                     data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false},"maxOptions":500}'
                                                     required
@@ -78,8 +78,8 @@
                                                 <select
                                                     id="subcategory"
                                                     class="tm-prestation-create-select"
-                                                    data-chained-selects-target="subcategory"
-                                                    data-action="change->chained-selects#loadServices"
+                                                    data-core--chained-selects-target="subcategory"
+                                                    data-action="change->core--chained-selects#loadServices"
                                                     data-controller="symfony--ux-autocomplete--autocomplete"
                                                     data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false},"maxOptions":500}'
                                                     disabled
@@ -96,7 +96,7 @@
                                                     id="service"
                                                     name="serviceId"
                                                     class="tm-prestation-create-select"
-                                                    data-chained-selects-target="service"
+                                                    data-core--chained-selects-target="service"
                                                     data-controller="symfony--ux-autocomplete--autocomplete"
                                                     data-symfony--ux-autocomplete--autocomplete-tom-select-options-value='{"plugins":{"clear_button":false},"maxOptions":500}'
                                                     disabled

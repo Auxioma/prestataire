@@ -142,13 +142,13 @@
                             <input type="email" id="login-email" name="_username" value="{{ last_username }}" placeholder="Adresse e-mail" autocomplete="email" required class="tm-login-field__input" {% if error %}aria-invalid="true" aria-describedby="login-error"{% endif %}>
                         </div>
 
-                        <div class="tm-login-field" data-controller="password">
+                        <div class="tm-login-field" data-controller="account--password">
                             <i class="bi bi-lock tm-login-field__icon" aria-hidden="true"></i>
 
                             <label class="visually-hidden" for="password">Mot de passe</label>
-                            <input type="password" id="password" name="_password" placeholder="Mot de passe" autocomplete="current-password" required class="tm-login-field__input" data-password-target="input" {% if error %}aria-invalid="true" aria-describedby="login-error"{% endif %}>
+                            <input type="password" id="password" name="_password" placeholder="Mot de passe" autocomplete="current-password" required class="tm-login-field__input" data-account--password-target="input" {% if error %}aria-invalid="true" aria-describedby="login-error"{% endif %}>
 
-                            <button type="button" class="tm-login-field__toggle" data-password-target="toggle" data-action="click->password#toggleVisibility" aria-label="Afficher ou masquer le mot de passe" aria-controls="password" aria-pressed="false"></button>
+                            <button type="button" class="tm-login-field__toggle" data-account--password-target="toggle" data-action="click->account--password#toggleVisibility" aria-label="Afficher ou masquer le mot de passe" aria-controls="password" aria-pressed="false"></button>
                         </div>
 
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">

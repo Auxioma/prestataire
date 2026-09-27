@@ -6,7 +6,7 @@
 {% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/profile/settings_client_profile.css') }}">{% endblock %}
 
 {% block body %}
-    <div class="container-fluid p-0 tm-cp-page-wrapper" data-controller="client-profile">
+    <div class="container-fluid p-0 tm-cp-page-wrapper" data-controller="account--client-profile">
         <div
             class="d-flex flex-column flex-md-row align-items-stretch">
             {{ include('Account/profile/_client_sidebar.html.twig', {user: user}) }}
@@ -102,12 +102,12 @@
                                             <div class="col-md-6 tm-cp-form-row">
                                                 {{ form_row(settingsForm.phoneNumber) }}
                                             </div>
-                                            <div class="col-md-6 tm-cp-form-row tm-cp-enum-radio-group" id="client-type-field" data-client-profile-target="typeField" data-action="change->client-profile#toggleProFields">
+                                            <div class="col-md-6 tm-cp-form-row tm-cp-enum-radio-group" id="client-type-field" data-account--client-profile-target="typeField" data-action="change->account--client-profile#toggleProFields">
                                                 {{ form_row(settingsForm.clientProfile.type) }}
                                             </div>
                                         </div>
 
-                                        <div id="pro-fields-wrapper" class="row g-3 mt-2 pt-3 border-top tm-cp-pro-fields-wrapper" data-client-profile-target="proFieldsWrapper">
+                                        <div id="pro-fields-wrapper" class="row g-3 mt-2 pt-3 border-top tm-cp-pro-fields-wrapper" data-account--client-profile-target="proFieldsWrapper">
                                             <h3 class="fw-semibold text-primary mb-2 fs-6">Détails de l'entreprise</h3>
                                             <div class="col-md-6 tm-cp-form-row">
                                                 {{ form_row(settingsForm.clientProfile.companyName) }}
