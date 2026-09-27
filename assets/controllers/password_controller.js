@@ -27,6 +27,7 @@ export default class extends Controller {
 
         const visible = this.inputTarget.type === "text";
         this.inputTarget.type = visible ? "password" : "text";
+        this.toggleTarget.setAttribute("aria-pressed", String(!visible));
 
         if (visible) {
             this.renderClosedEye();
@@ -73,13 +74,14 @@ export default class extends Controller {
 
     renderOpenEye() {
         if (this.hasToggleTarget) {
-            this.toggleTarget.innerHTML = '<i class="bi bi-eye-fill"></i>';
+            this.toggleTarget.innerHTML = '<i class="bi bi-eye-fill" aria-hidden="true"></i>';
         }
     }
 
     renderClosedEye() {
         if (this.hasToggleTarget) {
-            this.toggleTarget.innerHTML = '<i class="bi bi-eye-slash-fill"></i>';
+            this.toggleTarget.innerHTML = '<i class="bi bi-eye-slash-fill" aria-hidden="true"></i>';
+            this.toggleTarget.setAttribute("aria-pressed", "false");
         }
     }
 }

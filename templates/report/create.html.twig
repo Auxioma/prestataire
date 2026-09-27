@@ -31,17 +31,25 @@
                         {{ form_start(form) }}
                             <div class="mb-3">
                                 {{ form_label(form.reason) }}
-                                {{ form_widget(form.reason, { attr: { class: 'form-select' ~ (form.reason.vars.errors|length > 0 ? ' is-invalid' : '') } }) }}
+                                {{ form_widget(form.reason, {attr: {
+                                    class: 'form-select' ~ (form.reason.vars.errors|length > 0 ? ' is-invalid' : ''),
+                                    'aria-invalid': form.reason.vars.errors|length > 0 ? 'true' : 'false',
+                                    'aria-describedby': form.reason.vars.errors|length > 0 ? form.reason.vars.id ~ '-errors' : null,
+                                }}) }}
                                 {% if form.reason.vars.errors|length > 0 %}
-                                    <div class="invalid-feedback d-block">{{ form_errors(form.reason) }}</div>
+                                    <div id="{{ form.reason.vars.id }}-errors" class="invalid-feedback d-block" role="alert">{{ form_errors(form.reason) }}</div>
                                 {% endif %}
                             </div>
 
                             <div class="mb-4">
                                 {{ form_label(form.message) }}
-                                {{ form_widget(form.message, { attr: { class: 'form-control' ~ (form.message.vars.errors|length > 0 ? ' is-invalid' : '') } }) }}
+                                {{ form_widget(form.message, {attr: {
+                                    class: 'form-control' ~ (form.message.vars.errors|length > 0 ? ' is-invalid' : ''),
+                                    'aria-invalid': form.message.vars.errors|length > 0 ? 'true' : 'false',
+                                    'aria-describedby': form.message.vars.errors|length > 0 ? form.message.vars.id ~ '-errors' : null,
+                                }}) }}
                                 {% if form.message.vars.errors|length > 0 %}
-                                    <div class="invalid-feedback d-block">{{ form_errors(form.message) }}</div>
+                                    <div id="{{ form.message.vars.id }}-errors" class="invalid-feedback d-block" role="alert">{{ form_errors(form.message) }}</div>
                                 {% endif %}
                             </div>
 

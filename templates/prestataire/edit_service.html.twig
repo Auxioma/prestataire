@@ -38,8 +38,8 @@
                         {{ form_start(form, {
                             attr: {
                                 class: 'needs-validation',
-                                'data-turbo': 'false'
-                            }
+                                'data-turbo': 'false',
+                            },
                         }) }}
 
                         <div class="alert alert-light border mb-4" role="status">
@@ -56,11 +56,11 @@
 
                         <div class="mb-3">
                             {{ form_row(form.tauxReduction, {
-                                label_attr: { class: 'form-label fw-semibold' },
+                                label_attr: {class: 'form-label fw-semibold'},
                                 attr: {
                                     class: 'form-control',
-                                    placeholder: 'Ex : 10'
-                                }
+                                    placeholder: 'Ex : 10',
+                                },
                             }) }}
                         </div>
 
@@ -71,7 +71,7 @@
                         {% endif %}
 
                         <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end pt-2">
-                            <a href="{{ path('app_prestataire_settings', { tab: 'services', _fragment: 'services-panel' }) }}" class="btn btn-outline-secondary">
+                            <a href="{{ path('app_prestataire_settings', {tab: 'services', _fragment: 'services-panel'}) }}" class="btn btn-outline-secondary">
                                 Annuler
                             </a>
 

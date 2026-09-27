@@ -237,10 +237,10 @@
                               %}
 
                               {% if hasPublicPrestation %}
-                                  {% set cardUrl = path('app_prestataire_service_prestation_show', { slug: bonPlan.slug }) %}
+                                  {% set cardUrl = path('app_prestataire_service_prestation_show', {slug: bonPlan.slug}) %}
                                   {% set cardAriaLabel = 'Voir l’offre ' ~ prestationTitle %}
                               {% elseif prestataireSlug %}
-                                  {% set cardUrl = path('app_prestataire_show', { slug: prestataireSlug }) %}
+                                  {% set cardUrl = path('app_prestataire_show', {slug: prestataireSlug}) %}
                                   {% set cardAriaLabel = 'Voir le profil de ' ~ companyName %}
                               {% else %}
                                   {% set cardUrl = null %}
@@ -265,11 +265,11 @@
                                       {% endif %}
 
                                       {% if bonPlan.coverImage is defined and bonPlan.coverImage %}
-                                          <img src="{{ asset('uploads/bons-plans/' ~ bonPlan.coverImage) }}" alt="{{ prestationTitle }}" width="1200" height="896" loading="lazy">
+                                          <img src="{{ asset('uploads/bons-plans/' ~ bonPlan.coverImage) }}" alt="" width="1200" height="896" loading="lazy">
                                       {% elseif prestataire and prestataire.coverImage is defined and prestataire.coverImage %}
-                                          <img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="{{ prestationTitle }}" width="1200" height="896" loading="lazy">
+                                          <img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="" width="1200" height="896" loading="lazy">
                                       {% else %}
-                                          <img src="{{ asset('images/img_par_defaut.webp') }}" alt="{{ prestationTitle }}" width="1200" height="896" loading="lazy">
+                                          <img src="{{ asset('images/img_par_defaut.webp') }}" alt="" width="1200" height="896" loading="lazy">
                                       {% endif %}
 
                                       {% if cardUrl %}

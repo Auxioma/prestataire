@@ -39,6 +39,8 @@
                                         class: 'tm-reset-password-form__input',
                                         placeholder: 'Saisissez votre nouveau mot de passe',
                                         'data-reset-password-toggle-target': 'input',
+                                        'aria-invalid': resetForm.plainPassword.first.vars.errors|length > 0 ? 'true' : 'false',
+                                        'aria-describedby': resetForm.plainPassword.first.vars.errors|length > 0 ? resetForm.plainPassword.first.vars.id ~ '-errors' : null,
                                     },
                                 }) }}
 
@@ -46,14 +48,14 @@
                                     type="button"
                                     class="tm-reset-password-form__toggle"
                                     data-action="click->reset-password-toggle#toggle"
-                                    aria-label="Afficher le mot de passe"
+                                    aria-label="Afficher ou masquer le nouveau mot de passe"
                                     aria-pressed="false"
                                 >
-                                    <i class="bi bi-eye" data-reset-password-toggle-target="icon"></i>
+                                    <i class="bi bi-eye" data-reset-password-toggle-target="icon" aria-hidden="true"></i>
                                 </button>
                             </div>
 
-                            <div class="tm-reset-password-form__errors">
+                            <div id="{{ resetForm.plainPassword.first.vars.id }}-errors" class="tm-reset-password-form__errors">
                                 {{ form_errors(resetForm.plainPassword.first) }}
                             </div>
                         </div>
@@ -71,6 +73,8 @@
                                         class: 'tm-reset-password-form__input',
                                         placeholder: 'Confirmez votre nouveau mot de passe',
                                         'data-reset-password-toggle-target': 'input',
+                                        'aria-invalid': resetForm.plainPassword.second.vars.errors|length > 0 ? 'true' : 'false',
+                                        'aria-describedby': resetForm.plainPassword.second.vars.errors|length > 0 ? resetForm.plainPassword.second.vars.id ~ '-errors' : null,
                                     },
                                 }) }}
 
@@ -78,14 +82,14 @@
                                     type="button"
                                     class="tm-reset-password-form__toggle"
                                     data-action="click->reset-password-toggle#toggle"
-                                    aria-label="Afficher le mot de passe"
+                                    aria-label="Afficher ou masquer la confirmation du mot de passe"
                                     aria-pressed="false"
                                 >
-                                    <i class="bi bi-eye" data-reset-password-toggle-target="icon"></i>
+                                    <i class="bi bi-eye" data-reset-password-toggle-target="icon" aria-hidden="true"></i>
                                 </button>
                             </div>
 
-                            <div class="tm-reset-password-form__errors">
+                            <div id="{{ resetForm.plainPassword.second.vars.id }}-errors" class="tm-reset-password-form__errors">
                                 {{ form_errors(resetForm.plainPassword.second) }}
                             </div>
                         </div>

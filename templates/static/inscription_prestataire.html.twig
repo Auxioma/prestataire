@@ -99,7 +99,7 @@
                     <div class="d-flex justify-content-between position-relative" style="z-index: 2;">
                         <div class="text-center">
                             <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center mx-auto mb-2 shadow-sm" style="width: 32px; height: 32px; font-size: 13px;">1</div>
-                            <span class="fw-medium text-primary tm-static-text-sm">Informations</span>
+                            <span class="fw-medium text-primary tm-static-text-sm" aria-current="step">Informations</span>
                         </div>
                         <div class="text-center">
                             <div class="rounded-circle bg-light text-muted border fw-bold d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 32px; height: 32px; font-size: 13px;">2</div>
@@ -120,37 +120,37 @@
 
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label small fw-bold text-dark mb-1">Prénom <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control form-control-sm py-2 bg-light border-0" placeholder="Votre prénom" disabled>
+                        <label for="provider-first-name" class="form-label small fw-bold text-dark mb-1">Prénom <span class="text-danger">*</span></label>
+                        <input id="provider-first-name" type="text" class="form-control form-control-sm py-2 bg-light border-0" placeholder="Votre prénom" autocomplete="given-name" disabled>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small fw-bold text-dark mb-1">Nom <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control form-control-sm py-2 bg-light border-0" placeholder="Votre nom" disabled>
+                        <label for="provider-last-name" class="form-label small fw-bold text-dark mb-1">Nom <span class="text-danger">*</span></label>
+                        <input id="provider-last-name" type="text" class="form-control form-control-sm py-2 bg-light border-0" placeholder="Votre nom" autocomplete="family-name" disabled>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small fw-bold text-dark mb-1">E-mail <span class="text-danger">*</span></label>
-                        <input type="email" class="form-control form-control-sm py-2 bg-light border-0" placeholder="exemple@email.com" disabled>
+                        <label for="provider-email" class="form-label small fw-bold text-dark mb-1">E-mail <span class="text-danger">*</span></label>
+                        <input id="provider-email" type="email" class="form-control form-control-sm py-2 bg-light border-0" placeholder="exemple@email.com" autocomplete="email" disabled>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small fw-bold text-dark mb-1">Téléphone <span class="text-danger">*</span></label>
+                        <label for="provider-phone" class="form-label small fw-bold text-dark mb-1">Téléphone <span class="text-danger">*</span></label>
                         <div class="input-group input-group-sm">
-                            <span class="input-group-text bg-light border-0 text-muted"><i class="fa-solid fa-phone me-1 small"></i> 🇫🇷</span>
-                            <input type="tel" class="form-control py-2 bg-light border-0" placeholder="06 12 34 56 78" disabled>
+                            <span class="input-group-text bg-light border-0 text-muted" aria-hidden="true"><i class="fa-solid fa-phone me-1 small"></i> 🇫🇷</span>
+                            <input id="provider-phone" type="tel" class="form-control py-2 bg-light border-0" placeholder="06 12 34 56 78" autocomplete="tel" disabled>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small fw-bold text-dark mb-1">Mot de passe <span class="text-danger">*</span></label>
+                        <label for="provider-password" class="form-label small fw-bold text-dark mb-1">Mot de passe <span class="text-danger">*</span></label>
                         <div class="position-relative">
-                            <input type="password" class="form-control form-control-sm py-2 bg-light border-0 pe-5" placeholder="Créez un mot de passe sécurisé" disabled>
-                            <i class="fa-regular fa-eye position-absolute top-50 end-3 translate-middle-y text-muted" style="cursor: not-allowed;"></i>
+                            <input id="provider-password" type="password" class="form-control form-control-sm py-2 bg-light border-0 pe-5" placeholder="Créez un mot de passe sécurisé" aria-describedby="provider-password-hint" autocomplete="new-password" disabled>
+                            <i class="fa-regular fa-eye position-absolute top-50 end-3 translate-middle-y text-muted" aria-hidden="true" style="cursor: not-allowed;"></i>
                         </div>
-                        <span class="tm-static-text-xs text-muted d-block mt-1">Au moins 8 caractères avec une majuscule, une minuscule et un chiffre.</span>
+                        <span id="provider-password-hint" class="tm-static-text-xs text-muted d-block mt-1">Au moins 8 caractères avec une majuscule, une minuscule et un chiffre.</span>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small fw-bold text-dark mb-1">Confirmer le mot de passe <span class="text-danger">*</span></label>
+                        <label for="provider-password-confirm" class="form-label small fw-bold text-dark mb-1">Confirmer le mot de passe <span class="text-danger">*</span></label>
                         <div class="position-relative">
-                            <input type="password" class="form-control form-control-sm py-2 bg-light border-0 pe-5" placeholder="Confirmez votre mot de passe" disabled>
-                            <i class="fa-regular fa-eye position-absolute top-50 end-3 translate-middle-y text-muted" style="cursor: not-allowed;"></i>
+                            <input id="provider-password-confirm" type="password" class="form-control form-control-sm py-2 bg-light border-0 pe-5" placeholder="Confirmez votre mot de passe" autocomplete="new-password" disabled>
+                            <i class="fa-regular fa-eye position-absolute top-50 end-3 translate-middle-y text-muted" aria-hidden="true" style="cursor: not-allowed;"></i>
                         </div>
                     </div>
                 </div>
@@ -168,7 +168,7 @@
 
                 <div class="d-flex justify-content-end mt-4">
                     <button class="btn btn-primary px-4 py-2 fw-medium d-flex align-items-center gap-2 rounded-3" type="button" style="background-color: #2b59ff; border: none;" disabled>
-                        Continuer <i class="fa-solid fa-arrow-right"></i>
+                        Continuer <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                     </button>
                 </div>
 

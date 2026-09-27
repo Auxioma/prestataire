@@ -7,7 +7,7 @@
 {% block body %}
 {% set provider = quoteRequest.prestataire %}
 {% set providerName = provider and provider.companyName ? provider.companyName : 'Prestataire' %}
-{% set providerProfileUrl = provider and provider.slug ? path('app_prestataire_show', { slug: provider.slug }) : null %}
+{% set providerProfileUrl = provider and provider.slug ? path('app_prestataire_show', {slug: provider.slug}) : null %}
 <section class="tm-qad-page">
     <div class="tm-qad-shell">
         <a href="{{ path('app_quote_request_history') }}" class="tm-qad-backlink">
@@ -74,7 +74,7 @@
                         <h3 class="tm-qad-panel__subtitle">Votre avis client</h3>
                         <div class="d-flex flex-wrap gap-2 align-items-center">
                             {% if canLeaveReview %}
-                                <a href="{{ path('app_review_create', { quoteRequestSlug: quoteRequest.slug }) }}" class="tm-qad-btn tm-qad-btn--primary">
+                                <a href="{{ path('app_review_create', {quoteRequestSlug: quoteRequest.slug}) }}" class="tm-qad-btn tm-qad-btn--primary">
                                     Laisser un avis
                                 </a>
                             {% elseif existingReview %}
@@ -128,12 +128,12 @@
 
                                 {% if proposal.publicReference is defined and proposal.publicReference is not empty %}
                                     <aside class="tm-qad-proposal__aside">
-                                        <a href="{{ path('app_quote_request_quote_proposal_show', { publicReference: proposal.publicReference }) }}"
+                                        <a href="{{ path('app_quote_request_quote_proposal_show', {publicReference: proposal.publicReference}) }}"
                                            class="tm-qad-btn tm-qad-btn--primary">
                                             Voir le devis
                                         </a>
                                         {% if proposal.invoice and proposal.invoice.isIssued %}
-                                            <a href="{{ path('app_quote_request_invoice_show', { publicReference: proposal.publicReference }) }}"
+                                            <a href="{{ path('app_quote_request_invoice_show', {publicReference: proposal.publicReference}) }}"
                                                class="tm-qad-btn tm-qad-btn--primary">
                                                 Voir la facture
                                             </a>
@@ -163,7 +163,7 @@
                                             <span class="badge bg-{{ document.status.badgeClass }}-subtle text-{{ document.status.badgeClass }}">
                                                 {{ document.status.label }}
                                             </span>
-                                            <a href="{{ path('app_quote_request_prestataire_document_view', { slug: quoteRequest.slug, id: document.id }) }}"
+                                            <a href="{{ path('app_quote_request_prestataire_document_view', {slug: quoteRequest.slug, id: document.id}) }}"
                                                target="_blank"
                                                rel="noopener"
                                                class="tm-qad-btn tm-qad-btn--primary">

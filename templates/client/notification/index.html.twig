@@ -13,7 +13,7 @@
                 <div class="c-notifications-hero__content">
                     <span class="c-notifications-hero__eyebrow">Centre de notifications</span>
                     <h1 class="c-notifications-hero__title">Notifications</h1>
-                    <p class="c-notifications-hero__subtitle">
+                    <p class="c-notifications-hero__subtitle" role="status">
                         {{ unreadCount }}
                         non lue{{ unreadCount > 1 ? 's' : '' }}
                     </p>
@@ -67,7 +67,7 @@
                                         {% endif %}
                                     </div>
 
-                                    <time class="c-notification-card__date">
+                                    <time class="c-notification-card__date" datetime="{{ notification.createdAt|date('c') }}">
                                         {{ notification.createdAt|date('d/m/Y H:i') }}
                                     </time>
                                 </div>

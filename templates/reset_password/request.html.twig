@@ -29,10 +29,14 @@
                     attr: {
                         placeholder: 'Votre adresse e-mail',
                         class: 'tm-input',
+                        'aria-invalid': requestForm.email.vars.errors|length > 0 ? 'true' : 'false',
+                        'aria-describedby': requestForm.email.vars.errors|length > 0 ? requestForm.email.vars.id ~ '-errors' : null,
                     },
                 }) }}
 
-                {{ form_errors(requestForm.email) }}
+                <div id="{{ requestForm.email.vars.id }}-errors">
+                    {{ form_errors(requestForm.email) }}
+                </div>
             </div>
 
             <button type="submit" class="tm-submit">Envoyer le lien</button>

@@ -47,10 +47,10 @@
                             {{ form_widget(siretForm.siret, {attr: {
                                 class: 'tm-siret-input',
                                 'aria-describedby': siretInvalid ? 'siret-help siret-errors' : 'siret-help',
-                                'aria-invalid': siretInvalid ? 'true' : 'false'
+                                'aria-invalid': siretInvalid ? 'true' : 'false',
                             }}) }}
                         </div>
-                        <div id="siret-errors" class="tm-siret-errors">{{ form_errors(siretForm.siret) }}</div>
+                        <div id="siret-errors" class="tm-siret-errors" {% if siretInvalid %}role="alert"{% endif %}>{{ form_errors(siretForm.siret) }}</div>
                         <p id="siret-help" class="tm-siret-help">14 chiffres, disponibles sur vos documents d’entreprise.</p>
                         <button type="submit" class="tm-register-submit-btn tm-siret-submit">Vérifier et poursuivre <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
                     {{ form_end(siretForm) }}

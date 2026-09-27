@@ -34,9 +34,9 @@
             >
                 <div class="tm-browse-card__cover">
                     {% if profile.coverImage %}
-                        <img src="{{ asset('uploads/covers/' ~ profile.coverImage) }}" alt="{{ profile.companyName|default('Prestataire') }}" width="1200" height="896" loading="lazy">
+                        <img src="{{ asset('uploads/covers/' ~ profile.coverImage) }}" alt="" width="1200" height="896" loading="lazy">
                     {% else %}
-                        <img src="{{ asset('images/img_par_defaut.webp') }}" alt="{{ profile.companyName|default('Prestataire') }}" width="1200" height="896" loading="lazy">
+                        <img src="{{ asset('images/img_par_defaut.webp') }}" alt="" width="1200" height="896" loading="lazy">
                     {% endif %}
                     <div class="tm-browse-card__cover-overlay"></div>
 
@@ -62,7 +62,7 @@
                     <div class="tm-browse-card__identity">
                         <div class="tm-browse-card__logo">
                             {% if profile.logo %}
-                                <img src="{{ asset('uploads/logos/' ~ profile.logo) }}" alt="{{ profile.companyName }}" width="160" height="160" loading="lazy">
+                                <img src="{{ asset('uploads/logos/' ~ profile.logo) }}" alt="" width="160" height="160" loading="lazy">
                             {% else %}
                                 <i class="fa-solid fa-building"></i>
                             {% endif %}
@@ -108,8 +108,8 @@
 
                     <div class="tm-browse-card__footer">
                         <div class="tm-browse-card__stats">
-                            <span class="tm-browse-card__rating">
-                                <i class="fa-solid fa-star"></i>
+                            <span class="tm-browse-card__rating" role="img" aria-label="Note moyenne : {{ profile.averageRating|default('0.0') }} sur 5">
+                                <i class="fa-solid fa-star" aria-hidden="true"></i>
                                 <strong>{{ profile.averageRating|default('0.0') }}</strong>
                                 <small>/5</small>
                             </span>
@@ -167,7 +167,7 @@
             </div>
 
             <div class="tm-browse-hero__actions">
-                <div class="tm-browse-hero__stats">
+                <div class="tm-browse-hero__stats" role="status" aria-live="polite" aria-atomic="true">
                     <strong>{{ totalResults }}</strong>
                     <span>prestataire{{ totalResults > 1 ? 's' : '' }}</span>
                 </div>
@@ -195,45 +195,45 @@
                     class: 'tm-browse-filters__form',
                     novalidate: 'novalidate',
                     'data-controller': 'chained-selects homepage-search',
-                    'data-homepage-search-default-radius-value': radiusKm
-                }
+                    'data-homepage-search-default-radius-value': radiusKm,
+                },
             }) }}
                 <div class="tm-browse-filters__grid">
                     <div class="tm-browse-filter-field tm-browse-filter-field--query">
                         {{ form_label(browseForm.query, null, {
-                            label_attr: { class: 'tm-browse-filter-field__label' }
+                            label_attr: {class: 'tm-browse-filter-field__label'},
                         }) }}
                         {{ form_widget(browseForm.query, {
                             attr: {
                                 class: 'form-control tm-browse-filter-field__control',
-                                autocomplete: 'off'
-                            }
+                                autocomplete: 'off',
+                            },
                         }) }}
                     </div>
 
                     <div class="tm-browse-filter-field">
                         {{ form_label(browseForm.location, null, {
-                            label_attr: { class: 'tm-browse-filter-field__label' }
+                            label_attr: {class: 'tm-browse-filter-field__label'},
                         }) }}
                         {{ form_widget(browseForm.location, {
                             attr: {
                                 class: 'form-control tm-browse-filter-field__control',
-                                autocomplete: 'off'
-                            }
+                                autocomplete: 'off',
+                            },
                         }) }}
                     </div>
 
                     <div class="tm-browse-filter-field">
                         {{ form_label(browseForm.radiusKm, null, {
-                            label_attr: { class: 'tm-browse-filter-field__label' }
+                            label_attr: {class: 'tm-browse-filter-field__label'},
                         }) }}
                         <div class="tm-browse-filter-field__range-wrap">
                             {{ form_widget(browseForm.radiusKm, {
                                 attr: {
                                     class: 'form-range tm-browse-filter-field__range',
                                     'data-homepage-search-target': 'range',
-                                    'data-action': 'input->homepage-search#update change->homepage-search#update'
-                                }
+                                    'data-action': 'input->homepage-search#update change->homepage-search#update',
+                                },
                             }) }}
                             <span class="tm-browse-filter-field__range-value" data-homepage-search-target="value">{{ radiusKm }} km</span>
                         </div>
@@ -241,37 +241,37 @@
 
                     <div class="tm-browse-filter-field">
                         {{ form_label(browseForm.category, null, {
-                            label_attr: { class: 'tm-browse-filter-field__label' }
+                            label_attr: {class: 'tm-browse-filter-field__label'},
                         }) }}
                         {{ form_widget(browseForm.category, {
                             attr: {
                                 class: 'form-select tm-browse-filter-field__control',
                                 'data-chained-selects-target': 'category',
-                                'data-action': 'change->chained-selects#loadSubCategories'
-                            }
+                                'data-action': 'change->chained-selects#loadSubCategories',
+                            },
                         }) }}
                     </div>
 
                     <div class="tm-browse-filter-field">
                         {{ form_label(browseForm.subCategory, null, {
-                            label_attr: { class: 'tm-browse-filter-field__label' }
+                            label_attr: {class: 'tm-browse-filter-field__label'},
                         }) }}
                         {{ form_widget(browseForm.subCategory, {
                             attr: {
                                 class: 'form-select tm-browse-filter-field__control',
-                                'data-chained-selects-target': 'subcategory'
-                            }
+                                'data-chained-selects-target': 'subcategory',
+                            },
                         }) }}
                     </div>
 
                     <div class="tm-browse-filter-field">
                         {{ form_label(browseForm.sort, null, {
-                            label_attr: { class: 'tm-browse-filter-field__label' }
+                            label_attr: {class: 'tm-browse-filter-field__label'},
                         }) }}
                         {{ form_widget(browseForm.sort, {
                             attr: {
-                                class: 'form-select tm-browse-filter-field__control'
-                            }
+                                class: 'form-select tm-browse-filter-field__control',
+                            },
                         }) }}
                     </div>
                 </div>
@@ -357,7 +357,7 @@
             {% set endPage = currentPage + 2 < totalPages ? currentPage + 2 : totalPages %}
             <nav class="tm-browse-pagination mt-5" aria-label="Pagination des prestataires">
                 {% if currentPage > 1 %}
-                    <a href="{{ path('app_prestataire_browse', app.request.query.all|merge({ page: currentPage - 1 })) }}" class="tm-browse-pagination__control">
+                    <a href="{{ path('app_prestataire_browse', app.request.query.all|merge({page: currentPage - 1})) }}" class="tm-browse-pagination__control">
                         <i class="fa-solid fa-chevron-left"></i>
                         <span>Précédent</span>
                     </a>
@@ -371,9 +371,9 @@
                 <div class="tm-browse-pagination__pages">
                     {% for pageNumber in startPage..endPage %}
                         {% if pageNumber == currentPage %}
-                            <span class="tm-browse-pagination__page is-active">{{ pageNumber }}</span>
+                            <span class="tm-browse-pagination__page is-active" aria-current="page">{{ pageNumber }}</span>
                         {% else %}
-                            <a href="{{ path('app_prestataire_browse', app.request.query.all|merge({ page: pageNumber })) }}" class="tm-browse-pagination__page">
+                            <a href="{{ path('app_prestataire_browse', app.request.query.all|merge({page: pageNumber})) }}" class="tm-browse-pagination__page">
                                 {{ pageNumber }}
                             </a>
                         {% endif %}
@@ -381,7 +381,7 @@
                 </div>
 
                 {% if currentPage < totalPages %}
-                    <a href="{{ path('app_prestataire_browse', app.request.query.all|merge({ page: currentPage + 1 })) }}" class="tm-browse-pagination__control">
+                    <a href="{{ path('app_prestataire_browse', app.request.query.all|merge({page: currentPage + 1})) }}" class="tm-browse-pagination__control">
                         <span>Suivant</span>
                         <i class="fa-solid fa-chevron-right"></i>
                     </a>

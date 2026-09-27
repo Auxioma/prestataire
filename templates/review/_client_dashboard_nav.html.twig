@@ -1,8 +1,8 @@
 <nav class="tm-review-subnav mb-4" aria-label="Navigation de l’espace client">
-    <a href="{{ path('app_quote_request_index') }}" class="tm-review-subnav__link {{ app.request.attributes.get('_route') == 'app_quote_request_index' ? 'is-active' : '' }}">
+    <a href="{{ path('app_quote_request_index') }}" class="tm-review-subnav__link {{ app.request.attributes.get('_route') == 'app_quote_request_index' ? 'is-active' : '' }}" {% if app.request.attributes.get('_route') == 'app_quote_request_index' %}aria-current="page"{% endif %}>
         Mes demandes
     </a>
-    <a href="{{ path('app_review_my_reviews') }}" class="tm-review-subnav__link {{ app.request.attributes.get('_route') starts with 'app_review_' and app.request.attributes.get('_route') != 'app_review_prestataire_reviews' ? 'is-active' : '' }}">
+    <a href="{{ path('app_review_my_reviews') }}" class="tm-review-subnav__link {{ app.request.attributes.get('_route') starts with 'app_review_' and app.request.attributes.get('_route') != 'app_review_prestataire_reviews' ? 'is-active' : '' }}" {% if app.request.attributes.get('_route') starts with 'app_review_' and app.request.attributes.get('_route') != 'app_review_prestataire_reviews' %}aria-current="page"{% endif %}>
         Mes avis
     </a>
 </nav>

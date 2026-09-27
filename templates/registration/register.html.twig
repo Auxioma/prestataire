@@ -28,7 +28,7 @@
                         <div class="tm-register-feature-list">
                             <div class="tm-register-feature">
                                 <div class="tm-register-feature__icon">
-                                    <i class="bi bi-shield-check"></i>
+                                    <i class="bi bi-shield-check" aria-hidden="true"></i>
                                 </div>
                                 <div class="tm-register-feature__content">
                                     <strong>Des prestataires vérifiés</strong>
@@ -38,7 +38,7 @@
 
                             <div class="tm-register-feature">
                                 <div class="tm-register-feature__icon">
-                                    <i class="bi bi-star"></i>
+                                    <i class="bi bi-star" aria-hidden="true"></i>
                                 </div>
                                 <div class="tm-register-feature__content">
                                     <strong>Des avis authentiques</strong>
@@ -48,7 +48,7 @@
 
                             <div class="tm-register-feature">
                                 <div class="tm-register-feature__icon">
-                                    <i class="bi bi-tag"></i>
+                                    <i class="bi bi-tag" aria-hidden="true"></i>
                                 </div>
                                 <div class="tm-register-feature__content">
                                     <strong>Des offres exclusives</strong>
@@ -58,7 +58,7 @@
 
                             <div class="tm-register-feature">
                                 <div class="tm-register-feature__icon">
-                                    <i class="bi bi-lock"></i>
+                                    <i class="bi bi-lock" aria-hidden="true"></i>
                                 </div>
                                 <div class="tm-register-feature__content">
                                     <strong>Paiement sécurisé</strong>
@@ -111,9 +111,9 @@
 
                     {% if isPrestataire %}
                         <div class="d-flex align-items-center gap-2 mb-4" role="group" aria-label="Progression de l'inscription prestataire">
-                            <span class="badge rounded-pill {{ currentStep == 1 ? 'bg-primary' : 'bg-light text-dark border' }}">1. Sécurité</span>
-                            <span class="badge rounded-pill {{ currentStep == 2 ? 'bg-primary' : 'bg-light text-dark border' }}">2. Activité</span>
-                            <span class="badge rounded-pill {{ currentStep == 3 ? 'bg-primary' : 'bg-light text-dark border' }}">3. Validation</span>
+                            <span class="badge rounded-pill {{ currentStep == 1 ? 'bg-primary' : 'bg-light text-dark border' }}" {% if currentStep == 1 %}aria-current="step"{% endif %}>1. Sécurité</span>
+                            <span class="badge rounded-pill {{ currentStep == 2 ? 'bg-primary' : 'bg-light text-dark border' }}" {% if currentStep == 2 %}aria-current="step"{% endif %}>2. Activité</span>
+                            <span class="badge rounded-pill {{ currentStep == 3 ? 'bg-primary' : 'bg-light text-dark border' }}" {% if currentStep == 3 %}aria-current="step"{% endif %}>3. Validation</span>
                         </div>
                     {% endif %}
 
@@ -121,8 +121,8 @@
                         {{ form_start(registrationForm) }}
 
                         {% if not registrationForm.vars.valid %}
-                            <div class="alert alert-danger p-3 small mb-3 rounded-3 d-flex align-items-start fw-semibold">
-                                <i class="bi bi-exclamation-triangle-fill me-2 fs-5 mt-0.5"></i>
+                            <div class="alert alert-danger p-3 small mb-3 rounded-3 d-flex align-items-start fw-semibold" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2 fs-5 mt-0.5" aria-hidden="true"></i>
                                 <div>
                                     {% for error in registrationForm.vars.errors %}
                                         {% if 'CSRF' in error.message or 'token' in error.message %}
@@ -138,17 +138,20 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <div class="tm-register-field {% if not registrationForm.firstName.vars.valid %}border border-danger rounded-3{% endif %}">
-                                    <i class="bi bi-person-fill tm-register-field__icon"></i>
+                                    {{ form_label(registrationForm.firstName, null, {label_attr: {class: 'visually-hidden'}}) }}
+                                    <i class="bi bi-person-fill tm-register-field__icon" aria-hidden="true"></i>
                                     {{ form_widget(registrationForm.firstName, {
                                         attr: {
                                             placeholder: 'Prénom',
                                             class: 'tm-register-field__input',
+                                            'aria-invalid': registrationForm.firstName.vars.errors|length > 0 ? 'true' : 'false',
+                                            'aria-describedby': registrationForm.firstName.vars.errors|length > 0 ? registrationForm.firstName.vars.id ~ '-errors' : null,
                                         },
                                     }) }}
                                 </div>
                                 {% if registrationForm.firstName.vars.errors|length > 0 %}
-                                    <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
-                                        <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+                                    <div id="{{ registrationForm.firstName.vars.id }}-errors" class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
+                                        <i class="bi bi-exclamation-circle-fill me-2 fs-6" aria-hidden="true"></i>
                                         <span>{{ registrationForm.firstName.vars.errors[0].message }}</span>
                                     </div>
                                 {% endif %}
@@ -156,17 +159,20 @@
 
                             <div class="col-md-6">
                                 <div class="tm-register-field {% if not registrationForm.lastName.vars.valid %}border border-danger rounded-3{% endif %}">
-                                    <i class="bi bi-person-badge-fill tm-register-field__icon"></i>
+                                    {{ form_label(registrationForm.lastName, null, {label_attr: {class: 'visually-hidden'}}) }}
+                                    <i class="bi bi-person-badge-fill tm-register-field__icon" aria-hidden="true"></i>
                                     {{ form_widget(registrationForm.lastName, {
                                         attr: {
                                             placeholder: 'Nom',
                                             class: 'tm-register-field__input',
+                                            'aria-invalid': registrationForm.lastName.vars.errors|length > 0 ? 'true' : 'false',
+                                            'aria-describedby': registrationForm.lastName.vars.errors|length > 0 ? registrationForm.lastName.vars.id ~ '-errors' : null,
                                         },
                                     }) }}
                                 </div>
                                 {% if registrationForm.lastName.vars.errors|length > 0 %}
-                                    <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
-                                        <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+                                    <div id="{{ registrationForm.lastName.vars.id }}-errors" class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
+                                        <i class="bi bi-exclamation-circle-fill me-2 fs-6" aria-hidden="true"></i>
                                         <span>{{ registrationForm.lastName.vars.errors[0].message }}</span>
                                     </div>
                                 {% endif %}
@@ -175,18 +181,21 @@
 
                         <div class="mb-3 mt-3">
                             <div class="tm-register-field {% if not registrationForm.phoneNumber.vars.valid %}border border-danger rounded-3{% endif %}">
-                                <i class="bi bi-telephone-fill tm-register-field__icon"></i>
+                                {{ form_label(registrationForm.phoneNumber, null, {label_attr: {class: 'visually-hidden'}}) }}
+                                <i class="bi bi-telephone-fill tm-register-field__icon" aria-hidden="true"></i>
                                 {{ form_widget(registrationForm.phoneNumber, {
                                     attr: {
                                         placeholder: 'Numéro de téléphone',
                                         class: 'tm-register-field__input',
+                                        'aria-invalid': registrationForm.phoneNumber.vars.errors|length > 0 ? 'true' : 'false',
+                                        'aria-describedby': registrationForm.phoneNumber.vars.errors|length > 0 ? registrationForm.phoneNumber.vars.id ~ '-errors' : null,
                                     },
                                 }) }}
                             </div>
 
                             {% if registrationForm.phoneNumber.vars.errors|length > 0 %}
-                                <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
-                                    <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+                                <div id="{{ registrationForm.phoneNumber.vars.id }}-errors" class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
+                                    <i class="bi bi-exclamation-circle-fill me-2 fs-6" aria-hidden="true"></i>
                                     <span>{{ registrationForm.phoneNumber.vars.errors[0].message }}</span>
                                 </div>
                             {% endif %}
@@ -194,18 +203,21 @@
 
                         <div class="mb-3">
                             <div class="tm-register-field {% if not registrationForm.email.vars.valid %}border border-danger rounded-3{% endif %}">
-                                <i class="bi bi-envelope-fill tm-register-field__icon"></i>
+                                {{ form_label(registrationForm.email, null, {label_attr: {class: 'visually-hidden'}}) }}
+                                <i class="bi bi-envelope-fill tm-register-field__icon" aria-hidden="true"></i>
                                 {{ form_widget(registrationForm.email, {
                                     attr: {
                                         placeholder: 'Adresse e-mail',
                                         class: 'tm-register-field__input',
+                                        'aria-invalid': registrationForm.email.vars.errors|length > 0 ? 'true' : 'false',
+                                        'aria-describedby': registrationForm.email.vars.errors|length > 0 ? registrationForm.email.vars.id ~ '-errors' : null,
                                     },
                                 }) }}
                             </div>
 
                             {% if registrationForm.email.vars.errors|length > 0 %}
-                                <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
-                                    <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+                                <div id="{{ registrationForm.email.vars.id }}-errors" class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
+                                    <i class="bi bi-exclamation-circle-fill me-2 fs-6" aria-hidden="true"></i>
                                     <span>{{ registrationForm.email.vars.errors[0].message }}</span>
                                 </div>
                             {% endif %}
@@ -214,15 +226,18 @@
                         <div class="tm-register-password-block" data-controller="password">
                             <div class="tm-register-field tm-register-field--password {% if not registrationForm.plainPassword.first.vars.valid %}border border-danger rounded-3{% endif %}">
                                 <span class="tm-register-field__icon">
-                                    <i class="bi bi-lock-fill"></i>
+                                    <i class="bi bi-lock-fill" aria-hidden="true"></i>
                                 </span>
 
+                                {{ form_label(registrationForm.plainPassword.first, null, {label_attr: {class: 'visually-hidden'}}) }}
                                 {{ form_widget(registrationForm.plainPassword.first, {
                                     attr: {
                                         placeholder: 'Mot de passe',
                                         class: 'tm-register-field__input',
                                         'data-password-target': 'input',
                                         'data-action': 'input->password#checkPassword',
+                                        'aria-invalid': registrationForm.plainPassword.first.vars.errors|length > 0 ? 'true' : 'false',
+                                        'aria-describedby': registrationForm.plainPassword.first.vars.errors|length > 0 ? registrationForm.plainPassword.first.vars.id ~ '-errors ' ~ registrationForm.plainPassword.first.vars.id ~ '-rules' : registrationForm.plainPassword.first.vars.id ~ '-rules',
                                     },
                                 }) }}
 
@@ -230,13 +245,13 @@
                             </div>
 
                             {% if registrationForm.plainPassword.first.vars.errors|length > 0 %}
-                                <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
-                                    <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+                                <div id="{{ registrationForm.plainPassword.first.vars.id }}-errors" class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
+                                    <i class="bi bi-exclamation-circle-fill me-2 fs-6" aria-hidden="true"></i>
                                     <span>{{ registrationForm.plainPassword.first.vars.errors[0].message }}</span>
                                 </div>
                             {% endif %}
 
-                            <div class="tm-register-password-rules">
+                            <div id="{{ registrationForm.plainPassword.first.vars.id }}-rules" class="tm-register-password-rules" aria-live="polite">
                                 <div class="is-invalid" data-password-target="length">❌ Au moins 8 caractères</div>
                                 <div class="is-invalid" data-password-target="uppercase">❌ Au moins une majuscule</div>
                                 <div class="is-invalid" data-password-target="number">❌ Au moins un chiffre</div>
@@ -247,14 +262,17 @@
                         <div class="mb-3 mt-3" data-controller="password">
                             <div class="tm-register-field tm-register-field--password {% if not registrationForm.plainPassword.second.vars.valid %}border border-danger rounded-3{% endif %}">
                                 <span class="tm-register-field__icon">
-                                    <i class="bi bi-shield-lock-fill"></i>
+                                    <i class="bi bi-shield-lock-fill" aria-hidden="true"></i>
                                 </span>
 
+                                {{ form_label(registrationForm.plainPassword.second, null, {label_attr: {class: 'visually-hidden'}}) }}
                                 {{ form_widget(registrationForm.plainPassword.second, {
                                     attr: {
                                         placeholder: 'Confirmer le mot de passe',
                                         class: 'tm-register-field__input',
                                         'data-password-target': 'input',
+                                        'aria-invalid': registrationForm.plainPassword.second.vars.errors|length > 0 ? 'true' : 'false',
+                                        'aria-describedby': registrationForm.plainPassword.second.vars.errors|length > 0 ? registrationForm.plainPassword.second.vars.id ~ '-errors' : null,
                                     },
                                 }) }}
 
@@ -262,8 +280,8 @@
                             </div>
 
                             {% if registrationForm.plainPassword.second.vars.errors|length > 0 %}
-                                <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
-                                    <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+                                <div id="{{ registrationForm.plainPassword.second.vars.id }}-errors" class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
+                                    <i class="bi bi-exclamation-circle-fill me-2 fs-6" aria-hidden="true"></i>
                                     <span>{{ registrationForm.plainPassword.second.vars.errors[0].message }}</span>
                                 </div>
                             {% endif %}
@@ -275,8 +293,8 @@
                         </div>
 
                         {% if registrationForm.agreeTerms.vars.errors|length > 0 %}
-                            <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold">
-                                <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+                            <div class="text-danger small mt-2 ps-2 d-flex align-items-center fw-semibold" role="alert">
+                                <i class="bi bi-exclamation-circle-fill me-2 fs-6" aria-hidden="true"></i>
                                 <span>{{ registrationForm.agreeTerms.vars.errors[0].message }}</span>
                             </div>
                         {% endif %}
@@ -290,12 +308,12 @@
                         </div>
 
                         <a href="{{ path('connect_google_start', {role: currentRole}) }}" class="tm-register-social-btn" data-turbo="false" data-turbo-prefetch="false">
-                            <i class="bi bi-google"></i>
+                            <i class="bi bi-google" aria-hidden="true"></i>
                             <span>S'inscrire avec Google</span>
                         </a>
 
                         <button type="button" class="tm-register-social-btn">
-                            <i class="bi bi-apple"></i>
+                            <i class="bi bi-apple" aria-hidden="true"></i>
                             <span>S'inscrire avec Apple</span>
                         </button>
 
@@ -307,13 +325,13 @@
                         {{ form_end(registrationForm) }}
                     {% elseif currentStep == 2 %}
                         {% if activityError %}
-                            <div class="alert alert-danger p-3 small mb-3 rounded-3 d-flex align-items-start fw-semibold">
-                                <i class="bi bi-exclamation-triangle-fill me-2 fs-5 mt-0.5"></i>
+                            <div class="alert alert-danger p-3 small mb-3 rounded-3 d-flex align-items-start fw-semibold" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2 fs-5 mt-0.5" aria-hidden="true"></i>
                                 <div>{{ activityError }}</div>
                             </div>
                         {% endif %}
 
-                        <form method="post" action="{{ path('app_register', { role: 'prestataire', step: 2 }) }}" data-controller="chained-selects" data-turbo="false">
+                        <form method="post" action="{{ path('app_register', {role: 'prestataire', step: 2}) }}" data-controller="chained-selects" data-turbo="false">
                             <input type="hidden" name="_token" value="{{ csrf_token('prestataire_registration_activity') }}">
 
                             <div class="mb-3">
@@ -346,7 +364,7 @@
                             </div>
 
                             <div class="d-flex flex-column flex-sm-row gap-2">
-                                <a href="{{ path('app_register', { role: 'prestataire', step: 1 }) }}" class="btn btn-outline-secondary">Retour</a>
+                                <a href="{{ path('app_register', {role: 'prestataire', step: 1}) }}" class="btn btn-outline-secondary">Retour</a>
                                 <button type="submit" class="tm-register-submit-btn flex-grow-1">Continuer</button>
                             </div>
                         </form>
@@ -367,11 +385,11 @@
                             <p class="mb-0"><strong>Première activité :</strong> {{ selectedService ? selectedService.name : 'Non renseignée' }}</p>
                         </div>
 
-                        <form method="post" action="{{ path('app_register', { role: 'prestataire', step: 3 }) }}" data-turbo="false">
+                        <form method="post" action="{{ path('app_register', {role: 'prestataire', step: 3}) }}" data-turbo="false">
                             <input type="hidden" name="_token" value="{{ csrf_token('prestataire_registration_finalize') }}">
 
                             <div class="d-flex flex-column flex-sm-row gap-2">
-                                <a href="{{ path('app_register', { role: 'prestataire', step: 2 }) }}" class="btn btn-outline-secondary">Retour</a>
+                                <a href="{{ path('app_register', {role: 'prestataire', step: 2}) }}" class="btn btn-outline-secondary">Retour</a>
                                 <button type="submit" class="tm-register-submit-btn flex-grow-1">Créer mon compte prestataire</button>
                             </div>
                         </form>

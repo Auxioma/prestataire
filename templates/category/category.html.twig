@@ -7,18 +7,18 @@
     {% for row in categoryRows %}
         {% set categoryItems = categoryItems|merge([{
             '@type': 'ListItem',
-            'position': loop.index,
-            'name': row.category.name,
-            'url': url('app_category_show', {slug: row.category.slug})
+            position: loop.index,
+            name: row.category.name,
+            url: url('app_category_show', {slug: row.category.slug}),
         }]) %}
     {% endfor %}
     {{ include('layout/_json_ld.html.twig', {data: {
         '@context': 'https://schema.org',
         '@type': 'CollectionPage',
         '@id': app.request.uri ~ '#webpage',
-        'url': app.request.uri,
-        'name': 'Toutes les catégories',
-        'mainEntity': {'@type': 'ItemList', 'itemListElement': categoryItems}
+        url: app.request.uri,
+        name: 'Toutes les catégories',
+        mainEntity: {'@type': 'ItemList', itemListElement: categoryItems},
     }}) }}
 {% endblock %}
 
@@ -101,9 +101,9 @@
                     </div>
                 </div>
 
-                {% include 'category/_filters.html.twig' with {
-                    formView: filterForm
-                } only %}
+                {{ include('category/_filters.html.twig', {
+                    formView: filterForm,
+                }, false) }}
 
                 {% if hasActiveFilters|default(false) %}
                     <div class="tmc-filter-chips" role="group" aria-label="Filtres actifs">
@@ -169,7 +169,7 @@
                                 {% if hasUploadedCategoryImage %}
                                     <img
                                         src="{{ asset('uploads/service-categories/' ~ category.image) }}"
-                                        alt="{{ category.name }}"
+                                        alt=""
                                         class="tmc-card__cover tmc-card__cover-image"
                                         width="640"
                                         height="360"

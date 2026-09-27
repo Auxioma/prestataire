@@ -57,7 +57,10 @@
                                     height="900"
                                     loading="lazy"
                                     data-conversation-gallery-target="mainImage"
-                                    data-action="click->conversation-gallery#openLightbox"
+                                    role="button"
+                                    tabindex="0"
+                                    aria-label="Agrandir la photo : {{ mediaItems[0].attachment.originalName ?: 'Photo de la conversation' }}"
+                                    data-action="click->conversation-gallery#openLightbox keydown.enter->conversation-gallery#openLightbox keydown.space->conversation-gallery#openLightbox"
                                 >
 
                                 <figcaption class="c-conversation-gallery__caption">
@@ -84,7 +87,7 @@
                                     >
                                         <form
                                             method="post"
-                                            action="{{ path(deleteRouteName, { id: mediaItems[0].attachment.id }) }}"
+                                            action="{{ path(deleteRouteName, {id: mediaItems[0].attachment.id}) }}"
                                             data-conversation-gallery-target="deleteForm"
                                             data-controller="confirm-dialog"
                                             data-action="submit->confirm-dialog#confirm"
@@ -140,7 +143,7 @@
                                 data-alt="{{ item.attachment.originalName ?: 'Photo de la conversation' }}"
                                 data-author="{{ item.authorName ?: 'Utilisateur' }}"
                                 data-date="{{ item.createdAt ? item.createdAt|date('d/m/Y H:i') : '—' }}"
-                                data-delete-url="{{ path(deleteRouteName, { id: item.attachment.id }) }}"
+                                data-delete-url="{{ path(deleteRouteName, {id: item.attachment.id}) }}"
                                 data-delete-token="{{ csrf_token('delete_attachment_' ~ item.attachment.id) }}"
                                 data-can-delete="{{ item.canDelete ? '1' : '0' }}"
                                 aria-label="Voir la photo {{ loop.index }}"

@@ -89,27 +89,27 @@
                 <p class="text-muted small mb-4">Décrivez votre projet, c'est rapide et sans engagement.</p>
 
                 <div class="mb-3">
-                    <label class="form-label small fw-bold text-dark mb-1">Catégorie de votre projet</label>
-                    <select class="form-select form-select-sm bg-light text-muted border-0 py-2" disabled>
+                    <label for="quote-category" class="form-label small fw-bold text-dark mb-1">Catégorie de votre projet</label>
+                    <select id="quote-category" class="form-select form-select-sm bg-light text-muted border-0 py-2" disabled>
                         <option>Sélectionnez une catégorie</option>
                     </select>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label small fw-bold text-dark mb-1">Titre de votre projet</label>
-                    <input type="text" class="form-control form-control-sm bg-light border-0 py-2" placeholder="Ex : Rénovation complète" disabled>
+                    <label for="quote-title" class="form-label small fw-bold text-dark mb-1">Titre de votre projet</label>
+                    <input id="quote-title" type="text" class="form-control form-control-sm bg-light border-0 py-2" placeholder="Ex : Rénovation complète" disabled>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label small fw-bold text-dark mb-1">Décrivez votre projet</label>
-                    <textarea class="form-control form-control-sm bg-light border-0" rows="4" placeholder="Décrivez votre besoin..." disabled></textarea>
+                    <label for="quote-description" class="form-label small fw-bold text-dark mb-1">Décrivez votre projet</label>
+                    <textarea id="quote-description" class="form-control form-control-sm bg-light border-0" rows="4" placeholder="Décrivez votre besoin..." aria-describedby="quote-description-hint" disabled></textarea>
                     <div class="text-end mt-1">
-                        <span class="tm-static-text-xs text-muted">Précisez votre demande au maximum.</span>
+                        <span id="quote-description-hint" class="tm-static-text-xs text-muted">Précisez votre demande au maximum.</span>
                     </div>
                 </div>
 
                 <button class="btn btn-primary w-100 py-2 fw-medium d-flex align-items-center justify-content-center gap-2 mb-3" type="button" disabled>
-                    Envoyer ma demande <i class="fa-solid fa-arrow-right"></i>
+                    Envoyer ma demande <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                 </button>
             </div>
         </div>

@@ -43,7 +43,7 @@
                         {% set avatarClass = avatarClasses[(conversation.id|default(loop.index0)) % avatarClasses|length] %}
 
                         <a
-                            href="{{ path('app_prestataire_dashboard', { conversation: conversation.id, tab: 'messages', conversationPage: conversations.currentPageNumber is defined ? conversations.currentPageNumber : 1 }) }}"
+                            href="{{ path('app_prestataire_dashboard', {conversation: conversation.id, tab: 'messages', conversationPage: conversations.currentPageNumber is defined ? conversations.currentPageNumber : 1}) }}"
                             class="conversation tm-msg-thread{% if isActive %} actif is-active{% endif %}{% if unreadCount > 0 %} non-lu is-unread{% endif %}"
                             data-action="click->messages-sidebar-live#markThreadRead"
                             data-conversation-id="{{ conversation.id }}"
@@ -142,7 +142,7 @@
                     <div class="msg-fil__actions tm-msg-head-actions">
                         {% if hasConversationPhotos %}
                             <a
-                                href="{{ path('app_prestataire_conversation_photos', { id: activeConversation.id }) }}"
+                                href="{{ path('app_prestataire_conversation_photos', {id: activeConversation.id}) }}"
                                 class="btn btn-outline-secondary tm-msg-head-btn"
                             >
                                 Accès photos conversation
@@ -160,7 +160,7 @@
                             </button>
 
                             <a
-                                href="{{ path('app_report_conversation', { id: activeConversation.id }) }}"
+                                href="{{ path('app_report_conversation', {id: activeConversation.id}) }}"
                                 class="btn btn-outline-danger tm-msg-head-btn"
                             >
                                 Signaler
@@ -265,6 +265,7 @@
                                 <button
                                     type="button"
                                     class="tm-msg-lightbox-close"
+                                    data-image-lightbox-target="close"
                                     data-action="click->image-lightbox#close"
                                     aria-label="Fermer"
                                 >
@@ -299,7 +300,7 @@
                                     <i class="fa-solid fa-chevron-right"></i>
                                 </button>
 
-                                <div class="tm-msg-lightbox-counter" data-image-lightbox-target="counter"></div>
+                                <div class="tm-msg-lightbox-counter" data-image-lightbox-target="counter" aria-live="polite" aria-atomic="true"></div>
                             </div>
                         </div>
                     {% endif %}
@@ -311,8 +312,8 @@
                             attr: {
                                 class: 'tm-msg-form',
                                 'data-controller': 'conversation-form',
-                                'data-action': 'submit->conversation-form#submit'
-                            }
+                                'data-action': 'submit->conversation-form#submit',
+                            },
                         }) }}
 
                         {% if messageForm.vars.errors|length > 0 %}
@@ -334,8 +335,8 @@
                                 attr: {
                                     class: 'form-control tm-msg-textarea' ~ (messageForm.content.vars.errors|length > 0 ? ' is-invalid' : ''),
                                     rows: 1,
-                                    placeholder: 'Écrivez votre message…'
-                                }
+                                    placeholder: 'Écrivez votre message…',
+                                },
                             }) }}
 
                             <button type="submit" class="btn-envoyer tm-msg-submit" data-conversation-form-target="submit" aria-label="Envoyer le message">
@@ -353,8 +354,8 @@
                                     accept: 'image/jpeg,image/png,image/webp',
                                     multiple: 'multiple',
                                     'data-conversation-form-target': 'files',
-                                    'data-action': 'change->conversation-form#filesChanged'
-                                }
+                                    'data-action': 'change->conversation-form#filesChanged',
+                                },
                             }) }}
                             <div class="form-text" data-conversation-form-target="summary">Jusqu’à 5 photos.</div>
                             <div class="tm-conversation-preview" data-conversation-form-target="preview" hidden></div>
@@ -373,7 +374,7 @@
                         {% endif %}
 
                         {{ form_widget(messageForm._token) }}
-                        {{ form_end(messageForm, { render_rest: false }) }}
+                        {{ form_end(messageForm, {render_rest: false}) }}
                     {% elseif activeConversation and isConversationArchived is defined and isConversationArchived %}
                         <div class="alert alert-secondary mb-0" role="alert">
                             La messagerie est clôturée car cette demande a été archivée par votre interlocuteur.
@@ -445,7 +446,7 @@
                                 </div>
 
                                 <div class="modal-footer">
-                                    <a href="{{ path('app_prestataire_quote_request_show', { slug: quoteRequest.slug }) }}" class="btn btn-outline-secondary">
+                                    <a href="{{ path('app_prestataire_quote_request_show', {slug: quoteRequest.slug}) }}" class="btn btn-outline-secondary">
                                         Ouvrir la fiche demande
                                     </a>
                                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">

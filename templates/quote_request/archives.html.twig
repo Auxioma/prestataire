@@ -7,7 +7,7 @@
 {% block body %}
 <div class="container-fluid p-0 tm-cp-page-wrapper">
     <div class="d-flex flex-column flex-md-row align-items-stretch">
-        {{ include('profile/_client_sidebar.html.twig', { user: app.user }) }}
+        {{ include('profile/_client_sidebar.html.twig', {user: app.user}) }}
 
         <div class="grow p-3 p-md-5 tm-cp-main-content-inner">
 <section class="tm-qa-page">
@@ -29,7 +29,7 @@
 
         {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
             {% for message in messages %}
-                <div class="tm-qa-alert tm-qa-alert--{{ type }}">
+                <div class="tm-qa-alert tm-qa-alert--{{ type }}" role="alert">
                     <div class="tm-qa-alert__body">{{ message }}</div>
                     <button type="button" class="tm-qa-alert__close btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
                 </div>
@@ -41,7 +41,7 @@
                 {% for quoteRequest in archivedQuoteRequests %}
                     {% set provider = quoteRequest.prestataire %}
                     {% set providerName = provider and provider.companyName ? provider.companyName : 'Prestataire' %}
-                    {% set providerProfileUrl = provider and provider.slug ? path('app_prestataire_show', { slug: provider.slug }) : null %}
+                    {% set providerProfileUrl = provider and provider.slug ? path('app_prestataire_show', {slug: provider.slug}) : null %}
                     <article class="tm-qa-card">
                         <div class="tm-qa-card__accent" aria-hidden="true"></div>
 
@@ -79,7 +79,7 @@
                         </div>
 
                         <aside class="tm-qa-card__aside">
-                            <a href="{{ path('app_quote_request_history_show', { slug: quoteRequest.slug }) }}"
+                            <a href="{{ path('app_quote_request_history_show', {slug: quoteRequest.slug}) }}"
                                class="tm-qa-btn tm-qa-btn--primary">
                                 Voir le détail
                             </a>

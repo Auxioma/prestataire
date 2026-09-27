@@ -1,16 +1,16 @@
 {% set currentRoute = app.request.attributes.get('_route')|default('') %}
 {% set currentTab = activeTab|default('dashboard') %}
 {% set dashboardLinks = [
-    { key: 'dashboard', label: 'Tableau de bord', icon: 'fa-house' },
-    { key: 'prestations', label: 'Mes prestations', icon: 'fa-toolbox' },
-    { key: 'revenus', label: 'Mes revenus', icon: 'fa-credit-card' },
-    { key: 'calendrier', label: 'Calendrier', icon: 'fa-calendar-days' },
-    { key: 'demandes', label: 'Demandes reçues', icon: 'fa-file-lines' },
-    { key: 'archives', label: 'Archives', icon: 'fa-box-archive' },
-    { key: 'messages', label: 'Messages', icon: 'fa-envelope' },
+    {key: 'dashboard', label: 'Tableau de bord', icon: 'fa-house'},
+    {key: 'prestations', label: 'Mes prestations', icon: 'fa-toolbox'},
+    {key: 'revenus', label: 'Mes revenus', icon: 'fa-credit-card'},
+    {key: 'calendrier', label: 'Calendrier', icon: 'fa-calendar-days'},
+    {key: 'demandes', label: 'Demandes reçues', icon: 'fa-file-lines'},
+    {key: 'archives', label: 'Archives', icon: 'fa-box-archive'},
+    {key: 'messages', label: 'Messages', icon: 'fa-envelope'},
 ] %}
 
-<div class="tm-app-sidebar tm-dashboard-page__sidebar-inner" {{ stimulus_controller('messages-sidebar-live', { url: 'http://localhost:3001', userId: app.user.id, authToken: navbarRealtimeNotificationsToken|default(''), activeConversationId: activeConversation is defined and activeConversation ? activeConversation.id : 0, activeTab: activeTab|default('') }) }}>
+<div class="tm-app-sidebar tm-dashboard-page__sidebar-inner" {{ stimulus_controller('messages-sidebar-live', {url: 'http://localhost:3001', userId: app.user.id, authToken: navbarRealtimeNotificationsToken|default(''), activeConversationId: activeConversation is defined and activeConversation ? activeConversation.id : 0, activeTab: activeTab|default('')}) }}>
     <div class="tm-app-sidebar-top tm-dashboard-page__sidebar-top">
         <div class="tm-sidebar-profile-card tm-dashboard-page__profile-card">
             <div class="tm-sidebar-profile-avatar-wrap">
@@ -48,7 +48,7 @@
 
     <nav class="tm-sidebar-nav nav nav-pills flex-column tm-dashboard-page__nav" aria-label="Navigation principale du dashboard">
         {% for item in dashboardLinks %}
-            {% set href = path('app_prestataire_dashboard', { tab: item.key }) %}
+            {% set href = path('app_prestataire_dashboard', {tab: item.key}) %}
             {% set isActive = currentTab == item.key %}
             <a href="{{ href }}" class="tm-sidebar-link nav-link {{ isActive ? 'active' : '' }}" {{ isActive ? 'aria-current="page"' : '' }}>
                 <span class="tm-sidebar-link-icon"><i class="fa-solid {{ item.icon }}" aria-hidden="true"></i></span>

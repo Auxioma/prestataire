@@ -19,8 +19,8 @@
         attr: {
             novalidate: 'novalidate',
             class: 'tm-form-container',
-            'data-turbo': 'false'
-        }
+            'data-turbo': 'false',
+        },
     }) }}
 
     <div class="tm-availability-vacation card border-0 shadow-sm mb-4">
@@ -30,14 +30,14 @@
                     attr: {
                         class: 'form-check-input',
                         role: 'switch',
-                        'data-action': 'change->availability-toggle#toggleVacation'
-                    }
+                        'data-action': 'change->availability-toggle#toggleVacation',
+                    },
                 }) }}
                 <div class="tm-availability-vacation-copy">
                     {{ form_label(availabilityForm.isOnVacation, null, {
                         label_attr: {
-                            class: 'form-check-label fw-semibold'
-                        }
+                            class: 'form-check-label fw-semibold',
+                        },
                     }) }}
                     <p class="mb-0 text-muted small">
                         Quand ce mode est actif, votre semainier public affiche clairement
@@ -54,8 +54,8 @@
                     {{ form_label(availabilityForm.vacationReturnDate) }}
                     {{ form_widget(availabilityForm.vacationReturnDate, {
                         attr: {
-                            min: 'now'|date('Y-m-d')
-                        }
+                            min: 'now'|date('Y-m-d'),
+                        },
                     }) }}
                     {{ form_errors(availabilityForm.vacationReturnDate) }}
                     <p class="mb-0 text-muted small">
@@ -67,22 +67,22 @@
     </div>
 
     <div class="tm-availability-table-wrap">
-        <div class="tm-availability-table">
-            <div class="tm-availability-head tm-availability-row">
-                <div class="tm-availability-col tm-availability-col--day">Jour</div>
-                <div class="tm-availability-col tm-availability-col--slot">Matin</div>
-                <div class="tm-availability-col tm-availability-col--slot">Après-midi</div>
+        <div class="tm-availability-table" role="table" aria-label="Horaires de disponibilité habituels">
+            <div class="tm-availability-head tm-availability-row" role="row">
+                <div class="tm-availability-col tm-availability-col--day" role="columnheader">Jour</div>
+                <div class="tm-availability-col tm-availability-col--slot" role="columnheader">Matin</div>
+                <div class="tm-availability-col tm-availability-col--slot" role="columnheader">Après-midi</div>
             </div>
 
             {% for availabilityFormRow in availabilityForm.availabilities %}
                 {% set availability = availabilities[loop.index0] %}
 
-                <div class="tm-availability-row tm-availability-day-row tm-availability-day-row--{{ loop.index }}">
-                    <div class="tm-availability-col tm-availability-col--day">
+                <div class="tm-availability-row tm-availability-day-row tm-availability-day-row--{{ loop.index }}" role="row">
+                    <div class="tm-availability-col tm-availability-col--day" role="rowheader">
                         <div class="tm-availability-day-name">{{ availability.dayLabel }}</div>
                     </div>
 
-                    <div class="tm-availability-col tm-availability-col--slot">
+                    <div class="tm-availability-col tm-availability-col--slot" role="cell">
                         <div class="tm-availability-slot"
                              data-availability-toggle-target="slot">
                             <div class="tm-availability-slot-top">
@@ -94,8 +94,8 @@
                                             class: 'tm-availability-switch-input',
                                             'data-availability-toggle-target': 'checkbox',
                                             'data-availability-toggle-panel-selector-value': '.js-morning-panel',
-                                            'data-action': 'change->availability-toggle#toggle'
-                                        }
+                                            'data-action': 'change->availability-toggle#toggle',
+                                        },
                                     }) }}
                                     <span class="tm-availability-switch-slider"></span>
                                     <span class="tm-availability-switch-text">Ouvert</span>
@@ -120,7 +120,7 @@
                         </div>
                     </div>
 
-                    <div class="tm-availability-col tm-availability-col--slot">
+                    <div class="tm-availability-col tm-availability-col--slot" role="cell">
                         <div class="tm-availability-slot"
                              data-availability-toggle-target="slot">
                             <div class="tm-availability-slot-top">
@@ -132,8 +132,8 @@
                                             class: 'tm-availability-switch-input',
                                             'data-availability-toggle-target': 'checkbox',
                                             'data-availability-toggle-panel-selector-value': '.js-afternoon-panel',
-                                            'data-action': 'change->availability-toggle#toggle'
-                                        }
+                                            'data-action': 'change->availability-toggle#toggle',
+                                        },
                                     }) }}
                                     <span class="tm-availability-switch-slider"></span>
                                     <span class="tm-availability-switch-text">Ouvert</span>

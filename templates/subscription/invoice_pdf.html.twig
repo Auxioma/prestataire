@@ -89,7 +89,7 @@
             font-size: 20px;
             font-weight: 700;
             color: #16233c;
-            margin-bottom: 4px;
+            margin: 0 0 4px;
         }
 
         .invoice-number {
@@ -121,7 +121,7 @@
             letter-spacing: 0.12em;
             text-transform: uppercase;
             color: #647089;
-            margin-bottom: 5px;
+            margin: 0 0 5px;
         }
 
         .card {
@@ -143,13 +143,16 @@
             padding-left: 6px;
         }
 
-        .meta-table td {
+        .meta-table td,
+        .meta-table th {
             padding: 4px 0;
             border-bottom: 1px solid #ebeff5;
             font-size: 10px;
+            text-align: left;
         }
 
-        .meta-table tr:last-child td {
+        .meta-table tr:last-child td,
+        .meta-table tr:last-child th {
             border-bottom: 0;
         }
 
@@ -186,11 +189,13 @@
             text-align: right;
         }
 
+        .summary-table tfoot th,
         .summary-table tfoot td {
             background: #f7f9fc;
             font-weight: 700;
             color: #16233c;
             border-bottom: 0;
+            text-align: left;
         }
 
         .summary-table .line-title {
@@ -221,7 +226,7 @@
     </style>
 </head>
 <body>
-    <div class="page">
+    <main class="page">
         {% set account = prestataire ? prestataire.account : null %}
         {% set invoiceNumber = invoice.invoiceNumber ?: ('ABO-' ~ (invoice.id ?: 'draft')) %}
         {% set totalAmount = invoice.totalAmount ?: invoice.amountPaid ?: '0.00' %}
@@ -243,7 +248,7 @@
                     </td>
                     <td class="invoice-box">
                         <div class="invoice-kicker">Facture d'abonnement</div>
-                        <div class="invoice-title">Abonnement</div>
+                        <h1 class="invoice-title">Abonnement</h1>
                         <div class="invoice-number">{{ invoiceNumber }}</div>
                         <div class="muted">
                             {{ invoice.paidAt ? 'Payée le ' ~ invoice.paidAt|date('d/m/Y à H:i') : 'Émise le ' ~ invoice.createdAt|date('d/m/Y à H:i') }}
@@ -260,7 +265,7 @@
         <table class="two-cols section">
             <tr>
                 <td>
-                    <div class="section-title">Émetteur</div>
+                    <h2 class="section-title">Émetteur</h2>
                     <div class="card">
                         <strong>{{ platform.legal_name }}</strong><br>
                         {{ platform.address_line_1 }}<br>
@@ -272,7 +277,7 @@
                     </div>
                 </td>
                 <td>
-                    <div class="section-title">Facturé à</div>
+                    <h2 class="section-title">Facturé à</h2>
                     <div class="card">
                         <strong>{{ prestataire.companyName ?: prestataire.legalName ?: 'Prestataire' }}</strong><br>
                         {% if prestataire.legalName and prestataire.legalName != prestataire.companyName %}
@@ -307,26 +312,27 @@
         </table>
 
         <div class="section">
-            <div class="section-title">Références</div>
+            <h2 class="section-title">Références</h2>
             <div class="card">
                 <table class="meta-table">
+                    <caption>Références de l'abonnement</caption>
                     <tr>
-                        <td>Plan</td>
+                        <th scope="row">Plan</th>
                         <td>{{ subscription and subscription.plan ? subscription.plan.name : 'Abonnement plateforme' }}</td>
                     </tr>
                     <tr>
-                        <td>Périodicité</td>
+                        <th scope="row">Périodicité</th>
                         <td>{{ subscription ? subscription.billingPeriod.label : 'Non disponible' }}</td>
                     </tr>
                     {% if invoice.periodStart and invoice.periodEnd %}
                         <tr>
-                            <td>Période facturée</td>
+                            <th scope="row">Période facturée</th>
                             <td>Du {{ invoice.periodStart|date('d/m/Y') }} au {{ invoice.periodEnd|date('d/m/Y') }}</td>
                         </tr>
                     {% endif %}
                     {% if invoice.stripeInvoiceId %}
                         <tr>
-                            <td>Référence Stripe</td>
+                            <th scope="row">Référence Stripe</th>
                             <td>{{ invoice.stripeInvoiceId }}</td>
                         </tr>
                     {% endif %}
@@ -335,13 +341,14 @@
         </div>
 
         <div class="section">
-            <div class="section-title">Détail facturé</div>
+            <h2 class="section-title">Détail facturé</h2>
             <div class="summary-wrap">
                 <table class="summary-table">
+                    <caption>Détail et montant de la facture d'abonnement</caption>
                     <thead>
                         <tr>
-                            <th>Description</th>
-                            <th>Montant</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Montant</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -366,7 +373,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td>Total TTC</td>
+                            <th scope="row">Total TTC</th>
                             <td>{{ totalAmount|number_format(2, ',', ' ') }} {{ invoice.currencyCode }}</td>
                         </tr>
                     </tfoot>
@@ -382,6 +389,6 @@
             <div>Document émis par {{ platform.legal_name }} pour la facturation de l’accès à la plateforme.</div>
             <div>La transmission réglementaire officielle n’est pas assurée par ce téléchargement seul.</div>
         </div>
-    </div>
+    </main>
 </body>
 </html>

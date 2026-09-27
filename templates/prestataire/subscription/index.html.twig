@@ -527,7 +527,7 @@
                                     </div>
 
                                     <div class="subscription-pricing-grid">
-                                        {% set planTierRanks = {'free': 0, 'pro': 1, 'premium': 2} %}
+                                        {% set planTierRanks = {free: 0, pro: 1, premium: 2} %}
                                         {% set currentPlanCode = currentSubscription and currentSubscription.plan ? currentSubscription.plan.code : null %}
                                         {% set currentPlanTierRank = currentPlanCode in planTierRanks|keys ? attribute(planTierRanks, currentPlanCode) : 0 %}
                                         {% set currentPeriodRank = currentSubscription and currentSubscription.billingPeriod.value == 'annual' ? 1 : 0 %}
@@ -620,15 +620,15 @@
                                                         data-subscription-checkout-plan-name-param="{{ plan.name }}"
                                                         data-subscription-checkout-plan-price-param="{{ plan.annualAmount ?: '0.00' }}"
                                                         data-subscription-checkout-plan-label-param="Annuel"
-                                                        data-subscription-checkout-plan-submit-url-param="{{ path('app_subscription_checkout', { code: plan.code, period: 'annual' }) }}"
+                                                        data-subscription-checkout-plan-submit-url-param="{{ path('app_subscription_checkout', {code: plan.code, period: 'annual'}) }}"
                                                         data-subscription-checkout-plan-csrf-token-param="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-annual') }}"
                                                         data-plan-monthly-price="{{ plan.monthlyAmount ?: '0.00' }}"
-                                                        data-plan-monthly-submit-url="{{ path('app_subscription_checkout', { code: plan.code, period: 'monthly' }) }}"
+                                                        data-plan-monthly-submit-url="{{ path('app_subscription_checkout', {code: plan.code, period: 'monthly'}) }}"
                                                         data-plan-monthly-csrf-token="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-monthly') }}"
                                                         data-plan-monthly-available="{{ isMonthlyUpgradeAvailable and stripeConfigured and stripePublicKey and plan.monthlyStripePriceId ? 'true' : 'false' }}"
                                                         data-plan-monthly-current="{{ isCurrentMonthlyPlan ? 'true' : 'false' }}"
                                                         data-plan-annual-price="{{ plan.annualAmount ?: '0.00' }}"
-                                                        data-plan-annual-submit-url="{{ path('app_subscription_checkout', { code: plan.code, period: 'annual' }) }}"
+                                                        data-plan-annual-submit-url="{{ path('app_subscription_checkout', {code: plan.code, period: 'annual'}) }}"
                                                         data-plan-annual-csrf-token="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-annual') }}"
                                                         data-plan-annual-available="{{ isAnnualUpgradeAvailable and stripeConfigured and stripePublicKey and plan.annualStripePriceId ? 'true' : 'false' }}"
                                                         data-plan-annual-current="{{ isCurrentAnnualPlan ? 'true' : 'false' }}"
@@ -759,7 +759,7 @@
                                                             <td><span class="chip chip--{{ statusClass }}">{{ invoice.status.label }}</span></td>
                                                             <td>
                                                                 <div class="actions-ligne">
-                                                                    <a href="{{ path('app_subscription_invoice_download', { invoiceId: invoice.id }) }}" class="btn-icone" aria-label="Télécharger la facture {{ invoice.invoiceNumber ?: invoice.id }}" title="Télécharger">
+                                                                    <a href="{{ path('app_subscription_invoice_download', {invoiceId: invoice.id}) }}" class="btn-icone" aria-label="Télécharger la facture {{ invoice.invoiceNumber ?: invoice.id }}" title="Télécharger">
                                                                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                                                             <path d="M13 3H6v18h12V8z"/>
                                                                             <path d="M13 3v5h5M9 14h6M9 17h4"/>

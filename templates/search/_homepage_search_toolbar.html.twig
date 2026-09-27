@@ -14,8 +14,8 @@
                         novalidate: 'novalidate',
                         'data-controller': 'homepage-search',
                         'data-homepage-search-default-radius-value': formView.radiusKm.vars.value ?: 25,
-                        'data-homepage-search-autocomplete-url-value': path('app_search_autocomplete')
-                    }
+                        'data-homepage-search-autocomplete-url-value': path('app_search_autocomplete'),
+                    },
                 }) }}
 
                     <div class="tm-homepage-search-field tm-homepage-search-field--query">
@@ -28,7 +28,7 @@
 
                         <div class="tm-homepage-search-field-body">
                             {{ form_label(formView.query, null, {
-                                label_attr: { class: 'tm-homepage-search-label' }
+                                label_attr: {class: 'tm-homepage-search-label'},
                             }) }}
 
                             <div class="tm-homepage-search-control">
@@ -38,8 +38,8 @@
                                         placeholder: 'Ex. plomberie, jardinage...',
                                         autocomplete: 'off',
                                         'data-homepage-search-target': 'query',
-                                        'data-action': 'input->homepage-search#onQueryInput keydown->homepage-search#onQueryKeydown'
-                                    }
+                                        'data-action': 'input->homepage-search#onQueryInput keydown->homepage-search#onQueryKeydown',
+                                    },
                                 }) }}
 
                                 <div
@@ -62,14 +62,14 @@
 
                         <div class="tm-homepage-search-field-body">
                             {{ form_label(formView.subCategory, null, {
-                                label_attr: { class: 'tm-homepage-search-label' }
+                                label_attr: {class: 'tm-homepage-search-label'},
                             }) }}
 
                             <div class="tm-homepage-search-control">
                                 {{ form_widget(formView.subCategory, {
                                     attr: {
-                                        class: 'tm-homepage-search-select'
-                                    }
+                                        class: 'tm-homepage-search-select',
+                                    },
                                 }) }}
                             </div>
                         </div>
@@ -85,7 +85,7 @@
 
                         <div class="tm-homepage-search-field-body">
                             {{ form_label(formView.location, null, {
-                                label_attr: { class: 'tm-homepage-search-label' }
+                                label_attr: {class: 'tm-homepage-search-label'},
                             }) }}
 
                             <div class="tm-homepage-search-control">
@@ -93,8 +93,8 @@
                                     attr: {
                                         class: 'tm-homepage-search-input',
                                         placeholder: 'Ville ou code postal...',
-                                        autocomplete: 'off'
-                                    }
+                                        autocomplete: 'off',
+                                    },
                                 }) }}
                             </div>
                         </div>
@@ -111,7 +111,7 @@
                         <div class="tm-homepage-search-field-body tm-homepage-search-field-body--radius">
                             <div class="tm-homepage-search-radius-head">
                                 {{ form_label(formView.radiusKm, null, {
-                                    label_attr: { class: 'tm-homepage-search-label mb-0' }
+                                    label_attr: {class: 'tm-homepage-search-label mb-0'},
                                 }) }}
                                 <span class="tm-homepage-search-radius-value" data-homepage-search-target="value">
                                     {{ formView.radiusKm.vars.value ?: 25 }} km
@@ -126,8 +126,8 @@
                                         max: 100,
                                         step: 5,
                                         'data-homepage-search-target': 'range',
-                                        'data-action': 'input->homepage-search#update change->homepage-search#update'
-                                    }
+                                        'data-action': 'input->homepage-search#update change->homepage-search#update',
+                                    },
                                 }) }}
                             </div>
                         </div>

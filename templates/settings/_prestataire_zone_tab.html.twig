@@ -55,7 +55,7 @@
 
                                 <form method="post" action="{{ path('app_prestataire_zone_delete', {id: zone.id}) }}#zones-panel" data-turbo="false" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Supprimer cette zone ?" data-confirm-dialog-text-value="Elle sera retirée de vos zones d’intervention." data-confirm-dialog-confirm-button-text-value="Supprimer" data-confirm-dialog-cancel-button-text-value="Annuler">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete_zone_' ~ zone.id) }}">
-                                    <button type="submit" class="tm-zone-delete-btn" title="Supprimer" aria-label="Supprimer la zone">
+                                    <button type="submit" class="tm-zone-delete-btn" title="Supprimer" aria-label="Supprimer la zone {{ zone.city ?: 'sans nom' }}">
                                         <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
                                     </button>
                                 </form>
@@ -132,7 +132,7 @@
             }) }}
 
             {% if zoneForm.vars.errors|length > 0 %}
-                <div class="alert alert-danger mb-3">
+                <div class="alert alert-danger mb-3" role="alert">
                     {{ form_errors(zoneForm) }}
                 </div>
             {% endif %}

@@ -13,108 +13,108 @@
 {% endblock %}
 
 {% block body %}
-	<div class="tm-settings-container" {{ stimulus_controller('settings-tabs') }}>
-		<div
-			class="tm-main-layout">
-			{# ================= SIDEBAR ================= #}
-			<aside class="tm-settings-sidebar" {{ stimulus_target('settings-tabs', 'sidebar') }}>
-				{{ include('profile/_prestataire_settings_sidebar.html.twig', {
+    <div class="tm-settings-container" {{ stimulus_controller('settings-tabs') }}>
+        <div
+            class="tm-main-layout">
+            {# ================= SIDEBAR ================= #}
+            <aside class="tm-settings-sidebar" {{ stimulus_target('settings-tabs', 'sidebar') }}>
+                {{ include('profile/_prestataire_settings_sidebar.html.twig', {
                     user: user,
                     activeTab: activeTab,
                     asLinks: true,
                 }) }}
-			</aside>
+            </aside>
 
-			<div class="tm-settings-sidebar-backdrop" {{ stimulus_target('settings-tabs', 'backdrop') }} {{ stimulus_action('settings-tabs', 'closeSidebar', 'click') }}></div>
+            <div class="tm-settings-sidebar-backdrop" {{ stimulus_target('settings-tabs', 'backdrop') }} {{ stimulus_action('settings-tabs', 'closeSidebar', 'click') }}></div>
 
-			{# ================= CONTENU ================= #}
-			<div class="tm-settings-content">
-				<button type="button" class="tm-sidebar-toggle d-lg-none" aria-label="Ouvrir la navigation des paramètres" {{ stimulus_target('settings-tabs', 'toggle') }} {{ stimulus_action('settings-tabs', 'toggleSidebar', 'click') }}>
-					☰
-				</button>
+            {# ================= CONTENU ================= #}
+            <div class="tm-settings-content">
+                <button type="button" class="tm-sidebar-toggle d-lg-none" aria-label="Ouvrir la navigation des paramètres" {{ stimulus_target('settings-tabs', 'toggle') }} {{ stimulus_action('settings-tabs', 'toggleSidebar', 'click') }}>
+                    ☰
+                </button>
 
-				<h1 class="fw-bold mb-1">Paramètres</h1>
-				<p class="text-muted mb-4">Gérez votre profil, vos services et vos préférences.</p>
+                <h1 class="fw-bold mb-1">Paramètres</h1>
+                <p class="text-muted mb-4">Gérez votre profil, vos services et vos préférences.</p>
 
-				{# Flash messages #}
-				{% for label in ['success', 'warning', 'danger', 'error'] %}
-					{% for message in app.flashes(label) %}
-						<div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show mb-4" role="alert">
-							{% if message is iterable and message.title is defined %}
-								<div>{{ message.title }}</div>
-								{% if message.items is defined and message.items is iterable and message.items is not empty %}
-									<ul class="mb-0 mt-2 ps-4">
-										{% for item in message.items %}
-											<li>{{ item }}</li>
-										{% endfor %}
-									</ul>
-								{% endif %}
-							{% elseif message is iterable and message.html is defined %}
-								{{ message.html|raw }}
-							{% else %}
-								{{ message }}
-							{% endif %}
-							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-						</div>
-					{% endfor %}
-				{% endfor %}
+                {# Flash messages #}
+                {% for label in ['success', 'warning', 'danger', 'error'] %}
+                    {% for message in app.flashes(label) %}
+                        <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show mb-4" role="alert">
+                            {% if message is iterable and message.title is defined %}
+                                <div>{{ message.title }}</div>
+                                {% if message.items is defined and message.items is iterable and message.items is not empty %}
+                                    <ul class="mb-0 mt-2 ps-4">
+                                        {% for item in message.items %}
+                                            <li>{{ item }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            {% elseif message is iterable and message.html is defined %}
+                                {{ message.html|raw }}
+                            {% else %}
+                                {{ message }}
+                            {% endif %}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
 
-				{# Tabs top nav #}
-				<ul class="nav nav-tabs border-bottom gap-2 mb-4" id="settingsTabs" role="tablist">
-					<li class="nav-item" role="presentation">
-						<button class="nav-link {{ activeTab == 'profile' ? 'active' : '' }}" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-panel" type="button" role="tab" aria-controls="profile-panel" aria-selected="{{ activeTab == 'profile' ? 'true' : 'false' }}">
-							<i class="fa-solid fa-user me-2" aria-hidden="true"></i>Mon profil
-						</button>
-					</li>
+                {# Tabs top nav #}
+                <ul class="nav nav-tabs border-bottom gap-2 mb-4" id="settingsTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {{ activeTab == 'profile' ? 'active' : '' }}" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-panel" type="button" role="tab" aria-controls="profile-panel" aria-selected="{{ activeTab == 'profile' ? 'true' : 'false' }}">
+                            <i class="fa-solid fa-user me-2" aria-hidden="true"></i>Mon profil
+                        </button>
+                    </li>
 
-					<li class="nav-item" role="presentation">
-						<button class="nav-link {{ activeTab == 'company' ? 'active' : '' }}" id="company-tab" data-bs-toggle="tab" data-bs-target="#company-panel" type="button" role="tab" aria-controls="company-panel" aria-selected="{{ activeTab == 'company' ? 'true' : 'false' }}">
-							<i class="fa-solid fa-building me-2" aria-hidden="true"></i>Mon entreprise
-						</button>
-					</li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {{ activeTab == 'company' ? 'active' : '' }}" id="company-tab" data-bs-toggle="tab" data-bs-target="#company-panel" type="button" role="tab" aria-controls="company-panel" aria-selected="{{ activeTab == 'company' ? 'true' : 'false' }}">
+                            <i class="fa-solid fa-building me-2" aria-hidden="true"></i>Mon entreprise
+                        </button>
+                    </li>
 
-					<li class="nav-item" role="presentation">
-						<button class="nav-link {{ activeTab == 'services' ? 'active' : '' }}" id="services-tab" data-bs-toggle="tab" data-bs-target="#services-panel" type="button" role="tab" aria-controls="services-panel" aria-selected="{{ activeTab == 'services' ? 'true' : 'false' }}">
-							<i class="fa-solid fa-screwdriver-wrench me-2" aria-hidden="true"></i>Services
-						</button>
-					</li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {{ activeTab == 'services' ? 'active' : '' }}" id="services-tab" data-bs-toggle="tab" data-bs-target="#services-panel" type="button" role="tab" aria-controls="services-panel" aria-selected="{{ activeTab == 'services' ? 'true' : 'false' }}">
+                            <i class="fa-solid fa-screwdriver-wrench me-2" aria-hidden="true"></i>Services
+                        </button>
+                    </li>
 
-					<li class="nav-item" role="presentation">
-						<button class="nav-link {{ activeTab == 'zones' ? 'active' : '' }}" id="zones-tab" data-bs-toggle="tab" data-bs-target="#zones-panel" type="button" role="tab" aria-controls="zones-panel" aria-selected="{{ activeTab == 'zones' ? 'true' : 'false' }}">
-							<i class="fa-solid fa-location-dot me-2" aria-hidden="true"></i>Zones
-						</button>
-					</li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {{ activeTab == 'zones' ? 'active' : '' }}" id="zones-tab" data-bs-toggle="tab" data-bs-target="#zones-panel" type="button" role="tab" aria-controls="zones-panel" aria-selected="{{ activeTab == 'zones' ? 'true' : 'false' }}">
+                            <i class="fa-solid fa-location-dot me-2" aria-hidden="true"></i>Zones
+                        </button>
+                    </li>
 
-					<li class="nav-item" role="presentation">
-						<button class="nav-link {{ activeTab == 'dispo' ? 'active' : '' }}" id="dispo-tab" data-bs-toggle="tab" data-bs-target="#dispo-panel" type="button" role="tab" aria-controls="dispo-panel" aria-selected="{{ activeTab == 'dispo' ? 'true' : 'false' }}">
-							<i class="fa-solid fa-calendar-days me-2" aria-hidden="true"></i>Disponibilités
-						</button>
-					</li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {{ activeTab == 'dispo' ? 'active' : '' }}" id="dispo-tab" data-bs-toggle="tab" data-bs-target="#dispo-panel" type="button" role="tab" aria-controls="dispo-panel" aria-selected="{{ activeTab == 'dispo' ? 'true' : 'false' }}">
+                            <i class="fa-solid fa-calendar-days me-2" aria-hidden="true"></i>Disponibilités
+                        </button>
+                    </li>
 
-					<li class="nav-item" role="presentation">
-						<button class="nav-link {{ activeTab == 'notif' ? 'active' : '' }}" id="notif-tab" data-bs-toggle="tab" data-bs-target="#notif-panel" type="button" role="tab" aria-controls="notif-panel" aria-selected="{{ activeTab == 'notif' ? 'true' : 'false' }}">
-							<i class="fa-solid fa-bell me-2" aria-hidden="true"></i>Notifications
-						</button>
-					</li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {{ activeTab == 'notif' ? 'active' : '' }}" id="notif-tab" data-bs-toggle="tab" data-bs-target="#notif-panel" type="button" role="tab" aria-controls="notif-panel" aria-selected="{{ activeTab == 'notif' ? 'true' : 'false' }}">
+                            <i class="fa-solid fa-bell me-2" aria-hidden="true"></i>Notifications
+                        </button>
+                    </li>
 
-					<li class="nav-item" role="presentation">
-						<button class="nav-link {{ activeTab == 'security' ? 'active' : '' }}" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-panel" type="button" role="tab" aria-controls="security-panel" aria-selected="{{ activeTab == 'security' ? 'true' : 'false' }}">
-							<i class="fa-solid fa-shield-halved me-2" aria-hidden="true"></i>Sécurité
-						</button>
-					</li>
-				</ul>
-				<div
-					class="tab-content" id="settingsTabsContent">
-					{# ================= PROFILE PANEL ================= #}
-					<div class="tab-pane fade {{ activeTab == 'profile' ? 'show active' : '' }}" id="profile-panel" role="tabpanel" aria-labelledby="profile-tab">
-						<div
-							class="row g-4 align-items-start">
-							{# ================= COLONNE GAUCHE ================= #}
-							<div class="col-lg-4 d-flex flex-column gap-4">
-								<div class="card tm-card p-4">
-									<h2 class="tm-card-title mb-4">Informations personnelles</h2>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {{ activeTab == 'security' ? 'active' : '' }}" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-panel" type="button" role="tab" aria-controls="security-panel" aria-selected="{{ activeTab == 'security' ? 'true' : 'false' }}">
+                            <i class="fa-solid fa-shield-halved me-2" aria-hidden="true"></i>Sécurité
+                        </button>
+                    </li>
+                </ul>
+                <div
+                    class="tab-content" id="settingsTabsContent">
+                    {# ================= PROFILE PANEL ================= #}
+                    <div class="tab-pane fade {{ activeTab == 'profile' ? 'show active' : '' }}" id="profile-panel" role="tabpanel" aria-labelledby="profile-tab">
+                        <div
+                            class="row g-4 align-items-start">
+                            {# ================= COLONNE GAUCHE ================= #}
+                            <div class="col-lg-4 d-flex flex-column gap-4">
+                                <div class="card tm-card p-4">
+                                    <h2 class="tm-card-title mb-4">Informations personnelles</h2>
 
-									{{ form_start(userForm, {
+                                    {{ form_start(userForm, {
                                     attr: {
                                         novalidate: 'novalidate',
                                         class: 'tm-form-container',
@@ -122,107 +122,109 @@
                                     },
                                 }) }}
 
-									<div class="mb-4 p-3 tm-profile-photo-box">
-										<label class="form-label d-block text-start mb-3">Photo de profil</label>
+                                    <div class="mb-4 p-3 tm-profile-photo-box">
+                                        {{ form_label(userForm.avatarFile, 'Photo de profil', {label_attr: {class: 'form-label d-block text-start mb-3'}}) }}
 
-										<div class="d-flex align-items-center gap-3 flex-wrap">
-											<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle shadow-sm" style="width: 90px; height: 90px; object-fit: cover;" alt="Avatar" width="90" height="90" loading="lazy">
+                                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                                            <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle shadow-sm" style="width: 90px; height: 90px; object-fit: cover;" alt="Photo de profil de {{ user.firstName }} {{ user.lastName }}" width="90" height="90" loading="lazy">
 
-											<div class="grow tm-vich-custom-container">
-												{{ form_widget(userForm.avatarFile, {
-														attr: {
-															class: 'form-control form-control-sm',
-														},
-													}) }}
-												{{ form_errors(userForm.avatarFile) }}
-												<small class="text-muted d-block mt-2 fs-7">PNG, JPG ou WEBP. Max 2 Mo.</small>
-											</div>
-										</div>
-									</div>
+                                            <div class="grow tm-vich-custom-container">
+                                                {{ form_widget(userForm.avatarFile, {
+                                                        attr: {
+                                                            class: 'form-control form-control-sm',
+                                                            'aria-invalid': userForm.avatarFile.vars.errors|length > 0 ? 'true' : 'false',
+                                                            'aria-describedby': userForm.avatarFile.vars.errors|length > 0 ? userForm.avatarFile.vars.id ~ '-errors' : null,
+                                                        },
+                                                    }) }}
+                                                <div id="{{ userForm.avatarFile.vars.id }}-errors">{{ form_errors(userForm.avatarFile) }}</div>
+                                                <small class="text-muted d-block mt-2 fs-7">PNG, JPG ou WEBP. Max 2 Mo.</small>
+                                            </div>
+                                        </div>
+                                    </div>
 
-									<div class="mb-3 tm-form-row">
-										{{ form_row(userForm.firstName) }}
-									</div>
+                                    <div class="mb-3 tm-form-row">
+                                        {{ form_row(userForm.firstName) }}
+                                    </div>
 
-									<div class="mb-3 tm-form-row">
-										{{ form_row(userForm.lastName) }}
-									</div>
+                                    <div class="mb-3 tm-form-row">
+                                        {{ form_row(userForm.lastName) }}
+                                    </div>
 
-									<div class="mb-3 tm-form-row">
-										{{ form_row(userForm.phoneNumber) }}
-									</div>
+                                    <div class="mb-3 tm-form-row">
+                                        {{ form_row(userForm.phoneNumber) }}
+                                    </div>
 
-									<div class="row mt-4">
-										<div class="col-12 d-flex justify-content-center">
-											<button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold col-12 col-md-auto">
-												Enregistrer les informations personnelles
-											</button>
-										</div>
-									</div>
+                                    <div class="row mt-4">
+                                        <div class="col-12 d-flex justify-content-center">
+                                            <button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold col-12 col-md-auto">
+                                                Enregistrer les informations personnelles
+                                            </button>
+                                        </div>
+                                    </div>
 
-									{{ form_end(userForm) }}
-								</div>
+                                    {{ form_end(userForm) }}
+                                </div>
 
-								<div class="card tm-card p-4">
-									<h2 class="tm-card-title mb-3">Aperçu de votre profil public</h2>
+                                <div class="card tm-card p-4">
+                                    <h2 class="tm-card-title mb-3">Aperçu de votre profil public</h2>
 
-									<div class="p-3 border rounded-4 bg-white shadow-sm text-center position-relative overflow-hidden">
-										{% if user.prestataireProfile and user.prestataireProfile.coverImage %}
-											<div class="position-absolute start-0 top-0 w-100 tm-public-cover tm-public-cover--image" style="background-image: url('{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}');"></div>
-										{% else %}
-											<div class="position-absolute start-0 top-0 w-100 tm-public-cover tm-public-cover--fallback"></div>
-										{% endif %}
+                                    <div class="p-3 border rounded-4 bg-white shadow-sm text-center position-relative overflow-hidden">
+                                        {% if user.prestataireProfile and user.prestataireProfile.coverImage %}
+                                            <div class="position-absolute start-0 top-0 w-100 tm-public-cover tm-public-cover--image" style="background-image: url('{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}');"></div>
+                                        {% else %}
+                                            <div class="position-absolute start-0 top-0 w-100 tm-public-cover tm-public-cover--fallback"></div>
+                                        {% endif %}
 
-										<div class="position-relative pt-4">
-											{% if user.prestataireProfile and user.prestataireProfile.logo %}
-												<img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" class="rounded-circle border-3 border-white shadow-sm mb-2 tm-public-avatar" alt="Logo entreprise" width="80" height="80" loading="lazy">
-											{% else %}
-												<img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80' }}" class="rounded-circle border-3 border-white shadow-sm mb-2 tm-public-avatar" alt="Aperçu avatar" width="80" height="80" loading="lazy">
-											{% endif %}
+                                        <div class="position-relative pt-4">
+                                            {% if user.prestataireProfile and user.prestataireProfile.logo %}
+                                                <img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" class="rounded-circle border-3 border-white shadow-sm mb-2 tm-public-avatar" alt="Logo de {{ user.prestataireProfile.companyName|default('votre entreprise') }}" width="80" height="80" loading="lazy">
+                                            {% else %}
+                                                <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80' }}" class="rounded-circle border-3 border-white shadow-sm mb-2 tm-public-avatar" alt="Aperçu de la photo de profil de {{ user.firstName }} {{ user.lastName }}" width="80" height="80" loading="lazy">
+                                            {% endif %}
 
-											<h3 class="mb-1 fw-bold text-dark">
-												{{ user.prestataireProfile.companyName|default(user.firstName ~ ' ' ~ user.lastName) }}
-												<span class="badge bg-primary ms-1 fs-7">Vérifié</span>
-											</h3>
+                                            <h3 class="mb-1 fw-bold text-dark">
+                                                {{ user.prestataireProfile.companyName|default(user.firstName ~ ' ' ~ user.lastName) }}
+                                                <span class="badge bg-primary ms-1 fs-7">Vérifié</span>
+                                            </h3>
 
-											<p class="text-muted mb-3 fs-6">
-												<span class="fw-medium text-dark">
-													{{ user.prestataireProfile.metier|default('Plombier') }}
-												</span>
-												<br>
-												⭐
-												{{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0' }}
-												({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }}
-												avis)
-												<br>
-												{# <span class="tm-profile-preview-location">
-													📍
-													{{ user.prestataireProfile.city|default('Libourne') }}
-													et alentours
-												</span> #}
-											</p>
+                                            <p class="text-muted mb-3 fs-6">
+                                                <span class="fw-medium text-dark">
+                                                    {{ user.prestataireProfile.metier|default('Plombier') }}
+                                                </span>
+                                                <br>
+                                                ⭐
+                                                {{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0' }}
+                                                ({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }}
+                                                avis)
+                                                <br>
+                                                {# <span class="tm-profile-preview-location">
+                                                    📍
+                                                    {{ user.prestataireProfile.city|default('Libourne') }}
+                                                    et alentours
+                                                </span> #}
+                                            </p>
 
-											<a
-												href="{{ user.prestataireProfile and user.prestataireProfile.slug ? path('app_prestataire_show', { slug: user.prestataireProfile.slug }) : '#' }}"
-												class="btn btn-outline-secondary btn-sm rounded-3 fw-medium w-100 py-2 {{ user.prestataireProfile and user.prestataireProfile.slug ? '' : 'disabled' }}"
-												{% if user.prestataireProfile and user.prestataireProfile.slug %}
-													target="_blank"
-													rel="noopener noreferrer"
-												{% else %}
-													aria-disabled="true"
-												{% endif %}
-											>
-												Voir le profil public ↗
-											</a>
-										</div>
-									</div>
-								</div>
-							</div>
+                                            <a
+                                                href="{{ user.prestataireProfile and user.prestataireProfile.slug ? path('app_prestataire_show', {slug: user.prestataireProfile.slug}) : '#' }}"
+                                                class="btn btn-outline-secondary btn-sm rounded-3 fw-medium w-100 py-2 {{ user.prestataireProfile and user.prestataireProfile.slug ? '' : 'disabled' }}"
+                                                {% if user.prestataireProfile and user.prestataireProfile.slug %}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                {% else %}
+                                                    aria-disabled="true"
+                                                {% endif %}
+                                            >
+                                                Voir le profil public ↗
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-							{# ================= COLONNE DROITE ================= #}
-							<div class="col-lg-8 d-flex flex-column gap-4">
-								<div class="card tm-card p-4">
-									{{ form_start(publicProfileForm, {
+                            {# ================= COLONNE DROITE ================= #}
+                            <div class="col-lg-8 d-flex flex-column gap-4">
+                                <div class="card tm-card p-4">
+                                    {{ form_start(publicProfileForm, {
                                     attr: {
                                         novalidate: 'novalidate',
                                         class: 'tm-form-container',
@@ -230,280 +232,280 @@
                                     },
                                 }) }}
 
-									<div class="row g-4">
-										<div class="col-lg-7">
-											<h2 class="tm-card-title mb-4">À propos de vous</h2>
+                                    <div class="row g-4">
+                                        <div class="col-lg-7">
+                                            <h2 class="tm-card-title mb-4">À propos de vous</h2>
 
-											<div class="mb-3 tm-form-row">
-												{{ form_row(publicProfileForm.metier) }}
-											</div>
+                                            <div class="mb-3 tm-form-row">
+                                                {{ form_row(publicProfileForm.metier) }}
+                                            </div>
 
-											<div class="mb-3 tm-form-row">
-												{{ form_row(publicProfileForm.shortDescription) }}
-											</div>
+                                            <div class="mb-3 tm-form-row">
+                                                {{ form_row(publicProfileForm.shortDescription) }}
+                                            </div>
 
-											<div class="mb-3 tm-form-row">
-												{{ form_row(publicProfileForm.description) }}
-											</div>
+                                            <div class="mb-3 tm-form-row">
+                                                {{ form_row(publicProfileForm.description) }}
+                                            </div>
 
-											<div class="mb-3 tm-form-row">
-												{{ form_row(publicProfileForm.experience) }}
-											</div>
+                                            <div class="mb-3 tm-form-row">
+                                                {{ form_row(publicProfileForm.experience) }}
+                                            </div>
 
-										</div>
+                                        </div>
 
-										<div class="col-lg-5">
-											<h2 class="tm-card-title mb-4">Réseaux sociaux & liens</h2>
+                                        <div class="col-lg-5">
+                                            <h2 class="tm-card-title mb-4">Réseaux sociaux & liens</h2>
 
-											<div class="mb-3 tm-form-row">
-												{{ form_row(publicProfileForm.website) }}
-											</div>
+                                            <div class="mb-3 tm-form-row">
+                                                {{ form_row(publicProfileForm.website) }}
+                                            </div>
 
-											<div class="mb-3 tm-form-row">
-												{{ form_row(publicProfileForm.facebookUrl) }}
-											</div>
+                                            <div class="mb-3 tm-form-row">
+                                                {{ form_row(publicProfileForm.facebookUrl) }}
+                                            </div>
 
-											<div class="mb-3 tm-form-row">
-												{{ form_row(publicProfileForm.instagramUrl) }}
-											</div>
+                                            <div class="mb-3 tm-form-row">
+                                                {{ form_row(publicProfileForm.instagramUrl) }}
+                                            </div>
 
-											<div class="mb-3 tm-form-row">
-												{{ form_row(publicProfileForm.linkedinUrl) }}
-											</div>
-										</div>
-									</div>
+                                            <div class="mb-3 tm-form-row">
+                                                {{ form_row(publicProfileForm.linkedinUrl) }}
+                                            </div>
+                                        </div>
+                                    </div>
 
-									<div class="row mt-4">
-										<div class="col-12 d-flex justify-content-center">
-											<button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold col-12 col-md-auto">
-												Enregistrer le profil public
-											</button>
-										</div>
-									</div>
+                                    <div class="row mt-4">
+                                        <div class="col-12 d-flex justify-content-center">
+                                            <button type="submit" class="btn tm-btn-service px-5 py-3 fw-bold col-12 col-md-auto">
+                                                Enregistrer le profil public
+                                            </button>
+                                        </div>
+                                    </div>
 
-									{{ form_end(publicProfileForm) }}
-								</div>
+                                    {{ form_end(publicProfileForm) }}
+                                </div>
 
-								<div class="card tm-card p-4">
-									<div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-2 mb-4">
-										<div>
-											<h2 class="tm-card-title mb-1">Certifications et diplômes</h2>
-											<p class="text-muted small mb-0">Ajoutez vos justificatifs professionnels au format PDF ou image.</p>
-										</div>
-										{% if certificationDocuments is not empty %}
-											<span class="badge rounded-pill bg-light text-dark border">{{ certificationDocuments|length }}</span>
-										{% endif %}
-									</div>
+                                <div class="card tm-card p-4">
+                                    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-2 mb-4">
+                                        <div>
+                                            <h2 class="tm-card-title mb-1">Certifications et diplômes</h2>
+                                            <p class="text-muted small mb-0">Ajoutez vos justificatifs professionnels au format PDF ou image.</p>
+                                        </div>
+                                        {% if certificationDocuments is not empty %}
+                                            <span class="badge rounded-pill bg-light text-dark border">{{ certificationDocuments|length }}</span>
+                                        {% endif %}
+                                    </div>
 
-									<div class="row g-4">
-										<div class="col-xl-6">
-											{{ form_start(certificationForm, {
-												attr: {
-													novalidate: 'novalidate',
-													class: 'tm-form-container',
-													'data-turbo': 'false',
-												},
-											}) }}
+                                    <div class="row g-4">
+                                        <div class="col-xl-6">
+                                            {{ form_start(certificationForm, {
+                                                attr: {
+                                                    novalidate: 'novalidate',
+                                                    class: 'tm-form-container',
+                                                    'data-turbo': 'false',
+                                                },
+                                            }) }}
 
-											<div class="mb-3 tm-form-row">
-												{{ form_row(certificationForm.documentFile) }}
-												<small class="text-muted d-block mt-2 fs-7">Formats acceptés : PDF, JPG, PNG, WEBP. Taille maximale : 8 Mo.</small>
-											</div>
+                                            <div class="mb-3 tm-form-row">
+                                                {{ form_row(certificationForm.documentFile) }}
+                                                <small class="text-muted d-block mt-2 fs-7">Formats acceptés : PDF, JPG, PNG, WEBP. Taille maximale : 8 Mo.</small>
+                                            </div>
 
-											<div class="row g-3">
-												<div class="col-md-6 tm-form-row">
-													{{ form_row(certificationForm.issuedAt) }}
-												</div>
-												<div class="col-md-6 tm-form-row">
-													{{ form_row(certificationForm.expiresAt) }}
-												</div>
-											</div>
+                                            <div class="row g-3">
+                                                <div class="col-md-6 tm-form-row">
+                                                    {{ form_row(certificationForm.issuedAt) }}
+                                                </div>
+                                                <div class="col-md-6 tm-form-row">
+                                                    {{ form_row(certificationForm.expiresAt) }}
+                                                </div>
+                                            </div>
 
-											<div class="mt-3 tm-form-row">
-												{{ form_row(certificationForm.notes) }}
-											</div>
+                                            <div class="mt-3 tm-form-row">
+                                                {{ form_row(certificationForm.notes) }}
+                                            </div>
 
-											<div class="row mt-4">
-												<div class="col-12 d-flex justify-content-center justify-content-lg-start">
-													<button type="submit" class="btn tm-btn-service px-4 py-3 fw-bold">
-														Ajouter la certification
-													</button>
-												</div>
-											</div>
+                                            <div class="row mt-4">
+                                                <div class="col-12 d-flex justify-content-center justify-content-lg-start">
+                                                    <button type="submit" class="btn tm-btn-service px-4 py-3 fw-bold">
+                                                        Ajouter la certification
+                                                    </button>
+                                                </div>
+                                            </div>
 
-											{{ form_end(certificationForm) }}
-										</div>
+                                            {{ form_end(certificationForm) }}
+                                        </div>
 
-										<div class="col-xl-6">
-											<div class="border rounded-4 bg-light-subtle p-3 h-100">
-												<h3 class="fw-bold fs-6 mb-3 text-dark">Documents enregistrés</h3>
+                                        <div class="col-xl-6">
+                                            <div class="border rounded-4 bg-light-subtle p-3 h-100">
+                                                <h3 class="fw-bold fs-6 mb-3 text-dark">Documents enregistrés</h3>
 
-												{% if certificationDocuments is not empty %}
-													<div class="d-flex flex-column gap-2">
-														{% for document in certificationDocuments %}
-															<div class="border rounded-3 p-3 bg-white">
-																<div class="d-flex justify-content-between align-items-start gap-3">
-																	<div class="min-w-0">
-																		<div class="fw-semibold small mb-1">{{ document.type.label }}</div>
+                                                {% if certificationDocuments is not empty %}
+                                                    <div class="d-flex flex-column gap-2">
+                                                        {% for document in certificationDocuments %}
+                                                            <div class="border rounded-3 p-3 bg-white">
+                                                                <div class="d-flex justify-content-between align-items-start gap-3">
+                                                                    <div class="min-w-0">
+                                                                        <div class="fw-semibold small mb-1">{{ document.type.label }}</div>
 
-																		{% if document.originalName %}
-																			<div class="small text-muted text-truncate">{{ document.originalName }}</div>
-																		{% endif %}
+                                                                        {% if document.originalName %}
+                                                                            <div class="small text-muted text-truncate">{{ document.originalName }}</div>
+                                                                        {% endif %}
 
-																		{% if document.issuedAt %}
-																			<div class="small text-muted">Obtenu le {{ document.issuedAt|date('d/m/Y') }}</div>
-																		{% endif %}
+                                                                        {% if document.issuedAt %}
+                                                                            <div class="small text-muted">Obtenu le {{ document.issuedAt|date('d/m/Y') }}</div>
+                                                                        {% endif %}
 
-																		{% if document.expiresAt %}
-																			<div class="small text-muted">Valide jusqu’au {{ document.expiresAt|date('d/m/Y') }}</div>
-																		{% endif %}
+                                                                        {% if document.expiresAt %}
+                                                                            <div class="small text-muted">Valide jusqu’au {{ document.expiresAt|date('d/m/Y') }}</div>
+                                                                        {% endif %}
 
-																		{% if document.notes %}
-																			<div class="small text-muted mt-1">{{ document.notes }}</div>
-																		{% endif %}
-																	</div>
+                                                                        {% if document.notes %}
+                                                                            <div class="small text-muted mt-1">{{ document.notes }}</div>
+                                                                        {% endif %}
+                                                                    </div>
 
-																	<div class="d-flex flex-column align-items-end gap-2 shrink">
-																		<span class="badge bg-{{ document.status.badgeClass }}-subtle text-{{ document.status.badgeClass }}">
-																			{{ document.status.label }}
-																		</span>
+                                                                    <div class="d-flex flex-column align-items-end gap-2 shrink">
+                                                                        <span class="badge bg-{{ document.status.badgeClass }}-subtle text-{{ document.status.badgeClass }}">
+                                                                            {{ document.status.label }}
+                                                                        </span>
 
-																		<div class="d-flex align-items-center gap-1">
-																			{% if document.fileName %}
-																				<a
-																					href="{{ asset('uploads/prestataire-documents/' ~ document.fileName) }}"
-																					target="_blank"
-																					rel="noopener noreferrer"
-																					class="btn btn-sm btn-light border"
-																				>
-																					Ouvrir
-																				</a>
-																			{% endif %}
+                                                                        <div class="d-flex align-items-center gap-1">
+                                                                            {% if document.fileName %}
+                                                                                <a
+                                                                                    href="{{ asset('uploads/prestataire-documents/' ~ document.fileName) }}"
+                                                                                    target="_blank"
+                                                                                    rel="noopener noreferrer"
+                                                                                    class="btn btn-sm btn-light border"
+                                                                                >
+                                                                                    Ouvrir
+                                                                                </a>
+                                                                            {% endif %}
 
-																			<form
-																				method="post"
-																				action="{{ path('app_prestataire_document_delete', { id: document.id }) }}"
-																				class="m-0"
-																				data-controller="confirm-dialog"
-																				data-action="submit->confirm-dialog#confirm"
-																				data-confirm-dialog-title-value="Supprimer cette certification ?"
-																				data-confirm-dialog-text-value="Le document sera retiré de votre profil."
-																				data-confirm-dialog-confirm-button-text-value="Supprimer"
-																				data-confirm-dialog-cancel-button-text-value="Annuler"
-																			>
-																				<input
-																					type="hidden"
-																					name="_token"
-																					value="{{ csrf_token('delete_document_' ~ document.id) }}"
-																				>
+                                                                            <form
+                                                                                method="post"
+                                                                                action="{{ path('app_prestataire_document_delete', {id: document.id}) }}"
+                                                                                class="m-0"
+                                                                                data-controller="confirm-dialog"
+                                                                                data-action="submit->confirm-dialog#confirm"
+                                                                                data-confirm-dialog-title-value="Supprimer cette certification ?"
+                                                                                data-confirm-dialog-text-value="Le document sera retiré de votre profil."
+                                                                                data-confirm-dialog-confirm-button-text-value="Supprimer"
+                                                                                data-confirm-dialog-cancel-button-text-value="Annuler"
+                                                                            >
+                                                                                <input
+                                                                                    type="hidden"
+                                                                                    name="_token"
+                                                                                    value="{{ csrf_token('delete_document_' ~ document.id) }}"
+                                                                                >
 
-																								<button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer" aria-label="Supprimer cette zone d’intervention">
-																					<i class="fa-solid fa-trash"></i>
-																				</button>
-																			</form>
-																		</div>
-																	</div>
-																</div>
-															</div>
-														{% endfor %}
-													</div>
-												{% else %}
-													<p class="text-muted small mb-0">Aucune certification ou diplôme ajouté pour le moment.</p>
-												{% endif %}
-											</div>
-										</div>
-									</div>
-								</div>
+                                                                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer" aria-label="Supprimer cette zone d’intervention">
+                                                                                    <i class="fa-solid fa-trash"></i>
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    <p class="text-muted small mb-0">Aucune certification ou diplôme ajouté pour le moment.</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-								<div class="row g-4">
-									<div class="col-lg-6">
-										<div class="card tm-card p-4 h-100">
-											<h2 class="fw-bold mb-3 fs-5 text-dark">Statut du compte</h2>
-											<div class="p-3 mb-0 tm-status-box">
-												<div class="fw-bold small tm-status-success">✓ Compte vérifié</div>
-												<div class="fs-7 text-muted mt-1">Félicitations ! Votre compte est validé.</div>
-											</div>
-										</div>
-									</div>
+                                <div class="row g-4">
+                                    <div class="col-lg-6">
+                                        <div class="card tm-card p-4 h-100">
+                                            <h2 class="fw-bold mb-3 fs-5 text-dark">Statut du compte</h2>
+                                            <div class="p-3 mb-0 tm-status-box">
+                                                <div class="fw-bold small tm-status-success">✓ Compte vérifié</div>
+                                                <div class="fs-7 text-muted mt-1">Félicitations ! Votre compte est validé.</div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-									<div class="col-lg-6">
-										<div class="card tm-card p-4 h-100">
-											<h2 class="fw-bold mb-2 fs-5 text-dark">Note moyenne</h2>
+                                    <div class="col-lg-6">
+                                        <div class="card tm-card p-4 h-100">
+                                            <h2 class="fw-bold mb-2 fs-5 text-dark">Note moyenne</h2>
 
-											<div class="d-flex align-items-baseline gap-2">
-												<span class="display-5 fw-bold text-dark">
-													{{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0' }}
-												</span>
-												<span class="text-muted fs-5">/ 5</span>
-											</div>
+                                            <div class="d-flex align-items-baseline gap-2">
+                                                <span class="display-5 fw-bold text-dark">
+                                                    {{ user.prestataireProfile and user.prestataireProfile.averageRating ? user.prestataireProfile.averageRating|number_format(1, ',') : '0' }}
+                                                </span>
+                                                <span class="text-muted fs-5">/ 5</span>
+                                            </div>
 
-											<div class="my-2 fs-4 tm-rating-stars">
-												{% if user.prestataireProfile and user.prestataireProfile.averageRating %}
-													{% for i in 1..5 %}
-														{{ i <= user.prestataireProfile.averageRating ? '★' : '☆' }}
-													{% endfor %}
-												{% else %}
-													☆☆☆☆☆
-												{% endif %}
-											</div>
+                                            <div class="my-2 fs-4 tm-rating-stars">
+                                                {% if user.prestataireProfile and user.prestataireProfile.averageRating %}
+                                                    {% for i in 1..5 %}
+                                                        {{ i <= user.prestataireProfile.averageRating ? '★' : '☆' }}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    ☆☆☆☆☆
+                                                {% endif %}
+                                            </div>
 
-											<small class="text-muted fw-medium">
-												({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }}
-												avis)
-											</small>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+                                            <small class="text-muted fw-medium">
+                                                ({{ user.prestataireProfile and user.prestataireProfile.reviewsCount ? user.prestataireProfile.reviewsCount : '0' }}
+                                                avis)
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-					{# ================= ENTREPRISE ================= #}
-					<div class="tab-pane fade {{ activeTab == 'company' ? 'show active' : '' }}" id="company-panel" role="tabpanel" aria-labelledby="company-tab">
-						{{ include('settings/_prestataire_company_tab.html.twig', {
+                    {# ================= ENTREPRISE ================= #}
+                    <div class="tab-pane fade {{ activeTab == 'company' ? 'show active' : '' }}" id="company-panel" role="tabpanel" aria-labelledby="company-tab">
+                        {{ include('settings/_prestataire_company_tab.html.twig', {
                         companyForm: companyForm,
                         user: user,
                     }) }}
-					</div>
+                    </div>
 
-					{# ================= SERVICES ================= #}
-					<div class="tab-pane fade {{ activeTab == 'services' ? 'show active' : '' }}" id="services-panel" role="tabpanel" aria-labelledby="services-tab">
-						{{ include('settings/_prestataire_services_tab.html.twig') }}
-					</div>
+                    {# ================= SERVICES ================= #}
+                    <div class="tab-pane fade {{ activeTab == 'services' ? 'show active' : '' }}" id="services-panel" role="tabpanel" aria-labelledby="services-tab">
+                        {{ include('settings/_prestataire_services_tab.html.twig') }}
+                    </div>
 
-					{# ================= ZONES ================= #}
-					<div class="tab-pane fade {{ activeTab == 'zones' ? 'show active' : '' }}" id="zones-panel" role="tabpanel" aria-labelledby="zones-tab">
-						{{ include('settings/_prestataire_zone_tab.html.twig', {
+                    {# ================= ZONES ================= #}
+                    <div class="tab-pane fade {{ activeTab == 'zones' ? 'show active' : '' }}" id="zones-panel" role="tabpanel" aria-labelledby="zones-tab">
+                        {{ include('settings/_prestataire_zone_tab.html.twig', {
                         zoneForm: zoneForm,
                         zones: zones,
                         user: user,
                     }) }}
-					</div>
+                    </div>
 
-					{# ================= DISPONIBILITES ================= #}
-					<div class="tab-pane fade {{ activeTab == 'dispo' ? 'show active' : '' }}" id="dispo-panel" role="tabpanel" aria-labelledby="dispo-tab">
-						{{ include ('settings/_prestataire_availability_tab.html.twig', {
+                    {# ================= DISPONIBILITES ================= #}
+                    <div class="tab-pane fade {{ activeTab == 'dispo' ? 'show active' : '' }}" id="dispo-panel" role="tabpanel" aria-labelledby="dispo-tab">
+                        {{ include ('settings/_prestataire_availability_tab.html.twig', {
                             availabilityForm: availabilityForm,
                             availabilities: availabilities,
                         }) }}
-					</div>
+                    </div>
 
-					{# ================= AUTRES TABS ================= #}
-					<div class="tab-pane fade {{ activeTab == 'notif' ? 'show active' : '' }}" id="notif-panel" role="tabpanel" aria-labelledby="notif-tab">
-						{{ include('settings/_prestataire_notifications_tab.html.twig', {
-							notificationForm: notificationForm,
-						}) }}
-					</div>
+                    {# ================= AUTRES TABS ================= #}
+                    <div class="tab-pane fade {{ activeTab == 'notif' ? 'show active' : '' }}" id="notif-panel" role="tabpanel" aria-labelledby="notif-tab">
+                        {{ include('settings/_prestataire_notifications_tab.html.twig', {
+                            notificationForm: notificationForm,
+                        }) }}
+                    </div>
 
-					<div class="tab-pane fade {{ activeTab == 'security' ? 'show active' : '' }}" id="security-panel" role="tabpanel" aria-labelledby="security-tab">
-						{{ include('settings/_prestataire_security_tab.html.twig', {
-							passwordForm: passwordForm,
-							deletionForm: deletionForm,
-						}) }}
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                    <div class="tab-pane fade {{ activeTab == 'security' ? 'show active' : '' }}" id="security-panel" role="tabpanel" aria-labelledby="security-tab">
+                        {{ include('settings/_prestataire_security_tab.html.twig', {
+                            passwordForm: passwordForm,
+                            deletionForm: deletionForm,
+                        }) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}

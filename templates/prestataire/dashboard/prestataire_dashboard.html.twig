@@ -15,104 +15,104 @@
 {% endblock %}
 
 {% block body %}
-	<div class="tm-dashboard-page" {{ stimulus_controller('prestataire-dashboard-tabs') }}>
-		<div class="tm-settings-container tm-dashboard-page__shell">
-			<div class="tm-main-layout tm-dashboard-page__layout">
-				<aside class="tm-settings-sidebar tm-dashboard-page__sidebar" {{ stimulus_target('prestataire-dashboard-tabs', 'sidebar') }}>
-					{{ include('profile/_prestataire_dashboard_sidebar.html.twig', {
+    <div class="tm-dashboard-page" {{ stimulus_controller('prestataire-dashboard-tabs') }}>
+        <div class="tm-settings-container tm-dashboard-page__shell">
+            <div class="tm-main-layout tm-dashboard-page__layout">
+                <aside class="tm-settings-sidebar tm-dashboard-page__sidebar" id="prestataire-dashboard-navigation" {{ stimulus_target('prestataire-dashboard-tabs', 'sidebar') }}>
+                    {{ include('profile/_prestataire_dashboard_sidebar.html.twig', {
                         user: user,
                         activeTab: activeTab,
                         unreadConversationCount: unreadConversationCount|default(0),
                         asLinks: true,
                     }) }}
-				</aside>
+                </aside>
 
-				<div class="tm-settings-sidebar-backdrop tm-dashboard-page__backdrop" {{ stimulus_target('prestataire-dashboard-tabs', 'backdrop') }} {{ stimulus_action('prestataire-dashboard-tabs', 'closeSidebar', 'click') }}></div>
+                <div class="tm-settings-sidebar-backdrop tm-dashboard-page__backdrop" aria-hidden="true" {{ stimulus_target('prestataire-dashboard-tabs', 'backdrop') }} {{ stimulus_action('prestataire-dashboard-tabs', 'closeSidebar', 'click') }}></div>
 
-				<div class="tm-settings-content tm-dashboard-page__content">
-					<button type="button" class="tm-sidebar-toggle d-lg-none tm-dashboard-page__toggle" aria-label="Ouvrir la navigation du dashboard" {{ stimulus_target('prestataire-dashboard-tabs', 'toggle') }} {{ stimulus_action('prestataire-dashboard-tabs', 'toggleSidebar', 'click') }}>
-						☰
-					</button>
+                <div class="tm-settings-content tm-dashboard-page__content">
+                    <button type="button" class="tm-sidebar-toggle d-lg-none tm-dashboard-page__toggle" aria-label="Ouvrir la navigation de l'espace professionnel" aria-controls="prestataire-dashboard-navigation" aria-expanded="false" {{ stimulus_target('prestataire-dashboard-tabs', 'toggle') }} {{ stimulus_action('prestataire-dashboard-tabs', 'toggleSidebar', 'click') }}>
+                        ☰
+                    </button>
 
-					<header class="tm-dashboard-page__header">
-						<div class="tm-dashboard-page__header-copy">
-							<h1 class="tm-dashboard-page__title">Espace Pro</h1>
-							<p class="tm-dashboard-page__subtitle">
-								Pilotez votre activité, vos demandes et vos échanges depuis une seule interface.
-							</p>
-						</div>
-					</header>
+                    <header class="tm-dashboard-page__header">
+                        <div class="tm-dashboard-page__header-copy">
+                            <h1 class="tm-dashboard-page__title">Espace Pro</h1>
+                            <p class="tm-dashboard-page__subtitle">
+                                Pilotez votre activité, vos demandes et vos échanges depuis une seule interface.
+                            </p>
+                        </div>
+                    </header>
 
-					{% for label in ['success', 'warning', 'danger', 'error'] %}
-						{% for message in app.flashes(label) %}
-							<div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show mb-4 tm-dashboard-page__alert" role="alert">
-								{{ message }}
-								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-							</div>
-						{% endfor %}
-					{% endfor %}
+                    {% for label in ['success', 'warning', 'danger', 'error'] %}
+                        {% for message in app.flashes(label) %}
+                            <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show mb-4 tm-dashboard-page__alert" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
 
-					<div class="tab-content tm-dashboard-page__tabs" id="dashboardMainTabsContent">
-						<section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'dashboard' ? 'show active' : '' }}" id="dashboard-main-panel" role="tabpanel" aria-labelledby="dashboard-main-tab" tabindex="0">
-							{% if activeTab == 'dashboard' %}
-								{{ include('prestataire/dashboard/_dashboard_panel.html.twig') }}
-							{% endif %}
-						</section>
+                    <div class="tab-content tm-dashboard-page__tabs" id="dashboardMainTabsContent">
+                        <section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'dashboard' ? 'show active' : '' }}" id="dashboard-main-panel">
+                            {% if activeTab == 'dashboard' %}
+                                {{ include('prestataire/dashboard/_dashboard_panel.html.twig') }}
+                            {% endif %}
+                        </section>
 
-						<section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'prestations' ? 'show active' : '' }}" id="prestations-main-panel" role="tabpanel" aria-labelledby="prestations-main-tab" tabindex="0">
-							{% if activeTab == 'prestations' %}
-								{{ include('prestataire/dashboard/_prestations_panel.html.twig') }}
-							{% endif %}
-						</section>
+                        <section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'prestations' ? 'show active' : '' }}" id="prestations-main-panel">
+                            {% if activeTab == 'prestations' %}
+                                {{ include('prestataire/dashboard/_prestations_panel.html.twig') }}
+                            {% endif %}
+                        </section>
 
-						<section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'avis' ? 'show active' : '' }}" id="avis-main-panel" role="tabpanel" aria-labelledby="avis-main-tab" tabindex="0">
-							{% if activeTab == 'avis' %}
-								{{ include('prestataire/dashboard/_avis_panel.html.twig') }}
-							{% endif %}
-						</section>
+                        <section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'avis' ? 'show active' : '' }}" id="avis-main-panel">
+                            {% if activeTab == 'avis' %}
+                                {{ include('prestataire/dashboard/_avis_panel.html.twig') }}
+                            {% endif %}
+                        </section>
 
-						<section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'revenus' ? 'show active' : '' }}" id="revenus-main-panel" role="tabpanel" aria-labelledby="revenus-main-tab" tabindex="0">
-							{% if activeTab == 'revenus' %}
-								{{ include('prestataire/dashboard/_revenus_panel.html.twig') }}
-							{% endif %}
-						</section>
+                        <section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'revenus' ? 'show active' : '' }}" id="revenus-main-panel">
+                            {% if activeTab == 'revenus' %}
+                                {{ include('prestataire/dashboard/_revenus_panel.html.twig') }}
+                            {% endif %}
+                        </section>
 
-						<section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'calendrier' ? 'show active' : '' }}" id="calendrier-main-panel" role="tabpanel" aria-labelledby="calendrier-main-tab" tabindex="0">
-							{% if activeTab == 'calendrier' %}
-								{{ include('prestataire/dashboard/_calendrier_panel.html.twig') }}
-							{% endif %}
-						</section>
+                        <section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'calendrier' ? 'show active' : '' }}" id="calendrier-main-panel">
+                            {% if activeTab == 'calendrier' %}
+                                {{ include('prestataire/dashboard/_calendrier_panel.html.twig') }}
+                            {% endif %}
+                        </section>
 
-						<section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'demandes' ? 'show active' : '' }}" id="demandes-main-panel" role="tabpanel" aria-labelledby="demandes-main-tab" tabindex="0">
-							{% if activeTab == 'demandes' %}
-								{{ include('prestataire/dashboard/_demandes_panel.html.twig') }}
-							{% endif %}
-						</section>
+                        <section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'demandes' ? 'show active' : '' }}" id="demandes-main-panel">
+                            {% if activeTab == 'demandes' %}
+                                {{ include('prestataire/dashboard/_demandes_panel.html.twig') }}
+                            {% endif %}
+                        </section>
 
-						<section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'archives' ? 'show active' : '' }}" id="archives-main-panel" role="tabpanel" aria-labelledby="archives-main-tab" tabindex="0">
-							{% if activeTab == 'archives' %}
-								{{ include('prestataire/dashboard/_archives_panel.html.twig') }}
-							{% endif %}
-						</section>
+                        <section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'archives' ? 'show active' : '' }}" id="archives-main-panel">
+                            {% if activeTab == 'archives' %}
+                                {{ include('prestataire/dashboard/_archives_panel.html.twig') }}
+                            {% endif %}
+                        </section>
 
-						<section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'messages' ? 'show active' : '' }}" id="messages-main-panel" role="tabpanel" aria-labelledby="messages-main-tab" tabindex="0" {{ stimulus_controller('realtime-conversation', { url: 'http://localhost:3001', conversationId: activeConversation ? activeConversation.id : 0, authToken: realtimeConversationToken|default(''), eventName: 'message_created', joinEventName: 'join_conversation', streamSelector: '.tm-msg-stream', bodySelector: '.tm-msg-body', emptySelector: '.tm-msg-empty--body', currentUserType: 'prestataire', layout: 'dashboard' } ) }}>
-							{% if activeTab == 'messages' %}
-								{{ include('prestataire/dashboard/_messages_panel.html.twig') }}
-							{% endif %}
-						</section>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	{% set restoreScroll = app.request.query.get('scroll') %}
-	{% if restoreScroll is not empty %}
-		<script>
-			window.addEventListener('load', function () {
-				window.setTimeout(function () {
-					window.scrollTo(0, {{ restoreScroll|default(0) + 0 }});
-				}, 80);
-			});
-		</script>
-	{% endif %}
+                        <section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'messages' ? 'show active' : '' }}" id="messages-main-panel" {{ stimulus_controller('realtime-conversation', {url: 'http://localhost:3001', conversationId: activeConversation ? activeConversation.id : 0, authToken: realtimeConversationToken|default(''), eventName: 'message_created', joinEventName: 'join_conversation', streamSelector: '.tm-msg-stream', bodySelector: '.tm-msg-body', emptySelector: '.tm-msg-empty--body', currentUserType: 'prestataire', layout: 'dashboard'}) }}>
+                            {% if activeTab == 'messages' %}
+                                {{ include('prestataire/dashboard/_messages_panel.html.twig') }}
+                            {% endif %}
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% set restoreScroll = app.request.query.get('scroll') %}
+    {% if restoreScroll is not empty %}
+        <script>
+            window.addEventListener('load', function () {
+                window.setTimeout(function () {
+                    window.scrollTo(0, {{ restoreScroll|default(0) + 0 }});
+                }, 80);
+            });
+        </script>
+    {% endif %}
 {% endblock %}

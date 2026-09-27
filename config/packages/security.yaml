@@ -44,7 +44,13 @@ security:
                 secret: '%kernel.secret%'
                 lifetime: 604800
                 path: /
-                always_remember_me: true
+                secure: auto
+                httponly: true
+                samesite: lax
+                always_remember_me: false
+
+                token_provider:
+                    doctrine: true
 
             custom_authenticators:
                 - App\Account\Security\GoogleAuthenticator

@@ -7,32 +7,32 @@
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
         '@id': url('app_static_page', {slug: 'aide-faq'}) ~ '#webpage',
-        'mainEntity': [
+        mainEntity: [
             {
                 '@type': 'Question',
-                'name': 'Comment créer un compte sur TrouveMoi.com ?',
-                'acceptedAnswer': {
+                name: 'Comment créer un compte sur TrouveMoi.com ?',
+                acceptedAnswer: {
                     '@type': 'Answer',
-                    'text': 'Pour créer un compte, cliquez sur le bouton "Connexion" ou "S\'inscrire" en haut à droite de la page d\'accueil. Choisissez ensuite votre profil (Particulier ou Prestataire), remplissez le formulaire avec vos coordonnées, puis validez votre inscription grâce au mail de confirmation envoyé sur votre messagerie.'
-                }
+                    text: 'Pour créer un compte, cliquez sur le bouton "Connexion" ou "S\'inscrire" en haut à droite de la page d\'accueil. Choisissez ensuite votre profil (Particulier ou Prestataire), remplissez le formulaire avec vos coordonnées, puis validez votre inscription grâce au mail de confirmation envoyé sur votre messagerie.',
+                },
             },
             {
                 '@type': 'Question',
-                'name': 'Comment trouver un prestataire près de chez moi ?',
-                'acceptedAnswer': {
+                name: 'Comment trouver un prestataire près de chez moi ?',
+                acceptedAnswer: {
                     '@type': 'Answer',
-                    'text': 'Utilisez la barre de recherche principale en indiquant le métier recherché et votre code postal. Vous pourrez ensuite filtrer les résultats selon les notes des clients, les certifications ou les disponibilités pour sélectionner le professionnel idéal.'
-                }
+                    text: 'Utilisez la barre de recherche principale en indiquant le métier recherché et votre code postal. Vous pourrez ensuite filtrer les résultats selon les notes des clients, les certifications ou les disponibilités pour sélectionner le professionnel idéal.',
+                },
             },
             {
                 '@type': 'Question',
-                'name': 'Comment demander un devis et combien de temps pour recevoir une réponse ?',
-                'acceptedAnswer': {
+                name: 'Comment demander un devis et combien de temps pour recevoir une réponse ?',
+                acceptedAnswer: {
                     '@type': 'Answer',
-                    'text': 'Cliquez sur "Demander un devis", décrivez précisément votre projet et soumettez votre demande. En moyenne, les artisans et prestataires qualifiés de votre région reviennent vers vous avec des propositions concrètes sous un délai de 24 à 72 heures.'
-                }
-            }
-        ]
+                    text: 'Cliquez sur "Demander un devis", décrivez précisément votre projet et soumettez votre demande. En moyenne, les artisans et prestataires qualifiés de votre région reviennent vers vous avec des propositions concrètes sous un délai de 24 à 72 heures.',
+                },
+            },
+        ],
     }}) }}
 {% endblock %}
 
@@ -59,13 +59,14 @@
         </p>
 
         <div class="position-relative tm-static-max-w-600 mx-auto mt-4">
-            <input type="text" class="form-control form-control-lg ps-5 bg-white border shadow-sm fs-6 tm-static-input-round" placeholder="Rechercher une question, un sujet...">
+            <label for="faq-search" class="visually-hidden">Rechercher une question dans la FAQ</label>
+            <input id="faq-search" type="search" class="form-control form-control-lg ps-5 bg-white border shadow-sm fs-6 tm-static-input-round" placeholder="Rechercher une question, un sujet...">
         </div>
     </div>
 
     <div class="row g-4">
         <div class="col-lg-8">
-            <h3 class="h5 fw-bold text-dark mb-4">Questions fréquentes</h3>
+            <h2 class="h5 fw-bold text-dark mb-4">Questions fréquentes</h2>
 
             <div class="accordion accordion-flush bg-white rounded-4 shadow-sm p-2 border tm-static-accordion" id="faqAccordion">
 
@@ -73,7 +74,7 @@
                 <div class="accordion-item border-bottom py-2">
                     <h2 class="accordion-header" id="headingOne">
                         <button class="accordion-button collapsed fw-medium text-dark bg-white fs-6 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                            <i class="fa-regular fa-user text-primary me-3"></i> Comment créer un compte sur TrouveMoi.com ?
+                            <i class="fa-regular fa-user text-primary me-3" aria-hidden="true"></i> Comment créer un compte sur TrouveMoi.com ?
                         </button>
                     </h2>
                     <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
@@ -87,7 +88,7 @@
                 <div class="accordion-item border-bottom py-2">
                     <h2 class="accordion-header" id="headingTwo">
                         <button class="accordion-button collapsed fw-medium text-dark bg-white fs-6 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            <i class="fa-solid fa-magnifying-glass text-primary me-3"></i> Comment trouver un prestataire près de chez moi ?
+                            <i class="fa-solid fa-magnifying-glass text-primary me-3" aria-hidden="true"></i> Comment trouver un prestataire près de chez moi ?
                         </button>
                     </h2>
                     <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
@@ -101,7 +102,7 @@
                 <div class="accordion-item py-2">
                     <h2 class="accordion-header" id="headingThree">
                         <button class="accordion-button collapsed fw-medium text-dark bg-white fs-6 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            <i class="fa-regular fa-file-lines text-primary me-3"></i> Comment demander un devis et combien de temps pour recevoir une réponse ?
+                            <i class="fa-regular fa-file-lines text-primary me-3" aria-hidden="true"></i> Comment demander un devis et combien de temps pour recevoir une réponse ?
                         </button>
                     </h2>
                     <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">

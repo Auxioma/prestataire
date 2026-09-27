@@ -4,378 +4,378 @@
 {% endblock %}
 
 {% block stylesheets %}
-	{{ parent() }}
-	<link rel="stylesheet" href="{{ asset('styles/quote_proposal/edit.css') }}">
-	<style>
-		#quote-proposal-edit-form #quote-proposal-external-panel {
-			display: none;
-		}
-	</style>
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/quote_proposal/edit.css') }}">
+    <style>
+        #quote-proposal-edit-form #quote-proposal-external-panel {
+            display: none;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
-	{% set itemPrototype %}
-	<article class="tm-quote-item-card tm-quote-item-card--line" data-collection-item>
-		<div class="tm-quote-item-card__top">
-			<div class="tm-quote-item-card__title-wrap">
-				<span class="tm-quote-item-card__eyebrow">Prestation</span>
-				<h4 class="tm-quote-item-card__title">Nouvelle ligne</h4>
-			</div>
+    {% set itemPrototype %}
+    <article class="tm-quote-item-card tm-quote-item-card--line" data-collection-item>
+        <div class="tm-quote-item-card__top">
+            <div class="tm-quote-item-card__title-wrap">
+                <span class="tm-quote-item-card__eyebrow">Prestation</span>
+                <h4 class="tm-quote-item-card__title">Nouvelle ligne</h4>
+            </div>
 
-			<button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="collection#remove">
-				Supprimer la ligne
-			</button>
-		</div>
+            <button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="collection#remove">
+                Supprimer la ligne
+            </button>
+        </div>
 
-		<div class="tm-quote-item-card__body tm-quote-item-card__body--compact">
-			<div class="tm-quote-grid tm-quote-grid--1">
-				<div class="tm-quote-field">
-					{{ form_row(form.items.vars.prototype.label) }}
-				</div>
+        <div class="tm-quote-item-card__body tm-quote-item-card__body--compact">
+            <div class="tm-quote-grid tm-quote-grid--1">
+                <div class="tm-quote-field">
+                    {{ form_row(form.items.vars.prototype.label) }}
+                </div>
 
-				<div class="tm-quote-field">
-					{{ form_row(form.items.vars.prototype.description) }}
-				</div>
-			</div>
+                <div class="tm-quote-field">
+                    {{ form_row(form.items.vars.prototype.description) }}
+                </div>
+            </div>
 
-			<div class="tm-quote-grid tm-quote-grid--3">
-				<div class="tm-quote-field">
-					{{ form_row(form.items.vars.prototype.quantity) }}
-				</div>
+            <div class="tm-quote-grid tm-quote-grid--3">
+                <div class="tm-quote-field">
+                    {{ form_row(form.items.vars.prototype.quantity) }}
+                </div>
 
-				<div class="tm-quote-field">
-					{{ form_row(form.items.vars.prototype.unitPriceHt) }}
-				</div>
+                <div class="tm-quote-field">
+                    {{ form_row(form.items.vars.prototype.unitPriceHt) }}
+                </div>
 
-				<div class="tm-quote-field">
-					{{ form_row(form.items.vars.prototype.vatRate) }}
-				</div>
-			</div>
-		</div>
-	</article>
-	{% endset %}
+                <div class="tm-quote-field">
+                    {{ form_row(form.items.vars.prototype.vatRate) }}
+                </div>
+            </div>
+        </div>
+    </article>
+    {% endset %}
 
-	<div class="tm-quote-edit">
-		<div class="container tm-quote-edit__container">
-			<section class="tm-quote-edit__hero">
-				<div class="tm-quote-edit__hero-main">
-					<span class="tm-quote-edit__eyebrow">Espace devis</span>
-					<h1 class="tm-quote-edit__title">Éditer le devis</h1>
-					<p class="tm-quote-edit__subtitle">
-						Préparez une proposition sérieuse, claire et rassurante pour votre client.
-					</p>
+    <div class="tm-quote-edit">
+        <div class="container tm-quote-edit__container">
+            <section class="tm-quote-edit__hero">
+                <div class="tm-quote-edit__hero-main">
+                    <span class="tm-quote-edit__eyebrow">Espace devis</span>
+                    <h1 class="tm-quote-edit__title">Éditer le devis</h1>
+                    <p class="tm-quote-edit__subtitle">
+                        Préparez une proposition sérieuse, claire et rassurante pour votre client.
+                    </p>
 
-					<div class="tm-quote-edit__meta-grid">
-						<article class="tm-quote-edit__meta-card">
-							<span class="tm-quote-edit__meta-label">Numéro</span>
-							<strong class="tm-quote-edit__meta-value">{{ proposal.proposalNumber ?: 'Brouillon de devis' }}</strong>
-						</article>
+                    <div class="tm-quote-edit__meta-grid">
+                        <article class="tm-quote-edit__meta-card">
+                            <span class="tm-quote-edit__meta-label">Numéro</span>
+                            <strong class="tm-quote-edit__meta-value">{{ proposal.proposalNumber ?: 'Brouillon de devis' }}</strong>
+                        </article>
 
-						<article class="tm-quote-edit__meta-card">
-							<span class="tm-quote-edit__meta-label">Référence interne</span>
-							<strong class="tm-quote-edit__meta-value">{{ proposal.publicReference ?: '—' }}</strong>
-						</article>
+                        <article class="tm-quote-edit__meta-card">
+                            <span class="tm-quote-edit__meta-label">Référence interne</span>
+                            <strong class="tm-quote-edit__meta-value">{{ proposal.publicReference ?: '—' }}</strong>
+                        </article>
 
-						<article class="tm-quote-edit__meta-card">
-							<span class="tm-quote-edit__meta-label">Créé le</span>
-							<strong class="tm-quote-edit__meta-value">{{ proposal.createdAt ? proposal.createdAt|date('d/m/Y à H:i') : '—' }}</strong>
-						</article>
+                        <article class="tm-quote-edit__meta-card">
+                            <span class="tm-quote-edit__meta-label">Créé le</span>
+                            <strong class="tm-quote-edit__meta-value">{{ proposal.createdAt ? proposal.createdAt|date('d/m/Y à H:i') : '—' }}</strong>
+                        </article>
 
-						<article class="tm-quote-edit__meta-card">
-							<span class="tm-quote-edit__meta-label">Statut</span>
-							<strong class="tm-quote-edit__meta-value">{{ proposal.status.label }}</strong>
-						</article>
-					</div>
+                        <article class="tm-quote-edit__meta-card">
+                            <span class="tm-quote-edit__meta-label">Statut</span>
+                            <strong class="tm-quote-edit__meta-value">{{ proposal.status.label }}</strong>
+                        </article>
+                    </div>
 
-					{% if proposal.updatedAt and proposal.createdAt and proposal.updatedAt|date('U') != proposal.createdAt|date('U') %}
-						<p class="tm-quote-edit__updated-at">
-							Dernière modification :
-							{{ proposal.updatedAt|date('d/m/Y à H:i') }}
-						</p>
-					{% endif %}
-				</div>
+                    {% if proposal.updatedAt and proposal.createdAt and proposal.updatedAt|date('U') != proposal.createdAt|date('U') %}
+                        <p class="tm-quote-edit__updated-at">
+                            Dernière modification :
+                            {{ proposal.updatedAt|date('d/m/Y à H:i') }}
+                        </p>
+                    {% endif %}
+                </div>
 
-				<div class="tm-quote-edit__hero-actions">
-					<a href="{{ path('app_prestataire_quote_request_show', { slug: proposal.quoteRequest.slug }) }}" class="tm-quote-btn tm-quote-btn--secondary">
-						Retour à la demande
-					</a>
+                <div class="tm-quote-edit__hero-actions">
+                    <a href="{{ path('app_prestataire_quote_request_show', {slug: proposal.quoteRequest.slug}) }}" class="tm-quote-btn tm-quote-btn--secondary">
+                        Retour à la demande
+                    </a>
 
-					<a href="{{ path('app_prestataire_quote_proposal_show', { publicReference: proposal.publicReference }) }}" class="tm-quote-btn tm-quote-btn--primary">
-						Aperçu
-					</a>
+                    <a href="{{ path('app_prestataire_quote_proposal_show', {publicReference: proposal.publicReference}) }}" class="tm-quote-btn tm-quote-btn--primary">
+                        Aperçu
+                    </a>
 
-					<form method="post" action="{{ path('app_prestataire_quote_proposal_delete', { publicReference: proposal.publicReference }) }}" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Supprimer ce devis ?" data-confirm-dialog-text-value="Il ne sera plus visible par le client, mais vous pourrez créer un nouveau devis pour cette demande." data-confirm-dialog-confirm-button-text-value="Supprimer" data-confirm-dialog-cancel-button-text-value="Annuler">
-						<input type="hidden" name="_token" value="{{ csrf_token('delete_quote_proposal_' ~ proposal.id) }}">
-						<button type="submit" class="tm-quote-btn tm-quote-btn--danger">
-							Supprimer
-						</button>
-					</form>
-				</div>
-			</section>
+                    <form method="post" action="{{ path('app_prestataire_quote_proposal_delete', {publicReference: proposal.publicReference}) }}" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Supprimer ce devis ?" data-confirm-dialog-text-value="Il ne sera plus visible par le client, mais vous pourrez créer un nouveau devis pour cette demande." data-confirm-dialog-confirm-button-text-value="Supprimer" data-confirm-dialog-cancel-button-text-value="Annuler">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_quote_proposal_' ~ proposal.id) }}">
+                        <button type="submit" class="tm-quote-btn tm-quote-btn--danger">
+                            Supprimer
+                        </button>
+                    </form>
+                </div>
+            </section>
 
-			{% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
-				{% for message in messages %}
-					<div class="alert alert-{{ type }} alert-dismissible fade show mb-4" role="alert">
-						{{ message }}
-						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-					</div>
-				{% endfor %}
-			{% endfor %}
+            {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type }} alert-dismissible fade show mb-4" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
 
-			{% if proposal.isFinalized %}
-				<div class="tm-quote-edit__alert tm-quote-edit__alert--warning">
-					<span class="tm-quote-edit__alert-dot"></span>
-					<div>
-						<strong>Devis déjà publié.</strong>
-						Toute modification enregistrée mettra à jour la version visible par le client.
-					</div>
-				</div>
-			{% else %}
-				<div class="tm-quote-edit__alert tm-quote-edit__alert--info">
-					<span class="tm-quote-edit__alert-dot"></span>
-					<div>
-						<strong>Brouillon en cours.</strong>
-						Renseignez les lignes, les conditions et les notes, puis <span style="font-weight: 700; text-transform: uppercase; background: #fff3a3; padding: 0 4px; border-radius: 4px;">finaliser</span> le devis depuis l’<span style="font-weight: 700; text-transform: uppercase; background: #fff3a3; padding: 0 4px; border-radius: 4px;">apercu</span>.
-					</div>
-				</div>
-			{% endif %}
+            {% if proposal.isFinalized %}
+                <div class="tm-quote-edit__alert tm-quote-edit__alert--warning">
+                    <span class="tm-quote-edit__alert-dot"></span>
+                    <div>
+                        <strong>Devis déjà publié.</strong>
+                        Toute modification enregistrée mettra à jour la version visible par le client.
+                    </div>
+                </div>
+            {% else %}
+                <div class="tm-quote-edit__alert tm-quote-edit__alert--info">
+                    <span class="tm-quote-edit__alert-dot"></span>
+                    <div>
+                        <strong>Brouillon en cours.</strong>
+                        Renseignez les lignes, les conditions et les notes, puis <span style="font-weight: 700; text-transform: uppercase; background: #fff3a3; padding: 0 4px; border-radius: 4px;">finaliser</span> le devis depuis l’<span style="font-weight: 700; text-transform: uppercase; background: #fff3a3; padding: 0 4px; border-radius: 4px;">apercu</span>.
+                    </div>
+                </div>
+            {% endif %}
 
-			<div class="tm-quote-edit__layout">
-				<div class="tm-quote-edit__main">
-					<section class="tm-quote-panel tm-quote-panel--main">
-						<div class="tm-quote-panel__head tm-quote-panel__head--split">
-							<div>
-								<span class="tm-quote-panel__eyebrow">Contenu du devis</span>
-								<h2 class="tm-quote-panel__title">Composition du document</h2>
-							</div>
+            <div class="tm-quote-edit__layout">
+                <div class="tm-quote-edit__main">
+                    <section class="tm-quote-panel tm-quote-panel--main">
+                        <div class="tm-quote-panel__head tm-quote-panel__head--split">
+                            <div>
+                                <span class="tm-quote-panel__eyebrow">Contenu du devis</span>
+                                <h2 class="tm-quote-panel__title">Composition du document</h2>
+                            </div>
 
-							<p class="tm-quote-panel__desc">
-								Chaque champ doit renforcer la lisibilité, la confiance et la compréhension de l’offre.
-							</p>
-						</div>
+                            <p class="tm-quote-panel__desc">
+                                Chaque champ doit renforcer la lisibilité, la confiance et la compréhension de l’offre.
+                            </p>
+                        </div>
 
-						<div class="tm-quote-panel__body">
-							{{ form_start(form, { attr: { id: 'quote-proposal-edit-form', class: 'tm-quote-form' } } ) }}
+                        <div class="tm-quote-panel__body">
+                            {{ form_start(form, {attr: {id: 'quote-proposal-edit-form', class: 'tm-quote-form'}}) }}
 
-							{% if form.vars.errors|length > 0 %}
-								<div class="tm-quote-form__global-errors">
-									{{ form_errors(form) }}
-								</div>
-							{% endif %}
+                            {% if form.vars.errors|length > 0 %}
+                                <div class="tm-quote-form__global-errors">
+                                    {{ form_errors(form) }}
+                                </div>
+                            {% endif %}
 
-							<section class="tm-quote-form-section">
-								<div class="tm-quote-form-section__head">
-									<h3 class="tm-quote-form-section__title">Informations générales</h3>
-									<p class="tm-quote-form-section__text">Présentez clairement l’objet du devis et le message d’introduction.</p>
-								</div>
+                            <section class="tm-quote-form-section">
+                                <div class="tm-quote-form-section__head">
+                                    <h3 class="tm-quote-form-section__title">Informations générales</h3>
+                                    <p class="tm-quote-form-section__text">Présentez clairement l’objet du devis et le message d’introduction.</p>
+                                </div>
 
-								<div class="tm-quote-grid tm-quote-grid--1">
-									<div class="tm-quote-field">
-										{{ form_row(form.title) }}
-									</div>
-									<div class="tm-quote-field">
-										{{ form_row(form.introMessage) }}
-									</div>
-								</div>
-							</section>
+                                <div class="tm-quote-grid tm-quote-grid--1">
+                                    <div class="tm-quote-field">
+                                        {{ form_row(form.title) }}
+                                    </div>
+                                    <div class="tm-quote-field">
+                                        {{ form_row(form.introMessage) }}
+                                    </div>
+                                </div>
+                            </section>
 
-							<section class="tm-quote-form-section">
-								<div class="tm-quote-form-section__head">
-									<h3 class="tm-quote-form-section__title">Document contractuel</h3>
-									<p class="tm-quote-form-section__text">Choisissez si cette proposition repose sur le devis natif de la plateforme ou sur un PDF externe transmis par vos soins.</p>
-								</div>
+                            <section class="tm-quote-form-section">
+                                <div class="tm-quote-form-section__head">
+                                    <h3 class="tm-quote-form-section__title">Document contractuel</h3>
+                                    <p class="tm-quote-form-section__text">Choisissez si cette proposition repose sur le devis natif de la plateforme ou sur un PDF externe transmis par vos soins.</p>
+                                </div>
 
-								<div class="tm-quote-grid tm-quote-grid--1">
-									<div class="tm-quote-field">
-										{{ form_row(form.documentMode) }}
-									</div>
-								</div>
+                                <div class="tm-quote-grid tm-quote-grid--1">
+                                    <div class="tm-quote-field">
+                                        {{ form_row(form.documentMode) }}
+                                    </div>
+                                </div>
 
-								<div class="alert alert-info border-0 shadow-sm mb-0">
-									Si vous ajoutez un PDF de devis externe, il remplacera le devis généré par la plateforme pour cette proposition.
-								</div>
+                                <div class="alert alert-info border-0 shadow-sm mb-0">
+                                    Si vous ajoutez un PDF de devis externe, il remplacera le devis généré par la plateforme pour cette proposition.
+                                </div>
 
-								<div id="quote-proposal-external-panel" class="tm-quote-grid tm-quote-grid--1 mt-3">
-									<div class="tm-quote-field">
-										{{ form_label(form.externalPdfFile) }}
-										{{ form_errors(form.externalPdfFile) }}
-										<div class="tm-vich-custom-container">
-											{{ form_widget(form.externalPdfFile.file, { attr: { class: 'form-control' } }) }}
+                                <div id="quote-proposal-external-panel" class="tm-quote-grid tm-quote-grid--1 mt-3">
+                                    <div class="tm-quote-field">
+                                        {{ form_label(form.externalPdfFile) }}
+                                        {{ form_errors(form.externalPdfFile) }}
+                                        <div class="tm-vich-custom-container">
+                                            {{ form_widget(form.externalPdfFile.file, {attr: {class: 'form-control'}}) }}
 
-											{% if form.externalPdfFile.delete is defined %}
-												<div class="form-check">
-													{{ form_widget(form.externalPdfFile.delete) }}
-													{{ form_label(form.externalPdfFile.delete) }}
-												</div>
-											{% endif %}
-										</div>
-										{{ form_help(form.externalPdfFile) }}
+                                            {% if form.externalPdfFile.delete is defined %}
+                                                <div class="form-check">
+                                                    {{ form_widget(form.externalPdfFile.delete) }}
+                                                    {{ form_label(form.externalPdfFile.delete) }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        {{ form_help(form.externalPdfFile) }}
 
-										{% if proposal.externalPdfOriginalName %}
-											<p class="small text-muted mb-0">
-												Fichier actuel :
-												<strong>{{ proposal.externalPdfOriginalName }}</strong>
-												{% if proposal.externalPdfUploadedAt %}
-													, importé le {{ proposal.externalPdfUploadedAt|date('d/m/Y à H:i') }}
-												{% endif %}
-											</p>
-										{% endif %}
-									</div>
-								</div>
-							</section>
+                                        {% if proposal.externalPdfOriginalName %}
+                                            <p class="small text-muted mb-0">
+                                                Fichier actuel :
+                                                <strong>{{ proposal.externalPdfOriginalName }}</strong>
+                                                {% if proposal.externalPdfUploadedAt %}
+                                                    , importé le {{ proposal.externalPdfUploadedAt|date('d/m/Y à H:i') }}
+                                                {% endif %}
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </section>
 
-							<section class="tm-quote-form-section">
-								<div class="tm-quote-form-section__head">
-									<h3 class="tm-quote-form-section__title">Cadre commercial</h3>
-									<p class="tm-quote-form-section__text">Définissez la validité du devis, les notes complémentaires et les conditions.</p>
-								</div>
+                            <section class="tm-quote-form-section">
+                                <div class="tm-quote-form-section__head">
+                                    <h3 class="tm-quote-form-section__title">Cadre commercial</h3>
+                                    <p class="tm-quote-form-section__text">Définissez la validité du devis, les notes complémentaires et les conditions.</p>
+                                </div>
 
-								<div class="tm-quote-grid tm-quote-grid--2">
-									<div class="tm-quote-field">
-										{{ form_row(form.validUntil) }}
-									</div>
-									<div class="tm-quote-field">
-										{{ form_row(form.notes) }}
-									</div>
-								</div>
+                                <div class="tm-quote-grid tm-quote-grid--2">
+                                    <div class="tm-quote-field">
+                                        {{ form_row(form.validUntil) }}
+                                    </div>
+                                    <div class="tm-quote-field">
+                                        {{ form_row(form.notes) }}
+                                    </div>
+                                </div>
 
-								<div class="tm-quote-grid tm-quote-grid--1">
-									<div class="tm-quote-field">
-										{{ form_row(form.terms) }}
-									</div>
-								</div>
+                                <div class="tm-quote-grid tm-quote-grid--1">
+                                    <div class="tm-quote-field">
+                                        {{ form_row(form.terms) }}
+                                    </div>
+                                </div>
 
-								<div class="tm-quote-grid tm-quote-grid--1">
-									<div class="tm-quote-field">{{ form_row(form.latePaymentPenaltyTerms) }}</div>
-									<div class="tm-quote-field">{{ form_row(form.fixedRecoveryCompensationTerms) }}</div>
-									<div class="tm-quote-field">{{ form_row(form.earlyPaymentDiscountTerms) }}</div>
-								</div>
-							</section>
+                                <div class="tm-quote-grid tm-quote-grid--1">
+                                    <div class="tm-quote-field">{{ form_row(form.latePaymentPenaltyTerms) }}</div>
+                                    <div class="tm-quote-field">{{ form_row(form.fixedRecoveryCompensationTerms) }}</div>
+                                    <div class="tm-quote-field">{{ form_row(form.earlyPaymentDiscountTerms) }}</div>
+                                </div>
+                            </section>
 
-							<section id="quote-proposal-native-items" class="tm-quote-form-section tm-quote-form-section--items">
-								<div data-controller="collection" data-collection-index-value="{{ form.items|length }}" data-collection-prototype-value="{{ itemPrototype|e('html_attr') }}">
-									<div class="tm-quote-form-section__head tm-quote-form-section__head--items">
-										<div>
-											<h3 class="tm-quote-form-section__title">Lignes du devis</h3>
-											<p class="tm-quote-form-section__text">Ajoutez chaque prestation avec un intitulé clair, une quantité, un prix et une TVA cohérente.</p>
-										</div>
-									</div>
+                            <section id="quote-proposal-native-items" class="tm-quote-form-section tm-quote-form-section--items">
+                                <div data-controller="collection" data-collection-index-value="{{ form.items|length }}" data-collection-prototype-value="{{ itemPrototype|e('html_attr') }}">
+                                    <div class="tm-quote-form-section__head tm-quote-form-section__head--items">
+                                        <div>
+                                            <h3 class="tm-quote-form-section__title">Lignes du devis</h3>
+                                            <p class="tm-quote-form-section__text">Ajoutez chaque prestation avec un intitulé clair, une quantité, un prix et une TVA cohérente.</p>
+                                        </div>
+                                    </div>
 
-									<div class="tm-quote-items" data-collection-target="items">
-										{% for itemForm in form.items %}
-											<article class="tm-quote-item-card tm-quote-item-card--line" data-collection-item>
-												<div class="tm-quote-item-card__top">
-													<div class="tm-quote-item-card__title-wrap">
-														<span class="tm-quote-item-card__eyebrow">Prestation</span>
-														<h4 class="tm-quote-item-card__title">Ligne
-															{{ loop.index }}</h4>
-													</div>
+                                    <div class="tm-quote-items" data-collection-target="items">
+                                        {% for itemForm in form.items %}
+                                            <article class="tm-quote-item-card tm-quote-item-card--line" data-collection-item>
+                                                <div class="tm-quote-item-card__top">
+                                                    <div class="tm-quote-item-card__title-wrap">
+                                                        <span class="tm-quote-item-card__eyebrow">Prestation</span>
+                                                        <h4 class="tm-quote-item-card__title">Ligne
+                                                            {{ loop.index }}</h4>
+                                                    </div>
 
-													<button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="collection#remove">
-														Supprimer la ligne
-													</button>
-												</div>
+                                                    <button type="button" class="tm-quote-btn tm-quote-btn--mini-danger" data-action="collection#remove">
+                                                        Supprimer la ligne
+                                                    </button>
+                                                </div>
 
-												<div class="tm-quote-item-card__body tm-quote-item-card__body--compact">
-													<div class="tm-quote-grid tm-quote-grid--1">
-														<div class="tm-quote-field">
-															{{ form_row(itemForm.label) }}
-														</div>
+                                                <div class="tm-quote-item-card__body tm-quote-item-card__body--compact">
+                                                    <div class="tm-quote-grid tm-quote-grid--1">
+                                                        <div class="tm-quote-field">
+                                                            {{ form_row(itemForm.label) }}
+                                                        </div>
 
-														<div class="tm-quote-field">
-															{{ form_row(itemForm.description) }}
-														</div>
-													</div>
+                                                        <div class="tm-quote-field">
+                                                            {{ form_row(itemForm.description) }}
+                                                        </div>
+                                                    </div>
 
-													<div class="tm-quote-grid tm-quote-grid--3">
-														<div class="tm-quote-field">
-															{{ form_row(itemForm.quantity) }}
-														</div>
+                                                    <div class="tm-quote-grid tm-quote-grid--3">
+                                                        <div class="tm-quote-field">
+                                                            {{ form_row(itemForm.quantity) }}
+                                                        </div>
 
-														<div class="tm-quote-field">
-															{{ form_row(itemForm.unitPriceHt) }}
-														</div>
+                                                        <div class="tm-quote-field">
+                                                            {{ form_row(itemForm.unitPriceHt) }}
+                                                        </div>
 
-														<div class="tm-quote-field">
-															{{ form_row(itemForm.vatRate) }}
-														</div>
-													</div>
-												</div>
-											</article>
-										{% else %}
-											<div class="tm-quote-empty">
-												<div class="tm-quote-empty__icon">+</div>
-												<h4 class="tm-quote-empty__title">Aucune prestation ajoutée</h4>
-												<p class="tm-quote-empty__text">Ajoutez une première ligne pour commencer votre devis.</p>
-											</div>
-										{% endfor %}
-									</div>
+                                                        <div class="tm-quote-field">
+                                                            {{ form_row(itemForm.vatRate) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        {% else %}
+                                            <div class="tm-quote-empty">
+                                                <div class="tm-quote-empty__icon">+</div>
+                                                <h4 class="tm-quote-empty__title">Aucune prestation ajoutée</h4>
+                                                <p class="tm-quote-empty__text">Ajoutez une première ligne pour commencer votre devis.</p>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
 
-									<div class="tm-quote-add-line-wrap">
-										<button type="button" class="tm-quote-btn tm-quote-btn--mini-primary" data-action="collection#add">
-											Ajouter une ligne
-										</button>
-									</div>
-								</div>
-							</section>
+                                    <div class="tm-quote-add-line-wrap">
+                                        <button type="button" class="tm-quote-btn tm-quote-btn--mini-primary" data-action="collection#add">
+                                            Ajouter une ligne
+                                        </button>
+                                    </div>
+                                </div>
+                            </section>
 
-							<div class="tm-quote-form__actions">
-								<button type="submit" class="tm-quote-btn tm-quote-btn--success">
-									Enregistrer le devis
-								</button>
+                            <div class="tm-quote-form__actions">
+                                <button type="submit" class="tm-quote-btn tm-quote-btn--success">
+                                    Enregistrer le devis
+                                </button>
 
-								<a href="{{ path('app_prestataire_quote_proposal_show', { publicReference: proposal.publicReference }) }}" class="tm-quote-btn tm-quote-btn--secondary">
-									Annuler
-								</a>
-							</div>
+                                <a href="{{ path('app_prestataire_quote_proposal_show', {publicReference: proposal.publicReference}) }}" class="tm-quote-btn tm-quote-btn--secondary">
+                                    Annuler
+                                </a>
+                            </div>
 
-							{{ form_end(form) }}
-						</div>
-					</section>
-				</div>
+                            {{ form_end(form) }}
+                        </div>
+                    </section>
+                </div>
 
-				<aside class="tm-quote-edit__aside">
-					<section class="tm-quote-panel tm-quote-panel--aside">
-						<div class="tm-quote-panel__head tm-quote-panel__head--aside">
-							<span class="tm-quote-panel__eyebrow">Résumé financier</span>
-							<h2 class="tm-quote-panel__title tm-quote-panel__title--aside">Montants</h2>
-						</div>
+                <aside class="tm-quote-edit__aside">
+                    <section class="tm-quote-panel tm-quote-panel--aside">
+                        <div class="tm-quote-panel__head tm-quote-panel__head--aside">
+                            <span class="tm-quote-panel__eyebrow">Résumé financier</span>
+                            <h2 class="tm-quote-panel__title tm-quote-panel__title--aside">Montants</h2>
+                        </div>
 
-						<div class="tm-quote-panel__content">
-							<div class="tm-quote-totals">
-								<div class="tm-quote-totals__row">
-									<span>HT</span>
-									<strong>{{ proposal.subtotalHt|number_format(2, ',', ' ') }}
-										€</strong>
-								</div>
+                        <div class="tm-quote-panel__content">
+                            <div class="tm-quote-totals">
+                                <div class="tm-quote-totals__row">
+                                    <span>HT</span>
+                                    <strong>{{ proposal.subtotalHt|number_format(2, ',', ' ') }}
+                                        €</strong>
+                                </div>
 
-								<div class="tm-quote-totals__row">
-									<span>TVA</span>
-									<strong>{{ proposal.taxAmount|number_format(2, ',', ' ') }}
-										€</strong>
-								</div>
+                                <div class="tm-quote-totals__row">
+                                    <span>TVA</span>
+                                    <strong>{{ proposal.taxAmount|number_format(2, ',', ' ') }}
+                                        €</strong>
+                                </div>
 
-								<div class="tm-quote-totals__row tm-quote-totals__row--accent">
-									<span>Total TTC</span>
-									<strong>{{ proposal.totalTtc|number_format(2, ',', ' ') }}
-										€</strong>
-								</div>
-							</div>
-						</div>
-					</section>
+                                <div class="tm-quote-totals__row tm-quote-totals__row--accent">
+                                    <span>Total TTC</span>
+                                    <strong>{{ proposal.totalTtc|number_format(2, ',', ' ') }}
+                                        €</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
-					<section class="tm-quote-panel tm-quote-panel--aside">
-						<div class="tm-quote-panel__head tm-quote-panel__head--aside">
-							<span class="tm-quote-panel__eyebrow">Contexte figé</span>
-							<h2 class="tm-quote-panel__title tm-quote-panel__title--aside">Informations enregistrées</h2>
-						</div>
+                    <section class="tm-quote-panel tm-quote-panel--aside">
+                        <div class="tm-quote-panel__head tm-quote-panel__head--aside">
+                            <span class="tm-quote-panel__eyebrow">Contexte figé</span>
+                            <h2 class="tm-quote-panel__title tm-quote-panel__title--aside">Informations enregistrées</h2>
+                        </div>
 
-						<div class="tm-quote-panel__content">
-							<div class="tm-quote-info-stack">
-								<article class="tm-quote-info-card">
-									<span class="tm-quote-info-card__label">Prestataire</span>
-									<strong class="tm-quote-info-card__value">{{ proposal.prestataireCompanyName ?: '—' }}</strong>
-								</article>
+                        <div class="tm-quote-panel__content">
+                            <div class="tm-quote-info-stack">
+                                <article class="tm-quote-info-card">
+                                    <span class="tm-quote-info-card__label">Prestataire</span>
+                                    <strong class="tm-quote-info-card__value">{{ proposal.prestataireCompanyName ?: '—' }}</strong>
+                                </article>
 
 <article class="tm-quote-info-card">
     <span class="tm-quote-info-card__label">Client</span>
@@ -394,37 +394,37 @@
     </strong>
 </article>
 
-								<article class="tm-quote-info-card">
-									<span class="tm-quote-info-card__label">Statut</span>
-									<strong class="tm-quote-info-card__value">{{ proposal.status.label }}</strong>
-								</article>
-							</div>
-						</div>
-					</section>
-				</aside>
-			</div>
-		</div>
-	</div>
+                                <article class="tm-quote-info-card">
+                                    <span class="tm-quote-info-card__label">Statut</span>
+                                    <strong class="tm-quote-info-card__value">{{ proposal.status.label }}</strong>
+                                </article>
+                            </div>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
-	{{ parent() }}
-	<script>
-		window.toggleQuoteProposalDocumentMode = function () {
-			const externalPanel = document.getElementById('quote-proposal-external-panel');
-			const nativeItemsSection = document.getElementById('quote-proposal-native-items');
-			const checkedInput = document.querySelector('input[data-document-mode-value]:checked');
+    {{ parent() }}
+    <script>
+        window.toggleQuoteProposalDocumentMode = function () {
+            const externalPanel = document.getElementById('quote-proposal-external-panel');
+            const nativeItemsSection = document.getElementById('quote-proposal-native-items');
+            const checkedInput = document.querySelector('input[data-document-mode-value]:checked');
 
-			if (!externalPanel || !nativeItemsSection || !checkedInput) {
-				return;
-			}
+            if (!externalPanel || !nativeItemsSection || !checkedInput) {
+                return;
+            }
 
-			const isExternalPdf = checkedInput.getAttribute('data-document-mode-value') === 'external_pdf';
+            const isExternalPdf = checkedInput.getAttribute('data-document-mode-value') === 'external_pdf';
 
-			externalPanel.style.display = isExternalPdf ? 'grid' : 'none';
-			nativeItemsSection.style.display = isExternalPdf ? 'none' : '';
-		};
+            externalPanel.style.display = isExternalPdf ? 'grid' : 'none';
+            nativeItemsSection.style.display = isExternalPdf ? 'none' : '';
+        };
 
-		window.toggleQuoteProposalDocumentMode();
-	</script>
+        window.toggleQuoteProposalDocumentMode();
+    </script>
 {% endblock %}

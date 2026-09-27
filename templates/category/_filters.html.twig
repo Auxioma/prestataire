@@ -6,8 +6,8 @@
                 class: 'tm-homepage-search-form tmc-filters-form',
                 novalidate: 'novalidate',
                 'data-controller': 'homepage-search',
-                'data-homepage-search-default-radius-value': formView.radiusKm.vars.value ?: 25
-            }
+                'data-homepage-search-default-radius-value': formView.radiusKm.vars.value ?: 25,
+            },
         }) }}
             <div class="tm-homepage-search-field tm-homepage-search-field--query">
                 <span class="tm-homepage-search-field-icon" aria-hidden="true">
@@ -19,14 +19,14 @@
 
                 <div class="tm-homepage-search-field-body">
                     {{ form_label(formView.query, null, {
-                        label_attr: { class: 'tm-homepage-search-label' }
+                        label_attr: {class: 'tm-homepage-search-label'},
                     }) }}
                     <div class="tm-homepage-search-control">
                         {{ form_widget(formView.query, {
                             attr: {
                                 class: 'tm-homepage-search-input',
-                                autocomplete: 'off'
-                            }
+                                autocomplete: 'off',
+                            },
                         }) }}
                     </div>
                 </div>
@@ -42,14 +42,14 @@
 
                 <div class="tm-homepage-search-field-body">
                     {{ form_label(formView.location, null, {
-                        label_attr: { class: 'tm-homepage-search-label' }
+                        label_attr: {class: 'tm-homepage-search-label'},
                     }) }}
                     <div class="tm-homepage-search-control">
                         {{ form_widget(formView.location, {
                             attr: {
                                 class: 'tm-homepage-search-input',
-                                autocomplete: 'off'
-                            }
+                                autocomplete: 'off',
+                            },
                         }) }}
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                 <div class="tm-homepage-search-field-body tm-homepage-search-field-body--radius">
                     <div class="tm-homepage-search-radius-head">
                         {{ form_label(formView.radiusKm, null, {
-                            label_attr: { class: 'tm-homepage-search-label mb-0' }
+                            label_attr: {class: 'tm-homepage-search-label mb-0'},
                         }) }}
                         <span class="tm-homepage-search-radius-value" data-homepage-search-target="value">
                             {{ formView.radiusKm.vars.value ?: 25 }} km
@@ -81,8 +81,8 @@
                                 max: 100,
                                 step: 5,
                                 'data-homepage-search-target': 'range',
-                                'data-action': 'input->homepage-search#update change->homepage-search#update'
-                            }
+                                'data-action': 'input->homepage-search#update change->homepage-search#update',
+                            },
                         }) }}
                     </div>
                 </div>
@@ -99,13 +99,13 @@
 
                 <div class="tm-homepage-search-field-body">
                     {{ form_label(formView.sort, null, {
-                        label_attr: { class: 'tm-homepage-search-label' }
+                        label_attr: {class: 'tm-homepage-search-label'},
                     }) }}
                     <div class="tm-homepage-search-control">
                         {{ form_widget(formView.sort, {
                             attr: {
-                                class: 'tm-homepage-search-select'
-                            }
+                                class: 'tm-homepage-search-select',
+                            },
                         }) }}
                     </div>
                 </div>
