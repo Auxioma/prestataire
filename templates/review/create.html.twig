@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'Website/base.html.twig' %}
 
 {% block title %}{{ (isEdit|default(false)) ? 'Modifier mon avis' : 'Laisser un avis' }}{% endblock %}
 
@@ -11,7 +11,7 @@
     {% set isEdit = isEdit|default(false) %}
     <div class="container-fluid p-0 tm-cp-page-wrapper">
         <div class="d-flex flex-column flex-md-row align-items-stretch">
-            {{ include('profile/_client_sidebar.html.twig', {user: app.user}) }}
+            {{ include('Account/profile/_client_sidebar.html.twig', {user: app.user}) }}
 
             <div class="grow p-3 p-md-5 tm-cp-main-content-inner">
                 <section class="c-client-quotes-page">

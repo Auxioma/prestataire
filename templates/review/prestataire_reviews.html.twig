@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'Website/base.html.twig' %}
 
 {% block title %}Mes avis reçus{% endblock %}
 
@@ -12,7 +12,7 @@
         <div class="tm-settings-container tm-dashboard-page__shell">
             <div class="tm-main-layout tm-dashboard-page__layout">
                 <aside class="tm-settings-sidebar tm-dashboard-page__sidebar" {{ stimulus_target('prestataire-dashboard-tabs', 'sidebar') }}>
-                    {{ include('profile/_prestataire_dashboard_sidebar.html.twig', {
+                    {{ include('Prestataire/profile/_prestataire_dashboard_sidebar.html.twig', {
                         user: app.user,
                         activeTab: 'avis',
                         asLinks: true,
@@ -52,7 +52,7 @@
                                     <div class="avis-resume__note">
                                         <b>{{ prestataire.averageRating|default('0.00')|number_format(1, ',', ' ') }}<small>/5</small></b>
                                         <span class="etoiles">
-                                            {{ include('review/_stars.html.twig', {rating: prestataire.averageRating|default(0)|round(0, 'common')}) }}
+                                            {{ include('Review/_stars.html.twig', {rating: prestataire.averageRating|default(0)|round(0, 'common')}) }}
                                         </span>
                                         <p>Note moyenne actuelle</p>
                                     </div>
@@ -100,7 +100,7 @@
                                                         <span>{{ review.quoteRequest.title|default('Demande associée') }} · Avis vérifié</span>
                                                     </div>
                                                     <div class="carte-avis-page__droite">
-                                                        <span class="etoiles">{{ include('review/_stars.html.twig', {rating: review.rating}) }}</span>
+                                                        <span class="etoiles">{{ include('Review/_stars.html.twig', {rating: review.rating}) }}</span>
                                                         <p>{{ review.createdAt|date('d/m/Y à H:i') }}</p>
                                                     </div>
                                                 </div>

@@ -78,7 +78,7 @@ final class ReviewController extends AbstractController
             return $this->redirectToRoute('app_review_my_reviews');
         }
 
-        return $this->render('review/create.html.twig', [
+        return $this->render('Review/create.html.twig', [
             'form' => $form->createView(),
             'quoteRequest' => $quoteRequest,
             'prestataire' => $prestataire,
@@ -126,7 +126,7 @@ final class ReviewController extends AbstractController
             return $this->redirectToRoute('app_review_my_reviews');
         }
 
-        return $this->render('review/create.html.twig', [
+        return $this->render('Review/create.html.twig', [
             'form' => $form->createView(),
             'quoteRequest' => $quoteRequest,
             'prestataire' => $prestataire,
@@ -167,7 +167,7 @@ final class ReviewController extends AbstractController
         $user = $this->getAuthenticatedClientUser();
         $client = $user->getClientProfile();
 
-        return $this->render('review/my_reviews.html.twig', [
+        return $this->render('Review/my_reviews.html.twig', [
             'reviews' => $reviewRepository->findByClientOrderedByDate($client),
             'pendingQuoteRequests' => $reviewRepository->findEligibleQuoteRequestsForClient($client),
         ]);
@@ -180,7 +180,7 @@ final class ReviewController extends AbstractController
         $user = $this->getAuthenticatedPrestataireUser();
         $prestataire = $user->getPrestataireProfile();
 
-        return $this->render('review/prestataire_reviews.html.twig', [
+        return $this->render('Review/prestataire_reviews.html.twig', [
             'prestataire' => $prestataire,
             'reviews' => $reviewRepository->findByPrestataireOrderedByDate($prestataire),
         ]);
@@ -195,7 +195,7 @@ final class ReviewController extends AbstractController
             throw $this->createNotFoundException('Ce profil professionnel n’est pas disponible.');
         }
 
-        return $this->render('review/public_prestataire_reviews.html.twig', [
+        return $this->render('Review/public_prestataire_reviews.html.twig', [
             'prestataire' => $prestataire,
             'reviews' => $reviewRepository->findPublicByPrestataireOrderedByDate($prestataire),
         ]);

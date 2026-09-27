@@ -122,7 +122,7 @@ class ProfileController extends AbstractProfileController
             return $response;
         }
 
-        return $this->render('profile/client_profile.html.twig', [
+        return $this->render('Account/profile/client_profile.html.twig', [
             'settingsForm' => $form->createView(),
             'user' => $user,
             'notificationForm' => $notificationForm->createView(),
@@ -188,7 +188,7 @@ class ProfileController extends AbstractProfileController
             ? $prestataireServiceRepository->findBy(['id' => array_unique($bonsPlanIds)])
             : [];
 
-        return $this->render('client/client_favorite.html.twig', [
+        return $this->render('Review/favorite/client_favorite.html.twig', [
             'user' => $user,
             'favoriteProviders' => $favoriteProviders,
             'favoritePrestations' => $favoritePrestations,

@@ -1,0 +1,231 @@
+{% extends 'Website/base.html.twig' %}
+
+{% block title %}TrouveMoi - {{ category.name }}{% endblock %}
+
+{% block json_ld %}
+    {% set subCategoryItems = [] %}
+    {% for subCategory in category.subCategories|filter(subCategory => subCategory.isActive) %}
+        {% set subCategoryItems = subCategoryItems|merge([{
+            '@type': 'ListItem',
+            position: loop.index,
+            name: subCategory.name,
+            url: url('app_subcategory_services', {categorySlug: category.slug, subCategorySlug: subCategory.slug}),
+        }]) %}
+    {% endfor %}
+    {{ include('Website/layout/_json_ld.html.twig', {data: {
+        '@context': 'https://schema.org',
+        '@graph': [
+            {
+                '@type': 'CollectionPage',
+                '@id': url('app_category_show', {slug: category.slug}) ~ '#webpage',
+                name: 'Métiers en ' ~ category.name,
+                mainEntity: {'@type': 'ItemList', itemListElement: subCategoryItems},
+            },
+            {
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                    {'@type': 'ListItem', position: 1, name: 'Accueil', item: url('app_home')},
+                    {'@type': 'ListItem', position: 2, name: 'Catégories', item: url('app_category_index')},
+                    {'@type': 'ListItem', position: 3, name: category.name},
+                ],
+            },
+        ],
+    }}) }}
+{% endblock %}
+
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/category/sub_categories.css') }}">{% endblock %}
+
+{% block body %}
+    <div class="tm-subcatx-page">
+
+        <section class="tm-subcatx-hero">
+            <div class="tm-subcatx-hero__media" aria-hidden="true">
+                <img
+                    src="{{ asset('images/img_presta_homepage04.webp') }}"
+                    alt=""
+                    class="tm-subcatx-hero__bg-image"
+                    width="1935"
+                    height="813"
+                    loading="lazy"
+                    fetchpriority="high"
+                >
+            </div>
+
+            <div class="tm-subcatx-hero__overlay"></div>
+
+            <div class="tm-subcatx-shell">
+                <div class="tm-subcatx-hero__inner">
+                    <div class="tm-subcatx-hero__content">
+                        <span class="tm-subcatx-eyebrow">Explorer les métiers</span>
+
+                        <h1 class="tm-subcatx-hero__title">
+                            Métiers en {{ category.name }}
+                        </h1>
+
+                        <p class="tm-subcatx-hero__subtitle">
+                            Affinez votre recherche en choisissant une sous-catégorie spécialisée et trouvez plus rapidement le bon professionnel.
+                        </p>
+
+                        {% set activeSubCategories = category.subCategories|filter(subCategory => subCategory.isActive) %}
+
+                        <div class="tm-subcatx-hero__badges">
+                            <span><i class="fa-solid fa-layer-group"></i> {{ activeSubCategories|length }} spécialité{{ activeSubCategories|length > 1 ? 's' : '' }}</span>
+                            <span><i class="fa-solid fa-shield-halved"></i> Profils vérifiés</span>
+                            <span><i class="fa-solid fa-star"></i> Avis contrôlés</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="tm-subcatx-shell">
+            <nav aria-label="breadcrumb" class="tm-subcatx-breadcrumb">
+                <ol class="breadcrumb tm-subcatx-breadcrumb__list">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_home') }}" class="tm-subcatx-breadcrumb__link">
+                            <i class="fa-solid fa-house"></i>
+                            <span>Accueil</span>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_category_index') }}" class="tm-subcatx-breadcrumb__link">
+                            Catégories
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active tm-subcatx-breadcrumb__current" aria-current="page">
+                        {{ category.name }}
+                    </li>
+                </ol>
+            </nav>
+
+            <section class="tm-subcatx-section">
+                <div class="tm-subcatx-section__head">
+                    <div class="tm-subcatx-section__copy">
+                        <span class="tm-subcatx-eyebrow">Navigation par spécialité</span>
+                        <h2 class="tm-subcatx-section__title">Choisissez un métier</h2>
+                        <p class="tm-subcatx-section__subtitle">
+                            Sélectionnez la spécialité la plus adaptée à votre besoin pour accéder aux prestations correspondantes.
+                        </p>
+                    </div>
+                </div>
+
+                {% if activeSubCategories is not empty %}
+                    <div class="tm-subcatx-grid">
+                        {% for subCategory in activeSubCategories|sort((a, b) => a.position <=> b.position) %}
+                            {% set colorVariant = cycle(['blue', 'orange', 'green', 'violet'], loop.index0) %}
+
+                            <a
+                                href="{{ path('app_subcategory_services', {categorySlug: category.slug, subCategorySlug: subCategory.slug}) }}"
+                                class="tm-subcatx-card"
+                            >
+                                <div class="tm-subcatx-card__media">
+                                    <div class="tm-subcatx-card__cover tm-subcatx-card__cover--{{ colorVariant }}"></div>
+
+                                    <span class="tm-subcatx-card__icon tm-subcatx-card__icon--{{ colorVariant }}">
+                                        <i class="fa-solid {{ subCategory.icon|default('fa-screwdriver-wrench') }}"></i>
+                                    </span>
+                                </div>
+
+                                <div class="tm-subcatx-card__body">
+                                    <h3 class="tm-subcatx-card__title">{{ subCategory.name }}</h3>
+
+                                    <p class="tm-subcatx-card__desc">
+                                        Accédez aux prestations, comparez les profils et trouvez plus vite le bon spécialiste.
+                                    </p>
+
+                                    <span class="tm-subcatx-card__count">
+                                        <span>
+                                            {{ subCategory.services|length }}
+                                            {{ subCategory.services|length > 1 ? 'prestations disponibles' : 'prestation disponible' }}
+                                        </span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </span>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="tm-subcatx-empty">
+                        <div class="tm-subcatx-empty__icon">
+                            <i class="fa-solid fa-toolbox"></i>
+                        </div>
+
+                        <div class="tm-subcatx-empty__content">
+                            <h3 class="tm-subcatx-empty__title">Aucune spécialité disponible</h3>
+                            <p class="tm-subcatx-empty__text">
+                                Cette catégorie ne propose pas encore de sous-catégories actives pour le moment.
+                            </p>
+                        </div>
+                    </div>
+                {% endif %}
+            </section>
+
+            <section class="tm-subcatx-reassurance">
+                <div class="tm-subcatx-reassurance__grid">
+                    <article class="tm-subcatx-reassurance__item">
+                        <span class="tm-subcatx-reassurance__icon">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </span>
+                        <div>
+                            <h3>Prestataires vérifiés</h3>
+                            <p>Des professionnels de confiance dans chaque spécialité.</p>
+                        </div>
+                    </article>
+
+                    <article class="tm-subcatx-reassurance__item">
+                        <span class="tm-subcatx-reassurance__icon">
+                            <i class="fa-solid fa-star"></i>
+                        </span>
+                        <div>
+                            <h3>Avis authentiques</h3>
+                            <p>Des retours clients fiables pour comparer sereinement.</p>
+                        </div>
+                    </article>
+
+                    <article class="tm-subcatx-reassurance__item">
+                        <span class="tm-subcatx-reassurance__icon">
+                            <i class="fa-solid fa-file-signature"></i>
+                        </span>
+                        <div>
+                            <h3>Demandes simples</h3>
+                            <p>Accédez rapidement aux prestations qui vous intéressent.</p>
+                        </div>
+                    </article>
+
+                    <article class="tm-subcatx-reassurance__item">
+                        <span class="tm-subcatx-reassurance__icon">
+                            <i class="fa-solid fa-headset"></i>
+                        </span>
+                        <div>
+                            <h3>Accompagnement</h3>
+                            <p>Une équipe disponible pour vous aider au besoin.</p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="tm-subcatx-banner">
+                <div class="tm-subcatx-banner__content">
+                    <span class="tm-subcatx-banner__eyebrow">Espace professionnel</span>
+
+                    <h2 class="tm-subcatx-banner__title">Vous êtes prestataire ?</h2>
+
+                    <p class="tm-subcatx-banner__desc">
+                        Développez votre visibilité sur TrouveMoi et recevez des demandes qualifiées dans votre spécialité.
+                    </p>
+
+                    <div class="tm-subcatx-banner__features">
+                        <span><i class="fa-solid fa-circle-check"></i> Visibilité accrue</span>
+                        <span><i class="fa-solid fa-circle-check"></i> Clients qualifiés</span>
+                        <span><i class="fa-solid fa-circle-check"></i> Outils de gestion</span>
+                    </div>
+                </div>
+
+                <div class="tm-subcatx-banner__actions">
+                    <a href="{{ path('app_static_page', {slug: 'avantages'}) }}" class="tm-subcatx-btn tm-subcatx-btn--outline">En savoir plus</a>
+                    <a href="{{ path('app_register_choice') }}" class="tm-subcatx-btn tm-subcatx-btn--primary">Devenir prestataire</a>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}

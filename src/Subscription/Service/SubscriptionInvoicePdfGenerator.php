@@ -27,7 +27,7 @@ final class SubscriptionInvoicePdfGenerator
 
     public function generatePdfOutput(
         SubscriptionInvoice $invoice,
-        string $template = 'subscription/invoice_pdf.html.twig',
+        string $template = 'Subscription/invoice_pdf.html.twig',
     ): string {
         $embeddedXmlPath = $this->createEmbeddedXmlFile($invoice);
 

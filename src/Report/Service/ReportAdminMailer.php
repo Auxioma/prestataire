@@ -38,7 +38,7 @@ final class ReportAdminMailer
             ->from(new Address('noreply@trouvemoi.com', 'TrouveMoi'))
             ->to($recipient)
             ->subject(sprintf('Nouveau signalement - %s', $report->getContextLabel()))
-            ->htmlTemplate('emails/report_admin_notification.html.twig')
+            ->htmlTemplate('Report/emails/report_admin_notification.html.twig')
             ->context([
                 'report' => $report,
                 'reporterLabel' => $reporterLabel,

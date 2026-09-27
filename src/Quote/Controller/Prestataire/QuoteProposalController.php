@@ -123,7 +123,7 @@ class QuoteProposalController extends AbstractController
             ? Response::HTTP_UNPROCESSABLE_ENTITY
             : Response::HTTP_OK;
 
-        return $this->render('quote_proposal/edit.html.twig', [
+        return $this->render('Quote/quote_proposal/edit.html.twig', [
             'proposal' => $proposal,
             'form' => $form->createView(),
             'origin' => $request->query->get('origin'),
@@ -158,7 +158,7 @@ class QuoteProposalController extends AbstractController
             ], 303);
         }
 
-        return $this->render('quote_proposal/show.html.twig', [
+        return $this->render('Quote/quote_proposal/show.html.twig', [
             'proposal' => $proposal,
             'isReadOnlyView' => false,
             'viewerContext' => 'prestataire',
@@ -438,7 +438,7 @@ class QuoteProposalController extends AbstractController
         }
 
         return new Response(
-            $nativePdfGenerator->generatePdfOutput($proposal, 'quote_proposal/proposal_pdf.html.twig'),
+            $nativePdfGenerator->generatePdfOutput($proposal, 'Quote/quote_proposal/proposal_pdf.html.twig'),
             Response::HTTP_OK,
             [
                 'Content-Type' => 'application/pdf',
@@ -480,7 +480,7 @@ class QuoteProposalController extends AbstractController
             ], 303);
         }
 
-        return $this->render('quote_proposal/show.html.twig', [
+        return $this->render('Quote/quote_proposal/show.html.twig', [
             'proposal' => $proposal,
             'isReadOnlyView' => true,
             'viewerContext' => 'prestataire',

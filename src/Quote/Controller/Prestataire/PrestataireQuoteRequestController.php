@@ -70,7 +70,7 @@ final class PrestataireQuoteRequestController extends AbstractController
             10
         );
 
-        return $this->render('prestataire/quote_request/show.html.twig', [
+        return $this->render('Quote/prestataire/quote_request/show.html.twig', [
             'quoteRequests' => $quoteRequests,
         ]);
     }
@@ -118,7 +118,7 @@ final class PrestataireQuoteRequestController extends AbstractController
             }
         }
 
-        return $this->render('prestataire/quote_request/show.html.twig', [
+        return $this->render('Quote/prestataire/quote_request/show.html.twig', [
             'quoteRequest' => $quoteRequest,
             'isArchivedView' => $quoteRequest->isArchivedByPrestataire(),
             'linkedProposal' => $linkedProposal,

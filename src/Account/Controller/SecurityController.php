@@ -50,7 +50,7 @@ class SecurityController extends AbstractController
 
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('security/login.html.twig', [
+        return $this->render('Account/security/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error,
         ]);
@@ -78,7 +78,7 @@ class SecurityController extends AbstractController
                         ->from(new Address('contact@trouvemoi.fr', 'TrouveMoi'))
                         ->to((string) $user->getEmail())
                         ->subject('Confirmez votre adresse email')
-                        ->htmlTemplate('registration/confirmation_email.html.twig')
+                        ->htmlTemplate('Account/registration/confirmation_email.html.twig')
                 );
 
                 if (!$emailWasSent) {

@@ -1,0 +1,798 @@
+{% extends 'Website/base.html.twig' %}
+
+{% block title %}Abonnements prestataire - TrouveMoi{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/profile/settings_prestataire.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/prestataire/subscription.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .subscription-pricing-section {
+            --subscription-purple: #6200ff;
+            --subscription-border: #e5e5e5;
+            --subscription-text: #0b0b0b;
+            --subscription-muted: #7d7784;
+            margin-bottom: 1rem;
+            padding: 0;
+            background: transparent;
+            border: 0;
+            box-shadow: none;
+            font-family: Inter, sans-serif;
+        }
+
+        .subscription-pricing-section__heading {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .subscription-pricing-section__heading h2 {
+            grid-column: 1;
+            margin: 0;
+            color: var(--subscription-text);
+            font-size: 1rem;
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.025em;
+        }
+
+        .subscription-period-switch {
+            grid-column: 2;
+            display: inline-flex;
+            align-items: center;
+            width: 247px;
+            min-height: 37px;
+            padding: 4px;
+            border: 1px solid var(--subscription-border);
+            border-radius: 999px;
+            background: #fff;
+        }
+
+        .subscription-period-switch__button {
+            flex: 1 1 50%;
+            min-height: 25px;
+            padding: 0.25rem 0.85rem;
+            border: 0;
+            border-radius: 999px;
+            background: transparent;
+            color: #817a72;
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1;
+            transition: background-color 0.18s ease, color 0.18s ease;
+        }
+
+        .subscription-period-switch__button.is-active {
+            background: var(--subscription-purple);
+            color: #fff;
+        }
+
+        .subscription-period-switch__button:focus-visible {
+            outline: 3px solid rgba(98, 0, 255, 0.2);
+            outline-offset: 2px;
+        }
+
+        .subscription-pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .subscription-pricing-card {
+            display: flex;
+            min-width: 0;
+            min-height: 336px;
+            flex-direction: column;
+            padding: 1.2rem 1.25rem;
+            border: 1px solid var(--subscription-border);
+            border-radius: 15px;
+            background: #fff;
+        }
+
+        .subscription-pricing-card__name {
+            margin: 0 0 1rem;
+            color: var(--subscription-text);
+            font-size: 1rem;
+            font-weight: 800;
+            line-height: 1.15;
+        }
+
+        .subscription-pricing-card__price {
+            display: flex;
+            min-height: 31px;
+            align-items: baseline;
+            gap: 0.35rem;
+            margin-bottom: 0.85rem;
+            color: var(--subscription-text);
+        }
+
+        .subscription-pricing-card__price strong {
+            font-size: 1.5rem;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -0.035em;
+        }
+
+        .subscription-pricing-card__price span {
+            color: #746e7b;
+            font-size: 0.76rem;
+            font-weight: 500;
+        }
+
+        .subscription-pricing-card__description {
+            min-height: 2.25rem;
+            margin: 0 0 0.15rem;
+            color: var(--subscription-muted);
+            font-size: 0.71rem;
+            line-height: 1.35;
+        }
+
+        .subscription-pricing-card__features {
+            display: flex;
+            flex-direction: column;
+            margin-top: 0;
+            color: #625d67;
+            font-size: 0.72rem;
+            line-height: 1.35;
+        }
+
+        .subscription-pricing-card__feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.22rem;
+        }
+
+        .subscription-pricing-card__check {
+            flex: 0 0 auto;
+            color: #625d67;
+            font-weight: 800;
+        }
+
+        .subscription-pricing-card__action {
+            width: 100%;
+            min-height: 35px;
+            margin-top: auto;
+            padding: 0.55rem 1rem;
+            border: 0;
+            border-radius: 999px;
+            background: var(--subscription-purple);
+            color: #fff;
+            font-size: 0.76rem;
+            font-weight: 800;
+            line-height: 1;
+            transition: transform 0.16s ease, box-shadow 0.16s ease;
+        }
+
+        .subscription-pricing-card__action:not(:disabled):hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(98, 0, 255, 0.2);
+        }
+
+        .subscription-pricing-card__action:focus-visible {
+            outline: 3px solid rgba(98, 0, 255, 0.2);
+            outline-offset: 2px;
+        }
+
+        .subscription-pricing-card__action:disabled {
+            background: #e9e9e9;
+            color: #908b86;
+            cursor: default;
+            opacity: 1;
+        }
+
+        [data-price-period][hidden],
+        [data-credit-period][hidden] {
+            display: none !important;
+        }
+
+        @media (max-width: 991.98px) {
+            .subscription-pricing-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .subscription-pricing-section__heading {
+                display: flex;
+                align-items: stretch;
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            .subscription-period-switch {
+                width: 100%;
+                max-width: 310px;
+                align-self: center;
+            }
+
+            .subscription-pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .subscription-pricing-card {
+                min-height: 315px;
+            }
+        }
+    </style>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if stripeConfigured and stripePublicKey %}
+        <script src="https://js.stripe.com/v3/" defer></script>
+    {% endif %}
+    <script>
+        (() => {
+            const initializeSubscriptionPricing = () => {
+                document.querySelectorAll('[data-subscription-pricing]').forEach((section) => {
+                    if (section.dataset.subscriptionPricingInitialized === 'true') {
+                        return;
+                    }
+
+                    section.dataset.subscriptionPricingInitialized = 'true';
+
+                    const periodButtons = Array.from(
+                        section.querySelectorAll('[data-subscription-period]')
+                    );
+                    const planButtons = Array.from(
+                        section.querySelectorAll('[data-subscription-plan-action]')
+                    );
+
+                    const updatePeriod = (period) => {
+                        const periodLabel = period === 'annual' ? 'Annuel' : 'Mensuel';
+
+                        periodButtons.forEach((button) => {
+                            const isActive = button.dataset.subscriptionPeriod === period;
+                            button.classList.toggle('is-active', isActive);
+                            button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                        });
+
+                        section.querySelectorAll('[data-price-period]').forEach((price) => {
+                            price.hidden = price.dataset.pricePeriod !== period;
+                        });
+
+                        section.querySelectorAll('[data-credit-period]').forEach((credits) => {
+                            credits.hidden = credits.dataset.creditPeriod !== period;
+                        });
+
+                        planButtons.forEach((button) => {
+                            if (button.dataset.planLocked === 'true') {
+                                return;
+                            }
+
+                            const price = button.getAttribute(`data-plan-${period}-price`) || '0.00';
+                            const submitUrl = button.getAttribute(`data-plan-${period}-submit-url`) || '';
+                            const csrfToken = button.getAttribute(`data-plan-${period}-csrf-token`) || '';
+                            const available = button.getAttribute(`data-plan-${period}-available`) === 'true';
+                            const isCurrent = button.getAttribute(`data-plan-${period}-current`) === 'true';
+
+                            button.setAttribute('data-subscription-checkout-plan-period-param', period);
+                            button.setAttribute('data-subscription-checkout-plan-price-param', price);
+                            button.setAttribute('data-subscription-checkout-plan-label-param', periodLabel);
+                            button.setAttribute('data-subscription-checkout-plan-submit-url-param', submitUrl);
+                            button.setAttribute('data-subscription-checkout-plan-csrf-token-param', csrfToken);
+                            button.disabled = !available;
+                            button.textContent = isCurrent ? 'Abonnement actuel' : 'Souscrire';
+                        });
+
+                        section.dataset.activePeriod = period;
+                    };
+
+                    periodButtons.forEach((button) => {
+                        button.addEventListener('click', () => {
+                            updatePeriod(button.dataset.subscriptionPeriod);
+                        });
+                    });
+
+                    updatePeriod(section.dataset.defaultPeriod || 'annual');
+                });
+            };
+
+            document.addEventListener('DOMContentLoaded', initializeSubscriptionPricing);
+            document.addEventListener('turbo:load', initializeSubscriptionPricing);
+
+            if (document.readyState !== 'loading') {
+                initializeSubscriptionPricing();
+            }
+        })();
+    </script>
+
+{% endblock %}
+
+{% block body %}
+    <div class="tm-dashboard-page subscription-dashboard-page" {{ stimulus_controller('prestataire-dashboard-tabs') }}>
+        <div class="tm-settings-container tm-dashboard-page__shell">
+            <div class="tm-main-layout tm-dashboard-page__layout">
+                <aside class="tm-settings-sidebar tm-dashboard-page__sidebar" {{ stimulus_target('prestataire-dashboard-tabs', 'sidebar') }}>
+                    {{ include('Prestataire/profile/_prestataire_dashboard_sidebar.html.twig', {
+                        user: app.user,
+                        activeTab: '__subscription__',
+                        unreadConversationCount: unreadConversationCount|default(0),
+                        asLinks: true,
+                    }) }}
+                </aside>
+
+                <div class="tm-settings-sidebar-backdrop tm-dashboard-page__backdrop" {{ stimulus_target('prestataire-dashboard-tabs', 'backdrop') }} {{ stimulus_action('prestataire-dashboard-tabs', 'closeSidebar', 'click') }}></div>
+
+                <div class="tm-settings-content tm-dashboard-page__content">
+                    <button type="button" class="tm-sidebar-toggle d-lg-none tm-dashboard-page__toggle" aria-label="Ouvrir la navigation du dashboard" {{ stimulus_target('prestataire-dashboard-tabs', 'toggle') }} {{ stimulus_action('prestataire-dashboard-tabs', 'toggleSidebar', 'click') }}>
+                        ☰
+                    </button>
+
+                    <div class="dash-body subscription-page">
+                        <div class="dash-panel subscription-panel">
+                            {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+                                {% for message in messages %}
+                                    <div class="subscription-alert subscription-alert--{{ type == 'error' ? 'danger' : type }}" role="alert">
+                                        <div>{{ message }}</div>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+
+                            <header class="dash-header subscription-header">
+                                <div>
+                                    <p class="subscription-eyebrow">Abonnements et facturation</p>
+                                    <h1>Mon abonnement</h1>
+                                    <p>Abonnement, paiement et factures au même endroit.</p>
+                                </div>
+                            </header>
+
+                            {% if not stripeConfigured or not stripePublicKey %}
+                                <div class="subscription-alert subscription-alert--warning" role="alert">
+                                    Le module de paiement n’est pas disponible sur cet environnement. Les abonnements ne peuvent pas être souscrits pour le moment.
+                                </div>
+                            {% endif %}
+
+                            <div
+                                data-controller="subscription-checkout"
+                                data-subscription-checkout-stripe-public-key-value="{{ stripePublicKey }}"
+                                data-subscription-checkout-setup-intent-url-value="{{ path('app_subscription_setup_intent') }}"
+                                data-subscription-checkout-update-payment-method-url-value="{{ path('app_subscription_update_payment_method') }}"
+                                data-subscription-checkout-setup-intent-csrf-token-value="{{ csrf_token('subscription-setup-intent') }}"
+                                data-subscription-checkout-payment-method-update-csrf-token-value="{{ csrf_token('subscription-payment-method-update') }}"
+                                data-subscription-checkout-finalize-url-value="{{ path('app_subscription_finalize') }}"
+                                data-subscription-checkout-finalize-csrf-token-value="{{ csrf_token('subscription-finalize') }}"
+                                data-subscription-checkout-enabled-value="{{ stripeConfigured and stripePublicKey ? 'true' : 'false' }}"
+                                data-subscription-checkout-return-url-value="{{ path('app_subscription_index') }}"
+                            >
+                                {% if currentSubscription %}
+                                    <section class="dash-card subscription-section">
+                                        <div class="dash-card__header">
+                                            <h2>Offre actuelle</h2>
+                                        </div>
+
+                                        <div class="row g-4 align-items-stretch">
+                                            <div class="col-12 col-xl-8">
+                                                <div class="subscription-current">
+                                                    <div class="subscription-current__top">
+                                                        <div>
+                                                            <div class="subscription-badges">
+                                                                <span class="chip chip--premium">Abonnement actif</span>
+                                                                {% if currentSubscription.isCancelAtPeriodEnd %}
+                                                                    <span class="chip chip--attente">Résiliation programmée</span>
+                                                                {% endif %}
+                                                            </div>
+                                                            <h2 class="subscription-current__title">
+                                                                {{ currentSubscription.plan ? currentSubscription.plan.name : 'Abonnement actif' }}
+                                                            </h2>
+                                                            <p class="subscription-current__meta">
+                                                                {{ currentSubscription.billingPeriod.label }}
+                                                                {% if currentSubscription.status is defined %}
+                                                                    · {{ currentSubscription.status.label }}
+                                                                {% endif %}
+                                                                · Renouvellement le
+                                                                <strong>{{ subscriptionRenewalDate ? subscriptionRenewalDate|date('d/m/Y') : 'à confirmer' }}</strong>
+                                                            </p>
+
+                                                            {% if stripeConfigured %}
+                                                                <p class="subscription-current__payment-method">
+                                                                    Carte utilisée :
+                                                                    <strong>
+                                                                        {% if cardLast4 is defined and cardLast4 %}
+                                                                            **** {{ cardLast4|e }}
+                                                                        {% elseif hasStoredPaymentMethod|default(false) %}
+                                                                            carte enregistrée
+                                                                        {% else %}
+                                                                            non renseignée
+                                                                        {% endif %}
+                                                                    </strong>
+                                                                    {% if cardBrand is defined and cardBrand %}
+                                                                        <span class="subscription-current__payment-card-brand">{{ cardBrand|upper }}</span>
+                                                                    {% endif %}
+                                                                    {% if cardExpiry is defined and cardExpiry %}
+                                                                        <span>— Exp. {{ cardExpiry }}</span>
+                                                                    {% endif %}
+                                                                    <button type="button" class="btn btn-link btn-sm subscription-current__payment-method-link" data-action="subscription-checkout#startUpdatePaymentMethod">
+                                                                        Modifier
+                                                                    </button>
+                                                                </p>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+
+                                                    {% if currentSubscription.isCancelAtPeriodEnd %}
+                                                        <div class="subscription-inline-alert" role="alert">
+                                                            La résiliation de cet abonnement est programmée pour le
+                                                            <strong>{{ subscriptionRenewalDate ? subscriptionRenewalDate|date('d/m/Y') : 'prochain renouvellement' }}</strong>.
+                                                            Jusqu’à cette date, l’abonnement et ses crédits restent utilisables.
+                                                        </div>
+                                                    {% endif %}
+
+                                                    <div class="perf-stats subscription-stats">
+                                                        <div>
+                                                            <h3>Crédits restants</h3>
+                                                            <b>{{ currentSubscription.remainingCredits }}</b>
+                                                            <small>Disponibles</small>
+                                                        </div>
+                                                        <div>
+                                                            <h3>Crédits attribués</h3>
+                                                            <b>{{ currentSubscription.creditsGrantedCurrentPeriod }}</b>
+                                                            <small>Période en cours</small>
+                                                        </div>
+                                                        <div>
+                                                            <h3>Crédits consommés</h3>
+                                                            <b>{{ currentSubscription.creditsConsumedCurrentPeriod }}</b>
+                                                            <small>Déjà utilisés</small>
+                                                        </div>
+                                                        <div>
+                                                            <h3>Échéance</h3>
+                                                            <b>{{ subscriptionRenewalDate ? subscriptionRenewalDate|date('d/m/Y') : '—' }}</b>
+                                                            <small>{{ currentSubscription.billingPeriod.label }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {% if currentSubscription.plan and currentSubscription.plan.code != 'free' %}
+                                                <div class="col-12 col-xl-4">
+                                                    <div class="plan plan--actif subscription-sidecard">
+                                                        <span class="plan__badge plan__badge--actuel">OFFRE ACTIVE</span>
+                                                        <span class="plan__nom">{{ currentSubscription.plan.name }}</span>
+                                                        <div class="plan__liste">
+                                                            <span>Périodicité : {{ currentSubscription.billingPeriod.label }}</span>
+                                                            <span>Crédits restants : {{ currentSubscription.remainingCredits }}</span>
+                                                            <span>Statut : {{ currentSubscription.status is defined ? currentSubscription.status.label : 'Actif' }}</span>
+                                                        </div>
+
+                                                        {% if currentSubscription.isCancelAtPeriodEnd %}
+                                                            <form
+                                                                method="post"
+                                                                action="{{ path('app_subscription_resume') }}"
+                                                                data-controller="confirm-dialog"
+                                                                data-action="submit->confirm-dialog#confirm"
+                                                                data-confirm-dialog-title-value="Annuler la résiliation programmée ?"
+                                                                data-confirm-dialog-text-value="Votre abonnement restera actif et sera renouvelé normalement à la prochaine échéance."
+                                                                data-confirm-dialog-confirm-button-text-value="Conserver l’abonnement"
+                                                                data-confirm-dialog-cancel-button-text-value="Garder la résiliation"
+                                                                class="subscription-form-stack"
+                                                            >
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('subscription-resume') }}">
+                                                                <button type="submit" class="btn btn-dash-primary">Conserver l’abonnement</button>
+                                                            </form>
+                                                        {% else %}
+                                                            <form
+                                                                method="post"
+                                                                action="{{ path('app_subscription_cancel') }}"
+                                                                data-controller="confirm-dialog"
+                                                                data-action="submit->confirm-dialog#confirm"
+                                                                data-confirm-dialog-title-value="Programmer la résiliation ?"
+                                                                data-confirm-dialog-text-value="Votre abonnement restera actif jusqu’à la fin de la période déjà payée. Les crédits restants resteront utilisables jusque-là."
+                                                                data-confirm-dialog-confirm-button-text-value="Programmer la résiliation"
+                                                                data-confirm-dialog-cancel-button-text-value="Conserver l’abonnement"
+                                                                class="subscription-form-stack"
+                                                            >
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('subscription-cancel') }}">
+                                                                <button type="submit" class="btn btn-dash-ghost">Programmer la résiliation</button>
+                                                            </form>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </section>
+                                {% endif %}
+                                <section
+                                    class="subscription-pricing-section"
+                                    data-subscription-pricing
+                                    data-default-period="annual"
+                                    aria-labelledby="subscription-pricing-title"
+                                >
+                                    <div class="subscription-pricing-section__heading">
+                                        <h2 id="subscription-pricing-title">Choisissez votre abonnement</h2>
+
+                                        <div class="subscription-period-switch" role="group" aria-label="Périodicité de l’abonnement">
+                                            <button
+                                                type="button"
+                                                class="subscription-period-switch__button is-active"
+                                                data-subscription-period="annual"
+                                                aria-pressed="true"
+                                            >
+                                                Annuel
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="subscription-period-switch__button"
+                                                data-subscription-period="monthly"
+                                                aria-pressed="false"
+                                            >
+                                                Mensuel
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="subscription-pricing-grid">
+                                        {% set planTierRanks = {free: 0, pro: 1, premium: 2} %}
+                                        {% set currentPlanCode = currentSubscription and currentSubscription.plan ? currentSubscription.plan.code : null %}
+                                        {% set currentPlanTierRank = currentPlanCode in planTierRanks|keys ? attribute(planTierRanks, currentPlanCode) : 0 %}
+                                        {% set currentPeriodRank = currentSubscription and currentSubscription.billingPeriod.value == 'annual' ? 1 : 0 %}
+                                        {% set currentPlanRank = currentSubscription and currentSubscription.plan ? (currentPlanTierRank * 10) + currentPeriodRank : -1 %}
+
+                                        {% for plan in plans %}
+                                            {% set planTierRank = plan.code in planTierRanks|keys ? attribute(planTierRanks, plan.code) : 0 %}
+                                            {% set monthlyPlanRank = (planTierRank * 10) %}
+                                            {% set annualPlanRank = (planTierRank * 10) + 1 %}
+                                            {% set isCurrentPlanCode = currentSubscription and currentSubscription.plan and currentSubscription.plan.code == plan.code %}
+                                            {% set isCurrentMonthlyPlan = isCurrentPlanCode and currentSubscription.billingPeriod.value == 'monthly' %}
+                                            {% set isCurrentAnnualPlan = isCurrentPlanCode and currentSubscription.billingPeriod.value == 'annual' %}
+                                            {% set isFreePlan = plan.code == 'free' %}
+                                            {% set isMonthlyUpgradeAvailable = monthlyPlanRank > currentPlanRank %}
+                                            {% set isAnnualUpgradeAvailable = annualPlanRank > currentPlanRank %}
+
+                                            <article class="subscription-pricing-card{{ isCurrentPlanCode ? ' is-current' : '' }}">
+                                                <h3 class="subscription-pricing-card__name">{{ plan.name }}</h3>
+
+                                                <div
+                                                    class="subscription-pricing-card__price"
+                                                    data-price-period="annual"
+                                                >
+                                                    {% if isFreePlan %}
+                                                        <strong>Gratuit</strong>
+                                                    {% else %}
+                                                        <strong>{{ plan.annualAmount ? plan.annualAmount|number_format(2, ',', ' ') : '—' }} €</strong>
+                                                        <span>/ an</span>
+                                                    {% endif %}
+                                                </div>
+
+                                                <div
+                                                    class="subscription-pricing-card__price"
+                                                    data-price-period="monthly"
+                                                    hidden
+                                                >
+                                                    {% if isFreePlan %}
+                                                        <strong>Gratuit</strong>
+                                                    {% else %}
+                                                        <strong>{{ plan.monthlyAmount ? plan.monthlyAmount|number_format(2, ',', ' ') : '—' }} €</strong>
+                                                        <span>/ mois</span>
+                                                    {% endif %}
+                                                </div>
+
+                                                <p class="subscription-pricing-card__description">
+                                                    {{ plan.description ?: 'Une offre adaptée aux professionnels qui souhaitent développer leur activité.' }}
+                                                </p>
+
+                                                <div class="subscription-pricing-card__features">
+                                                    <span class="subscription-pricing-card__feature" data-credit-period="annual">
+                                                        <span class="subscription-pricing-card__check" aria-hidden="true">✓</span>
+                                                        {{ plan.annualCredits }} crédit{{ plan.annualCredits > 1 ? 's inclus' : ' inclus' }}
+                                                    </span>
+
+                                                    <span class="subscription-pricing-card__feature" data-credit-period="monthly" hidden>
+                                                        <span class="subscription-pricing-card__check" aria-hidden="true">✓</span>
+                                                        {{ plan.monthlyCredits }} crédit{{ plan.monthlyCredits > 1 ? 's inclus' : ' inclus' }}
+                                                    </span>
+
+                                                    <span class="subscription-pricing-card__feature">
+                                                        <span class="subscription-pricing-card__check" aria-hidden="true">✓</span>
+                                                        {{ plan.quoteResponsesEnabled ? 'Réponse aux demandes incluse' : 'Réponse aux demandes limitée' }}
+                                                    </span>
+
+                                                    <span class="subscription-pricing-card__feature">
+                                                        <span class="subscription-pricing-card__check" aria-hidden="true">✓</span>
+                                                        {{ plan.instantMessagingEnabled ? 'Messagerie instantanée incluse' : 'Messagerie instantanée non incluse' }}
+                                                    </span>
+                                                </div>
+
+                                                {% if isFreePlan %}
+                                                    <button
+                                                        type="button"
+                                                        class="subscription-pricing-card__action"
+                                                        data-subscription-plan-action
+                                                        data-plan-locked="true"
+                                                        disabled
+                                                    >
+                                                        Souscrire
+                                                    </button>
+                                                {% else %}
+                                                    <button
+                                                        type="button"
+                                                        class="subscription-pricing-card__action"
+                                                        data-action="click->subscription-checkout#selectPlan"
+                                                        data-subscription-plan-action
+                                                        data-plan-locked="false"
+                                                        data-subscription-checkout-plan-code-param="{{ plan.code }}"
+                                                        data-subscription-checkout-plan-period-param="annual"
+                                                        data-subscription-checkout-plan-name-param="{{ plan.name }}"
+                                                        data-subscription-checkout-plan-price-param="{{ plan.annualAmount ?: '0.00' }}"
+                                                        data-subscription-checkout-plan-label-param="Annuel"
+                                                        data-subscription-checkout-plan-submit-url-param="{{ path('app_subscription_checkout', {code: plan.code, period: 'annual'}) }}"
+                                                        data-subscription-checkout-plan-csrf-token-param="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-annual') }}"
+                                                        data-plan-monthly-price="{{ plan.monthlyAmount ?: '0.00' }}"
+                                                        data-plan-monthly-submit-url="{{ path('app_subscription_checkout', {code: plan.code, period: 'monthly'}) }}"
+                                                        data-plan-monthly-csrf-token="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-monthly') }}"
+                                                        data-plan-monthly-available="{{ isMonthlyUpgradeAvailable and stripeConfigured and stripePublicKey and plan.monthlyStripePriceId ? 'true' : 'false' }}"
+                                                        data-plan-monthly-current="{{ isCurrentMonthlyPlan ? 'true' : 'false' }}"
+                                                        data-plan-annual-price="{{ plan.annualAmount ?: '0.00' }}"
+                                                        data-plan-annual-submit-url="{{ path('app_subscription_checkout', {code: plan.code, period: 'annual'}) }}"
+                                                        data-plan-annual-csrf-token="{{ csrf_token('subscription-checkout-' ~ plan.code ~ '-annual') }}"
+                                                        data-plan-annual-available="{{ isAnnualUpgradeAvailable and stripeConfigured and stripePublicKey and plan.annualStripePriceId ? 'true' : 'false' }}"
+                                                        data-plan-annual-current="{{ isCurrentAnnualPlan ? 'true' : 'false' }}"
+                                                        {{ (not isAnnualUpgradeAvailable) or not stripeConfigured or not stripePublicKey or not plan.annualStripePriceId ? 'disabled' : '' }}
+                                                    >
+                                                        {{ isCurrentAnnualPlan ? 'Abonnement actuel' : 'Souscrire' }}
+                                                    </button>
+                                                {% endif %}
+                                            </article>
+                                        {% else %}
+                                            <div class="subscription-alert subscription-alert--muted" role="alert">
+                                                Aucun plan d’abonnement actif n’est configuré dans l’administration.
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </section>
+
+                                {% if stripeConfigured and stripePublicKey and plans is not empty %}
+                                    <section class="dash-card subscription-section">
+                                        <div class="row g-4 align-items-start">
+                                            <div class="col-12 col-lg-5">
+                                                <div class="subscription-payment-intro">
+                                                    <span class="chip chip--nouvelle">Paiement sécurisé</span>
+                                                    <h2>Confirmer la carte et l’abonnement</h2>
+                                                    <div class="subscription-selection-card" data-subscription-checkout-target="selectionCard">
+                                                        <div class="subscription-selection-card__label">Offre sélectionnée</div>
+                                                        <div class="subscription-selection-card__name" data-subscription-checkout-target="selectionName">Choisissez une formule</div>
+                                                        <div class="subscription-selection-card__meta" data-subscription-checkout-target="selectionMeta">
+                                                            Choisissez une formule ci-dessus.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 col-lg-7">
+                                                <div class="subscription-alert subscription-alert--danger d-none" data-subscription-checkout-target="errorBox"></div>
+                                                <div class="subscription-alert subscription-alert--success d-none" data-subscription-checkout-target="successBox"></div>
+
+                                                <div class="subscription-loading-overlay d-none" data-subscription-checkout-target="loadingOverlay" aria-hidden="true">
+                                                    <div class="subscription-loading-overlay__spinner" aria-hidden="true"></div>
+                                                    <div class="subscription-loading-overlay__text" data-subscription-checkout-target="loadingText">
+                                                        Préparation du paiement sécurisé...
+                                                    </div>
+                                                </div>
+
+                                                <div class="subscription-payment-card">
+                                                    <div class="subscription-payment-card__title">Carte bancaire</div>
+                                                    <div data-subscription-checkout-target="paymentElement"></div>
+                                                </div>
+
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-dash-primary subscription-submit"
+                                                    data-action="click->subscription-checkout#submit"
+                                                    data-subscription-checkout-target="submitButton"
+                                                    disabled
+                                                >
+                                                    <span data-subscription-checkout-target="submitButtonLabel">Régler et activer l’abonnement</span>
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-dash-ghost subscription-update d-none"
+                                                    data-action="click->subscription-checkout#submitPaymentMethodUpdate"
+                                                    data-subscription-checkout-target="updateButton"
+                                                    disabled
+                                                >
+                                                    Mettre à jour la carte
+                                                </button>
+
+                                                <div class="subscription-submit-help" data-subscription-checkout-target="submitHelp">
+                                                    Le bouton sera activé dès qu’une formule est choisie et que le formulaire de carte est prêt.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                {% endif %}
+
+                                <section class="dash-card subscription-section">
+                                    <div class="dash-card__header">
+                                        <div>
+                                            <p class="subscription-eyebrow">Factures d’abonnement</p>
+                                            <h2>Historique de facturation</h2>
+                                        </div>
+                                    </div>
+
+                                    {% if recentInvoices is not empty %}
+                                        <div class="tableau-wrap">
+                                            <table class="table-devis table-devis--compact">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">N° facture</th>
+                                                        <th scope="col">Date</th>
+                                                        <th scope="col">Libellé</th>
+                                                        <th scope="col">Montant</th>
+                                                        <th scope="col">Statut</th>
+                                                        <th scope="col" class="text-end">PDF</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for invoice in recentInvoices %}
+                                                        {% set statusClass = invoice.status.value == 'paid' ? 'accepte' : (invoice.status.value == 'open' ? 'attente' : (invoice.status.value == 'void' ? 'brouillon' : 'refuse')) %}
+                                                        <tr>
+                                                            <td><span class="devis-ref">{{ invoice.invoiceNumber ?: ('Facture n° ' ~ invoice.id) }}</span></td>
+                                                            <td>
+                                                                <span class="devis-date">
+                                                                    <b>{{ invoice.paidAt ? invoice.paidAt|date('d/m/Y à H:i') : invoice.createdAt|date('d/m/Y à H:i') }}</b>
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <span class="devis-prestation">
+                                                                    {% set invoiceLabel = invoice.getStripeDescription() %}
+                                                                    {% if invoiceLabel %}
+                                                                        {{ invoiceLabel }}
+                                                                    {% elseif invoice.subscription and invoice.subscription.plan %}
+                                                                        {{ invoice.subscription.plan.name }} — {{ invoice.subscription.billingPeriod.label }}
+                                                                    {% else %}
+                                                                        Abonnement synchronisé
+                                                                    {% endif %}
+                                                                    {% if invoice.periodStart and invoice.periodEnd %}
+                                                                        · {{ invoice.periodStart|date('d/m/Y') }} - {{ invoice.periodEnd|date('d/m/Y') }}
+                                                                    {% elseif invoice.periodStart %}
+                                                                        · À partir du {{ invoice.periodStart|date('d/m/Y') }}
+                                                                    {% endif %}
+                                                                </span>
+                                                            </td>
+                                                            <td><span class="devis-montant">{{ (invoice.totalAmount ?: invoice.amountPaid ?: '0.00')|number_format(2, ',', ' ') }} {{ invoice.currencyCode }}</span></td>
+                                                            <td><span class="chip chip--{{ statusClass }}">{{ invoice.status.label }}</span></td>
+                                                            <td>
+                                                                <div class="actions-ligne">
+                                                                    <a href="{{ path('app_subscription_invoice_download', {invoiceId: invoice.id}) }}" class="btn-icone" aria-label="Télécharger la facture {{ invoice.invoiceNumber ?: invoice.id }}" title="Télécharger">
+                                                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                                            <path d="M13 3H6v18h12V8z"/>
+                                                                            <path d="M13 3v5h5M9 14h6M9 17h4"/>
+                                                                        </svg>
+                                                                    </a>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    {% else %}
+                                        <div class="subscription-alert subscription-alert--muted" role="alert">
+                                            Aucune facture d’abonnement n’est encore disponible pour ce compte.
+                                        </div>
+                                    {% endif %}
+                                </section>
+                            </div>
+
+                            <div class="conseil">
+                                <p class="conseil__titre mb-0">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M13 2 4 14h6l-1 8 9-12h-6z"/>
+                                    </svg>
+                                    Le saviez-vous ?
+                                </p>
+                                <p>Une offre supérieure améliore généralement la visibilité et l’accès aux demandes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

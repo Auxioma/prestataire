@@ -135,7 +135,7 @@ class ShowPrestataireController extends AbstractController
         $hasUnlockedContactDetails = null !== $currentSubscription
             && 'free' !== $currentSubscription->getPlan()?->getCode();
 
-        return $this->render('show_prestataire/show.html.twig', [
+        return $this->render('Prestataire/show_prestataire/show.html.twig', [
             'prestataire' => $prestataire,
             'zones' => $zones,
             'zoneMap' => $zoneMap,

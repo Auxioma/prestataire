@@ -56,7 +56,7 @@ class RegistrationController extends AbstractController
      */
     public function choice(): Response
     {
-        return $this->render('registration/choice.html.twig');
+        return $this->render('Account/registration/choice.html.twig');
     }
 
     #[Route('/register', name: 'app_register')]
@@ -117,7 +117,7 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('registration/register.html.twig', [
+        return $this->render('Account/registration/register.html.twig', [
             'registrationForm' => $form,
             'accountType' => $accountType,
             'prestataireStep' => null,
@@ -236,7 +236,7 @@ class RegistrationController extends AbstractController
                 return $this->redirectToRoute('app_register', ['role' => 'prestataire', 'step' => 2]);
             }
 
-            return $this->render('registration/register.html.twig', [
+            return $this->render('Account/registration/register.html.twig', [
                 'registrationForm' => $form,
                 'accountType' => 'prestataire',
                 'prestataireStep' => 1,
@@ -277,7 +277,7 @@ class RegistrationController extends AbstractController
                 }
             }
 
-            return $this->render('registration/register.html.twig', [
+            return $this->render('Account/registration/register.html.twig', [
                 'registrationForm' => null,
                 'accountType' => 'prestataire',
                 'prestataireStep' => 2,
@@ -291,7 +291,7 @@ class RegistrationController extends AbstractController
         }
 
         if (!$request->isMethod('POST')) {
-            return $this->render('registration/register.html.twig', [
+            return $this->render('Account/registration/register.html.twig', [
                 'registrationForm' => null,
                 'accountType' => 'prestataire',
                 'prestataireStep' => 3,
@@ -413,7 +413,7 @@ class RegistrationController extends AbstractController
                 ->from(new Address('noreply@trouvemoi.com', 'TrouveMoi'))
                 ->to((string) $user->getEmail())
                 ->subject('Veuillez confirmer votre adresse email')
-                ->htmlTemplate('registration/confirmation_email.html.twig')
+                ->htmlTemplate('Account/registration/confirmation_email.html.twig')
         );
     }
 

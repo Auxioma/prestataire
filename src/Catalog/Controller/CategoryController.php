@@ -68,7 +68,7 @@ class CategoryController extends AbstractController
             $sort,
         );
 
-        return $this->render('category/category.html.twig', [
+        return $this->render('Catalog/category/category.html.twig', [
             'filterForm' => $form->createView(),
             'categoryRows' => $categoryRows,
             'activeQuery' => $query,
@@ -91,7 +91,7 @@ class CategoryController extends AbstractController
             throw $this->createNotFoundException('Cette catégorie n\'est pas disponible.');
         }
 
-        return $this->render('category/sub_categories.html.twig', [
+        return $this->render('Catalog/category/sub_categories.html.twig', [
             'category' => $category,
         ]);
     }
@@ -114,7 +114,7 @@ class CategoryController extends AbstractController
             throw $this->createNotFoundException('Ce métier ou cette spécialité n\'existe pas.');
         }
 
-        return $this->render('category/services.html.twig', [
+        return $this->render('Catalog/category/services.html.twig', [
             'category' => $subCategory->getParent(),
             'subCategory' => $subCategory,
         ]);

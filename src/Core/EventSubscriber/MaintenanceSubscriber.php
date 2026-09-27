@@ -35,7 +35,7 @@ final class MaintenanceSubscriber implements EventSubscriberInterface
         }
 
         $response = new Response(
-            $this->twig->render('maintenance.html.twig'),
+            $this->twig->render('Website/maintenance.html.twig'),
             Response::HTTP_SERVICE_UNAVAILABLE,
             [
                 'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',

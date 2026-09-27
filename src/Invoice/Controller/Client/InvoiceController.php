@@ -26,7 +26,7 @@ final class InvoiceController extends AbstractInvoiceController
             throw $this->createNotFoundException('Facture introuvable.');
         }
 
-        return $this->render('invoice/show.html.twig', [
+        return $this->render('Invoice/show.html.twig', [
             'invoice' => $invoice,
             'proposal' => $invoice->getQuoteProposal(),
             'viewerContext' => 'client',

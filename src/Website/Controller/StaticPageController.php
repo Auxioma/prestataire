@@ -31,7 +31,7 @@ class StaticPageController extends AbstractController
     {
         // Nettoyage simple du nom pour correspondre au fichier twig
         $templateName = str_replace('-', '_', $slug);
-        $templatePath = "static/{$templateName}.html.twig";
+        $templatePath = "Website/static/{$templateName}.html.twig";
 
         // Vérification de l'existence du template pour éviter une erreur 500
         if (!$this->twigExists($templatePath)) {

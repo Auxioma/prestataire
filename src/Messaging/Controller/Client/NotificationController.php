@@ -51,7 +51,7 @@ final class NotificationController extends AbstractController
             10
         );
 
-        return $this->render('client/notification/index.html.twig', [
+        return $this->render('Messaging/notification/index.html.twig', [
             'notifications' => $pagination,
             'unreadCount' => $notificationRepository->countUnreadForUser($user),
         ]);

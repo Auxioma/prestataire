@@ -85,7 +85,7 @@ class BonsPlansController extends AbstractController
             $favoriteBonPlanIds = $favoriteRepository->findTargetIdsByUserAndType($user, FavoriteTypeEnum::BON_PLAN);
         }
 
-        return $this->render('bons_plans/bons_plans.html.twig', [
+        return $this->render('Catalog/bons_plans/bons_plans.html.twig', [
             'bonsPlans' => $bonsPlans,
             'categories' => $categories,
             'subCategories' => $subCategories,

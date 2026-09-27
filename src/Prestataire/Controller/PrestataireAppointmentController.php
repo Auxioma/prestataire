@@ -185,7 +185,7 @@ final class PrestataireAppointmentController extends AbstractController
             );
         }
 
-        return $this->render('prestataire/appointment/new.html.twig', [
+        return $this->render('Prestataire/appointment/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -213,7 +213,7 @@ final class PrestataireAppointmentController extends AbstractController
             ['startsAt' => 'ASC']
         );
 
-        return $this->render('prestataire/appointment/index.html.twig', [
+        return $this->render('Prestataire/appointment/index.html.twig', [
             'appointments' => $appointments,
         ]);
     }
@@ -240,7 +240,7 @@ final class PrestataireAppointmentController extends AbstractController
             throw $this->createAccessDeniedException('Vous ne pouvez pas consulter ce rendez-vous.');
         }
 
-        return $this->render('prestataire/appointment/show.html.twig', [
+        return $this->render('Prestataire/appointment/show.html.twig', [
             'appointment' => $appointment,
         ]);
     }
@@ -282,7 +282,7 @@ final class PrestataireAppointmentController extends AbstractController
             );
         }
 
-        return $this->render('prestataire/appointment/edit.html.twig', [
+        return $this->render('Prestataire/appointment/edit.html.twig', [
             'appointment' => $appointment,
             'form' => $form->createView(),
         ]);

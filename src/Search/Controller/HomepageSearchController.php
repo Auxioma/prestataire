@@ -143,7 +143,7 @@ class HomepageSearchController extends AbstractController
         $offset = ($page - 1) * $perPage;
         $pagedDirectResults = array_slice($directResults, $offset, $perPage);
 
-        return $this->render('search/homepage_results.html.twig', [
+        return $this->render('Search/homepage_results.html.twig', [
             'searchForm' => $form->createView(),
             'results' => $pagedDirectResults,
             'directResults' => $pagedDirectResults,

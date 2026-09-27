@@ -44,6 +44,6 @@ final class PrestataireRegistrationSiretController extends AbstractController
             }
         }
 
-        return $this->render('registration/prestataire_siret.html.twig', ['siretForm' => $form]);
+        return $this->render('Prestataire/registration/prestataire_siret.html.twig', ['siretForm' => $form]);
     }
 }

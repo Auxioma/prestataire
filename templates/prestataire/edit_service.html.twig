@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'Website/base.html.twig' %}
 
 {% block title %}Modifier {{ ps.service.name }} - TrouveMoi{% endblock %}
 
@@ -11,7 +11,7 @@
     <div class="tm-settings-container" {{ stimulus_controller('settings-tabs') }}>
         <div class="tm-main-layout">
             <aside class="tm-settings-sidebar" {{ stimulus_target('settings-tabs', 'sidebar') }}>
-                {{ include('profile/_prestataire_settings_sidebar.html.twig', {
+                {{ include('Prestataire/profile/_prestataire_settings_sidebar.html.twig', {
                     user: app.user,
                     activeTab: 'services',
                     asLinks: true,

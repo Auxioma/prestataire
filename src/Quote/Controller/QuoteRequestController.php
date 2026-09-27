@@ -84,7 +84,7 @@ final class QuoteRequestController extends AbstractController
             8
         );
 
-        return $this->render('quote_request/index.html.twig', [
+        return $this->render('Quote/quote_request/index.html.twig', [
             'quoteRequests' => $quoteRequests,
         ]);
     }
@@ -236,7 +236,7 @@ final class QuoteRequestController extends AbstractController
             }
         }
 
-        return $this->render('quote_request/new.html.twig', [
+        return $this->render('Quote/quote_request/new.html.twig', [
             'form' => $form->createView(),
             'quoteRequest' => $quoteRequest,
             'prestataire' => $prestataire,
@@ -475,7 +475,7 @@ final class QuoteRequestController extends AbstractController
         // =========================
         // Rendu de la page
         // =========================
-        return $this->render('quote_request/show.html.twig', [
+        return $this->render('Quote/quote_request/show.html.twig', [
             'quoteRequest' => $quoteRequest,
             'conversation' => $conversation,
             'messages' => $messages,
@@ -651,7 +651,7 @@ final class QuoteRequestController extends AbstractController
 
         usort($mediaItems, static fn(array $a, array $b) => ($a['createdAt'] <=> $b['createdAt']));
 
-        return $this->render('conversation/gallery.html.twig', [
+        return $this->render('Messaging/conversation/gallery.html.twig', [
             'conversation' => $conversation,
             'quoteRequest' => $quoteRequest,
             'mediaItems' => $mediaItems,
@@ -690,7 +690,7 @@ final class QuoteRequestController extends AbstractController
             throw $this->createNotFoundException('Devis introuvable.');
         }
 
-        return $this->render('quote_request/proposal_show.html.twig', [
+        return $this->render('Quote/quote_request/proposal_show.html.twig', [
             'proposal' => $proposal,
             'quoteRequest' => $proposal->getQuoteRequest(),
             'viewerContext' => 'client',
@@ -734,7 +734,7 @@ final class QuoteRequestController extends AbstractController
         }
 
         return new Response(
-            $nativePdfGenerator->generatePdfOutput($proposal, 'quote_request/proposal_pdf.html.twig'),
+            $nativePdfGenerator->generatePdfOutput($proposal, 'Quote/quote_request/proposal_pdf.html.twig'),
             Response::HTTP_OK,
             [
                 'Content-Type' => 'application/pdf',
@@ -926,7 +926,7 @@ final class QuoteRequestController extends AbstractController
             8
         );
 
-        return $this->render('quote_request/archives.html.twig', [
+        return $this->render('Quote/quote_request/archives.html.twig', [
             'archivedQuoteRequests' => $archivedQuoteRequests,
         ]);
     }
@@ -993,7 +993,7 @@ $quoteResponses = array_values(array_filter(
         $existingReview = $reviewRepository->findOneByQuoteRequest($quoteRequest);
         $canLeaveReview = $reviewManager->canClientReviewQuoteRequest($user->getClientProfile(), $quoteRequest);
 
-        return $this->render('quote_request/archived_show.html.twig', [
+        return $this->render('Quote/quote_request/archived_show.html.twig', [
             'quoteRequest' => $quoteRequest,
             'conversation' => $conversation,
             'messages' => $messages,

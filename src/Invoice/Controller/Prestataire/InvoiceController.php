@@ -80,7 +80,7 @@ final class InvoiceController extends AbstractInvoiceController
             ? Response::HTTP_UNPROCESSABLE_ENTITY
             : Response::HTTP_OK;
 
-        return $this->render('invoice/edit.html.twig', [
+        return $this->render('Invoice/edit.html.twig', [
             'invoice' => $invoice,
             'proposal' => $proposal,
             'form' => $form->createView(),
@@ -139,7 +139,7 @@ final class InvoiceController extends AbstractInvoiceController
             $prestataireProfileRepository,
         );
 
-        return $this->render('invoice/show.html.twig', [
+        return $this->render('Invoice/show.html.twig', [
             'invoice' => $invoice,
             'proposal' => $invoice->getQuoteProposal(),
             'viewerContext' => 'prestataire',

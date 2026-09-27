@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'Website/base.html.twig' %}
 
 {% block title %}
     {{ prestation.title ?: 'Prestation' }}
@@ -35,7 +35,7 @@
     {% if firstMedia and firstMedia.fileName %}
         {% set serviceData = serviceData|merge({image: absolute_url(asset('uploads/prestations/' ~ firstMedia.fileName))}) %}
     {% endif %}
-    {{ include('layout/_json_ld.html.twig', {data: serviceData}) }}
+    {{ include('Website/layout/_json_ld.html.twig', {data: serviceData}) }}
 {% endblock %}
 
 {% set pricingLabel = 'Tarification non renseignée' %}

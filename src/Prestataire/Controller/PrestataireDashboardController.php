@@ -118,7 +118,7 @@ final class PrestataireDashboardController extends AbstractController
             }
 
             return $this->render(
-                'prestataire/dashboard/prestataire_dashboard.html.twig',
+                'Prestataire/dashboard/prestataire_dashboard.html.twig',
                 $this->buildDashboardViewData(
                     request: $request,
                     entityManager: $entityManager,
@@ -140,7 +140,7 @@ final class PrestataireDashboardController extends AbstractController
             );
         }
 
-        return $this->render('prestataire/dashboard/prestataire_dashboard.html.twig', $this->buildDashboardViewData(
+        return $this->render('Prestataire/dashboard/prestataire_dashboard.html.twig', $this->buildDashboardViewData(
             request: $request,
             entityManager: $entityManager,
             user: $user,
@@ -316,7 +316,7 @@ final class PrestataireDashboardController extends AbstractController
         }
 
         return $this->render(
-            'prestataire/dashboard/prestataire_dashboard.html.twig',
+            'Prestataire/dashboard/prestataire_dashboard.html.twig',
             $this->buildDashboardViewData(
                 request: $request,
                 entityManager: $entityManager,
@@ -391,7 +391,7 @@ final class PrestataireDashboardController extends AbstractController
 
         usort($mediaItems, static fn(array $a, array $b) => ($a['createdAt'] <=> $b['createdAt']));
 
-        return $this->render('conversation/gallery.html.twig', [
+        return $this->render('Messaging/conversation/gallery.html.twig', [
             'conversation' => $conversation,
             'mediaItems' => $mediaItems,
             'backUrl' => $this->generateUrl('app_prestataire_dashboard', [
