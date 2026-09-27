@@ -1,15 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Quote\Entity;
 
-use App\Messaging\Entity\Conversation;
-
 use App\Account\Entity\ClientProfile;
-
-use App\Prestataire\Entity\PrestataireService;
-
+use App\Messaging\Entity\Conversation;
 use App\Prestataire\Entity\PrestataireProfile;
-
+use App\Prestataire\Entity\PrestataireService;
 use App\Quote\Enum\QuoteRequestStatusEnum;
 use App\Quote\Repository\QuoteRequestRepository;
 use Doctrine\DBAL\Types\Types;
@@ -80,13 +93,13 @@ class QuoteRequest
 
     public function __toString(): string
     {
-        $title = trim((string) ($this->title ?? ''));
+        $title = mb_trim((string) ($this->title ?? ''));
 
         if ('' !== $title) {
             return $title;
         }
 
-        return sprintf('Demande #%s', $this->id ?? 'n/a');
+        return \sprintf('Demande #%s', $this->id ?? 'n/a');
     }
 
     public function getId(): ?string
@@ -233,11 +246,11 @@ class QuoteRequest
 
     public function setConversation(?Conversation $conversation): static
     {
-        if ($conversation === null && $this->conversation !== null) {
+        if (null === $conversation && null !== $this->conversation) {
             $this->conversation->setQuoteRequest(null);
         }
 
-        if ($conversation !== null && $conversation->getQuoteRequest() !== $this) {
+        if (null !== $conversation && $conversation->getQuoteRequest() !== $this) {
             $conversation->setQuoteRequest($this);
         }
 
@@ -307,7 +320,7 @@ class QuoteRequest
             return false;
         }
 
-        return in_array(
+        return \in_array(
             $this->status,
             [QuoteRequestStatusEnum::SUBMITTED, QuoteRequestStatusEnum::DENIED],
             true

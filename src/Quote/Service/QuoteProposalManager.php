@@ -2,15 +2,30 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Quote\Service;
 
 use App\Account\Entity\ClientProfile;
+use App\Account\Entity\User;
 use App\Messaging\Entity\Conversation;
 use App\Prestataire\Entity\PrestataireProfile;
 use App\Quote\Entity\QuoteProposal;
 use App\Quote\Entity\QuoteProposalItem;
 use App\Quote\Entity\QuoteRequest;
-use App\Account\Entity\User;
 use App\Quote\Enum\QuoteProposalStatusEnum;
 use App\Quote\Repository\QuoteProposalRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,25 +36,25 @@ class QuoteProposalManager
         private readonly EntityManagerInterface $entityManager,
         private readonly QuoteProposalRepository $quoteProposalRepository,
         private readonly QuoteProposalNumberGenerator $numberGenerator,
-    ) {}
+    ) {
+    }
 
     public function findActiveProposal(
         QuoteRequest $quoteRequest,
-        PrestataireProfile $prestataire
+        PrestataireProfile $prestataire,
     ): ?QuoteProposal {
         return $this->quoteProposalRepository->findOneActiveByQuoteRequestAndPrestataire($quoteRequest, $prestataire);
     }
 
-
     public function getOrCreateDraft(
         QuoteRequest $quoteRequest,
         PrestataireProfile $prestataire,
-        ?Conversation $conversation = null
+        ?Conversation $conversation = null,
     ): QuoteProposal {
         $existing = $this->findActiveProposal($quoteRequest, $prestataire);
 
         if ($existing instanceof QuoteProposal) {
-            if ($conversation instanceof Conversation && $existing->getConversation() === null) {
+            if ($conversation instanceof Conversation && null === $existing->getConversation()) {
                 $existing->setConversation($conversation);
                 $existing->touch();
                 $this->entityManager->flush();
@@ -60,10 +75,10 @@ class QuoteProposalManager
             ->setTitle($this->buildDefaultTitle($quoteRequest))
             ->setCurrency($this->resolveQuoteRequestCurrency($quoteRequest) ?? 'EUR');
 
-        if ($proposal->getPublicReference() === null) {
+        if (null === $proposal->getPublicReference()) {
             do {
                 $reference = $this->generatePublicReference();
-            } while ($this->quoteProposalRepository->findOneBy(['publicReference' => $reference]) !== null);
+            } while (null !== $this->quoteProposalRepository->findOneBy(['publicReference' => $reference]));
 
             $proposal->setPublicReference($reference);
         }
@@ -218,7 +233,7 @@ class QuoteProposalManager
 
     private function hasExternalPdfAvailable(QuoteProposal $proposal): bool
     {
-        return $proposal->hasExternalPdf() || $proposal->getExternalPdfFile() !== null;
+        return $proposal->hasExternalPdf() || null !== $proposal->getExternalPdfFile();
     }
 
     public function freezeSnapshot(
@@ -226,7 +241,7 @@ class QuoteProposalManager
         QuoteRequest $quoteRequest,
         PrestataireProfile $prestataire,
         ?ClientProfile $client = null,
-        ?Conversation $conversation = null
+        ?Conversation $conversation = null,
     ): QuoteProposal {
         $client ??= $quoteRequest->getClient();
 
@@ -249,7 +264,7 @@ class QuoteProposalManager
 
     private function freezePrestataireSnapshot(
         QuoteProposal $proposal,
-        PrestataireProfile $prestataire
+        PrestataireProfile $prestataire,
     ): void {
         $proposal->setPrestataireCompanyName($this->clean($prestataire->getCompanyName()));
         $proposal->setPrestataireLegalName($this->clean($prestataire->getLegalName()));
@@ -270,7 +285,7 @@ class QuoteProposalManager
 
     private function freezeClientSnapshot(
         QuoteProposal $proposal,
-        ?ClientProfile $client
+        ?ClientProfile $client,
     ): void {
         if (!$client instanceof ClientProfile) {
             $proposal->setClientTypeLabel(null);
@@ -293,12 +308,12 @@ class QuoteProposalManager
         $email = null;
 
         if ($account instanceof User) {
-            $firstName = trim((string) $account->getFirstName());
-            $lastName = trim((string) $account->getLastName());
-            $email = trim((string) $account->getEmail());
+            $firstName = mb_trim((string) $account->getFirstName());
+            $lastName = mb_trim((string) $account->getLastName());
+            $email = mb_trim((string) $account->getEmail());
 
-            $candidate = trim($firstName . ' ' . $lastName);
-            $fullName = $candidate !== '' ? $candidate : null;
+            $candidate = mb_trim($firstName.' '.$lastName);
+            $fullName = '' !== $candidate ? $candidate : null;
         }
 
         $proposal->setClientTypeLabel($this->resolveClientTypeLabel($client));
@@ -319,7 +334,7 @@ class QuoteProposalManager
 
     private function freezeInterventionSnapshot(
         QuoteProposal $proposal,
-        ?ClientProfile $client
+        ?ClientProfile $client,
     ): void {
         if (!$client instanceof ClientProfile) {
             $proposal->setClientInterventionAddress(null);
@@ -345,13 +360,13 @@ class QuoteProposalManager
 
     private function clean(?string $value): ?string
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
-        $value = trim($value);
+        $value = mb_trim($value);
 
-        return $value !== '' ? $value : null;
+        return '' !== $value ? $value : null;
     }
 
     private function firstFilled(?string ...$values): ?string
@@ -359,7 +374,7 @@ class QuoteProposalManager
         foreach ($values as $value) {
             $value = $this->clean($value);
 
-            if ($value !== null) {
+            if (null !== $value) {
                 return $value;
             }
         }
@@ -380,7 +395,7 @@ class QuoteProposalManager
         $title = $this->readObjectGetter($quoteRequest, ['getTitle']);
 
         if (!$this->isBlank($title)) {
-            return 'Devis - ' . $title;
+            return 'Devis - '.$title;
         }
 
         return 'Devis prestation';
@@ -394,7 +409,7 @@ class QuoteProposalManager
             return null;
         }
 
-        return strtoupper((string) $currency);
+        return mb_strtoupper((string) $currency);
     }
 
     private function resolveClientTypeLabel(?ClientProfile $client): ?string
@@ -405,7 +420,7 @@ class QuoteProposalManager
 
         $type = $this->readRawObjectGetter($client, ['getType']);
 
-        if ($type === null) {
+        if (null === $type) {
             return null;
         }
 
@@ -438,7 +453,7 @@ class QuoteProposalManager
         foreach (['getFirstname', 'getFirstName'] as $method) {
             if (method_exists($account, $method)) {
                 $firstName = $this->clean($account->{$method}());
-                if ($firstName !== null) {
+                if (null !== $firstName) {
                     break;
                 }
             }
@@ -448,13 +463,13 @@ class QuoteProposalManager
         foreach (['getLastname', 'getLastName'] as $method) {
             if (method_exists($account, $method)) {
                 $lastName = $this->clean($account->{$method}());
-                if ($lastName !== null) {
+                if (null !== $lastName) {
                     break;
                 }
             }
         }
 
-        $fullName = trim(($firstName ?? '') . ' ' . ($lastName ?? ''));
+        $fullName = mb_trim(($firstName ?? '').' '.($lastName ?? ''));
         $fullName = $this->clean($fullName);
 
         return $fullName ?? $companyName;
@@ -527,14 +542,14 @@ class QuoteProposalManager
 
     private function getStringValue(mixed $value): ?string
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
-        if (is_scalar($value) || $value instanceof \Stringable) {
-            $value = trim((string) $value);
+        if (\is_scalar($value) || $value instanceof \Stringable) {
+            $value = mb_trim((string) $value);
 
-            return $value !== '' ? $value : null;
+            return '' !== $value ? $value : null;
         }
 
         return null;
@@ -544,7 +559,7 @@ class QuoteProposalManager
     {
         $value = $this->getStringValue($value);
 
-        if ($value === null) {
+        if (null === $value) {
             return $default;
         }
 
@@ -560,11 +575,11 @@ class QuoteProposalManager
     private function trimJoin(array $parts): ?string
     {
         $parts = array_filter(
-            array_map(fn(mixed $value) => $this->getStringValue($value), $parts),
-            fn(?string $value) => !$this->isBlank($value)
+            array_map(fn (mixed $value) => $this->getStringValue($value), $parts),
+            fn (?string $value) => !$this->isBlank($value)
         );
 
-        if ($parts === []) {
+        if ([] === $parts) {
             return null;
         }
 
@@ -586,7 +601,7 @@ class QuoteProposalManager
 
     private function generatePublicReference(): string
     {
-        return sprintf('DEV-%s-%s', date('Y'), strtoupper(substr(bin2hex(random_bytes(6)), 0, 12)));
+        return \sprintf('DEV-%s-%s', date('Y'), mb_strtoupper(mb_substr(bin2hex(random_bytes(6)), 0, 12)));
     }
 
     private function normalizeItemPositions(QuoteProposal $proposal): void
@@ -604,11 +619,11 @@ class QuoteProposalManager
             $description = $item->getDescription();
             $label = $item->getLabel();
 
-            $isLabelBlank = $label === null || trim($label) === '';
-            $isDescriptionBlank = $description === null || trim($description) === '';
-            $isQuantityEmpty = $item->getQuantity() === null;
-            $isUnitPriceEmpty = $item->getUnitPriceHt() === null;
-            $isVatRateEmpty = $item->getVatRate() === null;
+            $isLabelBlank = null === $label || '' === mb_trim($label);
+            $isDescriptionBlank = null === $description || '' === mb_trim($description);
+            $isQuantityEmpty = null === $item->getQuantity();
+            $isUnitPriceEmpty = null === $item->getUnitPriceHt();
+            $isVatRateEmpty = null === $item->getVatRate();
 
             if ($isLabelBlank && $isDescriptionBlank && $isQuantityEmpty && $isUnitPriceEmpty && $isVatRateEmpty) {
                 $proposal->removeItem($item);
@@ -618,6 +633,6 @@ class QuoteProposalManager
 
     private function isBlank(?string $value): bool
     {
-        return $value === null || trim($value) === '';
+        return null === $value || '' === mb_trim($value);
     }
 }

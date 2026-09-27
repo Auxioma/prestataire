@@ -2,19 +2,30 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Invoice\Entity;
 
-use App\Quote\Entity\QuoteRequest;
-
-use App\Quote\Entity\QuoteProposal;
-
-use App\Prestataire\Entity\PrestataireProfile;
-
 use App\Account\Entity\ClientProfile;
-
 use App\Invoice\Enum\InvoiceSourceTypeEnum;
 use App\Invoice\Enum\InvoiceStatusEnum;
 use App\Invoice\Repository\InvoiceRepository;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Quote\Entity\QuoteProposal;
+use App\Quote\Entity\QuoteRequest;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -557,7 +568,7 @@ class Invoice
                 $maxPosition = max($maxPosition, $existingItem->getPosition() ?? 0);
             }
 
-            if ($item->getPosition() === null) {
+            if (null === $item->getPosition()) {
                 $item->setPosition($maxPosition + 1);
             }
 
@@ -604,12 +615,12 @@ class Invoice
 
     public function hasExternalPdf(): bool
     {
-        return $this->externalPdfName !== null && $this->externalPdfName !== '';
+        return null !== $this->externalPdfName && '' !== $this->externalPdfName;
     }
 
     public function hasGeneratedPdf(): bool
     {
-        return $this->facturXPdfName !== null && $this->facturXPdfName !== '';
+        return null !== $this->facturXPdfName && '' !== $this->facturXPdfName;
     }
 
     public function touch(): self

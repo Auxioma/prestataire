@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Quote\Enum;
 
 enum QuoteProposalDocumentModeEnum: string
@@ -17,11 +34,11 @@ enum QuoteProposalDocumentModeEnum: string
 
     public function isPlatform(): bool
     {
-        return $this === self::PLATFORM;
+        return self::PLATFORM === $this;
     }
 
     public function isExternalPdf(): bool
     {
-        return $this === self::EXTERNAL_PDF;
+        return self::EXTERNAL_PDF === $this;
     }
 }

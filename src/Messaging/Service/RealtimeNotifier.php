@@ -1,10 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Messaging\Service;
 
+use App\Account\Entity\User;
 use App\Messaging\Entity\Message;
 use App\Messaging\Entity\Notification;
-use App\Account\Entity\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -17,14 +34,15 @@ final class RealtimeNotifier
         private readonly string $realtimeBaseUrl,
         private readonly string $internalToken,
         private readonly UrlGeneratorInterface $urlGenerator,
-    ) {}
+    ) {
+    }
 
     public function notifyMessageCreated(int $conversationId, Message $message): void
     {
         $payload = $this->buildMessagePayload($message);
 
         try {
-            $response = $this->httpClient->request('POST', rtrim($this->realtimeBaseUrl, '/') . '/emit/message', [
+            $response = $this->httpClient->request('POST', mb_rtrim($this->realtimeBaseUrl, '/').'/emit/message', [
                 'headers' => [
                     'x-internal-token' => $this->internalToken,
                 ],
@@ -52,13 +70,13 @@ final class RealtimeNotifier
         $author = $message->getAuthor();
 
         $authorName = $author
-            ? trim(($author->getFirstName() ?? '') . ' ' . ($author->getLastName() ?? ''))
+            ? mb_trim(($author->getFirstName() ?? '').' '.($author->getLastName() ?? ''))
             : 'Système';
 
         $authorType = 'system';
 
         if ($author) {
-            $authorType = in_array('ROLE_PRESTATAIRE', $author->getRoles(), true)
+            $authorType = \in_array('ROLE_PRESTATAIRE', $author->getRoles(), true)
                 ? 'prestataire'
                 : 'client';
         }
@@ -77,7 +95,7 @@ final class RealtimeNotifier
                 'fileName' => $fileName,
                 'originalName' => $attachment->getOriginalName(),
                 'mimeType' => $attachment->getMimeType(),
-                'url' => '/uploads/messages/' . $fileName,
+                'url' => '/uploads/messages/'.$fileName,
             ];
         }
 
@@ -104,7 +122,7 @@ final class RealtimeNotifier
         ]);
 
         try {
-            $response = $this->httpClient->request('POST', rtrim($this->realtimeBaseUrl, '/') . '/emit/notification', [
+            $response = $this->httpClient->request('POST', mb_rtrim($this->realtimeBaseUrl, '/').'/emit/notification', [
                 'headers' => [
                     'x-internal-token' => $this->internalToken,
                 ],

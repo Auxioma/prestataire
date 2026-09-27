@@ -2,16 +2,31 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Account\Service;
 
 use App\Account\Entity\ClientProfile;
-use App\Prestataire\Entity\PrestataireProfile;
 use App\Account\Entity\User;
+use App\Account\Enum\UserStatusEnum;
+use App\Prestataire\Entity\PrestataireProfile;
 use App\Prestataire\Enum\DocumentVerificationStatusEnum;
 use App\Prestataire\Enum\PrestataireProfileStatusEnum;
-use App\Search\Enum\SearchVisibilityEnum;
-use App\Account\Enum\UserStatusEnum;
 use App\Prestataire\Enum\VerificationStatusEnum;
+use App\Search\Enum\SearchVisibilityEnum;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final class AccountSecurityManager
@@ -83,8 +98,8 @@ final class AccountSecurityManager
         $profile
             ->setDeletedAt($now)
             ->setUpdatedAt($now)
-            ->setCompanyName(sprintf('Compte desinscrit %s', $profileId))
-            ->setSlug(sprintf('compte-desinscrit-%s', $profileId))
+            ->setCompanyName(\sprintf('Compte desinscrit %s', $profileId))
+            ->setSlug(\sprintf('compte-desinscrit-%s', $profileId))
             ->setLegalName(null)
             ->setStructureType(null)
             ->setSiren(null)

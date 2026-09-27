@@ -2,18 +2,34 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Invoice\Service;
 
 use App\Invoice\Entity\Invoice;
 use App\Invoice\Entity\InvoiceItem;
-use App\Quote\Entity\QuoteProposal;
 use App\Invoice\Enum\InvoiceSourceTypeEnum;
+use App\Quote\Entity\QuoteProposal;
 
 final class InvoiceFactoryFromQuote
 {
     public function __construct(
         private readonly InvoiceTotalsCalculator $totalsCalculator,
-    ) {}
+    ) {
+    }
 
     public function createFromAcceptedQuote(QuoteProposal $proposal): Invoice
     {
@@ -38,7 +54,7 @@ final class InvoiceFactoryFromQuote
 
         if (!$proposal->usesExternalPdfDocument()) {
             foreach ($proposal->getItems() as $proposalItem) {
-                $item = (new InvoiceItem())
+                $item = new InvoiceItem()
                     ->setLabel($proposalItem->getLabel())
                     ->setDescription($proposalItem->getDescription())
                     ->setQuantity($proposalItem->getQuantity())

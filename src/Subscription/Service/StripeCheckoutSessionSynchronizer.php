@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Service;
 
 use App\Prestataire\Entity\PrestataireProfile;
@@ -63,11 +80,11 @@ final class StripeCheckoutSessionSynchronizer
 
         foreach ($subscriptions as $subscription) {
             $status = (string) ($subscription['status'] ?? '');
-            if (!in_array($status, ['trialing', 'active', 'past_due', 'unpaid', 'canceled', 'paused', 'incomplete_expired'], true)) {
+            if (!\in_array($status, ['trialing', 'active', 'past_due', 'unpaid', 'canceled', 'paused', 'incomplete_expired'], true)) {
                 continue;
             }
 
-            $stripeSubscriptionId = trim((string) ($subscription['id'] ?? ''));
+            $stripeSubscriptionId = mb_trim((string) ($subscription['id'] ?? ''));
             if ('' === $stripeSubscriptionId) {
                 continue;
             }
@@ -89,7 +106,7 @@ final class StripeCheckoutSessionSynchronizer
 
     public function syncSubscriptionForPrestataire(string $stripeSubscriptionId, PrestataireProfile $prestataireProfile): bool
     {
-        $stripeSubscriptionId = trim($stripeSubscriptionId);
+        $stripeSubscriptionId = mb_trim($stripeSubscriptionId);
         if ('' === $stripeSubscriptionId) {
             return false;
         }
@@ -160,7 +177,7 @@ final class StripeCheckoutSessionSynchronizer
         }
 
         $latestInvoice = $subscription['latest_invoice'] ?? null;
-        if (!is_array($latestInvoice)) {
+        if (!\is_array($latestInvoice)) {
             return 0;
         }
 
@@ -171,7 +188,7 @@ final class StripeCheckoutSessionSynchronizer
         }
 
         $firstLine = $latestInvoice['lines']['data'][0] ?? null;
-        if (!is_array($firstLine) || !is_array($firstLine['period'] ?? null)) {
+        if (!\is_array($firstLine) || !\is_array($firstLine['period'] ?? null)) {
             return 0;
         }
 
@@ -186,14 +203,13 @@ final class StripeCheckoutSessionSynchronizer
     private function syncLatestInvoiceFromSubscriptionPayload(
         array $subscription,
         ?\App\Subscription\Entity\PrestataireSubscription $fallbackSubscription = null,
-    ): void
-    {
+    ): void {
         $latestInvoice = $subscription['latest_invoice'] ?? null;
-        if (is_string($latestInvoice) && '' !== trim($latestInvoice)) {
+        if (\is_string($latestInvoice) && '' !== mb_trim($latestInvoice)) {
             $latestInvoice = $this->stripeApiClient->retrieveInvoice($latestInvoice);
         }
 
-        if (!is_array($latestInvoice)) {
+        if (!\is_array($latestInvoice)) {
             return;
         }
 

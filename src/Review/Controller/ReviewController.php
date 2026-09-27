@@ -1,13 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Review\Controller;
 
+use App\Account\Entity\User;
 use App\Prestataire\Entity\PrestataireProfile;
 use App\Quote\Entity\QuoteRequest;
-use App\Review\Entity\Review;
-use App\Account\Entity\User;
-use App\Review\Form\ReviewType;
 use App\Quote\Repository\QuoteRequestRepository;
+use App\Review\Entity\Review;
+use App\Review\Form\ReviewType;
 use App\Review\Repository\ReviewRepository;
 use App\Review\Service\ReviewManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -188,7 +205,8 @@ final class ReviewController extends AbstractController
 
     #[Route('/prestataire/{slug}', name: 'public_prestataire_reviews', methods: ['GET'], requirements: ['slug' => '(?!mes-avis$|mes-avis-recus$)[a-z0-9-]+'])]
     public function publicPrestataireReviews(
-        #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireProfile $prestataire,
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        PrestataireProfile $prestataire,
         ReviewRepository $reviewRepository,
     ): Response {
         if (!$prestataire->getCompanyName()) {

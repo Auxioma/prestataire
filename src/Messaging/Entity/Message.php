@@ -1,14 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Messaging\Entity;
 
 use App\Account\Entity\User;
-
 use App\Messaging\Enum\MessageTypeEnum;
 use App\Messaging\Repository\MessageRepository;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 #[ORM\Table(name: 'message')]
@@ -101,7 +117,7 @@ class Message
 
     public function setContent(string $content): static
     {
-        $this->content = trim($content);
+        $this->content = mb_trim($content);
 
         return $this;
     }
@@ -132,12 +148,12 @@ class Message
 
     public function isSystem(): bool
     {
-        return $this->type === MessageTypeEnum::SYSTEM;
+        return MessageTypeEnum::SYSTEM === $this->type;
     }
 
     public function isUserMessage(): bool
     {
-        return $this->type === MessageTypeEnum::USER;
+        return MessageTypeEnum::USER === $this->type;
     }
 
     /**

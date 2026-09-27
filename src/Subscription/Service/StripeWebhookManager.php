@@ -1,8 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Service;
 
 use App\Prestataire\Entity\PrestataireProfile;
+use App\Prestataire\Repository\PrestataireProfileRepository;
 use App\Subscription\Entity\PrestataireSubscription;
 use App\Subscription\Entity\SubscriptionCreditMovement;
 use App\Subscription\Entity\SubscriptionCustomer;
@@ -12,15 +30,14 @@ use App\Subscription\Enum\SubscriptionBillingPeriodEnum;
 use App\Subscription\Enum\SubscriptionCreditMovementTypeEnum;
 use App\Subscription\Enum\SubscriptionInvoiceStatusEnum;
 use App\Subscription\Enum\SubscriptionStatusEnum;
-use App\Prestataire\Repository\PrestataireProfileRepository;
 use App\Subscription\Repository\PrestataireSubscriptionRepository;
 use App\Subscription\Repository\SubscriptionCreditMovementRepository;
 use App\Subscription\Repository\SubscriptionCustomerRepository;
 use App\Subscription\Repository\SubscriptionInvoiceRepository;
-use App\Subscription\Repository\SubscriptionPlanRepository;
 use App\Subscription\Repository\SubscriptionPlanPriceRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Subscription\Repository\SubscriptionPlanRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\ORM\EntityManagerInterface;
 
 final class StripeWebhookManager
 {
@@ -49,7 +66,7 @@ final class StripeWebhookManager
         $type = (string) ($event['type'] ?? '');
         $object = $event['data']['object'] ?? null;
 
-        if (!is_array($object) || '' === $type) {
+        if (!\is_array($object) || '' === $type) {
             return;
         }
 
@@ -115,8 +132,7 @@ final class StripeWebhookManager
         array $payload,
         bool $flush = true,
         ?PrestataireSubscription $fallbackSubscription = null,
-    ): void
-    {
+    ): void {
         $this->syncInvoiceFromStripePayload($eventType, $payload, $fallbackSubscription);
 
         if ($flush) {
@@ -129,7 +145,7 @@ final class StripeWebhookManager
         $now = new \DateTimeImmutable();
 
         foreach ($this->prestataireSubscriptionRepository->findBy(['prestataireProfile' => $prestataireProfile]) as $subscription) {
-            $stripeSubscriptionId = trim((string) ($subscription->getStripeSubscriptionId() ?? ''));
+            $stripeSubscriptionId = mb_trim((string) ($subscription->getStripeSubscriptionId() ?? ''));
 
             if ($this->stripeReferenceHelper->isManagedSubscriptionId($stripeSubscriptionId)) {
                 continue;
@@ -180,8 +196,8 @@ final class StripeWebhookManager
         $previousRemainingCredits = $subscription->getRemainingCredits();
 
         $item = $payload['items']['data'][0] ?? [];
-        $priceId = is_array($item) ? (string) ($item['price']['id'] ?? '') : '';
-        $stripeItemId = is_array($item) ? (string) ($item['id'] ?? '') : '';
+        $priceId = \is_array($item) ? (string) ($item['price']['id'] ?? '') : '';
+        $stripeItemId = \is_array($item) ? (string) ($item['id'] ?? '') : '';
         $plan = '' !== $priceId ? $this->subscriptionPlanRepository->findOneByStripePriceId($priceId) : null;
         $planPrice = '' !== $priceId ? $this->subscriptionPlanPriceRepository->findOneByStripePriceId($priceId) : null;
         [$currentPeriodStart, $currentPeriodEnd] = $this->resolveSubscriptionPeriodBounds($payload);
@@ -219,7 +235,7 @@ final class StripeWebhookManager
             $subscription->syncCreditsWithPlan();
         }
 
-        $hasPlanChanged = 
+        $hasPlanChanged =
             $previousPlan instanceof \App\Subscription\Entity\SubscriptionPlan
             && $subscription->getPlan() instanceof \App\Subscription\Entity\SubscriptionPlan
             && $previousPlan->getId() !== $subscription->getPlan()->getId();
@@ -252,15 +268,15 @@ final class StripeWebhookManager
     private function hasLatestInvoiceForSubscriptionPayload(array $payload): bool
     {
         $latestInvoice = $payload['latest_invoice'] ?? null;
-        if (is_string($latestInvoice)) {
-            return '' !== trim($latestInvoice);
+        if (\is_string($latestInvoice)) {
+            return '' !== mb_trim($latestInvoice);
         }
 
-        if (!is_array($latestInvoice)) {
+        if (!\is_array($latestInvoice)) {
             return false;
         }
 
-        return '' !== trim((string) ($latestInvoice['id'] ?? ''));
+        return '' !== mb_trim((string) ($latestInvoice['id'] ?? ''));
     }
 
     /**
@@ -270,8 +286,7 @@ final class StripeWebhookManager
         string $eventType,
         array $payload,
         ?PrestataireSubscription $fallbackSubscription = null,
-    ): void
-    {
+    ): void {
         $stripeInvoiceId = (string) ($payload['id'] ?? '');
         if ('' === $stripeInvoiceId) {
             return;
@@ -332,6 +347,7 @@ final class StripeWebhookManager
 
         if ('subscription_create' === $billingReason) {
             $this->applyCreatedSubscriptionCredits($subscription, $invoice, $planCredits);
+
             return;
         }
 
@@ -344,7 +360,7 @@ final class StripeWebhookManager
                 return;
             }
 
-            $movement = (new SubscriptionCreditMovement())
+            $movement = new SubscriptionCreditMovement()
                 ->setPrestataireProfile($subscription->getPrestataireProfile())
                 ->setSubscription($subscription)
                 ->setInvoice($invoice)
@@ -416,7 +432,7 @@ final class StripeWebhookManager
             return null;
         }
 
-        $customer = (new SubscriptionCustomer())
+        $customer = new SubscriptionCustomer()
             ->setPrestataireProfile($prestataireProfile)
             ->setStripeCustomerId($stripeCustomerId)
             ->setBillingEmail($prestataireProfile->getAccount()?->getEmail());
@@ -441,7 +457,7 @@ final class StripeWebhookManager
         }
 
         $metadataBillingPeriod = $payload['metadata']['billing_period'] ?? null;
-        if (is_string($metadataBillingPeriod) && in_array($metadataBillingPeriod, ['monthly', 'annual'], true)) {
+        if (\is_string($metadataBillingPeriod) && \in_array($metadataBillingPeriod, ['monthly', 'annual'], true)) {
             return SubscriptionBillingPeriodEnum::from($metadataBillingPeriod);
         }
 
@@ -479,7 +495,7 @@ final class StripeWebhookManager
             return null;
         }
 
-        return (new \DateTimeImmutable())->setTimestamp((int) $timestamp);
+        return new \DateTimeImmutable()->setTimestamp((int) $timestamp);
     }
 
     private function normalizeStripeAmount(mixed $amount): ?string
@@ -506,7 +522,7 @@ final class StripeWebhookManager
         }
 
         $latestInvoice = $payload['latest_invoice'] ?? null;
-        if (!is_array($latestInvoice)) {
+        if (!\is_array($latestInvoice)) {
             return [$currentPeriodStart, $currentPeriodEnd];
         }
 
@@ -579,7 +595,7 @@ final class StripeWebhookManager
     private function extractInvoiceLinePeriodBounds(array $latestInvoice): array
     {
         $firstLine = $latestInvoice['lines']['data'][0] ?? null;
-        if (!is_array($firstLine) || !is_array($firstLine['period'] ?? null)) {
+        if (!\is_array($firstLine) || !\is_array($firstLine['period'] ?? null)) {
             return [null, null];
         }
 
@@ -791,14 +807,14 @@ final class StripeWebhookManager
             return null;
         }
 
-        $targetStripeSubscriptionId = trim((string) ($targetSubscription->getStripeSubscriptionId() ?? ''));
+        $targetStripeSubscriptionId = mb_trim((string) ($targetSubscription->getStripeSubscriptionId() ?? ''));
 
         foreach ($this->prestataireSubscriptionRepository->findUsableForPrestataire($prestataireProfile) as $candidate) {
             if ($candidate === $targetSubscription) {
                 continue;
             }
 
-            $candidateStripeSubscriptionId = trim((string) ($candidate->getStripeSubscriptionId() ?? ''));
+            $candidateStripeSubscriptionId = mb_trim((string) ($candidate->getStripeSubscriptionId() ?? ''));
             if ('' !== $targetStripeSubscriptionId && $candidateStripeSubscriptionId === $targetStripeSubscriptionId) {
                 continue;
             }
@@ -886,5 +902,4 @@ final class StripeWebhookManager
             ->setCreditsConsumedCurrentPeriod(0)
             ->setUpdatedAt(new \DateTimeImmutable());
     }
-
 }

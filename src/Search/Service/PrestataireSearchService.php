@@ -1,20 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Search\Service;
 
 use App\Search\Indexing\PrestataireIndexDefinition;
-
-use App\Search\Service\ElasticsearchClient;
 
 final class PrestataireSearchService
 {
@@ -287,15 +292,15 @@ final class PrestataireSearchService
                         'script' => [
                             'lang' => 'painless',
                             'source' => <<<'PAINLESS'
-if (doc['zones.location'].empty) {
-    return false;
-}
+                                if (doc['zones.location'].empty) {
+                                    return false;
+                                }
 
-double distanceMeters = doc['zones.location'].arcDistance(params.lat, params.lon);
-double zoneRadiusKm = doc['zones.radiusKm'].empty ? 0 : doc['zones.radiusKm'].value;
+                                double distanceMeters = doc['zones.location'].arcDistance(params.lat, params.lon);
+                                double zoneRadiusKm = doc['zones.radiusKm'].empty ? 0 : doc['zones.radiusKm'].value;
 
-return distanceMeters <= ((zoneRadiusKm + params.radiusKm) * 1000.0);
-PAINLESS,
+                                return distanceMeters <= ((zoneRadiusKm + params.radiusKm) * 1000.0);
+                                PAINLESS,
                             'params' => [
                                 'lat' => (float) $searchedLocation['latitude'],
                                 'lon' => (float) $searchedLocation['longitude'],

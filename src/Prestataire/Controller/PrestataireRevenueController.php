@@ -2,11 +2,26 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Prestataire\Controller;
 
+use App\Account\Entity\User;
 use App\Invoice\Entity\Invoice;
 use App\Prestataire\Entity\PrestataireRevenueEntry;
-use App\Account\Entity\User;
 use App\Prestataire\Service\PrestataireRevenueManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,7 +54,7 @@ final class PrestataireRevenueController extends AbstractController
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
-        if (!$this->isCsrfTokenValid('mark_invoice_paid_' . $invoice->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('mark_invoice_paid_'.$invoice->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Jeton CSRF invalide.');
         }
 
@@ -68,7 +83,7 @@ final class PrestataireRevenueController extends AbstractController
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
-        if (!$this->isCsrfTokenValid('mark_manual_revenue_paid_' . $entry->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('mark_manual_revenue_paid_'.$entry->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Jeton CSRF invalide.');
         }
 
@@ -97,7 +112,7 @@ final class PrestataireRevenueController extends AbstractController
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
-        if (!$this->isCsrfTokenValid('delete_manual_revenue_' . $entry->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete_manual_revenue_'.$entry->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Jeton CSRF invalide.');
         }
 
@@ -126,7 +141,7 @@ final class PrestataireRevenueController extends AbstractController
             throw $this->createAccessDeniedException('Accès refusé.');
         }
 
-        if (!$this->isCsrfTokenValid('mark_manual_revenue_unpaid_' . $entry->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('mark_manual_revenue_unpaid_'.$entry->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Jeton CSRF invalide.');
         }
 

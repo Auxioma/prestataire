@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Controller;
 
 use App\Subscription\Service\StripeWebhookEventRecorder;
@@ -27,7 +44,7 @@ final class StripeWebhookController extends AbstractController
         }
 
         $event = json_decode($payload, true);
-        if (!is_array($event)) {
+        if (!\is_array($event)) {
             return new Response('Invalid payload', Response::HTTP_BAD_REQUEST);
         }
 

@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Entity;
 
 use App\Prestataire\Entity\PrestataireProfile;
@@ -122,14 +139,14 @@ class PrestataireSubscription
         $plan = $this->plan?->__toString();
 
         if (null !== $prestataire && null !== $plan) {
-            return sprintf('%s - %s', $prestataire, $plan);
+            return \sprintf('%s - %s', $prestataire, $plan);
         }
 
         if (null !== $prestataire) {
             return $prestataire;
         }
 
-        return sprintf('Souscription #%s', $this->id ?? 'n/a');
+        return \sprintf('Souscription #%s', $this->id ?? 'n/a');
     }
 
     public function getId(): ?string

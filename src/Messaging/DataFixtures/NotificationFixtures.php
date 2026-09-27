@@ -1,13 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Messaging\DataFixtures;
 
-use App\Core\DataFixtures\BaseFixture;
-
 use App\Account\DataFixtures\UserFixtures;
-
-use App\Messaging\Entity\Notification;
 use App\Account\Entity\User;
+use App\Core\DataFixtures\BaseFixture;
+use App\Messaging\Entity\Notification;
 use App\Messaging\Enum\NotificationTypeEnum;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -19,15 +34,15 @@ class NotificationFixtures extends BaseFixture implements DependentFixtureInterf
         $types = NotificationTypeEnum::cases();
 
         for ($i = 1; $i <= 36; ++$i) {
-            $userReference = $i % 2 === 0
-                ? sprintf('user_prestataire_%d', (($i - 1) % UserFixtures::PRESTATAIRE_COUNT) + 1)
-                : sprintf('user_client_%d', (($i - 1) % UserFixtures::CLIENT_COUNT) + 1);
+            $userReference = 0 === $i % 2
+                ? \sprintf('user_prestataire_%d', (($i - 1) % UserFixtures::PRESTATAIRE_COUNT) + 1)
+                : \sprintf('user_client_%d', (($i - 1) % UserFixtures::CLIENT_COUNT) + 1);
 
             /** @var User $recipient */
             $recipient = $this->getReference($userReference, User::class);
-            $type = $types[($i - 1) % count($types)];
+            $type = $types[($i - 1) % \count($types)];
 
-            $notification = (new Notification())
+            $notification = new Notification()
                 ->setRecipient($recipient)
                 ->setType($type)
                 ->setTitle($type->getLabel())
@@ -36,7 +51,7 @@ class NotificationFixtures extends BaseFixture implements DependentFixtureInterf
                 ->setCreatedAt($this->randomDateTimeImmutable('-3 months', 'now'))
                 ->setMetadata(['fixture' => true, 'index' => $i]);
 
-            if ($i % 4 === 0) {
+            if (0 === $i % 4) {
                 $notification->setIsRead(true);
             }
 

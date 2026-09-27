@@ -1,16 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Prestataire\DataFixtures;
 
-use App\Core\DataFixtures\BaseFixture;
-
 use App\Account\DataFixtures\UserFixtures;
-
 use App\Catalog\DataFixtures\ServiceFixtures;
-
+use App\Catalog\Entity\Service;
+use App\Core\DataFixtures\BaseFixture;
 use App\Prestataire\Entity\PrestataireProfile;
 use App\Prestataire\Entity\PrestataireService;
-use App\Catalog\Entity\Service;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
@@ -22,15 +36,15 @@ class PrestataireServiceFixtures extends BaseFixture implements DependentFixture
 
         for ($i = 1; $i <= UserFixtures::PRESTATAIRE_COUNT; ++$i) {
             /** @var PrestataireProfile $prestataire */
-            $prestataire = $this->getReference(sprintf('prestataire_profile_%d', $i), PrestataireProfile::class);
+            $prestataire = $this->getReference(\sprintf('prestataire_profile_%d', $i), PrestataireProfile::class);
 
             for ($offset = 0; $offset < 3; ++$offset) {
                 /** @var Service $service */
-                $service = $this->getReference(sprintf('service_%d', (($i - 1) * 2 + $offset) % 30 + 1), Service::class);
+                $service = $this->getReference(\sprintf('service_%d', (($i - 1) * 2 + $offset) % 30 + 1), Service::class);
                 $catalogPrice = $this->decimal(45, 950);
-                $hasPromo = $offset !== 1;
+                $hasPromo = 1 !== $offset;
 
-                $prestataireService = (new PrestataireService())
+                $prestataireService = new PrestataireService()
                     ->setPrestataire($prestataire)
                     ->setService($service)
                     ->setIsActive(true)
@@ -48,10 +62,10 @@ class PrestataireServiceFixtures extends BaseFixture implements DependentFixture
                     ->setPromotionCreatedAt($hasPromo ? $this->randomDateTimeImmutable('-40 days', '-2 days') : null)
                     ->setCreatedAt($this->randomDateTimeImmutable('-10 months', '-2 months'))
                     ->setUpdatedAt($this->randomDateTimeImmutable('-20 days'))
-                    ->setSlug($this->slugify(sprintf('%s-%s-%d', $prestataire->getCompanyName(), $service->getName(), $offset + 1)));
+                    ->setSlug($this->slugify(\sprintf('%s-%s-%d', $prestataire->getCompanyName(), $service->getName(), $offset + 1)));
 
                 $manager->persist($prestataireService);
-                $this->addReference(sprintf('prestataire_service_%d', $position++), $prestataireService);
+                $this->addReference(\sprintf('prestataire_service_%d', $position++), $prestataireService);
             }
         }
 

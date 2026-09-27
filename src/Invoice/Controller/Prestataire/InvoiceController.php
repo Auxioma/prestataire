@@ -2,23 +2,38 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Invoice\Controller\Prestataire;
 
+use App\Account\Entity\User;
 use App\Invoice\Controller\AbstractInvoiceController;
 use App\Invoice\Entity\Invoice;
-use App\Prestataire\Entity\PrestataireProfile;
-use App\Quote\Entity\QuoteProposal;
-use App\Account\Entity\User;
-use App\Messaging\Enum\NotificationTypeEnum;
 use App\Invoice\Form\InvoiceType;
 use App\Invoice\Repository\InvoiceRepository;
-use App\Prestataire\Repository\PrestataireProfileRepository;
-use App\Quote\Repository\QuoteProposalRepository;
 use App\Invoice\Service\InvoiceDocumentResolver;
 use App\Invoice\Service\InvoiceManager;
 use App\Invoice\Service\InvoicePdfGenerator;
-use App\Review\Service\ClientReviewReminderMailer;
+use App\Messaging\Enum\NotificationTypeEnum;
 use App\Messaging\Service\NotificationManager;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Prestataire\Repository\PrestataireProfileRepository;
+use App\Quote\Entity\QuoteProposal;
+use App\Quote\Repository\QuoteProposalRepository;
+use App\Review\Service\ClientReviewReminderMailer;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -105,7 +120,7 @@ final class InvoiceController extends AbstractInvoiceController
             $prestataireProfileRepository,
         );
 
-        if (!$this->isCsrfTokenValid('issue_invoice_' . $proposal->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('issue_invoice_'.$proposal->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Jeton CSRF invalide.');
         }
 
@@ -181,7 +196,7 @@ final class InvoiceController extends AbstractInvoiceController
         );
 
         $xmlPath = $documentResolver->getXmlPath($invoice);
-        if ($xmlPath === null) {
+        if (null === $xmlPath) {
             throw $this->createNotFoundException('Le XML de préparation Factur-X n’est pas disponible.');
         }
 
@@ -189,7 +204,7 @@ final class InvoiceController extends AbstractInvoiceController
         $response->headers->set('Content-Type', 'application/xml');
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            sprintf('%s.xml', $invoice->getInvoiceNumber() ?: 'facture')
+            \sprintf('%s.xml', $invoice->getInvoiceNumber() ?: 'facture')
         );
 
         return $response;
@@ -211,7 +226,7 @@ final class InvoiceController extends AbstractInvoiceController
         );
 
         $xmlPath = $documentResolver->getXmlPath($invoice);
-        if ($xmlPath === null) {
+        if (null === $xmlPath) {
             throw $this->createNotFoundException('Le XML de préparation Factur-X n’est pas disponible.');
         }
 
@@ -219,7 +234,7 @@ final class InvoiceController extends AbstractInvoiceController
         $response->headers->set('Content-Type', 'application/xml; charset=UTF-8');
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_INLINE,
-            sprintf('%s.xml', $invoice->getInvoiceNumber() ?: 'facture')
+            \sprintf('%s.xml', $invoice->getInvoiceNumber() ?: 'facture')
         );
 
         return $response;

@@ -2,11 +2,26 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Invoice\Controller\Client;
 
+use App\Account\Entity\User;
 use App\Invoice\Controller\AbstractInvoiceController;
 use App\Invoice\Entity\Invoice;
-use App\Account\Entity\User;
 use App\Invoice\Repository\InvoiceRepository;
 use App\Invoice\Service\InvoiceDocumentResolver;
 use App\Invoice\Service\InvoicePdfGenerator;

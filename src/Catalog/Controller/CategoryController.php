@@ -1,23 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Catalog\Controller;
 
 use App\Catalog\Entity\ServiceCategory;
-use App\Search\Form\CategoryFilterType;
 use App\Catalog\Repository\ServiceCategoryRepository;
 use App\Catalog\Repository\ServiceRepository;
-use App\Search\Service\CategorySearchService;
 use App\Prestataire\Service\ZoneGeocoder;
+use App\Search\Form\CategoryFilterType;
+use App\Search\Service\CategorySearchService;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -38,8 +45,7 @@ class CategoryController extends AbstractController
         Request $request,
         CategorySearchService $categorySearchService,
         ZoneGeocoder $zoneGeocoder,
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(CategoryFilterType::class, [
             'query' => '',
             'location' => '',
@@ -55,14 +61,14 @@ class CategoryController extends AbstractController
             ? ($form->getData() ?? [])
             : [];
 
-        $query = trim((string) ($data['query'] ?? ''));
-        $location = trim((string) ($data['location'] ?? ''));
+        $query = mb_trim((string) ($data['query'] ?? ''));
+        $location = mb_trim((string) ($data['location'] ?? ''));
         $radiusKm = max(5, min(100, (int) ($data['radiusKm'] ?? 25)));
         $sort = (string) ($data['sort'] ?? 'providers');
-        $searchedLocation = $location !== '' ? $zoneGeocoder->geocode($location, null) : null;
+        $searchedLocation = '' !== $location ? $zoneGeocoder->geocode($location, null) : null;
         $categoryRows = $categorySearchService->search(
-            $query !== '' ? $query : null,
-            $location !== '' ? $location : null,
+            '' !== $query ? $query : null,
+            '' !== $location ? $location : null,
             $searchedLocation,
             $radiusKm,
             $sort,
@@ -75,7 +81,7 @@ class CategoryController extends AbstractController
             'activeLocation' => $location,
             'activeRadiusKm' => $radiusKm,
             'activeSort' => $sort,
-            'hasActiveFilters' => $query !== '' || $location !== '' || $sort !== 'providers' || $radiusKm !== 25,
+            'hasActiveFilters' => '' !== $query || '' !== $location || 'providers' !== $sort || 25 !== $radiusKm,
         ]);
     }
 
@@ -85,7 +91,8 @@ class CategoryController extends AbstractController
      */
     #[Route('/categories/{slug}', name: 'app_category_show', methods: ['GET'])]
     public function showCategory(
-        #[MapEntity(mapping: ['slug' => 'slug'])] ServiceCategory $category,
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        ServiceCategory $category,
     ): Response {
         if (!$category->isActive()) {
             throw $this->createNotFoundException('Cette catégorie n\'est pas disponible.');
@@ -125,8 +132,6 @@ class CategoryController extends AbstractController
     #[Route('/api/subcategories/{categoryId}', name: 'api_subcategories', methods: ['GET'])]
     /**
      * Traite l’action "getSubCategories" du contrôleur Category.
-     *
-     * @return JsonResponse
      */
     public function getSubCategories(int $categoryId, ServiceCategoryRepository $repo): JsonResponse
     {
@@ -139,8 +144,6 @@ class CategoryController extends AbstractController
     #[Route('/api/services/{subCategoryId}', name: 'api_services', methods: ['GET'])]
     /**
      * Traite l’action "getServices" du contrôleur Category.
-     *
-     * @return JsonResponse
      */
     public function getServices(int $subCategoryId, ServiceRepository $serviceRepo): JsonResponse
     {

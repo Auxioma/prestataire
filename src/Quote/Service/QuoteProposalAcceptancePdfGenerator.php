@@ -2,10 +2,25 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Quote\Service;
 
-use App\Quote\Entity\QuoteProposal;
 use App\Account\Entity\User;
+use App\Quote\Entity\QuoteProposal;
 use setasign\Fpdi\Fpdi;
 
 final class QuoteProposalAcceptancePdfGenerator
@@ -13,19 +28,20 @@ final class QuoteProposalAcceptancePdfGenerator
     public function __construct(
         private readonly QuoteProposalDocumentResolver $documentResolver,
         private readonly string $projectDir,
-    ) {}
+    ) {
+    }
 
     public function generateFromExternalPdf(QuoteProposal $proposal, ?User $acceptedBy): void
     {
         $sourcePath = $this->documentResolver->getExternalPdfPath($proposal);
 
-        if ($sourcePath === null || !is_file($sourcePath)) {
+        if (null === $sourcePath || !is_file($sourcePath)) {
             throw new \RuntimeException('Impossible de générer le PDF accepté : PDF externe introuvable.');
         }
 
-        $targetDirectory = $this->projectDir . '/var/uploads/quote-proposals/accepted';
+        $targetDirectory = $this->projectDir.'/var/uploads/quote-proposals/accepted';
 
-        if (!is_dir($targetDirectory) && !mkdir($targetDirectory, 0775, true) && !is_dir($targetDirectory)) {
+        if (!is_dir($targetDirectory) && !mkdir($targetDirectory, 0o775, true) && !is_dir($targetDirectory)) {
             throw new \RuntimeException('Impossible de créer le répertoire de stockage des devis acceptés.');
         }
 
@@ -48,7 +64,7 @@ final class QuoteProposalAcceptancePdfGenerator
         $pdf->Ln(4);
         $pdf->SetFont('Helvetica', '', 12);
         $pdf->MultiCell(0, 8, $this->toPdfEncoding(
-            sprintf(
+            \sprintf(
                 "Devis accepte par le client le %s.\nReference : %s\nClient : %s",
                 $proposal->getAcceptedAt()?->format('d/m/Y à H:i') ?? '—',
                 $proposal->getProposalNumber() ?: $proposal->getPublicReference() ?: '—',
@@ -56,18 +72,18 @@ final class QuoteProposalAcceptancePdfGenerator
             )
         ));
 
-        $targetName = sprintf(
+        $targetName = \sprintf(
             'accepted-quote-%s-%s.pdf',
             $proposal->getPublicReference() ?: $proposal->getId(),
             bin2hex(random_bytes(6))
         );
-        $targetPath = $targetDirectory . '/' . $targetName;
+        $targetPath = $targetDirectory.'/'.$targetName;
 
         $pdf->Output('F', $targetPath);
 
         $proposal
             ->setAcceptedPdfName($targetName)
-            ->setAcceptedPdfOriginalName(($proposal->getExternalPdfOriginalName() ?: 'devis') . '-accepted.pdf')
+            ->setAcceptedPdfOriginalName(($proposal->getExternalPdfOriginalName() ?: 'devis').'-accepted.pdf')
             ->setAcceptedPdfMimeType('application/pdf')
             ->setAcceptedPdfSize((int) filesize($targetPath))
             ->setAcceptedPdfGeneratedAt(new \DateTimeImmutable())
@@ -76,13 +92,13 @@ final class QuoteProposalAcceptancePdfGenerator
 
     private function resolveClientIdentity(QuoteProposal $proposal, ?User $acceptedBy): string
     {
-        $fullName = trim(sprintf(
+        $fullName = mb_trim(\sprintf(
             '%s %s',
             $acceptedBy?->getFirstName() ?? '',
             $acceptedBy?->getLastName() ?? ''
         ));
 
-        if ($fullName !== '') {
+        if ('' !== $fullName) {
             return $fullName;
         }
 

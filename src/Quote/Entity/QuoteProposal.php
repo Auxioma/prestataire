@@ -1,15 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Quote\Entity;
 
-use App\Invoice\Entity\Invoice;
-
-use App\Messaging\Entity\Conversation;
-
 use App\Account\Entity\ClientProfile;
-
+use App\Invoice\Entity\Invoice;
+use App\Messaging\Entity\Conversation;
 use App\Prestataire\Entity\PrestataireProfile;
-
 use App\Quote\Enum\QuoteProposalDocumentModeEnum;
 use App\Quote\Enum\QuoteProposalStatusEnum;
 use App\Quote\Repository\QuoteProposalRepository;
@@ -326,17 +339,17 @@ class QuoteProposal
 
     public function isDraft(): bool
     {
-        return $this->status === QuoteProposalStatusEnum::DRAFT;
+        return QuoteProposalStatusEnum::DRAFT === $this->status;
     }
 
     public function isFinalized(): bool
     {
-        return $this->status === QuoteProposalStatusEnum::FINALIZED;
+        return QuoteProposalStatusEnum::FINALIZED === $this->status;
     }
 
     public function isDeleted(): bool
     {
-        return $this->status === QuoteProposalStatusEnum::DELETED || null !== $this->deletedAt;
+        return QuoteProposalStatusEnum::DELETED === $this->status || null !== $this->deletedAt;
     }
 
     public function getProposalNumber(): ?string
@@ -947,12 +960,13 @@ class QuoteProposal
     public function setAcceptedAt(?\DateTimeImmutable $acceptedAt): self
     {
         $this->acceptedAt = $acceptedAt;
+
         return $this;
     }
 
     public function isAccepted(): bool
     {
-        return $this->status === QuoteProposalStatusEnum::ACCEPTED;
+        return QuoteProposalStatusEnum::ACCEPTED === $this->status;
     }
 
     public function markAsAccepted(): self
@@ -1153,7 +1167,7 @@ class QuoteProposal
 
     public function hasExternalPdf(): bool
     {
-        return $this->externalPdfName !== null && $this->externalPdfName !== '';
+        return null !== $this->externalPdfName && '' !== $this->externalPdfName;
     }
 
     public function getAcceptedPdfName(): ?string
@@ -1218,7 +1232,7 @@ class QuoteProposal
 
     public function hasAcceptedPdf(): bool
     {
-        return $this->acceptedPdfName !== null && $this->acceptedPdfName !== '';
+        return null !== $this->acceptedPdfName && '' !== $this->acceptedPdfName;
     }
 
     public function clearAcceptedPdf(): self

@@ -1,27 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Account\Controller;
 
 use App\Account\Entity\User;
-use App\Account\Security\EmailVerifier;
 use App\Account\Repository\UserRepository;
+use App\Account\Security\EmailVerifier;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
 /**
  * Gère les actions liées à security.
@@ -37,8 +44,6 @@ class SecurityController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     /**
      * Affiche et traite l’authentification utilisateur.
-     *
-     * @return Response
      */
     public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
     {
@@ -65,16 +70,16 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $email = mb_strtolower(trim((string) $request->request->get('email')));
+        $email = mb_strtolower(mb_trim((string) $request->request->get('email')));
 
-        if ($email !== '') {
+        if ('' !== $email) {
             $user = $this->userRepository->findOneBy(['email' => $email]);
 
             if ($user instanceof User && !$user->isVerified()) {
                 $emailWasSent = $this->emailVerifier->trySendEmailConfirmation(
                     'app_verify_email',
                     $user,
-                    (new TemplatedEmail())
+                    new TemplatedEmail()
                         ->from(new Address('contact@trouvemoi.fr', 'TrouveMoi'))
                         ->to((string) $user->getEmail())
                         ->subject('Confirmez votre adresse email')
@@ -103,8 +108,6 @@ class SecurityController extends AbstractController
     #[Route(path: '/logout', name: 'app_logout')]
     /**
      * Déclenche la déconnexion de l’utilisateur.
-     *
-     * @return void
      */
     public function logout(): void
     {

@@ -1,12 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Prestataire\Controller;
 
-use App\Prestataire\Entity\PrestataireAppointment;
 use App\Account\Entity\User;
+use App\Account\Service\AuthenticatedUserProvider;
+use App\Prestataire\Entity\PrestataireAppointment;
 use App\Prestataire\Form\PrestataireAppointmentType;
 use App\Prestataire\Repository\PrestataireAppointmentRepository;
-use App\Account\Service\AuthenticatedUserProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,8 +51,6 @@ final class PrestataireAppointmentController extends AbstractController
     #[Route('/events', name: 'events', methods: ['GET'])]
     /**
      * Traite l’action "events" du contrôleur Prestataire Appointment.
-     *
-     * @return JsonResponse
      */
     public function events(
         Request $request,
@@ -56,7 +71,7 @@ final class PrestataireAppointmentController extends AbstractController
         $start = $request->query->get('start');
         $end = $request->query->get('end');
 
-        if (!is_string($start) || !is_string($end) || '' === trim($start) || '' === trim($end)) {
+        if (!\is_string($start) || !\is_string($end) || '' === mb_trim($start) || '' === mb_trim($end)) {
             return $this->json([
                 'success' => false,
                 'message' => 'Période invalide.',
@@ -127,8 +142,6 @@ final class PrestataireAppointmentController extends AbstractController
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     /**
      * Affiche et traite le formulaire de création.
-     *
-     * @return Response
      */
     public function new(
         Request $request,
@@ -153,9 +166,9 @@ final class PrestataireAppointmentController extends AbstractController
 
             $roundedStart = $now
                 ->setTime((int) $now->format('H'), (int) $now->format('i'), 0)
-                ->modify(sprintf('+%d minutes', $minutesToAdd));
+                ->modify(\sprintf('+%d minutes', $minutesToAdd));
 
-            if ($minutesToAdd === 0) {
+            if (0 === $minutesToAdd) {
                 $roundedStart = $roundedStart->modify('+15 minutes');
             }
 
@@ -169,10 +182,9 @@ final class PrestataireAppointmentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $baseLabel = $appointment->getTitle() ?: 'rendez-vous';
             $baseSlug = (string) $slugger->slug($baseLabel)->lower();
-            $uniqueSlug = sprintf('%s-%s', $baseSlug, substr(bin2hex(random_bytes(4)), 0, 8));
+            $uniqueSlug = \sprintf('%s-%s', $baseSlug, mb_substr(bin2hex(random_bytes(4)), 0, 8));
 
             $appointment->setSlug($uniqueSlug);
             $entityManager->persist($appointment);
@@ -181,7 +193,7 @@ final class PrestataireAppointmentController extends AbstractController
             $this->addFlash('success', 'Le rendez-vous a bien été créé.');
 
             return $this->redirect(
-                $this->generateUrl('app_prestataire_dashboard') . '#calendrier-main-panel'
+                $this->generateUrl('app_prestataire_dashboard').'#calendrier-main-panel'
             );
         }
 
@@ -194,8 +206,6 @@ final class PrestataireAppointmentController extends AbstractController
     #[Route('', name: 'index', methods: ['GET'])]
     /**
      * Affiche la page principale de ce contrôleur.
-     *
-     * @return Response
      */
     public function index(
         PrestataireAppointmentRepository $appointmentRepository,
@@ -222,11 +232,10 @@ final class PrestataireAppointmentController extends AbstractController
     #[Route('/{slug}', name: 'show', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     /**
      * Affiche le détail de la ressource demandée.
-     *
-     * @return Response
      */
     public function show(
-        #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireAppointment $appointment,
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        PrestataireAppointment $appointment,
     ): Response {
         $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
@@ -249,12 +258,11 @@ final class PrestataireAppointmentController extends AbstractController
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     /**
      * Affiche et traite le formulaire de modification.
-     *
-     * @return Response
      */
     public function edit(
         Request $request,
-        #[MapEntity(id: 'id')] PrestataireAppointment $appointment,
+        #[MapEntity(id: 'id')]
+        PrestataireAppointment $appointment,
         EntityManagerInterface $entityManager,
     ): Response {
         $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
@@ -278,7 +286,7 @@ final class PrestataireAppointmentController extends AbstractController
             $this->addFlash('success', 'Le rendez-vous a bien été modifié.');
 
             return $this->redirect(
-                $this->generateUrl('app_prestataire_dashboard') . '#calendrier-main-panel'
+                $this->generateUrl('app_prestataire_dashboard').'#calendrier-main-panel'
             );
         }
 
@@ -292,12 +300,11 @@ final class PrestataireAppointmentController extends AbstractController
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'], requirements: ['id' => '\d+'])]
     /**
      * Supprime la ressource demandée.
-     *
-     * @return Response
      */
     public function delete(
         Request $request,
-        #[MapEntity(id: 'id')] PrestataireAppointment $appointment,
+        #[MapEntity(id: 'id')]
+        PrestataireAppointment $appointment,
         EntityManagerInterface $entityManager,
     ): Response {
         $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
@@ -312,7 +319,7 @@ final class PrestataireAppointmentController extends AbstractController
             throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer ce rendez-vous.');
         }
 
-        if ($this->isCsrfTokenValid('delete_appointment_' . $appointment->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete_appointment_'.$appointment->getId(), $request->request->get('_token'))) {
             $entityManager->remove($appointment);
             $entityManager->flush();
 
@@ -322,7 +329,7 @@ final class PrestataireAppointmentController extends AbstractController
         }
 
         return $this->redirect(
-            $this->generateUrl('app_prestataire_dashboard') . '#calendrier-main-panel'
+            $this->generateUrl('app_prestataire_dashboard').'#calendrier-main-panel'
         );
     }
 
@@ -330,8 +337,6 @@ final class PrestataireAppointmentController extends AbstractController
     #[Route('/move', name: 'move', methods: ['POST'])]
     /**
      * Traite l’action "move" du contrôleur Prestataire Appointment.
-     *
-     * @return JsonResponse
      */
     public function move(
         Request $request,
@@ -359,7 +364,7 @@ final class PrestataireAppointmentController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         if (
-            !is_array($data)
+            !\is_array($data)
             || empty($data['id'])
             || empty($data['startsAt'])
         ) {
@@ -392,7 +397,7 @@ final class PrestataireAppointmentController extends AbstractController
         try {
             $startsAt = new \DateTime($data['startsAt'], $timezone);
 
-            if (!empty($data['endsAt']) && is_string($data['endsAt'])) {
+            if (!empty($data['endsAt']) && \is_string($data['endsAt'])) {
                 $endsAt = new \DateTime($data['endsAt'], $timezone);
             } else {
                 $endsAt = clone $startsAt;

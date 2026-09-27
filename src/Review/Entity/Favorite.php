@@ -1,9 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Review\Entity;
 
 use App\Account\Entity\User;
-
 use App\Review\Enum\FavoriteTypeEnum;
 use App\Review\Repository\FavoriteRepository;
 use Doctrine\DBAL\Types\Types;
@@ -95,16 +111,16 @@ class Favorite
 
     public function isPrestataire(): bool
     {
-        return $this->type === FavoriteTypeEnum::PRESTATAIRE;
+        return FavoriteTypeEnum::PRESTATAIRE === $this->type;
     }
 
     public function isPrestation(): bool
     {
-        return $this->type === FavoriteTypeEnum::PRESTATION;
+        return FavoriteTypeEnum::PRESTATION === $this->type;
     }
 
     public function isBonPlan(): bool
     {
-        return $this->type === FavoriteTypeEnum::BON_PLAN;
+        return FavoriteTypeEnum::BON_PLAN === $this->type;
     }
 }

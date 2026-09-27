@@ -2,11 +2,25 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Review\Service;
 
-use App\Invoice\Entity\Invoice;
 use App\Account\Entity\User;
-use App\Review\Service\ReviewManager;
+use App\Invoice\Entity\Invoice;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -45,16 +59,16 @@ final class ClientReviewReminderMailer
             return;
         }
 
-        $recipient = trim((string) $clientUser->getEmail());
+        $recipient = mb_trim((string) $clientUser->getEmail());
 
         if ('' === $recipient) {
             return;
         }
 
-        $prestataireName = trim((string) ($prestataire->getCompanyName() ?: $prestataire->getLegalName() ?: 'votre prestataire'));
-        $clientFirstName = trim((string) ($clientUser->getFirstName() ?? ''));
+        $prestataireName = mb_trim((string) ($prestataire->getCompanyName() ?: $prestataire->getLegalName() ?: 'votre prestataire'));
+        $clientFirstName = mb_trim((string) ($clientUser->getFirstName() ?? ''));
 
-        $email = (new TemplatedEmail())
+        $email = new TemplatedEmail()
             ->from(new Address('noreply@trouvemoi.com', 'TrouveMoi'))
             ->to($recipient)
             ->subject('Votre facture est disponible - laissez votre avis')

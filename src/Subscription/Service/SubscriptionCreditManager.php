@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Service;
 
 use App\Quote\Entity\QuoteRequest;
@@ -30,7 +47,7 @@ class SubscriptionCreditManager
 
         $subscription->grantCredits($credits)->setUpdatedAt(new \DateTimeImmutable());
 
-        $movement = (new SubscriptionCreditMovement())
+        $movement = new SubscriptionCreditMovement()
             ->setPrestataireProfile($subscription->getPrestataireProfile())
             ->setSubscription($subscription)
             ->setType($type)
@@ -61,7 +78,7 @@ class SubscriptionCreditManager
 
         $subscription->consumeCredits($credits)->setUpdatedAt(new \DateTimeImmutable());
 
-        $movement = (new SubscriptionCreditMovement())
+        $movement = new SubscriptionCreditMovement()
             ->setPrestataireProfile($subscription->getPrestataireProfile())
             ->setSubscription($subscription)
             ->setType($type)
@@ -91,7 +108,7 @@ class SubscriptionCreditManager
 
         $subscription->consumeCredits(1)->setUpdatedAt(new \DateTimeImmutable());
 
-        $movement = (new SubscriptionCreditMovement())
+        $movement = new SubscriptionCreditMovement()
             ->setPrestataireProfile($subscription->getPrestataireProfile())
             ->setSubscription($subscription)
             ->setQuoteRequest($quoteRequest)

@@ -1,11 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Prestataire\DataFixtures;
 
-use App\Core\DataFixtures\BaseFixture;
-
 use App\Account\DataFixtures\UserFixtures;
-
+use App\Core\DataFixtures\BaseFixture;
 use App\Prestataire\Entity\PrestataireAvailability;
 use App\Prestataire\Entity\PrestataireProfile;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -17,10 +32,10 @@ class PrestataireAvailabilityFixtures extends BaseFixture implements DependentFi
     {
         for ($prestataireIndex = 1; $prestataireIndex <= UserFixtures::PRESTATAIRE_COUNT; ++$prestataireIndex) {
             /** @var PrestataireProfile $prestataire */
-            $prestataire = $this->getReference(sprintf('prestataire_profile_%d', $prestataireIndex), PrestataireProfile::class);
+            $prestataire = $this->getReference(\sprintf('prestataire_profile_%d', $prestataireIndex), PrestataireProfile::class);
 
             for ($day = 1; $day <= 7; ++$day) {
-                $availability = (new PrestataireAvailability())
+                $availability = new PrestataireAvailability()
                     ->setPrestataireProfile($prestataire)
                     ->setDayOfWeek($day)
                     ->setCreatedAt($this->faker->dateTimeBetween('-1 year', '-2 months'))
@@ -39,9 +54,9 @@ class PrestataireAvailabilityFixtures extends BaseFixture implements DependentFi
                         ->setMorningEnabled(true)
                         ->setMorningStart($this->time('09:00'))
                         ->setMorningEnd($this->time('12:00'))
-                        ->setAfternoonEnabled($prestataireIndex % 2 === 0)
-                        ->setAfternoonStart($prestataireIndex % 2 === 0 ? $this->time('14:00') : null)
-                        ->setAfternoonEnd($prestataireIndex % 2 === 0 ? $this->time('17:00') : null);
+                        ->setAfternoonEnabled(0 === $prestataireIndex % 2)
+                        ->setAfternoonStart(0 === $prestataireIndex % 2 ? $this->time('14:00') : null)
+                        ->setAfternoonEnd(0 === $prestataireIndex % 2 ? $this->time('17:00') : null);
                 }
 
                 $manager->persist($availability);

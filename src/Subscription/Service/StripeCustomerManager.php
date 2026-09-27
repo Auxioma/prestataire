@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Service;
 
 use App\Prestataire\Entity\PrestataireProfile;
@@ -32,13 +49,13 @@ final class StripeCustomerManager
         }
 
         $stripeCustomer = $this->stripeApiClient->createCustomer($prestataireProfile);
-        $stripeCustomerId = trim((string) ($stripeCustomer['id'] ?? ''));
+        $stripeCustomerId = mb_trim((string) ($stripeCustomer['id'] ?? ''));
 
         if ('' === $stripeCustomerId) {
             throw new \RuntimeException('Stripe n’a pas retourné d’identifiant client.');
         }
 
-        $customer ??= (new SubscriptionCustomer())
+        $customer ??= new SubscriptionCustomer()
             ->setPrestataireProfile($prestataireProfile);
 
         $customer

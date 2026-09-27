@@ -1,27 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Prestataire\Entity;
 
 use App\Catalog\Entity\Service;
-
-use App\Quote\Entity\QuoteRequest;
-
 use App\Prestataire\Repository\PrestataireServiceRepository;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
+use App\Quote\Entity\QuoteRequest;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use App\Prestataire\Entity\PrestationMedia;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PrestataireServiceRepository::class)]
 #[ORM\Table(
@@ -106,13 +110,11 @@ class PrestataireService
     #[ORM\OrderBy(['position' => 'ASC', 'createdAt' => 'ASC'])]
     private Collection $medias;
 
-
     /**
      * @var Collection<int, QuoteRequest>
      */
     #[ORM\OneToMany(mappedBy: 'prestation', targetEntity: QuoteRequest::class)]
     private Collection $quoteRequests;
-
 
     public function __construct()
     {
@@ -168,7 +170,7 @@ class PrestataireService
 
     public function setTitle(?string $title): self
     {
-        $this->title = null !== $title ? trim($title) : null;
+        $this->title = null !== $title ? mb_trim($title) : null;
 
         return $this;
     }
@@ -180,7 +182,7 @@ class PrestataireService
 
     public function setShortDescription(?string $shortDescription): self
     {
-        $this->shortDescription = null !== $shortDescription ? trim($shortDescription) : null;
+        $this->shortDescription = null !== $shortDescription ? mb_trim($shortDescription) : null;
 
         return $this;
     }
@@ -192,7 +194,7 @@ class PrestataireService
 
     public function setDescription(?string $description): self
     {
-        $this->description = null !== $description ? trim($description) : null;
+        $this->description = null !== $description ? mb_trim($description) : null;
 
         return $this;
     }
@@ -204,7 +206,7 @@ class PrestataireService
 
     public function setPricingType(?string $pricingType): self
     {
-        $this->pricingType = null !== $pricingType ? trim($pricingType) : null;
+        $this->pricingType = null !== $pricingType ? mb_trim($pricingType) : null;
 
         return $this;
     }
@@ -240,7 +242,7 @@ class PrestataireService
 
     public function setPriceUnit(?string $priceUnit): self
     {
-        $this->priceUnit = null !== $priceUnit ? trim($priceUnit) : null;
+        $this->priceUnit = null !== $priceUnit ? mb_trim($priceUnit) : null;
 
         return $this;
     }
@@ -252,7 +254,7 @@ class PrestataireService
 
     public function setAdditionalInfo(?string $additionalInfo): self
     {
-        $this->additionalInfo = null !== $additionalInfo ? trim($additionalInfo) : null;
+        $this->additionalInfo = null !== $additionalInfo ? mb_trim($additionalInfo) : null;
 
         return $this;
     }
@@ -348,6 +350,7 @@ class PrestataireService
     {
         return $this->medias;
     }
+
     /**
      * @return Collection<int, QuoteRequest>
      */
@@ -442,20 +445,20 @@ class PrestataireService
             return 'Sur devis';
         }
 
-        $unitSuffix = $this->hasText($this->priceUnit) ? ' / ' . $this->priceUnit : '';
-        $priceFrom = null !== $this->priceFrom ? $this->formatAmount($this->priceFrom) . ' €' : null;
-        $priceTo = null !== $this->priceTo ? $this->formatAmount($this->priceTo) . ' €' : null;
+        $unitSuffix = $this->hasText($this->priceUnit) ? ' / '.$this->priceUnit : '';
+        $priceFrom = null !== $this->priceFrom ? $this->formatAmount($this->priceFrom).' €' : null;
+        $priceTo = null !== $this->priceTo ? $this->formatAmount($this->priceTo).' €' : null;
 
         if (null !== $priceFrom && null !== $priceTo) {
-            return sprintf('De %s à %s%s', $priceFrom, $priceTo, $unitSuffix);
+            return \sprintf('De %s à %s%s', $priceFrom, $priceTo, $unitSuffix);
         }
 
         if (null !== $priceFrom) {
-            return sprintf('À partir de %s%s', $priceFrom, $unitSuffix);
+            return \sprintf('À partir de %s%s', $priceFrom, $unitSuffix);
         }
 
         if (null !== $priceTo) {
-            return sprintf('%s%s', $priceTo, $unitSuffix);
+            return \sprintf('%s%s', $priceTo, $unitSuffix);
         }
 
         return 'Sur devis';
@@ -467,20 +470,20 @@ class PrestataireService
             return null;
         }
 
-        $unitSuffix = $this->hasText($this->priceUnit) ? ' / ' . $this->priceUnit : '';
+        $unitSuffix = $this->hasText($this->priceUnit) ? ' / '.$this->priceUnit : '';
         $priceFrom = null !== $this->priceFrom ? $this->applyReductionToAmount($this->priceFrom) : null;
         $priceTo = null !== $this->priceTo ? $this->applyReductionToAmount($this->priceTo) : null;
 
         if (null !== $priceFrom && null !== $priceTo) {
-            return sprintf('De %s à %s%s', $priceFrom, $priceTo, $unitSuffix);
+            return \sprintf('De %s à %s%s', $priceFrom, $priceTo, $unitSuffix);
         }
 
         if (null !== $priceFrom) {
-            return sprintf('À partir de %s%s', $priceFrom, $unitSuffix);
+            return \sprintf('À partir de %s%s', $priceFrom, $unitSuffix);
         }
 
         if (null !== $priceTo) {
-            return sprintf('%s%s', $priceTo, $unitSuffix);
+            return \sprintf('%s%s', $priceTo, $unitSuffix);
         }
 
         return null;
@@ -497,7 +500,7 @@ class PrestataireService
 
     public function getDisplayTitle(): string
     {
-        if (null !== $this->title && '' !== trim($this->title)) {
+        if (null !== $this->title && '' !== mb_trim($this->title)) {
             return $this->title;
         }
 
@@ -524,7 +527,7 @@ class PrestataireService
 
     private function hasText(?string $value): bool
     {
-        return null !== $value && '' !== trim($value);
+        return null !== $value && '' !== mb_trim($value);
     }
 
     private function formatAmount(string $value): string
@@ -538,9 +541,9 @@ class PrestataireService
         $reduction = (float) ($this->tauxReduction ?? 0);
 
         if ($reduction <= 0) {
-            return $this->formatAmount($value) . ' €';
+            return $this->formatAmount($value).' €';
         }
 
-        return number_format(round($amount * (1 - ($reduction / 100)), 2), 2, ',', ' ') . ' €';
+        return number_format(round($amount * (1 - ($reduction / 100)), 2), 2, ',', ' ').' €';
     }
 }

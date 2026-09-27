@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Repository;
 
 use App\Prestataire\Entity\PrestataireProfile;
@@ -48,7 +65,7 @@ class PrestataireSubscriptionRepository extends ServiceEntityRepository
 
     public function findCurrentUsableForPrestataire(
         PrestataireProfile $prestataireProfile,
-        ?\DateTimeImmutable $at = null
+        ?\DateTimeImmutable $at = null,
     ): ?PrestataireSubscription {
         $at ??= new \DateTimeImmutable();
 
@@ -86,7 +103,7 @@ class PrestataireSubscriptionRepository extends ServiceEntityRepository
      */
     public function findUsableForPrestataire(
         PrestataireProfile $prestataireProfile,
-        ?\DateTimeImmutable $at = null
+        ?\DateTimeImmutable $at = null,
     ): array {
         $at ??= new \DateTimeImmutable();
 

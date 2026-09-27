@@ -2,6 +2,21 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Invoice\Service;
 
 use App\Invoice\Entity\Invoice;
@@ -12,7 +27,7 @@ final class InvoiceTotalsCalculator
 {
     public function recalculate(Invoice $invoice): Invoice
     {
-        if ($invoice->getSourceType() === InvoiceSourceTypeEnum::EXTERNAL_IMPORT) {
+        if (InvoiceSourceTypeEnum::EXTERNAL_IMPORT === $invoice->getSourceType()) {
             $invoice
                 ->setSubtotalHt('0.00')
                 ->setTaxAmount('0.00')
@@ -53,7 +68,7 @@ final class InvoiceTotalsCalculator
 
     private function normalizeDecimal(?string $value, string $default): string
     {
-        if ($value === null || trim($value) === '') {
+        if (null === $value || '' === mb_trim($value)) {
             return $default;
         }
 

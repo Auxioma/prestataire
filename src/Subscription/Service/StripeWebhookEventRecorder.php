@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Service;
 
 use App\Subscription\Entity\StripeWebhookEvent;
@@ -19,7 +36,7 @@ final class StripeWebhookEventRecorder
      */
     public function isAlreadyProcessed(array $event): bool
     {
-        $eventId = trim((string) ($event['id'] ?? ''));
+        $eventId = mb_trim((string) ($event['id'] ?? ''));
         if ('' === $eventId) {
             return false;
         }
@@ -32,12 +49,12 @@ final class StripeWebhookEventRecorder
      */
     public function recordProcessed(array $event): void
     {
-        $eventId = trim((string) ($event['id'] ?? ''));
+        $eventId = mb_trim((string) ($event['id'] ?? ''));
         if ('' === $eventId || $this->isAlreadyProcessed($event)) {
             return;
         }
 
-        $webhookEvent = (new StripeWebhookEvent())
+        $webhookEvent = new StripeWebhookEvent()
             ->setStripeEventId($eventId)
             ->setEventType((string) ($event['type'] ?? 'unknown'))
             ->setPayload($event)

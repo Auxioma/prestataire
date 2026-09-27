@@ -1,17 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Report\Controller\Admin;
 
-use App\Review\Controller\Admin\ReviewCrudController;
-
-use App\Quote\Controller\Admin\QuoteRequestCrudController;
-
 use App\Messaging\Controller\Admin\ConversationCrudController;
-
+use App\Quote\Controller\Admin\QuoteRequestCrudController;
 use App\Report\Entity\Report;
 use App\Report\Enum\ReportReasonEnum;
 use App\Report\Enum\ReportStatusEnum;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use App\Review\Controller\Admin\ReviewCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -22,6 +35,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 
 final class ReportCrudController extends AbstractCrudController
 {
@@ -62,7 +76,7 @@ final class ReportCrudController extends AbstractCrudController
                 $links = [];
 
                 if ($report->getQuoteRequest()) {
-                    $links[] = sprintf(
+                    $links[] = \sprintf(
                         '<a href="%s">Voir la demande</a>',
                         $this->adminUrlGenerator->unsetAll()
                             ->setController(QuoteRequestCrudController::class)
@@ -73,7 +87,7 @@ final class ReportCrudController extends AbstractCrudController
                 }
 
                 if ($report->getConversation()) {
-                    $links[] = sprintf(
+                    $links[] = \sprintf(
                         '<a href="%s">Voir la conversation</a>',
                         $this->adminUrlGenerator->unsetAll()
                             ->setController(ConversationCrudController::class)
@@ -84,7 +98,7 @@ final class ReportCrudController extends AbstractCrudController
                 }
 
                 if ($report->getReview()) {
-                    $links[] = sprintf(
+                    $links[] = \sprintf(
                         '<a href="%s">Voir l’avis</a>',
                         $this->adminUrlGenerator->unsetAll()
                             ->setController(ReviewCrudController::class)
@@ -104,7 +118,7 @@ final class ReportCrudController extends AbstractCrudController
             ->renderAsHtml()
             ->hideOnForm();
         yield TextareaField::new('message', 'Contenu du signalement')
-            ->formatValue(static fn ($value): string => null !== $value && '' !== trim((string) $value) ? (string) $value : 'Aucun message complémentaire fourni.')
+            ->formatValue(static fn ($value): string => null !== $value && '' !== mb_trim((string) $value) ? (string) $value : 'Aucun message complémentaire fourni.')
             ->onlyOnDetail();
         yield TextField::new('statusLabel', 'Statut')
             ->formatValue(fn ($value, Report $report): string => $this->renderStatusBadge($report->getStatus()))
@@ -163,12 +177,12 @@ final class ReportCrudController extends AbstractCrudController
 
     private function renderBadge(string $label, string $borderColor, string $backgroundColor, string $textColor): string
     {
-        return sprintf(
+        return \sprintf(
             '<span class="badge rounded-pill" style="border:1px solid %s;background:%s;color:%s;font-weight:600;">%s</span>',
-            htmlspecialchars($borderColor, ENT_QUOTES),
-            htmlspecialchars($backgroundColor, ENT_QUOTES),
-            htmlspecialchars($textColor, ENT_QUOTES),
-            htmlspecialchars($label, ENT_QUOTES)
+            htmlspecialchars($borderColor, \ENT_QUOTES),
+            htmlspecialchars($backgroundColor, \ENT_QUOTES),
+            htmlspecialchars($textColor, \ENT_QUOTES),
+            htmlspecialchars($label, \ENT_QUOTES)
         );
     }
 }

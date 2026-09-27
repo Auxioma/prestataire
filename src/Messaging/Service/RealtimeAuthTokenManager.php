@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Messaging\Service;
 
 use App\Account\Entity\User;
@@ -33,14 +50,14 @@ final class RealtimeAuthTokenManager
     public function createToken(array $payload, ?int $ttl = null): string
     {
         $payload['exp'] = time() + max(30, $ttl ?? self::DEFAULT_TTL);
-        $encodedPayload = $this->base64UrlEncode((string) json_encode($payload, JSON_THROW_ON_ERROR));
+        $encodedPayload = $this->base64UrlEncode((string) json_encode($payload, \JSON_THROW_ON_ERROR));
         $signature = hash_hmac('sha256', $encodedPayload, $this->internalToken);
 
-        return sprintf('%s.%s', $encodedPayload, $signature);
+        return \sprintf('%s.%s', $encodedPayload, $signature);
     }
 
     private function base64UrlEncode(string $value): string
     {
-        return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
+        return mb_rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
     }
 }

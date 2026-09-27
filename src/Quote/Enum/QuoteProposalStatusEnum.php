@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Quote\Enum;
 
 enum QuoteProposalStatusEnum: string
@@ -23,26 +40,26 @@ enum QuoteProposalStatusEnum: string
 
     public function isDraft(): bool
     {
-        return $this === self::DRAFT;
+        return self::DRAFT === $this;
     }
 
     public function isFinalized(): bool
     {
-        return $this === self::FINALIZED;
+        return self::FINALIZED === $this;
     }
 
     public function isAccepted(): bool
     {
-        return $this === self::ACCEPTED;
+        return self::ACCEPTED === $this;
     }
 
     public function isArchived(): bool
     {
-        return $this === self::ARCHIVED;
+        return self::ARCHIVED === $this;
     }
 
     public function isDeleted(): bool
     {
-        return $this === self::DELETED;
+        return self::DELETED === $this;
     }
 }

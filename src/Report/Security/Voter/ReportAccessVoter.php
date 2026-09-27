@@ -1,11 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Report\Security\Voter;
 
+use App\Account\Entity\User;
 use App\Messaging\Entity\Conversation;
 use App\Quote\Entity\QuoteRequest;
 use App\Review\Entity\Review;
-use App\Account\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -29,7 +46,7 @@ final class ReportAccessVoter extends Voter
         string $attribute,
         mixed $subject,
         TokenInterface $token,
-        ?Vote $vote = null
+        ?Vote $vote = null,
     ): bool {
         $user = $token->getUser();
 
@@ -82,7 +99,7 @@ final class ReportAccessVoter extends Voter
         return $this->sameEntity($review->getPrestataireProfile(), $prestataireProfile);
     }
 
-    private function sameEntity(object|null $left, object|null $right): bool
+    private function sameEntity(?object $left, ?object $right): bool
     {
         if (null === $left || null === $right) {
             return false;

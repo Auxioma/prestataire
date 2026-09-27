@@ -1,35 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Tests\Integration;
 
+use App\Account\Entity\User;
+use App\Account\Enum\UserStatusEnum;
+use App\Account\Repository\UserRepository;
+use App\Catalog\Entity\Service;
+use App\Catalog\Entity\ServiceCategory;
+use App\Company\Service\CompanyRegistryClient;
+use App\Company\Service\CompanyVerificationManager;
 use App\Prestataire\Entity\PrestataireInterventionZone;
 use App\Prestataire\Entity\PrestataireProfile;
 use App\Prestataire\Entity\PrestataireService;
-use App\Catalog\Entity\Service;
-use App\Catalog\Entity\ServiceCategory;
-use App\Account\Entity\User;
 use App\Prestataire\Enum\PrestataireProfileStatusEnum;
-use App\Search\Enum\SearchVisibilityEnum;
-use App\Account\Enum\UserStatusEnum;
 use App\Prestataire\Enum\VerificationStatusEnum;
-use App\Search\EventSubscriber\PrestataireSearchSubscriber;
-use App\Search\Repository\PrestataireSearchReadRepository;
-use App\Account\Repository\UserRepository;
-use App\Search\Indexing\PrestataireDocumentMapper;
-use App\Company\Service\CompanyRegistryClient;
-use App\Company\Service\CompanyVerificationManager;
-use App\Search\Service\ElasticsearchClient;
 use App\Prestataire\Service\PrestataireProfileManager;
+use App\Search\Enum\SearchVisibilityEnum;
+use App\Search\EventSubscriber\PrestataireSearchSubscriber;
+use App\Search\Indexing\PrestataireDocumentMapper;
+use App\Search\Repository\PrestataireSearchReadRepository;
+use App\Search\Service\ElasticsearchClient;
 use App\Search\Service\PrestataireSearchIndexer;
 use App\Search\Service\PrestataireSearchQueue;
 use Doctrine\DBAL\Connection;
@@ -78,15 +85,15 @@ final class PrestataireSearchSynchronizationTest extends TestCase
             self::markTestSkipped('Run with ELASTICSEARCH_INTEGRATION=1 to use a disposable local PostgreSQL schema.');
         }
         $localFile = \dirname(__DIR__, 2).'/.env.local';
-        $local = is_file($localFile) ? (new Dotenv())->parse(file_get_contents($localFile), $localFile) : [];
+        $local = is_file($localFile) ? new Dotenv()->parse(file_get_contents($localFile), $localFile) : [];
         $url = getenv('SEARCH_TEST_DATABASE_URL') ?: ($local['DATABASE_URL'] ?? $_SERVER['DATABASE_URL'] ?? $_ENV['DATABASE_URL'] ?? '');
-        $params = (new DsnParser(['postgresql' => 'pdo_pgsql', 'postgres' => 'pdo_pgsql']))->parse($url);
+        $params = new DsnParser(['postgresql' => 'pdo_pgsql', 'postgres' => 'pdo_pgsql'])->parse($url);
         self::assertContains($params['host'] ?? '', ['127.0.0.1', 'localhost'], 'Integration tests require local PostgreSQL.');
         $this->connection = DriverManager::getConnection($params);
         $this->schema = 'search_sync_test_'.bin2hex(random_bytes(8));
         $this->connection->executeStatement('CREATE SCHEMA '.$this->schema);
         $this->connection->executeStatement('SET search_path TO '.$this->schema);
-        $config = ORMSetup::createAttributeMetadataConfig(glob(\dirname(__DIR__, 2).'/src/*/Entity', GLOB_ONLYDIR), true);
+        $config = ORMSetup::createAttributeMetadataConfig(glob(\dirname(__DIR__, 2).'/src/*/Entity', \GLOB_ONLYDIR), true);
         $config->enableNativeLazyObjects(true);
         $config->setNamingStrategy(new UnderscoreNamingStrategy(\CASE_LOWER));
         $config->setRepositoryFactory(new class implements RepositoryFactory {
@@ -97,7 +104,7 @@ final class PrestataireSearchSynchronizationTest extends TestCase
         });
         $config->setIdentityGenerationPreferences([PostgreSQLPlatform::class => ClassMetadata::GENERATOR_TYPE_IDENTITY]);
         $this->manager = new EntityManager($this->connection, $config);
-        (new SchemaTool($this->manager))->createSchema($this->manager->getMetadataFactory()->getAllMetadata());
+        new SchemaTool($this->manager)->createSchema($this->manager->getMetadataFactory()->getAllMetadata());
         $this->elasticsearch = new ElasticsearchClient('https://localhost:9200', '', '', true);
         $this->resetHttpClient();
         $logger = new NullLogger();
@@ -125,10 +132,10 @@ final class PrestataireSearchSynchronizationTest extends TestCase
         self::assertSame('Entreprise test', $this->documents[$id]['companyName'], json_encode($this->documents));
         self::assertSame(0, $this->jobCount());
 
-        $category = (new ServiceCategory())->setName('Travaux')->setSlug('travaux')->setPosition(0)->setIsActive(true);
-        $service = (new Service())->setName('Plomberie')->setSlug('plomberie')->setCategory($category)->setPosition(0)->setIsActive(true);
-        $offer = (new PrestataireService())->setPrestataire($profile)->setService($service)->setTitle('Dépannage');
-        $zone = (new PrestataireInterventionZone())->setPrestataireProfile($profile)->setCity('Lille');
+        $category = new ServiceCategory()->setName('Travaux')->setSlug('travaux')->setPosition(0)->setIsActive(true);
+        $service = new Service()->setName('Plomberie')->setSlug('plomberie')->setCategory($category)->setPosition(0)->setIsActive(true);
+        $offer = new PrestataireService()->setPrestataire($profile)->setService($service)->setTitle('Dépannage');
+        $zone = new PrestataireInterventionZone()->setPrestataireProfile($profile)->setCity('Lille');
         foreach ([$category, $service, $offer, $zone] as $entity) {
             $this->manager->persist($entity);
         }
@@ -227,8 +234,8 @@ final class PrestataireSearchSynchronizationTest extends TestCase
 
     private function createProfile(): PrestataireProfile
     {
-        $user = (new User())->setEmail('test@example.invalid')->setPassword('test')->setStatus(UserStatusEnum::ACTIVE);
-        $profile = (new PrestataireProfile())->setCompanyName('Entreprise test')->setSlug('entreprise-test')->setSiret('12345678900011')
+        $user = new User()->setEmail('test@example.invalid')->setPassword('test')->setStatus(UserStatusEnum::ACTIVE);
+        $profile = new PrestataireProfile()->setCompanyName('Entreprise test')->setSlug('entreprise-test')->setSiret('12345678900011')
             ->setProfileStatus(PrestataireProfileStatusEnum::ACTIVE)->setVerificationStatus(VerificationStatusEnum::COMPANY_VERIFIED)->setAccount($user);
         $this->manager->persist($user);
         $this->manager->persist($profile);
@@ -270,6 +277,6 @@ final class PrestataireSearchSynchronizationTest extends TestCase
             return Create::promiseFor(new Response($status, ['X-Elastic-Product' => 'Elasticsearch', 'Content-Type' => 'application/json'], json_encode($response, \JSON_THROW_ON_ERROR)));
         };
         $client = ClientBuilder::create()->setHosts(['https://localhost:9200'])->setHttpClient(new Client(['handler' => $handler]))->build();
-        (new \ReflectionProperty($this->elasticsearch, 'client'))->setValue($this->elasticsearch, $client);
+        new \ReflectionProperty($this->elasticsearch, 'client')->setValue($this->elasticsearch, $client);
     }
 }

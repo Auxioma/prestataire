@@ -1,9 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Messaging\Controller\Client;
 
-use App\Messaging\Entity\Notification;
 use App\Account\Entity\User;
+use App\Messaging\Entity\Notification;
 use App\Messaging\Repository\NotificationRepository;
 use App\Messaging\Service\NotificationManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,13 +42,11 @@ final class NotificationController extends AbstractController
     #[Route('', name: 'index', methods: ['GET'])]
     /**
      * Affiche la page principale de ce contrôleur.
-     *
-     * @return Response
      */
     public function index(
         Request $request,
         NotificationRepository $notificationRepository,
-        PaginatorInterface $paginator
+        PaginatorInterface $paginator,
     ): Response {
         $user = $this->getUser();
 
@@ -60,12 +75,10 @@ final class NotificationController extends AbstractController
     #[Route('/{id}/open', name: 'open', methods: ['GET'])]
     /**
      * Ouvre la ressource ciblée.
-     *
-     * @return RedirectResponse
      */
     public function open(
         Notification $notification,
-        NotificationManager $notificationManager
+        NotificationManager $notificationManager,
     ): RedirectResponse {
         $user = $this->getUser();
 
@@ -88,13 +101,11 @@ final class NotificationController extends AbstractController
     #[Route('/{id}/read', name: 'mark_read', methods: ['POST'])]
     /**
      * Traite l’action "markRead" du contrôleur Notification.
-     *
-     * @return RedirectResponse
      */
     public function markRead(
         Request $request,
         Notification $notification,
-        NotificationManager $notificationManager
+        NotificationManager $notificationManager,
     ): RedirectResponse {
         $user = $this->getUser();
 
@@ -107,7 +118,7 @@ final class NotificationController extends AbstractController
 
         if (
             !$this->isCsrfTokenValid(
-                'mark-notification-read-' . $notification->getId(),
+                'mark-notification-read-'.$notification->getId(),
                 (string) $request->request->get('_token')
             )
         ) {
@@ -126,12 +137,10 @@ final class NotificationController extends AbstractController
     #[Route('/read-all', name: 'mark_all_read', methods: ['POST'])]
     /**
      * Traite l’action "markAllRead" du contrôleur Notification.
-     *
-     * @return RedirectResponse
      */
     public function markAllRead(
         Request $request,
-        NotificationManager $notificationManager
+        NotificationManager $notificationManager,
     ): RedirectResponse {
         $user = $this->getUser();
 
@@ -155,7 +164,7 @@ final class NotificationController extends AbstractController
 
         $redirect = (string) $request->request->get('redirect', '');
 
-        if ($redirect !== '') {
+        if ('' !== $redirect) {
             return $this->redirect($redirect, 303);
         }
 
@@ -165,13 +174,11 @@ final class NotificationController extends AbstractController
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
     /**
      * Supprime la ressource demandée.
-     *
-     * @return RedirectResponse
      */
     public function delete(
         Request $request,
         Notification $notification,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
     ): RedirectResponse {
         $user = $this->getUser();
 
@@ -184,7 +191,7 @@ final class NotificationController extends AbstractController
 
         if (
             !$this->isCsrfTokenValid(
-                'delete-notification-' . $notification->getId(),
+                'delete-notification-'.$notification->getId(),
                 (string) $request->request->get('_token')
             )
         ) {
@@ -204,13 +211,11 @@ final class NotificationController extends AbstractController
     #[Route('/delete-all', name: 'delete_all', methods: ['POST'])]
     /**
      * Traite l’action "deleteAll" du contrôleur Notification.
-     *
-     * @return RedirectResponse
      */
     public function deleteAll(
         Request $request,
         NotificationRepository $notificationRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
     ): RedirectResponse {
         $user = $this->getUser();
 

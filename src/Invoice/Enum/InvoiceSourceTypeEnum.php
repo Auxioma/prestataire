@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Invoice\Enum;
 
 enum InvoiceSourceTypeEnum: string
@@ -19,6 +36,6 @@ enum InvoiceSourceTypeEnum: string
 
     public function isExternalImport(): bool
     {
-        return $this === self::EXTERNAL_IMPORT;
+        return self::EXTERNAL_IMPORT === $this;
     }
 }

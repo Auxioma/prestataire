@@ -1,13 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\DataFixtures;
 
-use App\Core\DataFixtures\BaseFixture;
-
 use App\Account\DataFixtures\UserFixtures;
-
-use App\Subscription\DataFixtures\PrestataireSubscriptionFixtures;
-
+use App\Core\DataFixtures\BaseFixture;
 use App\Prestataire\Entity\PrestataireProfile;
 use App\Subscription\Entity\PrestataireSubscription;
 use App\Subscription\Entity\SubscriptionCreditMovement;
@@ -25,17 +38,17 @@ class SubscriptionCreditMovementFixtures extends BaseFixture implements Dependen
         for ($i = 1; $i <= 30; ++$i) {
             $profileIndex = (($i - 1) % UserFixtures::PRESTATAIRE_COUNT) + 1;
             /** @var PrestataireProfile $prestataire */
-            $prestataire = $this->getReference(sprintf('prestataire_profile_%d', $profileIndex), PrestataireProfile::class);
+            $prestataire = $this->getReference(\sprintf('prestataire_profile_%d', $profileIndex), PrestataireProfile::class);
             /** @var PrestataireSubscription $subscription */
-            $subscription = $this->getReference(sprintf('prestataire_subscription_%d', $profileIndex), PrestataireSubscription::class);
+            $subscription = $this->getReference(\sprintf('prestataire_subscription_%d', $profileIndex), PrestataireSubscription::class);
             /** @var SubscriptionInvoice $invoice */
-            $invoice = $this->getReference(sprintf('subscription_invoice_%d', (($i - 1) % 20) + 1), SubscriptionInvoice::class);
+            $invoice = $this->getReference(\sprintf('subscription_invoice_%d', (($i - 1) % 20) + 1), SubscriptionInvoice::class);
 
-            $isCredit = $i % 3 !== 0;
+            $isCredit = 0 !== $i % 3;
             $delta = $isCredit ? $this->faker->numberBetween(4, 12) : -$this->faker->numberBetween(1, 3);
             $balanceByProfile[$profileIndex] = ($balanceByProfile[$profileIndex] ?? 0) + $delta;
 
-            $movement = (new SubscriptionCreditMovement())
+            $movement = new SubscriptionCreditMovement()
                 ->setPrestataireProfile($prestataire)
                 ->setSubscription($subscription)
                 ->setInvoice($isCredit ? $invoice : null)

@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Prestataire\Controller\Admin;
 
 use App\Prestataire\Entity\PrestataireProfile;
@@ -37,8 +54,6 @@ class PrestataireProfileCrudController extends AbstractCrudController
 
     /**
      * Traite l’action "configureCrud" du contrôleur Prestataire Profile  C R U D.
-     *
-     * @return Crud
      */
     public function configureCrud(Crud $crud): Crud
     {
@@ -50,8 +65,6 @@ class PrestataireProfileCrudController extends AbstractCrudController
 
     /**
      * Traite l’action "configureActions" du contrôleur Prestataire Profile  C R U D.
-     *
-     * @return Actions
      */
     public function configureActions(Actions $actions): Actions
     {
@@ -80,8 +93,6 @@ class PrestataireProfileCrudController extends AbstractCrudController
     #[AdminRoute(path: '/verify-manually', name: 'verify_manually')]
     /**
      * Traite l’action "verifyManually" du contrôleur Prestataire Profile  C R U D.
-     *
-     * @return RedirectResponse
      */
     public function verifyManually(): RedirectResponse
     {
@@ -103,8 +114,6 @@ class PrestataireProfileCrudController extends AbstractCrudController
     #[AdminRoute(path: '/suspend-profile', name: 'suspend_profile')]
     /**
      * Traite l’action "suspendProfile" du contrôleur Prestataire Profile  C R U D.
-     *
-     * @return RedirectResponse
      */
     public function suspendProfile(): RedirectResponse
     {
@@ -123,8 +132,6 @@ class PrestataireProfileCrudController extends AbstractCrudController
     #[AdminRoute(path: '/reactivate-profile', name: 'reactivate_profile')]
     /**
      * Traite l’action "reactivateProfile" du contrôleur Prestataire Profile  C R U D.
-     *
-     * @return RedirectResponse
      */
     public function reactivateProfile(): RedirectResponse
     {
@@ -142,8 +149,6 @@ class PrestataireProfileCrudController extends AbstractCrudController
 
     /**
      * Traite l’action "configureFields" du contrôleur Prestataire Profile  C R U D.
-     *
-     * @return iterable
      */
     public function configureFields(string $pageName): iterable
     {

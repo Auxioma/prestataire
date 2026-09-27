@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Core\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -54,13 +71,13 @@ final class MaintenanceSubscriber implements EventSubscriberInterface
         }
 
         $headerToken = $request->headers->get('X-Maintenance-Token');
-        if (is_string($headerToken) && hash_equals($this->maintenanceSecret, $headerToken)) {
+        if (\is_string($headerToken) && hash_equals($this->maintenanceSecret, $headerToken)) {
             return true;
         }
 
         $queryToken = $request->query->get('maintenance_token');
 
-        return is_string($queryToken) && hash_equals($this->maintenanceSecret, $queryToken);
+        return \is_string($queryToken) && hash_equals($this->maintenanceSecret, $queryToken);
     }
 
     public static function getSubscribedEvents(): array

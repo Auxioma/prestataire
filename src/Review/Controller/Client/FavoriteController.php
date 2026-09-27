@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Review\Controller\Client;
 
 use App\Account\Entity\User;
@@ -20,8 +37,6 @@ final class FavoriteController extends AbstractController
     #[Route('/toggle', name: 'toggle', methods: ['POST'])]
     /**
      * Traite l’action "toggle" du contrôleur Favorite.
-     *
-     * @return JsonResponse
      */
     public function toggle(
         Request $request,
@@ -59,7 +74,7 @@ final class FavoriteController extends AbstractController
         $typeValue = $request->request->get('type');
         $targetId = $request->request->get('targetId');
 
-        if (!is_string($typeValue) || '' === trim($typeValue)) {
+        if (!\is_string($typeValue) || '' === mb_trim($typeValue)) {
             return $this->json([
                 'success' => false,
                 'message' => 'Type de favori manquant.',
@@ -67,8 +82,8 @@ final class FavoriteController extends AbstractController
         }
 
         if (
-            (!is_string($targetId) && !is_int($targetId))
-            || '' === trim((string) $targetId)
+            (!\is_string($targetId) && !\is_int($targetId))
+            || '' === mb_trim((string) $targetId)
             || !ctype_digit((string) $targetId)
         ) {
             return $this->json([
@@ -101,8 +116,8 @@ final class FavoriteController extends AbstractController
             'type' => $type->value,
             'targetId' => (string) $targetId,
             'message' => $isFavorite
-                ? sprintf('%s ajouté aux favoris.', $type->getLabel())
-                : sprintf('%s retiré des favoris.', $type->getLabel()),
+                ? \sprintf('%s ajouté aux favoris.', $type->getLabel())
+                : \sprintf('%s retiré des favoris.', $type->getLabel()),
         ]);
     }
 }

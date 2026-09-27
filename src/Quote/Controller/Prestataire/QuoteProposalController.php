@@ -1,21 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Quote\Controller\Prestataire;
 
+use App\Account\Entity\User;
 use App\Messaging\Entity\Conversation;
+use App\Messaging\Enum\NotificationTypeEnum;
+use App\Messaging\Repository\ConversationRepository;
+use App\Messaging\Service\NotificationManager;
 use App\Prestataire\Entity\PrestataireProfile;
+use App\Prestataire\Repository\PrestataireProfileRepository;
 use App\Quote\Entity\QuoteProposal;
 use App\Quote\Entity\QuoteRequest;
-use App\Account\Entity\User;
-use App\Messaging\Enum\NotificationTypeEnum;
 use App\Quote\Enum\QuoteProposalStatusEnum;
 use App\Quote\Enum\QuoteRequestStatusEnum;
 use App\Quote\Form\QuoteProposalType;
-use App\Messaging\Repository\ConversationRepository;
-use App\Prestataire\Repository\PrestataireProfileRepository;
 use App\Quote\Repository\QuoteProposalRepository;
 use App\Quote\Repository\QuoteRequestRepository;
-use App\Messaging\Service\NotificationManager;
 use App\Quote\Service\QuoteProposalDocumentResolver;
 use App\Quote\Service\QuoteProposalManager;
 use App\Quote\Service\QuoteProposalNativePdfGenerator;
@@ -39,8 +56,6 @@ class QuoteProposalController extends AbstractController
     #[Route('/new/{id}', name: 'new', methods: ['GET'])]
     /**
      * Affiche et traite le formulaire de création.
-     *
-     * @return Response
      */
     public function new(
         int $id,
@@ -73,8 +88,6 @@ class QuoteProposalController extends AbstractController
     #[Route('/{publicReference}/edit', name: 'edit', methods: ['GET', 'POST'])]
     /**
      * Affiche et traite le formulaire de modification.
-     *
-     * @return Response
      */
     public function edit(
         string $publicReference,
@@ -133,8 +146,6 @@ class QuoteProposalController extends AbstractController
     #[Route('/{publicReference}', name: 'show', methods: ['GET'])]
     /**
      * Affiche le détail de la ressource demandée.
-     *
-     * @return Response
      */
     public function show(
         string $publicReference,
@@ -170,8 +181,6 @@ class QuoteProposalController extends AbstractController
     #[Route('/{publicReference}/finalize', name: 'finalize', methods: ['POST'])]
     /**
      * Traite l’action "finalize" du contrôleur Quote Proposal.
-     *
-     * @return Response
      */
     public function finalize(
         string $publicReference,
@@ -203,7 +212,7 @@ class QuoteProposalController extends AbstractController
         }
 
         if (!$this->isCsrfTokenValid(
-            'finalize-quote-proposal-' . $securedProposal->getId(),
+            'finalize-quote-proposal-'.$securedProposal->getId(),
             (string) $request->request->get('_token')
         )) {
             $this->addFlash('danger', 'Jeton CSRF invalide.');
@@ -240,7 +249,7 @@ class QuoteProposalController extends AbstractController
             );
         }
 
-        if ($quoteRequest instanceof QuoteRequest && $quoteRequest->getStatus() !== QuoteRequestStatusEnum::CLOSED) {
+        if ($quoteRequest instanceof QuoteRequest && QuoteRequestStatusEnum::CLOSED !== $quoteRequest->getStatus()) {
             $quoteRequest->setStatus(QuoteRequestStatusEnum::ANSWERED);
             $quoteRequest->setUpdatedAt(new \DateTimeImmutable());
         }
@@ -279,8 +288,6 @@ class QuoteProposalController extends AbstractController
     #[Route('/{publicReference}/delete', name: 'delete', methods: ['POST'])]
     /**
      * Supprime la ressource demandée.
-     *
-     * @return Response
      */
     public function delete(
         string $publicReference,
@@ -308,7 +315,7 @@ class QuoteProposalController extends AbstractController
             ], 303);
         }
 
-        if (!$this->isCsrfTokenValid('delete_quote_proposal_' . $proposal->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete_quote_proposal_'.$proposal->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Jeton CSRF invalide.');
         }
 
@@ -325,8 +332,6 @@ class QuoteProposalController extends AbstractController
     #[Route('/{publicReference}/archive', name: 'archive', methods: ['POST'])]
     /**
      * Traite l’action "archive" du contrôleur Quote Proposal.
-     *
-     * @return Response
      */
     public function archive(
         string $publicReference,
@@ -352,7 +357,7 @@ class QuoteProposalController extends AbstractController
         ]);
 
         if (!$this->isCsrfTokenValid(
-            'archive_quote_proposal_' . $proposal->getId(),
+            'archive_quote_proposal_'.$proposal->getId(),
             (string) $request->request->get('_token')
         )) {
             throw $this->createAccessDeniedException('Jeton CSRF invalide.');
@@ -402,8 +407,6 @@ class QuoteProposalController extends AbstractController
     #[Route('/devis/{publicReference}/pdf', name: 'pdf', methods: ['GET'])]
     /**
      * Traite l’action "showPdf" du contrôleur Quote Proposal.
-     *
-     * @return Response
      */
     public function showPdf(
         string $publicReference,
@@ -442,7 +445,7 @@ class QuoteProposalController extends AbstractController
             Response::HTTP_OK,
             [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => sprintf(
+                'Content-Disposition' => \sprintf(
                     'inline; filename="%s.pdf"',
                     $proposal->getProposalNumber() ?: 'devis'
                 ),
@@ -453,8 +456,6 @@ class QuoteProposalController extends AbstractController
     #[Route('/{publicReference}/archived-show', name: 'archived_show', methods: ['GET'])]
     /**
      * Traite l’action "archivedShow" du contrôleur Quote Proposal.
-     *
-     * @return Response
      */
     public function archivedShow(
         string $publicReference,
@@ -493,7 +494,7 @@ class QuoteProposalController extends AbstractController
     {
         $user = $this->getUser();
 
-        if ($user === null) {
+        if (null === $user) {
             throw $this->createAccessDeniedException('Utilisateur non authentifié.');
         }
 
@@ -509,7 +510,7 @@ class QuoteProposalController extends AbstractController
     private function assertPrestataireCanAccessQuoteRequest(
         QuoteRequest $quoteRequest,
         PrestataireProfile $prestataire,
-        ConversationRepository $conversationRepository
+        ConversationRepository $conversationRepository,
     ): void {
         $conversation = $conversationRepository->findOneBy([
             'quoteRequest' => $quoteRequest,
@@ -527,11 +528,11 @@ class QuoteProposalController extends AbstractController
         Request $request,
         ConversationRepository $conversationRepository,
         QuoteRequest $quoteRequest,
-        PrestataireProfile $prestataire
+        PrestataireProfile $prestataire,
     ): ?Conversation {
         $conversationId = $request->query->get('conversation');
 
-        if ($conversationId !== null) {
+        if (null !== $conversationId) {
             $conversation = $conversationRepository->find($conversationId);
 
             if (

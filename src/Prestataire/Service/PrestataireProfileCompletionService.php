@@ -1,10 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Prestataire\Service;
 
+use App\Account\Entity\User;
 use App\Prestataire\Entity\PrestataireAvailability;
 use App\Prestataire\Entity\PrestataireProfile;
-use App\Account\Entity\User;
 
 final class PrestataireProfileCompletionService
 {
@@ -47,7 +64,7 @@ final class PrestataireProfileCompletionService
                 icon: 'fa-user',
                 checks: [
                     'Photo de profil' => null !== $user->getAvatar(),
-                    'Numéro de téléphone' => null !== $user->getPhoneNumber() && '' !== trim((string) $user->getPhoneNumber()),
+                    'Numéro de téléphone' => null !== $user->getPhoneNumber() && '' !== mb_trim((string) $user->getPhoneNumber()),
                 ],
             ),
             $this->createSection(
@@ -56,10 +73,10 @@ final class PrestataireProfileCompletionService
                 tab: 'profile',
                 icon: 'fa-id-card',
                 checks: [
-                    'Métier / spécialité' => null !== $prestataireProfile->getMetier() && '' !== trim((string) $prestataireProfile->getMetier()),
-                    'Expérience' => null !== $prestataireProfile->getExperience() && '' !== trim((string) $prestataireProfile->getExperience()),
-                    'Phrase d’accroche' => null !== $prestataireProfile->getShortDescription() && '' !== trim((string) $prestataireProfile->getShortDescription()),
-                    'Présentation complète' => null !== $prestataireProfile->getDescription() && '' !== trim((string) $prestataireProfile->getDescription()),
+                    'Métier / spécialité' => null !== $prestataireProfile->getMetier() && '' !== mb_trim((string) $prestataireProfile->getMetier()),
+                    'Expérience' => null !== $prestataireProfile->getExperience() && '' !== mb_trim((string) $prestataireProfile->getExperience()),
+                    'Phrase d’accroche' => null !== $prestataireProfile->getShortDescription() && '' !== mb_trim((string) $prestataireProfile->getShortDescription()),
+                    'Présentation complète' => null !== $prestataireProfile->getDescription() && '' !== mb_trim((string) $prestataireProfile->getDescription()),
                     'Site web ou réseau social' => $this->hasPublicWebPresence($prestataireProfile),
                 ],
             ),
@@ -69,7 +86,7 @@ final class PrestataireProfileCompletionService
                 tab: 'company',
                 icon: 'fa-building',
                 checks: [
-                    'Nom de l’entreprise' => null !== $prestataireProfile->getCompanyName() && '' !== trim((string) $prestataireProfile->getCompanyName()),
+                    'Nom de l’entreprise' => null !== $prestataireProfile->getCompanyName() && '' !== mb_trim((string) $prestataireProfile->getCompanyName()),
                     'SIRET ou SIREN' => $this->hasCompanyIdentifier($prestataireProfile),
                     'TVA intracommunautaire' => $this->hasText($prestataireProfile->getVatNumber()),
                     'Adresse complète' => $this->hasCompanyAddress($prestataireProfile),
@@ -118,8 +135,8 @@ final class PrestataireProfileCompletionService
 
         $completedChecks = array_sum(array_column($sections, 'completed'));
         $totalChecks = array_sum(array_column($sections, 'total'));
-        $completedSections = count(array_filter($sections, static fn (array $section): bool => $section['isComplete']));
-        $totalSections = count($sections);
+        $completedSections = \count(array_filter($sections, static fn (array $section): bool => $section['isComplete']));
+        $totalSections = \count($sections);
         $score = 0 === $totalChecks ? 0 : (int) round(($completedChecks / $totalChecks) * 100);
 
         $prestataireProfile->setCompletionScore($score);
@@ -263,11 +280,11 @@ final class PrestataireProfileCompletionService
             $items,
             static fn (array $item): bool => !$item['completed']
         ));
-        $completedItems = count($items) - count($missingItems);
+        $completedItems = \count($items) - \count($missingItems);
 
         return [
             'completed' => $completedItems,
-            'total' => count($items),
+            'total' => \count($items),
             'isComplete' => [] === $missingItems,
             'items' => $items,
             'missingItems' => $missingItems,
@@ -276,6 +293,7 @@ final class PrestataireProfileCompletionService
 
     /**
      * @param array<string, bool> $checks
+     *
      * @return array{
      *     key:string,
      *     label:string,
@@ -297,8 +315,8 @@ final class PrestataireProfileCompletionService
             }
         }
 
-        $completed = count($checks) - count($missingItems);
-        $total = count($checks);
+        $completed = \count($checks) - \count($missingItems);
+        $total = \count($checks);
 
         return [
             'key' => $key,
@@ -307,7 +325,7 @@ final class PrestataireProfileCompletionService
             'icon' => $icon,
             'completed' => $completed,
             'total' => $total,
-            'isComplete' => 0 === count($missingItems),
+            'isComplete' => 0 === \count($missingItems),
             'missingItems' => $missingItems,
         ];
     }
@@ -374,6 +392,6 @@ final class PrestataireProfileCompletionService
 
     private function hasText(?string $value): bool
     {
-        return null !== $value && '' !== trim($value);
+        return null !== $value && '' !== mb_trim($value);
     }
 }

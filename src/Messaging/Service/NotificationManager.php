@@ -1,9 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Messaging\Service;
 
-use App\Messaging\Entity\Notification;
 use App\Account\Entity\User;
+use App\Messaging\Entity\Notification;
 use App\Messaging\Enum\NotificationTypeEnum;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -25,7 +42,7 @@ class NotificationManager
         bool $flush = true,
     ): Notification {
         if (!$recipient->shouldReceiveNotificationType($type)) {
-            return (new Notification())
+            return new Notification()
                 ->setRecipient($recipient)
                 ->setType($type)
                 ->setTitle($title)
@@ -34,7 +51,7 @@ class NotificationManager
                 ->setMetadata($metadata);
         }
 
-        $notification = (new Notification())
+        $notification = new Notification()
             ->setRecipient($recipient)
             ->setType($type)
             ->setTitle($title)
@@ -77,7 +94,7 @@ class NotificationManager
                 continue;
             }
 
-            $notification = (new Notification())
+            $notification = new Notification()
                 ->setRecipient($recipient)
                 ->setType($type)
                 ->setTitle($title)

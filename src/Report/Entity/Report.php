@@ -1,18 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Report\Entity;
 
 use App\Account\Entity\User;
-
-use App\Review\Entity\Review;
-
-use App\Quote\Entity\QuoteRequest;
-
 use App\Messaging\Entity\Conversation;
-
+use App\Quote\Entity\QuoteRequest;
 use App\Report\Enum\ReportReasonEnum;
 use App\Report\Enum\ReportStatusEnum;
 use App\Report\Repository\ReportRepository;
+use App\Review\Entity\Review;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -76,7 +89,7 @@ class Report
 
     public function __toString(): string
     {
-        return sprintf('Signalement #%s', $this->id ?? 'n/a');
+        return \sprintf('Signalement #%s', $this->id ?? 'n/a');
     }
 
     public function getId(): ?string
@@ -168,7 +181,7 @@ class Report
 
     public function setMessage(?string $message): static
     {
-        $this->message = null !== $message ? trim($message) : null;
+        $this->message = null !== $message ? mb_trim($message) : null;
 
         return $this;
     }
@@ -205,7 +218,7 @@ class Report
 
     public function setAdminNote(?string $adminNote): static
     {
-        $this->adminNote = null !== $adminNote ? trim($adminNote) : null;
+        $this->adminNote = null !== $adminNote ? mb_trim($adminNote) : null;
 
         return $this;
     }
@@ -266,22 +279,22 @@ class Report
     public function getContextSummary(): string
     {
         if ($this->review instanceof Review) {
-            return sprintf(
+            return \sprintf(
                 'Avis lié à la demande "%s"%s.',
                 $this->review->getQuoteRequest()?->getTitle() ?? 'sans titre',
-                $this->review->getRating() !== null ? sprintf(' Note : %d/5', $this->review->getRating()) : ''
+                null !== $this->review->getRating() ? \sprintf(' Note : %d/5', $this->review->getRating()) : ''
             );
         }
 
         if ($this->conversation instanceof Conversation) {
-            return sprintf(
+            return \sprintf(
                 'Conversation liée à la demande "%s".',
                 $this->conversation->getQuoteRequest()?->getTitle() ?? 'sans titre'
             );
         }
 
         if ($this->quoteRequest instanceof QuoteRequest) {
-            return sprintf(
+            return \sprintf(
                 'Demande de devis "%s".',
                 $this->quoteRequest->getTitle() ?? 'sans titre'
             );

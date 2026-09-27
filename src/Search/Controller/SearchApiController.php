@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Search\Controller;
 
 use App\Search\Service\PrestataireSearchService;
@@ -15,7 +32,7 @@ final class SearchApiController extends AbstractController
         Request $request,
         PrestataireSearchService $prestataireSearchService,
     ): JsonResponse {
-        $query = trim((string) $request->query->get('q', ''));
+        $query = mb_trim((string) $request->query->get('q', ''));
         $query = mb_substr($query, 0, 100);
 
         if (mb_strlen($query) < 2) {
@@ -47,11 +64,11 @@ final class SearchApiController extends AbstractController
             $firstCategory = $item['subCategories'][0]['name'] ?? $item['categories'][0]['name'] ?? null;
             $firstService = $item['services'][0]['title'] ?? $item['services'][0]['service']['name'] ?? null;
 
-            $companyName = trim((string) ($item['companyName'] ?? ''));
-            $metier = trim((string) ($item['metier'] ?? ''));
-            $city = trim((string) ($item['city'] ?? ''));
+            $companyName = mb_trim((string) ($item['companyName'] ?? ''));
+            $metier = mb_trim((string) ($item['metier'] ?? ''));
+            $city = mb_trim((string) ($item['city'] ?? ''));
 
-            if ($companyName === '' && $metier === '' && $firstCategory === null && $firstService === null) {
+            if ('' === $companyName && '' === $metier && null === $firstCategory && null === $firstService) {
                 continue;
             }
 
@@ -70,7 +87,7 @@ final class SearchApiController extends AbstractController
         }
 
         return $this->json([
-            'items' => array_slice($items, 0, 6),
+            'items' => \array_slice($items, 0, 6),
         ]);
     }
 

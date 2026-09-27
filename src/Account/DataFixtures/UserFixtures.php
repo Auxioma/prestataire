@@ -1,11 +1,27 @@
 <?php
 
-namespace App\Account\DataFixtures;
+declare(strict_types=1);
 
-use App\Core\DataFixtures\BaseFixture;
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
+namespace App\Account\DataFixtures;
 
 use App\Account\Entity\User;
 use App\Account\Enum\UserStatusEnum;
+use App\Core\DataFixtures\BaseFixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -24,7 +40,7 @@ class UserFixtures extends BaseFixture
 
     public function load(ObjectManager $manager): void
     {
-        $admin = (new User())
+        $admin = new User()
             ->setEmail('admin@trouvemoi.fr')
             ->setRoles(['ROLE_ADMIN'])
             ->setFirstName('Amandine')
@@ -54,8 +70,8 @@ class UserFixtures extends BaseFixture
         $this->addReference('user_admin_1', $admin);
 
         for ($i = 1; $i <= self::CLIENT_COUNT; ++$i) {
-            $user = (new User())
-                ->setEmail(sprintf('client%d@trouvemoi.fr', $i))
+            $user = new User()
+                ->setEmail(\sprintf('client%d@trouvemoi.fr', $i))
                 ->setRoles(['ROLE_CLIENT'])
                 ->setFirstName($this->faker->firstName())
                 ->setLastName($this->faker->lastName())
@@ -77,20 +93,20 @@ class UserFixtures extends BaseFixture
             $this->attachRemoteImage(
                 $user,
                 'setAvatarFile',
-                sprintf(
+                \sprintf(
                     'https://randomuser.me/api/portraits/%s/%d.jpg',
-                    $i % 2 === 0 ? 'women' : 'men',
+                    0 === $i % 2 ? 'women' : 'men',
                     ($i % 99) + 1
                 )
             );
 
             $manager->persist($user);
-            $this->addReference(sprintf('user_client_%d', $i), $user);
+            $this->addReference(\sprintf('user_client_%d', $i), $user);
         }
 
         for ($i = 1; $i <= self::PRESTATAIRE_COUNT; ++$i) {
-            $user = (new User())
-                ->setEmail(sprintf('prestataire%d@trouvemoi.fr', $i))
+            $user = new User()
+                ->setEmail(\sprintf('prestataire%d@trouvemoi.fr', $i))
                 ->setRoles(['ROLE_PRESTATAIRE'])
                 ->setFirstName($this->faker->firstName())
                 ->setLastName($this->faker->lastName())
@@ -112,15 +128,15 @@ class UserFixtures extends BaseFixture
             $this->attachRemoteImage(
                 $user,
                 'setAvatarFile',
-                sprintf(
+                \sprintf(
                     'https://randomuser.me/api/portraits/%s/%d.jpg',
-                    $i % 2 === 0 ? 'men' : 'women',
+                    0 === $i % 2 ? 'men' : 'women',
                     (($i + 20) % 99) + 1
                 )
             );
 
             $manager->persist($user);
-            $this->addReference(sprintf('user_prestataire_%d', $i), $user);
+            $this->addReference(\sprintf('user_prestataire_%d', $i), $user);
         }
 
         $manager->flush();

@@ -1,27 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Website\Controller;
 
 use App\Account\Entity\User;
 use App\Catalog\Entity\ServiceCategory;
-use App\Review\Enum\FavoriteTypeEnum;
-use App\Search\Form\HomepageSearchType;
-use App\Review\Repository\FavoriteRepository;
+use App\Catalog\Repository\ServiceCategoryRepository;
 use App\Prestataire\Entity\PrestataireProfile;
 use App\Prestataire\Repository\PrestataireProfileRepository;
 use App\Prestataire\Repository\PrestataireServiceRepository;
-use App\Catalog\Repository\ServiceCategoryRepository;
 use App\Prestataire\Service\PrestataireProfileCompletionService;
+use App\Review\Enum\FavoriteTypeEnum;
+use App\Review\Repository\FavoriteRepository;
+use App\Search\Form\HomepageSearchType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,8 +49,6 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app_home', methods: ['GET'])]
     /**
      * Affiche la page principale de ce contrôleur.
-     *
-     * @return Response
      */
     public function index(
         Request $request,
@@ -58,7 +63,7 @@ class HomeController extends AbstractController
             'method' => 'GET',
         ]);
 
-        $categories = $cache->get('homepage.categories.v1', function (ItemInterface $item) use ($categoryRepository): array {
+        $categories = $cache->get('homepage.categories.v1', static function (ItemInterface $item) use ($categoryRepository): array {
             $item->expiresAfter(3600);
 
             return array_map(
@@ -76,7 +81,7 @@ class HomeController extends AbstractController
             );
         });
 
-        $providers = $cache->get('homepage.providers.v1', function (ItemInterface $item) use ($prestataireProfileRepository): array {
+        $providers = $cache->get('homepage.providers.v1', static function (ItemInterface $item) use ($prestataireProfileRepository): array {
             $item->expiresAfter(3600);
 
             return array_map(
@@ -158,7 +163,7 @@ class HomeController extends AbstractController
                 'onboarding_query_received' => $shouldShowProfileCompletionModal,
                 'prestataire_profile_found' => isset($prestataireProfile) && null !== $prestataireProfile,
                 'mandatory_checklist_built' => null !== $mandatoryChecklist,
-                'mandatory_missing_count' => null !== $mandatoryChecklist ? count($mandatoryChecklist['missingItems']) : null,
+                'mandatory_missing_count' => null !== $mandatoryChecklist ? \count($mandatoryChecklist['missingItems']) : null,
                 'mandatory_is_complete' => null !== $mandatoryChecklist ? $mandatoryChecklist['isComplete'] : null,
                 'show_profile_completion_modal' => $showProfileCompletionModal,
             ];

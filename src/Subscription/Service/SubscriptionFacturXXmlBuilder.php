@@ -2,6 +2,21 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Service;
 
 use App\Subscription\Entity\SubscriptionInvoice;
@@ -95,7 +110,7 @@ final class SubscriptionFacturXXmlBuilder
         $description = $planName;
 
         if ($invoice->getPeriodStart() instanceof \DateTimeInterface && $invoice->getPeriodEnd() instanceof \DateTimeInterface) {
-            $description .= sprintf(
+            $description .= \sprintf(
                 ' - periode du %s au %s',
                 $invoice->getPeriodStart()->format('d/m/Y'),
                 $invoice->getPeriodEnd()->format('d/m/Y')
@@ -240,7 +255,7 @@ final class SubscriptionFacturXXmlBuilder
 
     private function appendLegalOrganization(\DOMDocument $document, \DOMElement $parent, ?string $siren): void
     {
-        if ($siren === null) {
+        if (null === $siren) {
             return;
         }
 
@@ -264,7 +279,7 @@ final class SubscriptionFacturXXmlBuilder
 
         $hasValue = false;
         foreach ($orderedTags as $tag) {
-            if (isset($parts[$tag]) && null !== $parts[$tag] && '' !== trim((string) $parts[$tag])) {
+            if (isset($parts[$tag]) && null !== $parts[$tag] && '' !== mb_trim((string) $parts[$tag])) {
                 $hasValue = true;
                 break;
             }
@@ -278,11 +293,11 @@ final class SubscriptionFacturXXmlBuilder
 
         foreach ($orderedTags as $tag) {
             $value = $parts[$tag] ?? null;
-            if (null === $value || '' === trim((string) $value)) {
+            if (null === $value || '' === mb_trim((string) $value)) {
                 continue;
             }
 
-            $address->appendChild($this->createTextElementNS($document, self::NS_RAM, $tag, trim((string) $value)));
+            $address->appendChild($this->createTextElementNS($document, self::NS_RAM, $tag, mb_trim((string) $value)));
         }
 
         $parent->appendChild($address);
@@ -290,7 +305,7 @@ final class SubscriptionFacturXXmlBuilder
 
     private function appendTaxRegistration(\DOMDocument $document, \DOMElement $parent, ?string $vatNumber): void
     {
-        if (null === $vatNumber || '' === trim($vatNumber)) {
+        if (null === $vatNumber || '' === mb_trim($vatNumber)) {
             return;
         }
 
@@ -304,7 +319,7 @@ final class SubscriptionFacturXXmlBuilder
     private function appendElectronicCommunication(\DOMDocument $document, \DOMElement $parent, ?string $email): void
     {
         $email = $this->normalizeEmail($email);
-        if ($email === null) {
+        if (null === $email) {
             return;
         }
 
@@ -327,9 +342,9 @@ final class SubscriptionFacturXXmlBuilder
     private function buildIncludedNote(\DOMDocument $document, string $content, ?string $subjectCode = null): \DOMElement
     {
         $includedNote = $document->createElementNS(self::NS_RAM, 'ram:IncludedNote');
-        $includedNote->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Content', trim($content)));
+        $includedNote->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Content', mb_trim($content)));
 
-        if ($subjectCode !== null) {
+        if (null !== $subjectCode) {
             $includedNote->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:SubjectCode', $subjectCode));
         }
 
@@ -346,7 +361,7 @@ final class SubscriptionFacturXXmlBuilder
 
     private function resolveInvoiceNumber(SubscriptionInvoice $invoice): string
     {
-        return $invoice->getInvoiceNumber() ?: ('ABO-' . ($invoice->getId() ?? 'draft'));
+        return $invoice->getInvoiceNumber() ?: ('ABO-'.($invoice->getId() ?? 'draft'));
     }
 
     private function resolveSubtotal(SubscriptionInvoice $invoice): string
@@ -380,16 +395,16 @@ final class SubscriptionFacturXXmlBuilder
     {
         $digits = preg_replace('/\D+/', '', (string) $siret) ?: '';
 
-        if (strlen($digits) < 9) {
+        if (mb_strlen($digits) < 9) {
             return null;
         }
 
-        return substr($digits, 0, 9);
+        return mb_substr($digits, 0, 9);
     }
 
     private function normalizeCountryCode(?string $country): ?string
     {
-        $country = trim((string) $country);
+        $country = mb_trim((string) $country);
 
         if ('' === $country) {
             return null;
@@ -399,24 +414,24 @@ final class SubscriptionFacturXXmlBuilder
 
         return match ($upper) {
             'FRANCE' => 'FR',
-            default => strlen($upper) === 2 ? $upper : null,
+            default => 2 === mb_strlen($upper) ? $upper : null,
         };
     }
 
     private function normalizeVatNumber(?string $vatNumber): string
     {
-        return preg_replace('/\s+/', '', mb_strtoupper(trim((string) $vatNumber))) ?: '';
+        return preg_replace('/\s+/', '', mb_strtoupper(mb_trim((string) $vatNumber))) ?: '';
     }
 
     private function normalizeEmail(?string $email): ?string
     {
-        $email = trim((string) $email);
+        $email = mb_trim((string) $email);
 
-        return $email !== '' ? mb_strtolower($email) : null;
+        return '' !== $email ? mb_strtolower($email) : null;
     }
 
     private function hasTextContent(?string $value): bool
     {
-        return trim((string) $value) !== '';
+        return '' !== mb_trim((string) $value);
     }
 }

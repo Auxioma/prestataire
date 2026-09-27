@@ -2,11 +2,26 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Invoice\Service;
 
 use App\Invoice\Entity\Invoice;
-use App\Quote\Entity\QuoteProposal;
 use App\Invoice\Enum\InvoiceSourceTypeEnum;
+use App\Quote\Entity\QuoteProposal;
 
 final class FacturXXmlBuilder
 {
@@ -62,7 +77,7 @@ final class FacturXXmlBuilder
             $header->appendChild($issueDateTime);
         }
 
-        if ($invoice->getNotes() !== null && trim($invoice->getNotes()) !== '') {
+        if (null !== $invoice->getNotes() && '' !== mb_trim($invoice->getNotes())) {
             $header->appendChild($this->buildIncludedNote($document, $invoice->getNotes()));
         }
 
@@ -77,7 +92,7 @@ final class FacturXXmlBuilder
     {
         $transaction = $document->createElementNS(self::NS_RSM, 'rsm:SupplyChainTradeTransaction');
 
-        if ($invoice->getSourceType() !== InvoiceSourceTypeEnum::EXTERNAL_IMPORT) {
+        if (InvoiceSourceTypeEnum::EXTERNAL_IMPORT !== $invoice->getSourceType()) {
             foreach ($invoice->getItems() as $item) {
                 $line = $document->createElementNS(self::NS_RAM, 'ram:IncludedSupplyChainTradeLineItem');
 
@@ -87,7 +102,7 @@ final class FacturXXmlBuilder
 
                 $product = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedTradeProduct');
                 $product->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Name', $item->getLabel() ?: 'Ligne'));
-                if ($item->getDescription() !== null && trim($item->getDescription()) !== '') {
+                if (null !== $item->getDescription() && '' !== mb_trim($item->getDescription())) {
                     $product->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Description', $item->getDescription()));
                 }
                 $line->appendChild($product);
@@ -156,7 +171,7 @@ final class FacturXXmlBuilder
         ]);
         $agreement->appendChild($buyer);
 
-        if ($quote?->getProposalNumber() !== null && trim($quote->getProposalNumber()) !== '') {
+        if (null !== $quote?->getProposalNumber() && '' !== mb_trim($quote->getProposalNumber())) {
             $referencedDocument = $document->createElementNS(self::NS_RAM, 'ram:BuyerOrderReferencedDocument');
             $referencedDocument->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:IssuerAssignedID', $quote->getProposalNumber()));
             $agreement->appendChild($referencedDocument);
@@ -216,7 +231,7 @@ final class FacturXXmlBuilder
         if ($this->hasPaymentTerms($invoice)) {
             $terms = $document->createElementNS(self::NS_RAM, 'ram:SpecifiedTradePaymentTerms');
 
-            if ($invoice->getTerms() !== null && trim($invoice->getTerms()) !== '') {
+            if (null !== $invoice->getTerms() && '' !== mb_trim($invoice->getTerms())) {
                 $terms->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Description', $invoice->getTerms()));
             }
 
@@ -244,7 +259,7 @@ final class FacturXXmlBuilder
 
     private function appendLegalOrganization(\DOMDocument $document, \DOMElement $parent, ?string $siren): void
     {
-        if ($siren === null) {
+        if (null === $siren) {
             return;
         }
 
@@ -270,12 +285,12 @@ final class FacturXXmlBuilder
         foreach ($orderedTags as $tag) {
             $value = $parts[$tag] ?? null;
 
-            if ($value !== null && trim($value) !== '') {
+            if (null !== $value && '' !== mb_trim($value)) {
                 $values[$tag] = $value;
             }
         }
 
-        if ($values === []) {
+        if ([] === $values) {
             return;
         }
 
@@ -289,7 +304,7 @@ final class FacturXXmlBuilder
 
     private function appendTaxRegistration(\DOMDocument $document, \DOMElement $parent, ?string $vatNumber): void
     {
-        if ($vatNumber === null || trim($vatNumber) === '') {
+        if (null === $vatNumber || '' === mb_trim($vatNumber)) {
             return;
         }
 
@@ -332,7 +347,7 @@ final class FacturXXmlBuilder
         $includedNote = $document->createElementNS(self::NS_RAM, 'ram:IncludedNote');
         $includedNote->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:Content', $content));
 
-        if ($subjectCode !== null) {
+        if (null !== $subjectCode) {
             $includedNote->appendChild($this->createTextElementNS($document, self::NS_RAM, 'ram:SubjectCode', $subjectCode));
         }
 
@@ -349,7 +364,7 @@ final class FacturXXmlBuilder
         foreach ($invoice->getItems() as $item) {
             $rate = $this->formatAmount($item->getVatRate());
             $categoryCode = $this->resolveTaxCategoryCode($item->getVatRate());
-            $key = $categoryCode . '|' . $rate;
+            $key = $categoryCode.'|'.$rate;
             $basisAmount = $this->formatAmount($item->getTotalHt());
             $taxAmount = $this->calculateLineTaxAmount($basisAmount, $rate);
 
@@ -366,8 +381,8 @@ final class FacturXXmlBuilder
             $breakdowns[$key]['taxAmount'] = bcadd($breakdowns[$key]['taxAmount'], $taxAmount, 2);
         }
 
-        if ($breakdowns === []) {
-            $rate = $invoice->getTaxAmount() === '0.00' ? '0.00' : $this->formatAmount(0);
+        if ([] === $breakdowns) {
+            $rate = '0.00' === $invoice->getTaxAmount() ? '0.00' : $this->formatAmount(0);
 
             return [[
                 'rate' => $rate,
@@ -377,7 +392,7 @@ final class FacturXXmlBuilder
             ]];
         }
 
-        return array_values(array_map(fn (array $breakdown): array => [
+        return array_values(array_map(static fn (array $breakdown): array => [
             'rate' => $breakdown['rate'],
             'basisAmount' => $breakdown['basisAmount'],
             'taxAmount' => $breakdown['taxAmount'],
@@ -394,7 +409,7 @@ final class FacturXXmlBuilder
         \DOMDocument $document,
         string $namespace,
         string $qualifiedName,
-        null|string|int|float $value,
+        string|int|float|null $value,
     ): \DOMElement {
         $element = $document->createElementNS($namespace, $qualifiedName);
         $element->appendChild($document->createTextNode((string) $value));
@@ -402,24 +417,24 @@ final class FacturXXmlBuilder
         return $element;
     }
 
-    private function resolveTaxCategoryCode(null|string|int|float $rate): string
+    private function resolveTaxCategoryCode(string|int|float|null $rate): string
     {
         return ((float) $rate) > 0 ? 'S' : 'Z';
     }
 
     private function extractSiren(?string $siret): ?string
     {
-        if ($siret === null) {
+        if (null === $siret) {
             return null;
         }
 
         $normalized = preg_replace('/\D+/', '', $siret);
 
-        if (!is_string($normalized) || strlen($normalized) < 9) {
+        if (!\is_string($normalized) || mb_strlen($normalized) < 9) {
             return null;
         }
 
-        return substr($normalized, 0, 9);
+        return mb_substr($normalized, 0, 9);
     }
 
     private function hasDistinctDeliveryAddress(?QuoteProposal $quote): bool
@@ -433,7 +448,7 @@ final class FacturXXmlBuilder
         $deliveryCity = $this->normalizeForComparison($quote->getClientInterventionCity());
         $deliveryCountry = $this->normalizeForComparison($quote->getClientInterventionCountry());
 
-        if ($deliveryAddress === null && $deliveryPostalCode === null && $deliveryCity === null && $deliveryCountry === null) {
+        if (null === $deliveryAddress && null === $deliveryPostalCode && null === $deliveryCity && null === $deliveryCountry) {
             return false;
         }
 
@@ -445,37 +460,37 @@ final class FacturXXmlBuilder
 
     private function normalizeForComparison(?string $value): ?string
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
-        $normalized = trim(mb_strtolower($value));
+        $normalized = mb_trim(mb_strtolower($value));
 
-        return $normalized === '' ? null : $normalized;
+        return '' === $normalized ? null : $normalized;
     }
 
     private function hasTextContent(?string $value): bool
     {
-        return $value !== null && trim($value) !== '';
+        return null !== $value && '' !== mb_trim($value);
     }
 
     private function normalizeCountryCode(?string $country): ?string
     {
-        if ($country === null || trim($country) === '') {
+        if (null === $country || '' === mb_trim($country)) {
             return null;
         }
 
-        $normalized = strtoupper(trim($country));
+        $normalized = mb_strtoupper(mb_trim($country));
 
         return match ($normalized) {
             'FRANCE' => 'FR',
-            default => strlen($normalized) === 2 ? $normalized : $normalized,
+            default => 2 === mb_strlen($normalized) ? $normalized : $normalized,
         };
     }
 
-    private function formatAmount(null|string|int|float $value): string
+    private function formatAmount(string|int|float|null $value): string
     {
-        if ($value === null || $value === '') {
+        if (null === $value || '' === $value) {
             return '0.00';
         }
 

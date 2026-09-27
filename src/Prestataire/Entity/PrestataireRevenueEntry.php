@@ -2,6 +2,21 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Prestataire\Entity;
 
 use App\Prestataire\Repository\PrestataireRevenueEntryRepository;
@@ -111,7 +126,7 @@ class PrestataireRevenueEntry
 
     public function setLabel(?string $label): self
     {
-        $this->label = null !== $label ? trim($label) : null;
+        $this->label = null !== $label ? mb_trim($label) : null;
         $this->touch();
 
         return $this;
@@ -124,7 +139,7 @@ class PrestataireRevenueEntry
 
     public function setServiceLabel(?string $serviceLabel): self
     {
-        $this->serviceLabel = null !== $serviceLabel ? trim($serviceLabel) : null;
+        $this->serviceLabel = null !== $serviceLabel ? mb_trim($serviceLabel) : null;
         $this->touch();
 
         return $this;
@@ -137,7 +152,7 @@ class PrestataireRevenueEntry
 
     public function setClientName(?string $clientName): self
     {
-        $this->clientName = null !== $clientName ? trim($clientName) : null;
+        $this->clientName = null !== $clientName ? mb_trim($clientName) : null;
         $this->touch();
 
         return $this;
@@ -150,7 +165,7 @@ class PrestataireRevenueEntry
 
     public function setInvoiceNumber(?string $invoiceNumber): self
     {
-        $this->invoiceNumber = null !== $invoiceNumber ? trim($invoiceNumber) : null;
+        $this->invoiceNumber = null !== $invoiceNumber ? mb_trim($invoiceNumber) : null;
         $this->touch();
 
         return $this;
@@ -194,7 +209,7 @@ class PrestataireRevenueEntry
 
     public function setCurrency(string $currency): self
     {
-        $this->currency = trim($currency);
+        $this->currency = mb_trim($currency);
         $this->touch();
 
         return $this;
@@ -282,7 +297,7 @@ class PrestataireRevenueEntry
             return $this->prestataireService->getDisplayTitle();
         }
 
-        if (null !== $this->serviceLabel && '' !== trim($this->serviceLabel)) {
+        if (null !== $this->serviceLabel && '' !== mb_trim($this->serviceLabel)) {
             return $this->serviceLabel;
         }
 

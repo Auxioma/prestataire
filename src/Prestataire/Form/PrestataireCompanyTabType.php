@@ -1,27 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Prestataire\Form;
 
 use App\Prestataire\Entity\PrestataireProfile;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Image;
 use Vich\UploaderBundle\Form\Type\VichImageType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 
 class PrestataireCompanyTabType extends AbstractType
 {
@@ -156,19 +163,19 @@ class PrestataireCompanyTabType extends AbstractType
                 ],
             ]);
 
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, static function (FormEvent $event): void {
             $data = $event->getData();
 
-            if (!is_array($data)) {
+            if (!\is_array($data)) {
                 return;
             }
 
-            if (isset($data['siret']) && is_string($data['siret'])) {
+            if (isset($data['siret']) && \is_string($data['siret'])) {
                 $data['siret'] = preg_replace('/\D+/', '', $data['siret']);
                 $data['siret'] = mb_substr($data['siret'], 0, 14);
             }
 
-            if (isset($data['siren']) && is_string($data['siren'])) {
+            if (isset($data['siren']) && \is_string($data['siren'])) {
                 $data['siren'] = preg_replace('/\D+/', '', $data['siren']);
                 $data['siren'] = mb_substr($data['siren'], 0, 9);
             }

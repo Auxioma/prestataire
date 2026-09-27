@@ -1,22 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Quote\Controller\Prestataire;
 
+use App\Account\Entity\User;
+use App\Account\Service\AuthenticatedUserProvider;
 use App\Messaging\Entity\Conversation;
 use App\Messaging\Entity\Message;
-use App\Quote\Entity\QuoteRequest;
-use App\Account\Entity\User;
 use App\Messaging\Enum\MessageTypeEnum;
 use App\Messaging\Enum\NotificationTypeEnum;
-use App\Quote\Enum\QuoteRequestStatusEnum;
 use App\Messaging\Repository\ConversationRepository;
+use App\Messaging\Service\NotificationManager;
+use App\Prestataire\Security\Voter\PrestataireCompanySettingsVoter;
+use App\Quote\Entity\QuoteRequest;
+use App\Quote\Enum\QuoteRequestStatusEnum;
 use App\Quote\Repository\QuoteProposalRepository;
 use App\Quote\Repository\QuoteRequestRepository;
-use App\Account\Service\AuthenticatedUserProvider;
-use App\Messaging\Service\NotificationManager;
 use App\Subscription\Service\SubscriptionAccessManager;
 use App\Subscription\Service\SubscriptionCreditManager;
-use App\Prestataire\Security\Voter\PrestataireCompanySettingsVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -42,13 +59,11 @@ final class PrestataireQuoteRequestController extends AbstractController
     #[Route('', name: 'index', methods: ['GET'])]
     /**
      * Affiche la page principale de ce contrôleur.
-     *
-     * @return Response
      */
     public function index(
         Request $request,
         QuoteRequestRepository $quoteRequestRepository,
-        PaginatorInterface $paginator
+        PaginatorInterface $paginator,
     ): Response {
         $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
@@ -78,12 +93,11 @@ final class PrestataireQuoteRequestController extends AbstractController
     #[Route('/{slug}', name: 'show', methods: ['GET'])]
     /**
      * Affiche le détail de la ressource demandée.
-     *
-     * @return Response
      */
     public function show(
-        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
-        QuoteProposalRepository $quoteProposalRepository
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        QuoteRequest $quoteRequest,
+        QuoteProposalRepository $quoteProposalRepository,
     ): Response {
         $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
@@ -129,8 +143,6 @@ final class PrestataireQuoteRequestController extends AbstractController
     #[Route('/{slug}/accept-study', name: 'accept_study', methods: ['POST'])]
     /**
      * Traite l’action "acceptStudy" du contrôleur Prestataire Quote Request.
-     *
-     * @return RedirectResponse
      */
     public function acceptStudy(
         Request $request,
@@ -180,7 +192,7 @@ final class PrestataireQuoteRequestController extends AbstractController
             ]);
         }
 
-        if (!$this->isCsrfTokenValid('accept-study-' . $quoteRequest->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('accept-study-'.$quoteRequest->getId(), (string) $request->request->get('_token'))) {
             $this->addFlash('danger', 'Jeton CSRF invalide.');
 
             return $this->redirectToRoute('app_prestataire_quote_request_show', [
@@ -188,7 +200,7 @@ final class PrestataireQuoteRequestController extends AbstractController
             ]);
         }
 
-        if ($quoteRequest->getStatus() !== QuoteRequestStatusEnum::SUBMITTED) {
+        if (QuoteRequestStatusEnum::SUBMITTED !== $quoteRequest->getStatus()) {
             $this->addFlash('warning', 'Cette demande ne peut plus être acceptée pour étude.');
 
             return $this->redirectToRoute('app_prestataire_quote_request_show', [
@@ -273,14 +285,13 @@ final class PrestataireQuoteRequestController extends AbstractController
     #[Route('/{slug}/deny', name: 'deny', methods: ['POST'])]
     /**
      * Traite l’action "deny" du contrôleur Prestataire Quote Request.
-     *
-     * @return RedirectResponse
      */
     public function deny(
         Request $request,
-        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        QuoteRequest $quoteRequest,
         EntityManagerInterface $entityManager,
-        NotificationManager $notificationManager
+        NotificationManager $notificationManager,
     ): RedirectResponse {
         $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
@@ -298,7 +309,7 @@ final class PrestataireQuoteRequestController extends AbstractController
             throw $this->createAccessDeniedException('Vous ne pouvez pas traiter cette demande.');
         }
 
-        if (!$this->isCsrfTokenValid('deny-quote-request-' . $quoteRequest->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('deny-quote-request-'.$quoteRequest->getId(), (string) $request->request->get('_token'))) {
             $this->addFlash('danger', 'Jeton CSRF invalide.');
 
             return $this->redirectToRoute('app_prestataire_quote_request_show', [
@@ -306,7 +317,7 @@ final class PrestataireQuoteRequestController extends AbstractController
             ]);
         }
 
-        if ($quoteRequest->getStatus() !== QuoteRequestStatusEnum::SUBMITTED) {
+        if (QuoteRequestStatusEnum::SUBMITTED !== $quoteRequest->getStatus()) {
             $this->addFlash('warning', 'Cette demande ne peut plus être refusée.');
 
             return $this->redirectToRoute('app_prestataire_quote_request_show', [
@@ -347,13 +358,12 @@ final class PrestataireQuoteRequestController extends AbstractController
     #[Route('/{slug}/delete', name: 'delete', methods: ['POST'])]
     /**
      * Supprime la ressource demandée.
-     *
-     * @return RedirectResponse
      */
     public function delete(
         Request $request,
-        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
-        EntityManagerInterface $entityManager
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        QuoteRequest $quoteRequest,
+        EntityManagerInterface $entityManager,
     ): RedirectResponse {
         $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
@@ -375,7 +385,7 @@ final class PrestataireQuoteRequestController extends AbstractController
 
         if (
             !$this->isCsrfTokenValid(
-                'delete-quote-request-' . $quoteRequest->getId(),
+                'delete-quote-request-'.$quoteRequest->getId(),
                 (string) $request->request->get('_token')
             )
         ) {
@@ -398,7 +408,7 @@ final class PrestataireQuoteRequestController extends AbstractController
             ->setDeletedAt(new \DateTimeImmutable())
             ->setUpdatedAt(new \DateTimeImmutable());
 
-        if (!in_array(
+        if (!\in_array(
             $quoteRequest->getStatus(),
             [QuoteRequestStatusEnum::SUBMITTED, QuoteRequestStatusEnum::DENIED],
             true
@@ -420,13 +430,12 @@ final class PrestataireQuoteRequestController extends AbstractController
     #[Route('/{slug}/archive', name: 'archive', methods: ['POST'])]
     /**
      * Traite l’action "archive" du contrôleur Prestataire Quote Request.
-     *
-     * @return RedirectResponse
      */
     public function archive(
         Request $request,
-        #[MapEntity(mapping: ['slug' => 'slug'])] QuoteRequest $quoteRequest,
-        EntityManagerInterface $entityManager
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        QuoteRequest $quoteRequest,
+        EntityManagerInterface $entityManager,
     ): RedirectResponse {
         $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
 
@@ -442,6 +451,7 @@ final class PrestataireQuoteRequestController extends AbstractController
 
         if ($quoteRequest->isDeleted()) {
             $this->addFlash('warning', 'Cette demande n’est plus disponible.');
+
             return $this->redirectToRoute('app_prestataire_dashboard', [
                 'tab' => 'demandes',
                 '_fragment' => 'demandes-main-panel',
@@ -450,7 +460,7 @@ final class PrestataireQuoteRequestController extends AbstractController
 
         if (
             !$this->isCsrfTokenValid(
-                'archive-quote-request-' . $quoteRequest->getId(),
+                'archive-quote-request-'.$quoteRequest->getId(),
                 (string) $request->request->get('_token')
             )
         ) {
@@ -462,7 +472,7 @@ final class PrestataireQuoteRequestController extends AbstractController
             ]);
         }
 
-        if ($quoteRequest->getArchivedByPrestataireAt() !== null) {
+        if (null !== $quoteRequest->getArchivedByPrestataireAt()) {
             $this->addFlash('info', 'Cette demande est déjà archivée.');
 
             return $this->redirectToRoute('app_prestataire_dashboard', [
@@ -548,7 +558,7 @@ final class PrestataireQuoteRequestController extends AbstractController
         }
 
         if (\is_string($value)) {
-            return '' === trim($value);
+            return '' === mb_trim($value);
         }
 
         return false;

@@ -2,16 +2,31 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Prestataire\Service;
 
 use App\Account\Entity\ClientProfile;
+use App\Account\Entity\User;
 use App\Invoice\Entity\Invoice;
+use App\Invoice\Repository\InvoiceRepository;
 use App\Prestataire\Entity\PrestataireProfile;
 use App\Prestataire\Entity\PrestataireRevenueEntry;
-use App\Quote\Entity\QuoteProposal;
-use App\Account\Entity\User;
-use App\Invoice\Repository\InvoiceRepository;
 use App\Prestataire\Repository\PrestataireRevenueEntryRepository;
+use App\Quote\Entity\QuoteProposal;
 
 final class PrestataireRevenueOverviewBuilder
 {
@@ -47,8 +62,8 @@ final class PrestataireRevenueOverviewBuilder
         $services = [];
 
         $now = new \DateTimeImmutable();
-        $monthKey = sprintf('%04d-%02d', $selectedYear, $selectedMonth);
-        $yearKey = sprintf('%04d', $selectedYear);
+        $monthKey = \sprintf('%04d-%02d', $selectedYear, $selectedMonth);
+        $yearKey = \sprintf('%04d', $selectedYear);
         $availableYears = [$now->format('Y') => $now->format('Y')];
 
         $currentMonthInvoiced = 0;
@@ -298,12 +313,12 @@ final class PrestataireRevenueOverviewBuilder
         $proposal = $invoice->getQuoteProposal();
 
         if ($proposal instanceof QuoteProposal) {
-            $companyName = trim((string) $proposal->getClientCompanyName());
+            $companyName = mb_trim((string) $proposal->getClientCompanyName());
             if ('' !== $companyName) {
                 return $companyName;
             }
 
-            $fullName = trim((string) $proposal->getClientFullName());
+            $fullName = mb_trim((string) $proposal->getClientFullName());
             if ('' !== $fullName) {
                 return $fullName;
             }
@@ -311,14 +326,14 @@ final class PrestataireRevenueOverviewBuilder
 
         $client = $invoice->getClient();
         if ($client instanceof ClientProfile) {
-            $companyName = trim((string) $client->getCompanyName());
+            $companyName = mb_trim((string) $client->getCompanyName());
             if ('' !== $companyName) {
                 return $companyName;
             }
 
             $account = $client->getAccount();
             if ($account instanceof User) {
-                $fullName = trim((string) $account->getFirstName() . ' ' . (string) $account->getLastName());
+                $fullName = mb_trim((string) $account->getFirstName().' '.(string) $account->getLastName());
                 if ('' !== $fullName) {
                     return $fullName;
                 }
@@ -364,8 +379,8 @@ final class PrestataireRevenueOverviewBuilder
 
     private function buildMonthLabel(int $month, int $year): string
     {
-        $monthLabel = self::MONTH_LABELS[$month] ?? sprintf('%02d', $month);
+        $monthLabel = self::MONTH_LABELS[$month] ?? \sprintf('%02d', $month);
 
-        return sprintf('%s %04d', $monthLabel, $year);
+        return \sprintf('%s %04d', $monthLabel, $year);
     }
 }

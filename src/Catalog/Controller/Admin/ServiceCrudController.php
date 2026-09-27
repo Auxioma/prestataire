@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Catalog\Controller\Admin;
 
 use App\Catalog\Entity\Service;
@@ -7,13 +24,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 
 /**
  * Gère les actions liées à service  c r u d.
@@ -27,8 +44,6 @@ class ServiceCrudController extends AbstractCrudController
 
     /**
      * Traite l’action "configureCrud" du contrôleur Service  C R U D.
-     *
-     * @return Crud
      */
     public function configureCrud(Crud $crud): Crud
     {
@@ -40,8 +55,6 @@ class ServiceCrudController extends AbstractCrudController
 
     /**
      * Traite l’action "configureFields" du contrôleur Service  C R U D.
-     *
-     * @return iterable
      */
     public function configureFields(string $pageName): iterable
     {
@@ -73,12 +86,12 @@ class ServiceCrudController extends AbstractCrudController
 
         yield TextField::new('icon', 'Icône actuelle')
             ->onlyOnIndex()
-            ->formatValue(function ($value, $entity) {
+            ->formatValue(static function ($value, $entity) {
                 if (!$value) {
                     return '<span class="text-muted">Aucune</span>';
                 }
 
-                return sprintf(
+                return \sprintf(
                     '<span style="display:inline-flex;align-items:center;gap:8px;">
                     <i class="fa-solid %s"></i>
                     <code>%s</code>

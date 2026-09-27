@@ -1,13 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Prestataire\Entity;
 
 use App\Account\Entity\ClientProfile;
-
+use App\Prestataire\Enum\PrestataireAppointmentStatusEnum;
 use App\Prestataire\Repository\PrestataireAppointmentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use App\Prestataire\Enum\PrestataireAppointmentStatusEnum;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PrestataireAppointmentRepository::class)]
@@ -54,8 +70,6 @@ class PrestataireAppointment
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $locationLabel = null;
-
-
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
@@ -104,6 +118,7 @@ class PrestataireAppointment
     public function setPrestataire(?PrestataireProfile $prestataire): self
     {
         $this->prestataire = $prestataire;
+
         return $this;
     }
 
@@ -111,9 +126,11 @@ class PrestataireAppointment
     {
         return $this->prestation;
     }
+
     public function setPrestation(?PrestataireService $prestation): self
     {
         $this->prestation = $prestation;
+
         return $this;
     }
 
@@ -121,9 +138,11 @@ class PrestataireAppointment
     {
         return $this->client;
     }
+
     public function setClient(?ClientProfile $client): self
     {
         $this->client = $client;
+
         return $this;
     }
 
@@ -131,9 +150,11 @@ class PrestataireAppointment
     {
         return $this->title;
     }
+
     public function setTitle(string $title): self
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -141,9 +162,11 @@ class PrestataireAppointment
     {
         return $this->description;
     }
+
     public function setDescription(?string $description): self
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -193,9 +216,11 @@ class PrestataireAppointment
     {
         return $this->locationLabel;
     }
+
     public function setLocationLabel(?string $locationLabel): self
     {
         $this->locationLabel = $locationLabel;
+
         return $this;
     }
 
@@ -203,9 +228,11 @@ class PrestataireAppointment
     {
         return $this->createdAt;
     }
+
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
         return $this;
     }
 
@@ -213,9 +240,11 @@ class PrestataireAppointment
     {
         return $this->updatedAt;
     }
+
     public function setUpdatedAt(\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
         return $this;
     }
 
@@ -227,6 +256,7 @@ class PrestataireAppointment
     public function setSlug(?string $slug): self
     {
         $this->slug = $slug;
+
         return $this;
     }
 }

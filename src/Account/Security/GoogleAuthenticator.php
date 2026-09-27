@@ -1,25 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Account\Security;
 
 use App\Account\Entity\ClientProfile;
-use App\Prestataire\Entity\PrestataireProfile;
 use App\Account\Entity\User;
 use App\Account\Enum\ClientTypeEnum;
+use App\Account\Service\UserLoginTracker;
+use App\Company\Service\PrestataireRegistrationAdmission;
+use App\Prestataire\Entity\PrestataireProfile;
 use App\Prestataire\Repository\PrestataireProfileRepository;
 use App\Prestataire\Service\PrestataireProfileCompletionService;
-use App\Company\Service\PrestataireRegistrationAdmission;
-use App\Account\Service\UserLoginTracker;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;

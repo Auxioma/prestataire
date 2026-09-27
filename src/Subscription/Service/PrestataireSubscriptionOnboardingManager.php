@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Service;
 
 use App\Prestataire\Entity\PrestataireProfile;
@@ -34,14 +51,11 @@ final class PrestataireSubscriptionOnboardingManager
 
         $freePlan = $this->subscriptionPlanRepository->findOneActiveByCode(self::FREE_PLAN_CODE);
         if (null === $freePlan) {
-            throw new \RuntimeException(sprintf(
-                'Le plan gratuit "%s" est introuvable. Exécutez la commande "app:subscription:install-default-plans" ou chargez les fixtures de plans avant de créer un prestataire.',
-                self::FREE_PLAN_CODE
-            ));
+            throw new \RuntimeException(\sprintf('Le plan gratuit "%s" est introuvable. Exécutez la commande "app:subscription:install-default-plans" ou chargez les fixtures de plans avant de créer un prestataire.', self::FREE_PLAN_CODE));
         }
 
         $now = new \DateTimeImmutable();
-        $subscription = (new PrestataireSubscription())
+        $subscription = new PrestataireSubscription()
             ->setPrestataireProfile($prestataireProfile)
             ->setPlan($freePlan)
             ->setPlanPrice($freePlan->getCurrentPriceForPeriod(SubscriptionBillingPeriodEnum::MONTHLY))

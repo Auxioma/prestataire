@@ -1,15 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Report\Controller;
 
+use App\Account\Entity\User;
 use App\Messaging\Entity\Conversation;
 use App\Quote\Entity\QuoteRequest;
 use App\Report\Entity\Report;
-use App\Review\Entity\Review;
-use App\Account\Entity\User;
 use App\Report\Form\ReportType;
-use App\Report\Service\ReportManager;
 use App\Report\Security\Voter\ReportAccessVoter;
+use App\Report\Service\ReportManager;
+use App\Review\Entity\Review;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -142,7 +159,7 @@ final class ReportController extends AbstractController
             return $this->generateUrl('app_prestataire_dashboard', [
                 'tab' => 'messages',
                 'conversation' => $conversation->getId(),
-            ]) . '#messages-main-panel';
+            ]).'#messages-main-panel';
         }
 
         return $this->generateUrl('app_quote_request_show', [

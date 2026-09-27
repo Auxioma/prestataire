@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Service;
 
 use App\Prestataire\Entity\PrestataireProfile;
@@ -7,8 +24,8 @@ use App\Subscription\Entity\PrestataireSubscription;
 use App\Subscription\Entity\SubscriptionCustomer;
 use App\Subscription\Entity\SubscriptionPlan;
 use App\Subscription\Enum\SubscriptionBillingPeriodEnum;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\ORM\EntityManagerInterface;
 
 final class StripeSubscriptionCheckoutManager
 {
@@ -28,7 +45,7 @@ final class StripeSubscriptionCheckoutManager
     {
         $customer = $this->stripeCustomerManager->findOrCreateForPrestataire($prestataireProfile);
         $setupIntent = $this->stripeApiClient->createSetupIntent($prestataireProfile, $customer);
-        $clientSecret = trim((string) ($setupIntent['client_secret'] ?? ''));
+        $clientSecret = mb_trim((string) ($setupIntent['client_secret'] ?? ''));
 
         if ('' === $clientSecret) {
             throw new \RuntimeException('Stripe n’a pas retourné de client_secret pour le SetupIntent.');
@@ -58,7 +75,7 @@ final class StripeSubscriptionCheckoutManager
         );
 
         $checkoutUrl = $checkoutSession['url'] ?? null;
-        if (!is_string($checkoutUrl) || '' === $checkoutUrl) {
+        if (!\is_string($checkoutUrl) || '' === $checkoutUrl) {
             throw new \RuntimeException('Impossible de créer la session Stripe.');
         }
 
@@ -94,7 +111,7 @@ final class StripeSubscriptionCheckoutManager
         string $setupIntentId,
     ): array {
         $customer = $this->applySetupIntentPaymentMethod($prestataireProfile, $setupIntentId);
-        $paymentMethodId = trim((string) $customer->getStripeDefaultPaymentMethodId());
+        $paymentMethodId = mb_trim((string) $customer->getStripeDefaultPaymentMethodId());
 
         if ('' === $paymentMethodId) {
             throw new \RuntimeException('Aucun moyen de paiement Stripe par défaut n’a pu être enregistré.');
@@ -166,7 +183,7 @@ final class StripeSubscriptionCheckoutManager
         }
 
         $setupIntentCustomerId = $this->stripeReferenceHelper->extractExpandableId($setupIntent['customer'] ?? null);
-        $customerId = trim((string) $customer->getStripeCustomerId());
+        $customerId = mb_trim((string) $customer->getStripeCustomerId());
         if ('' === $setupIntentCustomerId || $setupIntentCustomerId !== $customerId) {
             throw new \RuntimeException('Le SetupIntent ne correspond pas au client Stripe attendu.');
         }
@@ -176,7 +193,7 @@ final class StripeSubscriptionCheckoutManager
             throw new \RuntimeException('Stripe n’a pas retourné de moyen de paiement exploitable.');
         }
 
-        $paymentMethodId = trim((string) ($paymentMethod['id'] ?? ''));
+        $paymentMethodId = mb_trim((string) ($paymentMethod['id'] ?? ''));
         if ('' === $paymentMethodId) {
             throw new \RuntimeException('Stripe n’a pas retourné d’identifiant de moyen de paiement.');
         }
@@ -189,27 +206,27 @@ final class StripeSubscriptionCheckoutManager
      */
     private function resolveReusablePaymentMethodId(SubscriptionCustomer $customer, array $paymentMethod): string
     {
-        $paymentMethodId = trim((string) ($paymentMethod['id'] ?? ''));
+        $paymentMethodId = mb_trim((string) ($paymentMethod['id'] ?? ''));
         $paymentMethodType = $this->extractPaymentMethodType($paymentMethod);
-        $stripeCustomerId = trim((string) $customer->getStripeCustomerId());
+        $stripeCustomerId = mb_trim((string) $customer->getStripeCustomerId());
 
         if ('card' !== $paymentMethodType || '' === $stripeCustomerId) {
             return $paymentMethodId;
         }
 
-        $fingerprint = trim((string) ($paymentMethod['card']['fingerprint'] ?? ''));
+        $fingerprint = mb_trim((string) ($paymentMethod['card']['fingerprint'] ?? ''));
         if ('' === $fingerprint) {
             return $paymentMethodId;
         }
 
-        $expirationMonth = trim((string) ($paymentMethod['card']['exp_month'] ?? ''));
-        $expirationYear = trim((string) ($paymentMethod['card']['exp_year'] ?? ''));
+        $expirationMonth = mb_trim((string) ($paymentMethod['card']['exp_month'] ?? ''));
+        $expirationYear = mb_trim((string) ($paymentMethod['card']['exp_year'] ?? ''));
 
         foreach ($this->stripeApiClient->listCustomerPaymentMethods($stripeCustomerId, 'card') as $candidate) {
-            $candidateId = trim((string) ($candidate['id'] ?? ''));
-            $candidateFingerprint = trim((string) ($candidate['card']['fingerprint'] ?? ''));
-            $candidateExpMonth = trim((string) ($candidate['card']['exp_month'] ?? ''));
-            $candidateExpYear = trim((string) ($candidate['card']['exp_year'] ?? ''));
+            $candidateId = mb_trim((string) ($candidate['id'] ?? ''));
+            $candidateFingerprint = mb_trim((string) ($candidate['card']['fingerprint'] ?? ''));
+            $candidateExpMonth = mb_trim((string) ($candidate['card']['exp_month'] ?? ''));
+            $candidateExpYear = mb_trim((string) ($candidate['card']['exp_year'] ?? ''));
 
             if (
                 '' === $candidateId
@@ -237,7 +254,7 @@ final class StripeSubscriptionCheckoutManager
      */
     private function extractPaymentMethodType(array $paymentMethod): ?string
     {
-        $type = trim((string) ($paymentMethod['type'] ?? ''));
+        $type = mb_trim((string) ($paymentMethod['type'] ?? ''));
 
         return '' !== $type ? $type : null;
     }
@@ -258,10 +275,10 @@ final class StripeSubscriptionCheckoutManager
     {
         $latestInvoice = $subscriptionPayload['latest_invoice'] ?? null;
         $paymentIntent = \is_array($latestInvoice ?? null) ? ($latestInvoice['payment_intent'] ?? null) : null;
-        $paymentIntentStatus = \is_array($paymentIntent) ? trim((string) ($paymentIntent['status'] ?? '')) : '';
-        $stripeSubscriptionId = trim((string) ($subscriptionPayload['id'] ?? ''));
-        $latestInvoiceStatus = \is_array($latestInvoice) ? trim((string) ($latestInvoice['status'] ?? 'draft')) : '';
-        $stripeInvoiceId = \is_array($latestInvoice) ? trim((string) ($latestInvoice['id'] ?? '')) : '';
+        $paymentIntentStatus = \is_array($paymentIntent) ? mb_trim((string) ($paymentIntent['status'] ?? '')) : '';
+        $stripeSubscriptionId = mb_trim((string) ($subscriptionPayload['id'] ?? ''));
+        $latestInvoiceStatus = \is_array($latestInvoice) ? mb_trim((string) ($latestInvoice['status'] ?? 'draft')) : '';
+        $stripeInvoiceId = \is_array($latestInvoice) ? mb_trim((string) ($latestInvoice['id'] ?? '')) : '';
 
         if (\in_array($paymentIntentStatus, ['requires_payment_method', 'canceled'], true)) {
             throw new \RuntimeException('Stripe demande un nouveau moyen de paiement pour finaliser l’abonnement.');
@@ -319,8 +336,8 @@ final class StripeSubscriptionCheckoutManager
             return $subscriptionPayload;
         }
 
-        $stripeInvoiceId = trim((string) ($latestInvoice['id'] ?? ''));
-        $invoiceStatus = trim((string) ($latestInvoice['status'] ?? ''));
+        $stripeInvoiceId = mb_trim((string) ($latestInvoice['id'] ?? ''));
+        $invoiceStatus = mb_trim((string) ($latestInvoice['status'] ?? ''));
         $amountRemaining = (int) ($latestInvoice['amount_remaining'] ?? 0);
 
         if ('' === $stripeInvoiceId || 'paid' === $invoiceStatus || $amountRemaining <= 0) {
@@ -330,7 +347,7 @@ final class StripeSubscriptionCheckoutManager
         $paidInvoice = $this->stripeApiClient->payInvoice($stripeInvoiceId, $paymentMethodId);
         $subscriptionPayload['latest_invoice'] = $paidInvoice;
 
-        $stripeSubscriptionId = trim((string) ($subscriptionPayload['id'] ?? ''));
+        $stripeSubscriptionId = mb_trim((string) ($subscriptionPayload['id'] ?? ''));
         if ('' === $stripeSubscriptionId) {
             return $subscriptionPayload;
         }

@@ -1,27 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Tests\Search;
 
-use App\Prestataire\Entity\PrestataireProfile;
 use App\Account\Entity\User;
-use App\Prestataire\Enum\PrestataireProfileStatusEnum;
-use App\Search\Enum\SearchVisibilityEnum;
 use App\Account\Enum\UserStatusEnum;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Prestataire\Enum\PrestataireProfileStatusEnum;
 use App\Prestataire\Enum\VerificationStatusEnum;
+use App\Search\Enum\SearchVisibilityEnum;
 use App\Search\Indexing\PrestataireIndexDefinition;
+use App\Search\Service\ElasticsearchClient;
 use App\Search\Service\PrestataireSearchEligibility;
 use App\Search\Service\PrestataireSearchService;
-use App\Search\Service\ElasticsearchClient;
 use Elastic\Elasticsearch\ClientBuilder;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
@@ -40,7 +47,7 @@ final class PrestataireSearchTest extends TestCase
         $stack->push(Middleware::history($history));
         $wrapper = new ElasticsearchClient('https://localhost:9200', '', '', true);
         $client = ClientBuilder::create()->setHosts(['https://localhost:9200'])->setHttpClient(new Client(['handler' => $stack]))->build();
-        (new \ReflectionProperty($wrapper, 'client'))->setValue($wrapper, $client);
+        new \ReflectionProperty($wrapper, 'client')->setValue($wrapper, $client);
         $search = new PrestataireSearchService($wrapper);
         $search->search('plombier');
         $search->autocomplete('plombier');
@@ -55,9 +62,9 @@ final class PrestataireSearchTest extends TestCase
 
     public function testHiddenSuspendedAndUnverifiedProfilesAreExcluded(): void
     {
-        $profile = (new PrestataireProfile())->setCompanyName('Entreprise')->setSlug('entreprise')
+        $profile = new PrestataireProfile()->setCompanyName('Entreprise')->setSlug('entreprise')
             ->setProfileStatus(PrestataireProfileStatusEnum::ACTIVE)->setVerificationStatus(VerificationStatusEnum::COMPANY_VERIFIED);
-        $account = (new User())->setStatus(UserStatusEnum::ACTIVE);
+        $account = new User()->setStatus(UserStatusEnum::ACTIVE);
         $profile->setAccount($account);
         self::assertTrue(PrestataireSearchEligibility::isEligible($profile));
         $profile->setSearchVisibility(SearchVisibilityEnum::HIDDEN);

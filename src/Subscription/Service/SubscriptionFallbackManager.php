@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Service;
 
 use App\Prestataire\Entity\PrestataireProfile;
@@ -61,7 +78,7 @@ final class SubscriptionFallbackManager
 
         $freePlan = $this->subscriptionPlanRepository->findOneActiveByCode(self::FREE_PLAN_CODE);
         if (null === $freePlan) {
-            throw new \RuntimeException(sprintf('Le plan gratuit "%s" est introuvable.', self::FREE_PLAN_CODE));
+            throw new \RuntimeException(\sprintf('Le plan gratuit "%s" est introuvable.', self::FREE_PLAN_CODE));
         }
 
         $now = new \DateTimeImmutable();
@@ -161,7 +178,7 @@ final class SubscriptionFallbackManager
 
         $freePlan = $this->subscriptionPlanRepository->findOneActiveByCode(self::FREE_PLAN_CODE);
         if (null === $freePlan) {
-            throw new \RuntimeException(sprintf('Le plan gratuit "%s" est introuvable.', self::FREE_PLAN_CODE));
+            throw new \RuntimeException(\sprintf('Le plan gratuit "%s" est introuvable.', self::FREE_PLAN_CODE));
         }
 
         $freeSubscription = $this->prestataireSubscriptionRepository

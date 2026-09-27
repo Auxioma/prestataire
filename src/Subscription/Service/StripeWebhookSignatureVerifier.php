@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Service;
 
 class StripeWebhookSignatureVerifier
@@ -13,7 +30,7 @@ class StripeWebhookSignatureVerifier
 
     public function isConfigured(): bool
     {
-        return '' !== trim($this->webhookSecret);
+        return '' !== mb_trim($this->webhookSecret);
     }
 
     public function verify(string $payload, ?string $signatureHeader, int $tolerance = self::DEFAULT_TOLERANCE): bool
@@ -26,7 +43,7 @@ class StripeWebhookSignatureVerifier
         foreach (explode(',', $signatureHeader) as $part) {
             [$key, $value] = array_pad(explode('=', $part, 2), 2, null);
             if (null !== $key && null !== $value) {
-                $parts[trim($key)][] = trim($value);
+                $parts[mb_trim($key)][] = mb_trim($value);
             }
         }
 
@@ -41,7 +58,7 @@ class StripeWebhookSignatureVerifier
             return false;
         }
 
-        $signedPayload = $timestamp . '.' . $payload;
+        $signedPayload = $timestamp.'.'.$payload;
         $expectedSignature = hash_hmac('sha256', $signedPayload, $this->webhookSecret);
 
         foreach ($signatures as $signature) {

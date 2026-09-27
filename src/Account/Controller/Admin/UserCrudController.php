@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Account\Controller\Admin;
 
 use App\Account\Entity\User;
@@ -37,8 +54,6 @@ class UserCrudController extends AbstractCrudController
 
     /**
      * Traite l’action "configureCrud" du contrôleur User  C R U D.
-     *
-     * @return Crud
      */
     public function configureCrud(Crud $crud): Crud
     {
@@ -50,8 +65,6 @@ class UserCrudController extends AbstractCrudController
 
     /**
      * Traite l’action "configureActions" du contrôleur User  C R U D.
-     *
-     * @return Actions
      */
     public function configureActions(Actions $actions): Actions
     {
@@ -74,8 +87,6 @@ class UserCrudController extends AbstractCrudController
     #[AdminRoute(path: '/ban-user', name: 'ban_user')]
     /**
      * Traite l’action "banUser" du contrôleur User  C R U D.
-     *
-     * @return RedirectResponse
      */
     public function banUser(): RedirectResponse
     {
@@ -94,8 +105,6 @@ class UserCrudController extends AbstractCrudController
     #[AdminRoute(path: '/reactivate-user', name: 'reactivate_user')]
     /**
      * Traite l’action "reactivateUser" du contrôleur User  C R U D.
-     *
-     * @return RedirectResponse
      */
     public function reactivateUser(): RedirectResponse
     {
@@ -113,8 +122,6 @@ class UserCrudController extends AbstractCrudController
 
     /**
      * Traite l’action "configureFields" du contrôleur User  C R U D.
-     *
-     * @return iterable
      */
     public function configureFields(string $pageName): iterable
     {
@@ -194,12 +201,12 @@ class UserCrudController extends AbstractCrudController
 
     private function renderBadge(string $label, string $borderColor, string $backgroundColor, string $textColor): string
     {
-        return sprintf(
+        return \sprintf(
             '<span class="badge rounded-pill" style="border:1px solid %s;background:%s;color:%s;font-weight:600;">%s</span>',
-            htmlspecialchars($borderColor, ENT_QUOTES),
-            htmlspecialchars($backgroundColor, ENT_QUOTES),
-            htmlspecialchars($textColor, ENT_QUOTES),
-            htmlspecialchars($label, ENT_QUOTES)
+            htmlspecialchars($borderColor, \ENT_QUOTES),
+            htmlspecialchars($backgroundColor, \ENT_QUOTES),
+            htmlspecialchars($textColor, \ENT_QUOTES),
+            htmlspecialchars($label, \ENT_QUOTES)
         );
     }
 }

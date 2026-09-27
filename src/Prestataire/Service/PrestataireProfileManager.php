@@ -1,14 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Prestataire\Service;
 
+use App\Account\Entity\User;
+use App\Account\Repository\UserRepository;
 use App\Prestataire\Entity\PrestataireAvailability;
 use App\Prestataire\Entity\PrestataireDocument;
 use App\Prestataire\Entity\PrestataireInterventionZone;
 use App\Prestataire\Entity\PrestataireProfile;
-use App\Account\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Account\Repository\UserRepository;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
 use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
@@ -58,7 +75,7 @@ final class PrestataireProfileManager
         $hasChanges = false;
 
         for ($day = 1; $day <= 7; ++$day) {
-            if (in_array($day, $existingDays, true)) {
+            if (\in_array($day, $existingDays, true)) {
                 continue;
             }
 
@@ -109,7 +126,7 @@ final class PrestataireProfileManager
 
     public function syncSlug(PrestataireProfile $prestataireProfile): void
     {
-        $companyName = trim((string) $prestataireProfile->getCompanyName());
+        $companyName = mb_trim((string) $prestataireProfile->getCompanyName());
         $baseSlug = mb_strtolower((string) $this->slugger->slug('' !== $companyName ? $companyName : 'prestataire'));
 
         if ('' === $baseSlug) {
@@ -120,7 +137,7 @@ final class PrestataireProfileManager
         $suffix = 2;
 
         while ($this->slugExistsForAnotherProfile($slug, $prestataireProfile)) {
-            $slug = sprintf('%s-%d', $baseSlug, $suffix);
+            $slug = \sprintf('%s-%d', $baseSlug, $suffix);
             ++$suffix;
         }
 
@@ -159,14 +176,14 @@ final class PrestataireProfileManager
             return null;
         }
 
-        $zoneMap = (new Map('default'))
+        $zoneMap = new Map('default')
             ->center(new Point(
                 (float) $firstMappableZone->getLatitude(),
                 (float) $firstMappableZone->getLongitude()
             ))
             ->zoom(8)
             ->options(
-                (new LeafletOptions())
+                new LeafletOptions()
                     ->tileLayer(new TileLayer(
                         url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -192,7 +209,7 @@ final class PrestataireProfileManager
                 ),
                 title: $label,
                 infoWindow: new InfoWindow(
-                    content: '<strong>' . htmlspecialchars($label) . '</strong><br>Rayon : ' . (int) $existingZone->getRadiusKm() . ' km'
+                    content: '<strong>'.htmlspecialchars($label).'</strong><br>Rayon : '.(int) $existingZone->getRadiusKm().' km'
                 )
             ));
         }

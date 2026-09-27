@@ -1,24 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Search\Controller;
 
-use App\Prestataire\Entity\PrestataireProfile;
 use App\Catalog\Entity\ServiceCategory;
-use App\Search\Form\PrestataireBrowseFilterType;
-use App\Prestataire\Repository\PrestataireProfileRepository;
 use App\Catalog\Repository\ServiceCategoryRepository;
-use App\Search\Service\PrestataireSearchService;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Prestataire\Repository\PrestataireProfileRepository;
 use App\Prestataire\Service\ZoneGeocoder;
+use App\Search\Form\PrestataireBrowseFilterType;
+use App\Search\Service\PrestataireSearchService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,8 +39,6 @@ class PrestataireBrowseController extends AbstractController
     #[Route('/prestataires', name: 'app_prestataire_browse', methods: ['GET'])]
     /**
      * Affiche la page principale de ce contrôleur.
-     *
-     * @return Response
      */
     public function index(
         Request $request,
@@ -69,15 +74,15 @@ class PrestataireBrowseController extends AbstractController
             ? ($form->getData() ?? [])
             : [];
 
-        $query = trim((string) ($data['query'] ?? ''));
-        $location = trim((string) ($data['location'] ?? ''));
+        $query = mb_trim((string) ($data['query'] ?? ''));
+        $location = mb_trim((string) ($data['location'] ?? ''));
         $radiusKm = max(5, min(100, (int) ($data['radiusKm'] ?? 25)));
         /** @var ServiceCategory|null $category */
         $category = $data['category'] ?? $selectedCategory;
         /** @var ServiceCategory|null $subCategory */
         $subCategory = $data['subCategory'] ?? null;
         $sort = (string) ($data['sort'] ?? 'relevance');
-        $searchedLocation = $location !== '' ? $zoneGeocoder->geocode($location, null) : null;
+        $searchedLocation = '' !== $location ? $zoneGeocoder->geocode($location, null) : null;
 
         if ($subCategory instanceof ServiceCategory) {
             if (!$subCategory->isActive() || null === $subCategory->getParent()) {
@@ -88,8 +93,8 @@ class PrestataireBrowseController extends AbstractController
         }
 
         $searchResponse = $prestataireSearchService->browseSearch(
-            $query !== '' ? $query : null,
-            $location !== '' ? $location : null,
+            '' !== $query ? $query : null,
+            '' !== $location ? $location : null,
             $category?->getSlug(),
             $subCategory?->getSlug(),
             $sort,
@@ -107,7 +112,7 @@ class PrestataireBrowseController extends AbstractController
 
         $profiles = [];
 
-        if ($hitIds !== []) {
+        if ([] !== $hitIds) {
             $fetchedProfiles = $profileRepository->createQueryBuilder('p')
                 ->leftJoin('p.account', 'a')->addSelect('a')
                 ->andWhere('p.id IN (:ids)')
@@ -135,7 +140,7 @@ class PrestataireBrowseController extends AbstractController
                 continue;
             }
 
-            if ($searchedLocation === null) {
+            if (null === $searchedLocation) {
                 $directResults[] = $profile;
                 continue;
             }
@@ -156,7 +161,7 @@ class PrestataireBrowseController extends AbstractController
             $fallbackResults[] = $profile;
         }
 
-        if ($searchedLocation !== null) {
+        if (null !== $searchedLocation) {
             usort(
                 $directResults,
                 static fn ($a, $b): int => ($a->matchedDistanceKm ?? 999999) <=> ($b->matchedDistanceKm ?? 999999)
@@ -170,13 +175,13 @@ class PrestataireBrowseController extends AbstractController
 
         $page = max(1, $request->query->getInt('page', 1));
         $perPage = 9;
-        $totalResults = count($directResults);
+        $totalResults = \count($directResults);
         $totalPages = max(1, (int) ceil($totalResults / $perPage));
         $page = min($page, $totalPages);
         $offset = ($page - 1) * $perPage;
-        $pagedProfiles = array_slice($directResults, $offset, $perPage);
+        $pagedProfiles = \array_slice($directResults, $offset, $perPage);
 
-        $pageTitle = $query !== ''
+        $pageTitle = '' !== $query
             ? 'Résultats pour "'.$query.'"'
             : 'Tous nos prestataires';
 
@@ -193,7 +198,7 @@ class PrestataireBrowseController extends AbstractController
             'current_sort' => $sort,
             'page_title' => $pageTitle,
             'totalResults' => $totalResults,
-            'totalFallbackResults' => count($fallbackResults),
+            'totalFallbackResults' => \count($fallbackResults),
             'currentPage' => $page,
             'totalPages' => $totalPages,
         ]);
@@ -211,7 +216,7 @@ class PrestataireBrowseController extends AbstractController
             return 'direct';
         }
 
-        if ($searchedLocation === null || !isset($searchedLocation['latitude'], $searchedLocation['longitude'])) {
+        if (null === $searchedLocation || !isset($searchedLocation['latitude'], $searchedLocation['longitude'])) {
             return 'direct';
         }
 
@@ -257,7 +262,7 @@ class PrestataireBrowseController extends AbstractController
             return 0.0;
         }
 
-        if ($searchedLocation === null || !isset($searchedLocation['latitude'], $searchedLocation['longitude'])) {
+        if (null === $searchedLocation || !isset($searchedLocation['latitude'], $searchedLocation['longitude'])) {
             return null;
         }
 
@@ -280,7 +285,7 @@ class PrestataireBrowseController extends AbstractController
             $zoneRadiusKm = max(0, (int) $zone->getRadiusKm());
 
             if ($distanceKm <= ($radiusKm + $zoneRadiusKm)) {
-                if ($bestDistance === null || $distanceKm < $bestDistance) {
+                if (null === $bestDistance || $distanceKm < $bestDistance) {
                     $bestDistance = $distanceKm;
                 }
             }
@@ -299,7 +304,7 @@ class PrestataireBrowseController extends AbstractController
             $prestataire->getPostalCode(),
         ];
 
-        if ($searchedLocation !== null) {
+        if (null !== $searchedLocation) {
             $candidates[] = $searchedLocation['city'] ?? null;
             $candidates[] = $searchedLocation['postalCode'] ?? null;
             $candidates[] = $searchedLocation['department'] ?? null;
@@ -351,7 +356,7 @@ class PrestataireBrowseController extends AbstractController
 
     private function normalizeLocationValue(?string $value): string
     {
-        $value = mb_strtolower(trim((string) $value));
+        $value = mb_strtolower(mb_trim((string) $value));
 
         if ('' === $value) {
             return '';
@@ -363,6 +368,6 @@ class PrestataireBrowseController extends AbstractController
 
         $value = preg_replace('/\s+/', ' ', $value) ?? $value;
 
-        return trim($value);
+        return mb_trim($value);
     }
 }

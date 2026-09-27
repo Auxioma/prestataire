@@ -1,52 +1,68 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Quote\Controller;
 
+use App\Account\Entity\User;
+use App\Account\Security\Voter\ClientSettingsVoter;
 use App\Messaging\Entity\Conversation;
 use App\Messaging\Entity\Message;
-use App\Prestataire\Entity\PrestataireProfile;
-use App\Prestataire\Entity\PrestataireDocument;
-use App\Prestataire\Entity\PrestataireService;
-use App\Quote\Entity\QuoteProposal;
-use App\Quote\Entity\QuoteRequest;
-use App\Account\Entity\User;
 use App\Messaging\Enum\MessageTypeEnum;
 use App\Messaging\Enum\NotificationTypeEnum;
-use App\Quote\Enum\QuoteProposalStatusEnum;
-use App\Quote\Enum\QuoteRequestStatusEnum;
 use App\Messaging\Form\MessageType;
-use App\Quote\Form\QuoteRequestType;
 use App\Messaging\Repository\ConversationRepository;
 use App\Messaging\Repository\MessageRepository;
-use App\Prestataire\Repository\PrestataireDocumentRepository;
-use App\Quote\Repository\QuoteProposalRepository;
-use App\Quote\Repository\QuoteRequestRepository;
-use App\Review\Repository\ReviewRepository;
 use App\Messaging\Service\ConversationMessageManager;
 use App\Messaging\Service\NotificationManager;
+use App\Messaging\Service\RealtimeAuthTokenManager;
+use App\Messaging\Service\RealtimeNotifier;
+use App\Prestataire\Entity\PrestataireDocument;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Prestataire\Entity\PrestataireService;
+use App\Prestataire\Repository\PrestataireDocumentRepository;
+use App\Quote\Entity\QuoteProposal;
+use App\Quote\Entity\QuoteRequest;
+use App\Quote\Enum\QuoteProposalStatusEnum;
+use App\Quote\Enum\QuoteRequestStatusEnum;
+use App\Quote\Form\QuoteRequestType;
+use App\Quote\Repository\QuoteProposalRepository;
+use App\Quote\Repository\QuoteRequestRepository;
 use App\Quote\Service\QuoteProposalAcceptancePdfGenerator;
 use App\Quote\Service\QuoteProposalDocumentResolver;
 use App\Quote\Service\QuoteProposalNativePdfGenerator;
 use App\Quote\Service\QuoteProposalPdfResponseFactory;
-use App\Messaging\Service\RealtimeAuthTokenManager;
-use App\Messaging\Service\RealtimeNotifier;
+use App\Review\Repository\ReviewRepository;
 use App\Review\Service\ReviewManager;
 use App\Subscription\Service\SubscriptionAccessManager;
-use App\Account\Security\Voter\ClientSettingsVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
-
 
 #[Route('/demandes-de-devis', name: 'app_quote_request')]
 /**
@@ -62,13 +78,11 @@ final class QuoteRequestController extends AbstractController
     #[Route('', name: '_index', methods: ['GET'])]
     /**
      * Affiche la page principale de ce contrôleur.
-     *
-     * @return Response
      */
     public function index(
         Request $request,
         QuoteRequestRepository $quoteRequestRepository,
-        PaginatorInterface $paginator
+        PaginatorInterface $paginator,
     ): Response {
         $user = $this->getUser();
 
@@ -93,16 +107,16 @@ final class QuoteRequestController extends AbstractController
     #[Route('/nouvelle/{slug}', name: '_new', methods: ['GET', 'POST'], defaults: ['slug' => null])]
     /**
      * Affiche et traite le formulaire de création.
-     *
-     * @return Response
      */
     public function new(
         Request $request,
         EntityManagerInterface $entityManager,
         SluggerInterface $slugger,
         NotificationManager $notificationManager,
-        #[MapEntity(mapping: ['slug' => 'slug'])] ?PrestataireService $prestation = null,
-        #[MapEntity(mapping: ['prestataireSlug' => 'slug'])] ?PrestataireProfile $prestataire = null
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        ?PrestataireService $prestation = null,
+        #[MapEntity(mapping: ['prestataireSlug' => 'slug'])]
+        ?PrestataireProfile $prestataire = null,
     ): Response {
         $user = $this->getUser();
 
@@ -149,7 +163,7 @@ final class QuoteRequestController extends AbstractController
         } else {
             $activePrestations = $prestataire
                 ->getPrestataireServices()
-                ->filter(static fn($ps) => $ps->isActive());
+                ->filter(static fn ($ps) => $ps->isActive());
 
             if ($activePrestations->isEmpty()) {
                 $this->addFlash('warning', 'Ce prestataire ne propose actuellement aucune prestation disponible pour une demande de devis.');
@@ -189,7 +203,7 @@ final class QuoteRequestController extends AbstractController
                     ->lower()
                     ->toString();
 
-                $quoteRequest->setSlug($baseSlug . '-' . substr(bin2hex(random_bytes(4)), 0, 8));
+                $quoteRequest->setSlug($baseSlug.'-'.mb_substr(bin2hex(random_bytes(4)), 0, 8));
 
                 $entityManager->persist($quoteRequest);
                 $entityManager->flush();
@@ -197,7 +211,7 @@ final class QuoteRequestController extends AbstractController
                 $prestataireUser = $quoteRequest->getPrestataire()?->getAccount();
 
                 if ($prestataireUser instanceof User) {
-                    $clientLabel = trim(sprintf(
+                    $clientLabel = mb_trim(\sprintf(
                         '%s %s',
                         $user->getFirstName() ?? '',
                         $user->getLastName() ?? ''
@@ -211,10 +225,10 @@ final class QuoteRequestController extends AbstractController
                         $prestataireUser,
                         NotificationTypeEnum::QUOTE_REQUEST_RECEIVED,
                         'Nouvelle demande de prestation',
-                        sprintf(
+                        \sprintf(
                             '%s vous a envoyé une nouvelle demande%s.',
                             $clientLabel,
-                            $quoteRequest->getTitle() ? ' : ' . $quoteRequest->getTitle() : ''
+                            $quoteRequest->getTitle() ? ' : '.$quoteRequest->getTitle() : ''
                         ),
                         $this->generateUrl('app_prestataire_quote_request_show', [
                             'slug' => $quoteRequest->getSlug(),
@@ -244,16 +258,14 @@ final class QuoteRequestController extends AbstractController
         ]);
     }
 
-#[Route(
-    '/{slug}',
-    name: '_show',
-    methods: ['GET', 'POST'],
-    requirements: ['slug' => '(?!(historique|nouvelle)$)[a-z0-9-]+']
-)]
+    #[Route(
+        '/{slug}',
+        name: '_show',
+        methods: ['GET', 'POST'],
+        requirements: ['slug' => '(?!(historique|nouvelle)$)[a-z0-9-]+']
+    )]
     /**
      * Affiche le détail de la ressource demandée.
-     *
-     * @return Response
      */
     public function show(
         Request $request,
@@ -271,7 +283,6 @@ final class QuoteRequestController extends AbstractController
         ReviewManager $reviewManager,
         SubscriptionAccessManager $subscriptionAccessManager,
     ): Response {
-
         $user = $this->getUser();
 
         // =========================
@@ -318,7 +329,7 @@ final class QuoteRequestController extends AbstractController
 
         $quoteResponses = array_values(array_filter(
             $quoteResponses,
-            static fn(QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted() || $proposal->getStatus()->isArchived()
+            static fn (QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted() || $proposal->getStatus()->isArchived()
         ));
 
         $existingReview = $reviewRepository->findOneByQuoteRequest($quoteRequest);
@@ -371,7 +382,7 @@ final class QuoteRequestController extends AbstractController
             if ($messageForm->isSubmitted() && $messageForm->isValid()) {
                 /** @var array<\Symfony\Component\HttpFoundation\File\UploadedFile>|null $uploadedFiles */
                 $uploadedFiles = $messageForm->get('attachments')->getData();
-                $uploadedFiles = is_array($uploadedFiles) ? $uploadedFiles : [];
+                $uploadedFiles = \is_array($uploadedFiles) ? $uploadedFiles : [];
 
                 $isPrepared = $conversationMessageManager->prepareMessage(
                     $message,
@@ -498,7 +509,7 @@ final class QuoteRequestController extends AbstractController
     {
         $raw = $request->request->get('return_scroll');
 
-        if (!\is_string($raw) && !\is_numeric($raw)) {
+        if (!\is_string($raw) && !is_numeric($raw)) {
             return null;
         }
 
@@ -516,14 +527,12 @@ final class QuoteRequestController extends AbstractController
     #[Route('/{slug}/delete', name: '_delete', methods: ['POST'])]
     /**
      * Supprime la ressource demandée.
-     *
-     * @return Response
      */
     public function delete(
         Request $request,
         string $slug,
         QuoteRequestRepository $quoteRequestRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
     ): Response {
         $user = $this->getUser();
 
@@ -548,7 +557,7 @@ final class QuoteRequestController extends AbstractController
 
         if (
             !$this->isCsrfTokenValid(
-                'delete-quote-request-' . $quoteRequest->getId(),
+                'delete-quote-request-'.$quoteRequest->getId(),
                 (string) $request->request->get('_token')
             )
         ) {
@@ -567,7 +576,7 @@ final class QuoteRequestController extends AbstractController
             ]);
         }
 
-        if (!in_array(
+        if (!\in_array(
             $quoteRequest->getStatus(),
             [QuoteRequestStatusEnum::SUBMITTED, QuoteRequestStatusEnum::DENIED],
             true
@@ -593,8 +602,6 @@ final class QuoteRequestController extends AbstractController
     #[Route('/{slug}/photos', name: '_photos', methods: ['GET'])]
     /**
      * Traite l’action "photos" du contrôleur Quote Request.
-     *
-     * @return Response
      */
     public function photos(
         string $slug,
@@ -639,9 +646,9 @@ final class QuoteRequestController extends AbstractController
                 $mediaItems[] = [
                     'attachment' => $attachment,
                     'message' => $message,
-                    'url' => '/uploads/messages/' . $attachment->getFileName(),
+                    'url' => '/uploads/messages/'.$attachment->getFileName(),
                     'authorName' => $author
-                        ? trim(($author->getFirstName() ?? '') . ' ' . ($author->getLastName() ?? ''))
+                        ? mb_trim(($author->getFirstName() ?? '').' '.($author->getLastName() ?? ''))
                         : 'Système',
                     'createdAt' => $message->getCreatedAt(),
                     'canDelete' => $isOwner,
@@ -649,7 +656,7 @@ final class QuoteRequestController extends AbstractController
             }
         }
 
-        usort($mediaItems, static fn(array $a, array $b) => ($a['createdAt'] <=> $b['createdAt']));
+        usort($mediaItems, static fn (array $a, array $b) => ($a['createdAt'] <=> $b['createdAt']));
 
         return $this->render('Messaging/conversation/gallery.html.twig', [
             'conversation' => $conversation,
@@ -667,8 +674,6 @@ final class QuoteRequestController extends AbstractController
     #[Route('/devis/{publicReference}', name: '_quote_proposal_show', methods: ['GET'])]
     /**
      * Traite l’action "showProposal" du contrôleur Quote Request.
-     *
-     * @return Response
      */
     public function showProposal(
         string $publicReference,
@@ -702,8 +707,6 @@ final class QuoteRequestController extends AbstractController
     #[Route('/devis/{publicReference}/pdf', name: '_quote_proposal_pdf', methods: ['GET'])]
     /**
      * Traite l’action "showProposalPdf" du contrôleur Quote Request.
-     *
-     * @return Response
      */
     public function showProposalPdf(
         string $publicReference,
@@ -738,7 +741,7 @@ final class QuoteRequestController extends AbstractController
             Response::HTTP_OK,
             [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => sprintf(
+                'Content-Disposition' => \sprintf(
                     'inline; filename="%s.pdf"',
                     $proposal->getProposalNumber() ?: 'devis'
                 ),
@@ -749,8 +752,6 @@ final class QuoteRequestController extends AbstractController
     #[Route('/devis/{publicReference}/accept', name: '_quote_proposal_accept', methods: ['POST'])]
     /**
      * Traite l’action "acceptProposal" du contrôleur Quote Request.
-     *
-     * @return Response
      */
     public function acceptProposal(
         string $publicReference,
@@ -776,7 +777,7 @@ final class QuoteRequestController extends AbstractController
         }
 
         if (!$this->isCsrfTokenValid(
-            'accept_quote_proposal_' . $proposal->getId(),
+            'accept_quote_proposal_'.$proposal->getId(),
             (string) $request->request->get('_token')
         )) {
             throw $this->createAccessDeniedException('Jeton CSRF invalide.');
@@ -868,10 +869,10 @@ final class QuoteRequestController extends AbstractController
 
         $quoteResponses = array_values(array_filter(
             $quoteResponses,
-            static fn(QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted() || $proposal->getStatus()->isArchived()
+            static fn (QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted() || $proposal->getStatus()->isArchived()
         ));
 
-        if ($quoteResponses === []) {
+        if ([] === $quoteResponses) {
             throw $this->createNotFoundException('Aucun devis finalisé n’est disponible pour cette demande.');
         }
 
@@ -887,7 +888,7 @@ final class QuoteRequestController extends AbstractController
 
         $path = $storage->resolvePath($document, 'documentFile');
 
-        if ($path === null || !is_file($path)) {
+        if (null === $path || !is_file($path)) {
             throw $this->createNotFoundException('Le fichier du document est introuvable.');
         }
 
@@ -904,8 +905,6 @@ final class QuoteRequestController extends AbstractController
     #[Route('/historique', name: '_history', methods: ['GET'])]
     /**
      * Traite l’action "history" du contrôleur Quote Request.
-     *
-     * @return Response
      */
     public function history(
         Request $request,
@@ -934,8 +933,6 @@ final class QuoteRequestController extends AbstractController
     #[Route('/historique/{slug}', name: '_history_show', methods: ['GET'])]
     /**
      * Traite l’action "historyShow" du contrôleur Quote Request.
-     *
-     * @return Response
      */
     public function historyShow(
         string $slug,
@@ -947,7 +944,6 @@ final class QuoteRequestController extends AbstractController
         ReviewRepository $reviewRepository,
         ReviewManager $reviewManager,
     ): Response {
-
         $user = $this->getUser();
 
         if (!$user instanceof User || !$user->getClientProfile() || !$this->isGranted('ROLE_CLIENT')) {
@@ -969,21 +965,21 @@ final class QuoteRequestController extends AbstractController
 
         $messages = $conversation ? $conversation->getMessages()->toArray() : [];
 
-$quoteResponses = $quoteProposalRepository->findBy(
-    [
-        'quoteRequest' => $quoteRequest,
-        'deletedAt' => null,
-    ],
-    [
-        'finalizedAt' => 'DESC',
-        'createdAt' => 'DESC',
-    ]
-);
+        $quoteResponses = $quoteProposalRepository->findBy(
+            [
+                'quoteRequest' => $quoteRequest,
+                'deletedAt' => null,
+            ],
+            [
+                'finalizedAt' => 'DESC',
+                'createdAt' => 'DESC',
+            ]
+        );
 
-$quoteResponses = array_values(array_filter(
-    $quoteResponses,
-    static fn(QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted() || $proposal->getStatus()->isArchived()
-));
+        $quoteResponses = array_values(array_filter(
+            $quoteResponses,
+            static fn (QuoteProposal $proposal): bool => $proposal->isFinalized() || $proposal->isAccepted() || $proposal->getStatus()->isArchived()
+        ));
         $visiblePrestataireDocuments = $this->getVisiblePrestataireDocumentsForClient(
             $quoteRequest,
             $quoteResponses,
@@ -1007,14 +1003,12 @@ $quoteResponses = array_values(array_filter(
     #[Route('/{slug}/archive', name: '_mark_as_archived', methods: ['POST'])]
     /**
      * Traite l’action "markAsArchived" du contrôleur Quote Request.
-     *
-     * @return Response
      */
     public function markAsArchived(
         Request $request,
         string $slug,
         QuoteRequestRepository $quoteRequestRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
     ): Response {
         $user = $this->getUser();
 
@@ -1029,7 +1023,7 @@ $quoteResponses = array_values(array_filter(
         }
 
         if (!$this->isCsrfTokenValid(
-            'archive-quote-request-' . $quoteRequest->getId(),
+            'archive-quote-request-'.$quoteRequest->getId(),
             (string) $request->request->get('_token')
         )) {
             $this->addFlash('danger', 'Jeton CSRF invalide.');
@@ -1058,6 +1052,7 @@ $quoteResponses = array_values(array_filter(
 
     /**
      * @param array<int, QuoteProposal> $quoteResponses
+     *
      * @return array<int, PrestataireDocument>
      */
     private function getVisiblePrestataireDocumentsForClient(
@@ -1065,13 +1060,13 @@ $quoteResponses = array_values(array_filter(
         array $quoteResponses,
         PrestataireDocumentRepository $prestataireDocumentRepository,
     ): array {
-        if ($quoteResponses === [] || !$quoteRequest->getPrestataire()) {
+        if ([] === $quoteResponses || !$quoteRequest->getPrestataire()) {
             return [];
         }
 
         return array_values(array_filter(
             $prestataireDocumentRepository->findVisibleToClientByPrestataire((int) $quoteRequest->getPrestataire()->getId()),
-            static fn(PrestataireDocument $document): bool => $document->getFileName() !== null
+            static fn (PrestataireDocument $document): bool => null !== $document->getFileName()
         ));
     }
 
@@ -1161,7 +1156,7 @@ $quoteResponses = array_values(array_filter(
         }
 
         if (\is_string($value)) {
-            return '' === trim($value);
+            return '' === mb_trim($value);
         }
 
         return false;

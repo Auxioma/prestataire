@@ -1,14 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Tests\Security\Voter;
 
 use App\Account\Entity\ClientProfile;
+use App\Account\Entity\User;
 use App\Messaging\Entity\Conversation;
 use App\Prestataire\Entity\PrestataireProfile;
 use App\Quote\Entity\QuoteRequest;
-use App\Review\Entity\Review;
-use App\Account\Entity\User;
 use App\Report\Security\Voter\ReportAccessVoter;
+use App\Review\Entity\Review;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
@@ -22,7 +39,7 @@ final class ReportAccessVoterTest extends TestCase
         $clientProfile->setAccount($clientUser);
         $clientUser->setClientProfile($clientProfile);
 
-        $quoteRequest = (new QuoteRequest())
+        $quoteRequest = new QuoteRequest()
             ->setClient($clientProfile);
 
         self::assertSame(
@@ -40,7 +57,7 @@ final class ReportAccessVoterTest extends TestCase
         $prestataireProfile->setSlug('acme');
         $prestataireUser->setPrestataireProfile($prestataireProfile);
 
-        $conversation = (new Conversation())
+        $conversation = new Conversation()
             ->setPrestataire($prestataireProfile);
 
         self::assertSame(
@@ -62,7 +79,7 @@ final class ReportAccessVoterTest extends TestCase
         $otherPrestataireProfile->setCompanyName('Other');
         $otherPrestataireProfile->setSlug('other');
 
-        $review = (new Review())
+        $review = new Review()
             ->setPrestataireProfile($otherPrestataireProfile);
 
         self::assertSame(

@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Prestataire\Security\Voter;
 
 use App\Prestataire\Entity\PrestataireProfile;
@@ -20,7 +37,7 @@ final class PrestataireCompanySettingsVoter extends Voter
         string $attribute,
         mixed $subject,
         TokenInterface $token,
-        ?Vote $vote = null
+        ?Vote $vote = null,
     ): bool {
         \assert($subject instanceof PrestataireProfile);
 
@@ -42,7 +59,7 @@ final class PrestataireCompanySettingsVoter extends Voter
         }
 
         if (\is_string($value)) {
-            return '' === trim($value);
+            return '' === mb_trim($value);
         }
 
         return false;

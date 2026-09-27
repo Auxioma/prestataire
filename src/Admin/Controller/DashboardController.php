@@ -1,39 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Admin\Controller;
 
-use App\Account\Controller\Admin\UserCrudController;
-
-use App\Subscription\Controller\Admin\SubscriptionPlanPriceCrudController;
-
-use App\Subscription\Controller\Admin\SubscriptionPlanCrudController;
-
-use App\Subscription\Controller\Admin\SubscriptionInvoiceCrudController;
-
-use App\Catalog\Controller\Admin\ServiceCrudController;
-
-use App\Catalog\Controller\Admin\ServiceCategoryCrudController;
-
-use App\Review\Controller\Admin\ReviewCrudController;
-
-use App\Report\Controller\Admin\ReportCrudController;
-
-use App\Subscription\Controller\Admin\PrestataireSubscriptionCrudController;
-
-use App\Prestataire\Controller\Admin\PrestataireProfileCrudController;
-
 use App\Account\Controller\Admin\ClientProfileCrudController;
-
+use App\Account\Controller\Admin\UserCrudController;
+use App\Catalog\Controller\Admin\ServiceCategoryCrudController;
+use App\Catalog\Controller\Admin\ServiceCrudController;
+use App\Prestataire\Controller\Admin\PrestataireProfileCrudController;
+use App\Report\Controller\Admin\ReportCrudController;
+use App\Review\Controller\Admin\ReviewCrudController;
+use App\Subscription\Controller\Admin\PrestataireSubscriptionCrudController;
+use App\Subscription\Controller\Admin\SubscriptionInvoiceCrudController;
+use App\Subscription\Controller\Admin\SubscriptionPlanCrudController;
+use App\Subscription\Controller\Admin\SubscriptionPlanPriceCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -57,8 +53,6 @@ class DashboardController extends AbstractDashboardController
 
     /**
      * Affiche la page principale de ce contrôleur.
-     *
-     * @return Response
      */
     public function index(): Response
     {
@@ -72,8 +66,6 @@ class DashboardController extends AbstractDashboardController
 
     /**
      * Traite l’action "configureDashboard" du contrôleur Dashboard.
-     *
-     * @return Dashboard
      */
     public function configureDashboard(): Dashboard
     {
@@ -84,113 +76,111 @@ class DashboardController extends AbstractDashboardController
 
     /**
      * Traite l’action "configureMenuItems" du contrôleur Dashboard.
-     *
-     * @return iterable
      */
     public function configureMenuItems(): iterable
-{
-    yield MenuItem::linkToDashboard('Accueil', 'fa fa-home');
+    {
+        yield MenuItem::linkToDashboard('Accueil', 'fa fa-home');
 
-    yield MenuItem::section('Modération');
-    yield MenuItem::linkToUrl(
-        'Utilisateurs',
-        'fas fa-users',
-        $this->adminUrlGenerator->unsetAll()
-            ->setController(UserCrudController::class)
-            ->setAction(Action::INDEX)
-            ->generateUrl()
-    );
+        yield MenuItem::section('Modération');
+        yield MenuItem::linkToUrl(
+            'Utilisateurs',
+            'fas fa-users',
+            $this->adminUrlGenerator->unsetAll()
+                ->setController(UserCrudController::class)
+                ->setAction(Action::INDEX)
+                ->generateUrl()
+        );
 
-    yield MenuItem::linkToUrl(
-        'Prestataires',
-        'fas fa-briefcase',
-        $this->adminUrlGenerator->unsetAll()
-            ->setController(PrestataireProfileCrudController::class)
-            ->setAction(Action::INDEX)
-            ->generateUrl()
-    );
+        yield MenuItem::linkToUrl(
+            'Prestataires',
+            'fas fa-briefcase',
+            $this->adminUrlGenerator->unsetAll()
+                ->setController(PrestataireProfileCrudController::class)
+                ->setAction(Action::INDEX)
+                ->generateUrl()
+        );
 
-    yield MenuItem::linkToUrl(
-        'Clients',
-        'fas fa-user-circle',
-        $this->adminUrlGenerator->unsetAll()
-            ->setController(ClientProfileCrudController::class)
-            ->setAction(Action::INDEX)
-            ->generateUrl()
-    );
+        yield MenuItem::linkToUrl(
+            'Clients',
+            'fas fa-user-circle',
+            $this->adminUrlGenerator->unsetAll()
+                ->setController(ClientProfileCrudController::class)
+                ->setAction(Action::INDEX)
+                ->generateUrl()
+        );
 
-    yield MenuItem::linkToUrl(
-        'Avis clients',
-        'fas fa-star',
-        $this->adminUrlGenerator->unsetAll()
-            ->setController(ReviewCrudController::class)
-            ->setAction(Action::INDEX)
-            ->generateUrl()
-    );
+        yield MenuItem::linkToUrl(
+            'Avis clients',
+            'fas fa-star',
+            $this->adminUrlGenerator->unsetAll()
+                ->setController(ReviewCrudController::class)
+                ->setAction(Action::INDEX)
+                ->generateUrl()
+        );
 
-    yield MenuItem::linkToUrl(
-        'Signalements',
-        'fas fa-flag',
-        $this->adminUrlGenerator->unsetAll()
-            ->setController(ReportCrudController::class)
-            ->setAction(Action::INDEX)
-            ->generateUrl()
-    );
+        yield MenuItem::linkToUrl(
+            'Signalements',
+            'fas fa-flag',
+            $this->adminUrlGenerator->unsetAll()
+                ->setController(ReportCrudController::class)
+                ->setAction(Action::INDEX)
+                ->generateUrl()
+        );
 
-    yield MenuItem::section('Catalogue');
-    yield MenuItem::linkToUrl(
-        'Catégories / Sous-catégories',
-        'fas fa-tags',
-        $this->adminUrlGenerator->unsetAll()
-            ->setController(ServiceCategoryCrudController::class)
-            ->setAction(Action::INDEX)
-            ->generateUrl()
-    );
+        yield MenuItem::section('Catalogue');
+        yield MenuItem::linkToUrl(
+            'Catégories / Sous-catégories',
+            'fas fa-tags',
+            $this->adminUrlGenerator->unsetAll()
+                ->setController(ServiceCategoryCrudController::class)
+                ->setAction(Action::INDEX)
+                ->generateUrl()
+        );
 
-    yield MenuItem::linkToUrl(
-        'Services / Métiers',
-        'fas fa-wrench',
-        $this->adminUrlGenerator->unsetAll()
-            ->setController(ServiceCrudController::class)
-            ->setAction(Action::INDEX)
-            ->generateUrl()
-    );
+        yield MenuItem::linkToUrl(
+            'Services / Métiers',
+            'fas fa-wrench',
+            $this->adminUrlGenerator->unsetAll()
+                ->setController(ServiceCrudController::class)
+                ->setAction(Action::INDEX)
+                ->generateUrl()
+        );
 
-    yield MenuItem::section('Abonnements');
-    yield MenuItem::linkToUrl(
-        'Plans d’abonnement',
-        'fas fa-layer-group',
-        $this->adminUrlGenerator->unsetAll()
-            ->setController(SubscriptionPlanCrudController::class)
-            ->setAction(Action::INDEX)
-            ->generateUrl()
-    );
+        yield MenuItem::section('Abonnements');
+        yield MenuItem::linkToUrl(
+            'Plans d’abonnement',
+            'fas fa-layer-group',
+            $this->adminUrlGenerator->unsetAll()
+                ->setController(SubscriptionPlanCrudController::class)
+                ->setAction(Action::INDEX)
+                ->generateUrl()
+        );
 
-    yield MenuItem::linkToUrl(
-        'Tarifs d’abonnement',
-        'fas fa-tags',
-        $this->adminUrlGenerator->unsetAll()
-            ->setController(SubscriptionPlanPriceCrudController::class)
-            ->setAction(Action::INDEX)
-            ->generateUrl()
-    );
+        yield MenuItem::linkToUrl(
+            'Tarifs d’abonnement',
+            'fas fa-tags',
+            $this->adminUrlGenerator->unsetAll()
+                ->setController(SubscriptionPlanPriceCrudController::class)
+                ->setAction(Action::INDEX)
+                ->generateUrl()
+        );
 
-    yield MenuItem::linkToUrl(
-        'Souscriptions',
-        'fas fa-repeat',
-        $this->adminUrlGenerator->unsetAll()
-            ->setController(PrestataireSubscriptionCrudController::class)
-            ->setAction(Action::INDEX)
-            ->generateUrl()
-    );
+        yield MenuItem::linkToUrl(
+            'Souscriptions',
+            'fas fa-repeat',
+            $this->adminUrlGenerator->unsetAll()
+                ->setController(PrestataireSubscriptionCrudController::class)
+                ->setAction(Action::INDEX)
+                ->generateUrl()
+        );
 
-    yield MenuItem::linkToUrl(
-        'Factures Stripe',
-        'fas fa-file-invoice-dollar',
-        $this->adminUrlGenerator->unsetAll()
-            ->setController(SubscriptionInvoiceCrudController::class)
-            ->setAction(Action::INDEX)
-            ->generateUrl()
-    );
-}
+        yield MenuItem::linkToUrl(
+            'Factures Stripe',
+            'fas fa-file-invoice-dollar',
+            $this->adminUrlGenerator->unsetAll()
+                ->setController(SubscriptionInvoiceCrudController::class)
+                ->setAction(Action::INDEX)
+                ->generateUrl()
+        );
+    }
 }

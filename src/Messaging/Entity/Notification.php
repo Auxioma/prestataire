@@ -1,9 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Messaging\Entity;
 
 use App\Account\Entity\User;
-
 use App\Messaging\Enum\NotificationTypeEnum;
 use App\Messaging\Repository\NotificationRepository;
 use Doctrine\DBAL\Types\Types;
@@ -98,7 +114,7 @@ class Notification
 
     public function setTitle(string $title): static
     {
-        $this->title = trim($title);
+        $this->title = mb_trim($title);
 
         return $this;
     }
@@ -110,7 +126,7 @@ class Notification
 
     public function setBody(string $body): static
     {
-        $this->body = trim($body);
+        $this->body = mb_trim($body);
 
         return $this;
     }
@@ -122,7 +138,7 @@ class Notification
 
     public function setTargetUrl(?string $targetUrl): static
     {
-        $this->targetUrl = null !== $targetUrl ? trim($targetUrl) : null;
+        $this->targetUrl = null !== $targetUrl ? mb_trim($targetUrl) : null;
 
         return $this;
     }

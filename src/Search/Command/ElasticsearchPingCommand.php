@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Search\Command;
 
 use App\Search\Service\ElasticsearchClient;
@@ -23,11 +40,11 @@ final class ElasticsearchPingCommand extends Command
             $response = $this->elasticsearchClient->getClient()->info();
 
             $output->writeln('HTTP status: '.$response->getStatusCode());
-            $output->writeln(json_encode($response->asArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            $output->writeln(json_encode($response->asArray(), \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES));
 
             return Command::SUCCESS;
         } catch (\Throwable $e) {
-            $output->writeln('Exception: '.get_class($e));
+            $output->writeln('Exception: '.$e::class);
             $output->writeln('Message: '.$e->getMessage());
 
             return Command::FAILURE;

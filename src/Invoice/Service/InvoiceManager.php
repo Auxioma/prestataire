@@ -2,15 +2,30 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Invoice\Service;
 
 use App\Invoice\Entity\Invoice;
 use App\Invoice\Entity\InvoiceItem;
-use App\Prestataire\Entity\PrestataireProfile;
-use App\Quote\Entity\QuoteProposal;
 use App\Invoice\Enum\InvoiceSourceTypeEnum;
 use App\Invoice\Enum\InvoiceStatusEnum;
 use App\Invoice\Repository\InvoiceRepository;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Quote\Entity\QuoteProposal;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class InvoiceManager
@@ -22,7 +37,8 @@ final class InvoiceManager
         private readonly InvoiceTotalsCalculator $totalsCalculator,
         private readonly InvoiceDocumentManager $documentManager,
         private readonly InvoiceNumberGenerator $numberGenerator,
-    ) {}
+    ) {
+    }
 
     public function getOrCreateFromAcceptedQuote(QuoteProposal $proposal): Invoice
     {
@@ -70,7 +86,7 @@ final class InvoiceManager
         $this->normalizeItemPositions($invoice);
         $this->totalsCalculator->recalculate($invoice);
 
-        if ($invoice->getInvoiceNumber() === null) {
+        if (null === $invoice->getInvoiceNumber()) {
             $prestataire = $invoice->getPrestataire();
 
             if (!$prestataire instanceof PrestataireProfile) {
@@ -79,7 +95,7 @@ final class InvoiceManager
 
             $invoice->setInvoiceNumber($this->numberGenerator->generate($prestataire, $invoice->getQuoteProposal()));
 
-            if ($invoice->getQuoteProposal()?->getProposalSequenceNumber() !== null) {
+            if (null !== $invoice->getQuoteProposal()?->getProposalSequenceNumber()) {
                 $invoice->setInvoiceSequenceNumber($invoice->getQuoteProposal()->getProposalSequenceNumber());
             }
         }
@@ -119,7 +135,7 @@ final class InvoiceManager
 
     private function assertCanIssue(Invoice $invoice): void
     {
-        if ($invoice->getSourceType() === InvoiceSourceTypeEnum::EXTERNAL_IMPORT) {
+        if (InvoiceSourceTypeEnum::EXTERNAL_IMPORT === $invoice->getSourceType()) {
             if (!$invoice->hasExternalPdf()) {
                 throw new \DomainException('Ajoutez un PDF de facture avant d’émettre la facture.');
             }
@@ -134,7 +150,7 @@ final class InvoiceManager
 
     private function normalizeSourceConfiguration(Invoice $invoice): void
     {
-        if ($invoice->getSourceType() === InvoiceSourceTypeEnum::EXTERNAL_IMPORT && !$invoice->hasExternalPdf()) {
+        if (InvoiceSourceTypeEnum::EXTERNAL_IMPORT === $invoice->getSourceType() && !$invoice->hasExternalPdf()) {
             $invoice->setSourceType($this->resolveInternalSourceType($invoice));
         }
     }
@@ -170,10 +186,10 @@ final class InvoiceManager
         $label = $item->getLabel();
         $description = $item->getDescription();
 
-        return ($label === null || trim($label) === '')
-            && ($description === null || trim($description) === '')
-            && $item->getQuantity() === null
-            && $item->getUnitPriceHt() === null
-            && $item->getVatRate() === null;
+        return (null === $label || '' === mb_trim($label))
+            && (null === $description || '' === mb_trim($description))
+            && null === $item->getQuantity()
+            && null === $item->getUnitPriceHt()
+            && null === $item->getVatRate();
     }
 }

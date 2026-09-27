@@ -1,33 +1,50 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Prestataire\Controller;
 
+use App\Account\Entity\User;
+use App\Account\Service\AuthenticatedUserProvider;
 use App\Messaging\Entity\Conversation;
-use App\Prestataire\Entity\PrestataireRevenueEntry;
 use App\Messaging\Entity\Message;
 use App\Messaging\Entity\MessageAttachment;
-use App\Prestataire\Entity\PrestataireProfile;
-use App\Account\Entity\User;
 use App\Messaging\Enum\MessageTypeEnum;
 use App\Messaging\Enum\NotificationTypeEnum;
-use App\Quote\Enum\QuoteRequestStatusEnum;
 use App\Messaging\Form\MessageType;
-use App\Prestataire\Form\PrestataireRevenueEntryType;
 use App\Messaging\Repository\ConversationRepository;
 use App\Messaging\Repository\MessageRepository;
+use App\Messaging\Service\ConversationMessageManager;
+use App\Messaging\Service\NotificationManager;
+use App\Messaging\Service\RealtimeAuthTokenManager;
+use App\Messaging\Service\RealtimeNotifier;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Prestataire\Entity\PrestataireRevenueEntry;
+use App\Prestataire\Form\PrestataireRevenueEntryType;
 use App\Prestataire\Repository\PrestataireAppointmentRepository;
 use App\Prestataire\Repository\PrestataireProfileRepository;
 use App\Prestataire\Repository\PrestataireRevenueEntryRepository;
 use App\Prestataire\Repository\PrestataireServiceRepository;
-use App\Quote\Repository\QuoteRequestRepository;
-use App\Review\Repository\ReviewRepository;
-use App\Messaging\Service\ConversationMessageManager;
-use App\Messaging\Service\NotificationManager;
-use App\Account\Service\AuthenticatedUserProvider;
 use App\Prestataire\Service\PrestataireProfileCompletionService;
 use App\Prestataire\Service\PrestataireRevenueOverviewBuilder;
-use App\Messaging\Service\RealtimeAuthTokenManager;
-use App\Messaging\Service\RealtimeNotifier;
+use App\Quote\Enum\QuoteRequestStatusEnum;
+use App\Quote\Repository\QuoteRequestRepository;
+use App\Review\Repository\ReviewRepository;
 use App\Subscription\Service\SubscriptionAccessManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -63,8 +80,6 @@ final class PrestataireDashboardController extends AbstractController
     #[Route('/prestataire/espace-pro', name: 'app_prestataire_dashboard', methods: ['GET', 'POST'])]
     /**
      * Affiche la page principale de ce contrôleur.
-     *
-     * @return Response
      */
     public function index(
         Request $request,
@@ -98,7 +113,7 @@ final class PrestataireDashboardController extends AbstractController
 
                 if (
                     null === $manualRevenueEntry->getServiceLabel()
-                    && $manualRevenueEntry->getPrestataireService() !== null
+                    && null !== $manualRevenueEntry->getPrestataireService()
                 ) {
                     $manualRevenueEntry->setServiceLabel($manualRevenueEntry->getPrestataireService()?->getDisplayTitle());
                 }
@@ -161,11 +176,10 @@ final class PrestataireDashboardController extends AbstractController
     #[Route('/prestataire/espace-pro/conversation/{id}/message', name: 'app_prestataire_conversation_message_send', methods: ['POST'])]
     /**
      * Traite l’action "sendMessage" du contrôleur Prestataire Dashboard.
-     *
-     * @return Response
      */
     public function sendMessage(
-        #[MapEntity(id: 'id')] Conversation $conversation,
+        #[MapEntity(id: 'id')]
+        Conversation $conversation,
         Request $request,
         EntityManagerInterface $entityManager,
         RealtimeNotifier $realtimeNotifier,
@@ -232,7 +246,7 @@ final class PrestataireDashboardController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var array<\Symfony\Component\HttpFoundation\File\UploadedFile>|null $uploadedFiles */
             $uploadedFiles = $form->get('attachments')->getData();
-            $uploadedFiles = is_array($uploadedFiles) ? $uploadedFiles : [];
+            $uploadedFiles = \is_array($uploadedFiles) ? $uploadedFiles : [];
 
             $message->setConversation($conversation);
 
@@ -341,11 +355,10 @@ final class PrestataireDashboardController extends AbstractController
     #[Route('/prestataire/espace-pro/conversation/{id}/photos', name: 'app_prestataire_conversation_photos', methods: ['GET'])]
     /**
      * Traite l’action "conversationPhotos" du contrôleur Prestataire Dashboard.
-     *
-     * @return Response
      */
     public function conversationPhotos(
-        #[MapEntity(id: 'id')] Conversation $conversation,
+        #[MapEntity(id: 'id')]
+        Conversation $conversation,
         Request $request,
     ): Response {
         $user = $this->getAuthenticatedPrestataireUser();
@@ -374,9 +387,9 @@ final class PrestataireDashboardController extends AbstractController
                 $mediaItems[] = [
                     'attachment' => $attachment,
                     'message' => $message,
-                    'url' => '/uploads/messages/' . $attachment->getFileName(),
+                    'url' => '/uploads/messages/'.$attachment->getFileName(),
                     'authorName' => $author
-                        ? trim(($author->getFirstName() ?? '') . ' ' . ($author->getLastName() ?? ''))
+                        ? mb_trim(($author->getFirstName() ?? '').' '.($author->getLastName() ?? ''))
                         : 'Système',
                     'createdAt' => $message->getCreatedAt(),
                     'canDelete' => $isOwner,
@@ -389,7 +402,7 @@ final class PrestataireDashboardController extends AbstractController
             }
         }
 
-        usort($mediaItems, static fn(array $a, array $b) => ($a['createdAt'] <=> $b['createdAt']));
+        usort($mediaItems, static fn (array $a, array $b) => ($a['createdAt'] <=> $b['createdAt']));
 
         return $this->render('Messaging/conversation/gallery.html.twig', [
             'conversation' => $conversation,
@@ -404,12 +417,9 @@ final class PrestataireDashboardController extends AbstractController
         ]);
     }
 
-
     #[Route('/conversation/attachment/{id}/delete', name: 'app_conversation_attachment_delete', methods: ['POST'])]
     /**
      * Traite l’action "deleteAttachment" du contrôleur Prestataire Dashboard.
-     *
-     * @return Response
      */
     public function deleteAttachment(
         Request $request,
@@ -431,7 +441,7 @@ final class PrestataireDashboardController extends AbstractController
         }
 
         if (!$this->isCsrfTokenValid(
-            'delete_attachment_' . $attachment->getId(),
+            'delete_attachment_'.$attachment->getId(),
             (string) $request->request->get('_token')
         )) {
             throw $this->createAccessDeniedException('Jeton CSRF invalide.');
@@ -444,7 +454,7 @@ final class PrestataireDashboardController extends AbstractController
 
         $this->addFlash('success', 'La photo a bien été supprimée.');
 
-        if ($redirect !== '') {
+        if ('' !== $redirect) {
             return $this->redirect($redirect, 303);
         }
 
@@ -737,7 +747,7 @@ final class PrestataireDashboardController extends AbstractController
     ): PrestataireRevenueEntry {
         $entryId = $request->query->get('edit_revenue');
 
-        if (!\is_string($entryId) && !\is_numeric($entryId)) {
+        if (!\is_string($entryId) && !is_numeric($entryId)) {
             return new PrestataireRevenueEntry();
         }
 
@@ -865,18 +875,18 @@ final class PrestataireDashboardController extends AbstractController
         if (!$mandatoryChecklist['isComplete']) {
             $missingLabels = array_map(
                 static fn (array $item): string => $item['label'],
-                array_slice($mandatoryChecklist['missingItems'], 0, 4)
+                \array_slice($mandatoryChecklist['missingItems'], 0, 4)
             );
 
             $alerts[] = [
                 'tone' => 'warning',
                 'title' => 'Profil à finaliser',
-                'text' => sprintf(
+                'text' => \sprintf(
                     '%d information%s indispensable%s encore manquante%s avant une mise en ligne optimale.',
-                    count($mandatoryChecklist['missingItems']),
-                    count($mandatoryChecklist['missingItems']) > 1 ? 's' : '',
-                    count($mandatoryChecklist['missingItems']) > 1 ? 's' : '',
-                    count($mandatoryChecklist['missingItems']) > 1 ? 's' : ''
+                    \count($mandatoryChecklist['missingItems']),
+                    \count($mandatoryChecklist['missingItems']) > 1 ? 's' : '',
+                    \count($mandatoryChecklist['missingItems']) > 1 ? 's' : '',
+                    \count($mandatoryChecklist['missingItems']) > 1 ? 's' : ''
                 ),
                 'href' => $this->buildSettingsUrlFromChecklist($mandatoryChecklist),
                 'label' => 'Compléter maintenant',
@@ -889,13 +899,13 @@ final class PrestataireDashboardController extends AbstractController
             $alerts[] = [
                 'tone' => 'gold',
                 'title' => 'Messages à lire',
-                'text' => sprintf(
+                'text' => \sprintf(
                     '%d message%s client attend%s votre lecture.',
                     $unreadMessagesCount,
                     $unreadMessagesCount > 1 ? 's' : '',
                     $unreadMessagesCount > 1 ? 'ent' : ''
                 ),
-                'href' => $this->generateUrl('app_prestataire_dashboard', ['tab' => 'messages']) . '#messages-main-panel',
+                'href' => $this->generateUrl('app_prestataire_dashboard', ['tab' => 'messages']).'#messages-main-panel',
                 'label' => 'Ouvrir la messagerie',
             ];
         }
@@ -908,13 +918,13 @@ final class PrestataireDashboardController extends AbstractController
             $alerts[] = [
                 'tone' => 'danger',
                 'title' => 'Demandes en attente',
-                'text' => sprintf(
+                'text' => \sprintf(
                     '%d demande%s de devis attend%s encore votre prise en charge.',
                     $submittedRequestsCount,
                     $submittedRequestsCount > 1 ? 's' : '',
                     $submittedRequestsCount > 1 ? 'ent' : ''
                 ),
-                'href' => $this->generateUrl('app_prestataire_dashboard', ['tab' => 'demandes']) . '#demandes-main-panel',
+                'href' => $this->generateUrl('app_prestataire_dashboard', ['tab' => 'demandes']).'#demandes-main-panel',
                 'label' => 'Traiter les demandes',
             ];
         }
@@ -927,14 +937,14 @@ final class PrestataireDashboardController extends AbstractController
             $alerts[] = [
                 'tone' => 'info',
                 'title' => 'Devis à préparer',
-                'text' => sprintf(
+                'text' => \sprintf(
                     '%d dossier%s accepté%s pour étude mérite%s maintenant un chiffrage.',
                     $acceptedRequestsCount,
                     $acceptedRequestsCount > 1 ? 's' : '',
                     $acceptedRequestsCount > 1 ? 's' : '',
                     $acceptedRequestsCount > 1 ? 'nt' : ''
                 ),
-                'href' => $this->generateUrl('app_prestataire_dashboard', ['tab' => 'demandes']) . '#demandes-main-panel',
+                'href' => $this->generateUrl('app_prestataire_dashboard', ['tab' => 'demandes']).'#demandes-main-panel',
                 'label' => 'Reprendre les dossiers',
             ];
         }
@@ -950,12 +960,12 @@ final class PrestataireDashboardController extends AbstractController
                     $alerts[] = [
                         'tone' => 'success',
                         'title' => 'Rendez-vous imminent',
-                        'text' => sprintf(
+                        'text' => \sprintf(
                             '"%s" commence le %s.',
                             $nextAppointment->getTitle() ?? 'Votre prochain rendez-vous',
                             $nextStartsAt->format('d/m à H:i')
                         ),
-                        'href' => $this->generateUrl('app_prestataire_dashboard', ['tab' => 'calendrier']) . '#calendrier-main-panel',
+                        'href' => $this->generateUrl('app_prestataire_dashboard', ['tab' => 'calendrier']).'#calendrier-main-panel',
                         'label' => 'Voir l’agenda',
                     ];
                 }
@@ -966,7 +976,7 @@ final class PrestataireDashboardController extends AbstractController
             $alerts[] = [
                 'tone' => 'warning',
                 'title' => 'Crédits faibles',
-                'text' => sprintf(
+                'text' => \sprintf(
                     'Il ne vous reste plus que %d crédit%s sur votre abonnement actif.',
                     $remainingCredits,
                     $remainingCredits > 1 ? 's' : ''
@@ -976,7 +986,7 @@ final class PrestataireDashboardController extends AbstractController
             ];
         }
 
-        return array_slice($alerts, 0, 3);
+        return \array_slice($alerts, 0, 3);
     }
 
     private function resolveQuoteSort(Request $request): string
@@ -1020,7 +1030,7 @@ final class PrestataireDashboardController extends AbstractController
         }
 
         foreach ($quoteOrderBy as $field => $direction) {
-            $queryBuilder->addOrderBy('qr.' . $field, $direction);
+            $queryBuilder->addOrderBy('qr.'.$field, $direction);
         }
 
         return $queryBuilder;
@@ -1053,7 +1063,7 @@ final class PrestataireDashboardController extends AbstractController
             return null;
         }
 
-        if (is_string($conversationId) || is_numeric($conversationId)) {
+        if (\is_string($conversationId) || is_numeric($conversationId)) {
             foreach ($conversations as $conversation) {
                 if ((string) $conversation->getId() === (string) $conversationId) {
                     return $conversation;
@@ -1138,7 +1148,7 @@ final class PrestataireDashboardController extends AbstractController
     {
         $raw = $request->request->get('return_scroll');
 
-        if (!\is_string($raw) && !\is_numeric($raw)) {
+        if (!\is_string($raw) && !is_numeric($raw)) {
             return null;
         }
 

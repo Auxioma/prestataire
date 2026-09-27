@@ -1,14 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Review\Service;
 
-use App\Messaging\Service\NotificationManager;
-
 use App\Account\Entity\ClientProfile;
+use App\Messaging\Enum\NotificationTypeEnum;
+use App\Messaging\Service\NotificationManager;
 use App\Prestataire\Entity\PrestataireProfile;
 use App\Quote\Entity\QuoteRequest;
 use App\Review\Entity\Review;
-use App\Messaging\Enum\NotificationTypeEnum;
 use App\Review\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -41,7 +57,7 @@ final class ReviewManager
         PrestataireProfile $prestataire,
         QuoteRequest $quoteRequest,
         int $rating,
-        ?string $comment
+        ?string $comment,
     ): Review {
         if ($quoteRequest->getClient()?->getId() !== $client->getId()) {
             throw new \DomainException('Cette demande n’appartient pas au client.');
@@ -55,7 +71,7 @@ final class ReviewManager
             throw new \DomainException('Cette demande n’est pas éligible à un avis.');
         }
 
-        $review = (new Review())
+        $review = new Review()
             ->setClientProfile($client)
             ->setPrestataireProfile($prestataire)
             ->setQuoteRequest($quoteRequest)
@@ -117,7 +133,7 @@ final class ReviewManager
 
     private function normalizeComment(?string $comment): ?string
     {
-        $comment = null !== $comment ? trim($comment) : null;
+        $comment = null !== $comment ? mb_trim($comment) : null;
 
         return '' === $comment ? null : $comment;
     }
@@ -131,14 +147,14 @@ final class ReviewManager
             return;
         }
 
-        $clientFirstName = trim((string) ($review->getClientProfile()?->getAccount()?->getFirstName() ?? ''));
+        $clientFirstName = mb_trim((string) ($review->getClientProfile()?->getAccount()?->getFirstName() ?? ''));
         $rating = max(0, min(5, (int) ($review->getRating() ?? 0)));
         $title = 'Vous avez reçu un nouvel avis';
-        $body = sprintf(
+        $body = \sprintf(
             '%s vous a laissé une note de %d/5%s.',
             '' !== $clientFirstName ? $clientFirstName : 'Un client',
             $rating,
-            $quoteRequest?->getTitle() ? sprintf(' pour "%s"', $quoteRequest->getTitle()) : ''
+            $quoteRequest?->getTitle() ? \sprintf(' pour "%s"', $quoteRequest->getTitle()) : ''
         );
 
         $this->notificationManager->notify(
@@ -146,7 +162,7 @@ final class ReviewManager
             NotificationTypeEnum::REVIEW_RECEIVED,
             $title,
             $body,
-            $this->urlGenerator->generate('app_review_prestataire_reviews') . '#review-' . $review->getId(),
+            $this->urlGenerator->generate('app_review_prestataire_reviews').'#review-'.$review->getId(),
             [
                 'reviewId' => $review->getId(),
                 'quoteRequestId' => $quoteRequest?->getId(),

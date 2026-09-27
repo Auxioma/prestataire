@@ -1,42 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Prestataire\Entity;
 
 use App\Account\Entity\User;
-
 use App\Catalog\Entity\Service;
-
-use App\Quote\Entity\QuoteRequest;
-
+use App\Prestataire\Enum\DocumentVerificationStatusEnum;
 use App\Prestataire\Enum\PrestataireProfileStatusEnum;
-use App\Search\Enum\SearchVisibilityEnum;
 use App\Prestataire\Enum\VerificationStatusEnum;
+use App\Prestataire\Repository\PrestataireProfileRepository;
+use App\Quote\Entity\QuoteRequest;
+use App\Search\Enum\SearchVisibilityEnum;
 use App\Subscription\Entity\PrestataireSubscription;
 use App\Subscription\Entity\SubscriptionCreditMovement;
 use App\Subscription\Entity\SubscriptionCustomer;
-use App\Prestataire\Repository\PrestataireProfileRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Attribute as Vich;
-use App\Prestataire\Entity\PrestataireAppointment;
-use App\Prestataire\Enum\DocumentVerificationStatusEnum;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Prestataire\Entity\PrestataireDocument;
-
-
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: PrestataireProfileRepository::class)]
 #[ORM\Table(name: 'prestataire_profile')]
@@ -295,18 +295,18 @@ class PrestataireProfile
 
     public function __toString(): string
     {
-        $companyName = trim((string) ($this->companyName ?? ''));
-        $slug = trim((string) ($this->slug ?? ''));
+        $companyName = mb_trim((string) ($this->companyName ?? ''));
+        $slug = mb_trim((string) ($this->slug ?? ''));
 
         if ('' !== $companyName && '' !== $slug) {
-            return sprintf('%s (%s)', $companyName, $slug);
+            return \sprintf('%s (%s)', $companyName, $slug);
         }
 
         if ('' !== $companyName) {
             return $companyName;
         }
 
-        return sprintf('Prestataire #%s', $this->id ?? 'n/a');
+        return \sprintf('Prestataire #%s', $this->id ?? 'n/a');
     }
 
     // --- AVAILABILITY ---
@@ -1173,11 +1173,11 @@ class PrestataireProfile
 
     public function setSubscriptionCustomer(?SubscriptionCustomer $subscriptionCustomer): static
     {
-        if ($subscriptionCustomer === null && $this->subscriptionCustomer !== null) {
+        if (null === $subscriptionCustomer && null !== $this->subscriptionCustomer) {
             $this->subscriptionCustomer->setPrestataireProfile(null);
         }
 
-        if ($subscriptionCustomer !== null && $subscriptionCustomer->getPrestataireProfile() !== $this) {
+        if (null !== $subscriptionCustomer && $subscriptionCustomer->getPrestataireProfile() !== $this) {
             $subscriptionCustomer->setPrestataireProfile($this);
         }
 

@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Service;
 
 use App\Prestataire\Entity\PrestataireProfile;
@@ -27,7 +44,7 @@ class StripeApiClient
 
     public function isConfigured(): bool
     {
-        return '' !== trim($this->stripeSecretKey);
+        return '' !== mb_trim($this->stripeSecretKey);
     }
 
     /**
@@ -40,7 +57,7 @@ class StripeApiClient
     public function createCustomer(PrestataireProfile $prestataireProfile): array
     {
         $account = $prestataireProfile->getAccount();
-        $name = trim(($account?->getFirstName() ?? '') . ' ' . ($account?->getLastName() ?? ''));
+        $name = mb_trim(($account?->getFirstName() ?? '').' '.($account?->getLastName() ?? ''));
 
         return $this->request('POST', '/customers', [
             'email' => $account?->getEmail(),
@@ -61,7 +78,7 @@ class StripeApiClient
         PrestataireProfile $prestataireProfile,
         SubscriptionCustomer $customer,
     ): array {
-        $stripeCustomerId = trim((string) $customer->getStripeCustomerId());
+        $stripeCustomerId = mb_trim((string) $customer->getStripeCustomerId());
         if ('' === $stripeCustomerId) {
             throw new \InvalidArgumentException('Aucun client Stripe n’est disponible pour créer le SetupIntent.');
         }
@@ -114,7 +131,7 @@ class StripeApiClient
             'subscription_data[metadata][billing_period]' => $billingPeriod->value,
         ];
 
-        if ($customer instanceof SubscriptionCustomer && '' !== trim((string) $customer->getStripeCustomerId())) {
+        if ($customer instanceof SubscriptionCustomer && '' !== mb_trim((string) $customer->getStripeCustomerId())) {
             $payload['customer'] = $customer->getStripeCustomerId();
         } else {
             $payload['customer_email'] = $prestataireProfile->getAccount()?->getEmail();
@@ -133,7 +150,7 @@ class StripeApiClient
     public function createBillingPortalSession(SubscriptionCustomer $customer, string $returnUrl): array
     {
         return $this->request('POST', '/billing_portal/sessions', [
-            'customer' => trim((string) $customer->getStripeCustomerId()),
+            'customer' => mb_trim((string) $customer->getStripeCustomerId()),
             'return_url' => $returnUrl,
         ]);
     }
@@ -147,7 +164,7 @@ class StripeApiClient
      */
     public function retrieveSetupIntent(string $setupIntentId): array
     {
-        return $this->request('GET', sprintf('/setup_intents/%s', $setupIntentId), [
+        return $this->request('GET', \sprintf('/setup_intents/%s', $setupIntentId), [
             'expand[0]' => 'payment_method',
             'expand[1]' => 'customer',
         ]);
@@ -162,12 +179,12 @@ class StripeApiClient
      */
     public function updateCustomerDefaultPaymentMethod(SubscriptionCustomer $customer, string $paymentMethodId): array
     {
-        $stripeCustomerId = trim((string) $customer->getStripeCustomerId());
+        $stripeCustomerId = mb_trim((string) $customer->getStripeCustomerId());
         if ('' === $stripeCustomerId) {
             throw new \InvalidArgumentException('Le client Stripe est introuvable.');
         }
 
-        return $this->request('POST', sprintf('/customers/%s', $stripeCustomerId), [
+        return $this->request('POST', \sprintf('/customers/%s', $stripeCustomerId), [
             'invoice_settings[default_payment_method]' => $paymentMethodId,
         ]);
     }
@@ -187,7 +204,7 @@ class StripeApiClient
         string $paymentMethodId,
     ): array {
         $priceId = $plan->getStripePriceIdForPeriod($billingPeriod);
-        $stripeCustomerId = trim((string) $customer->getStripeCustomerId());
+        $stripeCustomerId = mb_trim((string) $customer->getStripeCustomerId());
 
         if (null === $priceId || '' === $stripeCustomerId) {
             throw new \InvalidArgumentException('Impossible de créer l’abonnement Stripe sans client et prix valides.');
@@ -224,7 +241,7 @@ class StripeApiClient
         $stripeSubscriptionId = $subscription->getStripeSubscriptionId();
         $stripeSubscriptionItemId = $subscription->getStripeSubscriptionItemId();
         $priceId = $plan->getStripePriceIdForPeriod($billingPeriod);
-        $defaultPaymentMethodId = trim((string) $subscription->getCustomer()?->getStripeDefaultPaymentMethodId());
+        $defaultPaymentMethodId = mb_trim((string) $subscription->getCustomer()?->getStripeDefaultPaymentMethodId());
 
         if (null === $stripeSubscriptionId || null === $stripeSubscriptionItemId || null === $priceId) {
             throw new \InvalidArgumentException('Impossible de modifier l’abonnement Stripe sans identifiants complets.');
@@ -248,7 +265,7 @@ class StripeApiClient
             $payload['default_payment_method'] = $defaultPaymentMethodId;
         }
 
-        return $this->request('POST', sprintf('/subscriptions/%s', $stripeSubscriptionId), $payload);
+        return $this->request('POST', \sprintf('/subscriptions/%s', $stripeSubscriptionId), $payload);
     }
 
     /**
@@ -260,12 +277,12 @@ class StripeApiClient
      */
     public function scheduleSubscriptionCancellation(PrestataireSubscription $subscription): array
     {
-        $stripeSubscriptionId = trim((string) $subscription->getStripeSubscriptionId());
+        $stripeSubscriptionId = mb_trim((string) $subscription->getStripeSubscriptionId());
         if ('' === $stripeSubscriptionId) {
             throw new \InvalidArgumentException('Impossible de résilier un abonnement Stripe sans identifiant.');
         }
 
-        return $this->request('POST', sprintf('/subscriptions/%s', $stripeSubscriptionId), [
+        return $this->request('POST', \sprintf('/subscriptions/%s', $stripeSubscriptionId), [
             'cancel_at_period_end' => 'true',
             'expand[0]' => 'items.data.price',
             'expand[1]' => 'latest_invoice',
@@ -282,12 +299,12 @@ class StripeApiClient
      */
     public function resumeSubscription(PrestataireSubscription $subscription): array
     {
-        $stripeSubscriptionId = trim((string) $subscription->getStripeSubscriptionId());
+        $stripeSubscriptionId = mb_trim((string) $subscription->getStripeSubscriptionId());
         if ('' === $stripeSubscriptionId) {
             throw new \InvalidArgumentException('Impossible de réactiver un abonnement Stripe sans identifiant.');
         }
 
-        return $this->request('POST', sprintf('/subscriptions/%s', $stripeSubscriptionId), [
+        return $this->request('POST', \sprintf('/subscriptions/%s', $stripeSubscriptionId), [
             'cancel_at_period_end' => 'false',
             'expand[0]' => 'items.data.price',
             'expand[1]' => 'latest_invoice',
@@ -304,7 +321,7 @@ class StripeApiClient
      */
     public function retrieveSubscription(string $stripeSubscriptionId): array
     {
-        return $this->request('GET', sprintf('/subscriptions/%s', $stripeSubscriptionId), [
+        return $this->request('GET', \sprintf('/subscriptions/%s', $stripeSubscriptionId), [
             'expand[0]' => 'items.data.price',
             'expand[1]' => 'latest_invoice',
             'expand[2]' => 'latest_invoice.payment_intent',
@@ -345,8 +362,8 @@ class StripeApiClient
     private function extractSubscriptionPaymentMethodLast4(array $subscription): ?string
     {
         $latestInvoice = $subscription['latest_invoice'] ?? null;
-        if (is_string($latestInvoice) && '' !== trim($latestInvoice)) {
-            $latestInvoice = $this->retrieveInvoice(trim($latestInvoice));
+        if (\is_string($latestInvoice) && '' !== mb_trim($latestInvoice)) {
+            $latestInvoice = $this->retrieveInvoice(mb_trim($latestInvoice));
         }
 
         if (!\is_array($latestInvoice)) {
@@ -354,8 +371,8 @@ class StripeApiClient
         }
 
         $paymentIntent = $latestInvoice['payment_intent'] ?? null;
-        if (is_string($paymentIntent) && '' !== trim($paymentIntent)) {
-            $paymentIntent = $this->retrievePaymentIntent(trim($paymentIntent));
+        if (\is_string($paymentIntent) && '' !== mb_trim($paymentIntent)) {
+            $paymentIntent = $this->retrievePaymentIntent(mb_trim($paymentIntent));
         }
 
         if (!\is_array($paymentIntent)) {
@@ -390,8 +407,8 @@ class StripeApiClient
     private function extractSubscriptionPaymentMethodExpiry(array $subscription): ?string
     {
         $latestInvoice = $subscription['latest_invoice'] ?? null;
-        if (is_string($latestInvoice) && '' !== trim($latestInvoice)) {
-            $latestInvoice = $this->retrieveInvoice(trim($latestInvoice));
+        if (\is_string($latestInvoice) && '' !== mb_trim($latestInvoice)) {
+            $latestInvoice = $this->retrieveInvoice(mb_trim($latestInvoice));
         }
 
         if (!\is_array($latestInvoice)) {
@@ -399,8 +416,8 @@ class StripeApiClient
         }
 
         $paymentIntent = $latestInvoice['payment_intent'] ?? null;
-        if (is_string($paymentIntent) && '' !== trim($paymentIntent)) {
-            $paymentIntent = $this->retrievePaymentIntent(trim($paymentIntent));
+        if (\is_string($paymentIntent) && '' !== mb_trim($paymentIntent)) {
+            $paymentIntent = $this->retrievePaymentIntent(mb_trim($paymentIntent));
         }
 
         if (!\is_array($paymentIntent)) {
@@ -438,7 +455,7 @@ class StripeApiClient
         if (\is_array($paymentMethodDetails)) {
             $card = $paymentMethodDetails['card'] ?? null;
             if (\is_array($card)) {
-                $last4 = trim((string) ($card['last4'] ?? ''));
+                $last4 = mb_trim((string) ($card['last4'] ?? ''));
                 if ('' !== $last4) {
                     return $last4;
                 }
@@ -449,7 +466,7 @@ class StripeApiClient
         if (\is_array($paymentMethod)) {
             $card = $paymentMethod['card'] ?? null;
             if (\is_array($card)) {
-                $last4 = trim((string) ($card['last4'] ?? ''));
+                $last4 = mb_trim((string) ($card['last4'] ?? ''));
                 if ('' !== $last4) {
                     return $last4;
                 }
@@ -462,8 +479,8 @@ class StripeApiClient
     private function extractSubscriptionPaymentMethodBrand(array $subscription): ?string
     {
         $latestInvoice = $subscription['latest_invoice'] ?? null;
-        if (is_string($latestInvoice) && '' !== trim($latestInvoice)) {
-            $latestInvoice = $this->retrieveInvoice(trim($latestInvoice));
+        if (\is_string($latestInvoice) && '' !== mb_trim($latestInvoice)) {
+            $latestInvoice = $this->retrieveInvoice(mb_trim($latestInvoice));
         }
 
         if (!\is_array($latestInvoice)) {
@@ -471,8 +488,8 @@ class StripeApiClient
         }
 
         $paymentIntent = $latestInvoice['payment_intent'] ?? null;
-        if (is_string($paymentIntent) && '' !== trim($paymentIntent)) {
-            $paymentIntent = $this->retrievePaymentIntent(trim($paymentIntent));
+        if (\is_string($paymentIntent) && '' !== mb_trim($paymentIntent)) {
+            $paymentIntent = $this->retrievePaymentIntent(mb_trim($paymentIntent));
         }
 
         if (!\is_array($paymentIntent)) {
@@ -507,7 +524,7 @@ class StripeApiClient
         if (\is_array($paymentMethodDetails)) {
             $card = $paymentMethodDetails['card'] ?? null;
             if (\is_array($card)) {
-                $brand = trim((string) ($card['brand'] ?? ''));
+                $brand = mb_trim((string) ($card['brand'] ?? ''));
                 if ('' !== $brand) {
                     return $this->normalizeCardBrand($brand);
                 }
@@ -518,7 +535,7 @@ class StripeApiClient
         if (\is_array($paymentMethod)) {
             $card = $paymentMethod['card'] ?? null;
             if (\is_array($card)) {
-                $brand = trim((string) ($card['brand'] ?? ''));
+                $brand = mb_trim((string) ($card['brand'] ?? ''));
                 if ('' !== $brand) {
                     return $this->normalizeCardBrand($brand);
                 }
@@ -530,7 +547,8 @@ class StripeApiClient
 
     private function normalizeCardBrand(string $brand): string
     {
-        $brand = trim(strtolower($brand));
+        $brand = mb_trim(mb_strtolower($brand));
+
         return match ($brand) {
             'american express', 'american_express' => 'amex',
             'unionpay', 'union_pay' => 'unionpay',
@@ -551,14 +569,14 @@ class StripeApiClient
             if (\is_array($card)) {
                 $expMonth = $card['exp_month'] ?? null;
                 $expYear = $card['exp_year'] ?? null;
-                if (is_int($expMonth) || is_string($expMonth)) {
+                if (\is_int($expMonth) || \is_string($expMonth)) {
                     $expMonth = (int) $expMonth;
                 }
-                if (is_int($expYear) || is_string($expYear)) {
+                if (\is_int($expYear) || \is_string($expYear)) {
                     $expYear = (int) $expYear;
                 }
-                if (is_int($expMonth) && is_int($expYear)) {
-                    return sprintf('%02d/%02d', $expMonth, $expYear % 100);
+                if (\is_int($expMonth) && \is_int($expYear)) {
+                    return \sprintf('%02d/%02d', $expMonth, $expYear % 100);
                 }
             }
         }
@@ -569,14 +587,14 @@ class StripeApiClient
             if (\is_array($card)) {
                 $expMonth = $card['exp_month'] ?? null;
                 $expYear = $card['exp_year'] ?? null;
-                if (is_int($expMonth) || is_string($expMonth)) {
+                if (\is_int($expMonth) || \is_string($expMonth)) {
                     $expMonth = (int) $expMonth;
                 }
-                if (is_int($expYear) || is_string($expYear)) {
+                if (\is_int($expYear) || \is_string($expYear)) {
                     $expYear = (int) $expYear;
                 }
-                if (is_int($expMonth) && is_int($expYear)) {
-                    return sprintf('%02d/%02d', $expMonth, $expYear % 100);
+                if (\is_int($expMonth) && \is_int($expYear)) {
+                    return \sprintf('%02d/%02d', $expMonth, $expYear % 100);
                 }
             }
         }
@@ -593,14 +611,14 @@ class StripeApiClient
      */
     public function retrieveInvoice(string $stripeInvoiceId): array
     {
-        return $this->request('GET', sprintf('/invoices/%s', $stripeInvoiceId), [
+        return $this->request('GET', \sprintf('/invoices/%s', $stripeInvoiceId), [
             'expand[0]' => 'payment_intent',
         ]);
     }
 
     public function retrievePaymentIntent(string $paymentIntentId): array
     {
-        return $this->request('GET', sprintf('/payment_intents/%s', $paymentIntentId), [
+        return $this->request('GET', \sprintf('/payment_intents/%s', $paymentIntentId), [
             'expand[0]' => 'charges.data.payment_method',
             'expand[1]' => 'charges.data.payment_method_details',
         ]);
@@ -615,7 +633,7 @@ class StripeApiClient
      */
     public function retrievePaymentMethod(string $paymentMethodId): array
     {
-        return $this->request('GET', sprintf('/payment_methods/%s', $paymentMethodId));
+        return $this->request('GET', \sprintf('/payment_methods/%s', $paymentMethodId));
     }
 
     public function retrievePaymentMethodCardLast4(string $paymentMethodId): ?string
@@ -626,7 +644,8 @@ class StripeApiClient
             return null;
         }
 
-        $last4 = trim((string) ($card['last4'] ?? ''));
+        $last4 = mb_trim((string) ($card['last4'] ?? ''));
+
         return '' !== $last4 ? $last4 : null;
     }
 
@@ -641,8 +660,8 @@ class StripeApiClient
         $expMonth = $card['exp_month'] ?? null;
         $expYear = $card['exp_year'] ?? null;
 
-        if ((is_int($expMonth) || is_string($expMonth)) && (is_int($expYear) || is_string($expYear))) {
-            return sprintf('%02d/%02d', (int) $expMonth, (int) $expYear % 100);
+        if ((\is_int($expMonth) || \is_string($expMonth)) && (\is_int($expYear) || \is_string($expYear))) {
+            return \sprintf('%02d/%02d', (int) $expMonth, (int) $expYear % 100);
         }
 
         return null;
@@ -656,7 +675,8 @@ class StripeApiClient
             return null;
         }
 
-        $brand = trim((string) ($card['brand'] ?? ''));
+        $brand = mb_trim((string) ($card['brand'] ?? ''));
+
         return '' !== $brand ? $this->normalizeCardBrand($brand) : null;
     }
 
@@ -669,7 +689,7 @@ class StripeApiClient
      */
     public function retrieveCheckoutSession(string $checkoutSessionId): array
     {
-        return $this->request('GET', sprintf('/checkout/sessions/%s', $checkoutSessionId), [
+        return $this->request('GET', \sprintf('/checkout/sessions/%s', $checkoutSessionId), [
             'expand[0]' => 'subscription',
         ]);
     }
@@ -695,7 +715,7 @@ class StripeApiClient
 
         $data = $response['data'] ?? [];
 
-        return is_array($data) ? array_values(array_filter($data, 'is_array')) : [];
+        return \is_array($data) ? array_values(array_filter($data, 'is_array')) : [];
     }
 
     /**
@@ -717,7 +737,7 @@ class StripeApiClient
 
         $data = $response['data'] ?? [];
 
-        return is_array($data) ? array_values(array_filter($data, 'is_array')) : [];
+        return \is_array($data) ? array_values(array_filter($data, 'is_array')) : [];
     }
 
     /**
@@ -729,7 +749,7 @@ class StripeApiClient
      */
     public function detachPaymentMethod(string $paymentMethodId): array
     {
-        return $this->request('POST', sprintf('/payment_methods/%s/detach', $paymentMethodId));
+        return $this->request('POST', \sprintf('/payment_methods/%s/detach', $paymentMethodId));
     }
 
     /**
@@ -745,12 +765,12 @@ class StripeApiClient
             'expand[0]' => 'payment_intent',
         ];
 
-        $paymentMethodId = trim((string) $paymentMethodId);
+        $paymentMethodId = mb_trim((string) $paymentMethodId);
         if ('' !== $paymentMethodId) {
             $payload['payment_method'] = $paymentMethodId;
         }
 
-        return $this->request('POST', sprintf('/invoices/%s/pay', $stripeInvoiceId), $payload);
+        return $this->request('POST', \sprintf('/invoices/%s/pay', $stripeInvoiceId), $payload);
     }
 
     /**
@@ -789,7 +809,7 @@ class StripeApiClient
             'currency' => 'eur',
             'unit_amount' => $unitAmount,
             'recurring[interval]' => $interval,
-            'nickname' => $planPrice->getLabel() ?: sprintf('%s %s', $plan->getName(), $planPrice->getBillingPeriod()->getLabel()),
+            'nickname' => $planPrice->getLabel() ?: \sprintf('%s %s', $plan->getName(), $planPrice->getBillingPeriod()->getLabel()),
             'metadata[plan_code]' => $plan->getCode(),
             'metadata[billing_period]' => $planPrice->getBillingPeriod()->value,
             'metadata[promotional]' => $planPrice->isPromotional() ? '1' : '0',
@@ -805,7 +825,7 @@ class StripeApiClient
      */
     public function retrievePrice(string $stripePriceId): array
     {
-        return $this->request('GET', sprintf('/prices/%s', $stripePriceId));
+        return $this->request('GET', \sprintf('/prices/%s', $stripePriceId));
     }
 
     /**
@@ -835,11 +855,11 @@ class StripeApiClient
         if ([] !== $payload) {
             $options['body'] = http_build_query(array_filter(
                 $payload,
-                static fn(mixed $value): bool => null !== $value
+                static fn (mixed $value): bool => null !== $value
             ));
         }
 
-        $response = $this->httpClient->request($method, self::API_BASE_URI . $path, $options);
+        $response = $this->httpClient->request($method, self::API_BASE_URI.$path, $options);
 
         $data = $response->toArray(false);
 
@@ -856,13 +876,13 @@ class StripeApiClient
     private function extractErrorMessage(array $data): string
     {
         $error = $data['error'] ?? null;
-        if (!is_array($error)) {
+        if (!\is_array($error)) {
             return 'Stripe a refusé la requête.';
         }
 
-        $message = trim((string) ($error['message'] ?? ''));
-        $code = trim((string) ($error['code'] ?? ''));
-        $param = trim((string) ($error['param'] ?? ''));
+        $message = mb_trim((string) ($error['message'] ?? ''));
+        $code = mb_trim((string) ($error['code'] ?? ''));
+        $param = mb_trim((string) ($error['param'] ?? ''));
 
         $parts = [];
 
@@ -871,11 +891,11 @@ class StripeApiClient
         }
 
         if ('' !== $code) {
-            $parts[] = sprintf('code Stripe : %s', $code);
+            $parts[] = \sprintf('code Stripe : %s', $code);
         }
 
         if ('' !== $param) {
-            $parts[] = sprintf('champ : %s', $param);
+            $parts[] = \sprintf('champ : %s', $param);
         }
 
         if ([] === $parts) {

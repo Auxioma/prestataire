@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Invoice\Repository;
 
 use App\Account\Entity\ClientProfile;
@@ -59,7 +76,7 @@ class InvoiceRepository extends ServiceEntityRepository
         $result = $this->createQueryBuilder('i')
             ->select('i.invoiceNumber')
             ->andWhere('i.invoiceNumber LIKE :pattern')
-            ->setParameter('pattern', 'FAC-' . $year . '-%')
+            ->setParameter('pattern', 'FAC-'.$year.'-%')
             ->orderBy('i.invoiceNumber', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
@@ -81,7 +98,7 @@ class InvoiceRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
 
-        $maxSequence = is_array($result) ? (int) ($result['maxSequence'] ?? 0) : 0;
+        $maxSequence = \is_array($result) ? (int) ($result['maxSequence'] ?? 0) : 0;
 
         return $maxSequence + 1;
     }

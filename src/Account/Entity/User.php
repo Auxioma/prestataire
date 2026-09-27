@@ -1,29 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Account\Entity;
 
-use App\Review\Entity\Favorite;
-
-use App\Messaging\Entity\Notification;
-
-use App\Prestataire\Entity\PrestataireProfile;
-
-
 use App\Account\Enum\UserStatusEnum;
+use App\Account\Repository\UserRepository;
+use App\Messaging\Entity\Notification;
 use App\Messaging\Enum\NotificationTypeEnum;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Review\Entity\Favorite;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use App\Account\Repository\UserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;

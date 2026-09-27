@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Prestataire\Entity;
 
 use App\Prestataire\Repository\PrestationMediaRepository;
@@ -14,7 +31,6 @@ class PrestationMedia
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-
     #[ORM\Column]
     private ?int $id = null;
 
@@ -93,7 +109,7 @@ class PrestationMedia
 
     public function setTitle(?string $title): static
     {
-        $this->title = null !== $title ? trim($title) : null;
+        $this->title = null !== $title ? mb_trim($title) : null;
 
         return $this;
     }
@@ -105,7 +121,7 @@ class PrestationMedia
 
     public function setAltText(?string $altText): static
     {
-        $this->altText = null !== $altText ? trim($altText) : null;
+        $this->altText = null !== $altText ? mb_trim($altText) : null;
 
         return $this;
     }

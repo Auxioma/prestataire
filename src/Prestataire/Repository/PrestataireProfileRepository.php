@@ -1,19 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Prestataire\Repository;
 
-use App\Prestataire\Entity\PrestataireProfile;
 use App\Catalog\Entity\Service;
+use App\Prestataire\Entity\PrestataireProfile;
 use App\Prestataire\Enum\PrestataireProfileStatusEnum;
 // use App\Search\Enum\SearchVisibilityEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -93,7 +100,7 @@ class PrestataireProfileRepository extends ServiceEntityRepository
                 OR LOWER(p.shortDescription) LIKE LOWER(:query)
                 OR LOWER(s.name) LIKE LOWER(:query)
             ')
-                ->setParameter('query', '%' . $query . '%');
+                ->setParameter('query', '%'.$query.'%');
         }
 
         if ('' !== $location && null === $searchedLocation) {
@@ -104,8 +111,8 @@ class PrestataireProfileRepository extends ServiceEntityRepository
                 OR LOWER(z.city) LIKE LOWER(:location)
                 OR z.postalCode LIKE :locationExact
             ')
-                ->setParameter('location', '%' . $location . '%')
-                ->setParameter('locationExact', '%' . $location . '%');
+                ->setParameter('location', '%'.$location.'%')
+                ->setParameter('locationExact', '%'.$location.'%');
         }
 
         if (null !== $subCategory) {

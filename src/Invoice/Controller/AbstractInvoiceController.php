@@ -2,6 +2,21 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Invoice\Controller;
 
 use App\Invoice\Entity\Invoice;
@@ -37,7 +52,7 @@ abstract class AbstractInvoiceController extends AbstractController
             Response::HTTP_OK,
             [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => sprintf(
+                'Content-Disposition' => \sprintf(
                     'inline; filename="%s.pdf"',
                     $invoice->getInvoiceNumber() ?: 'facture'
                 ),

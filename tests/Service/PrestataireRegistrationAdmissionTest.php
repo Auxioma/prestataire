@@ -1,23 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Tests\Service;
 
-use App\Prestataire\Entity\PrestataireProfile;
-use App\Prestataire\Exception\RegistrationAdmissionException;
 use App\Catalog\Repository\AllowedNafCodeRepository;
-use App\Prestataire\Repository\PrestataireProfileRepository;
 use App\Company\Service\CompanyRegistryClient;
 use App\Company\Service\PrestataireRegistrationAdmission;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Prestataire\Exception\RegistrationAdmissionException;
+use App\Prestataire\Repository\PrestataireProfileRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
@@ -89,7 +96,7 @@ final class PrestataireRegistrationAdmissionTest extends TestCase
         }), 'https://registry.example');
         $session = new Session(new MockArraySessionStorage());
         try {
-            (new PrestataireRegistrationAdmission($registry, $codes, $profiles))->verify('12345678900011', $session);
+            new PrestataireRegistrationAdmission($registry, $codes, $profiles)->verify('12345678900011', $session);
             self::fail('An API outage must block admission.');
         } catch (RegistrationAdmissionException $exception) {
             self::assertStringContainsString('temporairement indisponible', $exception->getMessage());

@@ -1,11 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Prestataire\DataFixtures;
 
-use App\Core\DataFixtures\BaseFixture;
-
 use App\Account\DataFixtures\UserFixtures;
-
+use App\Core\DataFixtures\BaseFixture;
 use App\Prestataire\Entity\PrestataireInterventionZone;
 use App\Prestataire\Entity\PrestataireProfile;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -31,12 +46,12 @@ class PrestataireInterventionZoneFixtures extends BaseFixture implements Depende
     {
         for ($i = 1; $i <= UserFixtures::PRESTATAIRE_COUNT; ++$i) {
             /** @var PrestataireProfile $prestataire */
-            $prestataire = $this->getReference(sprintf('prestataire_profile_%d', $i), PrestataireProfile::class);
-            $primary = self::ZONES[($i - 1) % count(self::ZONES)];
-            $secondary = self::ZONES[$i % count(self::ZONES)];
+            $prestataire = $this->getReference(\sprintf('prestataire_profile_%d', $i), PrestataireProfile::class);
+            $primary = self::ZONES[($i - 1) % \count(self::ZONES)];
+            $secondary = self::ZONES[$i % \count(self::ZONES)];
 
             foreach ([[$primary, true], [$secondary, false]] as [$zoneData, $isMain]) {
-                $zone = (new PrestataireInterventionZone())
+                $zone = new PrestataireInterventionZone()
                     ->setPrestataireProfile($prestataire)
                     ->setCity($zoneData['city'])
                     ->setPostalCode($zoneData['postal'])

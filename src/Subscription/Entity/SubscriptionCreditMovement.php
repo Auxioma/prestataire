@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Entity;
 
 use App\Prestataire\Entity\PrestataireProfile;
@@ -10,7 +27,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SubscriptionCreditMovementRepository::class)]
-#[ORM\Table(name: 'subscription_credit_movement',
+#[ORM\Table(
+    name: 'subscription_credit_movement',
     uniqueConstraints: [new ORM\UniqueConstraint(name: 'uniq_subscription_credit_movement_invoice', columns: ['invoice_id'])]
 )]
 #[ORM\Index(name: 'idx_subscription_credit_movement_profile', columns: ['prestataire_profile_id'])]

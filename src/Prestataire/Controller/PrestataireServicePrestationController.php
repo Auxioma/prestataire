@@ -1,44 +1,50 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Prestataire\Controller;
 
-use App\Prestataire\Entity\PrestataireService;
 use App\Account\Entity\User;
-use App\Prestataire\Form\PrestataireServicePrestationType;
-use App\Prestataire\Repository\PrestataireServiceRepository;
+use App\Account\Service\AuthenticatedUserProvider;
 use App\Catalog\Repository\ServiceCategoryRepository;
 use App\Catalog\Repository\ServiceRepository;
+use App\Prestataire\Entity\PrestataireService;
+use App\Prestataire\Form\PrestataireServicePrestationType;
+use App\Prestataire\Repository\PrestataireServiceRepository;
+use App\Prestataire\Service\PrestataireProfileCompletionService;
+use App\Review\Enum\FavoriteTypeEnum;
+use App\Review\Repository\FavoriteRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
 use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
 use Symfony\UX\Map\InfoWindow;
 use Symfony\UX\Map\Map;
 use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Review\Enum\FavoriteTypeEnum;
-use App\Review\Repository\FavoriteRepository;
-use App\Account\Service\AuthenticatedUserProvider;
-use App\Prestataire\Service\PrestataireProfileCompletionService;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use Symfony\Component\Routing\Requirement\Requirement;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\String\Slugger\SluggerInterface;
-
 
 /**
  * Gère les actions liées à prestataire service prestation.
@@ -54,12 +60,11 @@ final class PrestataireServicePrestationController extends AbstractController
     #[Route('/prestataire/service/{slug}/prestation', name: 'app_prestataire_service_prestation_edit', requirements: ['slug' => Requirement::ASCII_SLUG])]
     /**
      * Affiche et traite le formulaire de modification.
-     *
-     * @return Response
      */
     public function edit(
         Request $request,
-        #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireService $ps,
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        PrestataireService $ps,
         EntityManagerInterface $em,
         PrestataireProfileCompletionService $prestataireProfileCompletionService,
     ): Response {
@@ -76,7 +81,7 @@ final class PrestataireServicePrestationController extends AbstractController
         if ($ps->getMedias()->count() < 5) {
             $missing = 5 - $ps->getMedias()->count();
 
-            for ($i = 0; $i < $missing; $i++) {
+            for ($i = 0; $i < $missing; ++$i) {
                 $media = new \App\Prestataire\Entity\PrestationMedia();
                 $media->setPosition($ps->getMedias()->count());
                 $ps->addMedia($media);
@@ -117,7 +122,7 @@ final class PrestataireServicePrestationController extends AbstractController
             $this->addFlash('success', 'Prestation détaillée enregistrée.');
 
             return $this->redirect(
-                $this->generateUrl('app_prestataire_settings') . '#services-panel'
+                $this->generateUrl('app_prestataire_settings').'#services-panel'
             );
         }
 
@@ -135,20 +140,19 @@ final class PrestataireServicePrestationController extends AbstractController
         }
 
         if (null !== $firstMappableZone) {
-            $zoneMap = (new Map())
+            $zoneMap = new Map()
                 ->center(new Point(
                     (float) $firstMappableZone->getLatitude(),
                     (float) $firstMappableZone->getLongitude()
                 ))
                 ->zoom(8)
                 ->options(
-                    (new LeafletOptions())->tileLayer(new TileLayer(
+                    new LeafletOptions()->tileLayer(new TileLayer(
                         url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                         options: ['maxZoom' => 19],
                     ))
                 );
-
 
             foreach ($zones as $zone) {
                 if (null === $zone->getLatitude() || null === $zone->getLongitude()) {
@@ -157,7 +161,7 @@ final class PrestataireServicePrestationController extends AbstractController
 
                 $label = $zone->getCity() ?: 'Zone d’intervention';
                 $radiusText = null !== $zone->getRadiusKm()
-                    ? 'Rayon : ' . (int) $zone->getRadiusKm() . ' km'
+                    ? 'Rayon : '.(int) $zone->getRadiusKm().' km'
                     : 'Rayon non renseigné';
 
                 $zoneMap->addMarker(new Marker(
@@ -167,10 +171,10 @@ final class PrestataireServicePrestationController extends AbstractController
                     ),
                     title: $label,
                     infoWindow: new InfoWindow(
-                        content: sprintf(
+                        content: \sprintf(
                             '<strong>%s</strong><br>%s',
-                            htmlspecialchars($label, ENT_QUOTES, 'UTF-8'),
-                            htmlspecialchars($radiusText, ENT_QUOTES, 'UTF-8')
+                            htmlspecialchars($label, \ENT_QUOTES, 'UTF-8'),
+                            htmlspecialchars($radiusText, \ENT_QUOTES, 'UTF-8')
                         )
                     )
                 ));
@@ -191,8 +195,6 @@ final class PrestataireServicePrestationController extends AbstractController
     #[Route('/prestataire/prestations/nouvelle', name: 'app_prestataire_service_new', methods: ['GET', 'POST'])]
     /**
      * Affiche et traite le formulaire de création.
-     *
-     * @return Response
      */
     public function new(
         Request $request,
@@ -248,7 +250,7 @@ final class PrestataireServicePrestationController extends AbstractController
             $baseLabel = $selectedService->getName() ?: 'prestation';
             $baseSlug = (string) $slugger->slug($baseLabel)->lower();
 
-            $uniqueSlug = sprintf('%s-%s', $baseSlug, substr(bin2hex(random_bytes(4)), 0, 8));
+            $uniqueSlug = \sprintf('%s-%s', $baseSlug, mb_substr(bin2hex(random_bytes(4)), 0, 8));
             $prestation->setSlug($uniqueSlug);
 
             $em->persist($prestation);
@@ -271,12 +273,11 @@ final class PrestataireServicePrestationController extends AbstractController
     #[Route('/prestataire/service/{slug}/prestation/voir', name: 'app_prestataire_service_prestation_show', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
     /**
      * Affiche le détail de la ressource demandée.
-     *
-     * @return Response
      */
     public function show(
-        #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireService $ps,
-        FavoriteRepository $favoriteRepository
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        PrestataireService $ps,
+        FavoriteRepository $favoriteRepository,
     ): Response {
         if (!$ps->isActive()) {
             throw $this->createNotFoundException('Cette prestation est introuvable.');
@@ -301,11 +302,11 @@ final class PrestataireServicePrestationController extends AbstractController
         $companyName = $prestataire?->getCompanyName() ?: 'Prestataire';
         $serviceName = $ps->getService()?->getName() ?: 'Prestation';
 
-        $prestationMap = (new Map())
+        $prestationMap = new Map()
             ->center(new Point($centerLat, $centerLng))
             ->zoom($hasMapCenter ? 10 : 6)
             ->options(
-                (new LeafletOptions())->tileLayer(new TileLayer(
+                new LeafletOptions()->tileLayer(new TileLayer(
                     url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                     options: ['maxZoom' => 19],
@@ -318,7 +319,7 @@ final class PrestataireServicePrestationController extends AbstractController
                     position: new Point($centerLat, $centerLng),
                     title: $companyName,
                     infoWindow: new InfoWindow(
-                        content: sprintf('<strong>%s</strong><br>%s', $companyName, $serviceName)
+                        content: \sprintf('<strong>%s</strong><br>%s', $companyName, $serviceName)
                     )
                 )
             );
@@ -347,8 +348,6 @@ final class PrestataireServicePrestationController extends AbstractController
     #[Route('/prestataire/service/{id}/toggle-active', name: 'app_prestataire_service_toggle_active', methods: ['POST'])]
     /**
      * Traite l’action "toggleActive" du contrôleur Prestataire Service Prestation.
-     *
-     * @return JsonResponse
      */
     public function toggleActive(
         Request $request,
@@ -371,7 +370,7 @@ final class PrestataireServicePrestationController extends AbstractController
 
         $token = (string) $request->request->get('_token');
 
-        if (!$this->isCsrfTokenValid('toggle_prestation_' . $ps->getId(), $token)) {
+        if (!$this->isCsrfTokenValid('toggle_prestation_'.$ps->getId(), $token)) {
             return $this->json([
                 'success' => false,
                 'message' => 'Jeton CSRF invalide.',

@@ -2,6 +2,21 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Service;
 
 use App\Subscription\Entity\SubscriptionInvoice;
@@ -23,7 +38,8 @@ final class SubscriptionInvoicePdfGenerator
         private readonly Environment $twig,
         private readonly SubscriptionFacturXXmlBuilder $xmlBuilder,
         private readonly KernelInterface $kernel,
-    ) {}
+    ) {
+    }
 
     public function generatePdfOutput(
         SubscriptionInvoice $invoice,
@@ -55,7 +71,7 @@ final class SubscriptionInvoicePdfGenerator
         $options = new Options();
         $options->set('defaultFont', 'DejaVu Sans');
         $options->set('isRemoteEnabled', true);
-        $options->setIsPdfAEnabled($embeddedXmlPath !== null);
+        $options->setIsPdfAEnabled(null !== $embeddedXmlPath);
 
         $dompdf = new Dompdf($options);
         $dompdf->loadHtml($html);
@@ -63,7 +79,7 @@ final class SubscriptionInvoicePdfGenerator
         $this->applyDocumentMetadata($dompdf, $invoice);
         $dompdf->render();
 
-        if ($embeddedXmlPath !== null) {
+        if (null !== $embeddedXmlPath) {
             $canvas = $dompdf->getCanvas();
 
             if ($canvas instanceof CPDF) {
@@ -81,7 +97,7 @@ final class SubscriptionInvoicePdfGenerator
 
         $output = $dompdf->output();
 
-        if ($embeddedXmlPath !== null && is_file($embeddedXmlPath)) {
+        if (null !== $embeddedXmlPath && is_file($embeddedXmlPath)) {
             @unlink($embeddedXmlPath);
         }
 
@@ -90,12 +106,12 @@ final class SubscriptionInvoicePdfGenerator
 
     private function applyDocumentMetadata(Dompdf $dompdf, SubscriptionInvoice $invoice): void
     {
-        $invoiceNumber = $invoice->getInvoiceNumber() ?: ('ABO-' . ($invoice->getId() ?? 'draft'));
+        $invoiceNumber = $invoice->getInvoiceNumber() ?: ('ABO-'.($invoice->getId() ?? 'draft'));
 
-        $dompdf->addInfo('Title', sprintf('Facture abonnement %s', $invoiceNumber));
+        $dompdf->addInfo('Title', \sprintf('Facture abonnement %s', $invoiceNumber));
         $dompdf->addInfo('Author', 'TrouveMoi');
         $dompdf->addInfo('Creator', 'TrouveMoi');
-        $dompdf->addInfo('Subject', sprintf('Facture d’abonnement %s', $invoiceNumber));
+        $dompdf->addInfo('Subject', \sprintf('Facture d’abonnement %s', $invoiceNumber));
         $dompdf->addInfo('Keywords', 'Factur-X, EN16931, PDF/A-3, abonnement, trouvemoi');
     }
 
@@ -103,12 +119,12 @@ final class SubscriptionInvoicePdfGenerator
     {
         $xmlContent = $this->xmlBuilder->build($invoice);
 
-        if ('' === trim($xmlContent)) {
+        if ('' === mb_trim($xmlContent)) {
             return null;
         }
 
         $path = tempnam(sys_get_temp_dir(), 'subscription-facturx-');
-        if ($path === false) {
+        if (false === $path) {
             return null;
         }
 
@@ -123,71 +139,71 @@ final class SubscriptionInvoicePdfGenerator
 
     private function resolvePlatformLogoDataUri(): ?string
     {
-        $logoPath = $this->kernel->getProjectDir() . '/assets/images/logo_trouvemoipresta.png';
+        $logoPath = $this->kernel->getProjectDir().'/assets/images/logo_trouvemoipresta.png';
 
         if (!is_file($logoPath)) {
             return null;
         }
 
         $contents = @file_get_contents($logoPath);
-        if ($contents === false) {
+        if (false === $contents) {
             return null;
         }
 
-        return 'data:image/png;base64,' . base64_encode($contents);
+        return 'data:image/png;base64,'.base64_encode($contents);
     }
 
     private function buildFacturXXmpExtension(): string
     {
-        return sprintf(
+        return \sprintf(
             <<<'XML'
 
-<rdf:Description xmlns:pdfaExtension="http://www.aiim.org/pdfa/ns/extension/" xmlns:pdfaSchema="http://www.aiim.org/pdfa/ns/schema#" xmlns:pdfaProperty="http://www.aiim.org/pdfa/ns/property#" rdf:about="">
-<pdfaExtension:schemas>
-<rdf:Bag>
-<rdf:li rdf:parseType="Resource">
-<pdfaSchema:schema>Factur-X PDFA Extension Schema</pdfaSchema:schema>
-<pdfaSchema:namespaceURI>%s</pdfaSchema:namespaceURI>
-<pdfaSchema:prefix>fx</pdfaSchema:prefix>
-<pdfaSchema:property>
-<rdf:Seq>
-<rdf:li rdf:parseType="Resource">
-<pdfaProperty:name>DocumentFileName</pdfaProperty:name>
-<pdfaProperty:valueType>Text</pdfaProperty:valueType>
-<pdfaProperty:category>external</pdfaProperty:category>
-<pdfaProperty:description>The name of the embedded XML document</pdfaProperty:description>
-</rdf:li>
-<rdf:li rdf:parseType="Resource">
-<pdfaProperty:name>DocumentType</pdfaProperty:name>
-<pdfaProperty:valueType>Text</pdfaProperty:valueType>
-<pdfaProperty:category>external</pdfaProperty:category>
-<pdfaProperty:description>The type of the hybrid document in capital letters, e.g. INVOICE or ORDER</pdfaProperty:description>
-</rdf:li>
-<rdf:li rdf:parseType="Resource">
-<pdfaProperty:name>Version</pdfaProperty:name>
-<pdfaProperty:valueType>Text</pdfaProperty:valueType>
-<pdfaProperty:category>external</pdfaProperty:category>
-<pdfaProperty:description>The Factur-X version</pdfaProperty:description>
-</rdf:li>
-<rdf:li rdf:parseType="Resource">
-<pdfaProperty:name>ConformanceLevel</pdfaProperty:name>
-<pdfaProperty:valueType>Text</pdfaProperty:valueType>
-<pdfaProperty:category>external</pdfaProperty:category>
-<pdfaProperty:description>The Factur-X conformance level</pdfaProperty:description>
-</rdf:li>
-</rdf:Seq>
-</pdfaSchema:property>
-</rdf:li>
-</rdf:Bag>
-</pdfaExtension:schemas>
-</rdf:Description>
-<rdf:Description xmlns:fx="%s" rdf:about="">
-<fx:DocumentType>%s</fx:DocumentType>
-<fx:DocumentFileName>%s</fx:DocumentFileName>
-<fx:Version>%s</fx:Version>
-<fx:ConformanceLevel>%s</fx:ConformanceLevel>
-</rdf:Description>
-XML,
+                <rdf:Description xmlns:pdfaExtension="http://www.aiim.org/pdfa/ns/extension/" xmlns:pdfaSchema="http://www.aiim.org/pdfa/ns/schema#" xmlns:pdfaProperty="http://www.aiim.org/pdfa/ns/property#" rdf:about="">
+                <pdfaExtension:schemas>
+                <rdf:Bag>
+                <rdf:li rdf:parseType="Resource">
+                <pdfaSchema:schema>Factur-X PDFA Extension Schema</pdfaSchema:schema>
+                <pdfaSchema:namespaceURI>%s</pdfaSchema:namespaceURI>
+                <pdfaSchema:prefix>fx</pdfaSchema:prefix>
+                <pdfaSchema:property>
+                <rdf:Seq>
+                <rdf:li rdf:parseType="Resource">
+                <pdfaProperty:name>DocumentFileName</pdfaProperty:name>
+                <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                <pdfaProperty:category>external</pdfaProperty:category>
+                <pdfaProperty:description>The name of the embedded XML document</pdfaProperty:description>
+                </rdf:li>
+                <rdf:li rdf:parseType="Resource">
+                <pdfaProperty:name>DocumentType</pdfaProperty:name>
+                <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                <pdfaProperty:category>external</pdfaProperty:category>
+                <pdfaProperty:description>The type of the hybrid document in capital letters, e.g. INVOICE or ORDER</pdfaProperty:description>
+                </rdf:li>
+                <rdf:li rdf:parseType="Resource">
+                <pdfaProperty:name>Version</pdfaProperty:name>
+                <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                <pdfaProperty:category>external</pdfaProperty:category>
+                <pdfaProperty:description>The Factur-X version</pdfaProperty:description>
+                </rdf:li>
+                <rdf:li rdf:parseType="Resource">
+                <pdfaProperty:name>ConformanceLevel</pdfaProperty:name>
+                <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                <pdfaProperty:category>external</pdfaProperty:category>
+                <pdfaProperty:description>The Factur-X conformance level</pdfaProperty:description>
+                </rdf:li>
+                </rdf:Seq>
+                </pdfaSchema:property>
+                </rdf:li>
+                </rdf:Bag>
+                </pdfaExtension:schemas>
+                </rdf:Description>
+                <rdf:Description xmlns:fx="%s" rdf:about="">
+                <fx:DocumentType>%s</fx:DocumentType>
+                <fx:DocumentFileName>%s</fx:DocumentFileName>
+                <fx:Version>%s</fx:Version>
+                <fx:ConformanceLevel>%s</fx:ConformanceLevel>
+                </rdf:Description>
+                XML,
             self::FACTUR_X_XMP_NAMESPACE,
             self::FACTUR_X_XMP_NAMESPACE,
             self::FACTUR_X_DOCUMENT_TYPE,

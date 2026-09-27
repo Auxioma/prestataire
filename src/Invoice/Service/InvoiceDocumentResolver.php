@@ -2,6 +2,21 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Invoice\Service;
 
 use App\Invoice\Entity\Invoice;
@@ -15,14 +30,15 @@ final class InvoiceDocumentResolver
     public function __construct(
         private readonly StorageInterface $storage,
         private readonly string $projectDir,
-    ) {}
+    ) {
+    }
 
     public function resolve(Invoice $invoice): ?InvoiceResolvedDocument
     {
         if ($invoice->isExternalImport() && $invoice->hasExternalPdf()) {
             $path = $this->storage->resolvePath($invoice, 'externalPdfFile');
 
-            if ($path !== null && is_file($path)) {
+            if (null !== $path && is_file($path)) {
                 return new InvoiceResolvedDocument(
                     self::TYPE_EXTERNAL_PDF,
                     $this->buildDownloadFilename($invoice, 'externe'),
@@ -33,7 +49,7 @@ final class InvoiceDocumentResolver
         }
 
         if ($invoice->hasGeneratedPdf()) {
-            $path = sprintf(
+            $path = \sprintf(
                 '%s/var/uploads/invoices/generated/%s',
                 $this->projectDir,
                 $invoice->getFacturXPdfName()
@@ -58,7 +74,7 @@ final class InvoiceDocumentResolver
             return null;
         }
 
-        $path = sprintf(
+        $path = \sprintf(
             '%s/var/uploads/invoices/generated/%s',
             $this->projectDir,
             $invoice->getFacturXXmlName()
@@ -71,8 +87,8 @@ final class InvoiceDocumentResolver
     {
         $base = $invoice->getInvoiceNumber() ?: $invoice->getQuoteProposal()?->getPublicReference() ?: 'facture';
 
-        return $suffix !== null
-            ? sprintf('%s-%s.pdf', $base, $suffix)
-            : sprintf('%s.pdf', $base);
+        return null !== $suffix
+            ? \sprintf('%s-%s.pdf', $base, $suffix)
+            : \sprintf('%s.pdf', $base);
     }
 }

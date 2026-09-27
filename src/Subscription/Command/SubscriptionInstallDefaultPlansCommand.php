@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Command;
 
 use App\Subscription\Entity\SubscriptionPlan;
@@ -88,7 +105,7 @@ final class SubscriptionInstallDefaultPlansCommand extends Command
         $defaultCodes = array_column(self::DEFAULT_PLANS, 'code');
 
         foreach ($this->subscriptionPlanRepository->findAll() as $existingPlan) {
-            if (!in_array($existingPlan->getCode(), $defaultCodes, true)) {
+            if (!\in_array($existingPlan->getCode(), $defaultCodes, true)) {
                 $existingPlan
                     ->setStatus(SubscriptionPlanStatusEnum::ARCHIVED)
                     ->setUpdatedAt($now);
@@ -119,7 +136,7 @@ final class SubscriptionInstallDefaultPlansCommand extends Command
             $this->upsertStandardPrice($plan, SubscriptionBillingPeriodEnum::ANNUAL, $data['annual_amount'], $now);
 
             $this->entityManager->persist($plan);
-            $io->text(sprintf('Plan %s prêt.', $data['code']));
+            $io->text(\sprintf('Plan %s prêt.', $data['code']));
         }
 
         $this->entityManager->flush();
@@ -152,7 +169,7 @@ final class SubscriptionInstallDefaultPlansCommand extends Command
         }
 
         if (!$selected instanceof SubscriptionPlanPrice) {
-            $selected = (new SubscriptionPlanPrice())
+            $selected = new SubscriptionPlanPrice()
                 ->setPlan($plan)
                 ->setBillingPeriod($billingPeriod)
                 ->setCreatedAt($now);

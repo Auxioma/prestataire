@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Entity;
 
 use App\Subscription\Enum\SubscriptionBillingPeriodEnum;
@@ -97,18 +114,18 @@ class SubscriptionPlan
 
     public function __toString(): string
     {
-        $name = trim((string) ($this->name ?? ''));
-        $code = trim((string) ($this->code ?? ''));
+        $name = mb_trim((string) ($this->name ?? ''));
+        $code = mb_trim((string) ($this->code ?? ''));
 
         if ('' !== $name && '' !== $code) {
-            return sprintf('%s (%s)', $name, $code);
+            return \sprintf('%s (%s)', $name, $code);
         }
 
         if ('' !== $name) {
             return $name;
         }
 
-        return sprintf('Plan #%s', $this->id ?? 'n/a');
+        return \sprintf('Plan #%s', $this->id ?? 'n/a');
     }
 
     public function getId(): ?string

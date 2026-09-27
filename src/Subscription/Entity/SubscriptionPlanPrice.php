@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Entity;
 
 use App\Subscription\Enum\SubscriptionBillingPeriodEnum;
@@ -61,15 +78,15 @@ class SubscriptionPlanPrice
     public function __toString(): string
     {
         $planName = $this->plan?->getName() ?? 'Plan';
-        $label = trim((string) ($this->label ?? ''));
+        $label = mb_trim((string) ($this->label ?? ''));
         $amount = $this->amount ?? '0.00';
 
-        return sprintf(
+        return \sprintf(
             '%s - %s %sEUR%s',
             $planName,
             $this->billingPeriod->getLabel(),
             $amount,
-            '' !== $label ? sprintf(' (%s)', $label) : ''
+            '' !== $label ? \sprintf(' (%s)', $label) : ''
         );
     }
 
@@ -109,7 +126,7 @@ class SubscriptionPlanPrice
 
     public function setLabel(?string $label): static
     {
-        $this->label = null !== $label ? trim($label) : null;
+        $this->label = null !== $label ? mb_trim($label) : null;
 
         return $this;
     }
@@ -133,7 +150,7 @@ class SubscriptionPlanPrice
 
     public function setStripePriceId(?string $stripePriceId): static
     {
-        $this->stripePriceId = null !== $stripePriceId ? trim($stripePriceId) : null;
+        $this->stripePriceId = null !== $stripePriceId ? mb_trim($stripePriceId) : null;
 
         return $this;
     }

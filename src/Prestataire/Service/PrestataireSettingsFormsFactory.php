@@ -1,18 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Prestataire\Service;
 
+use App\Account\Entity\User;
+use App\Account\Form\AccountDeletionType;
+use App\Account\Form\AccountPasswordChangeType;
+use App\Messaging\Form\PrestataireNotificationPreferencesType;
 use App\Prestataire\Dto\PrestataireSettingsForms;
 use App\Prestataire\Entity\PrestataireDocument;
 use App\Prestataire\Entity\PrestataireInterventionZone;
 use App\Prestataire\Entity\PrestataireProfile;
-use App\Account\Entity\User;
-use App\Account\Form\AccountDeletionType;
-use App\Account\Form\AccountPasswordChangeType;
 use App\Prestataire\Form\PrestataireAvailabilityCollectionType;
 use App\Prestataire\Form\PrestataireCompanyTabType;
 use App\Prestataire\Form\PrestataireInterventionZoneType;
-use App\Messaging\Form\PrestataireNotificationPreferencesType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

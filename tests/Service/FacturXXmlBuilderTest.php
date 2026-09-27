@@ -2,12 +2,27 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Tests\Service;
 
 use App\Invoice\Entity\Invoice;
 use App\Invoice\Entity\InvoiceItem;
-use App\Quote\Entity\QuoteProposal;
 use App\Invoice\Service\FacturXXmlBuilder;
+use App\Quote\Entity\QuoteProposal;
 use horstoeko\stringmanagement\PathUtils;
 use horstoeko\zugferd\ZugferdSettings;
 use PHPUnit\Framework\TestCase;
@@ -67,7 +82,7 @@ final class FacturXXmlBuilderTest extends TestCase
         libxml_use_internal_errors(true);
 
         self::assertTrue($document->schemaValidate($xsd), implode("\n", array_map(
-            static fn (\LibXMLError $error): string => sprintf('[line %d] %s : %s', $error->line, $error->code, trim($error->message)),
+            static fn (\LibXMLError $error): string => \sprintf('[line %d] %s : %s', $error->line, $error->code, mb_trim($error->message)),
             libxml_get_errors()
         )));
 
@@ -77,7 +92,7 @@ final class FacturXXmlBuilderTest extends TestCase
 
     private function createInvoiceFixture(): Invoice
     {
-        $quote = (new QuoteProposal())
+        $quote = new QuoteProposal()
             ->setProposalNumber('DEV-2026-00002')
             ->setPrestataireCompanyName('Acme Services')
             ->setPrestataireLegalName('Acme Services SARL')
@@ -101,7 +116,7 @@ final class FacturXXmlBuilderTest extends TestCase
             ->setClientInterventionCity('Bordeaux')
             ->setClientInterventionCountry('France');
 
-        $invoice = (new Invoice())
+        $invoice = new Invoice()
             ->setQuoteProposal($quote)
             ->setInvoiceNumber('FAC-TEST-XML-001')
             ->setIssuedAt(new \DateTimeImmutable('2026-07-14 12:00:00'))
@@ -115,7 +130,7 @@ final class FacturXXmlBuilderTest extends TestCase
             ->setEarlyPaymentDiscountTerms('Pas d\'escompte pour paiement anticipe.');
 
         $invoice->addItem(
-            (new InvoiceItem())
+            new InvoiceItem()
                 ->setLabel('Ligne 20')
                 ->setQuantity('1.00')
                 ->setUnitPriceHt('200.00')
@@ -125,7 +140,7 @@ final class FacturXXmlBuilderTest extends TestCase
         );
 
         $invoice->addItem(
-            (new InvoiceItem())
+            new InvoiceItem()
                 ->setLabel('Ligne 10')
                 ->setQuantity('1.00')
                 ->setUnitPriceHt('50.00')

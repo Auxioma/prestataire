@@ -1,17 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Prestataire\DataFixtures;
 
-use App\Core\DataFixtures\BaseFixture;
-
 use App\Account\DataFixtures\UserFixtures;
-
-use App\Prestataire\Entity\PrestataireProfile;
 use App\Account\Entity\User;
+use App\Core\DataFixtures\BaseFixture;
+use App\Prestataire\Entity\PrestataireProfile;
 use App\Prestataire\Enum\DocumentVerificationStatusEnum;
 use App\Prestataire\Enum\PrestataireProfileStatusEnum;
-use App\Search\Enum\SearchVisibilityEnum;
 use App\Prestataire\Enum\VerificationStatusEnum;
+use App\Search\Enum\SearchVisibilityEnum;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
@@ -41,18 +56,18 @@ class PrestataireProfileFixtures extends BaseFixture implements DependentFixture
     {
         foreach (self::PROFILES as $index => $data) {
             /** @var User $user */
-            $user = $this->getReference(sprintf('user_prestataire_%d', $index + 1), User::class);
+            $user = $this->getReference(\sprintf('user_prestataire_%d', $index + 1), User::class);
             $createdAt = $this->randomDateTimeImmutable('-18 months', '-4 months');
 
-            $profile = (new PrestataireProfile())
+            $profile = new PrestataireProfile()
                 ->setAccount($user)
                 ->setCompanyName($data['company'])
-                ->setSlug($this->slugify($data['company'] . '-' . ($index + 1)))
-                ->setLegalName($data['company'] . ' SASU')
+                ->setSlug($this->slugify($data['company'].'-'.($index + 1)))
+                ->setLegalName($data['company'].' SASU')
                 ->setStructureType($this->faker->randomElement(['EI', 'EURL', 'SASU', 'SARL']))
                 ->setSiren($this->faker->numerify('#########'))
                 ->setSiret($this->faker->numerify('#########000##'))
-                ->setVatNumber('FR' . $this->faker->numerify('##') . $this->faker->numerify('#########'))
+                ->setVatNumber('FR'.$this->faker->numerify('##').$this->faker->numerify('#########'))
                 ->setAddress($this->faker->streetAddress())
                 ->setAddressComplement($this->faker->optional()->secondaryAddress())
                 ->setPostalCode($data['postal'])
@@ -63,15 +78,15 @@ class PrestataireProfileFixtures extends BaseFixture implements DependentFixture
                 ->setGeohash($this->faker->regexify('[a-z0-9]{6}'))
                 ->setPhonePublic($this->faker->numerify('05########'))
                 ->setPhonePrivate($this->faker->numerify('06########'))
-                ->setWebsite('https://www.' . $this->slugify($data['company']) . '.fr')
-                ->setFacebookUrl('https://facebook.com/' . $this->slugify($data['company']))
-                ->setInstagramUrl('https://instagram.com/' . $this->slugify($data['company']))
-                ->setLinkedinUrl('https://linkedin.com/company/' . $this->slugify($data['company']))
-                ->setShortDescription(sprintf('%s basé à %s, disponible pour des missions locales avec devis clair et intervention rapide.', $data['metier'], $data['city']))
-                ->setLongDescription(sprintf('%s accompagne particuliers et professionnels de %s pour des prestations fiables, pédagogiques et soignées. Chaque mission est préparée avec un cadre de prix transparent et un suivi sérieux.', $data['company'], $data['city']))
-                ->setDescription(sprintf('Profil professionnel complet pour %s.', $data['company']))
+                ->setWebsite('https://www.'.$this->slugify($data['company']).'.fr')
+                ->setFacebookUrl('https://facebook.com/'.$this->slugify($data['company']))
+                ->setInstagramUrl('https://instagram.com/'.$this->slugify($data['company']))
+                ->setLinkedinUrl('https://linkedin.com/company/'.$this->slugify($data['company']))
+                ->setShortDescription(\sprintf('%s basé à %s, disponible pour des missions locales avec devis clair et intervention rapide.', $data['metier'], $data['city']))
+                ->setLongDescription(\sprintf('%s accompagne particuliers et professionnels de %s pour des prestations fiables, pédagogiques et soignées. Chaque mission est préparée avec un cadre de prix transparent et un suivi sérieux.', $data['company'], $data['city']))
+                ->setDescription(\sprintf('Profil professionnel complet pour %s.', $data['company']))
                 ->setMetier($data['metier'])
-                ->setExperience($this->faker->numberBetween(4, 18) . ' ans d’expérience')
+                ->setExperience($this->faker->numberBetween(4, 18).' ans d’expérience')
                 ->setProfileStatus(PrestataireProfileStatusEnum::ACTIVE)
                 ->setVerificationStatus($this->faker->randomElement([
                     VerificationStatusEnum::COMPANY_VERIFIED,
@@ -104,17 +119,17 @@ class PrestataireProfileFixtures extends BaseFixture implements DependentFixture
             $this->attachRemoteImage(
                 $profile,
                 'setLogoFile',
-                sprintf('https://picsum.photos/300/300?random=logo-%d', $index + 1)
+                \sprintf('https://picsum.photos/300/300?random=logo-%d', $index + 1)
             );
 
             $this->attachRemoteImage(
                 $profile,
                 'setCoverImageFile',
-                sprintf('https://picsum.photos/1200/400?random=cover-%d', $index + 1)
+                \sprintf('https://picsum.photos/1200/400?random=cover-%d', $index + 1)
             );
 
             $manager->persist($profile);
-            $this->addReference(sprintf('prestataire_profile_%d', $index + 1), $profile);
+            $this->addReference(\sprintf('prestataire_profile_%d', $index + 1), $profile);
         }
 
         $manager->flush();

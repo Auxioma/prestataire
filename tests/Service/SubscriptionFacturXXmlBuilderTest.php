@@ -2,14 +2,29 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Tests\Service;
 
+use App\Account\Entity\User;
 use App\Prestataire\Entity\PrestataireProfile;
 use App\Subscription\Entity\PrestataireSubscription;
 use App\Subscription\Entity\SubscriptionCustomer;
 use App\Subscription\Entity\SubscriptionInvoice;
 use App\Subscription\Entity\SubscriptionPlan;
-use App\Account\Entity\User;
 use App\Subscription\Enum\SubscriptionBillingPeriodEnum;
 use App\Subscription\Enum\SubscriptionInvoiceStatusEnum;
 use App\Subscription\Service\SubscriptionFacturXXmlBuilder;
@@ -61,7 +76,7 @@ final class SubscriptionFacturXXmlBuilderTest extends TestCase
         libxml_use_internal_errors(true);
 
         self::assertTrue($document->schemaValidate($xsd), implode("\n", array_map(
-            static fn (\LibXMLError $error): string => sprintf('[line %d] %s : %s', $error->line, $error->code, trim($error->message)),
+            static fn (\LibXMLError $error): string => \sprintf('[line %d] %s : %s', $error->line, $error->code, mb_trim($error->message)),
             libxml_get_errors()
         )));
 
@@ -71,10 +86,10 @@ final class SubscriptionFacturXXmlBuilderTest extends TestCase
 
     private function createInvoiceFixture(): SubscriptionInvoice
     {
-        $user = (new User())
+        $user = new User()
             ->setEmail('buyer@example.test');
 
-        $prestataire = (new PrestataireProfile())
+        $prestataire = new PrestataireProfile()
             ->setAccount($user)
             ->setCompanyName('Acme Services')
             ->setLegalName('Acme Services SARL')
@@ -86,17 +101,17 @@ final class SubscriptionFacturXXmlBuilderTest extends TestCase
             ->setSiret('98765432100019')
             ->setVatNumber('FR12 123456789');
 
-        $customer = (new SubscriptionCustomer())
+        $customer = new SubscriptionCustomer()
             ->setPrestataireProfile($prestataire)
             ->setStripeCustomerId('cus_test_001')
             ->setBillingEmail('billing@example.test');
 
-        $plan = (new SubscriptionPlan())
+        $plan = new SubscriptionPlan()
             ->setCode('pro')
             ->setName('Abonnement Pro')
             ->setMonthlyAmount('49.00');
 
-        $subscription = (new PrestataireSubscription())
+        $subscription = new PrestataireSubscription()
             ->setPrestataireProfile($prestataire)
             ->setCustomer($customer)
             ->setPlan($plan)
@@ -104,7 +119,7 @@ final class SubscriptionFacturXXmlBuilderTest extends TestCase
             ->setCurrentPeriodStart(new \DateTimeImmutable('2026-07-01 00:00:00'))
             ->setCurrentPeriodEnd(new \DateTimeImmutable('2026-07-31 23:59:59'));
 
-        return (new SubscriptionInvoice())
+        return new SubscriptionInvoice()
             ->setSubscription($subscription)
             ->setStripeInvoiceId('in_sub_test_001')
             ->setStripePaymentIntentId('pi_sub_test_001')

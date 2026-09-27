@@ -2,6 +2,21 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Quote\Service;
 
 use App\Quote\Entity\QuoteProposal;
@@ -16,7 +31,8 @@ final class QuoteProposalDocumentResolver
     public function __construct(
         private readonly StorageInterface $storage,
         private readonly string $projectDir,
-    ) {}
+    ) {
+    }
 
     public function resolve(QuoteProposal $proposal): QuoteProposalResolvedDocument
     {
@@ -69,7 +85,7 @@ final class QuoteProposalDocumentResolver
             return null;
         }
 
-        return sprintf(
+        return \sprintf(
             '%s/var/uploads/quote-proposals/accepted/%s',
             $this->projectDir,
             $proposal->getAcceptedPdfName()
@@ -80,8 +96,8 @@ final class QuoteProposalDocumentResolver
     {
         $base = $proposal->getProposalNumber() ?: $proposal->getPublicReference() ?: 'devis';
 
-        return $suffix !== null
-            ? sprintf('%s-%s.pdf', $base, $suffix)
-            : sprintf('%s.pdf', $base);
+        return null !== $suffix
+            ? \sprintf('%s-%s.pdf', $base, $suffix)
+            : \sprintf('%s.pdf', $base);
     }
 }

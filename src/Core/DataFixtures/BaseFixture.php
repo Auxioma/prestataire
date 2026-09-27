@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Core\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -34,7 +51,7 @@ abstract class BaseFixture extends Fixture
 
     protected function randomDateTimeImmutable(
         string $start = '-2 years',
-        string $end = 'now'
+        string $end = 'now',
     ): \DateTimeImmutable {
         /** @var \DateTime $date */
         $date = $this->faker->dateTimeBetween($start, $end, 'Europe/Paris');
@@ -65,7 +82,7 @@ abstract class BaseFixture extends Fixture
         string $setter,
         string $group,
         ?int $index = null,
-        ?string $originalName = null
+        ?string $originalName = null,
     ): void {
         $path = $this->placeholderPath($group, $index);
 
@@ -84,7 +101,7 @@ abstract class BaseFixture extends Fixture
     protected function attachRemoteImage(
         object $entity,
         string $setter,
-        string $url
+        string $url,
     ): void {
         $path = $this->downloadImage($url);
 
@@ -100,25 +117,22 @@ abstract class BaseFixture extends Fixture
     protected function placeholderPath(string $group, ?int $index = null): string
     {
         if (!isset(self::$placeholderCache[$group])) {
-            $paths = glob(sprintf('%s/%s/*', self::PLACEHOLDER_DIR, $group));
+            $paths = glob(\sprintf('%s/%s/*', self::PLACEHOLDER_DIR, $group));
 
             sort($paths);
 
             self::$placeholderCache[$group] = $paths ?: [];
         }
 
-        if (self::$placeholderCache[$group] === []) {
-            throw new \RuntimeException(sprintf(
-                'Aucun placeholder disponible pour le groupe "%s".',
-                $group
-            ));
+        if ([] === self::$placeholderCache[$group]) {
+            throw new \RuntimeException(\sprintf('Aucun placeholder disponible pour le groupe "%s".', $group));
         }
 
-        if ($index === null) {
+        if (null === $index) {
             return self::$placeholderCache[$group][array_rand(self::$placeholderCache[$group])];
         }
 
-        return self::$placeholderCache[$group][$index % count(self::$placeholderCache[$group])];
+        return self::$placeholderCache[$group][$index % \count(self::$placeholderCache[$group])];
     }
 
     /**
@@ -127,12 +141,12 @@ abstract class BaseFixture extends Fixture
     protected function downloadImage(string $url): string
     {
         if (!is_dir(self::CACHE_DIR)) {
-            mkdir(self::CACHE_DIR, 0777, true);
+            mkdir(self::CACHE_DIR, 0o777, true);
         }
 
         $extension = pathinfo(
-            parse_url($url, PHP_URL_PATH),
-            PATHINFO_EXTENSION
+            parse_url($url, \PHP_URL_PATH),
+            \PATHINFO_EXTENSION
         );
 
         if (!$extension) {
@@ -142,24 +156,21 @@ abstract class BaseFixture extends Fixture
         $file = self::CACHE_DIR.'/'.md5($url).'.'.$extension;
 
         if (!file_exists($file)) {
-            $fp = fopen($file, 'wb');
+            $fp = fopen($file, 'w');
 
             if (!$fp) {
-                throw new \RuntimeException(sprintf(
-                    'Impossible de créer le fichier "%s".',
-                    $file
-                ));
+                throw new \RuntimeException(\sprintf('Impossible de créer le fichier "%s".', $file));
             }
 
             $ch = curl_init($url);
 
             curl_setopt_array($ch, [
-                CURLOPT_FILE => $fp,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_FAILONERROR => true,
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_USERAGENT => 'Symfony Fixtures',
+                \CURLOPT_FILE => $fp,
+                \CURLOPT_FOLLOWLOCATION => true,
+                \CURLOPT_TIMEOUT => 30,
+                \CURLOPT_FAILONERROR => true,
+                \CURLOPT_SSL_VERIFYPEER => false,
+                \CURLOPT_USERAGENT => 'Symfony Fixtures',
             ]);
 
             curl_exec($ch);
@@ -170,10 +181,7 @@ abstract class BaseFixture extends Fixture
 
                 @unlink($file);
 
-                throw new \RuntimeException(sprintf(
-                    'Erreur CURL : %s',
-                    curl_error($ch)
-                ));
+                throw new \RuntimeException(\sprintf('Erreur CURL : %s', curl_error($ch)));
             }
 
             curl_close($ch);

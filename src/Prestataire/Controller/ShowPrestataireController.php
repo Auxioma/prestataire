@@ -1,33 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Prestataire\Controller;
 
+use App\Account\Entity\User;
 use App\Prestataire\Entity\PrestataireProfile;
+use App\Prestataire\Service\PrestataireResponseTimeManager;
+use App\Review\Enum\FavoriteTypeEnum;
+use App\Review\Repository\FavoriteRepository;
+use App\Subscription\Service\SubscriptionAccessManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
+use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
 use Symfony\UX\Map\InfoWindow;
 use Symfony\UX\Map\Map;
 use Symfony\UX\Map\Marker;
 use Symfony\UX\Map\Point;
-use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
-use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
-use App\Account\Entity\User;
-use App\Review\Enum\FavoriteTypeEnum;
-use App\Review\Repository\FavoriteRepository;
-use App\Prestataire\Service\PrestataireResponseTimeManager;
-use App\Subscription\Service\SubscriptionAccessManager;
 
 /**
  * Gère les actions liées à show prestataire.
@@ -42,11 +49,10 @@ class ShowPrestataireController extends AbstractController
     )]
     /**
      * Traite l’action "__invoke" du contrôleur Show Prestataire.
-     *
-     * @return Response
      */
     public function __invoke(
-        #[MapEntity(mapping: ['slug' => 'slug'])] PrestataireProfile $prestataire,
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        PrestataireProfile $prestataire,
         FavoriteRepository $favoriteRepository,
         PrestataireResponseTimeManager $prestataireResponseTimeManager,
         SubscriptionAccessManager $subscriptionAccessManager,
@@ -61,7 +67,7 @@ class ShowPrestataireController extends AbstractController
 
         $zones = array_values(array_filter(
             $prestataire->getPrestataireInterventionZones()->toArray(),
-            static fn($zone) => $zone->isActive()
+            static fn ($zone) => $zone->isActive()
         ));
 
         $zoneMap = null;
@@ -75,14 +81,14 @@ class ShowPrestataireController extends AbstractController
         }
 
         if (null !== $firstMappableZone) {
-            $zoneMap = (new Map())
+            $zoneMap = new Map()
                 ->center(new Point(
                     (float) $firstMappableZone->getLatitude(),
                     (float) $firstMappableZone->getLongitude()
                 ))
                 ->zoom(9)
                 ->options(
-                    (new LeafletOptions())
+                    new LeafletOptions()
                         ->tileLayer(new TileLayer(
                             url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                             attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -97,7 +103,7 @@ class ShowPrestataireController extends AbstractController
 
                 $label = $zone->getCity() ?: 'Zone d’intervention';
                 $radiusText = null !== $zone->getRadiusKm()
-                    ? 'Rayon : ' . (int) $zone->getRadiusKm() . ' km'
+                    ? 'Rayon : '.(int) $zone->getRadiusKm().' km'
                     : 'Rayon non renseigné';
 
                 $zoneMap->addMarker(new Marker(
@@ -107,10 +113,10 @@ class ShowPrestataireController extends AbstractController
                     ),
                     title: $label,
                     infoWindow: new InfoWindow(
-                        content: sprintf(
+                        content: \sprintf(
                             '<strong>%s</strong><br>%s',
-                            htmlspecialchars($label, ENT_QUOTES, 'UTF-8'),
-                            htmlspecialchars($radiusText, ENT_QUOTES, 'UTF-8')
+                            htmlspecialchars($label, \ENT_QUOTES, 'UTF-8'),
+                            htmlspecialchars($radiusText, \ENT_QUOTES, 'UTF-8')
                         )
                     )
                 ));

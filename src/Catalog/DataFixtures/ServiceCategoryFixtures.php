@@ -1,10 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Catalog\DataFixtures;
 
-use App\Core\DataFixtures\BaseFixture;
-
 use App\Catalog\Entity\ServiceCategory;
+use App\Core\DataFixtures\BaseFixture;
 use Doctrine\Persistence\ObjectManager;
 
 class ServiceCategoryFixtures extends BaseFixture
@@ -24,37 +40,37 @@ class ServiceCategoryFixtures extends BaseFixture
     {
         $position = 1;
         foreach (self::CATEGORIES as $groupIndex => $categoryData) {
-            $parent = (new ServiceCategory())
+            $parent = new ServiceCategory()
                 ->setName($categoryData['name'])
                 ->setSlug($this->slugify($categoryData['name']))
-                ->setDescription(sprintf('Prestations professionnelles autour de %s.', mb_strtolower($categoryData['name'])))
+                ->setDescription(\sprintf('Prestations professionnelles autour de %s.', mb_strtolower($categoryData['name'])))
                 ->setIcon($categoryData['icon'])
                 ->setColor($categoryData['color'])
-                ->setImage(sprintf('categories/%s.jpg', $this->slugify($categoryData['name'])))
-                ->setSeoTitle($categoryData['name'] . ' | TrouveMoi')
+                ->setImage(\sprintf('categories/%s.jpg', $this->slugify($categoryData['name'])))
+                ->setSeoTitle($categoryData['name'].' | TrouveMoi')
                 ->setSeoDescription('Trouvez rapidement un professionnel qualifié près de chez vous.')
                 ->setPosition($position++)
                 ->setCreatedAt($this->randomDateTimeImmutable('-2 years', '-10 months'))
                 ->setIsActive(true);
             $manager->persist($parent);
-            $this->addReference(sprintf('service_category_parent_%d', $groupIndex + 1), $parent);
+            $this->addReference(\sprintf('service_category_parent_%d', $groupIndex + 1), $parent);
 
             foreach ($categoryData['children'] as $childIndex => $childData) {
-                $child = (new ServiceCategory())
+                $child = new ServiceCategory()
                     ->setName($childData['name'])
                     ->setSlug($this->slugify($childData['name']))
-                    ->setDescription(sprintf('Sous-catégorie dédiée à %s.', mb_strtolower($childData['name'])))
+                    ->setDescription(\sprintf('Sous-catégorie dédiée à %s.', mb_strtolower($childData['name'])))
                     ->setIcon($childData['icon'])
                     ->setColor($categoryData['color'])
-                    ->setImage(sprintf('categories/%s.jpg', $this->slugify($childData['name'])))
-                    ->setSeoTitle($childData['name'] . ' | TrouveMoi')
+                    ->setImage(\sprintf('categories/%s.jpg', $this->slugify($childData['name'])))
+                    ->setSeoTitle($childData['name'].' | TrouveMoi')
                     ->setSeoDescription('Comparez des profils vérifiés et des prestations adaptées à votre besoin.')
                     ->setPosition($childIndex + 1)
                     ->setParent($parent)
                     ->setCreatedAt($this->randomDateTimeImmutable('-2 years', '-10 months'))
                     ->setIsActive(true);
                 $manager->persist($child);
-                $this->addReference(sprintf('service_category_child_%d', (($groupIndex) * 2) + $childIndex + 1), $child);
+                $this->addReference(\sprintf('service_category_child_%d', ($groupIndex * 2) + $childIndex + 1), $child);
             }
         }
 

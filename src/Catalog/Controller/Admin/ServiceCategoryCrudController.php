@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Catalog\Controller\Admin;
 
 use App\Catalog\Entity\ServiceCategory;
@@ -28,8 +45,6 @@ class ServiceCategoryCrudController extends AbstractCrudController
 
     /**
      * Traite l’action "configureCrud" du contrôleur Service Category  C R U D.
-     *
-     * @return Crud
      */
     public function configureCrud(Crud $crud): Crud
     {
@@ -41,8 +56,6 @@ class ServiceCategoryCrudController extends AbstractCrudController
 
     /**
      * Traite l’action "configureFields" du contrôleur Service Category  C R U D.
-     *
-     * @return iterable
      */
     public function configureFields(string $pageName): iterable
     {
@@ -75,12 +88,12 @@ class ServiceCategoryCrudController extends AbstractCrudController
 
         yield TextField::new('icon', 'Icône actuelle')
             ->onlyOnIndex()
-            ->formatValue(function ($value, $entity) {
+            ->formatValue(static function ($value, $entity) {
                 if (!$value) {
                     return '<span class="text-muted">Aucune</span>';
                 }
 
-                return sprintf(
+                return \sprintf(
                     '<span style="display:inline-flex;align-items:center;gap:8px;">
                     <i class="fa-solid %s"></i>
                     <code>%s</code>

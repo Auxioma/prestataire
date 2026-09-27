@@ -2,6 +2,21 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Quote\Service;
 
 final class QuoteProposalResolvedDocument
@@ -12,7 +27,8 @@ final class QuoteProposalResolvedDocument
         private readonly bool $storedFile,
         private readonly ?string $filesystemPath = null,
         private readonly ?string $mimeType = 'application/pdf',
-    ) {}
+    ) {
+    }
 
     public function getType(): string
     {
@@ -41,16 +57,16 @@ final class QuoteProposalResolvedDocument
 
     public function isAcceptedDerivedPdf(): bool
     {
-        return $this->type === QuoteProposalDocumentResolver::TYPE_ACCEPTED_PDF;
+        return QuoteProposalDocumentResolver::TYPE_ACCEPTED_PDF === $this->type;
     }
 
     public function isExternalPdf(): bool
     {
-        return $this->type === QuoteProposalDocumentResolver::TYPE_EXTERNAL_PDF;
+        return QuoteProposalDocumentResolver::TYPE_EXTERNAL_PDF === $this->type;
     }
 
     public function isNativePdf(): bool
     {
-        return $this->type === QuoteProposalDocumentResolver::TYPE_NATIVE_PDF;
+        return QuoteProposalDocumentResolver::TYPE_NATIVE_PDF === $this->type;
     }
 }

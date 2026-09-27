@@ -1,30 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Prestataire\Controller;
 
 use App\Account\Controller\AbstractProfileController;
+use App\Account\Entity\User;
+use App\Account\Service\AccountSecurityManager;
+use App\Account\Service\AuthenticatedUserProvider;
+use App\Catalog\Repository\ServiceCategoryRepository;
+use App\Catalog\Repository\ServiceRepository;
+use App\Company\Service\CompanyRegistryClient;
+use App\Company\Service\CompanyVerificationManager;
 use App\Prestataire\Entity\PrestataireDocument;
 use App\Prestataire\Entity\PrestataireProfile;
 use App\Prestataire\Entity\PrestataireService;
-use App\Account\Entity\User;
 use App\Prestataire\Enum\PrestataireDocumentTypeEnum;
 use App\Prestataire\Form\PrestataireServiceType;
-use App\Catalog\Repository\ServiceCategoryRepository;
-use App\Catalog\Repository\ServiceRepository;
-use App\Account\Service\AccountSecurityManager;
-use App\Account\Service\AuthenticatedUserProvider;
-use App\Company\Service\CompanyRegistryClient;
-use App\Company\Service\CompanyVerificationManager;
 use App\Prestataire\Service\PrestataireAvailabilityManager;
 use App\Prestataire\Service\PrestataireProfileCompletionService;
 use App\Prestataire\Service\PrestataireProfileManager;

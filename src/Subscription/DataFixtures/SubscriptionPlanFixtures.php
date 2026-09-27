@@ -1,9 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\DataFixtures;
 
 use App\Core\DataFixtures\BaseFixture;
-
 use App\Subscription\Entity\SubscriptionPlan;
 use App\Subscription\Entity\SubscriptionPlanPrice;
 use App\Subscription\Enum\SubscriptionBillingPeriodEnum;
@@ -81,7 +97,7 @@ class SubscriptionPlanFixtures extends BaseFixture
     public function load(ObjectManager $manager): void
     {
         foreach (self::PLANS as $index => $data) {
-            $plan = (new SubscriptionPlan())
+            $plan = new SubscriptionPlan()
                 ->setCode($data['code'])
                 ->setName($data['name'])
                 ->setDescription($data['description'])
@@ -100,7 +116,7 @@ class SubscriptionPlanFixtures extends BaseFixture
                 ->setCreatedAt($this->randomDateTimeImmutable('-12 months', '-5 months'))
                 ->setUpdatedAt($this->randomDateTimeImmutable('-30 days'));
 
-            $monthlyPrice = (new SubscriptionPlanPrice())
+            $monthlyPrice = new SubscriptionPlanPrice()
                 ->setPlan($plan)
                 ->setBillingPeriod(SubscriptionBillingPeriodEnum::MONTHLY)
                 ->setLabel('Tarif standard')
@@ -111,7 +127,7 @@ class SubscriptionPlanFixtures extends BaseFixture
                 ->setCreatedAt($plan->getCreatedAt())
                 ->setUpdatedAt($plan->getUpdatedAt());
 
-            $annualPrice = (new SubscriptionPlanPrice())
+            $annualPrice = new SubscriptionPlanPrice()
                 ->setPlan($plan)
                 ->setBillingPeriod(SubscriptionBillingPeriodEnum::ANNUAL)
                 ->setLabel('Tarif standard')

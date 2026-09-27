@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Quote\Repository;
 
 use App\Account\Entity\ClientProfile;
@@ -23,7 +40,7 @@ class QuoteProposalRepository extends ServiceEntityRepository
         $result = $this->createQueryBuilder('qp')
             ->select('qp.proposalNumber')
             ->andWhere('qp.proposalNumber LIKE :pattern')
-            ->setParameter('pattern', 'DEV-' . $year . '-%')
+            ->setParameter('pattern', 'DEV-'.$year.'-%')
             ->orderBy('qp.proposalNumber', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
@@ -45,14 +62,14 @@ class QuoteProposalRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
 
-        $maxSequence = is_array($result) ? (int) ($result['maxSequence'] ?? 0) : 0;
+        $maxSequence = \is_array($result) ? (int) ($result['maxSequence'] ?? 0) : 0;
 
         return $maxSequence + 1;
     }
 
     public function findOneVisibleForClientByPublicReference(
         string $publicReference,
-        ClientProfile $client
+        ClientProfile $client,
     ): ?QuoteProposal {
         return $this->createQueryBuilder('qp')
             ->andWhere('qp.publicReference = :publicReference')
@@ -73,7 +90,7 @@ class QuoteProposalRepository extends ServiceEntityRepository
 
     public function findOneActiveByQuoteRequestAndPrestataire(
         QuoteRequest $quoteRequest,
-        PrestataireProfile $prestataire
+        PrestataireProfile $prestataire,
     ): ?QuoteProposal {
         return $this->createQueryBuilder('qp')
             ->andWhere('qp.quoteRequest = :quoteRequest')
@@ -103,7 +120,7 @@ class QuoteProposalRepository extends ServiceEntityRepository
 
     public function findOneForPrestataireByPublicReference(
         string $publicReference,
-        PrestataireProfile $prestataire
+        PrestataireProfile $prestataire,
     ): ?QuoteProposal {
         return $this->createQueryBuilder('qp')
             ->andWhere('qp.publicReference = :publicReference')
@@ -118,7 +135,7 @@ class QuoteProposalRepository extends ServiceEntityRepository
 
     public function findOneForPrestataireByPublicReferenceIncludingArchived(
         string $publicReference,
-        PrestataireProfile $prestataire
+        PrestataireProfile $prestataire,
     ): ?QuoteProposal {
         return $this->createQueryBuilder('qp')
             ->andWhere('qp.publicReference = :publicReference')
@@ -182,7 +199,7 @@ class QuoteProposalRepository extends ServiceEntityRepository
 
     public function findOneArchivedByQuoteRequestAndPrestataire(
         QuoteRequest $quoteRequest,
-        PrestataireProfile $prestataire
+        PrestataireProfile $prestataire,
     ): ?QuoteProposal {
         return $this->createQueryBuilder('qp')
             ->andWhere('qp.quoteRequest = :quoteRequest')
@@ -199,7 +216,7 @@ class QuoteProposalRepository extends ServiceEntityRepository
 
     public function findOneVisibleByQuoteRequestAndPrestataire(
         QuoteRequest $quoteRequest,
-        PrestataireProfile $prestataire
+        PrestataireProfile $prestataire,
     ): ?QuoteProposal {
         return $this->createQueryBuilder('qp')
             ->andWhere('qp.quoteRequest = :quoteRequest')

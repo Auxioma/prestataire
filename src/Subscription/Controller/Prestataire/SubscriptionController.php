@@ -1,20 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Controller\Prestataire;
 
-use App\Subscription\Enum\SubscriptionBillingPeriodEnum;
+use App\Account\Service\AuthenticatedUserProvider;
 use App\Subscription\Entity\SubscriptionInvoice;
+use App\Subscription\Enum\SubscriptionBillingPeriodEnum;
 use App\Subscription\Repository\PrestataireSubscriptionRepository;
 use App\Subscription\Repository\SubscriptionInvoiceRepository;
 use App\Subscription\Repository\SubscriptionPlanRepository;
-use App\Account\Service\AuthenticatedUserProvider;
-use App\Subscription\Service\StripeCheckoutSessionSynchronizer;
 use App\Subscription\Service\StripeApiClient;
+use App\Subscription\Service\StripeCheckoutSessionSynchronizer;
 use App\Subscription\Service\StripeCustomerManager;
-use App\Subscription\Service\SubscriptionInvoicePdfGenerator;
 use App\Subscription\Service\StripeSubscriptionCheckoutManager;
 use App\Subscription\Service\SubscriptionAccessManager;
 use App\Subscription\Service\SubscriptionFallbackManager;
+use App\Subscription\Service\SubscriptionInvoicePdfGenerator;
 use App\Subscription\Service\SubscriptionUpgradePolicy;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -48,12 +65,13 @@ final class SubscriptionController extends AbstractController
         StripeApiClient $stripeApiClient,
         StripeCheckoutSessionSynchronizer $stripeCheckoutSessionSynchronizer,
         EntityManagerInterface $entityManager,
-        #[Autowire('%app.stripe.public_key%')] string $stripePublicKey,
+        #[Autowire('%app.stripe.public_key%')]
+        string $stripePublicKey,
     ): Response {
         $prestataireProfile = $this->getPrestataireProfile();
 
         if ('success' === $request->query->get('checkout')) {
-            $checkoutSessionId = trim((string) $request->query->get('session_id', ''));
+            $checkoutSessionId = mb_trim((string) $request->query->get('session_id', ''));
 
             if ('' !== $checkoutSessionId) {
                 try {
@@ -65,7 +83,7 @@ final class SubscriptionController extends AbstractController
                             : 'Le paiement est revenu de Stripe, mais la synchronisation locale reste en attente du webhook.'
                     );
                 } catch (\Throwable $exception) {
-                    $this->addFlash('warning', 'Le paiement a bien ete confirme par Stripe, mais la synchronisation locale a echoue : ' . $exception->getMessage());
+                    $this->addFlash('warning', 'Le paiement a bien ete confirme par Stripe, mais la synchronisation locale a echoue : '.$exception->getMessage());
                 }
             } else {
                 $this->addFlash('info', 'Le paiement a bien ete transmis a Stripe. Votre abonnement sera active ou mis a jour apres confirmation definitive du paiement par webhook.');
@@ -154,7 +172,7 @@ final class SubscriptionController extends AbstractController
         } catch (\Throwable $exception) {
             return $this->json([
                 'success' => false,
-                'message' => 'Impossible d’initialiser le formulaire Stripe : ' . $exception->getMessage(),
+                'message' => 'Impossible d’initialiser le formulaire Stripe : '.$exception->getMessage(),
             ], Response::HTTP_BAD_GATEWAY);
         }
 
@@ -187,7 +205,7 @@ final class SubscriptionController extends AbstractController
         }
 
         $csrfToken = $this->extractRequestValue($request, '_token');
-        if (!$this->isCsrfTokenValid('subscription-checkout-' . $code . '-' . $period, $csrfToken)) {
+        if (!$this->isCsrfTokenValid('subscription-checkout-'.$code.'-'.$period, $csrfToken)) {
             return $this->json([
                 'success' => false,
                 'message' => 'Jeton CSRF invalide.',
@@ -225,7 +243,7 @@ final class SubscriptionController extends AbstractController
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $setupIntentId = trim($this->extractRequestValue($request, 'setupIntentId'));
+        $setupIntentId = mb_trim($this->extractRequestValue($request, 'setupIntentId'));
         if ('' === $setupIntentId) {
             return $this->json([
                 'success' => false,
@@ -248,7 +266,7 @@ final class SubscriptionController extends AbstractController
         } catch (\Throwable $exception) {
             return $this->json([
                 'success' => false,
-                'message' => 'Impossible de créer ou mettre à jour l’abonnement Stripe : ' . $exception->getMessage(),
+                'message' => 'Impossible de créer ou mettre à jour l’abonnement Stripe : '.$exception->getMessage(),
             ], Response::HTTP_BAD_GATEWAY);
         }
 
@@ -297,7 +315,7 @@ final class SubscriptionController extends AbstractController
         } catch (\Throwable $exception) {
             return $this->json([
                 'success' => false,
-                'message' => 'La synchronisation finale avec Stripe a échoué : ' . $exception->getMessage(),
+                'message' => 'La synchronisation finale avec Stripe a échoué : '.$exception->getMessage(),
             ], Response::HTTP_BAD_GATEWAY);
         }
 
@@ -345,7 +363,7 @@ final class SubscriptionController extends AbstractController
         } catch (\Throwable $exception) {
             return $this->json([
                 'success' => false,
-                'message' => 'Impossible de mettre à jour la carte : ' . $exception->getMessage(),
+                'message' => 'Impossible de mettre à jour la carte : '.$exception->getMessage(),
             ], Response::HTTP_BAD_GATEWAY);
         }
 
@@ -382,13 +400,13 @@ final class SubscriptionController extends AbstractController
                 $this->generateUrl('app_subscription_index', [], UrlGeneratorInterface::ABSOLUTE_URL)
             );
         } catch (\Throwable $exception) {
-            $this->addFlash('danger', 'Impossible d’ouvrir le portail de facturation Stripe : ' . $exception->getMessage());
+            $this->addFlash('danger', 'Impossible d’ouvrir le portail de facturation Stripe : '.$exception->getMessage());
 
             return $this->redirectToRoute('app_subscription_index');
         }
 
         $portalUrl = $portalSession['url'] ?? null;
-        if (!is_string($portalUrl) || '' === $portalUrl) {
+        if (!\is_string($portalUrl) || '' === $portalUrl) {
             $this->addFlash('danger', 'Impossible d’ouvrir le portail de facturation Stripe.');
 
             return $this->redirectToRoute('app_subscription_index');
@@ -447,11 +465,11 @@ final class SubscriptionController extends AbstractController
             $this->addFlash(
                 'success',
                 $effectiveDate instanceof \DateTimeImmutable
-                    ? sprintf('Votre abonnement sera résilié le %s. Vous conservez l’accès jusqu’à cette date.', $effectiveDate->format('d/m/Y'))
+                    ? \sprintf('Votre abonnement sera résilié le %s. Vous conservez l’accès jusqu’à cette date.', $effectiveDate->format('d/m/Y'))
                     : 'Votre abonnement sera résilié à la fin de la période en cours.'
             );
         } catch (\Throwable $exception) {
-            $this->addFlash('danger', 'Impossible de programmer la résiliation : ' . $exception->getMessage());
+            $this->addFlash('danger', 'Impossible de programmer la résiliation : '.$exception->getMessage());
         }
 
         return $this->redirectToRoute('app_subscription_index');
@@ -504,7 +522,7 @@ final class SubscriptionController extends AbstractController
             $stripeSubscriptionCheckoutManager->resumeScheduledCancellation($currentSubscription);
             $this->addFlash('success', 'La résiliation programmée a été annulée. Votre abonnement restera actif.');
         } catch (\Throwable $exception) {
-            $this->addFlash('danger', 'Impossible d’annuler la résiliation programmée : ' . $exception->getMessage());
+            $this->addFlash('danger', 'Impossible d’annuler la résiliation programmée : '.$exception->getMessage());
         }
 
         return $this->redirectToRoute('app_subscription_index');
@@ -550,10 +568,10 @@ final class SubscriptionController extends AbstractController
     {
         $formValue = $request->request->get($key);
         if (\is_scalar($formValue)) {
-            return trim((string) $formValue);
+            return mb_trim((string) $formValue);
         }
 
-        if ('' === trim((string) $request->getContent())) {
+        if ('' === mb_trim((string) $request->getContent())) {
             return '';
         }
 
@@ -565,14 +583,14 @@ final class SubscriptionController extends AbstractController
 
         $value = $payload[$key] ?? null;
 
-        return \is_scalar($value) ? trim((string) $value) : '';
+        return \is_scalar($value) ? mb_trim((string) $value) : '';
     }
 
     private function buildInvoiceDownloadFilename(SubscriptionInvoice $invoice): string
     {
-        $baseName = trim((string) ($invoice->getInvoiceNumber() ?: $invoice->getStripeInvoiceId() ?: 'facture-abonnement'));
+        $baseName = mb_trim((string) ($invoice->getInvoiceNumber() ?: $invoice->getStripeInvoiceId() ?: 'facture-abonnement'));
         $baseName = preg_replace('/[^A-Za-z0-9._-]+/', '-', $baseName) ?: 'facture-abonnement';
 
-        return sprintf('%s.pdf', trim($baseName, '-'));
+        return \sprintf('%s.pdf', mb_trim($baseName, '-'));
     }
 }

@@ -1,12 +1,28 @@
 <?php
 
-namespace App\Account\DataFixtures;
+declare(strict_types=1);
 
-use App\Core\DataFixtures\BaseFixture;
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
+namespace App\Account\DataFixtures;
 
 use App\Account\Entity\ClientProfile;
 use App\Account\Entity\User;
 use App\Account\Enum\ClientTypeEnum;
+use App\Core\DataFixtures\BaseFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
@@ -16,11 +32,11 @@ class ClientProfileFixtures extends BaseFixture implements DependentFixtureInter
     {
         for ($i = 1; $i <= UserFixtures::CLIENT_COUNT; ++$i) {
             /** @var User $user */
-            $user = $this->getReference(sprintf('user_client_%d', $i), User::class);
-            $isPro = $i % 3 === 0;
+            $user = $this->getReference(\sprintf('user_client_%d', $i), User::class);
+            $isPro = 0 === $i % 3;
             $city = $this->faker->randomElement(['Bordeaux', 'Mérignac', 'Pessac', 'Talence', 'Arcachon', 'Libourne']);
 
-            $profile = (new ClientProfile())
+            $profile = new ClientProfile()
                 ->setAccount($user)
                 ->setType($isPro ? ClientTypeEnum::PROFESSIONNEL : ClientTypeEnum::PARTICULIER)
                 ->setCreatedAt($this->randomDateTimeImmutable('-18 months', '-2 months'))
@@ -33,7 +49,7 @@ class ClientProfileFixtures extends BaseFixture implements DependentFixtureInter
 
             if ($isPro) {
                 $profile
-                    ->setCompanyName(sprintf('%s Conseil', $this->faker->company()))
+                    ->setCompanyName(\sprintf('%s Conseil', $this->faker->company()))
                     ->setSiret($this->faker->numerify('#########000##'))
                     ->setBillingAddress($this->faker->streetAddress())
                     ->setBillingPostalCode($this->faker->postcode())
@@ -48,7 +64,7 @@ class ClientProfileFixtures extends BaseFixture implements DependentFixtureInter
             }
 
             $manager->persist($profile);
-            $this->addReference(sprintf('client_profile_%d', $i), $profile);
+            $this->addReference(\sprintf('client_profile_%d', $i), $profile);
         }
 
         $manager->flush();

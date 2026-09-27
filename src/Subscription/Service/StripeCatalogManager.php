@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Service;
 
 use App\Subscription\Entity\SubscriptionPlan;
@@ -49,7 +66,7 @@ class StripeCatalogManager
         $created = false;
         if ($mustCreateNewPrice) {
             $stripePrice = $this->stripeApiClient->createPrice($plan, $planPrice, $productId);
-            $priceId = trim((string) ($stripePrice['id'] ?? ''));
+            $priceId = mb_trim((string) ($stripePrice['id'] ?? ''));
 
             if ('' === $priceId) {
                 throw new \RuntimeException('Stripe n’a pas retourné de Price ID.');
@@ -76,14 +93,14 @@ class StripeCatalogManager
 
     private function resolveProductId(SubscriptionPlan $plan): string
     {
-        $productId = trim((string) ($plan->getStripeProductId() ?? ''));
+        $productId = mb_trim((string) ($plan->getStripeProductId() ?? ''));
 
         if ('' !== $productId) {
             return $productId;
         }
 
         $stripeProduct = $this->stripeApiClient->createProduct($plan);
-        $productId = trim((string) ($stripeProduct['id'] ?? ''));
+        $productId = mb_trim((string) ($stripeProduct['id'] ?? ''));
 
         if ('' === $productId) {
             throw new \RuntimeException('Stripe n’a pas retourné de Product ID.');
@@ -99,7 +116,7 @@ class StripeCatalogManager
      */
     private function matchesStripePrice(SubscriptionPlanPrice $planPrice, string $productId, array $stripePrice): bool
     {
-        $stripeProductId = trim((string) ($stripePrice['product'] ?? ''));
+        $stripeProductId = mb_trim((string) ($stripePrice['product'] ?? ''));
         $unitAmount = (string) ($stripePrice['unit_amount_decimal'] ?? '');
         $recurringInterval = (string) ($stripePrice['recurring']['interval'] ?? '');
         $isActive = (bool) ($stripePrice['active'] ?? false);

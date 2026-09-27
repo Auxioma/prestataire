@@ -2,15 +2,30 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Tests\Service;
 
 use App\Invoice\Entity\Invoice;
 use App\Invoice\Entity\InvoiceItem;
-use App\Quote\Entity\QuoteProposal;
 use App\Invoice\Enum\InvoiceSourceTypeEnum;
 use App\Invoice\Enum\InvoiceStatusEnum;
 use App\Invoice\Service\FacturXXmlBuilder;
 use App\Invoice\Service\InvoicePdfGenerator;
+use App\Quote\Entity\QuoteProposal;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Environment;
@@ -25,13 +40,31 @@ final class InvoicePdfGeneratorTest extends TestCase
     {
         $xmlBuilder = new FacturXXmlBuilder();
         $pdfGenerator = new InvoicePdfGenerator(
-            new Environment(new FilesystemLoader(__DIR__ . '/../../templates')),
+            new Environment(new FilesystemLoader(__DIR__.'/../../templates')),
             new UploaderHelper(new class implements StorageInterface {
-                public function upload(object $obj, PropertyMapping $mapping): void {}
-                public function remove(object $obj, PropertyMapping $mapping): ?bool { return null; }
-                public function resolvePath(object|array $obj, ?string $fieldName = null, ?string $className = null, ?bool $relative = false): ?string { return null; }
-                public function resolveUri(object|array $obj, ?string $fieldName = null, ?string $className = null): ?string { return null; }
-                public function resolveStream(object|array $obj, ?string $fieldName = null, ?string $className = null) { return null; }
+                public function upload(object $obj, PropertyMapping $mapping): void
+                {
+                }
+
+                public function remove(object $obj, PropertyMapping $mapping): ?bool
+                {
+                    return null;
+                }
+
+                public function resolvePath(object|array $obj, ?string $fieldName = null, ?string $className = null, ?bool $relative = false): ?string
+                {
+                    return null;
+                }
+
+                public function resolveUri(object|array $obj, ?string $fieldName = null, ?string $className = null): ?string
+                {
+                    return null;
+                }
+
+                public function resolveStream(object|array $obj, ?string $fieldName = null, ?string $className = null)
+                {
+                    return null;
+                }
             }),
             new RequestStack(),
         );
@@ -44,7 +77,7 @@ final class InvoicePdfGeneratorTest extends TestCase
         self::assertStringContainsString('urn:cen.eu:en16931:2017', $xmlContent);
 
         $xmlPath = tempnam(sys_get_temp_dir(), 'facturx-test-');
-        if ($xmlPath === false) {
+        if (false === $xmlPath) {
             self::fail('Impossible de créer un fichier temporaire pour le test Factur-X.');
         }
 
@@ -65,7 +98,7 @@ final class InvoicePdfGeneratorTest extends TestCase
 
     private function createInvoiceFixture(): Invoice
     {
-        $quote = (new QuoteProposal())
+        $quote = new QuoteProposal()
             ->setPublicReference('DEV-TEST-001')
             ->setProposalNumber('DEV-2026-00001')
             ->setProposalSequenceNumber(1)
@@ -90,7 +123,7 @@ final class InvoicePdfGeneratorTest extends TestCase
             ->setClientInterventionCity('Lyon')
             ->setClientInterventionCountry('France');
 
-        $item = (new InvoiceItem())
+        $item = new InvoiceItem()
             ->setLabel('Prestation de test')
             ->setDescription('Exemple de ligne de facture')
             ->setQuantity('2.00')
@@ -99,7 +132,7 @@ final class InvoicePdfGeneratorTest extends TestCase
             ->setTotalHt('200.00')
             ->setPosition(1);
 
-        return (new Invoice())
+        return new Invoice()
             ->setQuoteProposal($quote)
             ->setSourceType(InvoiceSourceTypeEnum::GENERATED_FROM_QUOTE)
             ->setStatus(InvoiceStatusEnum::ISSUED)

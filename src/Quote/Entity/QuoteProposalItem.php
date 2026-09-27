@@ -1,12 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Quote\Entity;
 
 use App\Quote\Repository\QuoteProposalItemRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: QuoteProposalItemRepository::class)]
 #[ORM\Table(name: 'quote_proposal_item')]
@@ -55,11 +72,11 @@ class QuoteProposalItem
         $label = $this->getLabel();
         $description = $this->getDescription();
 
-        $isLabelBlank = $label === null || trim($label) === '';
-        $isDescriptionBlank = $description === null || trim($description) === '';
-        $isQuantityEmpty = $this->getQuantity() === null;
-        $isUnitPriceEmpty = $this->getUnitPriceHt() === null;
-        $isVatRateEmpty = $this->getVatRate() === null;
+        $isLabelBlank = null === $label || '' === mb_trim($label);
+        $isDescriptionBlank = null === $description || '' === mb_trim($description);
+        $isQuantityEmpty = null === $this->getQuantity();
+        $isUnitPriceEmpty = null === $this->getUnitPriceHt();
+        $isVatRateEmpty = null === $this->getVatRate();
 
         $isCompletelyEmpty = $isLabelBlank && $isDescriptionBlank && $isQuantityEmpty && $isUnitPriceEmpty && $isVatRateEmpty;
 

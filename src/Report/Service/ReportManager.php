@@ -1,15 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Report\Service;
 
 use App\Account\Entity\ClientProfile;
+use App\Account\Entity\User;
 use App\Messaging\Entity\Conversation;
 use App\Prestataire\Entity\PrestataireProfile;
 use App\Quote\Entity\QuoteRequest;
 use App\Report\Entity\Report;
-use App\Review\Entity\Review;
-use App\Account\Entity\User;
 use App\Report\Enum\ReportStatusEnum;
+use App\Review\Entity\Review;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class ReportManager

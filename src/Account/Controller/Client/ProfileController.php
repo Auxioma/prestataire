@@ -1,13 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Account\Controller\Client;
@@ -15,15 +22,15 @@ namespace App\Account\Controller\Client;
 use App\Account\Controller\AbstractProfileController;
 use App\Account\Entity\ClientProfile;
 use App\Account\Entity\User;
-use App\Review\Enum\FavoriteTypeEnum;
 use App\Account\Form\AccountDeletionType;
 use App\Account\Form\AccountPasswordChangeType;
 use App\Account\Form\AccountSettingsType;
+use App\Account\Service\AccountSecurityManager;
 use App\Messaging\Form\ClientNotificationPreferencesType;
-use App\Review\Repository\FavoriteRepository;
 use App\Prestataire\Repository\PrestataireProfileRepository;
 use App\Prestataire\Repository\PrestataireServiceRepository;
-use App\Account\Service\AccountSecurityManager;
+use App\Review\Enum\FavoriteTypeEnum;
+use App\Review\Repository\FavoriteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -163,15 +170,15 @@ class ProfileController extends AbstractProfileController
         foreach ($favorites as $favorite) {
             $type = $favorite->getType();
 
-            if ($type === FavoriteTypeEnum::PRESTATAIRE) {
+            if (FavoriteTypeEnum::PRESTATAIRE === $type) {
                 $providerIds[] = $favorite->getTargetId();
             }
 
-            if ($type === FavoriteTypeEnum::PRESTATION) {
+            if (FavoriteTypeEnum::PRESTATION === $type) {
                 $prestationIds[] = $favorite->getTargetId();
             }
 
-            if ($type === FavoriteTypeEnum::BON_PLAN) {
+            if (FavoriteTypeEnum::BON_PLAN === $type) {
                 $bonsPlanIds[] = $favorite->getTargetId();
             }
         }

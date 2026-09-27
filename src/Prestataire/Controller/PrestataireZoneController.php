@@ -1,19 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Copyright(c) 2026 Trouve moi
+ * Copyright (c) 2026 AUXIOMA Web Agency.
  *
- * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Projet : TrouveMoi
+ *
  * Tous droits réservés.
  *
- * Ce code source est la propriété exclusive de Auxioma Web Agency.
- * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
  */
 
 namespace App\Prestataire\Controller;
 
-use App\Prestataire\Entity\PrestataireInterventionZone;
 use App\Account\Service\AuthenticatedUserProvider;
+use App\Prestataire\Entity\PrestataireInterventionZone;
 use App\Prestataire\Form\PrestataireInterventionZoneType;
 use App\Prestataire\Service\PrestataireProfileCompletionService;
 use App\Prestataire\Service\ZoneGeocoder;
@@ -40,8 +47,6 @@ final class PrestataireZoneController extends AbstractController
     #[Route('/ajouter', name: 'add', methods: ['POST'])]
     /**
      * Ajoute la ressource demandée.
-     *
-     * @return Response
      */
     public function add(
         Request $request,
@@ -101,8 +106,6 @@ final class PrestataireZoneController extends AbstractController
     #[Route('/supprimer/{id}', name: 'delete', methods: ['POST'])]
     /**
      * Supprime la ressource demandée.
-     *
-     * @return Response
      */
     public function delete(
         Request $request,

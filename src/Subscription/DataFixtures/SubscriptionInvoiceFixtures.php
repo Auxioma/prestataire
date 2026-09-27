@@ -1,13 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\DataFixtures;
 
-use App\Core\DataFixtures\BaseFixture;
-
 use App\Account\DataFixtures\UserFixtures;
-
-use App\Subscription\DataFixtures\PrestataireSubscriptionFixtures;
-
+use App\Core\DataFixtures\BaseFixture;
 use App\Subscription\Entity\PrestataireSubscription;
 use App\Subscription\Entity\SubscriptionInvoice;
 use App\Subscription\Enum\SubscriptionInvoiceStatusEnum;
@@ -20,20 +33,20 @@ class SubscriptionInvoiceFixtures extends BaseFixture implements DependentFixtur
     {
         for ($i = 1; $i <= 20; ++$i) {
             /** @var PrestataireSubscription $subscription */
-            $subscription = $this->getReference(sprintf('prestataire_subscription_%d', (($i - 1) % UserFixtures::PRESTATAIRE_COUNT) + 1), PrestataireSubscription::class);
+            $subscription = $this->getReference(\sprintf('prestataire_subscription_%d', (($i - 1) % UserFixtures::PRESTATAIRE_COUNT) + 1), PrestataireSubscription::class);
             $periodStart = $subscription->getCurrentPeriodStart() ?? $this->randomDateTimeImmutable('-1 month', '-10 days');
             $periodEnd = $subscription->getCurrentPeriodEnd() ?? $periodStart->modify('+1 month');
-            $total = $subscription->getBillingPeriod()->value === 'annual'
+            $total = 'annual' === $subscription->getBillingPeriod()->value
                 ? $subscription->getPlan()?->getAnnualAmount()
                 : $subscription->getPlan()?->getMonthlyAmount();
 
-            $invoice = (new SubscriptionInvoice())
+            $invoice = new SubscriptionInvoice()
                 ->setSubscription($subscription)
-                ->setStripeInvoiceId(sprintf('in_demo_%04d', $i))
-                ->setStripePaymentIntentId(sprintf('pi_demo_%04d', $i))
-                ->setInvoiceNumber(sprintf('FA-2026-%04d', $i))
-                ->setHostedInvoiceUrl(sprintf('https://billing.stripe.local/invoices/%04d', $i))
-                ->setInvoicePdfUrl(sprintf('https://billing.stripe.local/invoices/%04d.pdf', $i))
+                ->setStripeInvoiceId(\sprintf('in_demo_%04d', $i))
+                ->setStripePaymentIntentId(\sprintf('pi_demo_%04d', $i))
+                ->setInvoiceNumber(\sprintf('FA-2026-%04d', $i))
+                ->setHostedInvoiceUrl(\sprintf('https://billing.stripe.local/invoices/%04d', $i))
+                ->setInvoicePdfUrl(\sprintf('https://billing.stripe.local/invoices/%04d.pdf', $i))
                 ->setCurrency('eur')
                 ->setSubtotalAmount($total)
                 ->setTaxAmount('0.00')
@@ -51,7 +64,7 @@ class SubscriptionInvoiceFixtures extends BaseFixture implements DependentFixtur
                 ->setUpdatedAt($this->randomDateTimeImmutable('-15 days'));
 
             $manager->persist($invoice);
-            $this->addReference(sprintf('subscription_invoice_%d', $i), $invoice);
+            $this->addReference(\sprintf('subscription_invoice_%d', $i), $invoice);
         }
 
         $manager->flush();

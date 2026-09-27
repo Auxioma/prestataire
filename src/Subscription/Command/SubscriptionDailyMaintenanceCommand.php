@@ -1,5 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Subscription\Command;
 
 use App\Subscription\Repository\PrestataireSubscriptionRepository;
@@ -49,7 +66,7 @@ final class SubscriptionDailyMaintenanceCommand extends Command
                     }
                 } catch (\Throwable $exception) {
                     ++$syncErrors;
-                    $io->warning(sprintf(
+                    $io->warning(\sprintf(
                         'Synchronisation Stripe échouée pour le prestataire #%s : %s',
                         $prestataireProfile->getId() ?? 'n/a',
                         $exception->getMessage()
@@ -79,7 +96,7 @@ final class SubscriptionDailyMaintenanceCommand extends Command
                 ++$fallbacksApplied;
             } catch (\Throwable $exception) {
                 ++$fallbackErrors;
-                $io->warning(sprintf(
+                $io->warning(\sprintf(
                     'Fallback gratuit échoué pour la souscription #%s : %s',
                     $subscription->getId() ?? 'n/a',
                     $exception->getMessage()
@@ -89,7 +106,7 @@ final class SubscriptionDailyMaintenanceCommand extends Command
 
         $this->entityManager->flush();
 
-        $io->success(sprintf(
+        $io->success(\sprintf(
             'Maintenance terminée. Sync Stripe: %d, fallbacks gratuits: %d, erreurs sync: %d, erreurs fallback: %d.',
             $syncedCustomers,
             $fallbacksApplied,

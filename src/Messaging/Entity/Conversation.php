@@ -1,17 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Messaging\Entity;
 
-use App\Quote\Entity\QuoteRequest;
-
 use App\Account\Entity\ClientProfile;
-
-use App\Prestataire\Entity\PrestataireProfile;
-
 use App\Messaging\Repository\ConversationRepository;
-use Doctrine\ORM\Mapping as ORM;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Quote\Entity\QuoteRequest;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ConversationRepository::class)]
 #[ORM\Table(name: 'conversation')]
@@ -58,13 +72,13 @@ class Conversation
 
     public function __toString(): string
     {
-        $quoteRequestTitle = trim((string) ($this->quoteRequest?->getTitle() ?? ''));
+        $quoteRequestTitle = mb_trim((string) ($this->quoteRequest?->getTitle() ?? ''));
 
         if ('' !== $quoteRequestTitle) {
-            return sprintf('Conversation - %s', $quoteRequestTitle);
+            return \sprintf('Conversation - %s', $quoteRequestTitle);
         }
 
-        return sprintf('Conversation #%s', $this->id ?? 'n/a');
+        return \sprintf('Conversation #%s', $this->id ?? 'n/a');
     }
 
     public function getId(): ?string
