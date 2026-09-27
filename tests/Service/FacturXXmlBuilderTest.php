@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
-use App\Entity\Invoice;
-use App\Entity\InvoiceItem;
-use App\Entity\QuoteProposal;
-use App\Service\FacturXXmlBuilder;
+use App\Invoice\Entity\Invoice;
+use App\Invoice\Entity\InvoiceItem;
+use App\Quote\Entity\QuoteProposal;
+use App\Invoice\Service\FacturXXmlBuilder;
 use horstoeko\stringmanagement\PathUtils;
 use horstoeko\zugferd\ZugferdSettings;
 use PHPUnit\Framework\TestCase;

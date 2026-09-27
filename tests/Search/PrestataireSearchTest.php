@@ -12,16 +12,16 @@
 
 namespace App\Tests\Search;
 
-use App\Entity\PrestataireProfile;
-use App\Entity\User;
-use App\Enum\PrestataireProfileStatusEnum;
-use App\Enum\SearchVisibilityEnum;
-use App\Enum\UserStatusEnum;
-use App\Enum\VerificationStatusEnum;
-use App\Search\PrestataireIndexDefinition;
-use App\Search\PrestataireSearchEligibility;
-use App\Search\PrestataireSearchService;
-use App\Service\ElasticsearchClient;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Account\Entity\User;
+use App\Prestataire\Enum\PrestataireProfileStatusEnum;
+use App\Search\Enum\SearchVisibilityEnum;
+use App\Account\Enum\UserStatusEnum;
+use App\Prestataire\Enum\VerificationStatusEnum;
+use App\Search\Indexing\PrestataireIndexDefinition;
+use App\Search\Service\PrestataireSearchEligibility;
+use App\Search\Service\PrestataireSearchService;
+use App\Search\Service\ElasticsearchClient;
 use Elastic\Elasticsearch\ClientBuilder;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;

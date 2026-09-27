@@ -2,6 +2,26 @@
 
 {% block title %}TrouveMoi - Toutes les catégories{% endblock %}
 
+{% block json_ld %}
+    {% set categoryItems = [] %}
+    {% for row in categoryRows %}
+        {% set categoryItems = categoryItems|merge([{
+            '@type': 'ListItem',
+            'position': loop.index,
+            'name': row.category.name,
+            'url': url('app_category_show', {slug: row.category.slug})
+        }]) %}
+    {% endfor %}
+    {{ include('layout/_json_ld.html.twig', {data: {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        '@id': app.request.uri ~ '#webpage',
+        'url': app.request.uri,
+        'name': 'Toutes les catégories',
+        'mainEntity': {'@type': 'ItemList', 'itemListElement': categoryItems}
+    }}) }}
+{% endblock %}
+
 {% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/category/category.css') }}">{% endblock %}
 
 {% block body %}

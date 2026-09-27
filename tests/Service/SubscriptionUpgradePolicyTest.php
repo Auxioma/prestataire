@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
-use App\Service\Subscription\SubscriptionUpgradePolicy;
+use App\Subscription\Service\SubscriptionUpgradePolicy;
 use PHPUnit\Framework\TestCase;
 
 final class SubscriptionUpgradePolicyTest extends TestCase

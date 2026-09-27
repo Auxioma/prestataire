@@ -4,6 +4,43 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="{% block meta_description %}Trouvez rapidement un prestataire ou un artisan vérifié près de chez vous avec TrouveMoi.{% endblock %}">
+        {% set organizationUrl = url('app_home') %}
+        {{ include('layout/_json_ld.html.twig', {data: {
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            '@id': organizationUrl ~ '#organization',
+            'name': 'TrouveMoi',
+            'url': organizationUrl,
+            'logo': absolute_url(asset('images/logo_trouvemoipresta.png')),
+            'description': 'La plateforme qui connecte les clients avec les meilleurs professionnels.'
+        }}) }}
+        {% block json_ld %}{% endblock %}
+        {% if app.request.attributes.get('_route') == 'app_static_page' %}
+            {% set staticBreadcrumbNames = {
+                'about': 'À propos de nous',
+                'aide-faq': 'Aide & FAQ',
+                'avantages': 'Avantages',
+                'cgu': "Conditions générales d'utilisation",
+                'comment-ca-marche': 'Comment ça marche ?',
+                'demander-un-devis': 'Demander un devis',
+                'help': "Besoin d'aide ?",
+                'inscription-prestataire': 'Inscription prestataire',
+                'legal': 'Mentions légales',
+                'privacy': 'Politique de confidentialité',
+                'ressources': 'Ressources'
+            } %}
+            {% set staticBreadcrumbName = staticBreadcrumbNames[app.request.attributes.get('slug')]|default(null) %}
+            {% if staticBreadcrumbName %}
+                {{ include('layout/_json_ld.html.twig', {data: {
+                    '@context': 'https://schema.org',
+                    '@type': 'BreadcrumbList',
+                    'itemListElement': [
+                        {'@type': 'ListItem', 'position': 1, 'name': 'Accueil', 'item': organizationUrl},
+                        {'@type': 'ListItem', 'position': 2, 'name': staticBreadcrumbName}
+                    ]
+                }}) }}
+            {% endif %}
+        {% endif %}
         <title>
             {% block title %}Welcome!
             {% endblock %}

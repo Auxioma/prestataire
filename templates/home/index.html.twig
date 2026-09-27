@@ -3,6 +3,18 @@
 {% block title %}TrouveMoi Prestataires - Accueil
 {% endblock %}
 
+{% block json_ld %}
+    {{ include('layout/_json_ld.html.twig', {data: {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        '@id': url('app_home') ~ '#website',
+        'name': 'TrouveMoi',
+        'url': url('app_home'),
+        'inLanguage': 'fr',
+        'publisher': {'@id': url('app_home') ~ '#organization'}
+    }}) }}
+{% endblock %}
+
 {% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/home/accueil.css') }}">{% endblock %}
 
 {% block body %}

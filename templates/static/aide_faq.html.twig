@@ -1,6 +1,40 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Aide & FAQ - TrouveMoi.com{% block json_ld %}{% endblock %}{% endblock %}
+{% block title %}Aide & FAQ - TrouveMoi.com{% endblock %}
+
+{% block json_ld %}
+    {{ include('layout/_json_ld.html.twig', {data: {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        '@id': url('app_static_page', {slug: 'aide-faq'}) ~ '#webpage',
+        'mainEntity': [
+            {
+                '@type': 'Question',
+                'name': 'Comment créer un compte sur TrouveMoi.com ?',
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': 'Pour créer un compte, cliquez sur le bouton "Connexion" ou "S\'inscrire" en haut à droite de la page d\'accueil. Choisissez ensuite votre profil (Particulier ou Prestataire), remplissez le formulaire avec vos coordonnées, puis validez votre inscription grâce au mail de confirmation envoyé sur votre messagerie.'
+                }
+            },
+            {
+                '@type': 'Question',
+                'name': 'Comment trouver un prestataire près de chez moi ?',
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': 'Utilisez la barre de recherche principale en indiquant le métier recherché et votre code postal. Vous pourrez ensuite filtrer les résultats selon les notes des clients, les certifications ou les disponibilités pour sélectionner le professionnel idéal.'
+                }
+            },
+            {
+                '@type': 'Question',
+                'name': 'Comment demander un devis et combien de temps pour recevoir une réponse ?',
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': 'Cliquez sur "Demander un devis", décrivez précisément votre projet et soumettez votre demande. En moyenne, les artisans et prestataires qualifiés de votre région reviennent vers vous avec des propositions concrètes sous un délai de 24 à 72 heures.'
+                }
+            }
+        ]
+    }}) }}
+{% endblock %}
 
 {% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/static/staticpage.css') }}">{% endblock %}
 

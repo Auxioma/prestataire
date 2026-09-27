@@ -14,12 +14,56 @@ doctrine:
             Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
         auto_mapping: true
         mappings:
-            App:
+            AppAccount:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: App
+                dir: '%kernel.project_dir%/src/Account/Entity'
+                prefix: 'App\Account\Entity'
+            AppCatalog:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Catalog/Entity'
+                prefix: 'App\Catalog\Entity'
+            AppInvoice:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Invoice/Entity'
+                prefix: 'App\Invoice\Entity'
+            AppMessaging:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Messaging/Entity'
+                prefix: 'App\Messaging\Entity'
+            AppPrestataire:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Prestataire/Entity'
+                prefix: 'App\Prestataire\Entity'
+            AppQuote:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Quote/Entity'
+                prefix: 'App\Quote\Entity'
+            AppReport:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Report/Entity'
+                prefix: 'App\Report\Entity'
+            AppReview:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Review/Entity'
+                prefix: 'App\Review\Entity'
+            AppSearch:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Search/Entity'
+                prefix: 'App\Search\Entity'
+            AppSubscription:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Subscription/Entity'
+                prefix: 'App\Subscription\Entity'
 
 when@test:
     doctrine:

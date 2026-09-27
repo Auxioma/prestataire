@@ -1,0 +1,546 @@
+<?php
+
+/**
+ * Copyright(c) 2026 Trouve moi
+ *
+ * Ce fichier fait partie d’un projet développé par Auxioma Web Agency.
+ * Tous droits réservés.
+ *
+ * Ce code source est la propriété exclusive de Auxioma Web Agency.
+ * Toute reproduction, modification, distribution ou utilisation sans autorisation préalable est interdite.
+ */
+
+namespace App\Prestataire\Entity;
+
+use App\Catalog\Entity\Service;
+
+use App\Quote\Entity\QuoteRequest;
+
+use App\Prestataire\Repository\PrestataireServiceRepository;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use App\Prestataire\Entity\PrestationMedia;
+
+#[ORM\Entity(repositoryClass: PrestataireServiceRepository::class)]
+#[ORM\Table(
+    name: 'prestataire_profile_service',
+    uniqueConstraints: [
+        new ORM\UniqueConstraint(
+            name: 'uniq_prestataire_profile_service',
+            columns: ['prestataire_profile_id', 'service_id']
+        ),
+    ]
+)]
+#[ORM\HasLifecycleCallbacks]
+class PrestataireService
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: PrestataireProfile::class, inversedBy: 'prestataireServices')]
+    #[ORM\JoinColumn(name: 'prestataire_profile_id', referencedColumnName: 'id', nullable: false)]
+    private ?PrestataireProfile $prestataire = null;
+
+    #[ORM\ManyToOne(targetEntity: Service::class)]
+    #[ORM\JoinColumn(name: 'service_id', referencedColumnName: 'id', nullable: false)]
+    private ?Service $service = null;
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
+    private bool $isActive = true;
+
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $title = null;
+
+    #[ORM\Column(type: Types::STRING, length: 500, nullable: true)]
+    private ?string $shortDescription = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
+    private ?string $pricingType = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $priceFrom = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $priceTo = null;
+
+    #[ORM\Column(type: Types::STRING, length: 50, nullable: true)]
+    private ?string $priceUnit = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $additionalInfo = null;
+
+    #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
+    private int $position = 0;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, options: ['default' => 0])]
+    private ?string $prixCatalogue = '0.00';
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2, nullable: true)]
+    private ?string $tauxReduction = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $promotionCreatedAt = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true, nullable: true)]
+    private ?string $slug = null;
+
+    #[ORM\OneToMany(
+        mappedBy: 'prestation',
+        targetEntity: PrestationMedia::class,
+        orphanRemoval: true,
+        cascade: ['persist', 'remove']
+    )]
+    #[ORM\OrderBy(['position' => 'ASC', 'createdAt' => 'ASC'])]
+    private Collection $medias;
+
+
+    /**
+     * @var Collection<int, QuoteRequest>
+     */
+    #[ORM\OneToMany(mappedBy: 'prestation', targetEntity: QuoteRequest::class)]
+    private Collection $quoteRequests;
+
+
+    public function __construct()
+    {
+        $this->medias = new ArrayCollection();
+        $this->quoteRequests = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getPrestataire(): ?PrestataireProfile
+    {
+        return $this->prestataire;
+    }
+
+    public function setPrestataire(?PrestataireProfile $prestataire): self
+    {
+        $this->prestataire = $prestataire;
+
+        return $this;
+    }
+
+    public function getService(): ?Service
+    {
+        return $this->service;
+    }
+
+    public function setService(?Service $service): self
+    {
+        $this->service = $service;
+
+        return $this;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): self
+    {
+        $this->title = null !== $title ? trim($title) : null;
+
+        return $this;
+    }
+
+    public function getShortDescription(): ?string
+    {
+        return $this->shortDescription;
+    }
+
+    public function setShortDescription(?string $shortDescription): self
+    {
+        $this->shortDescription = null !== $shortDescription ? trim($shortDescription) : null;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = null !== $description ? trim($description) : null;
+
+        return $this;
+    }
+
+    public function getPricingType(): ?string
+    {
+        return $this->pricingType;
+    }
+
+    public function setPricingType(?string $pricingType): self
+    {
+        $this->pricingType = null !== $pricingType ? trim($pricingType) : null;
+
+        return $this;
+    }
+
+    public function getPriceFrom(): ?string
+    {
+        return $this->priceFrom;
+    }
+
+    public function setPriceFrom(?string $priceFrom): self
+    {
+        $this->priceFrom = $priceFrom;
+
+        return $this;
+    }
+
+    public function getPriceTo(): ?string
+    {
+        return $this->priceTo;
+    }
+
+    public function setPriceTo(?string $priceTo): self
+    {
+        $this->priceTo = $priceTo;
+
+        return $this;
+    }
+
+    public function getPriceUnit(): ?string
+    {
+        return $this->priceUnit;
+    }
+
+    public function setPriceUnit(?string $priceUnit): self
+    {
+        $this->priceUnit = null !== $priceUnit ? trim($priceUnit) : null;
+
+        return $this;
+    }
+
+    public function getAdditionalInfo(): ?string
+    {
+        return $this->additionalInfo;
+    }
+
+    public function setAdditionalInfo(?string $additionalInfo): self
+    {
+        $this->additionalInfo = null !== $additionalInfo ? trim($additionalInfo) : null;
+
+        return $this;
+    }
+
+    public function getPosition(): int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(int $position): self
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    public function getPrixCatalogue(): ?string
+    {
+        return $this->prixCatalogue;
+    }
+
+    public function setPrixCatalogue(string $prixCatalogue): self
+    {
+        $this->prixCatalogue = $prixCatalogue;
+
+        return $this;
+    }
+
+    public function getTauxReduction(): ?string
+    {
+        return $this->tauxReduction;
+    }
+
+    public function setTauxReduction(?string $tauxReduction): self
+    {
+        $this->tauxReduction = $tauxReduction;
+
+        return $this;
+    }
+
+    public function getPromotionCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->promotionCreatedAt;
+    }
+
+    public function setPromotionCreatedAt(?\DateTimeImmutable $promotionCreatedAt): self
+    {
+        $this->promotionCreatedAt = $promotionCreatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PrestationMedia>
+     */
+    public function getMedias(): Collection
+    {
+        return $this->medias;
+    }
+    /**
+     * @return Collection<int, QuoteRequest>
+     */
+    public function getQuoteRequests(): Collection
+    {
+        return $this->quoteRequests;
+    }
+
+    public function addQuoteRequest(QuoteRequest $quoteRequest): static
+    {
+        if (!$this->quoteRequests->contains($quoteRequest)) {
+            $this->quoteRequests->add($quoteRequest);
+            $quoteRequest->setPrestation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuoteRequest(QuoteRequest $quoteRequest): static
+    {
+        if ($this->quoteRequests->removeElement($quoteRequest)) {
+            if ($quoteRequest->getPrestation() === $this) {
+                $quoteRequest->setPrestation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addMedia(PrestationMedia $media): static
+    {
+        if (!$this->medias->contains($media)) {
+            $this->medias->add($media);
+            $media->setPrestation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMedia(PrestationMedia $media): static
+    {
+        $this->medias->removeElement($media);
+
+        return $this;
+    }
+
+    public function getPrixRemise(): ?float
+    {
+        if (null === $this->prixCatalogue) {
+            return null;
+        }
+
+        $prix = (float) $this->prixCatalogue;
+        $taux = (float) ($this->tauxReduction ?? 0);
+
+        if ($taux <= 0) {
+            return $prix;
+        }
+
+        return round($prix * (1 - ($taux / 100)), 2);
+    }
+
+    public function hasPromotion(): bool
+    {
+        return null !== $this->tauxReduction && (float) $this->tauxReduction > 0;
+    }
+
+    public function hasConfiguredPricing(): bool
+    {
+        return (null !== $this->pricingType && '' !== $this->pricingType)
+            || null !== $this->priceFrom
+            || null !== $this->priceTo
+            || (null !== $this->priceUnit && '' !== $this->priceUnit);
+    }
+
+    public function hasDisplayablePrice(): bool
+    {
+        if (!$this->hasConfiguredPricing()) {
+            return false;
+        }
+
+        if ('quote' === $this->pricingType) {
+            return false;
+        }
+
+        return null !== $this->priceFrom || null !== $this->priceTo;
+    }
+
+    public function getSettingsPricingLabel(): string
+    {
+        if (!$this->hasConfiguredPricing() || 'quote' === $this->pricingType) {
+            return 'Sur devis';
+        }
+
+        $unitSuffix = $this->hasText($this->priceUnit) ? ' / ' . $this->priceUnit : '';
+        $priceFrom = null !== $this->priceFrom ? $this->formatAmount($this->priceFrom) . ' €' : null;
+        $priceTo = null !== $this->priceTo ? $this->formatAmount($this->priceTo) . ' €' : null;
+
+        if (null !== $priceFrom && null !== $priceTo) {
+            return sprintf('De %s à %s%s', $priceFrom, $priceTo, $unitSuffix);
+        }
+
+        if (null !== $priceFrom) {
+            return sprintf('À partir de %s%s', $priceFrom, $unitSuffix);
+        }
+
+        if (null !== $priceTo) {
+            return sprintf('%s%s', $priceTo, $unitSuffix);
+        }
+
+        return 'Sur devis';
+    }
+
+    public function getDiscountedSettingsPricingLabel(): ?string
+    {
+        if (!$this->hasPromotion() || !$this->hasDisplayablePrice()) {
+            return null;
+        }
+
+        $unitSuffix = $this->hasText($this->priceUnit) ? ' / ' . $this->priceUnit : '';
+        $priceFrom = null !== $this->priceFrom ? $this->applyReductionToAmount($this->priceFrom) : null;
+        $priceTo = null !== $this->priceTo ? $this->applyReductionToAmount($this->priceTo) : null;
+
+        if (null !== $priceFrom && null !== $priceTo) {
+            return sprintf('De %s à %s%s', $priceFrom, $priceTo, $unitSuffix);
+        }
+
+        if (null !== $priceFrom) {
+            return sprintf('À partir de %s%s', $priceFrom, $unitSuffix);
+        }
+
+        if (null !== $priceTo) {
+            return sprintf('%s%s', $priceTo, $unitSuffix);
+        }
+
+        return null;
+    }
+
+    public function hasDetailedOffer(): bool
+    {
+        return (null !== $this->title && '' !== $this->title)
+            || (null !== $this->shortDescription && '' !== $this->shortDescription)
+            || (null !== $this->description && '' !== $this->description)
+            || $this->hasConfiguredPricing()
+            || (null !== $this->additionalInfo && '' !== $this->additionalInfo);
+    }
+
+    public function getDisplayTitle(): string
+    {
+        if (null !== $this->title && '' !== trim($this->title)) {
+            return $this->title;
+        }
+
+        return $this->service?->getName() ?? 'Service';
+    }
+
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        $now = new \DateTimeImmutable();
+
+        if (null === $this->createdAt) {
+            $this->createdAt = $now;
+        }
+
+        $this->updatedAt = $now;
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    private function hasText(?string $value): bool
+    {
+        return null !== $value && '' !== trim($value);
+    }
+
+    private function formatAmount(string $value): string
+    {
+        return number_format((float) $value, 2, ',', ' ');
+    }
+
+    private function applyReductionToAmount(string $value): string
+    {
+        $amount = (float) $value;
+        $reduction = (float) ($this->tauxReduction ?? 0);
+
+        if ($reduction <= 0) {
+            return $this->formatAmount($value) . ' €';
+        }
+
+        return number_format(round($amount * (1 - ($reduction / 100)), 2), 2, ',', ' ') . ' €';
+    }
+}

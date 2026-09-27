@@ -14,6 +14,30 @@
 {% set prestationMedias = prestation.medias %}
 {% set firstMedia = prestationMedias|length > 0 ? prestationMedias|first : null %}
 
+{% block json_ld %}
+    {% set prestationUrl = url('app_prestataire_service_prestation_show', {slug: prestation.slug}) %}
+    {% set serviceData = {
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        '@id': prestationUrl ~ '#service',
+        'name': prestation.title ?: serviceName,
+        'url': prestationUrl,
+        'serviceType': serviceName,
+        'provider': {
+            '@type': 'Organization',
+            '@id': url('app_prestataire_show', {slug: prestation.prestataire.slug}) ~ '#organization',
+            'name': companyName
+        }
+    } %}
+    {% if prestation.shortDescription or prestation.description %}
+        {% set serviceData = serviceData|merge({'description': prestation.shortDescription ?: prestation.description}) %}
+    {% endif %}
+    {% if firstMedia and firstMedia.fileName %}
+        {% set serviceData = serviceData|merge({'image': absolute_url(asset('uploads/prestations/' ~ firstMedia.fileName))}) %}
+    {% endif %}
+    {{ include('layout/_json_ld.html.twig', {data: serviceData}) }}
+{% endblock %}
+
 {% set pricingLabel = 'Tarification non renseignée' %}
 {% if prestation.pricingType == 'quote' %}
 	{% set pricingLabel = 'Tarif sur devis' %}

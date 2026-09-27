@@ -12,7 +12,7 @@
 
 namespace App\Tests\Service;
 
-use App\Service\CompanyRegistryClient;
+use App\Company\Service\CompanyRegistryClient;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;

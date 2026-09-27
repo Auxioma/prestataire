@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
-use App\Entity\PrestataireProfile;
-use App\Entity\Subscription\PrestataireSubscription;
-use App\Entity\Subscription\SubscriptionCustomer;
-use App\Entity\Subscription\SubscriptionInvoice;
-use App\Entity\Subscription\SubscriptionPlan;
-use App\Entity\User;
-use App\Enum\SubscriptionBillingPeriodEnum;
-use App\Enum\SubscriptionInvoiceStatusEnum;
-use App\Service\Subscription\SubscriptionFacturXXmlBuilder;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Subscription\Entity\PrestataireSubscription;
+use App\Subscription\Entity\SubscriptionCustomer;
+use App\Subscription\Entity\SubscriptionInvoice;
+use App\Subscription\Entity\SubscriptionPlan;
+use App\Account\Entity\User;
+use App\Subscription\Enum\SubscriptionBillingPeriodEnum;
+use App\Subscription\Enum\SubscriptionInvoiceStatusEnum;
+use App\Subscription\Service\SubscriptionFacturXXmlBuilder;
 use horstoeko\stringmanagement\PathUtils;
 use horstoeko\zugferd\ZugferdSettings;
 use PHPUnit\Framework\TestCase;

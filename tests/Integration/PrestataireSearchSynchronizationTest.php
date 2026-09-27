@@ -12,26 +12,26 @@
 
 namespace App\Tests\Integration;
 
-use App\Entity\PrestataireInterventionZone;
-use App\Entity\PrestataireProfile;
-use App\Entity\PrestataireService;
-use App\Entity\Service;
-use App\Entity\ServiceCategory;
-use App\Entity\User;
-use App\Enum\PrestataireProfileStatusEnum;
-use App\Enum\SearchVisibilityEnum;
-use App\Enum\UserStatusEnum;
-use App\Enum\VerificationStatusEnum;
-use App\EventSubscriber\PrestataireSearchSubscriber;
-use App\Repository\PrestataireSearchReadRepository;
-use App\Repository\UserRepository;
-use App\Search\PrestataireDocumentMapper;
-use App\Service\CompanyRegistryClient;
-use App\Service\CompanyVerificationManager;
-use App\Service\ElasticsearchClient;
-use App\Service\PrestataireProfileManager;
-use App\Service\PrestataireSearchIndexer;
-use App\Service\PrestataireSearchQueue;
+use App\Prestataire\Entity\PrestataireInterventionZone;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Prestataire\Entity\PrestataireService;
+use App\Catalog\Entity\Service;
+use App\Catalog\Entity\ServiceCategory;
+use App\Account\Entity\User;
+use App\Prestataire\Enum\PrestataireProfileStatusEnum;
+use App\Search\Enum\SearchVisibilityEnum;
+use App\Account\Enum\UserStatusEnum;
+use App\Prestataire\Enum\VerificationStatusEnum;
+use App\Search\EventSubscriber\PrestataireSearchSubscriber;
+use App\Search\Repository\PrestataireSearchReadRepository;
+use App\Account\Repository\UserRepository;
+use App\Search\Indexing\PrestataireDocumentMapper;
+use App\Company\Service\CompanyRegistryClient;
+use App\Company\Service\CompanyVerificationManager;
+use App\Search\Service\ElasticsearchClient;
+use App\Prestataire\Service\PrestataireProfileManager;
+use App\Search\Service\PrestataireSearchIndexer;
+use App\Search\Service\PrestataireSearchQueue;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
@@ -86,7 +86,7 @@ final class PrestataireSearchSynchronizationTest extends TestCase
         $this->schema = 'search_sync_test_'.bin2hex(random_bytes(8));
         $this->connection->executeStatement('CREATE SCHEMA '.$this->schema);
         $this->connection->executeStatement('SET search_path TO '.$this->schema);
-        $config = ORMSetup::createAttributeMetadataConfig([\dirname(__DIR__, 2).'/src/Entity'], true);
+        $config = ORMSetup::createAttributeMetadataConfig(glob(\dirname(__DIR__, 2).'/src/*/Entity', GLOB_ONLYDIR), true);
         $config->enableNativeLazyObjects(true);
         $config->setNamingStrategy(new UnderscoreNamingStrategy(\CASE_LOWER));
         $config->setRepositoryFactory(new class implements RepositoryFactory {

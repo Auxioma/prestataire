@@ -12,12 +12,12 @@
 
 namespace App\Tests\Service;
 
-use App\Entity\PrestataireProfile;
-use App\Exception\RegistrationAdmissionException;
-use App\Repository\AllowedNafCodeRepository;
-use App\Repository\PrestataireProfileRepository;
-use App\Service\CompanyRegistryClient;
-use App\Service\PrestataireRegistrationAdmission;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Prestataire\Exception\RegistrationAdmissionException;
+use App\Catalog\Repository\AllowedNafCodeRepository;
+use App\Prestataire\Repository\PrestataireProfileRepository;
+use App\Company\Service\CompanyRegistryClient;
+use App\Company\Service\PrestataireRegistrationAdmission;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;

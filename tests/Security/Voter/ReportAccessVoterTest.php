@@ -2,13 +2,13 @@
 
 namespace App\Tests\Security\Voter;
 
-use App\Entity\ClientProfile;
-use App\Entity\Conversation;
-use App\Entity\PrestataireProfile;
-use App\Entity\QuoteRequest;
-use App\Entity\Review;
-use App\Entity\User;
-use App\Security\Voter\ReportAccessVoter;
+use App\Account\Entity\ClientProfile;
+use App\Messaging\Entity\Conversation;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Quote\Entity\QuoteRequest;
+use App\Review\Entity\Review;
+use App\Account\Entity\User;
+use App\Report\Security\Voter\ReportAccessVoter;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
-use App\Entity\PrestataireProfile;
-use App\Entity\Subscription\PrestataireSubscription;
-use App\Entity\Subscription\SubscriptionInvoice;
-use App\Entity\Subscription\SubscriptionPlan;
-use App\Enum\SubscriptionBillingPeriodEnum;
-use App\Enum\SubscriptionInvoiceStatusEnum;
-use App\Service\Subscription\SubscriptionFacturXXmlBuilder;
-use App\Service\Subscription\SubscriptionInvoicePdfGenerator;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Subscription\Entity\PrestataireSubscription;
+use App\Subscription\Entity\SubscriptionInvoice;
+use App\Subscription\Entity\SubscriptionPlan;
+use App\Subscription\Enum\SubscriptionBillingPeriodEnum;
+use App\Subscription\Enum\SubscriptionInvoiceStatusEnum;
+use App\Subscription\Service\SubscriptionFacturXXmlBuilder;
+use App\Subscription\Service\SubscriptionInvoicePdfGenerator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Twig\Environment;

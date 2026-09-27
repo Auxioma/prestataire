@@ -5,6 +5,33 @@
     - TrouveMoi
 {% endblock %}
 
+{% block json_ld %}
+    {% set providerUrl = url('app_prestataire_show', {slug: prestataire.slug}) %}
+    {% set providerData = {
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        '@id': providerUrl ~ '#organization',
+        'name': prestataire.companyName,
+        'url': providerUrl
+    } %}
+    {% if prestataire.shortDescription or prestataire.description %}
+        {% set providerData = providerData|merge({'description': prestataire.shortDescription ?: prestataire.description}) %}
+    {% endif %}
+    {% if prestataire.logo %}
+        {% set providerData = providerData|merge({'logo': absolute_url(asset('uploads/logos/' ~ prestataire.logo))}) %}
+    {% endif %}
+    {% if prestataire.city or prestataire.postalCode %}
+        {% set providerAddress = {
+            '@type': 'PostalAddress',
+        } %}
+        {% if prestataire.city %}{% set providerAddress = providerAddress|merge({'addressLocality': prestataire.city}) %}{% endif %}
+        {% if prestataire.postalCode %}{% set providerAddress = providerAddress|merge({'postalCode': prestataire.postalCode}) %}{% endif %}
+        {% if prestataire.country %}{% set providerAddress = providerAddress|merge({'addressCountry': prestataire.country}) %}{% endif %}
+        {% set providerData = providerData|merge({'address': providerAddress}) %}
+    {% endif %}
+    {{ include('layout/_json_ld.html.twig', {data: providerData}) }}
+{% endblock %}
+
 {% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/show_profile/show_prestataire_profile.css') }}">{% endblock %}
 
 {% block body %}

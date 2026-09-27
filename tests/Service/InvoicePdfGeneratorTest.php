@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
-use App\Entity\Invoice;
-use App\Entity\InvoiceItem;
-use App\Entity\QuoteProposal;
-use App\Enum\InvoiceSourceTypeEnum;
-use App\Enum\InvoiceStatusEnum;
-use App\Service\FacturXXmlBuilder;
-use App\Service\InvoicePdfGenerator;
+use App\Invoice\Entity\Invoice;
+use App\Invoice\Entity\InvoiceItem;
+use App\Quote\Entity\QuoteProposal;
+use App\Invoice\Enum\InvoiceSourceTypeEnum;
+use App\Invoice\Enum\InvoiceStatusEnum;
+use App\Invoice\Service\FacturXXmlBuilder;
+use App\Invoice\Service\InvoicePdfGenerator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Environment;
