@@ -4,6 +4,13 @@
     {{ page_title }} - TrouveMoi
 {% endblock %}
 
+{% block canonical %}
+    {% set canonicalFilterKeys = app.request.query.all|keys|filter(key => key not in ['page', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid']) %}
+    {% if canonicalFilterKeys is empty %}
+        <link rel="canonical" href="{{ url('app_prestataire_browse', currentPage|default(1) > 1 ? {page: currentPage} : {})|e('html_attr') }}">
+    {% endif %}
+{% endblock %}
+
 {% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/prestataire_browse/prestataire_browse.css') }}">{% endblock %}
 
 {% block body %}

@@ -4,6 +4,24 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="{% block meta_description %}Trouvez rapidement un prestataire ou un artisan vérifié près de chez vous avec TrouveMoi.{% endblock %}">
+        {% block canonical %}
+            {% set canonicalRoute = app.request.attributes.get('_route') %}
+            {% set canonicalRoutes = [
+                'app_home',
+                'app_category_index',
+                'app_category_show',
+                'app_subcategory_services',
+                'app_search_flow',
+                'app_prestataire_show',
+                'app_prestataire_service_prestation_show',
+                'app_review_public_prestataire_reviews',
+                'app_static_page'
+            ] %}
+            {% set canonicalFilterKeys = app.request.query.all|keys|filter(key => key not in ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid']) %}
+            {% if canonicalRoute in canonicalRoutes and (canonicalRoute not in ['app_category_index', 'app_search_flow'] or canonicalFilterKeys is empty) %}
+                <link rel="canonical" href="{{ url(canonicalRoute, app.request.attributes.get('_route_params')|default({}))|e('html_attr') }}">
+            {% endif %}
+        {% endblock %}
         {% set organizationUrl = url('app_home') %}
         {{ include('layout/_json_ld.html.twig', {data: {
             '@context': 'https://schema.org',
