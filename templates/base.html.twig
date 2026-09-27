@@ -4,6 +4,23 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="{% block meta_description %}Trouvez rapidement un prestataire ou un artisan vérifié près de chez vous avec TrouveMoi.{% endblock %}">
+        {% set robotsRoute = app.request.attributes.get('_route') %}
+        {% set indexableRoutes = [
+            'app_home',
+            'app_category_index',
+            'app_category_show',
+            'app_subcategory_services',
+            'app_search_flow',
+            'app_prestataire_show',
+            'app_prestataire_service_prestation_show',
+            'app_review_public_prestataire_reviews',
+            'app_static_page',
+            'app_bons_plans',
+            'app_prestataire_browse'
+        ] %}
+        {% set robotsFilterKeys = app.request.query.all|keys|filter(key => key not in ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid']) %}
+        {% set shouldIndex = robotsRoute in indexableRoutes and (robotsRoute not in ['app_category_index', 'app_search_flow'] or robotsFilterKeys is empty) %}
+        <meta name="robots" content="{{ shouldIndex ? 'index,follow' : 'noindex,nofollow' }}">
         {% block canonical %}
             {% set canonicalRoute = app.request.attributes.get('_route') %}
             {% set canonicalRoutes = [
