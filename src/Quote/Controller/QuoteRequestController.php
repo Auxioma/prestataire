@@ -734,7 +734,7 @@ final class QuoteRequestController extends AbstractController
         }
 
         return new Response(
-            $nativePdfGenerator->generatePdfOutput($proposal, 'Quote/quote_request/proposal_pdf.html.twig'),
+            $nativePdfGenerator->generatePdfOutput($proposal, 'Quote/quote_proposal/proposal_pdf.html.twig'),
             Response::HTTP_OK,
             [
                 'Content-Type' => 'application/pdf',
