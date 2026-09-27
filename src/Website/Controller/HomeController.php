@@ -13,9 +13,11 @@
 namespace App\Website\Controller;
 
 use App\Account\Entity\User;
+use App\Catalog\Entity\ServiceCategory;
 use App\Review\Enum\FavoriteTypeEnum;
 use App\Search\Form\HomepageSearchType;
 use App\Review\Repository\FavoriteRepository;
+use App\Prestataire\Entity\PrestataireProfile;
 use App\Prestataire\Repository\PrestataireProfileRepository;
 use App\Prestataire\Repository\PrestataireServiceRepository;
 use App\Catalog\Repository\ServiceCategoryRepository;
@@ -24,6 +26,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * Gère les actions liées à home.
@@ -47,18 +51,48 @@ class HomeController extends AbstractController
         PrestataireProfileRepository $prestataireProfileRepository,
         PrestataireServiceRepository $prestataireServiceRepository,
         FavoriteRepository $favoriteRepository,
+        CacheInterface $cache,
     ): Response {
         $homepageSearchForm = $this->createForm(HomepageSearchType::class, null, [
             'action' => $this->generateUrl('app_homepage_search'),
             'method' => 'GET',
         ]);
 
-        $categories = $categoryRepository->findBy([
-            'isActive' => true,
-            'parent' => null,
-        ], [
-            'position' => 'ASC',
-        ]);
+        $categories = $cache->get('homepage.categories.v1', function (ItemInterface $item) use ($categoryRepository): array {
+            $item->expiresAfter(3600);
+
+            return array_map(
+                static fn (ServiceCategory $category): array => [
+                    'name' => $category->getName(),
+                    'slug' => $category->getSlug(),
+                    'icon' => $category->getIcon(),
+                ],
+                $categoryRepository->findBy([
+                    'isActive' => true,
+                    'parent' => null,
+                ], [
+                    'position' => 'ASC',
+                ])
+            );
+        });
+
+        $providers = $cache->get('homepage.providers.v1', function (ItemInterface $item) use ($prestataireProfileRepository): array {
+            $item->expiresAfter(3600);
+
+            return array_map(
+                static fn (PrestataireProfile $provider): array => [
+                    'id' => $provider->getId(),
+                    'slug' => $provider->getSlug(),
+                    'companyName' => $provider->getCompanyName(),
+                    'coverImage' => $provider->getCoverImage(),
+                    'averageRating' => $provider->getAverageRating(),
+                    'reviewsCount' => $provider->getReviewsCount(),
+                    'city' => $provider->getCity(),
+                    'metier' => $provider->getMetier(),
+                ],
+                $prestataireProfileRepository->findBy([], ['averageRating' => 'DESC'], 4)
+            );
+        });
 
         $favoriteProviderIds = [];
         $favoriteBonPlanIds = [];
@@ -133,7 +167,7 @@ class HomeController extends AbstractController
         return $this->render('home/index.html.twig', [
             'homepageSearchForm' => $homepageSearchForm->createView(),
             'categories' => $categories,
-            'providers' => $prestataireProfileRepository->findBy([], ['averageRating' => 'DESC'], 4),
+            'providers' => $providers,
             'bonsPlans' => $prestataireServiceRepository->findLatestBonsPlansForHome(4),
             'favoriteProviderIds' => $favoriteProviderIds,
             'favoriteBonPlanIds' => $favoriteBonPlanIds,

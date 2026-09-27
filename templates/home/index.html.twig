@@ -290,7 +290,7 @@
 
                     <div class="tmv2-provider-card__cover">
                         <img
-    src="{{ provider.coverImage ? vich_uploader_asset(provider, 'coverImageFile') : asset('images/img_par_defaut.webp') }}"
+    src="{{ provider.coverImage ? asset('uploads/covers/' ~ provider.coverImage) : asset('images/img_par_defaut.webp') }}"
     alt="{{ provider.companyName }}"
     class="tmv2-provider-card__cover-image"
     width="1200"
