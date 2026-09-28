@@ -40,15 +40,6 @@
             {% endif %}
         {% endblock %}
         {% set organizationUrl = url('app_home') %}
-        {{ include('Website/layout/_json_ld.html.twig', {data: {
-            '@context': 'https://schema.org',
-            '@type': 'Organization',
-            '@id': organizationUrl ~ '#organization',
-            name: 'TrouveMoi',
-            url: organizationUrl,
-            logo: absolute_url(asset('images/logo_trouvemoipresta.png')),
-            description: 'La plateforme qui connecte les clients avec les meilleurs professionnels.',
-        }}) }}
         {% block json_ld %}{% endblock %}
         {% if app.request.attributes.get('_route') == 'app_static_page' %}
             {% set staticBreadcrumbNames = {

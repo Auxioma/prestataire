@@ -8,8 +8,7 @@
 {% block json_ld %}
     {% set providerUrl = url('app_prestataire_show', {slug: prestataire.slug}) %}
     {% set providerData = {
-        '@context': 'https://schema.org',
-        '@type': 'Organization',
+        '@type': 'LocalBusiness',
         '@id': providerUrl ~ '#organization',
         name: prestataire.companyName,
         url: providerUrl,
@@ -20,16 +19,42 @@
     {% if prestataire.logo %}
         {% set providerData = providerData|merge({logo: absolute_url(asset('uploads/logos/' ~ prestataire.logo))}) %}
     {% endif %}
+    {% if prestataire.coverImage %}
+        {% set providerData = providerData|merge({image: absolute_url(asset('uploads/covers/' ~ prestataire.coverImage))}) %}
+    {% endif %}
     {% if prestataire.city or prestataire.postalCode %}
-        {% set providerAddress = {
-            '@type': 'PostalAddress',
-        } %}
+        {% set providerAddress = {'@type': 'PostalAddress'} %}
         {% if prestataire.city %}{% set providerAddress = providerAddress|merge({addressLocality: prestataire.city}) %}{% endif %}
         {% if prestataire.postalCode %}{% set providerAddress = providerAddress|merge({postalCode: prestataire.postalCode}) %}{% endif %}
         {% if prestataire.country %}{% set providerAddress = providerAddress|merge({addressCountry: prestataire.country}) %}{% endif %}
         {% set providerData = providerData|merge({address: providerAddress}) %}
     {% endif %}
-    {{ include('Website/layout/_json_ld.html.twig', {data: providerData}) }}
+    {% if hasUnlockedContactDetails and prestataire.phonePublic %}
+        {% set providerData = providerData|merge({telephone: prestataire.phonePublic}) %}
+    {% endif %}
+    {% set providerSameAs = [] %}
+    {% if hasUnlockedContactDetails and prestataire.website %}{% set providerSameAs = providerSameAs|merge([prestataire.website]) %}{% endif %}
+    {% if hasUnlockedContactDetails and prestataire.facebookUrl %}{% set providerSameAs = providerSameAs|merge([prestataire.facebookUrl]) %}{% endif %}
+    {% if hasUnlockedContactDetails and prestataire.instagramUrl %}{% set providerSameAs = providerSameAs|merge([prestataire.instagramUrl]) %}{% endif %}
+    {% if hasUnlockedContactDetails and prestataire.linkedinUrl %}{% set providerSameAs = providerSameAs|merge([prestataire.linkedinUrl]) %}{% endif %}
+    {% if providerSameAs is not empty %}
+        {% set providerData = providerData|merge({sameAs: providerSameAs}) %}
+    {% endif %}
+    {{ include('Website/layout/_json_ld.html.twig', {data: {
+        '@context': 'https://schema.org',
+        '@graph': [
+            providerData,
+            {
+                '@type': 'BreadcrumbList',
+                '@id': providerUrl ~ '#breadcrumb',
+                itemListElement: [
+                    {'@type': 'ListItem', position: 1, name: 'Accueil', item: url('app_home')},
+                    {'@type': 'ListItem', position: 2, name: 'Prestataires', item: url('app_prestataire_browse')},
+                    {'@type': 'ListItem', position: 3, name: prestataire.companyName},
+                ],
+            },
+        ],
+    }}) }}
 {% endblock %}
 
 {% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/show_profile/show_prestataire_profile.css') }}">{% endblock %}

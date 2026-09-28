@@ -4,14 +4,27 @@
 {% endblock %}
 
 {% block json_ld %}
+    {% set organizationUrl = url('app_home') %}
     {{ include('Website/layout/_json_ld.html.twig', {data: {
         '@context': 'https://schema.org',
-        '@type': 'WebSite',
-        '@id': url('app_home') ~ '#website',
-        name: 'TrouveMoi',
-        url: url('app_home'),
-        inLanguage: 'fr',
-        publisher: {'@id': url('app_home') ~ '#organization'},
+        '@graph': [
+            {
+                '@type': 'Organization',
+                '@id': organizationUrl ~ '#organization',
+                name: 'TrouveMoi',
+                url: organizationUrl,
+                logo: absolute_url(asset('images/logo_trouvemoipresta.png')),
+                description: 'La plateforme qui connecte les clients avec les meilleurs professionnels.',
+            },
+            {
+                '@type': 'WebSite',
+                '@id': organizationUrl ~ '#website',
+                name: 'TrouveMoi',
+                url: organizationUrl,
+                inLanguage: 'fr',
+                publisher: {'@id': organizationUrl ~ '#organization'},
+            },
+        ],
     }}) }}
 {% endblock %}
 

@@ -16,18 +16,64 @@
 
 {% block json_ld %}
     {% set prestationUrl = url('app_prestataire_service_prestation_show', {slug: prestation.slug}) %}
+    {% set providerUrl = url('app_prestataire_show', {slug: prestation.prestataire.slug}) %}
+    {% set providerData = {
+        '@type': 'LocalBusiness',
+        '@id': providerUrl ~ '#organization',
+        name: companyName,
+        url: providerUrl,
+    } %}
+    {% if prestation.prestataire.city or prestation.prestataire.postalCode %}
+        {% set providerAddress = {'@type': 'PostalAddress'} %}
+        {% if prestation.prestataire.city %}{% set providerAddress = providerAddress|merge({addressLocality: prestation.prestataire.city}) %}{% endif %}
+        {% if prestation.prestataire.postalCode %}{% set providerAddress = providerAddress|merge({postalCode: prestation.prestataire.postalCode}) %}{% endif %}
+        {% if prestation.prestataire.country %}{% set providerAddress = providerAddress|merge({addressCountry: prestation.prestataire.country}) %}{% endif %}
+        {% set providerData = providerData|merge({address: providerAddress}) %}
+    {% endif %}
+    {% if coverImage %}
+        {% set providerData = providerData|merge({image: absolute_url(asset('uploads/covers/' ~ coverImage))}) %}
+    {% endif %}
+    {% set openingHours = [] %}
+    {% set schemaDays = {
+        1: 'https://schema.org/Monday',
+        2: 'https://schema.org/Tuesday',
+        3: 'https://schema.org/Wednesday',
+        4: 'https://schema.org/Thursday',
+        5: 'https://schema.org/Friday',
+        6: 'https://schema.org/Saturday',
+        7: 'https://schema.org/Sunday',
+    } %}
+    {% if not prestation.prestataire.isOnVacation %}
+        {% for availability in availabilities %}
+            {% set schemaDay = schemaDays[availability.dayOfWeek]|default(null) %}
+            {% if schemaDay and availability.morningEnabled and availability.morningStart and availability.morningEnd %}
+                {% set openingHours = openingHours|merge([{
+                    '@type': 'OpeningHoursSpecification',
+                    dayOfWeek: schemaDay,
+                    opens: availability.morningStart|date('H:i'),
+                    closes: availability.morningEnd|date('H:i'),
+                }]) %}
+            {% endif %}
+            {% if schemaDay and availability.afternoonEnabled and availability.afternoonStart and availability.afternoonEnd %}
+                {% set openingHours = openingHours|merge([{
+                    '@type': 'OpeningHoursSpecification',
+                    dayOfWeek: schemaDay,
+                    opens: availability.afternoonStart|date('H:i'),
+                    closes: availability.afternoonEnd|date('H:i'),
+                }]) %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    {% if openingHours is not empty %}
+        {% set providerData = providerData|merge({openingHoursSpecification: openingHours}) %}
+    {% endif %}
     {% set serviceData = {
-        '@context': 'https://schema.org',
         '@type': 'Service',
         '@id': prestationUrl ~ '#service',
         name: prestation.title ?: serviceName,
         url: prestationUrl,
         serviceType: serviceName,
-        provider: {
-            '@type': 'Organization',
-            '@id': url('app_prestataire_show', {slug: prestation.prestataire.slug}) ~ '#organization',
-            name: companyName,
-        },
+        provider: {'@id': providerUrl ~ '#organization'},
     } %}
     {% if prestation.shortDescription or prestation.description %}
         {% set serviceData = serviceData|merge({description: prestation.shortDescription ?: prestation.description}) %}
@@ -35,7 +81,23 @@
     {% if firstMedia and firstMedia.fileName %}
         {% set serviceData = serviceData|merge({image: absolute_url(asset('uploads/prestations/' ~ firstMedia.fileName))}) %}
     {% endif %}
-    {{ include('Website/layout/_json_ld.html.twig', {data: serviceData}) }}
+    {{ include('Website/layout/_json_ld.html.twig', {data: {
+        '@context': 'https://schema.org',
+        '@graph': [
+            serviceData,
+            providerData,
+            {
+                '@type': 'BreadcrumbList',
+                '@id': prestationUrl ~ '#breadcrumb',
+                itemListElement: [
+                    {'@type': 'ListItem', position: 1, name: 'Accueil', item: url('app_home')},
+                    {'@type': 'ListItem', position: 2, name: 'Prestataires', item: url('app_prestataire_browse')},
+                    {'@type': 'ListItem', position: 3, name: companyName, item: providerUrl},
+                    {'@type': 'ListItem', position: 4, name: prestation.title ?: serviceName},
+                ],
+            },
+        ],
+    }}) }}
 {% endblock %}
 
 {% set pricingLabel = 'Tarification non renseignée' %}
