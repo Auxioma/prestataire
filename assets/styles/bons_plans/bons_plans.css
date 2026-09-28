@@ -2,27 +2,6 @@
      PAGE BONS PLANS
      Feuille de style dédiée à la vue Twig bons_plans.html.twig
      ============================================================ */
-
-  :root {
-      --tm-bp-encre: #0a1633;
-      --tm-bp-encre-2: #101f45;
-      --tm-bp-bleu: #1e49c7;
-      --tm-bp-bleu-clair: #e6ecfc;
-      --tm-bp-safran: #ff8a1e;
-      --tm-bp-safran-fonce: #e8760a;
-      --tm-bp-papier: #f4f6fa;
-      --tm-bp-blanc: #ffffff;
-      --tm-bp-vert: #0e9f6e;
-      --tm-bp-vert-clair: #e2f5ee;
-      --tm-bp-texte: #233047;
-      --tm-bp-texte-doux: #5b6b85;
-      --tm-bp-bordure: #e3e8f1;
-      --tm-bp-radius: 16px;
-      --tm-bp-radius-s: 10px;
-      --tm-bp-ombre: 0 8px 30px rgba(10, 22, 51, 0.08);
-      --tm-bp-ombre-forte: 0 18px 50px rgba(10, 22, 51, 0.16);
-  }
-
   .conteneur {
       max-width: 1200px;
       margin: 0 auto;
@@ -38,7 +17,7 @@
       font-size: clamp(28px, 3.4vw, 40px);
       font-weight: 800;
       letter-spacing: -0.02em;
-      color: var(--tm-bp-encre);
+      color: var(--tm-color-navy);
       line-height: 1.15;
   }
 
@@ -60,7 +39,7 @@
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--tm-bp-bleu);
+      color: var(--tm-color-blue);
   }
 
   .eyebrow::before {
@@ -68,7 +47,7 @@
       width: 22px;
       height: 3px;
       border-radius: 2px;
-      background: var(--tm-bp-safran);
+      background: var(--tm-color-orange);
   }
 
   .btn {
@@ -88,7 +67,7 @@
   }
 
   .btn-bleu {
-      background: var(--tm-bp-bleu);
+      background: var(--tm-color-blue);
       color: #fff;
   }
 
@@ -112,7 +91,7 @@
   .hero-liste {
       position: relative;
       overflow: hidden;
-      background: var(--tm-bp-encre);
+      background: var(--tm-color-navy);
       color: #fff;
   }
 
@@ -128,7 +107,7 @@
       inset: 0;
       background: linear-gradient(
           90deg,
-          var(--tm-bp-encre) 32%,
+          var(--tm-color-navy) 32%,
           rgba(10, 22, 51, 0.86) 50%,
           rgba(10, 22, 51, 0.25) 100%
       );
@@ -150,7 +129,7 @@
   }
 
   .hero-liste h1 span {
-      color: var(--tm-bp-safran);
+      color: var(--tm-color-orange);
   }
 
   .hero-liste p {
@@ -190,7 +169,7 @@
       flex-shrink: 0;
       border-radius: 11px;
       background: rgba(255, 255, 255, 0.1);
-      color: var(--tm-bp-safran);
+      color: var(--tm-color-orange);
   }
 
   .hero-liste .pastille-promo {
@@ -201,8 +180,8 @@
       padding: 22px 26px;
       border-radius: 18px;
       background: #fff;
-      box-shadow: var(--tm-bp-ombre-forte);
-      color: var(--tm-bp-encre);
+      box-shadow: var(--tm-shadow-lg);
+      color: var(--tm-color-navy);
       text-align: center;
       transform: translateY(-50%) rotate(6deg);
   }
@@ -210,7 +189,7 @@
   .pastille-promo .jusqua {
       font-size: 13.5px;
       font-weight: 600;
-      color: var(--tm-bp-texte-doux);
+      color: var(--tm-color-text-muted);
   }
 
   .pastille-promo .pourcent {
@@ -218,7 +197,7 @@
       font-weight: 800;
       letter-spacing: -0.03em;
       line-height: 1.05;
-      color: var(--tm-bp-safran);
+      color: var(--tm-color-orange);
   }
 
   .pastille-promo .sur {
@@ -230,7 +209,7 @@
       position: absolute;
       top: -22px;
       left: -18px;
-      color: var(--tm-bp-safran);
+      color: var(--tm-color-orange);
   }
 
   /* ============================================================
@@ -238,7 +217,7 @@
      ============================================================ */
 
   .resultats {
-      background: var(--tm-bp-papier);
+      background: var(--tm-color-paper);
   }
 
   .filtre {
@@ -247,10 +226,10 @@
       gap: 9px;
       min-height: 48px;
       padding: 10px 16px;
-      border: 1.5px solid var(--tm-bp-bordure);
+      border: 1.5px solid var(--tm-color-border);
       border-radius: 999px;
       background: #fff;
-      color: var(--tm-bp-encre);
+      color: var(--tm-color-navy);
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
@@ -258,17 +237,17 @@
   }
 
   .filtre:hover {
-      border-color: var(--tm-bp-bleu);
-      color: var(--tm-bp-bleu);
+      border-color: var(--tm-color-blue);
+      color: var(--tm-color-blue);
   }
 
   .filtre svg:first-child {
       flex-shrink: 0;
-      color: var(--tm-bp-bleu);
+      color: var(--tm-color-blue);
   }
 
   .filtre .chevron {
-      color: var(--tm-bp-texte-doux);
+      color: var(--tm-color-text-muted);
   }
 
   .filtre select {
@@ -304,14 +283,14 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      border: 1px solid var(--tm-bp-bordure);
-      border-radius: var(--tm-bp-radius);
+      border: 1px solid var(--tm-color-border);
+      border-radius: 16px;
       background: #fff;
       transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
   }
 
   .deal:hover {
-      border-color: var(--tm-bp-bleu);
+      border-color: var(--tm-color-blue);
       box-shadow: 0 14px 36px rgba(30, 73, 199, 0.18), 0 4px 14px rgba(255, 138, 30, 0.12);
       transform: translateY(-2px);
   }
@@ -333,8 +312,8 @@
       height: 100%;
       object-fit: cover;
       display: block;
-      border-top-left-radius: var(--tm-bp-radius);
-      border-top-right-radius: var(--tm-bp-radius);
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
   }
 
   .badge-remise {
@@ -344,8 +323,8 @@
       display: inline-flex;
       align-items: center;
       border-radius: 999px;
-      background: var(--tm-bp-safran);
-      color: var(--tm-bp-encre);
+      background: var(--tm-color-orange);
+      color: var(--tm-color-navy);
       padding: 5px 12px;
       font-size: 14px;
       font-weight: 800;
@@ -379,7 +358,7 @@
       border: 0;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.95);
-      color: var(--tm-bp-encre);
+      color: var(--tm-color-navy);
       transition: color 0.15s, transform 0.15s;
   }
 
@@ -401,18 +380,18 @@
       border: 3px solid #fff;
       border-radius: 50%;
       background: #fff;
-      box-shadow: var(--tm-bp-ombre);
-      color: var(--tm-bp-bleu);
+      box-shadow: var(--tm-shadow-sm);
+      color: var(--tm-color-blue);
       font-size: 16px;
   }
 
   .icone-cat.c-bleu {
-      background: var(--tm-bp-bleu);
+      background: var(--tm-color-blue);
       color: #fff;
   }
 
   .icone-cat.c-vert {
-      background: var(--tm-bp-vert);
+      background: var(--tm-color-success);
       color: #fff;
   }
 
@@ -422,8 +401,8 @@
   }
 
   .icone-cat.c-safran {
-      background: var(--tm-bp-safran);
-      color: var(--tm-bp-encre);
+      background: var(--tm-color-orange);
+      color: var(--tm-color-navy);
   }
 
   .deal .corps {
@@ -438,7 +417,7 @@
   .deal h3 {
       margin: 0;
       font-size: 16px;
-      color: var(--tm-bp-encre);
+      color: var(--tm-color-navy);
   }
 
   .deal h3 a {
@@ -447,13 +426,13 @@
   }
 
   .deal h3 a:hover {
-      color: var(--tm-bp-bleu);
+      color: var(--tm-color-blue);
   }
 
   .deal .metier {
       margin: 4px 0 0;
       font-size: 13px;
-      color: var(--tm-bp-texte-doux);
+      color: var(--tm-color-text-muted);
   }
 
   .deal .prix {
@@ -464,14 +443,14 @@
   }
 
   .deal .prix s {
-      color: var(--tm-bp-texte-doux);
+      color: var(--tm-color-text-muted);
       font-size: 13.5px;
   }
 
   .deal .prix strong {
       font-size: 21px;
       font-weight: 800;
-      color: var(--tm-bp-bleu);
+      color: var(--tm-color-blue);
   }
 
   .deal .ligne {
@@ -480,7 +459,7 @@
       gap: 7px;
       margin: 9px 0 0;
       font-size: 13.5px;
-      color: var(--tm-bp-texte-doux);
+      color: var(--tm-color-text-muted);
   }
 
   .deal .ligne svg {
@@ -488,21 +467,21 @@
   }
 
   .deal .ligne.note {
-      color: var(--tm-bp-encre);
+      color: var(--tm-color-navy);
       font-weight: 700;
   }
 
   .deal .ligne.note svg {
-      color: var(--tm-bp-safran);
+      color: var(--tm-color-orange);
   }
 
   .deal .ligne.note span {
-      color: var(--tm-bp-texte-doux);
+      color: var(--tm-color-text-muted);
       font-weight: 500;
   }
 
   .deal .ligne.lieu svg {
-      color: var(--tm-bp-bleu);
+      color: var(--tm-color-blue);
   }
 
   /* ============================================================
@@ -514,8 +493,8 @@
       top: 150px;
       padding: 28px 24px;
       border: 1px solid #d4dffa;
-      border-radius: var(--tm-bp-radius);
-      background: var(--tm-bp-bleu-clair);
+      border-radius: 16px;
+      background: var(--tm-color-blue-soft);
       text-align: center;
   }
 
@@ -528,21 +507,21 @@
       justify-content: center;
       border-radius: 50%;
       background: #fff;
-      box-shadow: var(--tm-bp-ombre);
-      color: var(--tm-bp-bleu);
+      box-shadow: var(--tm-shadow-sm);
+      color: var(--tm-color-blue);
   }
 
   .encart-notif h3 {
       margin: 0;
       font-size: 19px;
       line-height: 1.25;
-      color: var(--tm-bp-encre);
+      color: var(--tm-color-navy);
   }
 
   .encart-notif > p {
       margin: 10px 0 0;
       font-size: 13.5px;
-      color: var(--tm-bp-texte-doux);
+      color: var(--tm-color-text-muted);
   }
 
   .encart-notif .btn {
@@ -567,12 +546,12 @@
       gap: 10px;
       font-size: 13.5px;
       font-weight: 600;
-      color: var(--tm-bp-encre);
+      color: var(--tm-color-navy);
   }
 
   .encart-notif li svg {
       flex-shrink: 0;
-      color: var(--tm-bp-bleu);
+      color: var(--tm-color-blue);
   }
 
   /* ============================================================
@@ -582,11 +561,11 @@
   .tm-bonsplans-empty {
       grid-column: 1 / -1;
       padding: 48px 24px;
-      border: 1px solid var(--tm-bp-bordure);
-      border-radius: var(--tm-bp-radius);
+      border: 1px solid var(--tm-color-border);
+      border-radius: 16px;
       background: #fff;
       text-align: center;
-      box-shadow: var(--tm-bp-ombre);
+      box-shadow: var(--tm-shadow-sm);
   }
 
   .tm-bonsplans-empty__icon {
@@ -598,14 +577,14 @@
       margin: 14px 0 0;
       font-size: 24px;
       font-weight: 800;
-      color: var(--tm-bp-encre);
+      color: var(--tm-color-navy);
   }
 
   .tm-bonsplans-empty__text {
       max-width: 560px;
       margin: 12px auto 0;
       font-size: 15px;
-      color: var(--tm-bp-texte-doux);
+      color: var(--tm-color-text-muted);
   }
 
   .tm-bonsplans-empty__cta {
@@ -615,7 +594,7 @@
       margin-top: 22px;
       padding: 13px 22px;
       border-radius: 999px;
-      background: var(--tm-bp-bleu);
+      background: var(--tm-color-blue);
       color: #fff;
       font-weight: 700;
       text-decoration: none;
@@ -656,24 +635,24 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1.5px solid var(--tm-bp-bordure);
+      border: 1.5px solid var(--tm-color-border);
       border-radius: 12px;
       background: #fff;
-      color: var(--tm-bp-encre);
+      color: var(--tm-color-navy);
       font-size: 14.5px;
       font-weight: 700;
       transition: border-color 0.15s, background 0.15s, color 0.15s;
   }
 
   .tm-bonsplans-pagination .page-link:hover {
-      border-color: var(--tm-bp-bleu);
+      border-color: var(--tm-color-blue);
       background: #fff;
-      color: var(--tm-bp-bleu);
+      color: var(--tm-color-blue);
   }
 
   .tm-bonsplans-pagination .page-item.active .page-link {
-      border-color: var(--tm-bp-bleu);
-      background: var(--tm-bp-bleu);
+      border-color: var(--tm-color-blue);
+      background: var(--tm-color-blue);
       color: #fff;
   }
 
@@ -708,7 +687,7 @@
       .hero-liste .voile {
           background: linear-gradient(
               90deg,
-              var(--tm-bp-encre) 20%,
+              var(--tm-color-navy) 20%,
               rgba(10, 22, 51, 0.88) 60%,
               rgba(10, 22, 51, 0.55) 100%
           );
