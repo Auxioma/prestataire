@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'Website/base.html.twig' %}
 
 {% block title %}Mes avis{% endblock %}
 
@@ -10,7 +10,7 @@
 {% block body %}
     <div class="container-fluid p-0 tm-cp-page-wrapper">
         <div class="d-flex flex-column flex-md-row align-items-stretch">
-            {{ include('profile/_client_sidebar.html.twig', { user: app.user }) }}
+            {{ include('Account/profile/_client_sidebar.html.twig', {user: app.user}) }}
 
             <div class="grow p-3 p-md-5 tm-cp-main-content-inner">
                 <section class="c-client-quotes-page tm-client-reviews-page">
@@ -82,10 +82,10 @@
                                                                 <span class="small text-secondary">{{ providerName }} · {{ quoteRequest.createdAt ? quoteRequest.createdAt|date('d/m/Y') : '—' }}</span>
                                                             </div>
                                                             <div class="tm-client-reviews-invite__actions">
-                                                                <a href="{{ path('app_review_create', { quoteRequestSlug: quoteRequest.slug }) }}" class="btn btn-primary tm-review-pending-card__primary">
+                                                                <a href="{{ path('app_review_create', {quoteRequestSlug: quoteRequest.slug}) }}" class="btn btn-primary tm-review-pending-card__primary">
                                                                     Laisser un avis
                                                                 </a>
-                                                                <a href="{{ path(quoteRequest.archivedByClientAt ? 'app_quote_request_history_show' : 'app_quote_request_show', { slug: quoteRequest.slug }) }}" class="btn btn-outline-secondary tm-review-pending-card__secondary">
+                                                                <a href="{{ path(quoteRequest.archivedByClientAt ? 'app_quote_request_history_show' : 'app_quote_request_show', {slug: quoteRequest.slug}) }}" class="btn btn-outline-secondary tm-review-pending-card__secondary">
                                                                     Voir la demande
                                                                 </a>
                                                             </div>
@@ -130,7 +130,7 @@
                                                                 <span>{{ review.quoteRequest.title|default('Demande associée') }}</span>
                                                             </div>
                                                             <div class="carte-avis-page__droite">
-                                                                <span class="etoiles">{{ include('review/_stars.html.twig', { rating: review.rating }) }}</span>
+                                                                <span class="etoiles">{{ include('Review/_stars.html.twig', {rating: review.rating}) }}</span>
                                                                 <p>{{ review.createdAt|date('d/m/Y à H:i') }}</p>
                                                             </div>
                                                         </div>
@@ -138,7 +138,7 @@
                                                         <p class="carte-avis-page__texte">{{ review.comment|default('Aucun commentaire ajouté.') }}</p>
 
                                                         <div class="carte-demande__actions mt-3 tm-client-reviews-history-card__actions">
-                                                            <a href="{{ path('app_review_edit', { id: review.id }) }}" class="btn btn-outline-primary tm-review-history-card__edit">
+                                                            <a href="{{ path('app_review_edit', {id: review.id}) }}" class="btn btn-outline-primary tm-review-history-card__edit">
                                                                 Modifier
                                                             </a>
                                                             <button
@@ -164,7 +164,7 @@
                                                                 </div>
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
-                                                                    <form method="post" action="{{ path('app_review_delete', { id: review.id }) }}">
+                                                                    <form method="post" action="{{ path('app_review_delete', {id: review.id}) }}">
                                                                         <input type="hidden" name="_token" value="{{ csrf_token('delete-review-' ~ review.id) }}">
                                                                         <button type="submit" class="btn btn-danger">Supprimer l’avis</button>
                                                                     </form>

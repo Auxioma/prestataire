@@ -1,0 +1,334 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
+namespace App\Quote\Entity;
+
+use App\Account\Entity\ClientProfile;
+use App\Messaging\Entity\Conversation;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Prestataire\Entity\PrestataireService;
+use App\Quote\Enum\QuoteRequestStatusEnum;
+use App\Quote\Repository\QuoteRequestRepository;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: QuoteRequestRepository::class)]
+#[ORM\Table(name: 'quote_request')]
+class QuoteRequest
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: Types::BIGINT)]
+    private ?string $id = null;
+
+    #[ORM\ManyToOne(inversedBy: 'quoteRequests')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?ClientProfile $client = null;
+
+    #[ORM\ManyToOne(inversedBy: 'quoteRequests')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?PrestataireProfile $prestataire = null;
+
+    #[ORM\ManyToOne(inversedBy: 'quoteRequests')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?PrestataireService $prestation = null;
+
+    #[ORM\OneToOne(mappedBy: 'quoteRequest', targetEntity: Conversation::class)]
+    private ?Conversation $conversation = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $title = null;
+
+    #[ORM\Column(length: 255, unique: true, nullable: true)]
+    private ?string $slug = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $description = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $budgetAmount = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $desiredDate = null;
+
+    #[ORM\Column(length: 50, enumType: QuoteRequestStatusEnum::class)]
+    private QuoteRequestStatusEnum $status = QuoteRequestStatusEnum::SUBMITTED;
+
+    #[ORM\Column(type: 'datetime_immutable')]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $deletedAt = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $archivedByClientAt = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $archivedByPrestataireAt = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->status = QuoteRequestStatusEnum::SUBMITTED;
+    }
+
+    public function __toString(): string
+    {
+        $title = mb_trim((string) ($this->title ?? ''));
+
+        if ('' !== $title) {
+            return $title;
+        }
+
+        return \sprintf('Demande #%s', $this->id ?? 'n/a');
+    }
+
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
+
+    public function getClient(): ?ClientProfile
+    {
+        return $this->client;
+    }
+
+    public function setClient(?ClientProfile $client): static
+    {
+        $this->client = $client;
+
+        return $this;
+    }
+
+    public function getPrestataire(): ?PrestataireProfile
+    {
+        return $this->prestataire;
+    }
+
+    public function setPrestataire(?PrestataireProfile $prestataire): static
+    {
+        $this->prestataire = $prestataire;
+
+        return $this;
+    }
+
+    public function getPrestation(): ?PrestataireService
+    {
+        return $this->prestation;
+    }
+
+    public function setPrestation(?PrestataireService $prestation): static
+    {
+        $this->prestation = $prestation;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getBudgetAmount(): ?string
+    {
+        return $this->budgetAmount;
+    }
+
+    public function setBudgetAmount(?string $budgetAmount): static
+    {
+        $this->budgetAmount = $budgetAmount;
+
+        return $this;
+    }
+
+    public function getDesiredDate(): ?\DateTimeInterface
+    {
+        return $this->desiredDate;
+    }
+
+    public function setDesiredDate(?\DateTimeInterface $desiredDate): static
+    {
+        $this->desiredDate = $desiredDate;
+
+        return $this;
+    }
+
+    public function getStatus(): QuoteRequestStatusEnum
+    {
+        return $this->status;
+    }
+
+    public function setStatus(QuoteRequestStatusEnum $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getConversation(): ?Conversation
+    {
+        return $this->conversation;
+    }
+
+    public function setConversation(?Conversation $conversation): static
+    {
+        if (null === $conversation && null !== $this->conversation) {
+            $this->conversation->setQuoteRequest(null);
+        }
+
+        if (null !== $conversation && $conversation->getQuoteRequest() !== $this) {
+            $conversation->setQuoteRequest($this);
+        }
+
+        $this->conversation = $conversation;
+
+        return $this;
+    }
+
+    public function getArchivedByClientAt(): ?\DateTimeImmutable
+    {
+        return $this->archivedByClientAt;
+    }
+
+    public function setArchivedByClientAt(?\DateTimeImmutable $archivedByClientAt): self
+    {
+        $this->archivedByClientAt = $archivedByClientAt;
+
+        return $this;
+    }
+
+    public function isArchivedByClient(): bool
+    {
+        return null !== $this->archivedByClientAt;
+    }
+
+    public function getArchivedByPrestataireAt(): ?\DateTimeImmutable
+    {
+        return $this->archivedByPrestataireAt;
+    }
+
+    public function setArchivedByPrestataireAt(?\DateTimeImmutable $archivedByPrestataireAt): self
+    {
+        $this->archivedByPrestataireAt = $archivedByPrestataireAt;
+
+        return $this;
+    }
+
+    public function isArchivedByPrestataire(): bool
+    {
+        return null !== $this->archivedByPrestataireAt;
+    }
+
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeImmutable $deletedAt): static
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    public function isDeleted(): bool
+    {
+        return null !== $this->deletedAt;
+    }
+
+    public function canBeDeleted(): bool
+    {
+        if (null !== $this->deletedAt) {
+            return false;
+        }
+
+        if (null !== $this->conversation) {
+            return false;
+        }
+
+        return \in_array(
+            $this->status,
+            [QuoteRequestStatusEnum::SUBMITTED, QuoteRequestStatusEnum::DENIED],
+            true
+        );
+    }
+
+    public function shouldBeArchivedInsteadOfDeleted(): bool
+    {
+        return !$this->canBeDeleted();
+    }
+}

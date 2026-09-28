@@ -1,0 +1,102 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
+namespace App\Catalog\Controller;
+
+use App\Account\Entity\User;
+use App\Catalog\Repository\ServiceCategoryRepository;
+use App\Prestataire\Repository\PrestataireServiceRepository;
+use App\Review\Enum\FavoriteTypeEnum;
+use App\Review\Repository\FavoriteRepository;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+/**
+ * Gère les actions liées à bons plans.
+ */
+class BonsPlansController extends AbstractController
+{
+    #[Route('/bons-plans', name: 'app_bons_plans', methods: ['GET'])]
+    /**
+     * Affiche la page principale de ce contrôleur.
+     */
+    public function index(
+        Request $request,
+        PrestataireServiceRepository $prestataireServiceRepository,
+        ServiceCategoryRepository $serviceCategoryRepository,
+        PaginatorInterface $paginator,
+        FavoriteRepository $favoriteRepository,
+    ): Response {
+        $selectedCategorySlug = $request->query->get('category');
+        $selectedSubCategorySlug = $request->query->get('subCategory');
+
+        $categories = $serviceCategoryRepository->findBy(
+            ['parent' => null, 'isActive' => true],
+            ['position' => 'ASC']
+        );
+
+        $subCategories = [];
+        if ($selectedCategorySlug) {
+            $selectedCategory = $serviceCategoryRepository->findOneBy([
+                'slug' => $selectedCategorySlug,
+                'isActive' => true,
+            ]);
+
+            if ($selectedCategory) {
+                $subCategories = $serviceCategoryRepository->findBy(
+                    ['parent' => $selectedCategory, 'isActive' => true],
+                    ['position' => 'ASC']
+                );
+            }
+        }
+
+        $queryBuilder = $prestataireServiceRepository->getBonsPlansQueryBuilder(
+            $selectedCategorySlug ?: null,
+            $selectedSubCategorySlug ?: null
+        );
+
+        $bonsPlans = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            9,
+            [
+                'wrap-queries' => true,
+            ]
+        );
+
+        $favoriteBonPlanIds = [];
+        $user = $this->getUser();
+
+        if ($user instanceof User && $this->isGranted('ROLE_CLIENT')) {
+            $favoriteBonPlanIds = $favoriteRepository->findTargetIdsByUserAndType($user, FavoriteTypeEnum::BON_PLAN);
+        }
+
+        return $this->render('Catalog/bons_plans/bons_plans.html.twig', [
+            'bonsPlans' => $bonsPlans,
+            'categories' => $categories,
+            'subCategories' => $subCategories,
+            'selectedCategorySlug' => $selectedCategorySlug,
+            'selectedSubCategorySlug' => $selectedSubCategorySlug,
+            'favoriteBonPlanIds' => $favoriteBonPlanIds,
+        ]);
+    }
+}

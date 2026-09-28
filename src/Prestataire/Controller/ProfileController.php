@@ -1,0 +1,661 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
+namespace App\Prestataire\Controller;
+
+use App\Account\Controller\AbstractProfileController;
+use App\Account\Entity\User;
+use App\Account\Service\AccountSecurityManager;
+use App\Account\Service\AuthenticatedUserProvider;
+use App\Catalog\Repository\ServiceCategoryRepository;
+use App\Catalog\Repository\ServiceRepository;
+use App\Company\Service\CompanyRegistryClient;
+use App\Company\Service\CompanyVerificationManager;
+use App\Prestataire\Entity\PrestataireDocument;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Prestataire\Entity\PrestataireService;
+use App\Prestataire\Enum\PrestataireDocumentTypeEnum;
+use App\Prestataire\Form\PrestataireServiceType;
+use App\Prestataire\Service\PrestataireAvailabilityManager;
+use App\Prestataire\Service\PrestataireProfileCompletionService;
+use App\Prestataire\Service\PrestataireProfileManager;
+use App\Prestataire\Service\PrestataireSettingsFormsFactory;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\String\Slugger\SluggerInterface;
+
+class ProfileController extends AbstractProfileController
+{
+    public function __construct(
+        private readonly PrestataireProfileManager $prestataireProfileManager,
+        private readonly PrestataireAvailabilityManager $prestataireAvailabilityManager,
+        private readonly PrestataireProfileCompletionService $prestataireProfileCompletionService,
+        private readonly CompanyVerificationManager $companyVerificationManager,
+        private readonly PrestataireSettingsFormsFactory $prestataireSettingsFormsFactory,
+        private readonly AuthenticatedUserProvider $authenticatedUserProvider,
+        AccountSecurityManager $accountSecurityManager,
+        TokenStorageInterface $tokenStorage,
+        RequestStack $requestStack,
+    ) {
+        parent::__construct($accountSecurityManager, $tokenStorage, $requestStack);
+    }
+
+    #[Route('/prestataire/parametres', name: 'app_prestataire_settings')]
+    #[IsGranted('ROLE_PRESTATAIRE')]
+    public function settings(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ServiceCategoryRepository $categoryRepository,
+        CompanyRegistryClient $companyRegistryClient,
+    ): Response {
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
+
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $prestataireProfile = $this->prestataireProfileManager->getOrCreateProfile($user);
+        $this->prestataireProfileManager->ensureDefaultAvailabilities($prestataireProfile);
+
+        $availabilities = $this->prestataireProfileManager->getSortedAvailabilities($prestataireProfile);
+        $documents = $this->prestataireProfileManager->getSortedDocuments($prestataireProfile);
+        $certificationDocuments = array_values(array_filter(
+            $documents,
+            static fn (PrestataireDocument $document): bool => PrestataireDocumentTypeEnum::CERTIFICATION === $document->getType()
+        ));
+        $companyDocuments = array_values(array_filter(
+            $documents,
+            static fn (PrestataireDocument $document): bool => PrestataireDocumentTypeEnum::CERTIFICATION !== $document->getType()
+        ));
+        $zones = $prestataireProfile->getPrestataireInterventionZones();
+
+        $forms = $this->prestataireSettingsFormsFactory->create($user, $prestataireProfile);
+
+        $forms->userForm->handleRequest($request);
+        $forms->publicProfileForm->handleRequest($request);
+        $forms->certificationForm->handleRequest($request);
+        $forms->companyForm->handleRequest($request);
+        $forms->availabilityForm->handleRequest($request);
+        $forms->notificationForm->handleRequest($request);
+        $forms->documentForm->handleRequest($request);
+        $forms->passwordForm->handleRequest($request);
+        $forms->deletionForm->handleRequest($request);
+
+        $companyVerificationPreview = null;
+        $openCompanyVerificationModal = false;
+        $activeTab = $request->query->get('tab', 'profile');
+
+        if ($response = $this->handleDocumentForm(
+            entityManager: $entityManager,
+            prestataireProfile: $prestataireProfile,
+            documentForm: $forms->documentForm,
+            document: $forms->documentEntity,
+        )) {
+            return $response;
+        }
+
+        if ($response = $this->handleCertificationForm(
+            entityManager: $entityManager,
+            prestataireProfile: $prestataireProfile,
+            certificationForm: $forms->certificationForm,
+            certification: $forms->certificationEntity,
+        )) {
+            return $response;
+        }
+
+        if ($response = $this->handleUserForm(
+            entityManager: $entityManager,
+            userForm: $forms->userForm,
+            user: $user,
+            prestataireProfile: $prestataireProfile,
+        )) {
+            return $response;
+        }
+
+        if ($response = $this->handlePublicProfileForm(
+            entityManager: $entityManager,
+            publicProfileForm: $forms->publicProfileForm,
+            prestataireProfile: $prestataireProfile,
+        )) {
+            return $response;
+        }
+
+        $companyResult = $this->handleCompanyForm(
+            request: $request,
+            entityManager: $entityManager,
+            companyForm: $forms->companyForm,
+            prestataireProfile: $prestataireProfile,
+            companyRegistryClient: $companyRegistryClient,
+        );
+
+        if ($companyResult['response'] instanceof Response) {
+            return $companyResult['response'];
+        }
+
+        $companyVerificationPreview = $companyResult['companyVerificationPreview'];
+        $openCompanyVerificationModal = $companyResult['openCompanyVerificationModal'];
+
+        if ($response = $this->handleAvailabilityForm(
+            entityManager: $entityManager,
+            availabilityForm: $forms->availabilityForm,
+            prestataireProfile: $prestataireProfile,
+        )) {
+            return $response;
+        }
+
+        if ($response = $this->handleNotificationForm(
+            entityManager: $entityManager,
+            notificationForm: $forms->notificationForm,
+            user: $user,
+            redirectRoute: 'app_prestataire_settings',
+        )) {
+            return $response;
+        }
+
+        if ($response = $this->handlePasswordForm(
+            entityManager: $entityManager,
+            passwordForm: $forms->passwordForm,
+            user: $user,
+            redirectRoute: 'app_prestataire_settings',
+        )) {
+            return $response;
+        }
+
+        if ($response = $this->handleDeletionForm(
+            entityManager: $entityManager,
+            deletionForm: $forms->deletionForm,
+            user: $user,
+        )) {
+            return $response;
+        }
+
+        $zoneMap = $this->prestataireProfileManager->buildZoneMap($zones);
+
+        return $this->render('Prestataire/profile/prestataire_profile.html.twig', [
+            'userForm' => $forms->userForm->createView(),
+            'publicProfileForm' => $forms->publicProfileForm->createView(),
+            'certificationForm' => $forms->certificationForm->createView(),
+            'companyForm' => $forms->companyForm->createView(),
+            'zoneForm' => $forms->zoneForm->createView(),
+            'zones' => $zones,
+            'user' => $user,
+            'categories' => $categoryRepository->findWithSubCategories(),
+            'zoneMap' => $zoneMap,
+            'availabilityForm' => $forms->availabilityForm->createView(),
+            'availabilities' => $availabilities,
+            'notificationForm' => $forms->notificationForm->createView(),
+            'companyVerificationPreview' => $companyVerificationPreview,
+            'openCompanyVerificationModal' => $openCompanyVerificationModal,
+            'documentForm' => $forms->documentForm->createView(),
+            'documents' => $companyDocuments,
+            'certificationDocuments' => $certificationDocuments,
+            'passwordForm' => $forms->passwordForm->createView(),
+            'deletionForm' => $forms->deletionForm->createView(),
+            'activeTab' => $this->resolveActiveTab(
+                defaultTab: $activeTab,
+                availabilityForm: $forms->availabilityForm,
+                notificationForm: $forms->notificationForm,
+                passwordForm: $forms->passwordForm,
+                deletionForm: $forms->deletionForm,
+            ),
+        ]);
+    }
+
+    private function handleDocumentForm(
+        EntityManagerInterface $entityManager,
+        PrestataireProfile $prestataireProfile,
+        FormInterface $documentForm,
+        PrestataireDocument $document,
+    ): ?Response {
+        if (!$documentForm->isSubmitted()) {
+            return null;
+        }
+
+        if ($documentForm->isValid()) {
+            $document->setPrestataireProfile($prestataireProfile);
+            $prestataireProfile->addDocument($document);
+            $this->prestataireProfileCompletionService->syncCompletionScore($prestataireProfile->getAccount(), $prestataireProfile);
+
+            $entityManager->persist($document);
+            $entityManager->persist($prestataireProfile);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Le document a bien été ajouté.');
+
+            return $this->redirectToRoute('app_prestataire_settings', [
+                'tab' => 'company',
+            ]);
+        }
+
+        $this->addFlash('danger', 'Le document n’a pas pu être ajouté. Vérifiez les champs du formulaire.');
+
+        return null;
+    }
+
+    private function handleCertificationForm(
+        EntityManagerInterface $entityManager,
+        PrestataireProfile $prestataireProfile,
+        FormInterface $certificationForm,
+        PrestataireDocument $certification,
+    ): ?Response {
+        if (!$certificationForm->isSubmitted()) {
+            return null;
+        }
+
+        if ($certificationForm->isValid()) {
+            $certification
+                ->setPrestataireProfile($prestataireProfile)
+                ->setType(PrestataireDocumentTypeEnum::CERTIFICATION);
+
+            $prestataireProfile->addDocument($certification);
+            $this->prestataireProfileCompletionService->syncCompletionScore($prestataireProfile->getAccount(), $prestataireProfile);
+
+            $entityManager->persist($certification);
+            $entityManager->persist($prestataireProfile);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Votre certification a bien été ajoutée.');
+
+            return $this->redirectToRoute('app_prestataire_settings', [
+                'tab' => 'profile',
+                '_fragment' => 'profile-panel',
+            ]);
+        }
+
+        $this->addFlash('danger', 'La certification n’a pas pu être ajoutée. Vérifiez le fichier et les champs saisis.');
+
+        return null;
+    }
+
+    private function handleUserForm(
+        EntityManagerInterface $entityManager,
+        FormInterface $userForm,
+        User $user,
+        PrestataireProfile $prestataireProfile,
+    ): ?Response {
+        if (!$userForm->isSubmitted() || !$userForm->isValid()) {
+            return null;
+        }
+
+        $this->prestataireProfileCompletionService->syncCompletionScore($user, $prestataireProfile);
+
+        $entityManager->persist($user);
+        $entityManager->persist($prestataireProfile);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Vos informations personnelles ont été enregistrées.');
+
+        return $this->redirectToRoute('app_prestataire_settings', [
+            'tab' => 'profile',
+        ]);
+    }
+
+    private function handlePublicProfileForm(
+        EntityManagerInterface $entityManager,
+        FormInterface $publicProfileForm,
+        PrestataireProfile $prestataireProfile,
+    ): ?Response {
+        if (!$publicProfileForm->isSubmitted() || !$publicProfileForm->isValid()) {
+            return null;
+        }
+
+        $this->prestataireProfileManager->syncSlug($prestataireProfile);
+        $this->prestataireProfileCompletionService->syncCompletionScore($prestataireProfile->getAccount(), $prestataireProfile);
+
+        $entityManager->persist($prestataireProfile);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Votre profil public a été enregistré.');
+
+        return $this->redirectToRoute('app_prestataire_settings', [
+            'tab' => 'profile',
+        ]);
+    }
+
+    private function handleCompanyForm(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        FormInterface $companyForm,
+        PrestataireProfile $prestataireProfile,
+        CompanyRegistryClient $companyRegistryClient,
+    ): array {
+        $companyVerificationPreview = null;
+        $openCompanyVerificationModal = false;
+
+        if (!$companyForm->isSubmitted() || !$companyForm->isValid()) {
+            return [
+                'response' => null,
+                'companyVerificationPreview' => $companyVerificationPreview,
+                'openCompanyVerificationModal' => $openCompanyVerificationModal,
+            ];
+        }
+
+        $this->prestataireProfileManager->syncSlug($prestataireProfile);
+
+        $companyFormData = $request->request->all('company_form');
+
+        $isVerifyCompanyAction = \is_array($companyFormData) && \array_key_exists('verifyCompany', $companyFormData);
+        $isAcceptCompanyVerificationAction = $request->request->has('acceptCompanyVerification');
+        $isRejectCompanyVerificationAction = $request->request->has('rejectCompanyVerification');
+
+        if ($isRejectCompanyVerificationAction) {
+            $this->companyVerificationManager->clearPreview();
+            $this->addFlash('info', 'Le pré-remplissage automatique a été refusé.');
+
+            return [
+                'response' => $this->redirectToRoute('app_prestataire_settings', ['tab' => 'company']),
+                'companyVerificationPreview' => null,
+                'openCompanyVerificationModal' => false,
+            ];
+        }
+
+        if ($isAcceptCompanyVerificationAction) {
+            try {
+                $result = $this->companyVerificationManager->applyAcceptedPreview($prestataireProfile);
+            } catch (\RuntimeException $e) {
+                $this->addFlash('warning', $e->getMessage());
+
+                return [
+                    'response' => $this->redirectToRoute('app_prestataire_settings', ['tab' => 'company']),
+                    'companyVerificationPreview' => null,
+                    'openCompanyVerificationModal' => false,
+                ];
+            }
+
+            $this->prestataireProfileCompletionService->syncCompletionScore($prestataireProfile->getAccount(), $prestataireProfile);
+            $entityManager->persist($prestataireProfile);
+            $entityManager->flush();
+
+            if ($result['isVerified'] && !$result['isActive']) {
+                $helpUrl = $this->generateUrl('app_static_page', ['slug' => 'help']);
+
+                $this->addFlash('warning', [
+                    'html' => \sprintf(
+                        'Le SIRET a bien été trouvé, mais l’établissement est indiqué comme fermé dans la base publique. Le profil n’a pas été activé automatiquement et ne sera pas visible par les utilisateurs. Veuillez contacter l’administrateur <a href="%s">ICI</a>.',
+                        htmlspecialchars($helpUrl, \ENT_QUOTES, 'UTF-8')
+                    ),
+                ]);
+            }
+            $this->addFlash('success', 'Les informations officielles de l’entreprise ont été injectées dans votre fiche.');
+
+            return [
+                'response' => $this->redirectToRoute('app_prestataire_settings', ['tab' => 'company']),
+                'companyVerificationPreview' => null,
+                'openCompanyVerificationModal' => false,
+            ];
+        }
+
+        if ($isVerifyCompanyAction) {
+            try {
+                $preview = $this->companyVerificationManager->buildPreview($prestataireProfile, $companyRegistryClient);
+
+                return [
+                    'response' => null,
+                    'companyVerificationPreview' => $preview,
+                    'openCompanyVerificationModal' => true,
+                ];
+            } catch (\Throwable $e) {
+                $this->addFlash('danger', $e->getMessage());
+
+                return [
+                    'response' => $this->redirectToRoute('app_prestataire_settings', ['tab' => 'company']),
+                    'companyVerificationPreview' => null,
+                    'openCompanyVerificationModal' => false,
+                ];
+            }
+        }
+
+        $this->prestataireProfileCompletionService->syncCompletionScore($prestataireProfile->getAccount(), $prestataireProfile);
+        $entityManager->persist($prestataireProfile);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Les informations de l’entreprise ont été enregistrées.');
+
+        return [
+            'response' => $this->redirectToRoute('app_prestataire_settings', ['tab' => 'company']),
+            'companyVerificationPreview' => null,
+            'openCompanyVerificationModal' => false,
+        ];
+    }
+
+    private function handleAvailabilityForm(
+        EntityManagerInterface $entityManager,
+        FormInterface $availabilityForm,
+        PrestataireProfile $prestataireProfile,
+    ): ?Response {
+        if (!$availabilityForm->isSubmitted() || !$availabilityForm->isValid()) {
+            return null;
+        }
+
+        $this->prestataireAvailabilityManager->prepareForPersistence($prestataireProfile);
+        $this->prestataireProfileCompletionService->syncCompletionScore($prestataireProfile->getAccount(), $prestataireProfile);
+
+        $entityManager->persist($prestataireProfile);
+        $entityManager->flush();
+
+        $this->addFlash(
+            'success',
+            $prestataireProfile->isOnVacation()
+                ? 'Votre statut "En vacances" est activé. Vos horaires restent enregistrés.'
+                : 'Vos disponibilités ont bien été enregistrées.'
+        );
+
+        return $this->redirectToRoute('app_prestataire_settings', [
+            'tab' => 'dispo',
+        ]);
+    }
+
+    #[Route('/prestataire/service/ajouter', name: 'app_prestataire_add_service', methods: ['POST'])]
+    #[IsGranted('ROLE_PRESTATAIRE')]
+    public function addService(
+        Request $request,
+        EntityManagerInterface $em,
+        ServiceRepository $serviceRepo,
+        SluggerInterface $slugger,
+    ): Response {
+        if (!$this->isCsrfTokenValid('add_service', (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
+
+            return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
+        }
+
+        $serviceId = $request->request->get('service_id');
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
+        $service = $serviceRepo->find($serviceId);
+
+        if (!$service || !$user || !$user->getPrestataireProfile()) {
+            $this->addFlash('error', 'Une erreur est survenue.');
+
+            return $this->redirectToRoute('app_prestataire_settings');
+        }
+
+        $exists = $em->getRepository(PrestataireService::class)->findOneBy([
+            'prestataire' => $user->getPrestataireProfile(),
+            'service' => $service,
+        ]);
+
+        if ($exists) {
+            $this->addFlash('warning', 'Vous proposez déjà ce service !');
+        } else {
+            $pService = new PrestataireService();
+            $user->getPrestataireProfile()->addPrestataireService($pService);
+            $pService->setService($service);
+            $pService->setIsActive(true);
+
+            $baseSlug = (string) $slugger->slug($service->getName() ?: 'prestation')->lower();
+            $uniqueSlug = \sprintf('%s-%s', $baseSlug, mb_substr(bin2hex(random_bytes(4)), 0, 8));
+            $pService->setSlug($uniqueSlug);
+
+            $em->persist($pService);
+            $this->prestataireProfileCompletionService->syncCompletionScore($user, $user->getPrestataireProfile());
+            $em->persist($user->getPrestataireProfile());
+            $em->flush();
+
+            $this->addFlash('success', 'Service ajouté !');
+        }
+
+        return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
+    }
+
+    #[Route('/prestataire/service/supprimer/{id}', name: 'app_prestataire_service_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_PRESTATAIRE')]
+    public function delete(Request $request, PrestataireService $ps, EntityManagerInterface $em): Response
+    {
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
+
+        if (
+            !$user
+            || !$user->getPrestataireProfile()
+            || $ps->getPrestataire() !== $user->getPrestataireProfile()
+        ) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if ($this->isCsrfTokenValid('delete'.$ps->getId(), $request->request->get('_token'))) {
+            $user->getPrestataireProfile()->removePrestataireService($ps);
+            $em->remove($ps);
+            $this->prestataireProfileCompletionService->syncCompletionScore($user, $user->getPrestataireProfile());
+            $em->persist($user->getPrestataireProfile());
+            $em->flush();
+            $this->addFlash('success', 'Le service a bien été retiré de votre profil.');
+        }
+
+        return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
+    }
+
+    #[Route('/prestataire/service/editer/{id}', name: 'app_prestataire_service_edit')]
+    #[IsGranted('ROLE_PRESTATAIRE')]
+    public function edit(Request $request, PrestataireService $ps, EntityManagerInterface $em): Response
+    {
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
+
+        if (
+            !$user
+            || !$user->getPrestataireProfile()
+            || $ps->getPrestataire() !== $user->getPrestataireProfile()
+        ) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $oldReduction = $ps->getTauxReduction();
+        $canEditReduction = $ps->hasDisplayablePrice();
+
+        $form = $this->createForm(PrestataireServiceType::class, $ps, [
+            'can_edit_reduction' => $canEditReduction,
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (!$ps->hasDisplayablePrice()) {
+                $ps->setTauxReduction(null);
+                $ps->setPromotionCreatedAt(null);
+            } else {
+                $newReduction = $ps->getTauxReduction();
+
+                $oldReductionValue = null !== $oldReduction ? (float) $oldReduction : 0;
+                $newReductionValue = null !== $newReduction ? (float) $newReduction : 0;
+
+                if ($newReductionValue > 0) {
+                    if ($oldReductionValue <= 0 || $oldReductionValue !== $newReductionValue) {
+                        $ps->setPromotionCreatedAt(new \DateTimeImmutable());
+                    }
+                } else {
+                    $ps->setPromotionCreatedAt(null);
+                }
+            }
+
+            $this->prestataireProfileCompletionService->syncCompletionScore($user, $user->getPrestataireProfile());
+            $em->persist($user->getPrestataireProfile());
+            $em->flush();
+
+            $this->addFlash('success', 'Tarifs mis à jour !');
+
+            return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
+        }
+
+        return $this->render('Prestataire/edit_service.html.twig', [
+            'form' => $form->createView(),
+            'ps' => $ps,
+            'canEditReduction' => $canEditReduction,
+        ]);
+    }
+
+    #[Route('/prestataire/document/{id}/supprimer', name: 'app_prestataire_document_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_PRESTATAIRE')]
+    public function deleteDocument(
+        Request $request,
+        PrestataireDocument $document,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
+
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $prestataireProfile = $user->getPrestataireProfile();
+
+        if (!$prestataireProfile) {
+            $this->addFlash('danger', 'Profil prestataire introuvable.');
+
+            return $this->redirectToRoute('app_prestataire_settings', $this->getDocumentRedirectParameters(null));
+        }
+
+        if ($document->getPrestataireProfile()?->getId() !== $prestataireProfile->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer ce document.');
+        }
+
+        if (!$this->isCsrfTokenValid('delete_document_'.$document->getId(), $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Le jeton CSRF est invalide. Veuillez réessayer.');
+
+            return $this->redirectToRoute('app_prestataire_settings', $this->getDocumentRedirectParameters($document));
+        }
+
+        $prestataireProfile->removeDocument($document);
+        $this->prestataireProfileCompletionService->syncCompletionScore($user, $prestataireProfile);
+        $entityManager->remove($document);
+        $entityManager->persist($prestataireProfile);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le document a bien été supprimé.');
+
+        return $this->redirectToRoute('app_prestataire_settings', $this->getDocumentRedirectParameters($document));
+    }
+
+    private function getDocumentRedirectParameters(?PrestataireDocument $document): array
+    {
+        if (PrestataireDocumentTypeEnum::CERTIFICATION === $document?->getType()) {
+            return [
+                'tab' => 'profile',
+                '_fragment' => 'profile-panel',
+            ];
+        }
+
+        return [
+            'tab' => 'company',
+            '_fragment' => 'company-panel',
+        ];
+    }
+}

@@ -1,0 +1,76 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
+namespace App\Subscription\Repository;
+
+use App\Subscription\Entity\SubscriptionPlan;
+use App\Subscription\Enum\SubscriptionPlanStatusEnum;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+
+/**
+ * @extends ServiceEntityRepository<SubscriptionPlan>
+ */
+class SubscriptionPlanRepository extends ServiceEntityRepository
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, SubscriptionPlan::class);
+    }
+
+    /**
+     * @return list<SubscriptionPlan>
+     */
+    public function findActiveOrdered(): array
+    {
+        return $this->createQueryBuilder('sp')
+            ->leftJoin('sp.prices', 'price')
+            ->addSelect('price')
+            ->andWhere('sp.status = :status')
+            ->setParameter('status', SubscriptionPlanStatusEnum::ACTIVE)
+            ->orderBy('sp.sortOrder', 'ASC')
+            ->addOrderBy('sp.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findOneActiveByCode(string $code): ?SubscriptionPlan
+    {
+        return $this->createQueryBuilder('sp')
+            ->leftJoin('sp.prices', 'price')
+            ->addSelect('price')
+            ->andWhere('sp.code = :code')
+            ->andWhere('sp.status = :status')
+            ->setParameter('code', $code)
+            ->setParameter('status', SubscriptionPlanStatusEnum::ACTIVE)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findOneByStripePriceId(string $stripePriceId): ?SubscriptionPlan
+    {
+        return $this->createQueryBuilder('sp')
+            ->leftJoin('sp.prices', 'price')
+            ->addSelect('price')
+            ->andWhere('price.stripePriceId = :stripePriceId OR sp.monthlyStripePriceId = :stripePriceId OR sp.annualStripePriceId = :stripePriceId')
+            ->setParameter('stripePriceId', $stripePriceId)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+}

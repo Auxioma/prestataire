@@ -1,0 +1,185 @@
+{% extends 'Website/base.html.twig' %}
+
+{% block title %}Demande archivée{% endblock %}
+
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/quote_request/archived_show.css') }}">{% endblock %}
+
+{% block body %}
+{% set provider = quoteRequest.prestataire %}
+{% set providerName = provider and provider.companyName ? provider.companyName : 'Prestataire' %}
+{% set providerProfileUrl = provider and provider.slug ? path('app_prestataire_show', {slug: provider.slug}) : null %}
+<section class="tm-qad-page">
+    <div class="tm-qad-shell">
+        <a href="{{ path('app_quote_request_history') }}" class="tm-qad-backlink">
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+            <span>Retour à l’historique</span>
+        </a>
+
+        <header class="tm-qad-hero">
+            <div class="tm-qad-hero__inner">
+                <span class="tm-qad-hero__eyebrow">Demande archivée</span>
+                <h1 class="tm-qad-hero__title">{{ quoteRequest.title }}</h1>
+                <p class="tm-qad-hero__text">
+                    Cette demande est conservée dans votre historique et reste consultable en lecture seule.
+                </p>
+            </div>
+        </header>
+
+        <section class="tm-qad-panel">
+            <div class="tm-qad-panel__body">
+                <div class="tm-qad-panel__head">
+                    <div class="tm-qad-panel__heading">
+                        <h2 class="tm-qad-panel__title">Informations générales</h2>
+                        <p class="tm-qad-panel__text mb-0">
+                            Prestataire :
+                            {% if providerProfileUrl %}
+                                <a href="{{ providerProfileUrl }}">{{ providerName }}</a>
+                            {% else %}
+                                {{ providerName }}
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div class="tm-qad-panel__meta-grid">
+                        <div class="tm-qad-meta">
+                            <span class="tm-qad-meta__label">Statut</span>
+                            <strong class="tm-qad-meta__value">{{ quoteRequest.status.getLabel() }}</strong>
+                        </div>
+
+                        <div class="tm-qad-meta">
+                            <span class="tm-qad-meta__label">Archivée le</span>
+                            <strong class="tm-qad-meta__value">
+                                {{ quoteRequest.archivedByClientAt ? quoteRequest.archivedByClientAt|date('d/m/Y à H:i') : '—' }}
+                            </strong>
+                        </div>
+
+                        <div class="tm-qad-meta">
+                            <span class="tm-qad-meta__label">Budget</span>
+                            <strong class="tm-qad-meta__value">
+                                {{ quoteRequest.budgetAmount is not null ? quoteRequest.budgetAmount|number_format(2, ',', ' ') ~ ' €' : 'Non renseigné' }}
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+
+                {% if quoteRequest.description %}
+                    <div class="tm-qad-panel__block">
+                        <h3 class="tm-qad-panel__subtitle">Description</h3>
+                        <p class="tm-qad-panel__text">{{ quoteRequest.description|nl2br }}</p>
+                    </div>
+                {% endif %}
+
+                {% if canLeaveReview or existingReview %}
+                    <div class="tm-qad-panel__block">
+                        <h3 class="tm-qad-panel__subtitle">Votre avis client</h3>
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            {% if canLeaveReview %}
+                                <a href="{{ path('app_review_create', {quoteRequestSlug: quoteRequest.slug}) }}" class="tm-qad-btn tm-qad-btn--primary">
+                                    Laisser un avis
+                                </a>
+                            {% elseif existingReview %}
+                                <span class="badge text-bg-success">Avis déjà laissé</span>
+                                <a href="{{ path('app_review_my_reviews') }}" class="btn btn-outline-secondary btn-sm">
+                                    Voir mes avis
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="tm-qad-panel">
+            <div class="tm-qad-panel__body">
+                <div class="tm-qad-panel__heading">
+                    <h2 class="tm-qad-panel__title">Devis reçus</h2>
+                </div>
+
+                {% if quoteResponses is not empty %}
+                    <div class="tm-qad-proposals">
+                        {% for proposal in quoteResponses %}
+                            <article class="tm-qad-proposal">
+                                <div class="tm-qad-proposal__body">
+                                    <div class="tm-qad-proposal__top">
+                                        <div class="tm-qad-proposal__heading">
+                                            <h3 class="tm-qad-proposal__title">
+                                                {{ proposal.proposalNumber ?: 'Devis' }}
+                                            </h3>
+                                            <p class="tm-qad-proposal__subtitle">
+                                                Référence {{ proposal.publicReference }}
+                                            </p>
+                                        </div>
+
+                                        <div class="tm-qad-proposal__meta-grid">
+                                            <div class="tm-qad-meta">
+                                                <span class="tm-qad-meta__label">Statut</span>
+                                                <strong class="tm-qad-meta__value">{{ proposal.status.getLabel() }}</strong>
+                                            </div>
+
+                                            <div class="tm-qad-meta">
+                                                <span class="tm-qad-meta__label">Montant TTC</span>
+                                                <strong class="tm-qad-meta__value">
+                                                    {{ proposal.totalTtc is not null ? proposal.totalTtc|number_format(2, ',', ' ') ~ ' €' : '—' }}
+                                                </strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% if proposal.publicReference is defined and proposal.publicReference is not empty %}
+                                    <aside class="tm-qad-proposal__aside">
+                                        <a href="{{ path('app_quote_request_quote_proposal_show', {publicReference: proposal.publicReference}) }}"
+                                           class="tm-qad-btn tm-qad-btn--primary">
+                                            Voir le devis
+                                        </a>
+                                        {% if proposal.invoice and proposal.invoice.isIssued %}
+                                            <a href="{{ path('app_quote_request_invoice_show', {publicReference: proposal.publicReference}) }}"
+                                               class="tm-qad-btn tm-qad-btn--primary">
+                                                Voir la facture
+                                            </a>
+                                        {% endif %}
+                                    </aside>
+                                {% endif %}
+                            </article>
+                        {% endfor %}
+                    </div>
+
+                    {% if visiblePrestataireDocuments is defined and visiblePrestataireDocuments is not empty %}
+                        <div class="tm-qad-panel__block mt-4">
+                            <h3 class="tm-qad-panel__subtitle">Documents annexes du prestataire</h3>
+
+                            <div class="d-flex flex-column gap-2">
+                                {% for document in visiblePrestataireDocuments %}
+                                    <div class="border rounded-3 p-3 bg-light-subtle d-flex justify-content-between align-items-center gap-3">
+                                        <div>
+                                            <div class="fw-semibold">{{ document.type.label }}</div>
+                                            <div class="small text-muted">
+                                                {% if document.originalName %}{{ document.originalName }}{% endif %}
+                                                {% if document.expiresAt %} • Expire le {{ document.expiresAt|date('d/m/Y') }}{% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge bg-{{ document.status.badgeClass }}-subtle text-{{ document.status.badgeClass }}">
+                                                {{ document.status.label }}
+                                            </span>
+                                            <a href="{{ path('app_quote_request_prestataire_document_view', {slug: quoteRequest.slug, id: document.id}) }}"
+                                               target="_blank"
+                                               rel="noopener"
+                                               class="tm-qad-btn tm-qad-btn--primary">
+                                                Ouvrir
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p class="tm-qad-empty-text">Aucun devis n’est rattaché à cette demande.</p>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+</section>
+{% endblock %}

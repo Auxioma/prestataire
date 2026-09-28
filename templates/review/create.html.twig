@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'Website/base.html.twig' %}
 
 {% block title %}{{ (isEdit|default(false)) ? 'Modifier mon avis' : 'Laisser un avis' }}{% endblock %}
 
@@ -11,12 +11,12 @@
     {% set isEdit = isEdit|default(false) %}
     <div class="container-fluid p-0 tm-cp-page-wrapper">
         <div class="d-flex flex-column flex-md-row align-items-stretch">
-            {{ include('profile/_client_sidebar.html.twig', { user: app.user }) }}
+            {{ include('Account/profile/_client_sidebar.html.twig', {user: app.user}) }}
 
             <div class="grow p-3 p-md-5 tm-cp-main-content-inner">
                 <section class="c-client-quotes-page">
                     <div class="c-client-quotes-page__container">
-                        <a href="{{ path(isEdit ? 'app_review_my_reviews' : 'app_quote_request_show', isEdit ? {} : { slug: quoteRequest.slug }) }}" class="c-client-quotes-backlink">
+                        <a href="{{ path(isEdit ? 'app_review_my_reviews' : 'app_quote_request_show', isEdit ? {} : {slug: quoteRequest.slug}) }}" class="c-client-quotes-backlink">
                             <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
                             <span>{{ isEdit ? 'Retour à mes avis' : 'Retour à la demande' }}</span>
                         </a>
@@ -58,25 +58,26 @@
 
                                         {{ form_start(form, {
                                             attr: {
-                                                'data-turbo': 'false'
-                                                }
+                                                'data-turbo': 'false',
+                                                },
                                             }) }}
                                             <div class="tm-review-rating-box mb-4">
                                                 <div class="tm-review-rating-box__head">
-                                                    <label class="form-label fw-semibold d-block mb-0">Votre note</label>
+                                                    <span class="form-label fw-semibold d-block mb-0" id="review-rating-label">Votre note</span>
                                                     <span class="tm-review-rating-box__hint">Cliquez sur une étoile pour noter l’expérience</span>
                                                 </div>
 
                                                 <div
                                                     class="tm-review-rating-widget"
-                                                    data-controller="star-rating"
-                                                    data-star-rating-rating-value="{{ form.rating.vars.value|default(0) }}"
+                                                    data-controller="review--star-rating"
+                                                    data-review--star-rating-rating-value="{{ form.rating.vars.value|default(0) }}"
                                                 >
                                                     <div
                                                         class="tm-review-stars"
                                                         role="radiogroup"
-                                                        aria-label="Sélectionner une note de 0 à 5"
-                                                        data-action="mouseleave->star-rating#resetPreview"
+                                                        aria-labelledby="review-rating-label"
+                                                        {% if form.rating.vars.errors|length > 0 %}aria-invalid="true" aria-describedby="{{ form.rating.vars.id }}-errors"{% endif %}
+                                                        data-action="mouseleave->review--star-rating#resetPreview"
                                                     >
                                                         {% for star in 1..5 %}
                                                             <button
@@ -85,9 +86,9 @@
                                                                 role="radio"
                                                                 aria-label="Attribuer {{ star }} étoile{{ star > 1 ? 's' : '' }}"
                                                                 aria-checked="false"
-                                                                data-star-rating-target="star"
+                                                                data-review--star-rating-target="star"
                                                                 data-value="{{ star }}"
-                                                                data-action="click->star-rating#select mouseenter->star-rating#preview focus->star-rating#preview"
+                                                                data-action="click->review--star-rating#select mouseenter->review--star-rating#preview focus->review--star-rating#preview"
                                                             >
                                                                 <span aria-hidden="true" class="tm-review-stars__glyph">☆</span>
                                                             </button>
@@ -98,7 +99,7 @@
                                                         type="button"
                                                         class="btn btn-sm btn-outline-secondary tm-review-rating-widget__reset"
                                                         aria-label="Aucune étoile"
-                                                        data-action="click->star-rating#select"
+                                                        data-action="click->review--star-rating#select"
                                                         data-value="0"
                                                     >
                                                         Remettre à 0
@@ -106,11 +107,11 @@
 
                                                     {{ form_widget(form.rating, {
                                                         attr: {
-                                                            'data-star-rating-target': 'input'
-                                                        }
+                                                            'data-review--star-rating-target': 'input',
+                                                        },
                                                     }) }}
                                                 </div>
-                                                <div class="tm-review-errors mt-2">
+                                                <div id="{{ form.rating.vars.id }}-errors" class="tm-review-errors mt-2" {% if form.rating.vars.errors|length > 0 %}role="alert"{% endif %}>
                                                     {{ form_errors(form.rating) }}
                                                 </div>
                                             </div>
@@ -118,14 +119,16 @@
                                             <div class="tm-review-comment-box mb-4">
                                                 <div class="tm-review-comment-box__head">
                                                     <label for="{{ form.comment.vars.id }}" class="form-label fw-semibold mb-0">Votre commentaire</label>
-                                                    <span class="tm-review-comment-box__hint">Partagez les points utiles : qualité, ponctualité, communication, propreté.</span>
+                                                    <span id="review-comment-help" class="tm-review-comment-box__hint">Partagez les points utiles : qualité, ponctualité, communication, propreté.</span>
                                                 </div>
                                                 {{ form_widget(form.comment, {
                                                     attr: {
-                                                        class: 'form-control tm-review-comment-box__textarea'
-                                                    }
+                                                        class: 'form-control tm-review-comment-box__textarea',
+                                                        'aria-describedby': 'review-comment-help',
+                                                        'aria-invalid': form.comment.vars.errors|length > 0 ? 'true' : 'false',
+                                                    },
                                                 }) }}
-                                                <div class="tm-review-errors mt-2">
+                                                <div id="{{ form.comment.vars.id }}-errors" class="tm-review-errors mt-2" {% if form.comment.vars.errors|length > 0 %}role="alert"{% endif %}>
                                                     {{ form_errors(form.comment) }}
                                                 </div>
                                             </div>

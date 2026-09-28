@@ -2,16 +2,31 @@
 
 declare(strict_types=1);
 
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
 namespace App\Tests\Service;
 
-use App\Entity\PrestataireProfile;
-use App\Entity\Subscription\PrestataireSubscription;
-use App\Entity\Subscription\SubscriptionInvoice;
-use App\Entity\Subscription\SubscriptionPlan;
-use App\Enum\SubscriptionBillingPeriodEnum;
-use App\Enum\SubscriptionInvoiceStatusEnum;
-use App\Service\Subscription\SubscriptionFacturXXmlBuilder;
-use App\Service\Subscription\SubscriptionInvoicePdfGenerator;
+use App\Prestataire\Entity\PrestataireProfile;
+use App\Subscription\Entity\PrestataireSubscription;
+use App\Subscription\Entity\SubscriptionInvoice;
+use App\Subscription\Entity\SubscriptionPlan;
+use App\Subscription\Enum\SubscriptionBillingPeriodEnum;
+use App\Subscription\Enum\SubscriptionInvoiceStatusEnum;
+use App\Subscription\Service\SubscriptionFacturXXmlBuilder;
+use App\Subscription\Service\SubscriptionInvoicePdfGenerator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Twig\Environment;
@@ -27,7 +42,7 @@ final class SubscriptionInvoicePdfGeneratorTest extends TestCase
             ->willReturn(sys_get_temp_dir());
 
         $pdfGenerator = new SubscriptionInvoicePdfGenerator(
-            new Environment(new FilesystemLoader(\dirname(__DIR__, 2) . '/templates')),
+            new Environment(new FilesystemLoader(\dirname(__DIR__, 2).'/templates')),
             new SubscriptionFacturXXmlBuilder(),
             $kernel,
         );
@@ -44,7 +59,7 @@ final class SubscriptionInvoicePdfGeneratorTest extends TestCase
 
     private function createInvoiceFixture(): SubscriptionInvoice
     {
-        $prestataire = (new PrestataireProfile())
+        $prestataire = new PrestataireProfile()
             ->setCompanyName('Acme Services')
             ->setLegalName('Acme Services SARL')
             ->setAddress('10 rue de la Paix')
@@ -54,19 +69,19 @@ final class SubscriptionInvoicePdfGeneratorTest extends TestCase
             ->setSiret('12345678900012')
             ->setVatNumber('FR00123456789');
 
-        $plan = (new SubscriptionPlan())
+        $plan = new SubscriptionPlan()
             ->setCode('pro')
             ->setName('Abonnement Pro')
             ->setMonthlyAmount('49.00');
 
-        $subscription = (new PrestataireSubscription())
+        $subscription = new PrestataireSubscription()
             ->setPrestataireProfile($prestataire)
             ->setPlan($plan)
             ->setBillingPeriod(SubscriptionBillingPeriodEnum::MONTHLY)
             ->setCurrentPeriodStart(new \DateTimeImmutable('2026-07-01 00:00:00'))
             ->setCurrentPeriodEnd(new \DateTimeImmutable('2026-07-31 23:59:59'));
 
-        return (new SubscriptionInvoice())
+        return new SubscriptionInvoice()
             ->setSubscription($subscription)
             ->setStripeInvoiceId('in_sub_test_001')
             ->setStripePaymentIntentId('pi_sub_test_001')

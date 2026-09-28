@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'Website/base.html.twig' %}
 
 {% block title %}
     {{ pageTitle }} - TrouveMoi
@@ -30,7 +30,7 @@
             <div class="tm-search-results-card__cover-wrap">
                 <img
                     src="{{ profile.coverImage ? asset('uploads/covers/' ~ profile.coverImage) : asset('images/img_par_defaut.webp') }}"
-                    alt="{{ profile.companyName|default(profile.account.userIdentifier) }}"
+                    alt=""
                     class="tm-search-results-card__cover"
                     loading="lazy"
                     width="1200"
@@ -120,7 +120,7 @@
                 </div>
 
                 {% if canShowProfile %}
-                    <a href="{{ path('app_prestataire_show', { slug: profile.slug }) }}" class="tm-search-results-card__cta">
+                    <a href="{{ path('app_prestataire_show', {slug: profile.slug}) }}" class="tm-search-results-card__cta">
                         <span>Voir le profil</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
@@ -161,7 +161,7 @@
                 </div>
 
                 <div class="tm-search-results-summary">
-                    <div class="tm-search-results-summary__card">
+                    <div class="tm-search-results-summary__card" role="status" aria-live="polite" aria-atomic="true">
                         <span class="tm-search-results-summary__label">Résultats trouvés</span>
                         <strong class="tm-search-results-summary__value">{{ totalResults }}</strong>
                         <span class="tm-search-results-summary__meta">
@@ -182,10 +182,10 @@
             </header>
 
             <div class="tm-search-results-toolbar-wrap">
-                {% include 'search/_homepage_search_toolbar.html.twig' with {
+                {{ include('Search/_homepage_search_toolbar.html.twig', {
                     formView: searchForm,
-                    toolbarClass: 'tm-homepage-search-toolbar--results'
-                } only %}
+                    toolbarClass: 'tm-homepage-search-toolbar--results',
+                }, false) }}
             </div>
 
             {% if hasFilters %}
@@ -245,7 +245,7 @@
                             <div class="tm-search-results-pagination__inner">
                                 {% if currentPage > 1 %}
                                     <a
-                                        href="{{ path('app_homepage_search', app.request.query.all|merge({ page: currentPage - 1 })) }}"
+                                        href="{{ path('app_homepage_search', app.request.query.all|merge({page: currentPage - 1})) }}"
                                         class="tm-search-results-pagination__control tm-search-results-pagination__control--prev"
                                     >
                                         <i class="fa-solid fa-chevron-left"></i>
@@ -261,7 +261,7 @@
                                 <div class="tm-search-results-pagination__pages">
                                     {% if startPage > 1 %}
                                         <a
-                                            href="{{ path('app_homepage_search', app.request.query.all|merge({ page: 1 })) }}"
+                                            href="{{ path('app_homepage_search', app.request.query.all|merge({page: 1})) }}"
                                             class="tm-search-results-pagination__page"
                                         >
                                             1
@@ -274,7 +274,7 @@
 
                                     {% for pageNumber in startPage..endPage %}
                                         <a
-                                            href="{{ path('app_homepage_search', app.request.query.all|merge({ page: pageNumber })) }}"
+                                            href="{{ path('app_homepage_search', app.request.query.all|merge({page: pageNumber})) }}"
                                             class="tm-search-results-pagination__page {{ pageNumber == currentPage ? 'is-active' : '' }}"
                                             {% if pageNumber == currentPage %}aria-current="page"{% endif %}
                                         >
@@ -288,7 +288,7 @@
                                         {% endif %}
 
                                         <a
-                                            href="{{ path('app_homepage_search', app.request.query.all|merge({ page: totalPages })) }}"
+                                            href="{{ path('app_homepage_search', app.request.query.all|merge({page: totalPages})) }}"
                                             class="tm-search-results-pagination__page"
                                         >
                                             {{ totalPages }}
@@ -298,7 +298,7 @@
 
                                 {% if currentPage < totalPages %}
                                     <a
-                                        href="{{ path('app_homepage_search', app.request.query.all|merge({ page: currentPage + 1 })) }}"
+                                        href="{{ path('app_homepage_search', app.request.query.all|merge({page: currentPage + 1})) }}"
                                         class="tm-search-results-pagination__control tm-search-results-pagination__control--next"
                                     >
                                         <span>Suivant</span>

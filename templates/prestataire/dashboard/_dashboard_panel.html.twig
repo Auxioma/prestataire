@@ -5,13 +5,13 @@
     submitted: 'chip--nouvelle',
     accepted: 'chip--en-cours',
     answered: 'chip--repondue',
-    closed: 'chip--repondue'
+    closed: 'chip--repondue',
 } %}
 {% set appointmentStatusClasses = {
     scheduled: 'chip--en-cours',
     confirmed: 'chip--en-cours',
     completed: 'chip--repondue',
-    cancelled: 'chip--refuse'
+    cancelled: 'chip--refuse',
 } %}
 {% set avatarClasses = ['avatar--safran', 'avatar--bleu', 'avatar--vert', 'avatar--violet'] %}
 {% set welcomeName = app.user and app.user.prestataireProfile and app.user.prestataireProfile.companyName
@@ -29,14 +29,14 @@
     {% set nextActions = nextActions|merge([{
         title: section.label,
         subtitle: section.completed ~ '/' ~ section.total ~ ' complétés',
-        href: path('app_prestataire_settings', { tab: section.tab })
+        href: path('app_prestataire_settings', {tab: section.tab}),
     }]) %}
 {% endfor %}
 {% for item in mandatoryChecklist.missingItems|slice(0, 2) %}
     {% set nextActions = nextActions|merge([{
         title: item.label,
         subtitle: 'Paramètres ' ~ (item.tab == 'company' ? 'entreprise' : (item.tab == 'services' ? 'services' : (item.tab == 'zones' ? 'zones' : 'profil'))),
-        href: path('app_prestataire_settings', { tab: item.tab, _fragment: item.fragment })
+        href: path('app_prestataire_settings', {tab: item.tab, _fragment: item.fragment}),
     }]) %}
 {% endfor %}
 
@@ -50,7 +50,7 @@
             </p>
         </div>
         <div class="dash-header__actions">
-            <a href="{{ path('app_prestataire_settings', { tab: 'profile' }) }}" class="btn btn-dash-ghost">
+            <a href="{{ path('app_prestataire_settings', {tab: 'profile'}) }}" class="btn btn-dash-ghost">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
                 Compléter mon profil
             </a>
@@ -154,13 +154,13 @@
             <section class="dash-card">
                 <div class="dash-card__header">
                     <h2>Demandes récentes</h2>
-                    <a href="{{ path('app_prestataire_dashboard', { tab: 'demandes' }) ~ '#demandes-main-panel' }}" class="dash-card__lien">Voir toutes</a>
+                    <a href="{{ path('app_prestataire_dashboard', {tab: 'demandes'}) ~ '#demandes-main-panel' }}" class="dash-card__lien">Voir toutes</a>
                 </div>
                 {% if recentQuoteRequests is empty %}
                     <div class="dash-empty-state">Aucune demande reçue récemment.</div>
                 {% else %}
                     {% for quoteRequest in recentQuoteRequests %}
-                        <a href="{{ path('app_prestataire_dashboard', { tab: 'demandes' }) ~ '#demandes-main-panel' }}" class="ligne-demande">
+                        <a href="{{ path('app_prestataire_dashboard', {tab: 'demandes'}) ~ '#demandes-main-panel' }}" class="ligne-demande">
                             <div>
                                 <b>{{ quoteRequest.title }}</b>
                                 <p>
@@ -185,7 +185,7 @@
             <section class="dash-card">
                 <div class="dash-card__header">
                     <h2>Complétion du profil</h2>
-                    <a href="{{ path('app_prestataire_settings', { tab: 'profile' }) }}" class="dash-card__lien">Voir le détail</a>
+                    <a href="{{ path('app_prestataire_settings', {tab: 'profile'}) }}" class="dash-card__lien">Voir le détail</a>
                 </div>
                 <div class="tm-completion-card">
                     <div class="tm-completion-card__ring" role="progressbar" aria-label="Profil complété" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ completionReport.score }}">
@@ -235,26 +235,26 @@
             <section class="dash-card">
                 <div class="dash-card__header">
                     <h2>Mon agenda</h2>
-                    <a href="{{ path('app_prestataire_dashboard', { tab: 'calendrier' }) ~ '#calendrier-main-panel' }}" class="dash-card__lien">Voir tout</a>
+                    <a href="{{ path('app_prestataire_dashboard', {tab: 'calendrier'}) ~ '#calendrier-main-panel' }}" class="dash-card__lien">Voir tout</a>
                 </div>
                 <div
                     class="mini-cal"
-                    data-controller="calendar-panel"
-                    data-calendar-panel-events-url-value="{{ path('app_prestataire_appointment_events') }}"
-                    data-calendar-panel-update-url-value="{{ path('app_prestataire_appointment_move') }}"
-                    data-calendar-panel-csrf-token-value="{{ csrf_token('move_appointment') }}"
-                    data-calendar-panel-script-url-value="{{ asset('vendor/fullcalendar/index.global.min.js') }}"
-                    data-calendar-panel-compact-value="true"
-                    data-calendar-panel-height-value="290"
+                    data-controller="prestataire--calendar-panel"
+                    data-prestataire--calendar-panel-events-url-value="{{ path('app_prestataire_appointment_events') }}"
+                    data-prestataire--calendar-panel-update-url-value="{{ path('app_prestataire_appointment_move') }}"
+                    data-prestataire--calendar-panel-csrf-token-value="{{ csrf_token('move_appointment') }}"
+                    data-prestataire--calendar-panel-script-url-value="{{ asset('vendor/fullcalendar/index.global.min.js') }}"
+                    data-prestataire--calendar-panel-compact-value="true"
+                    data-prestataire--calendar-panel-height-value="290"
                 >
                     <div class="mini-cal__nav">
-                        <button class="mini-cal__fleche" type="button" aria-label="Mois précédent" data-action="click->calendar-panel#previousMonth"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
-                        <b data-calendar-panel-target="monthLabel">{{ 'now'|date('F Y')|capitalize }}</b>
-                        <button class="mini-cal__fleche" type="button" aria-label="Mois suivant" data-action="click->calendar-panel#nextMonth"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+                        <button class="mini-cal__fleche" type="button" aria-label="Mois précédent" data-action="click->prestataire--calendar-panel#previousMonth"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
+                        <b data-prestataire--calendar-panel-target="monthLabel">{{ 'now'|date('F Y')|capitalize }}</b>
+                        <button class="mini-cal__fleche" type="button" aria-label="Mois suivant" data-action="click->prestataire--calendar-panel#nextMonth"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
                     </div>
                     <div
                         class="tm-dashboard-calendar-embed"
-                        data-calendar-panel-target="calendar"
+                        data-prestataire--calendar-panel-target="calendar"
                     ></div>
                 </div>
                 <p class="small fw-bold text-dark mb-2">Prochains rendez-vous</p>
@@ -289,7 +289,7 @@
             <section class="dash-card">
                 <div class="dash-card__header">
                     <h2>Messages récents</h2>
-                    <a href="{{ path('app_prestataire_dashboard', { tab: 'messages' }) ~ '#messages-main-panel' }}" class="dash-card__lien">Voir tous</a>
+                    <a href="{{ path('app_prestataire_dashboard', {tab: 'messages'}) ~ '#messages-main-panel' }}" class="dash-card__lien">Voir tous</a>
                 </div>
                 {% if recentMessages is empty %}
                     <div class="dash-empty-state">Aucun message récent.</div>
@@ -298,8 +298,8 @@
                         {% set conversation = message.conversation %}
                         {% set quoteRequest = conversation ? conversation.quoteRequest : null %}
                         {% set messageHref = conversation
-                            ? path('app_prestataire_dashboard', { tab: 'messages', conversation: conversation.id }) ~ '#messages-main-panel'
-                            : path('app_prestataire_dashboard', { tab: 'messages' }) ~ '#messages-main-panel'
+                            ? path('app_prestataire_dashboard', {tab: 'messages', conversation: conversation.id}) ~ '#messages-main-panel'
+                            : path('app_prestataire_dashboard', {tab: 'messages'}) ~ '#messages-main-panel'
                         %}
                         {% set senderName = message.author ? message.author.firstName ~ ' ' ~ message.author.lastName : 'Système' %}
                         {% set senderParts = senderName|trim|split(' ') %}
@@ -379,7 +379,7 @@
                         Votre profil est bien avancé : gardez vos disponibilités et votre abonnement à jour pour rester réactif.
                     {% endif %}
                 </p>
-                <a href="{{ path('app_prestataire_settings', { tab: completionReport.score < 100 ? 'profile' : 'services' }) }}">
+                <a href="{{ path('app_prestataire_settings', {tab: completionReport.score < 100 ? 'profile' : 'services'}) }}">
                     Ouvrir les paramètres
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                 </a>

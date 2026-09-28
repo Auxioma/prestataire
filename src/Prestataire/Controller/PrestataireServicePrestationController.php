@@ -1,0 +1,393 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
+namespace App\Prestataire\Controller;
+
+use App\Account\Entity\User;
+use App\Account\Service\AuthenticatedUserProvider;
+use App\Catalog\Repository\ServiceCategoryRepository;
+use App\Catalog\Repository\ServiceRepository;
+use App\Prestataire\Entity\PrestataireService;
+use App\Prestataire\Form\PrestataireServicePrestationType;
+use App\Prestataire\Repository\PrestataireServiceRepository;
+use App\Prestataire\Service\PrestataireProfileCompletionService;
+use App\Review\Enum\FavoriteTypeEnum;
+use App\Review\Repository\FavoriteRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
+use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
+use Symfony\UX\Map\InfoWindow;
+use Symfony\UX\Map\Map;
+use Symfony\UX\Map\Marker;
+use Symfony\UX\Map\Point;
+
+/**
+ * Gère les actions liées à prestataire service prestation.
+ */
+final class PrestataireServicePrestationController extends AbstractController
+{
+    public function __construct(
+        private readonly AuthenticatedUserProvider $authenticatedUserProvider,
+    ) {
+    }
+
+    #[IsGranted('ROLE_PRESTATAIRE')]
+    #[Route('/prestataire/service/{slug}/prestation', name: 'app_prestataire_service_prestation_edit', requirements: ['slug' => Requirement::ASCII_SLUG])]
+    /**
+     * Affiche et traite le formulaire de modification.
+     */
+    public function edit(
+        Request $request,
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        PrestataireService $ps,
+        EntityManagerInterface $em,
+        PrestataireProfileCompletionService $prestataireProfileCompletionService,
+    ): Response {
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
+
+        if (
+            !$user
+            || !$user->getPrestataireProfile()
+            || $ps->getPrestataire() !== $user->getPrestataireProfile()
+        ) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if ($ps->getMedias()->count() < 5) {
+            $missing = 5 - $ps->getMedias()->count();
+
+            for ($i = 0; $i < $missing; ++$i) {
+                $media = new \App\Prestataire\Entity\PrestationMedia();
+                $media->setPosition($ps->getMedias()->count());
+                $ps->addMedia($media);
+            }
+        }
+
+        $form = $this->createForm(PrestataireServicePrestationType::class, $ps);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->has('medias')) {
+                foreach ($form->get('medias') as $mediaForm) {
+                    $media = $mediaForm->getData();
+
+                    if (!$media) {
+                        continue;
+                    }
+
+                    if ($mediaForm->has('delete') && true === $mediaForm->get('delete')->getData()) {
+                        if (method_exists($ps, 'removeMedia')) {
+                            $ps->removeMedia($media);
+                        }
+
+                        $em->remove($media);
+                    }
+                }
+            }
+
+            if (!$ps->hasDisplayablePrice()) {
+                $ps->setTauxReduction(null);
+                $ps->setPromotionCreatedAt(null);
+            }
+
+            $prestataireProfileCompletionService->syncCompletionScore($user, $user->getPrestataireProfile());
+            $em->persist($user->getPrestataireProfile());
+            $em->flush();
+
+            $this->addFlash('success', 'Prestation détaillée enregistrée.');
+
+            return $this->redirect(
+                $this->generateUrl('app_prestataire_settings').'#services-panel'
+            );
+        }
+
+        $zonesCollection = $ps->getPrestataire()?->getPrestataireInterventionZones();
+        $zones = $zonesCollection ? $zonesCollection->toArray() : [];
+
+        $zoneMap = null;
+        $firstMappableZone = null;
+
+        foreach ($zones as $zone) {
+            if (null !== $zone->getLatitude() && null !== $zone->getLongitude()) {
+                $firstMappableZone = $zone;
+                break;
+            }
+        }
+
+        if (null !== $firstMappableZone) {
+            $zoneMap = new Map()
+                ->center(new Point(
+                    (float) $firstMappableZone->getLatitude(),
+                    (float) $firstMappableZone->getLongitude()
+                ))
+                ->zoom(8)
+                ->options(
+                    new LeafletOptions()->tileLayer(new TileLayer(
+                        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                        options: ['maxZoom' => 19],
+                    ))
+                );
+
+            foreach ($zones as $zone) {
+                if (null === $zone->getLatitude() || null === $zone->getLongitude()) {
+                    continue;
+                }
+
+                $label = $zone->getCity() ?: 'Zone d’intervention';
+                $radiusText = null !== $zone->getRadiusKm()
+                    ? 'Rayon : '.(int) $zone->getRadiusKm().' km'
+                    : 'Rayon non renseigné';
+
+                $zoneMap->addMarker(new Marker(
+                    position: new Point(
+                        (float) $zone->getLatitude(),
+                        (float) $zone->getLongitude()
+                    ),
+                    title: $label,
+                    infoWindow: new InfoWindow(
+                        content: \sprintf(
+                            '<strong>%s</strong><br>%s',
+                            htmlspecialchars($label, \ENT_QUOTES, 'UTF-8'),
+                            htmlspecialchars($radiusText, \ENT_QUOTES, 'UTF-8')
+                        )
+                    )
+                ));
+            }
+        }
+
+        return $this->render('Prestataire/edit_prestation.html.twig', [
+            'form' => $form->createView(),
+            'ps' => $ps,
+            'prestation' => $ps,
+            'zones' => $zones,
+            'zoneMap' => $zoneMap,
+            'map' => $zoneMap,
+        ]);
+    }
+
+    #[IsGranted('ROLE_PRESTATAIRE')]
+    #[Route('/prestataire/prestations/nouvelle', name: 'app_prestataire_service_new', methods: ['GET', 'POST'])]
+    /**
+     * Affiche et traite le formulaire de création.
+     */
+    public function new(
+        Request $request,
+        EntityManagerInterface $em,
+        PrestataireServiceRepository $prestataireServiceRepository,
+        ServiceRepository $serviceRepository,
+        ServiceCategoryRepository $categoryRepository,
+        SluggerInterface $slugger,
+        PrestataireProfileCompletionService $prestataireProfileCompletionService,
+    ): Response {
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
+        $prestataire = $user?->getPrestataireProfile();
+
+        if (!$prestataire) {
+            throw $this->createAccessDeniedException('Profil prestataire introuvable.');
+        }
+
+        $categories = $categoryRepository->findBy([
+            'parent' => null,
+            'isActive' => true,
+        ], ['position' => 'ASC']);
+
+        if ($request->isMethod('POST')) {
+            $serviceId = $request->request->get('serviceId');
+            $selectedService = $serviceId ? $serviceRepository->find($serviceId) : null;
+
+            if (!$selectedService) {
+                $this->addFlash('error', 'Veuillez sélectionner un service valide.');
+
+                return $this->render('Prestataire/new_prestation.html.twig', [
+                    'categories' => $categories,
+                ]);
+            }
+
+            $existing = $prestataireServiceRepository->findOneBy([
+                'prestataire' => $prestataire,
+                'service' => $selectedService,
+            ]);
+
+            if ($existing) {
+                $this->addFlash('warning', 'Cette prestation existe déjà. Vous allez être redirigé vers sa fiche.');
+
+                return $this->redirectToRoute('app_prestataire_service_prestation_edit', [
+                    'slug' => $existing->getSlug(),
+                ]);
+            }
+
+            $prestation = new PrestataireService();
+            $prestation->setPrestataire($prestataire);
+            $prestation->setService($selectedService);
+            $prestation->setIsActive(true);
+
+            $baseLabel = $selectedService->getName() ?: 'prestation';
+            $baseSlug = (string) $slugger->slug($baseLabel)->lower();
+
+            $uniqueSlug = \sprintf('%s-%s', $baseSlug, mb_substr(bin2hex(random_bytes(4)), 0, 8));
+            $prestation->setSlug($uniqueSlug);
+
+            $em->persist($prestation);
+            $prestataireProfileCompletionService->syncCompletionScore($user, $prestataire);
+            $em->persist($prestataire);
+            $em->flush();
+
+            $this->addFlash('success', 'Le service a bien été ajouté. Vous pouvez maintenant compléter la prestation.');
+
+            return $this->redirectToRoute('app_prestataire_service_prestation_edit', [
+                'slug' => $prestation->getSlug(),
+            ]);
+        }
+
+        return $this->render('Prestataire/new_prestation.html.twig', [
+            'categories' => $categories,
+        ]);
+    }
+
+    #[Route('/prestataire/service/{slug}/prestation/voir', name: 'app_prestataire_service_prestation_show', methods: ['GET'], requirements: ['slug' => Requirement::ASCII_SLUG])]
+    /**
+     * Affiche le détail de la ressource demandée.
+     */
+    public function show(
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        PrestataireService $ps,
+        FavoriteRepository $favoriteRepository,
+    ): Response {
+        if (!$ps->isActive()) {
+            throw $this->createNotFoundException('Cette prestation est introuvable.');
+        }
+
+        $prestataire = $ps->getPrestataire();
+        $zones = $prestataire?->getPrestataireInterventionZones() ?? [];
+
+        $centerLat = 44.8378;
+        $centerLng = -0.5792;
+        $hasMapCenter = false;
+
+        foreach ($zones as $zone) {
+            if ($zone->getLatitude() && $zone->getLongitude()) {
+                $centerLat = (float) $zone->getLatitude();
+                $centerLng = (float) $zone->getLongitude();
+                $hasMapCenter = true;
+                break;
+            }
+        }
+
+        $companyName = $prestataire?->getCompanyName() ?: 'Prestataire';
+        $serviceName = $ps->getService()?->getName() ?: 'Prestation';
+
+        $prestationMap = new Map()
+            ->center(new Point($centerLat, $centerLng))
+            ->zoom($hasMapCenter ? 10 : 6)
+            ->options(
+                new LeafletOptions()->tileLayer(new TileLayer(
+                    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                    options: ['maxZoom' => 19],
+                ))
+            );
+
+        if ($hasMapCenter) {
+            $prestationMap->addMarker(
+                new Marker(
+                    position: new Point($centerLat, $centerLng),
+                    title: $companyName,
+                    infoWindow: new InfoWindow(
+                        content: \sprintf('<strong>%s</strong><br>%s', $companyName, $serviceName)
+                    )
+                )
+            );
+        }
+
+        $isFavoritePrestation = false;
+        $user = $this->getUser();
+
+        if ($user instanceof User && $this->isGranted('ROLE_CLIENT')) {
+            $isFavoritePrestation = null !== $favoriteRepository->findOneBy([
+                'user' => $user,
+                'type' => FavoriteTypeEnum::PRESTATION,
+                'targetId' => $ps->getId(),
+            ]);
+        }
+
+        return $this->render('Prestataire/show_prestation.html.twig', [
+            'ps' => $ps,
+            'prestation' => $ps,
+            'prestationMap' => $prestationMap,
+            'isFavoritePrestation' => $isFavoritePrestation,
+        ]);
+    }
+
+    #[IsGranted('ROLE_PRESTATAIRE')]
+    #[Route('/prestataire/service/{id}/toggle-active', name: 'app_prestataire_service_toggle_active', methods: ['POST'])]
+    /**
+     * Traite l’action "toggleActive" du contrôleur Prestataire Service Prestation.
+     */
+    public function toggleActive(
+        Request $request,
+        PrestataireService $ps,
+        EntityManagerInterface $em,
+        PrestataireProfileCompletionService $prestataireProfileCompletionService,
+    ): JsonResponse {
+        $user = $this->authenticatedUserProvider->getAuthenticatedPrestataireUser();
+
+        if (
+            !$user
+            || !$user->getPrestataireProfile()
+            || $ps->getPrestataire() !== $user->getPrestataireProfile()
+        ) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Accès refusé.',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $token = (string) $request->request->get('_token');
+
+        if (!$this->isCsrfTokenValid('toggle_prestation_'.$ps->getId(), $token)) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Jeton CSRF invalide.',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $ps->setIsActive(!$ps->isActive());
+        $prestataireProfileCompletionService->syncCompletionScore($user, $user->getPrestataireProfile());
+        $em->persist($user->getPrestataireProfile());
+        $em->flush();
+
+        return $this->json([
+            'success' => true,
+            'isActive' => $ps->isActive(),
+            'message' => $ps->isActive()
+                ? 'La prestation est maintenant active.'
+                : 'La prestation a été désactivée.',
+        ]);
+    }
+}

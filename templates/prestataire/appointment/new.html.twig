@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'Website/base.html.twig' %}
 {% form_theme form 'bootstrap_5_layout.html.twig' %}
 
 {% block title %}Nouveau rendez-vous{% endblock %}
@@ -18,7 +18,7 @@
                 </div>
 
                 <div class="tm-appointment-form-hero__actions">
-                    <a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" class="btn btn-outline-info" data-turbo="false">
+                    <a href="{{ path('app_prestataire_dashboard', {_fragment: 'calendrier-main-panel'}) }}" class="btn btn-outline-info" data-turbo="false">
                         Retour au calendrier
                     </a>
                 </div>
@@ -42,9 +42,9 @@
                                 method: 'POST',
                                 attr: {
                                     'data-turbo': 'false',
-                                    'data-controller': 'appointment-form',
-                                    'class': 'tm-appointment-form'
-                                }
+                                    'data-controller': 'prestataire--appointment-form',
+                                    class: 'tm-appointment-form',
+                                },
                             }) }}
 
                             <div class="tm-appointment-form-section">
@@ -115,7 +115,7 @@
                                     Enregistrer le rendez-vous
                                 </button>
 
-                                <a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" class="btn btn-outline-secondary">
+                                <a href="{{ path('app_prestataire_dashboard', {_fragment: 'calendrier-main-panel'}) }}" class="btn btn-outline-secondary">
                                     Annuler
                                 </a>
                             </div>

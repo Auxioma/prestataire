@@ -115,21 +115,21 @@
 
                     <aside class="tm-quote-item__actions">
                         <div class="tm-quote-item__actions-stack">
-                            <a href="{{ path('app_prestataire_quote_request_show', { slug: quoteRequest.slug }) }}"
+                            <a href="{{ path('app_prestataire_quote_request_show', {slug: quoteRequest.slug}) }}"
                                class="btn tm-quote-index-btn tm-quote-index-btn--primary w-100">
                                 Ouvrir la demande
                             </a>
 
                             {% if quoteRequest.canBeDeleted %}
                                 <form method="post"
-                                      action="{{ path('app_prestataire_quote_request_delete', { slug: quoteRequest.slug }) }}"
+                                      action="{{ path('app_prestataire_quote_request_delete', {slug: quoteRequest.slug}) }}"
                                       class="w-100"
-                                      data-controller="confirm-dialog"
-                                      data-action="submit->confirm-dialog#confirm"
-                                      data-confirm-dialog-title-value="Supprimer cette demande ?"
-                                      data-confirm-dialog-text-value="Cette suppression est définitive."
-                                      data-confirm-dialog-confirm-button-text-value="Supprimer"
-                                      data-confirm-dialog-cancel-button-text-value="Annuler">
+                                      data-controller="core--confirm-dialog"
+                                      data-action="submit->core--confirm-dialog#confirm"
+                                      data-core--confirm-dialog-title-value="Supprimer cette demande ?"
+                                      data-core--confirm-dialog-text-value="Cette suppression est définitive."
+                                      data-core--confirm-dialog-confirm-button-text-value="Supprimer"
+                                      data-core--confirm-dialog-cancel-button-text-value="Annuler">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete-quote-request-' ~ quoteRequest.id) }}">
                                     <button type="submit" class="btn tm-quote-index-btn tm-quote-index-btn--danger w-100">
                                         Supprimer
@@ -137,14 +137,14 @@
                                 </form>
                             {% elseif quoteRequest.archivedByPrestataireAt is null %}
                                 <form method="post"
-                                      action="{{ path('app_prestataire_quote_request_archive', { slug: quoteRequest.slug }) }}"
+                                      action="{{ path('app_prestataire_quote_request_archive', {slug: quoteRequest.slug}) }}"
                                       class="w-100"
-                                      data-controller="confirm-dialog"
-                                      data-action="submit->confirm-dialog#confirm"
-                                      data-confirm-dialog-title-value="Archiver cette demande ?"
-                                      data-confirm-dialog-text-value="Vous pourrez la retrouver ensuite dans vos archives."
-                                      data-confirm-dialog-confirm-button-text-value="Archiver"
-                                      data-confirm-dialog-cancel-button-text-value="Annuler">
+                                      data-controller="core--confirm-dialog"
+                                      data-action="submit->core--confirm-dialog#confirm"
+                                      data-core--confirm-dialog-title-value="Archiver cette demande ?"
+                                      data-core--confirm-dialog-text-value="Vous pourrez la retrouver ensuite dans vos archives."
+                                      data-core--confirm-dialog-confirm-button-text-value="Archiver"
+                                      data-core--confirm-dialog-cancel-button-text-value="Annuler">
                                     <input type="hidden" name="_token" value="{{ csrf_token('archive-quote-request-' ~ quoteRequest.id) }}">
                                     <button type="submit" class="btn tm-quote-index-btn tm-quote-index-btn--ghost w-100">
                                         Archiver
@@ -172,7 +172,7 @@
                                 tab: 'demandes',
                                 quote_sort: quoteSort|default('recent'),
                                 conversation: activeConversation ? activeConversation.id : null,
-                                quotePage: quoteRequests.currentPageNumber - 1
+                                quotePage: quoteRequests.currentPageNumber - 1,
                             }) ~ '#demandes-main-panel' }}">
                                 Précédent
                             </a>
@@ -185,7 +185,7 @@
                                 tab: 'demandes',
                                 quote_sort: quoteSort|default('recent'),
                                 conversation: activeConversation ? activeConversation.id : null,
-                                quotePage: page
+                                quotePage: page,
                             }) ~ '#demandes-main-panel' }}">
                                 {{ page }}
                             </a>
@@ -200,7 +200,7 @@
                                 tab: 'demandes',
                                 quote_sort: quoteSort|default('recent'),
                                 conversation: activeConversation ? activeConversation.id : null,
-                                quotePage: quoteRequests.currentPageNumber + 1
+                                quotePage: quoteRequests.currentPageNumber + 1,
                             }) ~ '#demandes-main-panel' }}">
                                 Suivant
                             </a>

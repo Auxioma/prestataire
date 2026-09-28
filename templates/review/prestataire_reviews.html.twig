@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'Website/base.html.twig' %}
 
 {% block title %}Mes avis reçus{% endblock %}
 
@@ -8,21 +8,21 @@
 {% endblock %}
 
 {% block body %}
-    <section class="tm-dashboard-page" {{ stimulus_controller('prestataire-dashboard-tabs') }}>
+    <section class="tm-dashboard-page" {{ stimulus_controller('prestataire--prestataire-dashboard-tabs') }}>
         <div class="tm-settings-container tm-dashboard-page__shell">
             <div class="tm-main-layout tm-dashboard-page__layout">
-                <aside class="tm-settings-sidebar tm-dashboard-page__sidebar" {{ stimulus_target('prestataire-dashboard-tabs', 'sidebar') }}>
-                    {{ include('profile/_prestataire_dashboard_sidebar.html.twig', {
+                <aside class="tm-settings-sidebar tm-dashboard-page__sidebar" {{ stimulus_target('prestataire--prestataire-dashboard-tabs', 'sidebar') }}>
+                    {{ include('Prestataire/profile/_prestataire_dashboard_sidebar.html.twig', {
                         user: app.user,
                         activeTab: 'avis',
                         asLinks: true,
                     }) }}
                 </aside>
 
-                <div class="tm-settings-sidebar-backdrop tm-dashboard-page__backdrop" {{ stimulus_target('prestataire-dashboard-tabs', 'backdrop') }} {{ stimulus_action('prestataire-dashboard-tabs', 'closeSidebar', 'click') }}></div>
+                <div class="tm-settings-sidebar-backdrop tm-dashboard-page__backdrop" {{ stimulus_target('prestataire--prestataire-dashboard-tabs', 'backdrop') }} {{ stimulus_action('prestataire--prestataire-dashboard-tabs', 'closeSidebar', 'click') }}></div>
 
                 <div class="tm-settings-content tm-dashboard-page__content tm-dashboard-reviews">
-                    <button type="button" class="tm-sidebar-toggle d-lg-none tm-dashboard-page__toggle" aria-label="Ouvrir la navigation du dashboard" {{ stimulus_target('prestataire-dashboard-tabs', 'toggle') }} {{ stimulus_action('prestataire-dashboard-tabs', 'toggleSidebar', 'click') }}>
+                    <button type="button" class="tm-sidebar-toggle d-lg-none tm-dashboard-page__toggle" aria-label="Ouvrir la navigation du dashboard" {{ stimulus_target('prestataire--prestataire-dashboard-tabs', 'toggle') }} {{ stimulus_action('prestataire--prestataire-dashboard-tabs', 'toggleSidebar', 'click') }}>
                         ☰
                     </button>
 
@@ -52,7 +52,7 @@
                                     <div class="avis-resume__note">
                                         <b>{{ prestataire.averageRating|default('0.00')|number_format(1, ',', ' ') }}<small>/5</small></b>
                                         <span class="etoiles">
-                                            {{ include('review/_stars.html.twig', { rating: prestataire.averageRating|default(0)|round(0, 'common') }) }}
+                                            {{ include('Review/_stars.html.twig', {rating: prestataire.averageRating|default(0)|round(0, 'common')}) }}
                                         </span>
                                         <p>Note moyenne actuelle</p>
                                     </div>
@@ -100,7 +100,7 @@
                                                         <span>{{ review.quoteRequest.title|default('Demande associée') }} · Avis vérifié</span>
                                                     </div>
                                                     <div class="carte-avis-page__droite">
-                                                        <span class="etoiles">{{ include('review/_stars.html.twig', { rating: review.rating }) }}</span>
+                                                        <span class="etoiles">{{ include('Review/_stars.html.twig', {rating: review.rating}) }}</span>
                                                         <p>{{ review.createdAt|date('d/m/Y à H:i') }}</p>
                                                     </div>
                                                 </div>
@@ -108,7 +108,7 @@
                                                 <p class="carte-avis-page__texte">{{ review.comment|default('Aucun commentaire ajouté.') }}</p>
 
                                                 <div class="tm-prestataire-review-card__actions">
-                                                    <a href="{{ path('app_report_review', { id: review.id }) }}" class="btn btn-outline-danger btn-sm">
+                                                    <a href="{{ path('app_report_review', {id: review.id}) }}" class="btn btn-outline-danger btn-sm">
                                                         Signaler cet avis
                                                     </a>
                                                 </div>

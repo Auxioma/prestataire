@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'Website/base.html.twig' %}
 
 {% block title %}TrouveMoi - Trouver un professionnel
 {% endblock %}
@@ -6,705 +6,705 @@
 {% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/search/searchPresta_category_service.css') }}">{% endblock %}
 
 {% block body %}
-	{% set directPrestataires = directPrestataires|default([]) %}
-	{% set fallbackPrestataires = fallbackPrestataires|default([]) %}
-	{% set location = location|default('') %}
-	{% set radiusKm = radiusKm|default(25) %}
-	{% set sort = sort|default('proximity') %}
-	<div class="tm-flow-page">
-		<div
-			class="tm-flow-page__container">
-			{# 1. BREADCRUMB #}
-			<nav aria-label="breadcrumb" class="tm-flow-breadcrumb">
-				<ol class="tm-flow-breadcrumb__list">
-					<li class="tm-flow-breadcrumb__item">
-						<a href="{{ path('app_home') }}" class="tm-flow-breadcrumb__link">
-							<i class="fa-solid fa-house"></i>
-							<span>Accueil</span>
-						</a>
-					</li>
+    {% set directPrestataires = directPrestataires|default([]) %}
+    {% set fallbackPrestataires = fallbackPrestataires|default([]) %}
+    {% set location = location|default('') %}
+    {% set radiusKm = radiusKm|default(25) %}
+    {% set sort = sort|default('proximity') %}
+    <div class="tm-flow-page">
+        <div
+            class="tm-flow-page__container">
+            {# 1. BREADCRUMB #}
+            <nav aria-label="breadcrumb" class="tm-flow-breadcrumb">
+                <ol class="tm-flow-breadcrumb__list">
+                    <li class="tm-flow-breadcrumb__item">
+                        <a href="{{ path('app_home') }}" class="tm-flow-breadcrumb__link">
+                            <i class="fa-solid fa-house"></i>
+                            <span>Accueil</span>
+                        </a>
+                    </li>
 
-					{% if currentCategory %}
-						<li class="tm-flow-breadcrumb__item {{ not currentSubCategory and not currentService ? 'is-current' : '' }}">
-							{% if currentSubCategory or currentService %}
-								<a href="{{ path('app_search_flow', {type: 'categorie', slug: currentCategory.slug}) }}" class="tm-flow-breadcrumb__link">
-									{{ currentCategory.name }}
-								</a>
-							{% else %}
-								<span>{{ currentCategory.name }}</span>
-							{% endif %}
-						</li>
-					{% endif %}
+                    {% if currentCategory %}
+                        <li class="tm-flow-breadcrumb__item {{ not currentSubCategory and not currentService ? 'is-current' : '' }}">
+                            {% if currentSubCategory or currentService %}
+                                <a href="{{ path('app_search_flow', {type: 'categorie', slug: currentCategory.slug}) }}" class="tm-flow-breadcrumb__link">
+                                    {{ currentCategory.name }}
+                                </a>
+                            {% else %}
+                                <span>{{ currentCategory.name }}</span>
+                            {% endif %}
+                        </li>
+                    {% endif %}
 
-					{% if currentSubCategory %}
-						<li class="tm-flow-breadcrumb__item {{ not currentService ? 'is-current' : '' }}">
-							{% if currentService %}
-								<a href="{{ path('app_search_flow', {type: 'categorie', slug: currentSubCategory.slug}) }}" class="tm-flow-breadcrumb__link">
-									{{ currentSubCategory.name }}
-								</a>
-							{% else %}
-								<span>{{ currentSubCategory.name }}</span>
-							{% endif %}
-						</li>
-					{% endif %}
+                    {% if currentSubCategory %}
+                        <li class="tm-flow-breadcrumb__item {{ not currentService ? 'is-current' : '' }}">
+                            {% if currentService %}
+                                <a href="{{ path('app_search_flow', {type: 'categorie', slug: currentSubCategory.slug}) }}" class="tm-flow-breadcrumb__link">
+                                    {{ currentSubCategory.name }}
+                                </a>
+                            {% else %}
+                                <span>{{ currentSubCategory.name }}</span>
+                            {% endif %}
+                        </li>
+                    {% endif %}
 
-					{% if currentService %}
-						<li class="tm-flow-breadcrumb__item is-current" aria-current="page">
-							<span>{{ currentService.name }}</span>
-						</li>
-					{% endif %}
-				</ol>
-			</nav>
+                    {% if currentService %}
+                        <li class="tm-flow-breadcrumb__item is-current" aria-current="page">
+                            <span>{{ currentService.name }}</span>
+                        </li>
+                    {% endif %}
+                </ol>
+            </nav>
 
-			{# 2. HERO #}
-			<section class="tm-flow-hero">
-				<div class="tm-flow-hero__main">
-					<span class="tm-flow-hero__eyebrow">
-						{% if currentService %}
-							Sélection de professionnels
-						{% elseif currentSubCategory %}
-							Prestations disponibles
-						{% elseif currentCategory %}
-							Explorer les métiers
-						{% else %}
-							Recherche de prestataires
-						{% endif %}
-					</span>
+            {# 2. HERO #}
+            <section class="tm-flow-hero">
+                <div class="tm-flow-hero__main">
+                    <span class="tm-flow-hero__eyebrow">
+                        {% if currentService %}
+                            Sélection de professionnels
+                        {% elseif currentSubCategory %}
+                            Prestations disponibles
+                        {% elseif currentCategory %}
+                            Explorer les métiers
+                        {% else %}
+                            Recherche de prestataires
+                        {% endif %}
+                    </span>
 
-					{% if currentService %}
-						<h1 class="tm-flow-hero__title">
-							Prestataires pour
-							<span>{{ currentService.name }}</span>
-						</h1>
-						<p class="tm-flow-hero__subtitle">
-							Comparez les entreprises disponibles et choisissez le professionnel qui correspond le mieux à votre besoin.
-						</p>
-					{% elseif currentSubCategory %}
-						<h1 class="tm-flow-hero__title">
-							Services en
-							<span>{{ currentSubCategory.name }}</span>
-						</h1>
-						<p class="tm-flow-hero__subtitle">
-							Sélectionnez la prestation exacte dont vous avez besoin pour trouver le bon professionnel.
-						</p>
-					{% elseif currentCategory %}
-						<h1 class="tm-flow-hero__title">
-							Métiers en
-							<span>{{ currentCategory.name }}</span>
-						</h1>
-						<p class="tm-flow-hero__subtitle">
-							Affinez votre recherche en choisissant une sous-catégorie spécialisée.
-						</p>
-					{% else %}
-						<h1 class="tm-flow-hero__title">Toutes les catégories</h1>
-						<p class="tm-flow-hero__subtitle">
-							Parcourez nos différents secteurs d’activité pour démarrer votre recherche.
-						</p>
-					{% endif %}
-				</div>
+                    {% if currentService %}
+                        <h1 class="tm-flow-hero__title">
+                            Prestataires pour
+                            <span>{{ currentService.name }}</span>
+                        </h1>
+                        <p class="tm-flow-hero__subtitle">
+                            Comparez les entreprises disponibles et choisissez le professionnel qui correspond le mieux à votre besoin.
+                        </p>
+                    {% elseif currentSubCategory %}
+                        <h1 class="tm-flow-hero__title">
+                            Services en
+                            <span>{{ currentSubCategory.name }}</span>
+                        </h1>
+                        <p class="tm-flow-hero__subtitle">
+                            Sélectionnez la prestation exacte dont vous avez besoin pour trouver le bon professionnel.
+                        </p>
+                    {% elseif currentCategory %}
+                        <h1 class="tm-flow-hero__title">
+                            Métiers en
+                            <span>{{ currentCategory.name }}</span>
+                        </h1>
+                        <p class="tm-flow-hero__subtitle">
+                            Affinez votre recherche en choisissant une sous-catégorie spécialisée.
+                        </p>
+                    {% else %}
+                        <h1 class="tm-flow-hero__title">Toutes les catégories</h1>
+                        <p class="tm-flow-hero__subtitle">
+                            Parcourez nos différents secteurs d’activité pour démarrer votre recherche.
+                        </p>
+                    {% endif %}
+                </div>
 
-				<div class="tm-flow-hero__aside">
-					<div class="tm-flow-hero-stat">
-						<span class="tm-flow-hero-stat__label">Parcours fluide</span>
-						<strong class="tm-flow-hero-stat__value">
-							{% if currentService %}
-								{{ prestataires|length }}
-							{% elseif services is not empty %}
-								{{ services|length }}
-							{% elseif subCategories is not empty %}
-								{{ subCategories|length }}
-							{% else %}
-								0
-							{% endif %}
-						</strong>
-						<span class="tm-flow-hero-stat__meta">
-							{% if currentService %}
-								pro{{ prestataires|length > 1 ? 's' : '' }}
-							{% elseif services is not empty %}
-								service{{ services|length > 1 ? 's' : '' }}
-							{% elseif subCategories is not empty %}
-								métier{{ subCategories|length > 1 ? 's' : '' }}
-							{% else %}
-								élément
-							{% endif %}
-						</span>
-					</div>
+                <div class="tm-flow-hero__aside">
+                    <div class="tm-flow-hero-stat">
+                        <span class="tm-flow-hero-stat__label">Parcours fluide</span>
+                        <strong class="tm-flow-hero-stat__value">
+                            {% if currentService %}
+                                {{ prestataires|length }}
+                            {% elseif services is not empty %}
+                                {{ services|length }}
+                            {% elseif subCategories is not empty %}
+                                {{ subCategories|length }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </strong>
+                        <span class="tm-flow-hero-stat__meta">
+                            {% if currentService %}
+                                pro{{ prestataires|length > 1 ? 's' : '' }}
+                            {% elseif services is not empty %}
+                                service{{ services|length > 1 ? 's' : '' }}
+                            {% elseif subCategories is not empty %}
+                                métier{{ subCategories|length > 1 ? 's' : '' }}
+                            {% else %}
+                                élément
+                            {% endif %}
+                        </span>
+                    </div>
 
-					<div class="tm-flow-hero-trust">
-						<div class="tm-flow-mini-badge">
-							<i class="fa-solid fa-circle-check"></i>
-							<span>Profils vérifiés</span>
-						</div>
-						<div class="tm-flow-mini-badge">
-							<i class="fa-solid fa-star"></i>
-							<span>Avis contrôlés</span>
-						</div>
-						<div class="tm-flow-mini-badge">
-							<i class="fa-solid fa-bolt"></i>
-							<span>Réponse rapide</span>
-						</div>
-					</div>
-				</div>
-			</section>
+                    <div class="tm-flow-hero-trust">
+                        <div class="tm-flow-mini-badge">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>Profils vérifiés</span>
+                        </div>
+                        <div class="tm-flow-mini-badge">
+                            <i class="fa-solid fa-star"></i>
+                            <span>Avis contrôlés</span>
+                        </div>
+                        <div class="tm-flow-mini-badge">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span>Réponse rapide</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-			{# 3. SOUS-CATÉGORIES #}
-			{% if subCategories is not empty %}
-				<section class="tm-flow-section">
-					<div class="tm-flow-section__head">
-						<div>
-							<span class="tm-flow-section__eyebrow">Étape suivante</span>
-							<h2 class="tm-flow-section__title">Choisissez un métier</h2>
-							<p class="tm-flow-section__subtitle">
-								Sélectionnez une spécialité pour faire apparaître les prestations associées.
-							</p>
-						</div>
-					</div>
+            {# 3. SOUS-CATÉGORIES #}
+            {% if subCategories is not empty %}
+                <section class="tm-flow-section">
+                    <div class="tm-flow-section__head">
+                        <div>
+                            <span class="tm-flow-section__eyebrow">Étape suivante</span>
+                            <h2 class="tm-flow-section__title">Choisissez un métier</h2>
+                            <p class="tm-flow-section__subtitle">
+                                Sélectionnez une spécialité pour faire apparaître les prestations associées.
+                            </p>
+                        </div>
+                    </div>
 
-					<div class="tm-flow-grid tm-flow-grid--choices">
-						{% for subCat in subCategories %}
-							<a href="{{ path('app_search_flow', {type: 'categorie', slug: subCat.slug}) }}" class="tm-flow-choice-card">
-								<div class="tm-flow-choice-card__top">
-									<div class="tm-flow-choice-card__icon">
-										<i class="fa-solid {{ subCat.icon|default('fa-circle-dot') }}"></i>
-									</div>
+                    <div class="tm-flow-grid tm-flow-grid--choices">
+                        {% for subCat in subCategories %}
+                            <a href="{{ path('app_search_flow', {type: 'categorie', slug: subCat.slug}) }}" class="tm-flow-choice-card">
+                                <div class="tm-flow-choice-card__top">
+                                    <div class="tm-flow-choice-card__icon">
+                                        <i class="fa-solid {{ subCat.icon|default('fa-circle-dot') }}"></i>
+                                    </div>
 
-									<div class="tm-flow-choice-card__content">
-										<h3 class="tm-flow-choice-card__title">{{ subCat.name }}</h3>
-										<p class="tm-flow-choice-card__text">
-											Explorez les prestations liées à cette spécialité et affinez votre recherche.
-										</p>
-									</div>
-								</div>
+                                    <div class="tm-flow-choice-card__content">
+                                        <h3 class="tm-flow-choice-card__title">{{ subCat.name }}</h3>
+                                        <p class="tm-flow-choice-card__text">
+                                            Explorez les prestations liées à cette spécialité et affinez votre recherche.
+                                        </p>
+                                    </div>
+                                </div>
 
-								<div class="tm-flow-choice-card__bottom">
-									<span>Explorer le métier</span>
-									<i class="fa-solid fa-arrow-right"></i>
-								</div>
-							</a>
-						{% endfor %}
-					</div>
-				</section>
-			{% endif %}
+                                <div class="tm-flow-choice-card__bottom">
+                                    <span>Explorer le métier</span>
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
 
-			{# 4. SERVICES #}
-			{% if services is not empty %}
-				<section class="tm-flow-section">
-					<div class="tm-flow-section__head">
-						<div>
-							<span class="tm-flow-section__eyebrow">Prestations</span>
-							<h2 class="tm-flow-section__title">Choisissez un service</h2>
-							<p class="tm-flow-section__subtitle">
-								Lancez votre recherche avec une prestation claire, précise et facile à comparer.
-							</p>
-						</div>
-					</div>
+            {# 4. SERVICES #}
+            {% if services is not empty %}
+                <section class="tm-flow-section">
+                    <div class="tm-flow-section__head">
+                        <div>
+                            <span class="tm-flow-section__eyebrow">Prestations</span>
+                            <h2 class="tm-flow-section__title">Choisissez un service</h2>
+                            <p class="tm-flow-section__subtitle">
+                                Lancez votre recherche avec une prestation claire, précise et facile à comparer.
+                            </p>
+                        </div>
+                    </div>
 
-					<div class="tm-flow-grid tm-flow-grid--services">
-						{% for service in services %}
-							<article class="tm-flow-service-card">
-								<div class="tm-flow-service-card__icon">
-									<i class="fa-solid {{ service.icon|default('fa-gears') }}"></i>
-								</div>
+                    <div class="tm-flow-grid tm-flow-grid--services">
+                        {% for service in services %}
+                            <article class="tm-flow-service-card">
+                                <div class="tm-flow-service-card__icon">
+                                    <i class="fa-solid {{ service.icon|default('fa-gears') }}"></i>
+                                </div>
 
-								<div class="tm-flow-service-card__body">
-									<h3 class="tm-flow-service-card__title">{{ service.name }}</h3>
+                                <div class="tm-flow-service-card__body">
+                                    <h3 class="tm-flow-service-card__title">{{ service.name }}</h3>
 
-									<p class="tm-flow-service-card__desc">
-										{% if service.description %}
-											{{ service.description|length > 110 ? service.description|slice(0, 110) ~ '…' : service.description }}
-										{% else %}
-											Trouvez rapidement un professionnel qualifié pour cette prestation.
-										{% endif %}
-									</p>
-								</div>
+                                    <p class="tm-flow-service-card__desc">
+                                        {% if service.description %}
+                                            {{ service.description|length > 110 ? service.description|slice(0, 110) ~ '…' : service.description }}
+                                        {% else %}
+                                            Trouvez rapidement un professionnel qualifié pour cette prestation.
+                                        {% endif %}
+                                    </p>
+                                </div>
 
-								<div class="tm-flow-service-card__footer">
-									<a href="{{ path('app_search_flow', {type: 'service', slug: service.slug}) }}" class="tm-flow-btn tm-flow-btn--primary">
-										Trouver un pro
-									</a>
-								</div>
-							</article>
-						{% endfor %}
-					</div>
-				</section>
-			{% endif %}
+                                <div class="tm-flow-service-card__footer">
+                                    <a href="{{ path('app_search_flow', {type: 'service', slug: service.slug}) }}" class="tm-flow-btn tm-flow-btn--primary">
+                                        Trouver un pro
+                                    </a>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
 
-			{# 5. PRESTATAIRES #}
-			{% if currentService %}
-				<section class="tm-flow-section">
-					<div class="tm-flow-section__head tm-flow-section__head--split">
-						<div>
-							<span class="tm-flow-section__eyebrow">Professionnels disponibles</span>
-							<h2 class="tm-flow-section__title">Entreprises pour
-								{{ currentService.name }}</h2>
-							<p class="tm-flow-section__subtitle">
-								Des cartes plus homogènes, plus lisibles et plus rassurantes.
-							</p>
-						</div>
+            {# 5. PRESTATAIRES #}
+            {% if currentService %}
+                <section class="tm-flow-section">
+                    <div class="tm-flow-section__head tm-flow-section__head--split">
+                        <div>
+                            <span class="tm-flow-section__eyebrow">Professionnels disponibles</span>
+                            <h2 class="tm-flow-section__title">Entreprises pour
+                                {{ currentService.name }}</h2>
+                            <p class="tm-flow-section__subtitle">
+                                Des cartes plus homogènes, plus lisibles et plus rassurantes.
+                            </p>
+                        </div>
 
-						{% if prestataires is not empty %}
-							<div class="tm-flow-results-pill">
-								{{ directPrestataires|length }}
-								résultat{{ directPrestataires|length > 1 ? 's' : '' }}
-							</div>
-						{% endif %}
-					</div>
+                        {% if prestataires is not empty %}
+                            <div class="tm-flow-results-pill">
+                                {{ directPrestataires|length }}
+                                résultat{{ directPrestataires|length > 1 ? 's' : '' }}
+                            </div>
+                        {% endif %}
+                    </div>
 
-					<div class="tm-flow-filterbar">
-						<form
-							method="GET"
-							class="tm-homepage-search-form tm-flow-filterbar__form"
-							data-controller="homepage-search"
-							data-homepage-search-default-radius-value="{{ radiusKm }}"
-						>
-							<div class="tm-homepage-search-field tm-homepage-search-field--location">
-								<span class="tm-homepage-search-field-icon" aria-hidden="true">
-									<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-										<path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/>
-										<circle cx="12" cy="10" r="2.6"/>
-									</svg>
-								</span>
+                    <div class="tm-flow-filterbar">
+                        <form
+                            method="GET"
+                            class="tm-homepage-search-form tm-flow-filterbar__form"
+                            data-controller="search--homepage-search"
+                            data-search--homepage-search-default-radius-value="{{ radiusKm }}"
+                        >
+                            <div class="tm-homepage-search-field tm-homepage-search-field--location">
+                                <span class="tm-homepage-search-field-icon" aria-hidden="true">
+                                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 21c4.5-4 7-7.6 7-11a7 7 0 1 0-14 0c0 3.4 2.5 7 7 11z"/>
+                                        <circle cx="12" cy="10" r="2.6"/>
+                                    </svg>
+                                </span>
 
-								<div class="tm-homepage-search-field-body">
-									<label for="tm-flow-location" class="tm-homepage-search-label">Localisation</label>
-									<div class="tm-homepage-search-control">
-										<input
-											id="tm-flow-location"
-											type="text"
-											name="location"
-											value="{{ location }}"
-											placeholder="Ville ou code postal..."
-											autocomplete="off"
-											class="tm-homepage-search-input"
-										>
-									</div>
-								</div>
-							</div>
+                                <div class="tm-homepage-search-field-body">
+                                    <label for="tm-flow-location" class="tm-homepage-search-label">Localisation</label>
+                                    <div class="tm-homepage-search-control">
+                                        <input
+                                            id="tm-flow-location"
+                                            type="text"
+                                            name="location"
+                                            value="{{ location }}"
+                                            placeholder="Ville ou code postal..."
+                                            autocomplete="off"
+                                            class="tm-homepage-search-input"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
 
-							<div class="tm-homepage-search-field tm-homepage-search-field--radius">
-								<span class="tm-homepage-search-field-icon" aria-hidden="true">
-									<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-										<path d="M12 3a9 9 0 1 0 9 9"/>
-										<path d="M12 7v5l3 3"/>
-									</svg>
-								</span>
+                            <div class="tm-homepage-search-field tm-homepage-search-field--radius">
+                                <span class="tm-homepage-search-field-icon" aria-hidden="true">
+                                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 3a9 9 0 1 0 9 9"/>
+                                        <path d="M12 7v5l3 3"/>
+                                    </svg>
+                                </span>
 
-								<div class="tm-homepage-search-field-body tm-homepage-search-field-body--radius">
-									<div class="tm-homepage-search-radius-head">
-										<label for="tm-flow-radius" class="tm-homepage-search-label mb-0">Rayon</label>
-										<span class="tm-homepage-search-radius-value" data-homepage-search-target="value">{{ radiusKm }} km</span>
-									</div>
+                                <div class="tm-homepage-search-field-body tm-homepage-search-field-body--radius">
+                                    <div class="tm-homepage-search-radius-head">
+                                        <label for="tm-flow-radius" class="tm-homepage-search-label mb-0">Rayon</label>
+                                        <span class="tm-homepage-search-radius-value" data-search--homepage-search-target="value">{{ radiusKm }} km</span>
+                                    </div>
 
-									<div class="tm-homepage-search-radius-wrap">
-										<input
-											id="tm-flow-radius"
-											type="range"
-											name="radiusKm"
-											min="5"
-											max="100"
-											step="5"
-											value="{{ radiusKm }}"
-											class="tm-homepage-search-range"
-											data-homepage-search-target="range"
-											data-action="input->homepage-search#update change->homepage-search#update"
-										>
-									</div>
-								</div>
-							</div>
+                                    <div class="tm-homepage-search-radius-wrap">
+                                        <input
+                                            id="tm-flow-radius"
+                                            type="range"
+                                            name="radiusKm"
+                                            min="5"
+                                            max="100"
+                                            step="5"
+                                            value="{{ radiusKm }}"
+                                            class="tm-homepage-search-range"
+                                            data-search--homepage-search-target="range"
+                                            data-action="input->search--homepage-search#update change->search--homepage-search#update"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
 
-							<div class="tm-homepage-search-field tm-homepage-search-field--category">
-								<span class="tm-homepage-search-field-icon" aria-hidden="true">
-									<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-										<path d="M4 7h16"/>
-										<path d="M4 12h16"/>
-										<path d="M4 17h10"/>
-									</svg>
-								</span>
+                            <div class="tm-homepage-search-field tm-homepage-search-field--category">
+                                <span class="tm-homepage-search-field-icon" aria-hidden="true">
+                                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 7h16"/>
+                                        <path d="M4 12h16"/>
+                                        <path d="M4 17h10"/>
+                                    </svg>
+                                </span>
 
-								<div class="tm-homepage-search-field-body">
-									<label for="tm-flow-sort" class="tm-homepage-search-label">Trier par</label>
-									<div class="tm-homepage-search-control">
-										<select id="tm-flow-sort" name="sort" class="tm-homepage-search-select">
-											<option value="proximity" {{ sort == 'proximity' ? 'selected' : '' }}>Proximité</option>
-											<option value="alphabetical" {{ sort == 'alphabetical' ? 'selected' : '' }}>Ordre alphabétique</option>
-											<option value="rating" {{ sort == 'rating' ? 'selected' : '' }}>Meilleure note</option>
-											<option value="reviews" {{ sort == 'reviews' ? 'selected' : '' }}>Nombre d'avis</option>
-										</select>
-									</div>
-								</div>
-							</div>
+                                <div class="tm-homepage-search-field-body">
+                                    <label for="tm-flow-sort" class="tm-homepage-search-label">Trier par</label>
+                                    <div class="tm-homepage-search-control">
+                                        <select id="tm-flow-sort" name="sort" class="tm-homepage-search-select">
+                                            <option value="proximity" {{ sort == 'proximity' ? 'selected' : '' }}>Proximité</option>
+                                            <option value="alphabetical" {{ sort == 'alphabetical' ? 'selected' : '' }}>Ordre alphabétique</option>
+                                            <option value="rating" {{ sort == 'rating' ? 'selected' : '' }}>Meilleure note</option>
+                                            <option value="reviews" {{ sort == 'reviews' ? 'selected' : '' }}>Nombre d'avis</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
 
-							<div class="tm-homepage-search-action tm-flow-filterbar__actions">
-								<button type="submit" class="tm-homepage-search-submit">
-									<span>Filtrer</span>
-								</button>
-								{% if location is not empty or radiusKm != 25 or sort != 'proximity' %}
-									<a href="{{ path('app_search_flow', {type: 'service', slug: currentService.slug}) }}" class="tm-flow-filterbar__reset">
-										<i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
-										<span>Réinitialiser</span>
-									</a>
-								{% endif %}
-							</div>
-						</form>
-					</div>
+                            <div class="tm-homepage-search-action tm-flow-filterbar__actions">
+                                <button type="submit" class="tm-homepage-search-submit">
+                                    <span>Filtrer</span>
+                                </button>
+                                {% if location is not empty or radiusKm != 25 or sort != 'proximity' %}
+                                    <a href="{{ path('app_search_flow', {type: 'service', slug: currentService.slug}) }}" class="tm-flow-filterbar__reset">
+                                        <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+                                        <span>Réinitialiser</span>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
 
-					{% if directPrestataires is not empty %}
-						<div class="tm-flow-provider-group">
-							<div class="tm-flow-provider-group__head">
-								<h3 class="tm-flow-provider-group__title">Dans votre zone</h3>
-								<p class="tm-flow-provider-group__text">Prestataires trouvés directement dans la zone demandée.</p>
-							</div>
+                    {% if directPrestataires is not empty %}
+                        <div class="tm-flow-provider-group">
+                            <div class="tm-flow-provider-group__head">
+                                <h3 class="tm-flow-provider-group__title">Dans votre zone</h3>
+                                <p class="tm-flow-provider-group__text">Prestataires trouvés directement dans la zone demandée.</p>
+                            </div>
 
-						<div class="tm-flow-grid tm-flow-grid--providers">
-							{% for prestataire in directPrestataires %}
+                        <div class="tm-flow-grid tm-flow-grid--providers">
+                            {% for prestataire in directPrestataires %}
     <article class="tm-flow-provider-card tm-flow-provider-card--interactive">
         <div class="tm-flow-provider-card__cover">
             {% if prestataire.coverImage %}
-                <img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="{{ prestataire.companyName }}" width="1200" height="896" loading="lazy">
+                <img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="" width="1200" height="896" loading="lazy">
             {% elseif prestataire.logo %}
-                <img src="{{ prestataire.logo }}" alt="{{ prestataire.companyName }}" width="160" height="160" loading="lazy">
+                <img src="{{ prestataire.logo }}" alt="" width="160" height="160" loading="lazy">
             {% else %}
-                <img src="{{ asset('images/img_par_defaut.webp') }}" alt="{{ prestataire.companyName }}" width="1200" height="896" loading="lazy">
+                <img src="{{ asset('images/img_par_defaut.webp') }}" alt="" width="1200" height="896" loading="lazy">
             {% endif %}
         </div>
 
-									<div class="tm-flow-provider-card__body">
-										<div class="tm-flow-provider-card__topline">
-											{% if prestataire.reviewsCount > 0 %}
-												<div class="tm-flow-provider-card__rating">
-													<i class="fa-solid fa-star"></i>
-													<span class="tm-flow-provider-card__rating-value">{{ prestataire.averageRating }}</span>
-													<span class="tm-flow-provider-card__rating-count">
-														{{ prestataire.reviewsCount }}
-														avis
-													</span>
-												</div>
-											{% else %}
-												<div class="tm-flow-provider-card__rating tm-flow-provider-card__rating--muted">
-													<i class="fa-regular fa-star"></i>
-													<span class="tm-flow-provider-card__rating-count">Pas encore d’avis</span>
-												</div>
-											{% endif %}
+                                    <div class="tm-flow-provider-card__body">
+                                        <div class="tm-flow-provider-card__topline">
+                                            {% if prestataire.reviewsCount > 0 %}
+                                                <div class="tm-flow-provider-card__rating">
+                                                    <i class="fa-solid fa-star"></i>
+                                                    <span class="tm-flow-provider-card__rating-value">{{ prestataire.averageRating }}</span>
+                                                    <span class="tm-flow-provider-card__rating-count">
+                                                        {{ prestataire.reviewsCount }}
+                                                        avis
+                                                    </span>
+                                                </div>
+                                            {% else %}
+                                                <div class="tm-flow-provider-card__rating tm-flow-provider-card__rating--muted">
+                                                    <i class="fa-regular fa-star"></i>
+                                                    <span class="tm-flow-provider-card__rating-count">Pas encore d’avis</span>
+                                                </div>
+                                            {% endif %}
 
-											<span class="tm-flow-provider-card__verified">
-												<i class="fa-solid fa-circle-check"></i>
-												Vérifié
-											</span>
-										</div>
+                                            <span class="tm-flow-provider-card__verified">
+                                                <i class="fa-solid fa-circle-check"></i>
+                                                Vérifié
+                                            </span>
+                                        </div>
 
-										<h3 class="tm-flow-provider-card__title">{{ prestataire.companyName }}</h3>
+                                        <h3 class="tm-flow-provider-card__title">{{ prestataire.companyName }}</h3>
 
-										<div class="tm-flow-provider-card__location">
-											<i class="fa-solid fa-location-dot"></i>
-											<span>{{ prestataire.city|default('Ville non renseignée') }}</span>
-											{% if prestataire.postalCode %}
-												<em>{{ prestataire.postalCode|slice(0, 2) }}</em>
-											{% endif %}
-										</div>
+                                        <div class="tm-flow-provider-card__location">
+                                            <i class="fa-solid fa-location-dot"></i>
+                                            <span>{{ prestataire.city|default('Ville non renseignée') }}</span>
+                                            {% if prestataire.postalCode %}
+                                                <em>{{ prestataire.postalCode|slice(0, 2) }}</em>
+                                            {% endif %}
+                                        </div>
 
-										{% if prestataire.matchedDistanceKm is defined and prestataire.matchedDistanceKm is not null %}
-											<div class="tm-flow-provider-card__distance">
-												À {{ prestataire.matchedDistanceKm|round(1) }} km
-											</div>
-										{% endif %}
+                                        {% if prestataire.matchedDistanceKm is defined and prestataire.matchedDistanceKm is not null %}
+                                            <div class="tm-flow-provider-card__distance">
+                                                À {{ prestataire.matchedDistanceKm|round(1) }} km
+                                            </div>
+                                        {% endif %}
 
-										<div class="tm-flow-provider-card__tags">
-											<span class="tm-flow-tag tm-flow-tag--primary">
-												{{ prestataire.metier|default('Prestataire') }}
-											</span>
+                                        <div class="tm-flow-provider-card__tags">
+                                            <span class="tm-flow-tag tm-flow-tag--primary">
+                                                {{ prestataire.metier|default('Prestataire') }}
+                                            </span>
 
-											{% if prestataire.experience %}
-												<span class="tm-flow-tag tm-flow-tag--soft">
-													{{ prestataire.experience }}
-												</span>
-											{% endif %}
-										</div>
+                                            {% if prestataire.experience %}
+                                                <span class="tm-flow-tag tm-flow-tag--soft">
+                                                    {{ prestataire.experience }}
+                                                </span>
+                                            {% endif %}
+                                        </div>
 
-										<p class="tm-flow-provider-card__desc">
-											{% if prestataire.shortDescription %}
-												{{ prestataire.shortDescription|length > 135 ? prestataire.shortDescription|slice(0, 135) ~ '…' : prestataire.shortDescription }}
-											{% elseif prestataire.description %}
-												{{ prestataire.description|length > 135 ? prestataire.description|slice(0, 135) ~ '…' : prestataire.description }}
-											{% else %}
-												Aucune description rédigée pour le moment.
-											{% endif %}
-										</p>
-									</div>
+                                        <p class="tm-flow-provider-card__desc">
+                                            {% if prestataire.shortDescription %}
+                                                {{ prestataire.shortDescription|length > 135 ? prestataire.shortDescription|slice(0, 135) ~ '…' : prestataire.shortDescription }}
+                                            {% elseif prestataire.description %}
+                                                {{ prestataire.description|length > 135 ? prestataire.description|slice(0, 135) ~ '…' : prestataire.description }}
+                                            {% else %}
+                                                Aucune description rédigée pour le moment.
+                                            {% endif %}
+                                        </p>
+                                    </div>
 
-									<div class="tm-flow-provider-card__footer">
-										<a href="{{ path('app_prestataire_show', {slug: prestataire.slug}) }}" class="tm-flow-provider-card__link">
-											<span>Voir le profil</span>
-											<i class="fa-solid fa-arrow-right"></i>
-										</a>
+                                    <div class="tm-flow-provider-card__footer">
+                                        <a href="{{ path('app_prestataire_show', {slug: prestataire.slug}) }}" class="tm-flow-provider-card__link">
+                                            <span>Voir le profil</span>
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </a>
 
-										<a href="{{ path('app_quote_request_new_by_prestataire', { prestataireSlug: prestataire.slug }) }}" class="tm-flow-btn tm-flow-btn--primary tm-flow-btn--compact">
-											Demander un devis
-										</a>
-									</div>
-								</article>
-							{% endfor %}
-						</div>
-						</div>
-					{% endif %}
+                                        <a href="{{ path('app_quote_request_new_by_prestataire', {prestataireSlug: prestataire.slug}) }}" class="tm-flow-btn tm-flow-btn--primary tm-flow-btn--compact">
+                                            Demander un devis
+                                        </a>
+                                    </div>
+                                </article>
+                            {% endfor %}
+                        </div>
+                        </div>
+                    {% endif %}
 
-					{% if fallbackPrestataires is not empty %}
-						<div class="tm-flow-provider-group tm-flow-provider-group--fallback">
-							<div class="tm-flow-provider-group__head">
-								<h3 class="tm-flow-provider-group__title">Pourraient intervenir dans votre zone</h3>
-								<p class="tm-flow-provider-group__text">Hors du rayon direct, mais avec une couverture compatible.</p>
-							</div>
+                    {% if fallbackPrestataires is not empty %}
+                        <div class="tm-flow-provider-group tm-flow-provider-group--fallback">
+                            <div class="tm-flow-provider-group__head">
+                                <h3 class="tm-flow-provider-group__title">Pourraient intervenir dans votre zone</h3>
+                                <p class="tm-flow-provider-group__text">Hors du rayon direct, mais avec une couverture compatible.</p>
+                            </div>
 
-							<div class="tm-flow-grid tm-flow-grid--providers">
-								{% for prestataire in fallbackPrestataires|slice(0, 6) %}
-									<article class="tm-flow-provider-card tm-flow-provider-card--interactive">
-										<div class="tm-flow-provider-card__cover">
-											{% if prestataire.coverImage %}
-												<img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="{{ prestataire.companyName }}" width="1200" height="896" loading="lazy">
-											{% elseif prestataire.logo %}
-												<img src="{{ prestataire.logo }}" alt="{{ prestataire.companyName }}" width="160" height="160" loading="lazy">
-											{% else %}
-												<img src="{{ asset('images/img_par_defaut.webp') }}" alt="{{ prestataire.companyName }}" width="1200" height="896" loading="lazy">
-											{% endif %}
-										</div>
+                            <div class="tm-flow-grid tm-flow-grid--providers">
+                                {% for prestataire in fallbackPrestataires|slice(0, 6) %}
+                                    <article class="tm-flow-provider-card tm-flow-provider-card--interactive">
+                                        <div class="tm-flow-provider-card__cover">
+                                            {% if prestataire.coverImage %}
+                                                <img src="{{ asset('uploads/covers/' ~ prestataire.coverImage) }}" alt="" width="1200" height="896" loading="lazy">
+                                            {% elseif prestataire.logo %}
+                                                <img src="{{ prestataire.logo }}" alt="" width="160" height="160" loading="lazy">
+                                            {% else %}
+                                                <img src="{{ asset('images/img_par_defaut.webp') }}" alt="" width="1200" height="896" loading="lazy">
+                                            {% endif %}
+                                        </div>
 
-										<div class="tm-flow-provider-card__body">
-											<div class="tm-flow-provider-card__topline">
-												<div class="tm-flow-provider-card__rating tm-flow-provider-card__rating--muted">
-													<i class="fa-solid fa-route"></i>
-													<span class="tm-flow-provider-card__rating-count">Couverture étendue</span>
-												</div>
-												<span class="tm-flow-provider-card__verified">
-													<i class="fa-solid fa-circle-check"></i>
-													Vérifié
-												</span>
-											</div>
+                                        <div class="tm-flow-provider-card__body">
+                                            <div class="tm-flow-provider-card__topline">
+                                                <div class="tm-flow-provider-card__rating tm-flow-provider-card__rating--muted">
+                                                    <i class="fa-solid fa-route"></i>
+                                                    <span class="tm-flow-provider-card__rating-count">Couverture étendue</span>
+                                                </div>
+                                                <span class="tm-flow-provider-card__verified">
+                                                    <i class="fa-solid fa-circle-check"></i>
+                                                    Vérifié
+                                                </span>
+                                            </div>
 
-											<h3 class="tm-flow-provider-card__title">{{ prestataire.companyName }}</h3>
+                                            <h3 class="tm-flow-provider-card__title">{{ prestataire.companyName }}</h3>
 
-											<div class="tm-flow-provider-card__location">
-												<i class="fa-solid fa-location-dot"></i>
-												<span>{{ prestataire.city|default('Ville non renseignée') }}</span>
-												{% if prestataire.postalCode %}
-													<em>{{ prestataire.postalCode|slice(0, 2) }}</em>
-												{% endif %}
-											</div>
+                                            <div class="tm-flow-provider-card__location">
+                                                <i class="fa-solid fa-location-dot"></i>
+                                                <span>{{ prestataire.city|default('Ville non renseignée') }}</span>
+                                                {% if prestataire.postalCode %}
+                                                    <em>{{ prestataire.postalCode|slice(0, 2) }}</em>
+                                                {% endif %}
+                                            </div>
 
-											{% if prestataire.matchedDistanceKm is defined and prestataire.matchedDistanceKm is not null %}
-												<div class="tm-flow-provider-card__distance">
-													À {{ prestataire.matchedDistanceKm|round(1) }} km
-												</div>
-											{% endif %}
+                                            {% if prestataire.matchedDistanceKm is defined and prestataire.matchedDistanceKm is not null %}
+                                                <div class="tm-flow-provider-card__distance">
+                                                    À {{ prestataire.matchedDistanceKm|round(1) }} km
+                                                </div>
+                                            {% endif %}
 
-											<p class="tm-flow-provider-card__desc">
-												{% if prestataire.shortDescription %}
-													{{ prestataire.shortDescription|length > 135 ? prestataire.shortDescription|slice(0, 135) ~ '…' : prestataire.shortDescription }}
-												{% elseif prestataire.description %}
-													{{ prestataire.description|length > 135 ? prestataire.description|slice(0, 135) ~ '…' : prestataire.description }}
-												{% else %}
-													Aucune description rédigée pour le moment.
-												{% endif %}
-											</p>
-										</div>
+                                            <p class="tm-flow-provider-card__desc">
+                                                {% if prestataire.shortDescription %}
+                                                    {{ prestataire.shortDescription|length > 135 ? prestataire.shortDescription|slice(0, 135) ~ '…' : prestataire.shortDescription }}
+                                                {% elseif prestataire.description %}
+                                                    {{ prestataire.description|length > 135 ? prestataire.description|slice(0, 135) ~ '…' : prestataire.description }}
+                                                {% else %}
+                                                    Aucune description rédigée pour le moment.
+                                                {% endif %}
+                                            </p>
+                                        </div>
 
-										<div class="tm-flow-provider-card__footer">
-											<a href="{{ path('app_prestataire_show', {slug: prestataire.slug}) }}" class="tm-flow-provider-card__link">
-												<span>Voir le profil</span>
-												<i class="fa-solid fa-arrow-right"></i>
-											</a>
+                                        <div class="tm-flow-provider-card__footer">
+                                            <a href="{{ path('app_prestataire_show', {slug: prestataire.slug}) }}" class="tm-flow-provider-card__link">
+                                                <span>Voir le profil</span>
+                                                <i class="fa-solid fa-arrow-right"></i>
+                                            </a>
 
-											<a href="{{ path('app_quote_request_new_by_prestataire', { prestataireSlug: prestataire.slug }) }}" class="tm-flow-btn tm-flow-btn--primary tm-flow-btn--compact">
-												Demander un devis
-											</a>
-										</div>
-									</article>
-								{% endfor %}
-							</div>
-						</div>
-					{% endif %}
+                                            <a href="{{ path('app_quote_request_new_by_prestataire', {prestataireSlug: prestataire.slug}) }}" class="tm-flow-btn tm-flow-btn--primary tm-flow-btn--compact">
+                                                Demander un devis
+                                            </a>
+                                        </div>
+                                    </article>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
 
-					{% if directPrestataires is empty and fallbackPrestataires is empty %}
-						<div class="tm-flow-empty">
-							<div class="tm-flow-empty__icon">
-								<i class="fa-solid fa-users-slash"></i>
-							</div>
-							<h3 class="tm-flow-empty__title">Aucun professionnel trouvé pour ce service</h3>
-							<p class="tm-flow-empty__text">
-								Notre réseau s’agrandit de jour en jour, mais il n’y a pas encore de prestataire actif enregistré pour
-								<strong>{{ currentService.name }}</strong>.
-							</p>
+                    {% if directPrestataires is empty and fallbackPrestataires is empty %}
+                        <div class="tm-flow-empty">
+                            <div class="tm-flow-empty__icon">
+                                <i class="fa-solid fa-users-slash"></i>
+                            </div>
+                            <h3 class="tm-flow-empty__title">Aucun professionnel trouvé pour ce service</h3>
+                            <p class="tm-flow-empty__text">
+                                Notre réseau s’agrandit de jour en jour, mais il n’y a pas encore de prestataire actif enregistré pour
+                                <strong>{{ currentService.name }}</strong>.
+                            </p>
 
-							<div class="tm-flow-empty__actions">
-								{% if currentSubCategory %}
-									<a href="{{ path('app_search_flow', {type: 'categorie', slug: currentSubCategory.slug}) }}" class="tm-flow-btn tm-flow-btn--ghost">
-										<i class="fa-solid fa-arrow-left"></i>
-										<span>Revenir à
-											{{ currentSubCategory.name }}</span>
-									</a>
-								{% endif %}
+                            <div class="tm-flow-empty__actions">
+                                {% if currentSubCategory %}
+                                    <a href="{{ path('app_search_flow', {type: 'categorie', slug: currentSubCategory.slug}) }}" class="tm-flow-btn tm-flow-btn--ghost">
+                                        <i class="fa-solid fa-arrow-left"></i>
+                                        <span>Revenir à
+                                            {{ currentSubCategory.name }}</span>
+                                    </a>
+                                {% endif %}
 
-								<a href="{{ path('app_home') }}" class="tm-flow-btn tm-flow-btn--primary">
-									Déposer un projet global
-								</a>
-							</div>
-						</div>
-					{% endif %}
-				</section>
-			{% endif %}
+                                <a href="{{ path('app_home') }}" class="tm-flow-btn tm-flow-btn--primary">
+                                    Déposer un projet global
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </section>
+            {% endif %}
 
-			{# 6. FOOTER VISUEL #}
-			{% if not currentService %}
-				<section class="tm-flow-editorial">
-					<div class="tm-flow-editorial__head">
-						<div>
-							<span class="tm-flow-section__eyebrow">TrouveMoi Pro</span>
-							<h2 class="tm-flow-section__title">Développez votre activité locale</h2>
-						</div>
-						<p class="tm-flow-section__subtitle">
-							Rejoignez la plateforme pour recevoir des demandes qualifiées et améliorer votre visibilité.
-						</p>
-					</div>
+            {# 6. FOOTER VISUEL #}
+            {% if not currentService %}
+                <section class="tm-flow-editorial">
+                    <div class="tm-flow-editorial__head">
+                        <div>
+                            <span class="tm-flow-section__eyebrow">TrouveMoi Pro</span>
+                            <h2 class="tm-flow-section__title">Développez votre activité locale</h2>
+                        </div>
+                        <p class="tm-flow-section__subtitle">
+                            Rejoignez la plateforme pour recevoir des demandes qualifiées et améliorer votre visibilité.
+                        </p>
+                    </div>
 
-					<div class="tm-flow-editorial__grid">
-						<article class="tm-flow-editorial-card">
-							<div class="tm-flow-editorial-card__media">
-								<img src="{{ asset('images/worker-group.webp') }}" alt="Client comparant plusieurs profils de professionnels" width="1408" height="768" loading="lazy">
-							</div>
-							<div class="tm-flow-editorial-card__content">
-								<span class="tm-flow-editorial-card__label">Visibilité</span>
-								<h3 class="tm-flow-editorial-card__title">Soyez visible sur les bons besoins</h3>
-								<p class="tm-flow-editorial-card__text">
-									Présentez clairement votre activité, vos spécialités et vos zones d’intervention.
-								</p>
-							</div>
-						</article>
+                    <div class="tm-flow-editorial__grid">
+                        <article class="tm-flow-editorial-card">
+                            <div class="tm-flow-editorial-card__media">
+                                <img src="{{ asset('images/worker-group.webp') }}" alt="Client comparant plusieurs profils de professionnels" width="1408" height="768" loading="lazy">
+                            </div>
+                            <div class="tm-flow-editorial-card__content">
+                                <span class="tm-flow-editorial-card__label">Visibilité</span>
+                                <h3 class="tm-flow-editorial-card__title">Soyez visible sur les bons besoins</h3>
+                                <p class="tm-flow-editorial-card__text">
+                                    Présentez clairement votre activité, vos spécialités et vos zones d’intervention.
+                                </p>
+                            </div>
+                        </article>
 
-						<article class="tm-flow-editorial-card">
-							<div class="tm-flow-editorial-card__media">
-								<img src="{{ asset('images/footer/footer-conversation.jpg') }}" alt="Échange entre un client et un prestataire" width="1408" height="768" loading="lazy">
-							</div>
-							<div class="tm-flow-editorial-card__content">
-								<span class="tm-flow-editorial-card__label">Conversion</span>
-								<h3 class="tm-flow-editorial-card__title">Recevez des demandes plus qualifiées</h3>
-								<p class="tm-flow-editorial-card__text">
-									Mettez en avant votre réactivité, vos avis et votre expertise métier.
-								</p>
-							</div>
-						</article>
+                        <article class="tm-flow-editorial-card">
+                            <div class="tm-flow-editorial-card__media">
+                                <img src="{{ asset('images/footer/footer-conversation.jpg') }}" alt="Échange entre un client et un prestataire" width="1408" height="768" loading="lazy">
+                            </div>
+                            <div class="tm-flow-editorial-card__content">
+                                <span class="tm-flow-editorial-card__label">Conversion</span>
+                                <h3 class="tm-flow-editorial-card__title">Recevez des demandes plus qualifiées</h3>
+                                <p class="tm-flow-editorial-card__text">
+                                    Mettez en avant votre réactivité, vos avis et votre expertise métier.
+                                </p>
+                            </div>
+                        </article>
 
-						<article class="tm-flow-editorial-card">
-							<div class="tm-flow-editorial-card__media">
-								<img src="{{ asset('images/footer/footer-local-search.jpg') }}" alt="Professionnel intervenant localement" width="1408" height="768" loading="lazy">
-							</div>
-							<div class="tm-flow-editorial-card__content">
-								<span class="tm-flow-editorial-card__label">Local</span>
-								<h3 class="tm-flow-editorial-card__title">Renforcez votre présence de proximité</h3>
-								<p class="tm-flow-editorial-card__text">
-									Touchez une clientèle locale avec des recherches plus ciblées et concrètes.
-								</p>
-							</div>
-						</article>
-					</div>
+                        <article class="tm-flow-editorial-card">
+                            <div class="tm-flow-editorial-card__media">
+                                <img src="{{ asset('images/footer/footer-local-search.jpg') }}" alt="Professionnel intervenant localement" width="1408" height="768" loading="lazy">
+                            </div>
+                            <div class="tm-flow-editorial-card__content">
+                                <span class="tm-flow-editorial-card__label">Local</span>
+                                <h3 class="tm-flow-editorial-card__title">Renforcez votre présence de proximité</h3>
+                                <p class="tm-flow-editorial-card__text">
+                                    Touchez une clientèle locale avec des recherches plus ciblées et concrètes.
+                                </p>
+                            </div>
+                        </article>
+                    </div>
 
-					<div class="tm-flow-editorial__actions">
-						<a href="{{ path('app_static_page', {slug: 'avantages'}) }}" class="tm-flow-btn tm-flow-btn--ghost">En savoir plus</a>
-						<a href="{{ path('app_register_choice') }}" class="tm-flow-btn tm-flow-btn--primary">Devenir prestataire</a>
-					</div>
-				</section>
-			{% endif %}
+                    <div class="tm-flow-editorial__actions">
+                        <a href="{{ path('app_static_page', {slug: 'avantages'}) }}" class="tm-flow-btn tm-flow-btn--ghost">En savoir plus</a>
+                        <a href="{{ path('app_register_choice') }}" class="tm-flow-btn tm-flow-btn--primary">Devenir prestataire</a>
+                    </div>
+                </section>
+            {% endif %}
 
-			{# 7. TRUST #}
-			<section class="tm-flow-trust">
-				<div class="tm-flow-trust__intro">
-					<span class="tm-flow-trust__eyebrow">Pourquoi TrouveMoi</span>
-					<h2 class="tm-flow-trust__title">Une recherche plus rassurante, plus lisible, plus concrète</h2>
-					<p class="tm-flow-trust__text">
-						Nous mettons en avant des profils plus clairs, des informations utiles au bon moment et une expérience pensée pour aider à comparer sans friction.
-					</p>
-				</div>
+            {# 7. TRUST #}
+            <section class="tm-flow-trust">
+                <div class="tm-flow-trust__intro">
+                    <span class="tm-flow-trust__eyebrow">Pourquoi TrouveMoi</span>
+                    <h2 class="tm-flow-trust__title">Une recherche plus rassurante, plus lisible, plus concrète</h2>
+                    <p class="tm-flow-trust__text">
+                        Nous mettons en avant des profils plus clairs, des informations utiles au bon moment et une expérience pensée pour aider à comparer sans friction.
+                    </p>
+                </div>
 
-				<div class="tm-flow-trust__list">
-					<article class="tm-flow-trust-story">
-						<div class="tm-flow-trust-story__media">
-							<img src="{{ asset('images/worker-group.webp') }}" alt="Comparaison de profils professionnels" width="1408" height="768" loading="lazy">
-						</div>
+                <div class="tm-flow-trust__list">
+                    <article class="tm-flow-trust-story">
+                        <div class="tm-flow-trust-story__media">
+                            <img src="{{ asset('images/worker-group.webp') }}" alt="Comparaison de profils professionnels" width="1408" height="768" loading="lazy">
+                        </div>
 
-						<div class="tm-flow-trust-story__content">
-							<div class="tm-flow-trust-story__topline">
-								<div class="tm-flow-trust-story__icon">
-									<i class="fa-solid fa-circle-check"></i>
-								</div>
+                        <div class="tm-flow-trust-story__content">
+                            <div class="tm-flow-trust-story__topline">
+                                <div class="tm-flow-trust-story__icon">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </div>
 
-								<span class="tm-flow-trust-story__kicker">Vérification</span>
-							</div>
+                                <span class="tm-flow-trust-story__kicker">Vérification</span>
+                            </div>
 
-							<h3 class="tm-flow-trust-story__title">Des profils mieux qualifiés</h3>
+                            <h3 class="tm-flow-trust-story__title">Des profils mieux qualifiés</h3>
 
-							<p class="tm-flow-trust-story__text">
-								Les informations importantes sont mises en avant pour aider à repérer plus vite les professionnels les plus crédibles.
-							</p>
+                            <p class="tm-flow-trust-story__text">
+                                Les informations importantes sont mises en avant pour aider à repérer plus vite les professionnels les plus crédibles.
+                            </p>
 
-							<div class="tm-flow-trust-story__footer">
-								<strong>Identité & Siret</strong>
-								<span>Repères visibles dans le parcours</span>
-							</div>
-						</div>
-					</article>
+                            <div class="tm-flow-trust-story__footer">
+                                <strong>Identité & Siret</strong>
+                                <span>Repères visibles dans le parcours</span>
+                            </div>
+                        </div>
+                    </article>
 
-					<article class="tm-flow-trust-story">
-						<div class="tm-flow-trust-story__media">
-							<img src="{{ asset('images/etoile-avis.webp') }}" alt="Client en échange avec un professionnel" width="1408" height="768" loading="lazy">
-						</div>
+                    <article class="tm-flow-trust-story">
+                        <div class="tm-flow-trust-story__media">
+                            <img src="{{ asset('images/etoile-avis.webp') }}" alt="Client en échange avec un professionnel" width="1408" height="768" loading="lazy">
+                        </div>
 
-						<div class="tm-flow-trust-story__content">
-							<div class="tm-flow-trust-story__topline">
-								<div class="tm-flow-trust-story__icon">
-									<i class="fa-solid fa-star"></i>
-								</div>
+                        <div class="tm-flow-trust-story__content">
+                            <div class="tm-flow-trust-story__topline">
+                                <div class="tm-flow-trust-story__icon">
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
 
-								<span class="tm-flow-trust-story__kicker">Transparence</span>
-							</div>
+                                <span class="tm-flow-trust-story__kicker">Transparence</span>
+                            </div>
 
-							<h3 class="tm-flow-trust-story__title">Des avis qui aident vraiment à choisir</h3>
+                            <h3 class="tm-flow-trust-story__title">Des avis qui aident vraiment à choisir</h3>
 
-							<p class="tm-flow-trust-story__text">
-								Notes, volume d’avis et cohérence du profil permettent une lecture plus rapide et plus utile des prestataires.
-							</p>
+                            <p class="tm-flow-trust-story__text">
+                                Notes, volume d’avis et cohérence du profil permettent une lecture plus rapide et plus utile des prestataires.
+                            </p>
 
-							<div class="tm-flow-trust-story__footer">
-								<strong>Avis contrôlés</strong>
-								<span>Lecture simple et rassurante</span>
-							</div>
-						</div>
-					</article>
+                            <div class="tm-flow-trust-story__footer">
+                                <strong>Avis contrôlés</strong>
+                                <span>Lecture simple et rassurante</span>
+                            </div>
+                        </div>
+                    </article>
 
-					<article class="tm-flow-trust-story">
-						<div class="tm-flow-trust-story__media">
-							<img src="{{ asset('images/img_par_defaut.webp') }}" alt="Intervention locale d'un professionnel" width="1200" height="896" loading="lazy">
-						</div>
+                    <article class="tm-flow-trust-story">
+                        <div class="tm-flow-trust-story__media">
+                            <img src="{{ asset('images/img_par_defaut.webp') }}" alt="Intervention locale d'un professionnel" width="1200" height="896" loading="lazy">
+                        </div>
 
-						<div class="tm-flow-trust-story__content">
-							<div class="tm-flow-trust-story__topline">
-								<div class="tm-flow-trust-story__icon">
-									<i class="fa-solid fa-bolt"></i>
-								</div>
+                        <div class="tm-flow-trust-story__content">
+                            <div class="tm-flow-trust-story__topline">
+                                <div class="tm-flow-trust-story__icon">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
 
-								<span class="tm-flow-trust-story__kicker">Réactivité</span>
-							</div>
+                                <span class="tm-flow-trust-story__kicker">Réactivité</span>
+                            </div>
 
-							<h3 class="tm-flow-trust-story__title">Un parcours plus vivant et plus fluide</h3>
+                            <h3 class="tm-flow-trust-story__title">Un parcours plus vivant et plus fluide</h3>
 
-							<p class="tm-flow-trust-story__text">
-								La navigation met en valeur les bons choix, limite les hésitations et aide à passer plus vite à l’action.
-							</p>
+                            <p class="tm-flow-trust-story__text">
+                                La navigation met en valeur les bons choix, limite les hésitations et aide à passer plus vite à l’action.
+                            </p>
 
-							<div class="tm-flow-trust-story__footer">
-								<strong>Réponse rapide</strong>
-								<span>Expérience plus directe</span>
-							</div>
-						</div>
-					</article>
-				</div>
-			</section>
-		</div>
-	</div>
+                            <div class="tm-flow-trust-story__footer">
+                                <strong>Réponse rapide</strong>
+                                <span>Expérience plus directe</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </div>
 {% endblock %}

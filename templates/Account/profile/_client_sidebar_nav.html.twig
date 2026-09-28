@@ -1,0 +1,75 @@
+{% set currentRoute = app.request.attributes.get('_route')|default('') %}
+
+<nav aria-label="Navigation de l’espace client">
+<ul class="nav flex-column gap-2 tm-cp-nav-menu">
+    <li class="nav-item w-100" style="width: 100%;">
+        <a
+            href="{{ path('app_quote_request_index') }}"
+            class="nav-link w-100 d-flex align-items-center {{ currentRoute starts with 'app_quote_request_' and currentRoute not in ['app_quote_request_history', 'app_quote_request_history_show'] ? 'active' : '' }}"
+            {% if currentRoute starts with 'app_quote_request_' and currentRoute not in ['app_quote_request_history', 'app_quote_request_history_show'] %}aria-current="page"{% endif %}
+            style="width: 100%; display: flex;"
+        >
+            <span class="me-2">
+                <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
+            </span>
+            Mes Demandes
+        </a>
+    </li>
+
+    <li class="nav-item w-100" style="width: 100%;">
+        <a
+            href="{{ path('app_client_settings_favorites') }}"
+            class="nav-link w-100 d-flex align-items-center {{ currentRoute == 'app_client_settings_favorites' ? 'active' : '' }}"
+            {% if currentRoute == 'app_client_settings_favorites' %}aria-current="page"{% endif %}
+            style="width: 100%; display: flex;"
+        >
+            <span class="me-2">
+                <i class="fa-regular fa-heart" aria-hidden="true"></i>
+            </span>
+            Mes Artisans Favoris
+        </a>
+    </li>
+
+    <li class="nav-item w-100" style="width: 100%;">
+        <a
+            href="{{ path('app_review_my_reviews') }}"
+            class="nav-link w-100 d-flex align-items-center {{ currentRoute starts with 'app_review_' and currentRoute != 'app_review_prestataire_reviews' ? 'active' : '' }}"
+            {% if currentRoute starts with 'app_review_' and currentRoute != 'app_review_prestataire_reviews' %}aria-current="page"{% endif %}
+            style="width: 100%; display: flex;"
+        >
+            <span class="me-2">
+                <i class="fa-regular fa-star" aria-hidden="true"></i>
+            </span>
+            Mes Avis
+        </a>
+    </li>
+
+    <li class="nav-item w-100" style="width: 100%;">
+        <a
+            href="{{ path('app_quote_request_history') }}"
+            class="nav-link w-100 d-flex align-items-center {{ currentRoute in ['app_quote_request_history', 'app_quote_request_history_show'] ? 'active' : '' }}"
+            {% if currentRoute in ['app_quote_request_history', 'app_quote_request_history_show'] %}aria-current="page"{% endif %}
+            style="width: 100%; display: flex;"
+        >
+            <span class="me-2">
+                <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
+            </span>
+            Mes Archives
+        </a>
+    </li>
+
+    <li class="nav-item w-100" style="width: 100%;">
+        <a
+            href="{{ path('app_client_settings') }}"
+            class="nav-link w-100 d-flex align-items-center {{ currentRoute == 'app_client_settings' ? 'active' : '' }}"
+            {% if currentRoute == 'app_client_settings' %}aria-current="page"{% endif %}
+            style="width: 100%; display: flex;"
+        >
+            <span class="me-2">
+                <i class="fa-solid fa-gear" aria-hidden="true"></i>
+            </span>
+            Paramètres
+        </a>
+    </li>
+</ul>
+</nav>

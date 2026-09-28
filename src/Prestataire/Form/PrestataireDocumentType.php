@@ -1,0 +1,115 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Copyright (c) 2026 AUXIOMA Web Agency.
+ *
+ * Projet : TrouveMoi
+ *
+ * Tous droits réservés.
+ *
+ * Ce fichier fait partie du projet TrouveMoi,
+ * développé par AUXIOMA Web Agency.
+ *
+ * Toute reproduction, modification, distribution ou utilisation,
+ * totale ou partielle, sans autorisation écrite préalable,
+ * est strictement interdite.
+ */
+
+namespace App\Prestataire\Form;
+
+use App\Prestataire\Entity\PrestataireDocument;
+use App\Prestataire\Enum\PrestataireDocumentTypeEnum;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\NotNull;
+
+class PrestataireDocumentType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            // type de document
+            ->add('type', EnumType::class, [
+                'class' => PrestataireDocumentTypeEnum::class,
+                'required' => true,
+                'label' => 'Type de document',
+                'choices' => array_values(array_filter(
+                    PrestataireDocumentTypeEnum::cases(),
+                    static fn (PrestataireDocumentTypeEnum $type): bool => PrestataireDocumentTypeEnum::CERTIFICATION !== $type
+                )),
+                'choice_label' => static fn (PrestataireDocumentTypeEnum $choice): string => $choice->getLabel(),
+                'placeholder' => 'Choisir un type',
+                'constraints' => [
+                    new NotNull(
+                        message: 'Veuillez sélectionner un type de document.',
+                    ),
+                ],
+            ])
+
+            // fichier réel uploadé
+            ->add('documentFile', FileType::class, [
+                'label' => 'Fichier',
+                'required' => true,
+                'mapped' => true,
+                'constraints' => [
+                    new File(
+                        maxSize: '8M',
+                        mimeTypes: [
+                            'application/pdf',
+                            'image/jpeg',
+                            'image/png',
+                            'image/webp',
+                        ],
+                        mimeTypesMessage: 'Veuillez envoyer un PDF, JPG, PNG ou WEBP.',
+                    ),
+                ],
+            ])
+
+            // visible au client
+            ->add('isVisibleToClient', CheckboxType::class, [
+                'label' => 'Rendre ce document visible au client concerné',
+                'required' => false,
+            ])
+
+            // date d’émission
+            ->add('issuedAt', DateType::class, [
+                'label' => 'Date d’émission',
+                'required' => false,
+                'widget' => 'single_text',
+            ])
+
+            // date d’expiration
+            ->add('expiresAt', DateType::class, [
+                'label' => 'Date d’expiration',
+                'required' => false,
+                'widget' => 'single_text',
+            ])
+
+            // notes internes éventuelles
+            ->add('notes', TextareaType::class, [
+                'label' => 'Notes',
+                'required' => false,
+                'attr' => [
+                    'rows' => 3,
+                    'placeholder' => 'Informations complémentaires sur ce document',
+                ],
+            ])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => PrestataireDocument::class,
+        ]);
+    }
+}

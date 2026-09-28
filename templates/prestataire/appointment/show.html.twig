@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'Website/base.html.twig' %}
 
 {% block title %}Détail du rendez-vous{% endblock %}
 
@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="tm-appointment-show-topbar__actions">
-                    <a href="{{ path('app_prestataire_dashboard', {'_fragment': 'calendrier-main-panel'}) }}" class="btn btn-outline-info" data-turbo="false">
+                    <a href="{{ path('app_prestataire_dashboard', {_fragment: 'calendrier-main-panel'}) }}" class="btn btn-outline-info" data-turbo="false">
                         Retour au calendrier
                     </a>
                 </div>
@@ -115,11 +115,11 @@
                             <h2>Actions rapides</h2>
 
                             <div class="tm-appointment-show-side__actions">
-                                <a href="{{ path('app_prestataire_appointment_edit', { id: appointment.id }) }}" class="btn btn-primary">
+                                <a href="{{ path('app_prestataire_appointment_edit', {id: appointment.id}) }}" class="btn btn-primary">
                                     Modifier le rendez-vous
                                 </a>
 
-                                <form method="post" action="{{ path('app_prestataire_appointment_delete', { id: appointment.id }) }}" data-turbo="false" data-controller="confirm-dialog" data-action="submit->confirm-dialog#confirm" data-confirm-dialog-title-value="Supprimer ce rendez-vous ?" data-confirm-dialog-text-value="Cette suppression est définitive." data-confirm-dialog-confirm-button-text-value="Supprimer" data-confirm-dialog-cancel-button-text-value="Annuler">
+                                <form method="post" action="{{ path('app_prestataire_appointment_delete', {id: appointment.id}) }}" data-turbo="false" data-controller="core--confirm-dialog" data-action="submit->core--confirm-dialog#confirm" data-core--confirm-dialog-title-value="Supprimer ce rendez-vous ?" data-core--confirm-dialog-text-value="Cette suppression est définitive." data-core--confirm-dialog-confirm-button-text-value="Supprimer" data-core--confirm-dialog-cancel-button-text-value="Annuler">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete_appointment_' ~ appointment.id) }}">
                                     <button type="submit" class="btn btn-danger w-100">
                                         Supprimer

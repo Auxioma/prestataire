@@ -43,9 +43,9 @@
                         {% set avatarClass = avatarClasses[(conversation.id|default(loop.index0)) % avatarClasses|length] %}
 
                         <a
-                            href="{{ path('app_prestataire_dashboard', { conversation: conversation.id, tab: 'messages', conversationPage: conversations.currentPageNumber is defined ? conversations.currentPageNumber : 1 }) }}"
+                            href="{{ path('app_prestataire_dashboard', {conversation: conversation.id, tab: 'messages', conversationPage: conversations.currentPageNumber is defined ? conversations.currentPageNumber : 1}) }}"
                             class="conversation tm-msg-thread{% if isActive %} actif is-active{% endif %}{% if unreadCount > 0 %} non-lu is-unread{% endif %}"
-                            data-action="click->messages-sidebar-live#markThreadRead"
+                            data-action="click->messaging--messages-sidebar-live#markThreadRead"
                             data-conversation-id="{{ conversation.id }}"
                             data-unread-count="{{ unreadCount }}"
                         >
@@ -142,7 +142,7 @@
                     <div class="msg-fil__actions tm-msg-head-actions">
                         {% if hasConversationPhotos %}
                             <a
-                                href="{{ path('app_prestataire_conversation_photos', { id: activeConversation.id }) }}"
+                                href="{{ path('app_prestataire_conversation_photos', {id: activeConversation.id}) }}"
                                 class="btn btn-outline-secondary tm-msg-head-btn"
                             >
                                 Accès photos conversation
@@ -160,7 +160,7 @@
                             </button>
 
                             <a
-                                href="{{ path('app_report_conversation', { id: activeConversation.id }) }}"
+                                href="{{ path('app_report_conversation', {id: activeConversation.id}) }}"
                                 class="btn btn-outline-danger tm-msg-head-btn"
                             >
                                 Signaler
@@ -169,7 +169,7 @@
                     </div>
                 </div>
 
-                <div class="msg-fil__scroll tm-msg-body" data-controller="image-lightbox">
+                <div class="msg-fil__scroll tm-msg-body" data-controller="core--image-lightbox">
                     {% if activeConversation.messages is empty %}
                         <div class="tm-msg-empty tm-msg-empty--body">
                             <div class="tm-msg-empty-box">
@@ -223,8 +223,8 @@
                                                             <button
                                                                 type="button"
                                                                 class="tm-msg-attachment"
-                                                                data-action="click->image-lightbox#open"
-                                                                data-image-lightbox-target="trigger"
+                                                                data-action="click->core--image-lightbox#open"
+                                                                data-core--image-lightbox-target="trigger"
                                                                 data-index="{{ attachmentIndex }}"
                                                                 data-src="{{ asset('uploads/messages/' ~ attachment.fileName) }}"
                                                                 data-alt="{{ attachment.originalName ?: 'Photo jointe' }}"
@@ -253,11 +253,11 @@
                             {% endfor %}
                         </div>
 
-                        <div class="tm-msg-lightbox" data-image-lightbox-target="modal" hidden>
+                        <div class="tm-msg-lightbox" data-core--image-lightbox-target="modal" hidden>
                             <button
                                 type="button"
                                 class="tm-msg-lightbox-backdrop"
-                                data-action="click->image-lightbox#close"
+                                data-action="click->core--image-lightbox#close"
                                 aria-label="Fermer la visionneuse"
                             ></button>
 
@@ -265,7 +265,8 @@
                                 <button
                                     type="button"
                                     class="tm-msg-lightbox-close"
-                                    data-action="click->image-lightbox#close"
+                                    data-core--image-lightbox-target="close"
+                                    data-action="click->core--image-lightbox#close"
                                     aria-label="Fermer"
                                 >
                                     <i class="fa-solid fa-xmark"></i>
@@ -274,7 +275,7 @@
                                 <button
                                     type="button"
                                     class="tm-msg-lightbox-nav tm-msg-lightbox-nav--prev"
-                                    data-action="click->image-lightbox#previous"
+                                    data-action="click->core--image-lightbox#previous"
                                     aria-label="Image précédente"
                                 >
                                     <i class="fa-solid fa-chevron-left"></i>
@@ -287,19 +288,19 @@
                                     width="1200"
                                     height="900"
                                     loading="lazy"
-                                    data-image-lightbox-target="image"
+                                    data-core--image-lightbox-target="image"
                                 >
 
                                 <button
                                     type="button"
                                     class="tm-msg-lightbox-nav tm-msg-lightbox-nav--next"
-                                    data-action="click->image-lightbox#next"
+                                    data-action="click->core--image-lightbox#next"
                                     aria-label="Image suivante"
                                 >
                                     <i class="fa-solid fa-chevron-right"></i>
                                 </button>
 
-                                <div class="tm-msg-lightbox-counter" data-image-lightbox-target="counter"></div>
+                                <div class="tm-msg-lightbox-counter" data-core--image-lightbox-target="counter" aria-live="polite" aria-atomic="true"></div>
                             </div>
                         </div>
                     {% endif %}
@@ -310,9 +311,9 @@
                         {{ form_start(messageForm, {
                             attr: {
                                 class: 'tm-msg-form',
-                                'data-controller': 'conversation-form',
-                                'data-action': 'submit->conversation-form#submit'
-                            }
+                                'data-controller': 'messaging--conversation-form',
+                                'data-action': 'submit->messaging--conversation-form#submit',
+                            },
                         }) }}
 
                         {% if messageForm.vars.errors|length > 0 %}
@@ -321,7 +322,7 @@
                             </div>
                         {% endif %}
 
-                        <div class="alert alert-danger d-none" data-conversation-form-target="error"></div>
+                        <div class="alert alert-danger d-none" data-messaging--conversation-form-target="error"></div>
 
                         <div class="tm-msg-compose-field tm-msg-compose-field--main">
                             <label class="btn-icone tm-msg-compose-attach" for="{{ messageForm.attachments.vars.id }}" aria-label="Joindre des photos">
@@ -334,11 +335,11 @@
                                 attr: {
                                     class: 'form-control tm-msg-textarea' ~ (messageForm.content.vars.errors|length > 0 ? ' is-invalid' : ''),
                                     rows: 1,
-                                    placeholder: 'Écrivez votre message…'
-                                }
+                                    placeholder: 'Écrivez votre message…',
+                                },
                             }) }}
 
-                            <button type="submit" class="btn-envoyer tm-msg-submit" data-conversation-form-target="submit" aria-label="Envoyer le message">
+                            <button type="submit" class="btn-envoyer tm-msg-submit" data-messaging--conversation-form-target="submit" aria-label="Envoyer le message">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <path d="m22 2-7 20-4-9-9-4z"/>
                                     <path d="M22 2 11 13"/>
@@ -352,12 +353,12 @@
                                     class: 'visually-hidden tm-msg-file-input' ~ (messageForm.attachments.vars.errors|length > 0 ? ' is-invalid' : ''),
                                     accept: 'image/jpeg,image/png,image/webp',
                                     multiple: 'multiple',
-                                    'data-conversation-form-target': 'files',
-                                    'data-action': 'change->conversation-form#filesChanged'
-                                }
+                                    'data-messaging--conversation-form-target': 'files',
+                                    'data-action': 'change->messaging--conversation-form#filesChanged',
+                                },
                             }) }}
-                            <div class="form-text" data-conversation-form-target="summary">Jusqu’à 5 photos.</div>
-                            <div class="tm-conversation-preview" data-conversation-form-target="preview" hidden></div>
+                            <div class="form-text" data-messaging--conversation-form-target="summary">Jusqu’à 5 photos.</div>
+                            <div class="tm-conversation-preview" data-messaging--conversation-form-target="preview" hidden></div>
                         </div>
 
                         {% if messageForm.content.vars.errors|length > 0 %}
@@ -373,7 +374,7 @@
                         {% endif %}
 
                         {{ form_widget(messageForm._token) }}
-                        {{ form_end(messageForm, { render_rest: false }) }}
+                        {{ form_end(messageForm, {render_rest: false}) }}
                     {% elseif activeConversation and isConversationArchived is defined and isConversationArchived %}
                         <div class="alert alert-secondary mb-0" role="alert">
                             La messagerie est clôturée car cette demande a été archivée par votre interlocuteur.
@@ -445,7 +446,7 @@
                                 </div>
 
                                 <div class="modal-footer">
-                                    <a href="{{ path('app_prestataire_quote_request_show', { slug: quoteRequest.slug }) }}" class="btn btn-outline-secondary">
+                                    <a href="{{ path('app_prestataire_quote_request_show', {slug: quoteRequest.slug}) }}" class="btn btn-outline-secondary">
                                         Ouvrir la fiche demande
                                     </a>
                                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">

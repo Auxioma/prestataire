@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'Website/base.html.twig' %}
 
 {% block title %}Modifier {{ ps.service.name }} - TrouveMoi{% endblock %}
 
@@ -8,20 +8,20 @@
 {% endblock %}
 
 {% block body %}
-    <div class="tm-settings-container" {{ stimulus_controller('settings-tabs') }}>
+    <div class="tm-settings-container" {{ stimulus_controller('prestataire--settings-tabs') }}>
         <div class="tm-main-layout">
-            <aside class="tm-settings-sidebar" {{ stimulus_target('settings-tabs', 'sidebar') }}>
-                {{ include('profile/_prestataire_settings_sidebar.html.twig', {
+            <aside class="tm-settings-sidebar" {{ stimulus_target('prestataire--settings-tabs', 'sidebar') }}>
+                {{ include('Prestataire/profile/_prestataire_settings_sidebar.html.twig', {
                     user: app.user,
                     activeTab: 'services',
                     asLinks: true,
                 }) }}
             </aside>
 
-            <div class="tm-settings-sidebar-backdrop" {{ stimulus_target('settings-tabs', 'backdrop') }} {{ stimulus_action('settings-tabs', 'closeSidebar', 'click') }}></div>
+            <div class="tm-settings-sidebar-backdrop" {{ stimulus_target('prestataire--settings-tabs', 'backdrop') }} {{ stimulus_action('prestataire--settings-tabs', 'closeSidebar', 'click') }}></div>
 
             <div class="tm-settings-content">
-                <button type="button" class="tm-sidebar-toggle d-lg-none" aria-label="Ouvrir la navigation des paramètres" {{ stimulus_target('settings-tabs', 'toggle') }} {{ stimulus_action('settings-tabs', 'toggleSidebar', 'click') }}>
+                <button type="button" class="tm-sidebar-toggle d-lg-none" aria-label="Ouvrir la navigation des paramètres" {{ stimulus_target('prestataire--settings-tabs', 'toggle') }} {{ stimulus_action('prestataire--settings-tabs', 'toggleSidebar', 'click') }}>
                     ☰
                 </button>
 
@@ -38,8 +38,8 @@
                         {{ form_start(form, {
                             attr: {
                                 class: 'needs-validation',
-                                'data-turbo': 'false'
-                            }
+                                'data-turbo': 'false',
+                            },
                         }) }}
 
                         <div class="alert alert-light border mb-4" role="status">
@@ -56,11 +56,11 @@
 
                         <div class="mb-3">
                             {{ form_row(form.tauxReduction, {
-                                label_attr: { class: 'form-label fw-semibold' },
+                                label_attr: {class: 'form-label fw-semibold'},
                                 attr: {
                                     class: 'form-control',
-                                    placeholder: 'Ex : 10'
-                                }
+                                    placeholder: 'Ex : 10',
+                                },
                             }) }}
                         </div>
 
@@ -71,7 +71,7 @@
                         {% endif %}
 
                         <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end pt-2">
-                            <a href="{{ path('app_prestataire_settings', { tab: 'services', _fragment: 'services-panel' }) }}" class="btn btn-outline-secondary">
+                            <a href="{{ path('app_prestataire_settings', {tab: 'services', _fragment: 'services-panel'}) }}" class="btn btn-outline-secondary">
                                 Annuler
                             </a>
 

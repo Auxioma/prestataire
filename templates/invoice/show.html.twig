@@ -1,249 +1,250 @@
-{% extends 'base.html.twig' %}
+{% extends 'Website/base.html.twig' %}
 
 {% block title %}Facture{% endblock %}
 
 {% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/quote_proposal/show.css') }}">{% endblock %}
 
 {% block body %}
-	{% set isPrestataireView = viewerContext|default('prestataire') == 'prestataire' %}
-	{% set proposal = proposal ?? invoice.quoteProposal %}
-	{% set pdfPath = isPrestataireView
-		? path('app_prestataire_invoice_pdf', { publicReference: proposal.publicReference })
-		: path('app_quote_request_invoice_pdf', { publicReference: proposal.publicReference }) %}
-	{% set backPath = isPrestataireView
-		? path(proposal.archivedByPrestataireAt ? 'app_prestataire_quote_proposal_archived_show' : 'app_prestataire_quote_proposal_show', { publicReference: proposal.publicReference })
-		: path(proposal.quoteRequest.archivedByClientAt ? 'app_quote_request_history_show' : 'app_quote_request_show', { slug: proposal.quoteRequest.slug }) %}
+    {% set isPrestataireView = viewerContext|default('prestataire') == 'prestataire' %}
+    {% set proposal = proposal ?? invoice.quoteProposal %}
+    {% set pdfPath = isPrestataireView
+        ? path('app_prestataire_invoice_pdf', {publicReference: proposal.publicReference})
+        : path('app_quote_request_invoice_pdf', {publicReference: proposal.publicReference}) %}
+    {% set backPath = isPrestataireView
+        ? path(proposal.archivedByPrestataireAt ? 'app_prestataire_quote_proposal_archived_show' : 'app_prestataire_quote_proposal_show', {publicReference: proposal.publicReference})
+        : path(proposal.quoteRequest.archivedByClientAt ? 'app_quote_request_history_show' : 'app_quote_request_show', {slug: proposal.quoteRequest.slug}) %}
 
-	<div class="qp-page">
-		<div class="qp-shell">
-			<header class="qp-hero">
-				<div class="qp-hero__main">
-					<div class="qp-eyebrow">Facture liée au devis accepté</div>
-					<h1 class="qp-title">Facture {{ invoice.invoiceNumber ?: 'Brouillon' }}</h1>
-					<div class="qp-meta-list">
-						<div class="qp-meta-pill">
-							<span class="qp-meta-pill__label">Devis source</span>
-							<span class="qp-meta-pill__value">{{ proposal.proposalNumber ?: proposal.publicReference }}</span>
-						</div>
-						<div class="qp-meta-pill">
-							<span class="qp-meta-pill__label">Statut</span>
-							<span class="qp-meta-pill__value">{{ invoice.status.label }}</span>
-						</div>
-						{% if invoice.isIssued and invoice.issuedAt %}
-							<div class="qp-meta-pill">
-								<span class="qp-meta-pill__label">Émise le</span>
-								<span class="qp-meta-pill__value">{{ invoice.issuedAt|date('d/m/Y à H:i') }}</span>
-							</div>
-						{% endif %}
-						<div class="qp-meta-pill">
-							<span class="qp-meta-pill__label">Mode</span>
-							<span class="qp-meta-pill__value">{{ invoice.sourceType.label }}</span>
-						</div>
-						{% if not invoice.isExternalImport %}
-							<div class="qp-meta-pill">
-								<span class="qp-meta-pill__label">Factur-X</span>
-								<span class="qp-meta-pill__value">PDF + XML embarqué</span>
-							</div>
-						{% endif %}
-						<div class="qp-meta-pill">
-							<span class="qp-meta-pill__label">Échéance</span>
-							<span class="qp-meta-pill__value">{{ invoice.dueAt ? invoice.dueAt|date('d/m/Y') : '—' }}</span>
-						</div>
-					</div>
-				</div>
+    <div class="qp-page">
+        <div class="qp-shell">
+            <header class="qp-hero">
+                <div class="qp-hero__main">
+                    <div class="qp-eyebrow">Facture liée au devis accepté</div>
+                    <h1 class="qp-title">Facture {{ invoice.invoiceNumber ?: 'Brouillon' }}</h1>
+                    <div class="qp-meta-list">
+                        <div class="qp-meta-pill">
+                            <span class="qp-meta-pill__label">Devis source</span>
+                            <span class="qp-meta-pill__value">{{ proposal.proposalNumber ?: proposal.publicReference }}</span>
+                        </div>
+                        <div class="qp-meta-pill">
+                            <span class="qp-meta-pill__label">Statut</span>
+                            <span class="qp-meta-pill__value">{{ invoice.status.label }}</span>
+                        </div>
+                        {% if invoice.isIssued and invoice.issuedAt %}
+                            <div class="qp-meta-pill">
+                                <span class="qp-meta-pill__label">Émise le</span>
+                                <span class="qp-meta-pill__value">{{ invoice.issuedAt|date('d/m/Y à H:i') }}</span>
+                            </div>
+                        {% endif %}
+                        <div class="qp-meta-pill">
+                            <span class="qp-meta-pill__label">Mode</span>
+                            <span class="qp-meta-pill__value">{{ invoice.sourceType.label }}</span>
+                        </div>
+                        {% if not invoice.isExternalImport %}
+                            <div class="qp-meta-pill">
+                                <span class="qp-meta-pill__label">Factur-X</span>
+                                <span class="qp-meta-pill__value">PDF + XML embarqué</span>
+                            </div>
+                        {% endif %}
+                        <div class="qp-meta-pill">
+                            <span class="qp-meta-pill__label">Échéance</span>
+                            <span class="qp-meta-pill__value">{{ invoice.dueAt ? invoice.dueAt|date('d/m/Y') : '—' }}</span>
+                        </div>
+                    </div>
+                </div>
 
-				<div class="qp-hero__actions">
-					<a href="{{ backPath }}" class="qp-btn qp-btn--ghost">{{ isPrestataireView ? 'Retour au devis' : 'Retour à la demande' }}</a>
-					<a href="{{ pdfPath }}" class="qp-btn qp-btn--primary" target="_blank" rel="noopener">Voir le PDF</a>
-					{% if isPrestataireView and not invoice.isIssued %}
-						<a href="{{ path('app_prestataire_invoice_manage', { publicReference: proposal.publicReference }) }}" class="qp-btn qp-btn--secondary">Modifier la facture</a>
-						<form
-							method="post"
-							action="{{ path('app_prestataire_invoice_issue', { publicReference: proposal.publicReference }) }}"
-							class="d-inline"
-							data-controller="confirm-dialog"
-							data-action="submit->confirm-dialog#confirm"
-						>
-							<input type="hidden" name="_token" value="{{ csrf_token('issue_invoice_' ~ proposal.id) }}">
-							<button
-								type="submit"
-								class="qp-btn qp-btn--secondary"
-								data-confirm-dialog-title-value="Émettre cette facture ?"
-								data-confirm-dialog-text-value="Elle deviendra visible par le client et ne pourra plus être modifiée ensuite."
-								data-confirm-dialog-confirm-button-text-value="Émettre"
-								data-confirm-dialog-cancel-button-text-value="Annuler"
-							>
-								Émettre la facture
-							</button>
-						</form>
-					{% endif %}
-				</div>
-			</header>
+                <div class="qp-hero__actions">
+                    <a href="{{ backPath }}" class="qp-btn qp-btn--ghost">{{ isPrestataireView ? 'Retour au devis' : 'Retour à la demande' }}</a>
+                    <a href="{{ pdfPath }}" class="qp-btn qp-btn--primary" target="_blank" rel="noopener">Voir le PDF <span class="visually-hidden">(nouvel onglet)</span></a>
+                    {% if isPrestataireView and not invoice.isIssued %}
+                        <a href="{{ path('app_prestataire_invoice_manage', {publicReference: proposal.publicReference}) }}" class="qp-btn qp-btn--secondary">Modifier la facture</a>
+                        <form
+                            method="post"
+                            action="{{ path('app_prestataire_invoice_issue', {publicReference: proposal.publicReference}) }}"
+                            class="d-inline"
+                            data-controller="core--confirm-dialog"
+                            data-action="submit->core--confirm-dialog#confirm"
+                        >
+                            <input type="hidden" name="_token" value="{{ csrf_token('issue_invoice_' ~ proposal.id) }}">
+                            <button
+                                type="submit"
+                                class="qp-btn qp-btn--secondary"
+                                data-core--confirm-dialog-title-value="Émettre cette facture ?"
+                                data-core--confirm-dialog-text-value="Elle deviendra visible par le client et ne pourra plus être modifiée ensuite."
+                                data-core--confirm-dialog-confirm-button-text-value="Émettre"
+                                data-core--confirm-dialog-cancel-button-text-value="Annuler"
+                            >
+                                Émettre la facture
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </header>
 
-			<section class="qp-banner {{ invoice.isIssued ? 'qp-banner--success' : 'qp-banner--warning' }}">
-				<div class="qp-banner__content">
-					<div class="qp-banner__text-group">
-						<div class="qp-banner__title">{{ invoice.isIssued ? 'Facture émise' : 'Facture en brouillon' }}</div>
-						<div class="qp-banner__text">
-							{% if invoice.isIssued %}
-								Cette facture est la version visible par le client. TrouveMoi en fournit une version PDF et, pour les factures générées en interne, un XML de préparation Factur-X.
-							{% else %}
-								Le document peut encore être ajusté par le prestataire avant émission définitive.
-							{% endif %}
-						</div>
-					</div>
-				</div>
-			</section>
+            <section class="qp-banner {{ invoice.isIssued ? 'qp-banner--success' : 'qp-banner--warning' }}">
+                <div class="qp-banner__content">
+                    <div class="qp-banner__text-group">
+                        <div class="qp-banner__title">{{ invoice.isIssued ? 'Facture émise' : 'Facture en brouillon' }}</div>
+                        <div class="qp-banner__text">
+                            {% if invoice.isIssued %}
+                                Cette facture est la version visible par le client. TrouveMoi en fournit une version PDF et, pour les factures générées en interne, un XML de préparation Factur-X.
+                            {% else %}
+                                Le document peut encore être ajusté par le prestataire avant émission définitive.
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-			<div class="qp-layout">
-				<div class="qp-main">
-					<section class="qp-card qp-card--hero">
-						<div class="qp-card__body">
-							<div class="qp-section-head qp-section-head--spread">
-								<div>
-									<div class="qp-kicker">Document</div>
-									<h2 class="qp-section-title">
-										{{ invoice.isExternalImport ? 'Facture PDF importée' : 'Facture générée dans TrouveMoi' }}
-									</h2>
-									<p class="qp-section-subtitle">
-										Prestataire : {{ proposal.prestataireCompanyName ?: proposal.prestataireLegalName ?: '—' }}
-									</p>
-								</div>
-							</div>
+            <div class="qp-layout">
+                <div class="qp-main">
+                    <section class="qp-card qp-card--hero">
+                        <div class="qp-card__body">
+                            <div class="qp-section-head qp-section-head--spread">
+                                <div>
+                                    <div class="qp-kicker">Document</div>
+                                    <h2 class="qp-section-title">
+                                        {{ invoice.isExternalImport ? 'Facture PDF importée' : 'Facture générée dans TrouveMoi' }}
+                                    </h2>
+                                    <p class="qp-section-subtitle">
+                                        Prestataire : {{ proposal.prestataireCompanyName ?: proposal.prestataireLegalName ?: '—' }}
+                                    </p>
+                                </div>
+                            </div>
 
-							{% if invoice.isExternalImport %}
-								<div class="qp-highlight-box">
-									<p class="mb-2"><strong>Cette facture repose sur un PDF externe importé par le prestataire.</strong></p>
-									<p class="mb-2">L’aperçu détaillé n’est pas reconstitué dans TrouveMoi. Le document contractuel à consulter est disponible via le bouton <strong>Voir le PDF</strong>.</p>
-									<p class="mb-0">
-										Fichier : <strong>{{ invoice.externalPdfOriginalName ?: 'Facture PDF externe' }}</strong>
-										{% if invoice.externalPdfUploadedAt %}, importé le {{ invoice.externalPdfUploadedAt|date('d/m/Y à H:i') }}{% endif %}
-									</p>
-								</div>
-							{% else %}
-								<div class="qp-highlight-box mb-3">
-									<p class="mb-2"><strong>PDF natif avec XML Factur-X embarqué.</strong></p>
-									<p class="mb-2">Le PDF généré par TrouveMoi reste lisible normalement et contient aussi un fichier XML embarqué pour la préparation Factur-X.</p>
-									{% if isPrestataireView %}
-										<p class="mb-0">
-											<a href="{{ path('app_prestataire_invoice_xml_preview', { publicReference: proposal.publicReference }) }}" target="_blank" rel="noopener"><strong>Voir le XML</strong></a>
-											·
-											<a href="{{ path('app_prestataire_invoice_xml', { publicReference: proposal.publicReference }) }}"><strong>Télécharger le XML</strong></a>
-										</p>
-									{% endif %}
-								</div>
+                            {% if invoice.isExternalImport %}
+                                <div class="qp-highlight-box">
+                                    <p class="mb-2"><strong>Cette facture repose sur un PDF externe importé par le prestataire.</strong></p>
+                                    <p class="mb-2">L’aperçu détaillé n’est pas reconstitué dans TrouveMoi. Le document contractuel à consulter est disponible via le bouton <strong>Voir le PDF</strong>.</p>
+                                    <p class="mb-0">
+                                        Fichier : <strong>{{ invoice.externalPdfOriginalName ?: 'Facture PDF externe' }}</strong>
+                                        {% if invoice.externalPdfUploadedAt %}, importé le {{ invoice.externalPdfUploadedAt|date('d/m/Y à H:i') }}{% endif %}
+                                    </p>
+                                </div>
+                            {% else %}
+                                <div class="qp-highlight-box mb-3">
+                                    <p class="mb-2"><strong>PDF natif avec XML Factur-X embarqué.</strong></p>
+                                    <p class="mb-2">Le PDF généré par TrouveMoi reste lisible normalement et contient aussi un fichier XML embarqué pour la préparation Factur-X.</p>
+                                    {% if isPrestataireView %}
+                                        <p class="mb-0">
+                                            <a href="{{ path('app_prestataire_invoice_xml_preview', {publicReference: proposal.publicReference}) }}" target="_blank" rel="noopener"><strong>Voir le XML</strong> <span class="visually-hidden">(nouvel onglet)</span></a>
+                                            ·
+                                            <a href="{{ path('app_prestataire_invoice_xml', {publicReference: proposal.publicReference}) }}"><strong>Télécharger le XML</strong></a>
+                                        </p>
+                                    {% endif %}
+                                </div>
 
-								<div class="qp-table-wrap">
-									<table class="qp-table">
-										<thead>
-											<tr>
-												<th>Prestation</th>
-												<th class="is-right">Qté</th>
-												<th class="is-right">PU HT</th>
-												<th class="is-right">TVA</th>
-												<th class="is-right">Total HT</th>
-											</tr>
-										</thead>
-										<tbody>
-											{% for item in invoice.items %}
-												<tr>
-													<td>
-														<div class="qp-item-title">{{ item.label ?: 'Ligne sans intitulé' }}</div>
-														{% if item.description %}
-															<div class="qp-item-description">{{ item.description }}</div>
-														{% endif %}
-													</td>
+                                <div class="qp-table-wrap">
+                                    <table class="qp-table">
+                                        <caption class="visually-hidden">Détail des lignes de la facture</caption>
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Prestation</th>
+                                                <th scope="col" class="is-right">Qté</th>
+                                                <th scope="col" class="is-right">PU HT</th>
+                                                <th scope="col" class="is-right">TVA</th>
+                                                <th scope="col" class="is-right">Total HT</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for item in invoice.items %}
+                                                <tr>
+                                                    <td>
+                                                        <div class="qp-item-title">{{ item.label ?: 'Ligne sans intitulé' }}</div>
+                                                        {% if item.description %}
+                                                            <div class="qp-item-description">{{ item.description }}</div>
+                                                        {% endif %}
+                                                    </td>
 
-													<td class="is-right">
-														<span class="qp-nowrap">{{ item.quantity|number_format(2, ',', ' ') }}</span>
-													</td>
+                                                    <td class="is-right">
+                                                        <span class="qp-nowrap">{{ item.quantity|number_format(2, ',', ' ') }}</span>
+                                                    </td>
 
-													<td class="is-right">
-														<span class="qp-money">
-															<span class="qp-money__value">{{ item.unitPriceHt|number_format(2, ',', ' ') }}</span>
-															<span class="qp-money__currency">€</span>
-														</span>
-													</td>
+                                                    <td class="is-right">
+                                                        <span class="qp-money">
+                                                            <span class="qp-money__value">{{ item.unitPriceHt|number_format(2, ',', ' ') }}</span>
+                                                            <span class="qp-money__currency">€</span>
+                                                        </span>
+                                                    </td>
 
-													<td class="is-right">
-														<span class="qp-percent">
-															<span class="qp-percent__value">{{ item.vatRate|number_format(2, ',', ' ') }}</span>
-															<span class="qp-percent__symbol">%</span>
-														</span>
-													</td>
+                                                    <td class="is-right">
+                                                        <span class="qp-percent">
+                                                            <span class="qp-percent__value">{{ item.vatRate|number_format(2, ',', ' ') }}</span>
+                                                            <span class="qp-percent__symbol">%</span>
+                                                        </span>
+                                                    </td>
 
-													<td class="is-right qp-table__amount">
-														<span class="qp-money qp-money--strong">
-															<span class="qp-money__value">{{ item.totalHt|number_format(2, ',', ' ') }}</span>
-															<span class="qp-money__currency">€</span>
-														</span>
-													</td>
-												</tr>
-											{% else %}
-												<tr><td colspan="5" class="qp-empty">Aucune ligne n’a été ajoutée.</td></tr>
-											{% endfor %}
-										</tbody>
-									</table>
-								</div>
-							{% endif %}
-						</div>
-					</section>
+                                                    <td class="is-right qp-table__amount">
+                                                        <span class="qp-money qp-money--strong">
+                                                            <span class="qp-money__value">{{ item.totalHt|number_format(2, ',', ' ') }}</span>
+                                                            <span class="qp-money__currency">€</span>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            {% else %}
+                                                <tr><td colspan="5" class="qp-empty">Aucune ligne n’a été ajoutée.</td></tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </section>
 
-					{% if not invoice.isExternalImport and invoice.terms %}
-						<section class="qp-card"><div class="qp-card__body"><div class="qp-section-head"><div class="qp-kicker">Conditions</div><h2 class="qp-section-title">Règlement</h2></div><div class="qp-richtext">{{ invoice.terms|nl2br }}</div></div></section>
-					{% endif %}
+                    {% if not invoice.isExternalImport and invoice.terms %}
+                        <section class="qp-card"><div class="qp-card__body"><div class="qp-section-head"><div class="qp-kicker">Conditions</div><h2 class="qp-section-title">Règlement</h2></div><div class="qp-richtext">{{ invoice.terms|nl2br }}</div></div></section>
+                    {% endif %}
 
-					{% if invoice.latePaymentPenaltyTerms or invoice.fixedRecoveryCompensationTerms or invoice.earlyPaymentDiscountTerms %}
-						<section class="qp-card"><div class="qp-card__body"><div class="qp-section-head"><div class="qp-kicker">Règlement</div><h2 class="qp-section-title">Mentions légales de paiement</h2></div><div class="qp-richtext">{% if invoice.latePaymentPenaltyTerms %}<p><strong>Pénalités de retard</strong><br>{{ invoice.latePaymentPenaltyTerms|nl2br }}</p>{% endif %}{% if invoice.fixedRecoveryCompensationTerms %}<p><strong>Indemnité forfaitaire de recouvrement</strong><br>{{ invoice.fixedRecoveryCompensationTerms|nl2br }}</p>{% endif %}{% if invoice.earlyPaymentDiscountTerms %}<p><strong>Escompte</strong><br>{{ invoice.earlyPaymentDiscountTerms|nl2br }}</p>{% endif %}</div></div></section>
-					{% endif %}
+                    {% if invoice.latePaymentPenaltyTerms or invoice.fixedRecoveryCompensationTerms or invoice.earlyPaymentDiscountTerms %}
+                        <section class="qp-card"><div class="qp-card__body"><div class="qp-section-head"><div class="qp-kicker">Règlement</div><h2 class="qp-section-title">Mentions légales de paiement</h2></div><div class="qp-richtext">{% if invoice.latePaymentPenaltyTerms %}<p><strong>Pénalités de retard</strong><br>{{ invoice.latePaymentPenaltyTerms|nl2br }}</p>{% endif %}{% if invoice.fixedRecoveryCompensationTerms %}<p><strong>Indemnité forfaitaire de recouvrement</strong><br>{{ invoice.fixedRecoveryCompensationTerms|nl2br }}</p>{% endif %}{% if invoice.earlyPaymentDiscountTerms %}<p><strong>Escompte</strong><br>{{ invoice.earlyPaymentDiscountTerms|nl2br }}</p>{% endif %}</div></div></section>
+                    {% endif %}
 
-					{% if invoice.notes %}
-						<section class="qp-card"><div class="qp-card__body"><div class="qp-section-head"><div class="qp-kicker">Notes</div><h2 class="qp-section-title">Informations complémentaires</h2></div><div class="qp-richtext">{{ invoice.notes|nl2br }}</div></div></section>
-					{% endif %}
-				</div>
+                    {% if invoice.notes %}
+                        <section class="qp-card"><div class="qp-card__body"><div class="qp-section-head"><div class="qp-kicker">Notes</div><h2 class="qp-section-title">Informations complémentaires</h2></div><div class="qp-richtext">{{ invoice.notes|nl2br }}</div></div></section>
+                    {% endif %}
+                </div>
 
-				<aside class="qp-sidebar">
-					<section class="qp-card qp-card--accent">
-						<div class="qp-card__body">
-							<div class="qp-kicker qp-kicker--light">Montants</div>
-							<h2 class="qp-section-title qp-section-title--light">Synthèse financière</h2>
-							{% if invoice.isExternalImport %}
-								<p class="mb-0 text-white-50">Les montants restent portés par le PDF externe importé.</p>
-							{% else %}
-								<dl class="qp-totals">
-									<div class="qp-totals__row">
-										<dt>Total HT</dt>
-										<dd>
-											<span class="qp-money">
-												<span class="qp-money__value">{{ invoice.subtotalHt|number_format(2, ',', ' ') }}</span>
-												<span class="qp-money__currency">€</span>
-											</span>
-										</dd>
-									</div>
-									<div class="qp-totals__row">
-										<dt>TVA</dt>
-										<dd>
-											<span class="qp-money">
-												<span class="qp-money__value">{{ invoice.taxAmount|number_format(2, ',', ' ') }}</span>
-												<span class="qp-money__currency">€</span>
-											</span>
-										</dd>
-									</div>
-									<div class="qp-totals__row qp-totals__row--grand">
-										<dt>Total TTC</dt>
-										<dd>
-											<span class="qp-money qp-money--strong">
-												<span class="qp-money__value">{{ invoice.totalTtc|number_format(2, ',', ' ') }}</span>
-												<span class="qp-money__currency">€</span>
-											</span>
-										</dd>
-									</div>
-								</dl>
-							{% endif %}
-						</div>
-					</section>
-				</aside>
-			</div>
-		</div>
-	</div>
+                <aside class="qp-sidebar">
+                    <section class="qp-card qp-card--accent">
+                        <div class="qp-card__body">
+                            <div class="qp-kicker qp-kicker--light">Montants</div>
+                            <h2 class="qp-section-title qp-section-title--light">Synthèse financière</h2>
+                            {% if invoice.isExternalImport %}
+                                <p class="mb-0 text-white-50">Les montants restent portés par le PDF externe importé.</p>
+                            {% else %}
+                                <dl class="qp-totals">
+                                    <div class="qp-totals__row">
+                                        <dt>Total HT</dt>
+                                        <dd>
+                                            <span class="qp-money">
+                                                <span class="qp-money__value">{{ invoice.subtotalHt|number_format(2, ',', ' ') }}</span>
+                                                <span class="qp-money__currency">€</span>
+                                            </span>
+                                        </dd>
+                                    </div>
+                                    <div class="qp-totals__row">
+                                        <dt>TVA</dt>
+                                        <dd>
+                                            <span class="qp-money">
+                                                <span class="qp-money__value">{{ invoice.taxAmount|number_format(2, ',', ' ') }}</span>
+                                                <span class="qp-money__currency">€</span>
+                                            </span>
+                                        </dd>
+                                    </div>
+                                    <div class="qp-totals__row qp-totals__row--grand">
+                                        <dt>Total TTC</dt>
+                                        <dd>
+                                            <span class="qp-money qp-money--strong">
+                                                <span class="qp-money__value">{{ invoice.totalTtc|number_format(2, ',', ' ') }}</span>
+                                                <span class="qp-money__currency">€</span>
+                                            </span>
+                                        </dd>
+                                    </div>
+                                </dl>
+                            {% endif %}
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </div>
+    </div>
 {% endblock %}
