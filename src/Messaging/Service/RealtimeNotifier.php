@@ -37,7 +37,7 @@ final class RealtimeNotifier
     ) {
     }
 
-    public function notifyMessageCreated(int $conversationId, Message $message): void
+    public function notifyMessageCreated(int|string $conversationId, Message $message): void
     {
         $payload = $this->buildMessagePayload($message);
 
@@ -47,7 +47,7 @@ final class RealtimeNotifier
                     'x-internal-token' => $this->internalToken,
                 ],
                 'json' => [
-                    'conversationId' => $conversationId,
+                    'conversationId' => (string) $conversationId,
                     'message' => $payload,
                 ],
             ]);

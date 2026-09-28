@@ -38,11 +38,11 @@ final class RealtimeAuthTokenManager
         ], $ttl);
     }
 
-    public function createConversationToken(int $conversationId, User $user, ?int $ttl = null): string
+    public function createConversationToken(int|string $conversationId, User $user, ?int $ttl = null): string
     {
         return $this->createToken([
             'type' => 'conversation',
-            'conversationId' => $conversationId,
+            'conversationId' => (string) $conversationId,
             'userId' => (int) $user->getId(),
         ], $ttl);
     }

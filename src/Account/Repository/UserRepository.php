@@ -50,7 +50,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    public function findOneWithProfilesById(int $id): ?User
+    public function findOneWithProfilesById(string $id): ?User
     {
         return $this->createQueryBuilder('u')
             ->leftJoin('u.clientProfile', 'clientProfile')
