@@ -20,6 +20,7 @@ declare(strict_types=1);
 namespace App\Prestataire\Controller;
 
 use App\Account\Entity\User;
+use App\Core\Service\SafeReturnUrlResolver;
 use App\Prestataire\Entity\PrestataireProfile;
 use App\Prestataire\Service\PrestataireResponseTimeManager;
 use App\Review\Enum\FavoriteTypeEnum;
@@ -27,6 +28,7 @@ use App\Review\Repository\FavoriteRepository;
 use App\Subscription\Service\SubscriptionAccessManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
@@ -51,11 +53,13 @@ class ShowPrestataireController extends AbstractController
      * Traite l’action "__invoke" du contrôleur Show Prestataire.
      */
     public function __invoke(
+        Request $request,
         #[MapEntity(mapping: ['slug' => 'slug'])]
         PrestataireProfile $prestataire,
         FavoriteRepository $favoriteRepository,
         PrestataireResponseTimeManager $prestataireResponseTimeManager,
         SubscriptionAccessManager $subscriptionAccessManager,
+        SafeReturnUrlResolver $safeReturnUrlResolver,
     ): Response {
         if (!$prestataire->getCompanyName()) {
             throw $this->createNotFoundException('Ce profil professionnel n\'est pas encore actif.');
@@ -148,6 +152,7 @@ class ShowPrestataireController extends AbstractController
             'isFavoriteProvider' => $isFavoriteProvider,
             'favoritePrestationIds' => $favoritePrestationIds,
             'hasUnlockedContactDetails' => $hasUnlockedContactDetails,
+            'backUrl' => $safeReturnUrlResolver->resolve($request, $this->generateUrl('app_home')),
         ]);
     }
 }

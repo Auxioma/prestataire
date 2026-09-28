@@ -23,6 +23,7 @@ use App\Account\Entity\User;
 use App\Account\Service\AuthenticatedUserProvider;
 use App\Catalog\Repository\ServiceCategoryRepository;
 use App\Catalog\Repository\ServiceRepository;
+use App\Core\Service\SafeReturnUrlResolver;
 use App\Prestataire\Entity\PrestataireService;
 use App\Prestataire\Form\PrestataireServicePrestationType;
 use App\Prestataire\Repository\PrestataireServiceRepository;
@@ -275,9 +276,11 @@ final class PrestataireServicePrestationController extends AbstractController
      * Affiche le détail de la ressource demandée.
      */
     public function show(
+        Request $request,
         #[MapEntity(mapping: ['slug' => 'slug'])]
         PrestataireService $ps,
         FavoriteRepository $favoriteRepository,
+        SafeReturnUrlResolver $safeReturnUrlResolver,
     ): Response {
         if (!$ps->isActive()) {
             throw $this->createNotFoundException('Cette prestation est introuvable.');
@@ -341,6 +344,7 @@ final class PrestataireServicePrestationController extends AbstractController
             'prestation' => $ps,
             'prestationMap' => $prestationMap,
             'isFavoritePrestation' => $isFavoritePrestation,
+            'backUrl' => $safeReturnUrlResolver->resolve($request, $this->generateUrl('app_home')),
         ]);
     }
 
