@@ -80,11 +80,16 @@ final class PrestataireRegistrationAdmissionTest extends TestCase
         self::assertNull($this->service('43.22A', false)->getApprovedCompany($session));
     }
 
-    public function testClosedEstablishmentCannotProceed(): void
+    public function testClosedEstablishmentWithAllowedNafCanProceed(): void
     {
-        $this->expectException(RegistrationAdmissionException::class);
-        $this->expectExceptionMessage('établissement actif');
-        $this->service('43.22A', true, 'F')->verify('12345678900011', new Session(new MockArraySessionStorage()));
+        $session = new Session(new MockArraySessionStorage());
+        $service = $this->service('43.22A', true, 'F');
+
+        $company = $service->verify('12345678900011', $session);
+
+        self::assertFalse($company['isActive']);
+        self::assertSame('43.22A', $company['nafCode']);
+        self::assertNotNull($service->getApprovedCompany($session));
     }
 
     public function testApiOutageDoesNotExposeTransportDetailsOrRedirectToOtherPlatform(): void

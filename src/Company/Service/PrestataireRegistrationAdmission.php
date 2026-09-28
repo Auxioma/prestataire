@@ -47,8 +47,8 @@ final class PrestataireRegistrationAdmission
         } catch (\RuntimeException|\InvalidArgumentException $exception) {
             throw new RegistrationAdmissionException($exception->getMessage(), 0, $exception);
         }
-        if (!$company['isVerified'] || !$company['isActive']) {
-            throw new RegistrationAdmissionException('Ce SIRET doit correspondre à un établissement actif pour poursuivre votre inscription.');
+        if (!$company['isVerified']) {
+            throw new RegistrationAdmissionException('Ce SIRET n’a pas pu être vérifié.');
         }
         $naf = $company['nafCode'] ?? null;
         if (null === $naf) {
