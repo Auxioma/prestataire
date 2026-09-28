@@ -6,7 +6,7 @@
 .tm-company-card {
     border: none !important;
     border-radius: 16px !important;
-    background: #fff !important;
+    background: var(--tm-color-white) !important;
     box-shadow:
         0 1px 2px rgba(15, 23, 42, 0.04),
         0 8px 24px rgba(15, 23, 42, 0.05);
@@ -15,19 +15,25 @@
 .tm-card-title {
     font-size: 1.25rem;
     font-weight: 700;
-    color: #0F172A;
+    color: var(--tm-color-text);
 }
 
 .tm-profile-photo-box {
-    background: #FAFBFD;
-    border: 1px solid #EEF2F7;
+    background: var(--tm-color-paper);
+    border: 1px solid var(--tm-color-border);
     border-radius: 16px;
 }
 
 .tm-profile-photo-box img {
     width: 72px !important;
     height: 72px !important;
-    border: 4px solid #FFFFFF;
+    border: 4px solid var(--tm-color-white);
+}
+
+.tm-profile-photo-box .tm-profile-avatar {
+    width: 90px !important;
+    height: 90px !important;
+    object-fit: cover;
 }
 
 /* =========================
@@ -47,7 +53,7 @@
 .form-label {
     display: block;
     margin-bottom: 8px;
-    color: #1E293B;
+    color: var(--tm-color-text);
     font-size: 0.9rem;
     font-weight: 600;
     text-align: left;
@@ -59,9 +65,9 @@
     width: 100%;
     min-height: 48px;
     padding: 8px 14px;
-    border: 1px solid #E5E7EB;
+    border: 1px solid var(--tm-color-border);
     border-radius: 10px;
-    background: #FAFBFD;
+    background: var(--tm-color-paper);
     font-size: 0.95rem;
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
@@ -74,10 +80,10 @@
 .tm-form-row input:focus,
 .tm-form-row select:focus,
 .tm-form-row textarea:focus {
-    border-color: #2046D8;
+    border-color: var(--tm-color-blue);
     outline: none;
     box-shadow: 0 0 0 4px rgba(32, 70, 216, 0.15);
-    background: #FFFFFF;
+    background: var(--tm-color-white);
 }
 
 .tm-form-row .form-text {
@@ -97,33 +103,33 @@
 ========================= */
 
 .badge.bg-primary {
-    background: #2046D8 !important;
+    background: var(--tm-color-blue) !important;
 }
 
 .tm-btn-service {
     min-width: 320px;
     border: none;
     border-radius: 12px;
-    background: linear-gradient(180deg, #2046D8 0%, #1633A4 100%);
-    color: #FFFFFF;
+    background: linear-gradient(180deg, var(--tm-color-blue) 0%, var(--tm-color-navy-light) 100%);
+    color: var(--tm-color-white);
     box-shadow: 0 10px 20px rgba(32, 70, 216, 0.18);
     transition: all 0.2s ease;
 }
 
 .tm-btn-service:hover {
-    background: linear-gradient(180deg, #1B3CC0 0%, #1633A4 100%);
-    color: #FFFFFF;
+    background: linear-gradient(180deg, var(--tm-color-blue) 0%, var(--tm-color-navy-light) 100%);
+    color: var(--tm-color-white);
     transform: translateY(-1px);
 }
 
 .tm-btn-service:active {
-    background: #1633A4;
-    color: #FFFFFF;
+    background: var(--tm-color-navy-light);
+    color: var(--tm-color-white);
 }
 
 .border-dashed {
     border-style: dashed !important;
-    border-color: #BFC7D6 !important;
+    border-color: var(--tm-color-border) !important;
 }
 
 /* =========================
@@ -155,13 +161,13 @@
 }
 
 .tm-public-cover--image {
-    background-size: cover;
-    background-position: center;
+    object-fit: cover;
+    object-position: center;
     opacity: 0.7;
 }
 
 .tm-public-cover--fallback {
-    background: linear-gradient(135deg, #e0eaff 0%, #cff0ff 100%);
+    background: linear-gradient(135deg, var(--tm-color-blue-soft) 0%, var(--tm-color-white) 100%);
 }
 
 .tm-public-avatar {
@@ -174,8 +180,18 @@
     font-size: 0.78rem;
 }
 
+.tm-profile-preview-job,
+.tm-profile-section-title,
+.tm-profile-rating-value {
+    color: var(--tm-color-text);
+}
+
+.tm-profile-preview-job {
+    font-weight: 500;
+}
+
 .tm-rating-stars {
-    color: #ffc107;
+    color: var(--tm-color-orange);
 }
 
 .tm-status-box {
@@ -185,7 +201,7 @@
 }
 
 .tm-status-success {
-    color: #16A34A;
+    color: var(--tm-color-success);
 }
 
 /* =========================

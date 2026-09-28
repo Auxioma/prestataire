@@ -114,7 +114,7 @@
                             <div class="d-flex align-items-center gap-3 w-100">
                                 <div class="tm-company-logo-mark m-0 shrink-0">
                                     {% if user.prestataireProfile and user.prestataireProfile.logo %}
-                                        <img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" alt="Logo de {{ user.prestataireProfile.companyName|default('votre entreprise') }}" width="160" height="160" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+                                        <img src="{{ asset('uploads/logos/' ~ user.prestataireProfile.logo) }}" class="tm-company-media-preview" alt="Logo de {{ user.prestataireProfile.companyName|default('votre entreprise') }}" width="160" height="160" loading="lazy">
                                     {% else %}
                                         ⚡
                                     {% endif %}
@@ -141,7 +141,7 @@
                             <div class="d-flex align-items-center gap-3 w-100">
                                 <div class="tm-company-cover-mark m-0 shrink-0">
                                     {% if user.prestataireProfile and user.prestataireProfile.coverImage %}
-                                        <img src="{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}" alt="Image de couverture de {{ user.prestataireProfile.companyName|default('votre entreprise') }}" width="1200" height="896" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+                                        <img src="{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}" class="tm-company-media-preview" alt="Image de couverture de {{ user.prestataireProfile.companyName|default('votre entreprise') }}" width="1200" height="896" loading="lazy">
                                     {% else %}
                                         🖼️
                                     {% endif %}
@@ -168,7 +168,7 @@
                             <div class="d-flex align-items-center gap-3 w-100">
                                 <div class="tm-company-cover-mark m-0 shrink-0">
                                     {% if user.prestataireProfile and user.prestataireProfile.signatureImage %}
-                                        <img src="{{ asset('uploads/signatures/' ~ user.prestataireProfile.signatureImage) }}" alt="Signature de {{ user.prestataireProfile.companyName|default('votre entreprise') }}" width="600" height="240" loading="lazy" style="width: 100%; height: 100%; object-fit: contain; background: #fff;">
+                                        <img src="{{ asset('uploads/signatures/' ~ user.prestataireProfile.signatureImage) }}" class="tm-company-media-preview tm-company-media-preview--contain" alt="Signature de {{ user.prestataireProfile.companyName|default('votre entreprise') }}" width="600" height="240" loading="lazy">
                                     {% else %}
                                         ✍️
                                     {% endif %}
@@ -240,7 +240,7 @@
                 </div>
 
                 <div class="tm-company-info-note mt-4 p-3 rounded-3">
-                    <div class="small fw-bold mb-1" style="color: var(--tm-service, #2046D8);">🛡️ Visibilité des données</div>
+                    <div class="small fw-bold mb-1 tm-company-info-note-title">🛡️ Visibilité des données</div>
                     <p class="mb-0 fs-7 text-muted">
                         Ces coordonnées permettent à vos futurs clients de vous joindre directement pour planifier les interventions.
                     </p>

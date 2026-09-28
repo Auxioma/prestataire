@@ -126,7 +126,7 @@
                                         {{ form_label(userForm.avatarFile, 'Photo de profil', {label_attr: {class: 'form-label d-block text-start mb-3'}}) }}
 
                                         <div class="d-flex align-items-center gap-3 flex-wrap">
-                                            <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle shadow-sm" style="width: 90px; height: 90px; object-fit: cover;" alt="Photo de profil de {{ user.firstName }} {{ user.lastName }}" width="90" height="90" loading="lazy">
+                                            <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle shadow-sm tm-profile-avatar" alt="Photo de profil de {{ user.firstName }} {{ user.lastName }}" width="90" height="90" loading="lazy">
 
                                             <div class="grow tm-vich-custom-container">
                                                 {{ form_widget(userForm.avatarFile, {
@@ -170,7 +170,7 @@
 
                                     <div class="p-3 border rounded-4 bg-white shadow-sm text-center position-relative overflow-hidden">
                                         {% if user.prestataireProfile and user.prestataireProfile.coverImage %}
-                                            <div class="position-absolute start-0 top-0 w-100 tm-public-cover tm-public-cover--image" style="background-image: url('{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}');"></div>
+                                            <img src="{{ asset('uploads/covers/' ~ user.prestataireProfile.coverImage) }}" class="position-absolute start-0 top-0 w-100 tm-public-cover tm-public-cover--image" alt="" width="1200" height="896" loading="lazy" aria-hidden="true">
                                         {% else %}
                                             <div class="position-absolute start-0 top-0 w-100 tm-public-cover tm-public-cover--fallback"></div>
                                         {% endif %}
