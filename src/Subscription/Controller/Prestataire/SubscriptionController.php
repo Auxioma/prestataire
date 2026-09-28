@@ -132,7 +132,7 @@ final class SubscriptionController extends AbstractController
         $cardBrand = null;
         $hasStoredPaymentMethod = null !== $currentSubscription?->getCustomer()?->getStripeDefaultPaymentMethodId();
 
-        return $this->render('Subscription/prestataire/subscription/index.html.twig', [
+        return $this->render('subscription/prestataire/subscription/index.html.twig', [
             'plans' => $subscriptionPlanRepository->findActiveOrdered(),
             'currentSubscription' => $currentSubscription,
             'subscriptionRenewalDate' => $subscriptionRenewalDate,

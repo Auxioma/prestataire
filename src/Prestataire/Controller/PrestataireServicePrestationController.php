@@ -181,7 +181,7 @@ final class PrestataireServicePrestationController extends AbstractController
             }
         }
 
-        return $this->render('Prestataire/edit_prestation.html.twig', [
+        return $this->render('prestataire/edit_prestation.html.twig', [
             'form' => $form->createView(),
             'ps' => $ps,
             'prestation' => $ps,
@@ -224,7 +224,7 @@ final class PrestataireServicePrestationController extends AbstractController
             if (!$selectedService) {
                 $this->addFlash('error', 'Veuillez sélectionner un service valide.');
 
-                return $this->render('Prestataire/new_prestation.html.twig', [
+                return $this->render('prestataire/new_prestation.html.twig', [
                     'categories' => $categories,
                 ]);
             }
@@ -265,7 +265,7 @@ final class PrestataireServicePrestationController extends AbstractController
             ]);
         }
 
-        return $this->render('Prestataire/new_prestation.html.twig', [
+        return $this->render('prestataire/new_prestation.html.twig', [
             'categories' => $categories,
         ]);
     }
@@ -336,7 +336,7 @@ final class PrestataireServicePrestationController extends AbstractController
             ]);
         }
 
-        return $this->render('Prestataire/show_prestation.html.twig', [
+        return $this->render('prestataire/show_prestation.html.twig', [
             'ps' => $ps,
             'prestation' => $ps,
             'prestationMap' => $prestationMap,

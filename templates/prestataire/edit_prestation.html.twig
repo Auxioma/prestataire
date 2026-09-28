@@ -18,7 +18,7 @@
     <div class="tm-settings-container" {{ stimulus_controller('prestataire--settings-tabs') }}>
         <div class="tm-main-layout">
             <aside class="tm-settings-sidebar" {{ stimulus_target('prestataire--settings-tabs', 'sidebar') }}>
-                {{ include('Prestataire/profile/_prestataire_settings_sidebar.html.twig', {
+                {{ include('prestataire/profile/_prestataire_settings_sidebar.html.twig', {
                     user: app.user,
                     activeTab: 'services',
                     asLinks: true,

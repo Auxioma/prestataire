@@ -19,7 +19,7 @@
         <div class="tm-settings-container tm-dashboard-page__shell">
             <div class="tm-main-layout tm-dashboard-page__layout">
                 <aside class="tm-settings-sidebar tm-dashboard-page__sidebar" id="prestataire-dashboard-navigation" {{ stimulus_target('prestataire--prestataire-dashboard-tabs', 'sidebar') }}>
-                    {{ include('Prestataire/profile/_prestataire_dashboard_sidebar.html.twig', {
+                    {{ include('prestataire/profile/_prestataire_dashboard_sidebar.html.twig', {
                         user: user,
                         activeTab: activeTab,
                         unreadConversationCount: unreadConversationCount|default(0),
@@ -55,49 +55,49 @@
                     <div class="tab-content tm-dashboard-page__tabs" id="dashboardMainTabsContent">
                         <section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'dashboard' ? 'show active' : '' }}" id="dashboard-main-panel">
                             {% if activeTab == 'dashboard' %}
-                                {{ include('Prestataire/dashboard/_dashboard_panel.html.twig') }}
+                                {{ include('prestataire/dashboard/_dashboard_panel.html.twig') }}
                             {% endif %}
                         </section>
 
                         <section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'prestations' ? 'show active' : '' }}" id="prestations-main-panel">
                             {% if activeTab == 'prestations' %}
-                                {{ include('Prestataire/dashboard/_prestations_panel.html.twig') }}
+                                {{ include('prestataire/dashboard/_prestations_panel.html.twig') }}
                             {% endif %}
                         </section>
 
                         <section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'avis' ? 'show active' : '' }}" id="avis-main-panel">
                             {% if activeTab == 'avis' %}
-                                {{ include('Prestataire/dashboard/_avis_panel.html.twig') }}
+                                {{ include('prestataire/dashboard/_avis_panel.html.twig') }}
                             {% endif %}
                         </section>
 
                         <section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'revenus' ? 'show active' : '' }}" id="revenus-main-panel">
                             {% if activeTab == 'revenus' %}
-                                {{ include('Prestataire/dashboard/_revenus_panel.html.twig') }}
+                                {{ include('prestataire/dashboard/_revenus_panel.html.twig') }}
                             {% endif %}
                         </section>
 
                         <section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'calendrier' ? 'show active' : '' }}" id="calendrier-main-panel">
                             {% if activeTab == 'calendrier' %}
-                                {{ include('Prestataire/dashboard/_calendrier_panel.html.twig') }}
+                                {{ include('prestataire/dashboard/_calendrier_panel.html.twig') }}
                             {% endif %}
                         </section>
 
                         <section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'demandes' ? 'show active' : '' }}" id="demandes-main-panel">
                             {% if activeTab == 'demandes' %}
-                                {{ include('Prestataire/dashboard/_demandes_panel.html.twig') }}
+                                {{ include('prestataire/dashboard/_demandes_panel.html.twig') }}
                             {% endif %}
                         </section>
 
                         <section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'archives' ? 'show active' : '' }}" id="archives-main-panel">
                             {% if activeTab == 'archives' %}
-                                {{ include('Prestataire/dashboard/_archives_panel.html.twig') }}
+                                {{ include('prestataire/dashboard/_archives_panel.html.twig') }}
                             {% endif %}
                         </section>
 
                         <section class="tab-pane fade tm-dashboard-page__panel {{ activeTab == 'messages' ? 'show active' : '' }}" id="messages-main-panel" {{ stimulus_controller('messaging--realtime-conversation', {url: 'http://localhost:3001', conversationId: activeConversation ? activeConversation.id : 0, authToken: realtimeConversationToken|default(''), eventName: 'message_created', joinEventName: 'join_conversation', streamSelector: '.tm-msg-stream', bodySelector: '.tm-msg-body', emptySelector: '.tm-msg-empty--body', currentUserType: 'prestataire', layout: 'dashboard'}) }}>
                             {% if activeTab == 'messages' %}
-                                {{ include('Prestataire/dashboard/_messages_panel.html.twig') }}
+                                {{ include('prestataire/dashboard/_messages_panel.html.twig') }}
                             {% endif %}
                         </section>
                     </div>

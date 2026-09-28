@@ -133,7 +133,7 @@ final class PrestataireDashboardController extends AbstractController
             }
 
             return $this->render(
-                'Prestataire/dashboard/prestataire_dashboard.html.twig',
+                'prestataire/dashboard/prestataire_dashboard.html.twig',
                 $this->buildDashboardViewData(
                     request: $request,
                     entityManager: $entityManager,
@@ -155,7 +155,7 @@ final class PrestataireDashboardController extends AbstractController
             );
         }
 
-        return $this->render('Prestataire/dashboard/prestataire_dashboard.html.twig', $this->buildDashboardViewData(
+        return $this->render('prestataire/dashboard/prestataire_dashboard.html.twig', $this->buildDashboardViewData(
             request: $request,
             entityManager: $entityManager,
             user: $user,
@@ -330,7 +330,7 @@ final class PrestataireDashboardController extends AbstractController
         }
 
         return $this->render(
-            'Prestataire/dashboard/prestataire_dashboard.html.twig',
+            'prestataire/dashboard/prestataire_dashboard.html.twig',
             $this->buildDashboardViewData(
                 request: $request,
                 entityManager: $entityManager,

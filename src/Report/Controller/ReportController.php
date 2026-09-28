@@ -60,7 +60,7 @@ final class ReportController extends AbstractController
             return $this->redirect($this->resolveQuoteRequestBackUrl($user, $quoteRequest));
         }
 
-        return $this->render('Report/create.html.twig', [
+        return $this->render('report/create.html.twig', [
             'form' => $form->createView(),
             'contextTitle' => 'Signaler cette demande de devis',
             'contextDescription' => $quoteRequest->getTitle() ?? 'Demande de devis',
@@ -91,7 +91,7 @@ final class ReportController extends AbstractController
             return $this->redirect($this->resolveConversationBackUrl($user, $conversation));
         }
 
-        return $this->render('Report/create.html.twig', [
+        return $this->render('report/create.html.twig', [
             'form' => $form->createView(),
             'contextTitle' => 'Signaler cette conversation',
             'contextDescription' => $conversation->getQuoteRequest()?->getTitle() ?? 'Conversation liée à une demande',
@@ -122,7 +122,7 @@ final class ReportController extends AbstractController
             return $this->redirectToRoute('app_review_prestataire_reviews');
         }
 
-        return $this->render('Report/create.html.twig', [
+        return $this->render('report/create.html.twig', [
             'form' => $form->createView(),
             'contextTitle' => 'Signaler cet avis',
             'contextDescription' => $review->getQuoteRequest()?->getTitle() ?? 'Avis reçu',

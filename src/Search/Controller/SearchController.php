@@ -136,7 +136,7 @@ class SearchController extends AbstractController
             $subCategories = $categoryRepository->findBy(['parent' => null, 'isActive' => true]);
         }
 
-        return $this->render('Search/search.html.twig', [
+        return $this->render('search/search.html.twig', [
             'currentCategory' => $currentCategory,
             'currentSubCategory' => $currentSubCategory,
             'currentService' => $currentService,

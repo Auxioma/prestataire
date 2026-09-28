@@ -195,7 +195,7 @@ class ProfileController extends AbstractProfileController
             ? $prestataireServiceRepository->findBy(['id' => array_unique($bonsPlanIds)])
             : [];
 
-        return $this->render('Review/favorite/client_favorite.html.twig', [
+        return $this->render('review/favorite/client_favorite.html.twig', [
             'user' => $user,
             'favoriteProviders' => $favoriteProviders,
             'favoritePrestations' => $favoritePrestations,

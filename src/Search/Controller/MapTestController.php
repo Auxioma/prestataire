@@ -59,7 +59,7 @@ final class MapTestController extends AbstractController
                     ))
             );
 
-        return $this->render('Search/test/map.html.twig', [
+        return $this->render('search/test/map.html.twig', [
             'map' => $map,
         ]);
     }

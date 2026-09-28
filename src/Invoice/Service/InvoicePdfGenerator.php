@@ -46,7 +46,7 @@ final class InvoicePdfGenerator
 
     public function generatePdfOutput(
         Invoice $invoice,
-        string $template = 'Invoice/pdf.html.twig',
+        string $template = 'invoice/pdf.html.twig',
         ?string $embeddedXmlPath = null,
     ): string {
         $html = $this->twig->render($template, [

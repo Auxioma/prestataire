@@ -18,7 +18,7 @@
             class="tm-main-layout">
             {# ================= SIDEBAR ================= #}
             <aside class="tm-settings-sidebar" {{ stimulus_target('prestataire--settings-tabs', 'sidebar') }}>
-                {{ include('Prestataire/profile/_prestataire_settings_sidebar.html.twig', {
+                {{ include('prestataire/profile/_prestataire_settings_sidebar.html.twig', {
                     user: user,
                     activeTab: activeTab,
                     asLinks: true,
@@ -462,7 +462,7 @@
 
                     {# ================= ENTREPRISE ================= #}
                     <div class="tab-pane fade {{ activeTab == 'company' ? 'show active' : '' }}" id="company-panel" role="tabpanel" aria-labelledby="company-tab">
-                        {{ include('Prestataire/settings/_prestataire_company_tab.html.twig', {
+                        {{ include('prestataire/settings/_prestataire_company_tab.html.twig', {
                         companyForm: companyForm,
                         user: user,
                     }) }}
@@ -470,12 +470,12 @@
 
                     {# ================= SERVICES ================= #}
                     <div class="tab-pane fade {{ activeTab == 'services' ? 'show active' : '' }}" id="services-panel" role="tabpanel" aria-labelledby="services-tab">
-                        {{ include('Prestataire/settings/_prestataire_services_tab.html.twig') }}
+                        {{ include('prestataire/settings/_prestataire_services_tab.html.twig') }}
                     </div>
 
                     {# ================= ZONES ================= #}
                     <div class="tab-pane fade {{ activeTab == 'zones' ? 'show active' : '' }}" id="zones-panel" role="tabpanel" aria-labelledby="zones-tab">
-                        {{ include('Prestataire/settings/_prestataire_zone_tab.html.twig', {
+                        {{ include('prestataire/settings/_prestataire_zone_tab.html.twig', {
                         zoneForm: zoneForm,
                         zones: zones,
                         user: user,
@@ -484,7 +484,7 @@
 
                     {# ================= DISPONIBILITES ================= #}
                     <div class="tab-pane fade {{ activeTab == 'dispo' ? 'show active' : '' }}" id="dispo-panel" role="tabpanel" aria-labelledby="dispo-tab">
-                        {{ include ('Prestataire/settings/_prestataire_availability_tab.html.twig', {
+                        {{ include ('prestataire/settings/_prestataire_availability_tab.html.twig', {
                             availabilityForm: availabilityForm,
                             availabilities: availabilities,
                         }) }}
@@ -492,13 +492,13 @@
 
                     {# ================= AUTRES TABS ================= #}
                     <div class="tab-pane fade {{ activeTab == 'notif' ? 'show active' : '' }}" id="notif-panel" role="tabpanel" aria-labelledby="notif-tab">
-                        {{ include('Prestataire/settings/_prestataire_notifications_tab.html.twig', {
+                        {{ include('prestataire/settings/_prestataire_notifications_tab.html.twig', {
                             notificationForm: notificationForm,
                         }) }}
                     </div>
 
                     <div class="tab-pane fade {{ activeTab == 'security' ? 'show active' : '' }}" id="security-panel" role="tabpanel" aria-labelledby="security-tab">
-                        {{ include('Prestataire/settings/_prestataire_security_tab.html.twig', {
+                        {{ include('prestataire/settings/_prestataire_security_tab.html.twig', {
                             passwordForm: passwordForm,
                             deletionForm: deletionForm,
                         }) }}

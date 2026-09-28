@@ -193,7 +193,7 @@ class ProfileController extends AbstractProfileController
 
         $zoneMap = $this->prestataireProfileManager->buildZoneMap($zones);
 
-        return $this->render('Prestataire/profile/prestataire_profile.html.twig', [
+        return $this->render('prestataire/profile/prestataire_profile.html.twig', [
             'userForm' => $forms->userForm->createView(),
             'publicProfileForm' => $forms->publicProfileForm->createView(),
             'certificationForm' => $forms->certificationForm->createView(),
@@ -595,7 +595,7 @@ class ProfileController extends AbstractProfileController
             return $this->redirectToRoute('app_prestataire_settings', ['_fragment' => 'services-panel']);
         }
 
-        return $this->render('Prestataire/edit_service.html.twig', [
+        return $this->render('prestataire/edit_service.html.twig', [
             'form' => $form->createView(),
             'ps' => $ps,
             'canEditReduction' => $canEditReduction,

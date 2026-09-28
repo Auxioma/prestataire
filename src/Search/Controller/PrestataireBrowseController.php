@@ -185,7 +185,7 @@ class PrestataireBrowseController extends AbstractController
             ? 'Résultats pour "'.$query.'"'
             : 'Tous nos prestataires';
 
-        return $this->render('Search/prestataire_browse/prestataire_browse.html.twig', [
+        return $this->render('search/prestataire_browse/prestataire_browse.html.twig', [
             'browseForm' => $form->createView(),
             'profiles' => $pagedProfiles,
             'directResults' => $pagedProfiles,

@@ -30,7 +30,7 @@
                                 <div class="small text-muted mb-1">Note moyenne</div>
                                 <div class="d-flex align-items-center gap-2">
                                     <strong class="fs-3">{{ prestataire.averageRating|default('0.00')|number_format(1, ',', ' ') }}</strong>
-                                    {{ include('Review/_stars.html.twig', {rating: prestataire.averageRating|default(0)|round(0, 'common')}) }}
+                                    {{ include('review/_stars.html.twig', {rating: prestataire.averageRating|default(0)|round(0, 'common')}) }}
                                 </div>
                             </div>
 
@@ -66,7 +66,7 @@
                                         <div>
                                             <h3 class="h5 mb-1">{{ reviewerName }}</h3>
                                             <p class="text-muted mb-2">{{ review.quoteRequest.title|default('Demande associée') }}</p>
-                                            {{ include('Review/_stars.html.twig', {rating: review.rating}) }}
+                                            {{ include('review/_stars.html.twig', {rating: review.rating}) }}
                                         </div>
 
                                         <span class="text-muted small">{{ review.createdAt|date('d/m/Y à H:i') }}</span>

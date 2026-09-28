@@ -72,7 +72,7 @@ final class ClientReviewReminderMailer
             ->from(new Address('noreply@trouvemoi.com', 'TrouveMoi'))
             ->to($recipient)
             ->subject('Votre facture est disponible - laissez votre avis')
-            ->htmlTemplate('Review/emails/client_review_reminder.html.twig')
+            ->htmlTemplate('review/emails/client_review_reminder.html.twig')
             ->context([
                 'clientFirstName' => $clientFirstName,
                 'prestataireName' => $prestataireName,
