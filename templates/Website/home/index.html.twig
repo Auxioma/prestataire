@@ -533,7 +533,7 @@
 </section>
 
             {# FAQ #}
-            <section class="tmv2-faq-section" style="padding-top:0">
+            <section class="tmv2-faq-section tmv2-faq-section--flush-top">
                 <div class="container">
                     <div class="tmv2-faq-head" data-website--scroll-reveal-target="element">
                         <div class="tmv2-faq-head__inner">
@@ -647,7 +647,7 @@
 
     {% if showProfileCompletionModal and mandatoryChecklist is not null %}
         <div class="tm-profile-completion-layer" {{ stimulus_controller('prestataire--profile-completion-modal') }}>
-            <div class="modal fade show tm-profile-completion-modal" id="profileCompletionModal" tabindex="-1" aria-labelledby="profileCompletionModalLabel" aria-modal="true" role="dialog" style="display: block;" {{ stimulus_target('prestataire--profile-completion-modal', 'modal') }}>
+            <div class="modal fade show tm-profile-completion-modal tm-profile-completion-modal--visible" id="profileCompletionModal" tabindex="-1" aria-labelledby="profileCompletionModalLabel" aria-modal="true" role="dialog" {{ stimulus_target('prestataire--profile-completion-modal', 'modal') }}>
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
