@@ -2,12 +2,16 @@
 
 {% block title %}Vérification SIRET - TrouveMoi Prestataires{% endblock %}
 
-{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/register/siret.css') }}">{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/register/register.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/register/siret.css') }}">
+{% endblock %}
 
 {% block body %}
     {% set siretInvalid = not siretForm.siret.vars.valid %}
     <div class="tm-register-page tm-siret-page">
-        <div class="tm-register-layout tm-siret-layout">
+        <div class="container-fluid px-4 px-xl-5">
+            <div class="tm-register-layout tm-siret-layout">
             <aside class="tm-register-hero tm-siret-hero" aria-labelledby="siret-welcome-title">
                 <div class="tm-register-hero__content tm-siret-hero__content">
                     <span class="tm-siret-eyebrow"><i class="bi bi-tools" aria-hidden="true"></i> L’espace des professionnels</span>
@@ -59,6 +63,7 @@
                     <a href="{{ path('app_register_choice') }}" class="tm-siret-back"><i class="bi bi-arrow-left" aria-hidden="true"></i> Retour au choix du compte</a>
                 </div>
             </section>
+            </div>
         </div>
     </div>
 {% endblock %}
