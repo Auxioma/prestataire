@@ -47,9 +47,7 @@ export default class extends Controller {
         this.hideAlerts();
 
         try {
-            if (typeof window.Stripe !== 'function') {
-                throw new Error('Stripe.js n’est pas disponible.');
-            }
+            await this.waitForStripe();
 
             const response = await fetch(this.setupIntentUrlValue, {
                 method: 'POST',
@@ -103,6 +101,22 @@ export default class extends Controller {
             this.showError(error.message || 'Impossible d’afficher le formulaire de paiement.');
         } finally {
             this.refreshSubmitState();
+        }
+    }
+
+    async waitForStripe(timeout = 15000) {
+        const stripeScript = document.querySelector('script[src^="https://js.stripe.com/v3"]');
+        if (!stripeScript) {
+            throw new Error('Le script Stripe.js est absent de la page.');
+        }
+
+        const deadline = Date.now() + timeout;
+        while (typeof window.Stripe !== 'function') {
+            if (Date.now() >= deadline) {
+                throw new Error('Stripe.js n’a pas pu être chargé. Vérifiez votre connexion ou un éventuel bloqueur de contenu.');
+            }
+
+            await new Promise((resolve) => window.setTimeout(resolve, 50));
         }
     }
 
