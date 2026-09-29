@@ -1,0 +1,112 @@
+{% extends 'Website/base.html.twig' %}
+
+{% block title %}{{ resource.title }} - TrouveMoi.com{% endblock %}
+{% block meta_description %}{{ resource.metaDescription }}{% endblock %}
+
+{% block canonical %}
+    <link rel="canonical" href="{{ url('app_resource_show', {slug: resourceSlug}) }}">
+{% endblock %}
+
+{% block json_ld %}
+    {{ include('Website/layout/_json_ld.html.twig', {data: {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: resource.title,
+        description: resource.metaDescription,
+        mainEntityOfPage: url('app_resource_show', {slug: resourceSlug}),
+        publisher: {'@type': 'Organization', name: 'TrouveMoi.com', url: url('app_home')},
+    }}) }}
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/static/staticpage.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/static/resource_detail.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="tm-resource-detail">
+    <div class="tm-resource-detail__breadcrumb-wrap">
+        <nav class="container" aria-label="Fil d’Ariane">
+            <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_static_page', {slug: 'ressources'}) }}">Ressources</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ resource.title }}</li>
+            </ol>
+        </nav>
+    </div>
+
+    <section class="tm-resource-detail__hero">
+        <div class="container tm-resource-detail__hero-grid">
+            <div>
+                <span class="tm-resource-detail__eyebrow">{{ resource.category }}</span>
+                <h1>{{ resource.title }}</h1>
+                <p>{{ resource.lead }}</p>
+                <a href="#methode" class="tm-resource-detail__primary-link">Découvrir la méthode <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a>
+            </div>
+            <div class="tm-resource-visual tm-resource-visual--{{ resource.visual }}" aria-label="Illustration : {{ resource.title }}">
+                {% if resource.visual == 'profile' %}
+                    <div class="tm-resource-profile-card">
+                        <div class="tm-resource-profile-card__head"><span class="tm-resource-avatar"><i class="fa-solid fa-user" aria-hidden="true"></i></span><span><strong>Atelier Martin</strong><small>Profil professionnel</small></span><b>85%</b></div>
+                        <div class="tm-resource-bar"><span class="tm-resource-bar__fill tm-resource-bar__fill--wide"></span></div>
+                        <div class="tm-resource-profile-card__rows"><span>Présentation</span><span>Prestations</span><span>Réalisations</span></div>
+                    </div>
+                {% elseif resource.visual == 'requests' %}
+                    <div class="tm-resource-funnel"><span><b>240</b> vues du profil</span><span><b>32</b> contacts qualifiés</span><span><b>12</b> demandes reçues</span></div>
+                {% elseif resource.visual == 'quotes' %}
+                    <div class="tm-resource-document"><div class="tm-resource-document__title">DEVIS <span>#2026-014</span></div><div class="tm-resource-document__line"><span>Prestation</span><b>480 €</b></div><div class="tm-resource-document__line"><span>Fournitures</span><b>120 €</b></div><div class="tm-resource-document__total"><span>Total TTC</span><strong>720 €</strong></div></div>
+                {% elseif resource.visual == 'security' %}
+                    <div class="tm-resource-shield"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><strong>Paiement protégé</strong><span><i class="fa-solid fa-check" aria-hidden="true"></i> Saisie sécurisée</span><span><i class="fa-solid fa-check" aria-hidden="true"></i> Authentification bancaire</span></div>
+                {% elseif resource.visual == 'updates' %}
+                    <div class="tm-resource-timeline"><span><b>01</b><i class="fa-regular fa-comments" aria-hidden="true"></i> Messagerie</span><span><b>02</b><i class="fa-regular fa-file-lines" aria-hidden="true"></i> Documents</span><span><b>03</b><i class="fa-solid fa-chart-line" aria-hidden="true"></i> Pilotage</span></div>
+                {% elseif resource.visual == 'webinar' %}
+                    <div class="tm-resource-video"><div class="tm-resource-video__screen"><i class="fa-solid fa-play" aria-hidden="true"></i></div><strong>Développer son activité</strong><span>3 chapitres · guide pratique</span></div>
+                {% elseif resource.visual == 'calculator' %}
+                    <div class="tm-resource-formula"><span><small>Coûts</small><b>320 €</b></span><i>+</i><span><small>Temps</small><b>280 €</b></span><i>+</i><span><small>Marge</small><b>120 €</b></span><strong>= 720 €</strong></div>
+                {% else %}
+                    <div class="tm-resource-chat"><span class="tm-resource-chat__client">Bonjour, êtes-vous disponible mardi ?</span><span class="tm-resource-chat__provider">Oui, je vous confirme le créneau de 9 h.</span><small><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Réponse claire et confirmée</small></div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <div class="container tm-resource-detail__content" id="methode">
+        <section aria-labelledby="resource-steps-title">
+            <span class="tm-resource-detail__section-label">La méthode</span>
+            <h2 id="resource-steps-title">Trois étapes pour passer à l’action</h2>
+            <div class="tm-resource-detail__steps">
+                {% for step in resource.steps %}
+                    <article class="tm-resource-step">
+                        <span class="tm-resource-step__number">0{{ loop.index }}</span>
+                        <span class="tm-resource-step__icon"><i class="{{ step.icon }}" aria-hidden="true"></i></span>
+                        <h3>{{ step.title }}</h3>
+                        <p>{{ step.text }}</p>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="tm-resource-detail__practice" aria-labelledby="resource-checklist-title">
+            <div>
+                <span class="tm-resource-detail__section-label">En pratique</span>
+                <h2 id="resource-checklist-title">Votre checklist</h2>
+                <p>Utilisez cette liste avant de considérer l’étape comme terminée.</p>
+            </div>
+            <ul>
+                {% for item in resource.checklist %}
+                    <li><i class="fa-solid fa-check" aria-hidden="true"></i><span>{{ item }}</span></li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <aside class="tm-resource-detail__tip">
+            <span><i class="fa-regular fa-lightbulb" aria-hidden="true"></i></span>
+            <div><strong>À retenir</strong><p>{{ resource.tip }}</p></div>
+        </aside>
+
+        <nav class="tm-resource-detail__actions" aria-label="Actions de fin de ressource">
+            <a href="{{ path('app_static_page', {slug: 'ressources'}) }}" class="tm-resource-detail__secondary-link"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Toutes les ressources</a>
+            <a href="{{ path('app_register_choice') }}" class="tm-resource-detail__primary-link">Créer mon compte <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+        </nav>
+    </div>
+</div>
+{% endblock %}

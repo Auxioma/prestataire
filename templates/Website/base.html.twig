@@ -15,6 +15,7 @@
             'app_prestataire_service_prestation_show',
             'app_review_public_prestataire_reviews',
             'app_static_page',
+            'app_resource_show',
             'app_bons_plans',
             'app_prestataire_browse',
         ] %}
@@ -33,6 +34,7 @@
                 'app_prestataire_service_prestation_show',
                 'app_review_public_prestataire_reviews',
                 'app_static_page',
+                'app_resource_show',
             ] %}
             {% set canonicalFilterKeys = app.request.query.all|keys|filter(key => key not in ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid']) %}
             {% if canonicalRoute in canonicalRoutes and (canonicalRoute not in ['app_category_index', 'app_search_flow'] or canonicalFilterKeys is empty) %}
