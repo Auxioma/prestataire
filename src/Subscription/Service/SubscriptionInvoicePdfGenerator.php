@@ -139,7 +139,7 @@ final class SubscriptionInvoicePdfGenerator
 
     private function resolvePlatformLogoDataUri(): ?string
     {
-        $logoPath = $this->kernel->getProjectDir().'/assets/images/logo_trouvemoipresta.png';
+        $logoPath = $this->kernel->getProjectDir().'/assets/images/logo_trouvemoi_black_background.png';
 
         if (!is_file($logoPath)) {
             return null;

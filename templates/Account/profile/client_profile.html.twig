@@ -100,6 +100,19 @@
                                                 {{ form_row(settingsForm.lastName) }}
                                             </div>
                                             <div class="col-md-6 tm-cp-form-row">
+                                                <label class="form-label" for="client-account-email">Adresse e-mail</label>
+                                                <input
+                                                    type="email"
+                                                    id="client-account-email"
+                                                    class="form-control"
+                                                    value="{{ user.email }}"
+                                                    autocomplete="email"
+                                                    readonly
+                                                    aria-readonly="true"
+                                                >
+                                                <small class="form-text text-muted">Cette adresse correspond à votre compte et ne peut pas être modifiée ici.</small>
+                                            </div>
+                                            <div class="col-md-6 tm-cp-form-row">
                                                 {{ form_row(settingsForm.phoneNumber) }}
                                             </div>
                                             <div class="col-md-6 tm-cp-form-row tm-cp-enum-radio-group" id="client-type-field" data-account--client-profile-target="typeField" data-action="change->account--client-profile#toggleProFields">

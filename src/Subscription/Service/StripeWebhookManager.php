@@ -21,6 +21,7 @@ namespace App\Subscription\Service;
 
 use App\Prestataire\Entity\PrestataireProfile;
 use App\Prestataire\Repository\PrestataireProfileRepository;
+use App\Subscription\Dto\SubscriptionInvoiceSynchronizationResult;
 use App\Subscription\Entity\PrestataireSubscription;
 use App\Subscription\Entity\SubscriptionCreditMovement;
 use App\Subscription\Entity\SubscriptionCustomer;
@@ -55,6 +56,7 @@ final class StripeWebhookManager
         private readonly SubscriptionCreditManager $subscriptionCreditManager,
         private readonly SubscriptionUpgradePolicy $subscriptionUpgradePolicy,
         private readonly SubscriptionFallbackManager $subscriptionFallbackManager,
+        private readonly SubscriptionLifecycleMailer $subscriptionLifecycleMailer,
     ) {
     }
 
@@ -70,23 +72,53 @@ final class StripeWebhookManager
             return;
         }
 
-        match ($type) {
-            'checkout.session.completed' => $this->syncCheckoutSessionCompleted($object),
-            'customer.subscription.created',
-            'customer.subscription.updated',
-            'customer.subscription.deleted' => $this->syncSubscriptionFromStripePayload($object),
-            'invoice.created',
-            'invoice.finalized',
-            'invoice.paid',
-            'invoice.payment_failed',
-            'invoice.voided' => $this->syncInvoiceFromStripePayload($type, $object),
-            default => null,
-        };
+        $subscription = null;
+        $invoiceSynchronization = null;
+        $cancellationWasAlreadyScheduled = false;
+
+        switch ($type) {
+            case 'checkout.session.completed':
+                $this->syncCheckoutSessionCompleted($object);
+                break;
+
+            case 'customer.subscription.created':
+            case 'customer.subscription.updated':
+            case 'customer.subscription.deleted':
+                $cancellationWasAlreadyScheduled = $this->wasCancellationAlreadyScheduled($object);
+                $subscription = $this->syncSubscriptionFromStripePayload($object);
+                break;
+
+            case 'invoice.created':
+            case 'invoice.finalized':
+            case 'invoice.paid':
+            case 'invoice.payment_failed':
+            case 'invoice.voided':
+                $invoiceSynchronization = $this->syncInvoiceFromStripePayload($type, $object);
+                break;
+
+            default:
+                return;
+        }
 
         try {
             $this->entityManager->flush();
         } catch (UniqueConstraintViolationException $e) {
             // Concurrent processing created the same credit movement; ignore duplicate constraint.
+            return;
+        }
+
+        if ($invoiceSynchronization instanceof SubscriptionInvoiceSynchronizationResult) {
+            $this->notifyPaidInvoiceIfRequired($invoiceSynchronization);
+        }
+
+        $cancellationJustScheduled =
+            'customer.subscription.updated' === $type
+            && $subscription instanceof PrestataireSubscription
+            && !$cancellationWasAlreadyScheduled
+            && $subscription->isCancelAtPeriodEnd();
+
+        if ($cancellationJustScheduled) {
+            $this->subscriptionLifecycleMailer->sendCancellationConfirmation($subscription);
         }
     }
 
@@ -111,14 +143,27 @@ final class StripeWebhookManager
      */
     public function syncSubscriptionPayloadAndReturn(array $payload, bool $flush = true): ?PrestataireSubscription
     {
+        $cancellationWasAlreadyScheduled = $this->wasCancellationAlreadyScheduled($payload);
         $subscription = $this->syncSubscriptionFromStripePayload($payload);
+        $synchronized = true;
 
         if ($flush) {
             try {
                 $this->entityManager->flush();
             } catch (UniqueConstraintViolationException $e) {
                 // Ignore duplicate movement created by concurrent process.
+                $synchronized = false;
             }
+        }
+
+        if (
+            $flush
+            && $synchronized
+            && $subscription instanceof PrestataireSubscription
+            && !$cancellationWasAlreadyScheduled
+            && $subscription->isCancelAtPeriodEnd()
+        ) {
+            $this->subscriptionLifecycleMailer->sendCancellationConfirmation($subscription);
         }
 
         return $subscription;
@@ -132,12 +177,48 @@ final class StripeWebhookManager
         array $payload,
         bool $flush = true,
         ?PrestataireSubscription $fallbackSubscription = null,
-    ): void {
-        $this->syncInvoiceFromStripePayload($eventType, $payload, $fallbackSubscription);
+    ): SubscriptionInvoiceSynchronizationResult {
+        $result = $this->syncInvoiceFromStripePayload($eventType, $payload, $fallbackSubscription);
 
         if ($flush) {
             $this->entityManager->flush();
+            $this->notifyPaidInvoiceIfRequired($result);
         }
+
+        return $result;
+    }
+
+    public function notifyPaidInvoiceIfRequired(SubscriptionInvoiceSynchronizationResult $result): void
+    {
+        $invoice = $result->invoice;
+        if (
+            !$invoice instanceof SubscriptionInvoice
+            || SubscriptionInvoiceStatusEnum::PAID !== $invoice->getStatus()
+            || $invoice->getLifecycleNotificationSentAt() instanceof \DateTimeImmutable
+        ) {
+            return;
+        }
+
+        if ($this->subscriptionLifecycleMailer->sendPaidInvoiceConfirmation($invoice)) {
+            $invoice->setLifecycleNotificationSentAt(new \DateTimeImmutable());
+            $this->entityManager->persist($invoice);
+            $this->entityManager->flush();
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     */
+    private function wasCancellationAlreadyScheduled(array $payload): bool
+    {
+        $stripeSubscriptionId = mb_trim((string) ($payload['id'] ?? ''));
+        if ('' === $stripeSubscriptionId) {
+            return false;
+        }
+
+        return $this->prestataireSubscriptionRepository
+            ->findOneByStripeSubscriptionId($stripeSubscriptionId)
+            ?->isCancelAtPeriodEnd() ?? false;
     }
 
     public function cleanupDemoSubscriptionsForPrestataire(PrestataireProfile $prestataireProfile, bool $flush = true): void
@@ -286,10 +367,10 @@ final class StripeWebhookManager
         string $eventType,
         array $payload,
         ?PrestataireSubscription $fallbackSubscription = null,
-    ): void {
+    ): SubscriptionInvoiceSynchronizationResult {
         $stripeInvoiceId = (string) ($payload['id'] ?? '');
         if ('' === $stripeInvoiceId) {
-            return;
+            return new SubscriptionInvoiceSynchronizationResult(null);
         }
 
         $subscription = $fallbackSubscription;
@@ -302,8 +383,8 @@ final class StripeWebhookManager
             }
         }
 
-        $invoice = $this->subscriptionInvoiceRepository->findOneByStripeInvoiceId($stripeInvoiceId)
-            ?? new SubscriptionInvoice();
+        $invoice = $this->subscriptionInvoiceRepository->findOneByStripeInvoiceId($stripeInvoiceId);
+        $invoice ??= new SubscriptionInvoice();
         [$invoicePeriodStart, $invoicePeriodEnd] = $this->resolveInvoicePeriodBounds($payload);
 
         $invoice
@@ -330,8 +411,10 @@ final class StripeWebhookManager
 
         $this->entityManager->persist($invoice);
 
+        $result = new SubscriptionInvoiceSynchronizationResult($invoice);
+
         if ('invoice.paid' !== $eventType || !$subscription instanceof PrestataireSubscription || !$subscription->getPlan()) {
-            return;
+            return $result;
         }
 
         $existingMovement = $this->subscriptionCreditMovementRepository->findOneByInvoice($invoice);
@@ -339,7 +422,7 @@ final class StripeWebhookManager
             $existingMovement = $this->subscriptionCreditMovementRepository->findOneByStripeInvoiceId($stripeInvoiceId);
         }
         if ($existingMovement instanceof SubscriptionCreditMovement) {
-            return;
+            return $result;
         }
 
         $planCredits = $subscription->getPlan()->getCreditsForPeriod($subscription->getBillingPeriod());
@@ -348,7 +431,7 @@ final class StripeWebhookManager
         if ('subscription_create' === $billingReason) {
             $this->applyCreatedSubscriptionCredits($subscription, $invoice, $planCredits);
 
-            return;
+            return $result;
         }
 
         if ('subscription_cycle' === $billingReason) {
@@ -357,7 +440,7 @@ final class StripeWebhookManager
 
             $renewalDelta = max(0, $subscription->getRemainingCredits() - $previousRemainingCredits);
             if ($renewalDelta <= 0) {
-                return;
+                return $result;
             }
 
             $movement = (new SubscriptionCreditMovement())
@@ -371,7 +454,7 @@ final class StripeWebhookManager
 
             $this->entityManager->persist($movement);
 
-            return;
+            return $result;
         }
 
         if ('subscription_update' === $billingReason) {
@@ -383,7 +466,7 @@ final class StripeWebhookManager
             $delta = max(0, $targetRemainingCredits - $currentRemainingCredits);
 
             if ($delta <= 0) {
-                return;
+                return $result;
             }
 
             $movement = $this->subscriptionCreditManager->grantCredits(
@@ -401,10 +484,12 @@ final class StripeWebhookManager
             );
             $movement->setInvoice($invoice);
 
-            return;
+            return $result;
         }
 
         $this->applyFallbackPaidInvoiceCredits($subscription, $invoice, $planCredits, $billingReason);
+
+        return $result;
     }
 
     /**

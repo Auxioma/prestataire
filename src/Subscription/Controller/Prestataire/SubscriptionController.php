@@ -130,7 +130,19 @@ final class SubscriptionController extends AbstractController
         $cardLast4 = null;
         $cardExpiry = null;
         $cardBrand = null;
-        $hasStoredPaymentMethod = null !== $currentSubscription?->getCustomer()?->getStripeDefaultPaymentMethodId();
+        $paymentMethodId = mb_trim((string) ($currentSubscription?->getCustomer()?->getStripeDefaultPaymentMethodId() ?? ''));
+        $hasStoredPaymentMethod = '' !== $paymentMethodId;
+
+        if ($hasStoredPaymentMethod && $stripeApiClient->isConfigured()) {
+            try {
+                $cardDetails = $stripeApiClient->retrievePaymentMethodCardDetails($paymentMethodId);
+                $cardLast4 = $cardDetails['last4'];
+                $cardExpiry = $cardDetails['expiry'];
+                $cardBrand = $cardDetails['brand'];
+            } catch (\Throwable) {
+                // The subscription page remains available if Stripe is temporarily unreachable.
+            }
+        }
 
         return $this->render('subscription/prestataire/subscription/index.html.twig', [
             'plans' => $subscriptionPlanRepository->findActiveOrdered(),

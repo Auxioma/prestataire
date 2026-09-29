@@ -20,6 +20,7 @@ declare(strict_types=1);
 namespace App\Subscription\Service;
 
 use App\Prestataire\Entity\PrestataireProfile;
+use App\Subscription\Dto\SubscriptionInvoiceSynchronizationResult;
 use App\Subscription\Entity\PrestataireSubscription;
 use App\Subscription\Entity\SubscriptionCustomer;
 use App\Subscription\Entity\SubscriptionPlan;
@@ -288,6 +289,7 @@ final class StripeSubscriptionCheckoutManager
         $clientSecret = \is_array($paymentIntent) ? (($paymentIntent['client_secret'] ?? null) ?: null) : null;
 
         if (!$requiresAction && (null === $latestInvoice || 'paid' === $latestInvoiceStatus)) {
+            $invoiceSynchronization = null;
             $this->stripeWebhookManager->syncSubscriptionPayload($subscriptionPayload, false);
 
             if (\is_array($latestInvoice)) {
@@ -297,7 +299,7 @@ final class StripeSubscriptionCheckoutManager
                     default => 'invoice.created',
                 };
 
-                $this->stripeWebhookManager->syncInvoicePayload($eventType, $latestInvoice, false);
+                $invoiceSynchronization = $this->stripeWebhookManager->syncInvoicePayload($eventType, $latestInvoice, false);
             }
 
             $this->stripeWebhookManager->cleanupDemoSubscriptionsForPrestataire($prestataireProfile, false);
@@ -305,6 +307,13 @@ final class StripeSubscriptionCheckoutManager
                 $this->entityManager->flush();
             } catch (UniqueConstraintViolationException $e) {
                 // Ignore duplicate movement created by concurrent process.
+                $invoiceSynchronization = null;
+            }
+
+            if (
+                $invoiceSynchronization instanceof SubscriptionInvoiceSynchronizationResult
+            ) {
+                $this->stripeWebhookManager->notifyPaidInvoiceIfRequired($invoiceSynchronization);
             }
         }
 

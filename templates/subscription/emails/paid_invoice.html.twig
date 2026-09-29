@@ -1,0 +1,46 @@
+{% extends 'subscription/emails/_layout.html.twig' %}
+
+{% block email_title %}{{ headline }}{% endblock %}
+{% block email_headline %}{{ headline }}{% endblock %}
+
+{% block email_content %}
+    <tr>
+        <td class="tm-email-content">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                    <td class="tm-email-copy">
+                        Bonjour{% if firstName %} {{ firstName }}{% endif %},
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tm-email-copy">{{ message }}</td>
+                </tr>
+                {% if companyName %}
+                    <tr>
+                        <td class="tm-email-copy">Compte professionnel : <strong>{{ companyName }}</strong></td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td>
+                        {{ include('subscription/emails/_invoice_details.html.twig') }}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tm-email-button-cell" align="center">
+                        <a class="tm-email-button" href="{{ accountUrl }}">Consulter la facture</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tm-email-note">
+                        Votre facture et l’historique de votre forfait restent également accessibles depuis votre espace prestataire.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tm-email-button-cell" align="center">
+                        <a class="tm-email-button" href="{{ accountUrl }}">Gérer mon forfait</a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+{% endblock %}

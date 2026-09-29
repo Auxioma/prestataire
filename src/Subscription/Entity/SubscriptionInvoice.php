@@ -100,6 +100,9 @@ class SubscriptionInvoice
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $lifecycleNotificationSentAt = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -409,6 +412,18 @@ class SubscriptionInvoice
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getLifecycleNotificationSentAt(): ?\DateTimeImmutable
+    {
+        return $this->lifecycleNotificationSentAt;
+    }
+
+    public function setLifecycleNotificationSentAt(?\DateTimeImmutable $lifecycleNotificationSentAt): static
+    {
+        $this->lifecycleNotificationSentAt = $lifecycleNotificationSentAt;
 
         return $this;
     }

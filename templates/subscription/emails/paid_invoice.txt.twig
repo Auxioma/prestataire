@@ -1,0 +1,18 @@
+{{ headline }}
+
+Bonjour{% if firstName %} {{ firstName }}{% endif %},
+
+{{ message }}
+
+Forfait : {{ planName }}
+Périodicité : {{ periodLabel }}
+{% if amountPaid is not null %}Montant payé : {{ amountPaid|number_format(2, ',', ' ') }} {{ currency }}
+{% endif %}{% if invoiceNumber %}Facture : {{ invoiceNumber }}
+{% endif %}{% if periodStart %}Début de période : {{ periodStart|date('d/m/Y') }}
+{% endif %}{% if periodEnd %}Fin de période : {{ periodEnd|date('d/m/Y') }}
+{% endif %}
+
+Consulter la facture : {{ accountUrl }}
+Gérer mon forfait : {{ accountUrl }}
+
+Cet e-mail transactionnel confirme une opération concernant votre forfait TrouveMoi.

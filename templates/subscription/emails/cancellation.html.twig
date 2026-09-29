@@ -1,0 +1,67 @@
+{% extends 'subscription/emails/_layout.html.twig' %}
+
+{% block email_title %}Confirmation de votre résiliation{% endblock %}
+{% block email_headline %}Votre résiliation est enregistrée{% endblock %}
+
+{% block email_content %}
+    <tr>
+        <td class="tm-email-content">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                    <td class="tm-email-copy">
+                        Bonjour{% if firstName %} {{ firstName }}{% endif %},
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tm-email-copy">
+                        Votre demande de résiliation a bien été enregistrée.
+                        {% if effectiveAt %}
+                            Votre forfait restera utilisable jusqu’au {{ effectiveAt|date('d/m/Y') }} inclus.
+                        {% else %}
+                            Il restera utilisable jusqu’à la fin de la période de facturation en cours.
+                        {% endif %}
+                    </td>
+                </tr>
+                {% if companyName %}
+                    <tr>
+                        <td class="tm-email-copy">Compte professionnel : <strong>{{ companyName }}</strong></td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td>
+                        <table role="presentation" class="tm-email-summary" width="100%" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                                <td class="tm-email-summary-label">Forfait résilié</td>
+                                <td class="tm-email-summary-value">{{ planName }}</td>
+                            </tr>
+                            <tr>
+                                <td class="tm-email-summary-label">Périodicité</td>
+                                <td class="tm-email-summary-value">{{ periodLabel }}</td>
+                            </tr>
+                            <tr>
+                                <td class="tm-email-summary-label">Demande enregistrée le</td>
+                                <td class="tm-email-summary-value">{{ requestedAt|date('d/m/Y à H:i') }}</td>
+                            </tr>
+                            {% if effectiveAt %}
+                                <tr>
+                                    <td class="tm-email-summary-label">Date effective</td>
+                                    <td class="tm-email-summary-value">{{ effectiveAt|date('d/m/Y') }}</td>
+                                </tr>
+                            {% endif %}
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tm-email-note">
+                        Aucun nouveau renouvellement automatique ne sera effectué après la date de fin indiquée.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tm-email-button-cell" align="center">
+                        <a class="tm-email-button" href="{{ accountUrl }}">Consulter mon forfait</a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+{% endblock %}

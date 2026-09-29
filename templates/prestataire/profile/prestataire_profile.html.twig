@@ -151,6 +151,20 @@
                                     </div>
 
                                     <div class="mb-3 tm-form-row">
+                                        <label class="form-label" for="prestataire-account-email">Adresse e-mail</label>
+                                        <input
+                                            type="email"
+                                            id="prestataire-account-email"
+                                            class="form-control"
+                                            value="{{ user.email }}"
+                                            autocomplete="email"
+                                            readonly
+                                            aria-readonly="true"
+                                        >
+                                        <small class="form-text text-muted">Cette adresse correspond à votre compte et ne peut pas être modifiée ici.</small>
+                                    </div>
+
+                                    <div class="mb-3 tm-form-row">
                                         {{ form_row(userForm.phoneNumber) }}
                                     </div>
 

@@ -20,6 +20,7 @@ declare(strict_types=1);
 namespace App\Subscription\Service;
 
 use App\Prestataire\Entity\PrestataireProfile;
+use App\Subscription\Dto\SubscriptionInvoiceSynchronizationResult;
 use App\Subscription\Entity\SubscriptionCustomer;
 use App\Subscription\Repository\SubscriptionCustomerRepository;
 
@@ -55,9 +56,10 @@ final class StripeCheckoutSessionSynchronizer
 
         $subscription = $this->stripeApiClient->retrieveSubscription($stripeSubscriptionId);
         $localSubscription = $this->stripeWebhookManager->syncSubscriptionPayloadAndReturn($subscription, false);
-        $this->syncLatestInvoiceFromSubscriptionPayload($subscription, $localSubscription);
+        $invoiceSynchronization = $this->syncLatestInvoiceFromSubscriptionPayload($subscription, $localSubscription);
 
         $this->stripeWebhookManager->cleanupDemoSubscriptionsForPrestataire($prestataireProfile, true);
+        $this->notifyPaidInvoiceIfRequired($invoiceSynchronization);
 
         return true;
     }
@@ -77,6 +79,7 @@ final class StripeCheckoutSessionSynchronizer
         $subscriptions = $this->stripeApiClient->listSubscriptionsForCustomer($stripeCustomerId, 20);
         usort($subscriptions, fn (array $left, array $right): int => $this->compareSubscriptions($left, $right));
         $hasSynchronizedAtLeastOneSubscription = false;
+        $invoiceSynchronizations = [];
 
         foreach ($subscriptions as $subscription) {
             $status = (string) ($subscription['status'] ?? '');
@@ -91,7 +94,7 @@ final class StripeCheckoutSessionSynchronizer
 
             $fullSubscription = $this->stripeApiClient->retrieveSubscription($stripeSubscriptionId);
             $localSubscription = $this->stripeWebhookManager->syncSubscriptionPayloadAndReturn($fullSubscription, false);
-            $this->syncLatestInvoiceFromSubscriptionPayload($fullSubscription, $localSubscription);
+            $invoiceSynchronizations[] = $this->syncLatestInvoiceFromSubscriptionPayload($fullSubscription, $localSubscription);
             $hasSynchronizedAtLeastOneSubscription = true;
         }
 
@@ -100,6 +103,9 @@ final class StripeCheckoutSessionSynchronizer
         }
 
         $this->stripeWebhookManager->cleanupDemoSubscriptionsForPrestataire($prestataireProfile, true);
+        foreach ($invoiceSynchronizations as $invoiceSynchronization) {
+            $this->notifyPaidInvoiceIfRequired($invoiceSynchronization);
+        }
 
         return true;
     }
@@ -113,9 +119,10 @@ final class StripeCheckoutSessionSynchronizer
 
         $subscription = $this->stripeApiClient->retrieveSubscription($stripeSubscriptionId);
         $localSubscription = $this->stripeWebhookManager->syncSubscriptionPayloadAndReturn($subscription, false);
-        $this->syncLatestInvoiceFromSubscriptionPayload($subscription, $localSubscription);
+        $invoiceSynchronization = $this->syncLatestInvoiceFromSubscriptionPayload($subscription, $localSubscription);
 
         $this->stripeWebhookManager->cleanupDemoSubscriptionsForPrestataire($prestataireProfile, true);
+        $this->notifyPaidInvoiceIfRequired($invoiceSynchronization);
 
         return true;
     }
@@ -203,14 +210,14 @@ final class StripeCheckoutSessionSynchronizer
     private function syncLatestInvoiceFromSubscriptionPayload(
         array $subscription,
         ?\App\Subscription\Entity\PrestataireSubscription $fallbackSubscription = null,
-    ): void {
+    ): ?SubscriptionInvoiceSynchronizationResult {
         $latestInvoice = $subscription['latest_invoice'] ?? null;
         if (\is_string($latestInvoice) && '' !== mb_trim($latestInvoice)) {
             $latestInvoice = $this->stripeApiClient->retrieveInvoice($latestInvoice);
         }
 
         if (!\is_array($latestInvoice)) {
-            return;
+            return null;
         }
 
         $eventType = match ((string) ($latestInvoice['status'] ?? 'draft')) {
@@ -219,6 +226,13 @@ final class StripeCheckoutSessionSynchronizer
             default => 'invoice.created',
         };
 
-        $this->stripeWebhookManager->syncInvoicePayload($eventType, $latestInvoice, false, $fallbackSubscription);
+        return $this->stripeWebhookManager->syncInvoicePayload($eventType, $latestInvoice, false, $fallbackSubscription);
+    }
+
+    private function notifyPaidInvoiceIfRequired(?SubscriptionInvoiceSynchronizationResult $result): void
+    {
+        if ($result instanceof SubscriptionInvoiceSynchronizationResult) {
+            $this->stripeWebhookManager->notifyPaidInvoiceIfRequired($result);
+        }
     }
 }

@@ -1,0 +1,17 @@
+Confirmation de votre résiliation
+
+Bonjour{% if firstName %} {{ firstName }}{% endif %},
+
+Votre demande de résiliation a bien été enregistrée.
+{% if effectiveAt %}Votre forfait restera utilisable jusqu’au {{ effectiveAt|date('d/m/Y') }} inclus.
+{% else %}Il restera utilisable jusqu’à la fin de la période de facturation en cours.
+{% endif %}
+
+Forfait résilié : {{ planName }}
+Périodicité : {{ periodLabel }}
+Demande enregistrée le : {{ requestedAt|date('d/m/Y à H:i') }}
+{% if effectiveAt %}Date effective : {{ effectiveAt|date('d/m/Y') }}
+{% endif %}
+
+Aucun nouveau renouvellement automatique ne sera effectué après cette date.
+Consulter mon forfait : {{ accountUrl }}

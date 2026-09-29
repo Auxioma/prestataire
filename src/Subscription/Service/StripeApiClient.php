@@ -636,6 +636,36 @@ class StripeApiClient
         return $this->request('GET', \sprintf('/payment_methods/%s', $paymentMethodId));
     }
 
+    /**
+     * @return array{last4: ?string, expiry: ?string, brand: ?string}
+     */
+    public function retrievePaymentMethodCardDetails(string $paymentMethodId): array
+    {
+        $paymentMethod = $this->retrievePaymentMethod($paymentMethodId);
+        $card = $paymentMethod['card'] ?? null;
+
+        if (!\is_array($card)) {
+            return [
+                'last4' => null,
+                'expiry' => null,
+                'brand' => null,
+            ];
+        }
+
+        $last4 = mb_trim((string) ($card['last4'] ?? ''));
+        $brand = mb_trim((string) ($card['brand'] ?? ''));
+        $expMonth = $card['exp_month'] ?? null;
+        $expYear = $card['exp_year'] ?? null;
+        $hasExpiry = (\is_int($expMonth) || \is_string($expMonth))
+            && (\is_int($expYear) || \is_string($expYear));
+
+        return [
+            'last4' => '' !== $last4 ? $last4 : null,
+            'expiry' => $hasExpiry ? \sprintf('%02d/%02d', (int) $expMonth, (int) $expYear % 100) : null,
+            'brand' => '' !== $brand ? $this->normalizeCardBrand($brand) : null,
+        ];
+    }
+
     public function retrievePaymentMethodCardLast4(string $paymentMethodId): ?string
     {
         $paymentMethod = $this->retrievePaymentMethod($paymentMethodId);
