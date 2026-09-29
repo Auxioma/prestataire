@@ -21,23 +21,45 @@ namespace App\Catalog\Entity;
 
 use App\Catalog\Repository\AllowedNafCodeRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AllowedNafCodeRepository::class)]
+#[UniqueEntity(fields: ['code'], message: 'Ce code NAF est déjà autorisé.')]
 class AllowedNafCode
 {
     #[ORM\Id]
     #[ORM\Column(length: 6)]
-    private string $code;
+    #[Assert\NotBlank(message: 'Le code NAF est obligatoire.')]
+    #[Assert\Regex(
+        pattern: '/^\d{2}\.\d{2}[A-Z]$/',
+        message: 'Le code NAF doit respecter le format 43.22A.'
+    )]
+    private ?string $code = null;
 
     #[ORM\Column(length: 255)]
-    private string $label;
+    #[Assert\NotBlank(message: 'Le libellé est obligatoire.')]
+    #[Assert\Length(max: 255, maxMessage: 'Le libellé ne peut pas dépasser {{ limit }} caractères.')]
+    private string $label = '';
 
     #[ORM\Column(options: ['default' => true])]
     private bool $isActive = true;
 
-    public function getCode(): string
+    public function __toString(): string
+    {
+        return null === $this->code ? $this->label : \sprintf('%s — %s', $this->code, $this->label);
+    }
+
+    public function getCode(): ?string
     {
         return $this->code;
+    }
+
+    public function setCode(string $code): static
+    {
+        $this->code = mb_strtoupper(mb_trim($code));
+
+        return $this;
     }
 
     public function getLabel(): string
@@ -45,8 +67,22 @@ class AllowedNafCode
         return $this->label;
     }
 
+    public function setLabel(string $label): static
+    {
+        $this->label = mb_trim($label);
+
+        return $this;
+    }
+
     public function isActive(): bool
     {
         return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): static
+    {
+        $this->isActive = $isActive;
+
+        return $this;
     }
 }

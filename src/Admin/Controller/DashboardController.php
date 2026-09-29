@@ -21,6 +21,7 @@ namespace App\Admin\Controller;
 
 use App\Account\Controller\Admin\ClientProfileCrudController;
 use App\Account\Controller\Admin\UserCrudController;
+use App\Catalog\Controller\Admin\AllowedNafCodeCrudController;
 use App\Catalog\Controller\Admin\ServiceCategoryCrudController;
 use App\Catalog\Controller\Admin\ServiceCrudController;
 use App\Prestataire\Controller\Admin\PrestataireProfileCrudController;
@@ -142,6 +143,15 @@ class DashboardController extends AbstractDashboardController
             'fas fa-wrench',
             $this->adminUrlGenerator->unsetAll()
                 ->setController(ServiceCrudController::class)
+                ->setAction(Action::INDEX)
+                ->generateUrl()
+        );
+
+        yield MenuItem::linkToUrl(
+            'Codes NAF autorisés',
+            'fas fa-list-check',
+            $this->adminUrlGenerator->unsetAll()
+                ->setController(AllowedNafCodeCrudController::class)
                 ->setAction(Action::INDEX)
                 ->generateUrl()
         );
