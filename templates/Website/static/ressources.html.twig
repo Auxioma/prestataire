@@ -23,7 +23,7 @@
         </div>
     </div>
 
-    <div class="container py-5">
+    <div class="container py-5" data-controller="website--resource-filter">
         <!-- Header principal -->
         <div class="text-center mb-5 tm-static-max-w-700 mx-auto">
             <h1 class="display-5 fw-bold tm-static-brand-title mb-2">
@@ -35,47 +35,26 @@
             </p>
         </div>
 
-        <!-- Navigation par Onglets (Filtrage) -->
+        <!-- Navigation par onglets -->
         <div class="d-flex justify-content-start justify-content-md-center overflow-auto pb-3 mb-5 border-bottom tm-static-text-nowrap scrolling-touch">
             <ul class="nav nav-pills gap-2 small fw-medium">
-                <li class="nav-item">
-                    <a class="nav-link active rounded-3 px-3 py-2 border-0 bg-primary" href="#">
-                        <i class="fa-solid fa-table-cells-large me-2"></i>Tout
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-muted bg-transparent border-0 px-3 py-2 tm-static-text-dark-hover" href="#">
-                        <i class="fa-regular fa-bookmark me-2 text-primary"></i>Guides pratiques
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-muted bg-transparent border-0 px-3 py-2 tm-static-text-dark-hover" href="#">
-                        <i class="fa-solid fa-chart-line me-2 text-primary"></i>Développer son activité
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-muted bg-transparent border-0 px-3 py-2 tm-static-text-dark-hover" href="#">
-                        <i class="fa-solid fa-screwdriver-wrench me-2 text-primary"></i>Gestion et outils
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-muted bg-transparent border-0 px-3 py-2 tm-static-text-dark-hover" href="#">
-                        <i class="fa-regular fa-newspaper me-2 text-primary"></i>Actualités
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-muted bg-transparent border-0 px-3 py-2 tm-static-text-dark-hover" href="#">
-                        <i class="fa-regular fa-circle-play me-2 text-primary"></i>Webinaires
-                    </a>
-                </li>
+                <li class="nav-item"><button type="button" class="tm-static-resource-filter nav-link is-active rounded-3 px-3 py-2" data-website--resource-filter-target="filter" data-action="website--resource-filter#select" data-website--resource-filter-category-param="all" aria-controls="resource-grid" aria-pressed="true"><i class="fa-solid fa-table-cells-large me-2"></i>Tout</button></li>
+                <li class="nav-item"><button type="button" class="tm-static-resource-filter nav-link rounded-3 px-3 py-2" data-website--resource-filter-target="filter" data-action="website--resource-filter#select" data-website--resource-filter-category-param="guides" aria-controls="resource-grid" aria-pressed="false"><i class="fa-regular fa-bookmark me-2"></i>Guides pratiques</button></li>
+                <li class="nav-item"><button type="button" class="tm-static-resource-filter nav-link rounded-3 px-3 py-2" data-website--resource-filter-target="filter" data-action="website--resource-filter#select" data-website--resource-filter-category-param="activity" aria-controls="resource-grid" aria-pressed="false"><i class="fa-solid fa-chart-line me-2"></i>Développer son activité</button></li>
+                <li class="nav-item"><button type="button" class="tm-static-resource-filter nav-link rounded-3 px-3 py-2" data-website--resource-filter-target="filter" data-action="website--resource-filter#select" data-website--resource-filter-category-param="tools" aria-controls="resource-grid" aria-pressed="false"><i class="fa-solid fa-screwdriver-wrench me-2"></i>Gestion et outils</button></li>
+                <li class="nav-item"><button type="button" class="tm-static-resource-filter nav-link rounded-3 px-3 py-2" data-website--resource-filter-target="filter" data-action="website--resource-filter#select" data-website--resource-filter-category-param="news" aria-controls="resource-grid" aria-pressed="false"><i class="fa-regular fa-newspaper me-2"></i>Actualités</button></li>
+                <li class="nav-item"><button type="button" class="tm-static-resource-filter nav-link rounded-3 px-3 py-2" data-website--resource-filter-target="filter" data-action="website--resource-filter#select" data-website--resource-filter-category-param="webinars" aria-controls="resource-grid" aria-pressed="false"><i class="fa-regular fa-circle-play me-2"></i>Webinaires</button></li>
+                <li class="nav-item"><button type="button" class="tm-static-resource-filter nav-link rounded-3 px-3 py-2" data-website--resource-filter-target="filter" data-action="website--resource-filter#select" data-website--resource-filter-category-param="advice" aria-controls="resource-grid" aria-pressed="false"><i class="fa-regular fa-lightbulb me-2"></i>Conseils</button></li>
             </ul>
         </div>
 
+        <p class="visually-hidden" aria-live="polite" data-website--resource-filter-target="status"></p>
+
         <!-- Grille des Ressources (4 colonnes de cartes) -->
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4 mb-5">
+        <div id="resource-grid" class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4 mb-5">
 
             {# Carte 1 - Guide pratique #}
-            <div class="col">
+            <div class="col" data-website--resource-filter-target="item" data-resource-category="guides">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border h-100 d-flex flex-column justify-content-between tm-static-hover-card">
                     <div>
                         <div class="tm-static-resource__icon bg-primary-subtle text-primary rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3">
@@ -92,7 +71,7 @@
             </div>
 
             {# Carte 2 - Développer son activité #}
-            <div class="col">
+            <div class="col" data-website--resource-filter-target="item" data-resource-category="activity">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border h-100 d-flex flex-column justify-content-between tm-static-hover-card">
                     <div>
                         <div class="tm-static-resource__icon bg-success-subtle text-success rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3">
@@ -109,7 +88,7 @@
             </div>
 
             {# Carte 3 - Gestion et outils #}
-            <div class="col">
+            <div class="col" data-website--resource-filter-target="item" data-resource-category="tools">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border h-100 d-flex flex-column justify-content-between tm-static-hover-card">
                     <div>
                         <div class="tm-static-resource__icon tm-static-resource__icon--tools rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3">
@@ -126,7 +105,7 @@
             </div>
 
             {# Carte 4 - Guide pratique #}
-            <div class="col">
+            <div class="col" data-website--resource-filter-target="item" data-resource-category="guides">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border h-100 d-flex flex-column justify-content-between tm-static-hover-card">
                     <div>
                         <div class="tm-static-resource__icon bg-warning-subtle text-warning rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3">
@@ -143,7 +122,7 @@
             </div>
 
             {# Carte 5 - Actualités #}
-            <div class="col">
+            <div class="col" data-website--resource-filter-target="item" data-resource-category="news">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border h-100 d-flex flex-column justify-content-between tm-static-hover-card">
                     <div>
                         <div class="tm-static-resource__icon bg-danger-subtle text-danger rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3">
@@ -160,7 +139,7 @@
             </div>
 
             {# Carte 6 - Webinaire #}
-            <div class="col">
+            <div class="col" data-website--resource-filter-target="item" data-resource-category="webinars">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border h-100 d-flex flex-column justify-content-between tm-static-hover-card">
                     <div>
                         <div class="tm-static-resource__icon bg-primary-subtle text-primary rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3">
@@ -177,7 +156,7 @@
             </div>
 
             {# Carte 7 - Outil #}
-            <div class="col">
+            <div class="col" data-website--resource-filter-target="item" data-resource-category="tools">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border h-100 d-flex flex-column justify-content-between tm-static-hover-card">
                     <div>
                         <div class="tm-static-resource__icon bg-info-subtle text-info rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3">
@@ -194,7 +173,7 @@
             </div>
 
             {# Carte 8 - Conseils #}
-            <div class="col">
+            <div class="col" data-website--resource-filter-target="item" data-resource-category="advice">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border h-100 d-flex flex-column justify-content-between tm-static-hover-card">
                     <div>
                         <div class="tm-static-resource__icon tm-static-resource__icon--advice rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3">
