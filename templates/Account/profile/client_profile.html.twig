@@ -132,7 +132,7 @@
                                     <div class="my-auto p-4 rounded-4 tm-cp-avatar-container">
                                         <img src="{{ user.avatar ? asset('uploads/avatars/' ~ user.avatar) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&q=80' }}" class="rounded-circle mb-3 border-2 border-white shadow-sm tm-cp-avatar-preview" alt="Photo de profil de {{ user.firstName }} {{ user.lastName }}" width="100" height="100" loading="lazy">
 
-                                        <div class="mx-auto" style="max-width: 320px;">
+                                        <div class="mx-auto tm-cp-avatar-upload">
                                             <div class="text-start">
                                                 {{ form_label(settingsForm.avatarFile, null, {label_attr: {class: 'visually-hidden'}}) }}
                                                 {{ form_widget(settingsForm.avatarFile, {attr: {
