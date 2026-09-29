@@ -47,7 +47,7 @@ class ShowPrestataireController extends AbstractController
         '/prestataire/{slug}',
         name: 'app_prestataire_show',
         methods: ['GET'],
-        requirements: ['slug' => '(?!abonnements$)[a-z0-9-]+']
+        requirements: ['slug' => '(?!(?:abonnements|demandes)$)[a-z0-9-]+']
     )]
     /**
      * Traite l’action "__invoke" du contrôleur Show Prestataire.
