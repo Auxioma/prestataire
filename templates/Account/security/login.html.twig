@@ -91,7 +91,9 @@
                         </div>
                     {% endfor %}
 
-                    {% for message in app.flashes('registration_email_delivery_warning') %}
+                    {% set registrationEmailDeliveryWarnings = app.flashes("registration_email_delivery_warning") %}
+
+                    {% for message in registrationEmailDeliveryWarnings %}
                         <div class="tm-login-alert tm-login-alert--error" role="alert">
                             <i class="bi bi-exclamation-triangle-fill"></i>
                             <span>{{ message }}</span>
@@ -119,21 +121,15 @@
                         </div>
                     {% endfor %}
 
+                    {% set translatedError = error ? error.messageKey|trans(error.messageData, "security") : null %}
+                    {% set verificationEmailRequired = translatedError == "Veuillez vérifier votre adresse email avant de vous connecter." %}
+
                     {% if error %}
-                        {% set translatedError = error.messageKey|trans(error.messageData, 'security') %}
                         <div class="alert alert-danger" id="login-error" role="alert">
                             <div>{{ translatedError }}</div>
-                            {% if translatedError == 'Veuillez vérifier votre adresse email avant de vous connecter.' and last_username %}
-                                <form method="post" action="{{ path('app_resend_verification_email') }}" class="mt-3">
-                                    <input type="hidden" name="email" value="{{ last_username }}">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('resend_verification_email') }}">
-                                    <button type="submit" class="btn btn-link p-0 align-baseline">
-                                        Renvoyer l’email de vérification
-                                    </button>
-                                </form>
-                            {% endif %}
                         </div>
                     {% endif %}
+
 
                     <form method="post" class="tm-login-form">
                         <div class="tm-login-field">
@@ -180,6 +176,32 @@
                             <a href="{{ path('app_register_choice') }}">S'inscrire</a>
                         </p>
                     </form>
+
+                    <details class="tm-login-resend"{% if verificationEmailRequired or registrationEmailDeliveryWarnings is not empty %} open{% endif %}>
+                        <summary class="tm-login-resend__summary">
+                            E-mail de confirmation non reçu ?
+                        </summary>
+                        <div class="tm-login-resend__content">
+                            <p>Indiquez l’adresse utilisée lors de votre inscription pour recevoir un nouveau lien.</p>
+                            <form method="post" action="{{ path("app_resend_verification_email") }}" class="tm-login-resend__form">
+                                <label class="visually-hidden" for="resend-verification-email">Adresse e-mail</label>
+                                <input
+                                    type="email"
+                                    id="resend-verification-email"
+                                    name="email"
+                                    value="{{ last_username }}"
+                                    placeholder="Adresse e-mail"
+                                    autocomplete="email"
+                                    required
+                                    class="tm-login-resend__input"
+                                >
+                                <input type="hidden" name="_token" value="{{ csrf_token("resend_verification_email") }}">
+                                <button type="submit" class="tm-login-resend__submit">
+                                    Renvoyer l’e-mail
+                                </button>
+                            </form>
+                        </div>
+                    </details>
                 </div>
 
                 <div class="tm-login-benefits">
