@@ -4,9 +4,13 @@
     Avis de {{ prestataire.companyName|default('ce prestataire') }} - TrouveMoi
 {% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset("styles/review/public_prestataire_reviews.css") }}">
+{% endblock %}
+
 {% block body %}
     <section class="container py-5">
-        <div class="mx-auto" style="max-width: 960px;">
+        <div class="tm-public-reviews__container mx-auto">
             <div class="mb-4">
                 <a href="{{ path('app_prestataire_show', {slug: prestataire.slug}) }}" class="text-decoration-none">
                     <i class="fa-solid fa-arrow-left me-1" aria-hidden="true"></i>

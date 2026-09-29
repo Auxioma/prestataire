@@ -38,7 +38,6 @@
               class="fond"
               role="img"
               aria-label="Sélection de bons plans TrouveMoi"
-              style="background-image:url('{{ asset('images/worker-bricolage.webp')|e('html_attr') }}')"
           ></div>
           <div class="voile"></div>
 
@@ -95,12 +94,12 @@
           </div>
       </section>
 
-      <section class="section resultats" style="padding-top:48px">
+      <section class="section resultats">
           <div class="conteneur">
-              <div class="entete-section" style="margin-bottom:28px">
+              <div class="entete-section">
                   <div>
                       <span class="eyebrow">Bons plans du moment</span>
-                      <h2 class="section-titre" style="font-size:clamp(24px,2.8vw,32px)">Des offres à durée limitée, ne les manquez pas !</h2>
+                      <h2 class="section-titre">Des offres à durée limitée, ne les manquez pas !</h2>
                   </div>
 
                   <form method="get" action="{{ path('app_bons_plans') }}">
@@ -138,7 +137,7 @@
               <div class="bons-plans-layout">
                   <div>
                       {% if selectedCategorySlug %}
-                          <form method="get" action="{{ path('app_bons_plans') }}" class="filtres-inner" style="padding:0 0 24px">
+                          <form method="get" action="{{ path('app_bons_plans') }}" class="filtres-inner filtres-inner--subcategories">
                               <label class="filtre" for="subCategory">
                                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-
   linecap="round">
