@@ -4,7 +4,10 @@
 
 {% block json_ld %}{% endblock %}
 
-{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/static/staticpage.css') }}">{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/static/staticpage.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/static/ressources.css') }}">
+{% endblock %}
 
 {% block body %}
     <div class="bg-light py-3 border-bottom">
@@ -75,10 +78,10 @@
             <div class="col">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border h-100 d-flex flex-column justify-content-between tm-static-hover-card">
                     <div>
-                        <div class="bg-primary-subtle text-primary rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3" style="width:52px; height:52px;">
+                        <div class="tm-static-resource__icon bg-primary-subtle text-primary rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3">
                             <i class="fa-regular fa-file-lines"></i>
                         </div>
-                        <span class="badge bg-primary-subtle text-primary fw-bold tracking-wider mb-2" style="font-size:9px; text-transform: uppercase;">Guide pratique</span>
+                        <span class="tm-static-resource__badge badge bg-primary-subtle text-primary fw-bold tracking-wider mb-2">Guide pratique</span>
                         <h2 class="h6 fw-bold text-dark lh-base mb-2">Bien créer son profil prestataire</h2>
                         <p class="text-muted tm-static-text-xs mb-0">Nos conseils pour créer un profil attractif et rassurer vos futurs clients.</p>
                     </div>
@@ -92,10 +95,10 @@
             <div class="col">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border h-100 d-flex flex-column justify-content-between tm-static-hover-card">
                     <div>
-                        <div class="bg-success-subtle text-success rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3" style="width:52px; height:52px;">
+                        <div class="tm-static-resource__icon bg-success-subtle text-success rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3">
                             <i class="fa-solid fa-bullseye"></i>
                         </div>
-                        <span class="badge bg-success-subtle text-success fw-bold tracking-wider mb-2" style="font-size:9px; text-transform: uppercase;">Développer son activité</span>
+                        <span class="tm-static-resource__badge badge bg-success-subtle text-success fw-bold tracking-wider mb-2">Développer son activité</span>
                         <h2 class="h6 fw-bold text-dark lh-base mb-2">5 astuces pour recevoir plus de demandes</h2>
                         <p class="text-muted tm-static-text-xs mb-0">Des conseils concrets pour augmenter votre visibilité et obtenir plus de clients.</p>
                     </div>
@@ -109,10 +112,10 @@
             <div class="col">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border h-100 d-flex flex-column justify-content-between tm-static-hover-card">
                     <div>
-                        <div class="rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3" style="width:52px; height:52px; background-color:#f3e8ff; color:#a855f7;">
+                        <div class="tm-static-resource__icon tm-static-resource__icon--tools rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3">
                             <i class="fa-regular fa-star"></i>
                         </div>
-                        <span class="badge fw-bold tracking-wider mb-2" style="font-size:9px; text-transform: uppercase; background-color:#f3e8ff; color:#a855f7;">Gestion et outils</span>
+                        <span class="tm-static-resource__badge tm-static-resource__badge--tools badge fw-bold tracking-wider mb-2">Gestion et outils</span>
                         <h2 class="h6 fw-bold text-dark lh-base mb-2">Gérer vos devis comme un pro</h2>
                         <p class="text-muted tm-static-text-xs mb-0">Modèles, bonnes pratiques et outils pour gagner du temps au quotidien.</p>
                     </div>
@@ -126,10 +129,10 @@
             <div class="col">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border h-100 d-flex flex-column justify-content-between tm-static-hover-card">
                     <div>
-                        <div class="bg-warning-subtle text-warning rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3" style="width:52px; height:52px;">
+                        <div class="tm-static-resource__icon bg-warning-subtle text-warning rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3">
                             <i class="fa-solid fa-shield-halved"></i>
                         </div>
-                        <span class="badge bg-warning-subtle text-warning fw-bold tracking-wider mb-2" style="font-size:9px; text-transform: uppercase;">Guide pratique</span>
+                        <span class="tm-static-resource__badge badge bg-warning-subtle text-warning fw-bold tracking-wider mb-2">Guide pratique</span>
                         <h2 class="h6 fw-bold text-dark lh-base mb-2">Sécurité des paiements : nos engagements</h2>
                         <p class="text-muted tm-static-text-xs mb-0">Tout savoir sur nos systèmes de paiement sécurisés et vos garanties.</p>
                     </div>
@@ -143,10 +146,10 @@
             <div class="col">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border h-100 d-flex flex-column justify-content-between tm-static-hover-card">
                     <div>
-                        <div class="bg-danger-subtle text-danger rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3" style="width:52px; height:52px;">
+                        <div class="tm-static-resource__icon bg-danger-subtle text-danger rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3">
                             <i class="fa-solid fa-bullhorn"></i>
                         </div>
-                        <span class="badge bg-danger-subtle text-danger fw-bold tracking-wider mb-2" style="font-size:9px; text-transform: uppercase;">Actualités</span>
+                        <span class="tm-static-resource__badge badge bg-danger-subtle text-danger fw-bold tracking-wider mb-2">Actualités</span>
                         <h2 class="h6 fw-bold text-dark lh-base mb-2">Nouveautés TrouveMoi.com</h2>
                         <p class="text-muted tm-static-text-xs mb-0">Découvrez les dernières fonctionnalités et améliorations de la plateforme.</p>
                     </div>
@@ -160,10 +163,10 @@
             <div class="col">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border h-100 d-flex flex-column justify-content-between tm-static-hover-card">
                     <div>
-                        <div class="bg-primary-subtle text-primary rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3" style="width:52px; height:52px;">
+                        <div class="tm-static-resource__icon bg-primary-subtle text-primary rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3">
                             <i class="fa-regular fa-circle-play"></i>
                         </div>
-                        <span class="badge bg-primary-subtle text-primary fw-bold tracking-wider mb-2" style="font-size:9px; text-transform: uppercase;">Webinaire</span>
+                        <span class="tm-static-resource__badge badge bg-primary-subtle text-primary fw-bold tracking-wider mb-2">Webinaire</span>
                         <h2 class="h6 fw-bold text-dark lh-base mb-2">Webinaire : Développer son activité en ligne</h2>
                         <p class="text-muted tm-static-text-xs mb-0">Replay de notre webinaire avec des experts pour booster votre activité.</p>
                     </div>
@@ -177,10 +180,10 @@
             <div class="col">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border h-100 d-flex flex-column justify-content-between tm-static-hover-card">
                     <div>
-                        <div class="bg-info-subtle text-info rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3" style="width:52px; height:52px;">
+                        <div class="tm-static-resource__icon bg-info-subtle text-info rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3">
                             <i class="fa-solid fa-calculator"></i>
                         </div>
-                        <span class="badge bg-info-subtle text-info fw-bold tracking-wider mb-2" style="font-size:9px; text-transform: uppercase;">Outil</span>
+                        <span class="tm-static-resource__badge badge bg-info-subtle text-info fw-bold tracking-wider mb-2">Outil</span>
                         <h2 class="h6 fw-bold text-dark lh-base mb-2">Calculateur de tarifs et marges</h2>
                         <p class="text-muted tm-static-text-xs mb-0">Un outil simple pour estimer vos tarifs et votre rentabilité.</p>
                     </div>
@@ -194,10 +197,10 @@
             <div class="col">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border h-100 d-flex flex-column justify-content-between tm-static-hover-card">
                     <div>
-                        <div class="rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3" style="width:52px; height:52px; background-color:#f5f3ff; color:#7c3aed;">
+                        <div class="tm-static-resource__icon tm-static-resource__icon--advice rounded-3 d-flex align-items-center justify-content-center fs-4 mb-3">
                             <i class="fa-regular fa-lightbulb"></i>
                         </div>
-                        <span class="badge fw-bold tracking-wider mb-2" style="font-size:9px; text-transform: uppercase; background-color:#f5f3ff; color:#7c3aed;">Conseils</span>
+                        <span class="tm-static-resource__badge tm-static-resource__badge--advice badge fw-bold tracking-wider mb-2">Conseils</span>
                         <h2 class="h6 fw-bold text-dark lh-base mb-2">Bien communiquer avec vos clients</h2>
                         <p class="text-muted tm-static-text-xs mb-0">Nos conseils pour instaurer une relation de confiance durable.</p>
                     </div>
@@ -212,7 +215,7 @@
         <!-- Bannière d'aide bas de page -->
         <div class="bg-light rounded-4 p-4 border d-flex flex-column flex-md-row align-items-center justify-content-between gap-4 mt-5">
             <div class="d-flex align-items-center gap-3">
-                <div class="bg-white text-primary border rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px;">
+                <div class="tm-static-resource__help-icon bg-white text-primary border rounded-circle d-flex align-items-center justify-content-center shadow-sm">
                     <i class="fa-solid fa-graduation-cap fs-5 text-primary"></i>
                 </div>
                 <div>

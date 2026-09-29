@@ -4,7 +4,10 @@
 
 {% block json_ld %}{% endblock %}
 
-{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/static/staticpage.css') }}">{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/static/staticpage.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/static/espace_prestataire.css') }}">
+{% endblock %}
 
 {% block body %}
 <div class="bg-light w-100 min-vh-100 py-4">
@@ -20,14 +23,14 @@
             <!-- Sidebar Gauche : Navigation Dashboard -->
             <div class="col-xl-2 col-lg-3">
                 <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border">
-                    <button class="btn btn-primary w-100 text-start py-2 px-3 mb-4 rounded-3 d-flex align-items-center gap-2 small fw-medium" style="background-color: #e8eeff; color: #2b59ff; border: none;">
+                    <button class="tm-static-provider-space__nav-active btn btn-primary w-100 text-start py-2 px-3 mb-4 rounded-3 d-flex align-items-center gap-2 small fw-medium">
                         <i class="fa-solid fa-table-columns"></i> Tableau de bord
                     </button>
 
                     <div class="mb-3">
                         <span class="tm-static-text-xs-alt text-muted text-uppercase fw-bold tracking-wider px-2 d-block mb-2">Mon activité</span>
                         <div class="list-group list-group-flush gap-1">
-                            <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted d-flex justify-content-between align-items-center"><span class="tm-static-text-dark-hover"><i class="fa-regular fa-envelope me-2"></i>Demandes reçues</span> <span class="badge bg-danger rounded-circle p-1 d-flex align-items-center justify-content-center" style="width:18px; height:18px; font-size:10px;">4</span></a>
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted d-flex justify-content-between align-items-center"><span class="tm-static-text-dark-hover"><i class="fa-regular fa-envelope me-2"></i>Demandes reçues</span> <span class="tm-static-provider-space__notification-badge badge bg-danger rounded-circle p-1 d-flex align-items-center justify-content-center">4</span></a>
                             <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted"><span class="tm-static-text-dark-hover"><i class="fa-regular fa-paper-plane me-2"></i>Devis envoyés</span></a>
                             <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted"><span class="tm-static-text-dark-hover"><i class="fa-solid fa-briefcase me-2"></i>Mes prestations</span></a>
                             <a href="#" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 small text-muted"><span class="tm-static-text-dark-hover"><i class="fa-regular fa-user me-2"></i>Mes clients</span></a>
@@ -57,9 +60,9 @@
 
                     <div class="bg-light rounded-4 p-3 border text-center mt-2">
                         <i class="fa-solid fa-headset text-primary fs-4 mb-2"></i>
-                        <h2 class="fw-bold text-dark mb-1" style="font-size:12px;">Besoin d'aide ?</h2>
+                        <h2 class="fw-bold text-dark mb-1 tm-static-text-sm">Besoin d'aide ?</h2>
                         <p class="text-muted tm-static-text-xs-alt mb-3">Consultez notre centre d'aide ou contactez-nous.</p>
-                        <button class="btn btn-white border bg-white text-dark btn-sm w-100 fw-medium shadow-sm" style="font-size:11px;">Centre d'aide</button>
+                        <button class="btn btn-white border bg-white text-dark btn-sm w-100 fw-medium shadow-sm tm-static-text-xs">Centre d'aide</button>
                     </div>
                 </div>
             </div>
@@ -128,35 +131,35 @@
                             </thead>
                             <tbody>
                                 <tr class="border-bottom">
-                                    <td class="py-3"><span class="badge bg-warning-subtle text-warning fw-medium px-2 py-1" style="font-size:11px;">Plomberie</span></td>
+                                    <td class="py-3"><span class="badge bg-warning-subtle text-warning fw-medium px-2 py-1 tm-static-text-xs">Plomberie</span></td>
                                     <th scope="row" class="py-3"><span class="fw-medium text-dark small">Fuite d'eau dans la salle de bain</span></th>
                                     <td class="py-3 text-muted small"><i class="fa-solid fa-location-dot me-1"></i> Lyon 69003</td>
                                     <td class="py-3 text-muted tm-static-text-xs-alt">Il y a 30 min</td>
                                     <td class="py-3 text-end"><button class="btn btn-outline-primary btn-sm rounded-pill tm-static-text-sm-alt px-3" disabled>Voir la demande</button></td>
                                 </tr>
                                 <tr class="border-bottom">
-                                    <td class="py-3"><span class="badge bg-primary-subtle text-primary fw-medium px-2 py-1" style="font-size:11px;">Chauffage</span></td>
+                                    <td class="py-3"><span class="badge bg-primary-subtle text-primary fw-medium px-2 py-1 tm-static-text-xs">Chauffage</span></td>
                                     <th scope="row" class="py-3"><span class="fw-medium text-dark small">Entretien chaudière gaz</span></th>
                                     <td class="py-3 text-muted small"><i class="fa-solid fa-location-dot me-1"></i> Villeurbanne 69100</td>
                                     <td class="py-3 text-muted tm-static-text-xs-alt">Il y a 2 h</td>
                                     <td class="py-3 text-end"><button class="btn btn-outline-primary btn-sm rounded-pill tm-static-text-sm-alt px-3" disabled>Voir la demande</button></td>
                                 </tr>
                                 <tr class="border-bottom">
-                                    <td class="py-3"><span class="badge bg-success-subtle text-success fw-medium px-2 py-1" style="font-size:11px;">Installation</span></td>
+                                    <td class="py-3"><span class="badge bg-success-subtle text-success fw-medium px-2 py-1 tm-static-text-xs">Installation</span></td>
                                     <th scope="row" class="py-3"><span class="fw-medium text-dark small">Installation chauffe-eau</span></th>
                                     <td class="py-3 text-muted small"><i class="fa-solid fa-location-dot me-1"></i> Caluire-et-Cuire 69300</td>
                                     <td class="py-3 text-muted tm-static-text-xs-alt">Il y a 5 h</td>
                                     <td class="py-3 text-end"><button class="btn btn-outline-primary btn-sm rounded-pill tm-static-text-sm-alt px-3" disabled>Voir la demande</button></td>
                                 </tr>
                                 <tr class="border-bottom">
-                                    <td class="py-3"><span class="badge bg-warning-subtle text-warning fw-medium px-2 py-1" style="font-size:11px;">Plomberie</span></td>
+                                    <td class="py-3"><span class="badge bg-warning-subtle text-warning fw-medium px-2 py-1 tm-static-text-xs">Plomberie</span></td>
                                     <th scope="row" class="py-3"><span class="fw-medium text-dark small">Débouchage canalisation</span></th>
                                     <td class="py-3 text-muted small"><i class="fa-solid fa-location-dot me-1"></i> Lyon 69007</td>
                                     <td class="py-3 text-muted tm-static-text-xs-alt">Il y a 1 jour</td>
                                     <td class="py-3 text-end"><button class="btn btn-outline-primary btn-sm rounded-pill tm-static-text-sm-alt px-3" disabled>Voir la demande</button></td>
                                 </tr>
                                 <tr>
-                                    <td class="py-3"><span class="badge bg-primary-subtle text-primary fw-medium px-2 py-1" style="font-size:11px;">Chauffage</span></td>
+                                    <td class="py-3"><span class="badge bg-primary-subtle text-primary fw-medium px-2 py-1 tm-static-text-xs">Chauffage</span></td>
                                     <th scope="row" class="py-3"><span class="fw-medium text-dark small">Remplacement radiateur</span></th>
                                     <td class="py-3 text-muted small"><i class="fa-solid fa-location-dot me-1"></i> Tassin-la-Demi-Lune 69160</td>
                                     <td class="py-3 text-muted tm-static-text-xs-alt">Il y a 1 jour</td>
@@ -178,7 +181,7 @@
                                 <h3 class="h6 fw-bold text-dark mb-1">Développez votre activité</h3>
                                 <p class="text-muted tm-static-text-xs-alt mb-0">Complétez votre profil à 100% pour gagner en visibilité et recevoir plus de demandes.</p>
                             </div>
-                            <div class="position-relative flex-shrink-0" style="width: 60px; height: 60px;">
+                            <div class="position-relative flex-shrink-0 tm-static-provider-space__progress">
                                 <svg viewBox="0 0 36 36" class="w-100 h-100">
                                     <path class="text-light" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                     <path class="text-success" stroke-dasharray="85, 100" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
@@ -214,7 +217,7 @@
                             <div class="d-flex align-items-center gap-3">
                                 <div class="text-primary bg-light p-2 rounded-2"><i class="fa-regular fa-square-plus fs-5"></i></div>
                                 <div>
-                                    <h3 class="fw-bold text-dark mb-0" style="font-size:12px;">Créer une prestation</h3>
+                                    <h3 class="fw-bold text-dark mb-0 tm-static-text-sm">Créer une prestation</h3>
                                     <span class="text-muted tm-static-text-xs-alt">Ajoutez un service que vous proposez</span>
                                 </div>
                             </div>
@@ -224,7 +227,7 @@
                             <div class="d-flex align-items-center gap-3">
                                 <div class="text-primary bg-light p-2 rounded-2"><i class="fa-regular fa-user fs-5"></i></div>
                                 <div>
-                                    <h3 class="fw-bold text-dark mb-0" style="font-size:12px;">Mettre à jour mon profil</h3>
+                                    <h3 class="fw-bold text-dark mb-0 tm-static-text-sm">Mettre à jour mon profil</h3>
                                     <span class="text-muted tm-static-text-xs-alt">Modifiez vos informations</span>
                                 </div>
                             </div>
@@ -234,7 +237,7 @@
                             <div class="d-flex align-items-center gap-3">
                                 <div class="text-primary bg-light p-2 rounded-2"><i class="fa-regular fa-calendar-check fs-5"></i></div>
                                 <div>
-                                    <h3 class="fw-bold text-dark mb-0" style="font-size:12px;">Gérer mes disponibilités</h3>
+                                    <h3 class="fw-bold text-dark mb-0 tm-static-text-sm">Gérer mes disponibilités</h3>
                                     <span class="text-muted tm-static-text-xs-alt">Indiquez vos créneaux disponibles</span>
                                 </div>
                             </div>
@@ -244,7 +247,7 @@
                             <div class="d-flex align-items-center gap-3">
                                 <div class="text-primary bg-light p-2 rounded-2"><i class="fa-solid fa-chart-line fs-5"></i></div>
                                 <div>
-                                    <h3 class="fw-bold text-dark mb-0" style="font-size:12px;">Voir mes statistiques</h3>
+                                    <h3 class="fw-bold text-dark mb-0 tm-static-text-sm">Voir mes statistiques</h3>
                                     <span class="text-muted tm-static-text-xs-alt">Suivez votre activity</span>
                                 </div>
                             </div>
@@ -262,39 +265,39 @@
 
                     <div class="d-flex flex-column gap-3 mb-3">
                         <div class="d-flex gap-3 align-items-start border-bottom pb-2">
-                            <div class="rounded-circle bg-secondary flex-shrink-0" style="width:36px; height:36px; background: url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100') center/cover;"></div>
+                            <div class="rounded-circle bg-secondary flex-shrink-0 tm-static-provider-space__avatar tm-static-provider-space__avatar--sophie"></div>
                             <div class="w-100">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <h3 class="fw-bold text-dark mb-0" style="font-size:12px;">Sophie L.</h3>
+                                    <h3 class="fw-bold text-dark mb-0 tm-static-text-sm">Sophie L.</h3>
                                     <span class="text-muted tm-static-text-xs-alt">10:24</span>
                                 </div>
-                                <p class="text-muted tm-static-text-xs-alt mb-0 text-truncate" style="max-width: 160px;">Votre devis a été accepté.</p>
+                                <p class="text-muted tm-static-text-xs-alt mb-0 text-truncate tm-static-provider-space__message-preview">Votre devis a été accepté.</p>
                             </div>
-                            <span class="bg-primary rounded-circle p-1 mt-2 flex-shrink-0" style="width:6px; height:6px;"></span>
+                            <span class="bg-primary rounded-circle p-1 mt-2 flex-shrink-0 tm-static-provider-space__unread-dot"></span>
                         </div>
 
                         <div class="d-flex gap-3 align-items-start border-bottom pb-2">
-                            <div class="rounded-circle bg-secondary flex-shrink-0" style="width:36px; height:36px; background: url('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100') center/cover;"></div>
+                            <div class="rounded-circle bg-secondary flex-shrink-0 tm-static-provider-space__avatar tm-static-provider-space__avatar--julien"></div>
                             <div class="w-100">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <h3 class="fw-bold text-dark mb-0" style="font-size:12px;">Julien M.</h3>
+                                    <h3 class="fw-bold text-dark mb-0 tm-static-text-sm">Julien M.</h3>
                                     <span class="text-muted tm-static-text-xs-alt">Hier</span>
                                 </div>
-                                <p class="text-muted tm-static-text-xs-alt mb-0 text-truncate" style="max-width: 160px;">Pouvez-vous intervenir demain matin ?</p>
+                                <p class="text-muted tm-static-text-xs-alt mb-0 text-truncate tm-static-provider-space__message-preview">Pouvez-vous intervenir demain matin ?</p>
                             </div>
-                            <span class="bg-primary rounded-circle p-1 mt-2 flex-shrink-0" style="width:6px; height:6px;"></span>
+                            <span class="bg-primary rounded-circle p-1 mt-2 flex-shrink-0 tm-static-provider-space__unread-dot"></span>
                         </div>
 
                         <div class="d-flex gap-3 align-items-start">
-                            <div class="rounded-circle bg-secondary flex-shrink-0" style="width:36px; height:36px; background: url('https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=100') center/cover;"></div>
+                            <div class="rounded-circle bg-secondary flex-shrink-0 tm-static-provider-space__avatar tm-static-provider-space__avatar--claire"></div>
                             <div class="w-100">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <h3 class="fw-bold text-dark mb-0" style="font-size:12px;">Claire D.</h3>
+                                    <h3 class="fw-bold text-dark mb-0 tm-static-text-sm">Claire D.</h3>
                                     <span class="text-muted tm-static-text-xs-alt">Hier</span>
                                 </div>
-                                <p class="text-muted tm-static-text-xs-alt mb-0 text-truncate" style="max-width: 160px;">Merci pour votre intervention !</p>
+                                <p class="text-muted tm-static-text-xs-alt mb-0 text-truncate tm-static-provider-space__message-preview">Merci pour votre intervention !</p>
                             </div>
-                            <span class="bg-primary rounded-circle p-1 mt-2 flex-shrink-0" style="width:6px; height:6px;"></span>
+                            <span class="bg-primary rounded-circle p-1 mt-2 flex-shrink-0 tm-static-provider-space__unread-dot"></span>
                         </div>
                     </div>
 

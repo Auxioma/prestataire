@@ -5,11 +5,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/quote_proposal/edit.css') }}">
-    <style>
-        #invoice-draft-form #invoice-external-panel {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('styles/invoice/edit.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -108,7 +104,7 @@
                     <span class="tm-quote-edit__alert-dot"></span>
                     <div>
                         <strong>Brouillon de facture.</strong>
-                        Renseignez les lignes, les conditions et les notes, puis passez par l’<span style="font-weight: 700; text-transform: uppercase; background: #fff3a3; padding: 0 4px; border-radius: 4px;">apercu</span> pour <span style="font-weight: 700; text-transform: uppercase; background: #fff3a3; padding: 0 4px; border-radius: 4px;">emettre</span> la facture.
+                        Renseignez les lignes, les conditions et les notes, puis passez par l’<span class="tm-invoice-edit__instruction-highlight">apercu</span> pour <span class="tm-invoice-edit__instruction-highlight">emettre</span> la facture.
                     </div>
                 </div>
             {% endif %}
