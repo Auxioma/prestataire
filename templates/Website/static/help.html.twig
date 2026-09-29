@@ -2,7 +2,10 @@
 
 {% block title %}Besoin d'aide ? - TrouveMoi.com{% endblock %}
 
-{% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/static/staticpage.css') }}">{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/static/staticpage.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/static/help.css') }}">
+{% endblock %}
 
 {% block body %}
 <div class="container py-5">
@@ -25,7 +28,7 @@
         </div>
         <div class="col-md-5 text-center d-none d-md-block">
             <div class="position-relative d-inline-block">
-                <div class="bg-primary-subtle rounded-circle position-absolute top-50 start-50 translate-middle tm-static-bg-circle-xl" style="z-index: -1;"></div>
+                <div class="tm-static-help__hero-backdrop bg-primary-subtle rounded-circle position-absolute top-50 start-50 translate-middle tm-static-bg-circle-xl"></div>
                 <i class="bi bi-headset text-primary display-1"></i>
             </div>
         </div>
