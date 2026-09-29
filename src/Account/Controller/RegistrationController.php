@@ -416,7 +416,7 @@ class RegistrationController extends AbstractController
         return $this->emailVerifier->trySendEmailConfirmation(
             'app_verify_email',
             $user,
-            new TemplatedEmail()
+            (new TemplatedEmail())
                 ->from(new Address('noreply@trouvemoi.com', 'TrouveMoi'))
                 ->to((string) $user->getEmail())
                 ->subject('Veuillez confirmer votre adresse email')

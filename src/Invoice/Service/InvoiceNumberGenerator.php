@@ -65,6 +65,6 @@ final class InvoiceNumberGenerator
             }
         }
 
-        return new \DateTimeImmutable()->format('Y');
+        return (new \DateTimeImmutable())->format('Y');
     }
 }

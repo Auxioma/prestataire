@@ -60,6 +60,10 @@ return (new Config())
          * Modernisation PHP 8.4.
          */
         '@PHP8x4Migration' => true,
+        // Keep chained instantiations readable by IDE analyzers that do not yet parse PHP 8.4 syntax.
+        'new_expression_parentheses' => [
+            'use_parentheses' => true,
+        ],
 
         /*
          * Typage strict.

@@ -51,7 +51,7 @@ class PrestataireInterventionZoneFixtures extends BaseFixture implements Depende
             $secondary = self::ZONES[$i % \count(self::ZONES)];
 
             foreach ([[$primary, true], [$secondary, false]] as [$zoneData, $isMain]) {
-                $zone = new PrestataireInterventionZone()
+                $zone = (new PrestataireInterventionZone())
                     ->setPrestataireProfile($prestataire)
                     ->setCity($zoneData['city'])
                     ->setPostalCode($zoneData['postal'])

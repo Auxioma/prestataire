@@ -59,7 +59,7 @@ class PrestataireProfileFixtures extends BaseFixture implements DependentFixture
             $user = $this->getReference(\sprintf('user_prestataire_%d', $index + 1), User::class);
             $createdAt = $this->randomDateTimeImmutable('-18 months', '-4 months');
 
-            $profile = new PrestataireProfile()
+            $profile = (new PrestataireProfile())
                 ->setAccount($user)
                 ->setCompanyName($data['company'])
                 ->setSlug($this->slugify($data['company'].'-'.($index + 1)))

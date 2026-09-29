@@ -32,7 +32,7 @@ class QuoteProposalNumberGenerator
     public function generate(PrestataireProfile $prestataire): array
     {
         $sequence = max(1, $this->quoteProposalRepository->findNextSequenceForPrestataire($prestataire));
-        $year = new \DateTimeImmutable()->format('Y');
+        $year = (new \DateTimeImmutable())->format('Y');
         $proposalNumber = \sprintf('DEV-%s-%05d', $year, $sequence);
 
         return [

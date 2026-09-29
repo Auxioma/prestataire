@@ -40,7 +40,7 @@ class PrestataireDocumentFixtures extends BaseFixture implements DependentFixtur
             $prestataire = $this->getReference(\sprintf('prestataire_profile_%d', (($i - 1) % UserFixtures::PRESTATAIRE_COUNT) + 1), PrestataireProfile::class);
             $type = $types[($i - 1) % \count($types)];
 
-            $document = new PrestataireDocument()
+            $document = (new PrestataireDocument())
                 ->setPrestataireProfile($prestataire)
                 ->setType($type)
                 ->setStatus($statuses[($i - 1) % \count($statuses)])

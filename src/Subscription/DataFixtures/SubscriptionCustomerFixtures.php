@@ -35,7 +35,7 @@ class SubscriptionCustomerFixtures extends BaseFixture implements DependentFixtu
             /** @var PrestataireProfile $prestataire */
             $prestataire = $this->getReference(\sprintf('prestataire_profile_%d', $i), PrestataireProfile::class);
 
-            $customer = new SubscriptionCustomer()
+            $customer = (new SubscriptionCustomer())
                 ->setPrestataireProfile($prestataire)
                 ->setStripeCustomerId(\sprintf('cus_demo_%04d', $i))
                 ->setStripeDefaultPaymentMethodId(\sprintf('pm_demo_%04d', $i))

@@ -55,7 +55,7 @@ final class StripeCustomerManager
             throw new \RuntimeException('Stripe n’a pas retourné d’identifiant client.');
         }
 
-        $customer ??= new SubscriptionCustomer()
+        $customer ??= (new SubscriptionCustomer())
             ->setPrestataireProfile($prestataireProfile);
 
         $customer

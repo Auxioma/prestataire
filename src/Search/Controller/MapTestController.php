@@ -40,7 +40,7 @@ final class MapTestController extends AbstractController
      */
     public function __invoke(): Response
     {
-        $map = new Map('default')
+        $map = (new Map('default'))
             ->center(new Point(44.9793, -1.0797))
             ->zoom(9)
             ->addMarker(new Marker(
@@ -51,7 +51,7 @@ final class MapTestController extends AbstractController
                 )
             ))
             ->options(
-                new LeafletOptions()
+                (new LeafletOptions())
                     ->tileLayer(new TileLayer(
                         url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',

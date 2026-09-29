@@ -169,7 +169,7 @@ final class SubscriptionInstallDefaultPlansCommand extends Command
         }
 
         if (!$selected instanceof SubscriptionPlanPrice) {
-            $selected = new SubscriptionPlanPrice()
+            $selected = (new SubscriptionPlanPrice())
                 ->setPlan($plan)
                 ->setBillingPeriod($billingPeriod)
                 ->setCreatedAt($now);

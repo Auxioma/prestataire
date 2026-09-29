@@ -40,7 +40,7 @@ class UserFixtures extends BaseFixture
 
     public function load(ObjectManager $manager): void
     {
-        $admin = new User()
+        $admin = (new User())
             ->setEmail('admin@trouvemoi.fr')
             ->setRoles(['ROLE_ADMIN'])
             ->setFirstName('Amandine')
@@ -70,7 +70,7 @@ class UserFixtures extends BaseFixture
         $this->addReference('user_admin_1', $admin);
 
         for ($i = 1; $i <= self::CLIENT_COUNT; ++$i) {
-            $user = new User()
+            $user = (new User())
                 ->setEmail(\sprintf('client%d@trouvemoi.fr', $i))
                 ->setRoles(['ROLE_CLIENT'])
                 ->setFirstName($this->faker->firstName())
@@ -105,7 +105,7 @@ class UserFixtures extends BaseFixture
         }
 
         for ($i = 1; $i <= self::PRESTATAIRE_COUNT; ++$i) {
-            $user = new User()
+            $user = (new User())
                 ->setEmail(\sprintf('prestataire%d@trouvemoi.fr', $i))
                 ->setRoles(['ROLE_PRESTATAIRE'])
                 ->setFirstName($this->faker->firstName())

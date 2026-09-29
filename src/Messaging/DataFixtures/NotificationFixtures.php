@@ -42,7 +42,7 @@ class NotificationFixtures extends BaseFixture implements DependentFixtureInterf
             $recipient = $this->getReference($userReference, User::class);
             $type = $types[($i - 1) % \count($types)];
 
-            $notification = new Notification()
+            $notification = (new Notification())
                 ->setRecipient($recipient)
                 ->setType($type)
                 ->setTitle($type->getLabel())

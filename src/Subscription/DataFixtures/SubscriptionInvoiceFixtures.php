@@ -40,7 +40,7 @@ class SubscriptionInvoiceFixtures extends BaseFixture implements DependentFixtur
                 ? $subscription->getPlan()?->getAnnualAmount()
                 : $subscription->getPlan()?->getMonthlyAmount();
 
-            $invoice = new SubscriptionInvoice()
+            $invoice = (new SubscriptionInvoice())
                 ->setSubscription($subscription)
                 ->setStripeInvoiceId(\sprintf('in_demo_%04d', $i))
                 ->setStripePaymentIntentId(\sprintf('pi_demo_%04d', $i))

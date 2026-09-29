@@ -360,7 +360,7 @@ final class StripeWebhookManager
                 return;
             }
 
-            $movement = new SubscriptionCreditMovement()
+            $movement = (new SubscriptionCreditMovement())
                 ->setPrestataireProfile($subscription->getPrestataireProfile())
                 ->setSubscription($subscription)
                 ->setInvoice($invoice)
@@ -432,7 +432,7 @@ final class StripeWebhookManager
             return null;
         }
 
-        $customer = new SubscriptionCustomer()
+        $customer = (new SubscriptionCustomer())
             ->setPrestataireProfile($prestataireProfile)
             ->setStripeCustomerId($stripeCustomerId)
             ->setBillingEmail($prestataireProfile->getAccount()?->getEmail());
@@ -495,7 +495,7 @@ final class StripeWebhookManager
             return null;
         }
 
-        return new \DateTimeImmutable()->setTimestamp((int) $timestamp);
+        return (new \DateTimeImmutable())->setTimestamp((int) $timestamp);
     }
 
     private function normalizeStripeAmount(mixed $amount): ?string

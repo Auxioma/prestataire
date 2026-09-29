@@ -47,7 +47,7 @@ final class PrestataireSearchTest extends TestCase
         $stack->push(Middleware::history($history));
         $wrapper = new ElasticsearchClient('https://localhost:9200', '', '', true);
         $client = ClientBuilder::create()->setHosts(['https://localhost:9200'])->setHttpClient(new Client(['handler' => $stack]))->build();
-        new \ReflectionProperty($wrapper, 'client')->setValue($wrapper, $client);
+        (new \ReflectionProperty($wrapper, 'client'))->setValue($wrapper, $client);
         $search = new PrestataireSearchService($wrapper);
         $search->search('plombier');
         $search->autocomplete('plombier');
@@ -62,9 +62,9 @@ final class PrestataireSearchTest extends TestCase
 
     public function testHiddenSuspendedAndUnverifiedProfilesAreExcluded(): void
     {
-        $profile = new PrestataireProfile()->setCompanyName('Entreprise')->setSlug('entreprise')
+        $profile = (new PrestataireProfile())->setCompanyName('Entreprise')->setSlug('entreprise')
             ->setProfileStatus(PrestataireProfileStatusEnum::ACTIVE)->setVerificationStatus(VerificationStatusEnum::COMPANY_VERIFIED);
-        $account = new User()->setStatus(UserStatusEnum::ACTIVE);
+        $account = (new User())->setStatus(UserStatusEnum::ACTIVE);
         $profile->setAccount($account);
         self::assertTrue(PrestataireSearchEligibility::isEligible($profile));
         $profile->setSearchVisibility(SearchVisibilityEnum::HIDDEN);

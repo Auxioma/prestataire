@@ -101,7 +101,7 @@ final class PrestataireRegistrationAdmissionTest extends TestCase
         }), 'https://registry.example');
         $session = new Session(new MockArraySessionStorage());
         try {
-            new PrestataireRegistrationAdmission($registry, $codes, $profiles)->verify('12345678900011', $session);
+            (new PrestataireRegistrationAdmission($registry, $codes, $profiles))->verify('12345678900011', $session);
             self::fail('An API outage must block admission.');
         } catch (RegistrationAdmissionException $exception) {
             self::assertStringContainsString('temporairement indisponible', $exception->getMessage());

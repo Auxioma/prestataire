@@ -68,7 +68,7 @@ final class ClientReviewReminderMailer
         $prestataireName = mb_trim((string) ($prestataire->getCompanyName() ?: $prestataire->getLegalName() ?: 'votre prestataire'));
         $clientFirstName = mb_trim((string) ($clientUser->getFirstName() ?? ''));
 
-        $email = new TemplatedEmail()
+        $email = (new TemplatedEmail())
             ->from(new Address('noreply@trouvemoi.com', 'TrouveMoi'))
             ->to($recipient)
             ->subject('Votre facture est disponible - laissez votre avis')

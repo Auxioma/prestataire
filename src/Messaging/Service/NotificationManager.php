@@ -42,7 +42,7 @@ class NotificationManager
         bool $flush = true,
     ): Notification {
         if (!$recipient->shouldReceiveNotificationType($type)) {
-            return new Notification()
+            return (new Notification())
                 ->setRecipient($recipient)
                 ->setType($type)
                 ->setTitle($title)
@@ -51,7 +51,7 @@ class NotificationManager
                 ->setMetadata($metadata);
         }
 
-        $notification = new Notification()
+        $notification = (new Notification())
             ->setRecipient($recipient)
             ->setType($type)
             ->setTitle($title)
@@ -94,7 +94,7 @@ class NotificationManager
                 continue;
             }
 
-            $notification = new Notification()
+            $notification = (new Notification())
                 ->setRecipient($recipient)
                 ->setType($type)
                 ->setTitle($title)

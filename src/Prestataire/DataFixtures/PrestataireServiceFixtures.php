@@ -44,7 +44,7 @@ class PrestataireServiceFixtures extends BaseFixture implements DependentFixture
                 $catalogPrice = $this->decimal(45, 950);
                 $hasPromo = 1 !== $offset;
 
-                $prestataireService = new PrestataireService()
+                $prestataireService = (new PrestataireService())
                     ->setPrestataire($prestataire)
                     ->setService($service)
                     ->setIsActive(true)

@@ -54,7 +54,7 @@ class ServiceFixtures extends BaseFixture implements DependentFixtureInterface
                 $priceMin = $this->decimal(20, 250);
                 $priceMax = number_format((float) $priceMin + $this->faker->numberBetween(30, 1200), 2, '.', '');
 
-                $service = new Service()
+                $service = (new Service())
                     ->setCategory($category)
                     ->setName($name)
                     ->setSlug($this->slugify($name))

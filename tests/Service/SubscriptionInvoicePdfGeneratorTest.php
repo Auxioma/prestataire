@@ -59,7 +59,7 @@ final class SubscriptionInvoicePdfGeneratorTest extends TestCase
 
     private function createInvoiceFixture(): SubscriptionInvoice
     {
-        $prestataire = new PrestataireProfile()
+        $prestataire = (new PrestataireProfile())
             ->setCompanyName('Acme Services')
             ->setLegalName('Acme Services SARL')
             ->setAddress('10 rue de la Paix')
@@ -69,19 +69,19 @@ final class SubscriptionInvoicePdfGeneratorTest extends TestCase
             ->setSiret('12345678900012')
             ->setVatNumber('FR00123456789');
 
-        $plan = new SubscriptionPlan()
+        $plan = (new SubscriptionPlan())
             ->setCode('pro')
             ->setName('Abonnement Pro')
             ->setMonthlyAmount('49.00');
 
-        $subscription = new PrestataireSubscription()
+        $subscription = (new PrestataireSubscription())
             ->setPrestataireProfile($prestataire)
             ->setPlan($plan)
             ->setBillingPeriod(SubscriptionBillingPeriodEnum::MONTHLY)
             ->setCurrentPeriodStart(new \DateTimeImmutable('2026-07-01 00:00:00'))
             ->setCurrentPeriodEnd(new \DateTimeImmutable('2026-07-31 23:59:59'));
 
-        return new SubscriptionInvoice()
+        return (new SubscriptionInvoice())
             ->setSubscription($subscription)
             ->setStripeInvoiceId('in_sub_test_001')
             ->setStripePaymentIntentId('pi_sub_test_001')

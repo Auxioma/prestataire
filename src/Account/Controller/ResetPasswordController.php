@@ -180,7 +180,7 @@ class ResetPasswordController extends AbstractController
             return $this->redirectToRoute('app_check_email');
         }
 
-        $email = new TemplatedEmail()
+        $email = (new TemplatedEmail())
             ->from(new Address('noreply@trouvemoipresta.com', 'TrouveMoi Prestataires'))
             ->to((string) $user->getEmail())
             ->subject('TrouveMoi Prestataires — Réinitialisation de votre mot de passe')

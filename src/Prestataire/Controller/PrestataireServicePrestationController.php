@@ -141,14 +141,14 @@ final class PrestataireServicePrestationController extends AbstractController
         }
 
         if (null !== $firstMappableZone) {
-            $zoneMap = new Map()
+            $zoneMap = (new Map())
                 ->center(new Point(
                     (float) $firstMappableZone->getLatitude(),
                     (float) $firstMappableZone->getLongitude()
                 ))
                 ->zoom(8)
                 ->options(
-                    new LeafletOptions()->tileLayer(new TileLayer(
+                    (new LeafletOptions())->tileLayer(new TileLayer(
                         url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                         options: ['maxZoom' => 19],
@@ -305,11 +305,11 @@ final class PrestataireServicePrestationController extends AbstractController
         $companyName = $prestataire?->getCompanyName() ?: 'Prestataire';
         $serviceName = $ps->getService()?->getName() ?: 'Prestation';
 
-        $prestationMap = new Map()
+        $prestationMap = (new Map())
             ->center(new Point($centerLat, $centerLng))
             ->zoom($hasMapCenter ? 10 : 6)
             ->options(
-                new LeafletOptions()->tileLayer(new TileLayer(
+                (new LeafletOptions())->tileLayer(new TileLayer(
                     url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                     options: ['maxZoom' => 19],

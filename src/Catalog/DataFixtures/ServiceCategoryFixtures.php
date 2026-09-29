@@ -40,7 +40,7 @@ class ServiceCategoryFixtures extends BaseFixture
     {
         $position = 1;
         foreach (self::CATEGORIES as $groupIndex => $categoryData) {
-            $parent = new ServiceCategory()
+            $parent = (new ServiceCategory())
                 ->setName($categoryData['name'])
                 ->setSlug($this->slugify($categoryData['name']))
                 ->setDescription(\sprintf('Prestations professionnelles autour de %s.', mb_strtolower($categoryData['name'])))
@@ -56,7 +56,7 @@ class ServiceCategoryFixtures extends BaseFixture
             $this->addReference(\sprintf('service_category_parent_%d', $groupIndex + 1), $parent);
 
             foreach ($categoryData['children'] as $childIndex => $childData) {
-                $child = new ServiceCategory()
+                $child = (new ServiceCategory())
                     ->setName($childData['name'])
                     ->setSlug($this->slugify($childData['name']))
                     ->setDescription(\sprintf('Sous-catégorie dédiée à %s.', mb_strtolower($childData['name'])))

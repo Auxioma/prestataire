@@ -54,7 +54,7 @@ final class StripeWebhookEventRecorder
             return;
         }
 
-        $webhookEvent = new StripeWebhookEvent()
+        $webhookEvent = (new StripeWebhookEvent())
             ->setStripeEventId($eventId)
             ->setEventType((string) ($event['type'] ?? 'unknown'))
             ->setPayload($event)

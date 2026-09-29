@@ -55,7 +55,7 @@ final class PrestataireSubscriptionOnboardingManager
         }
 
         $now = new \DateTimeImmutable();
-        $subscription = new PrestataireSubscription()
+        $subscription = (new PrestataireSubscription())
             ->setPrestataireProfile($prestataireProfile)
             ->setPlan($freePlan)
             ->setPlanPrice($freePlan->getCurrentPriceForPeriod(SubscriptionBillingPeriodEnum::MONTHLY))

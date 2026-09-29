@@ -48,7 +48,7 @@ class SubscriptionCreditMovementFixtures extends BaseFixture implements Dependen
             $delta = $isCredit ? $this->faker->numberBetween(4, 12) : -$this->faker->numberBetween(1, 3);
             $balanceByProfile[$profileIndex] = ($balanceByProfile[$profileIndex] ?? 0) + $delta;
 
-            $movement = new SubscriptionCreditMovement()
+            $movement = (new SubscriptionCreditMovement())
                 ->setPrestataireProfile($prestataire)
                 ->setSubscription($subscription)
                 ->setInvoice($isCredit ? $invoice : null)

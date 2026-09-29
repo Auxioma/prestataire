@@ -33,7 +33,7 @@ class PrestationMediaFixtures extends BaseFixture implements DependentFixtureInt
             /** @var PrestataireService $prestation */
             $prestation = $this->getReference(\sprintf('prestataire_service_%d', (($i - 1) % 42) + 1), PrestataireService::class);
 
-            $media = new PrestationMedia()
+            $media = (new PrestationMedia())
                 ->setPrestation($prestation)
                 ->setPosition(($i - 1) % 3)
                 ->setTitle(\sprintf('Visuel %d - %s', $i, $prestation->getTitle()))

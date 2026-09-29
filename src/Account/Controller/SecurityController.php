@@ -79,7 +79,7 @@ class SecurityController extends AbstractController
                 $emailWasSent = $this->emailVerifier->trySendEmailConfirmation(
                     'app_verify_email',
                     $user,
-                    new TemplatedEmail()
+                    (new TemplatedEmail())
                         ->from(new Address('contact@trouvemoi.fr', 'TrouveMoi'))
                         ->to((string) $user->getEmail())
                         ->subject('Confirmez votre adresse email')

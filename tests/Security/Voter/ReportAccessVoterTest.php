@@ -39,7 +39,7 @@ final class ReportAccessVoterTest extends TestCase
         $clientProfile->setAccount($clientUser);
         $clientUser->setClientProfile($clientProfile);
 
-        $quoteRequest = new QuoteRequest()
+        $quoteRequest = (new QuoteRequest())
             ->setClient($clientProfile);
 
         self::assertSame(
@@ -57,7 +57,7 @@ final class ReportAccessVoterTest extends TestCase
         $prestataireProfile->setSlug('acme');
         $prestataireUser->setPrestataireProfile($prestataireProfile);
 
-        $conversation = new Conversation()
+        $conversation = (new Conversation())
             ->setPrestataire($prestataireProfile);
 
         self::assertSame(
@@ -79,7 +79,7 @@ final class ReportAccessVoterTest extends TestCase
         $otherPrestataireProfile->setCompanyName('Other');
         $otherPrestataireProfile->setSlug('other');
 
-        $review = new Review()
+        $review = (new Review())
             ->setPrestataireProfile($otherPrestataireProfile);
 
         self::assertSame(

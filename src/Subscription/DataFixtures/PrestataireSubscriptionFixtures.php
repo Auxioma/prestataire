@@ -53,7 +53,7 @@ class PrestataireSubscriptionFixtures extends BaseFixture implements DependentFi
                 ? min($granted - 1, $this->faker->numberBetween(0, max(1, (int) floor($granted / 2))))
                 : 0;
 
-            $subscription = new PrestataireSubscription()
+            $subscription = (new PrestataireSubscription())
                 ->setPrestataireProfile($prestataire)
                 ->setCustomer($customer)
                 ->setPlan($plan)

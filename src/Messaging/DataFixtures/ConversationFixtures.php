@@ -40,7 +40,7 @@ class ConversationFixtures extends BaseFixture implements DependentFixtureInterf
             /** @var PrestataireProfile $prestataire */
             $prestataire = $quoteRequest->getPrestataire();
 
-            $conversation = new Conversation()
+            $conversation = (new Conversation())
                 ->setQuoteRequest($quoteRequest)
                 ->setClient($client)
                 ->setPrestataire($prestataire)

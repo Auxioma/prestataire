@@ -40,7 +40,7 @@ class MessageFixtures extends BaseFixture implements DependentFixtureInterface
 
             for ($offset = 0; $offset < 4; ++$offset) {
                 $isSystem = 0 === $offset;
-                $message = new Message()
+                $message = (new Message())
                     ->setConversation($conversation)
                     ->setAuthor($isSystem ? null : (0 === $offset % 2 ? $prestataireUser : $clientUser))
                     ->setType($isSystem ? MessageTypeEnum::SYSTEM : MessageTypeEnum::USER)

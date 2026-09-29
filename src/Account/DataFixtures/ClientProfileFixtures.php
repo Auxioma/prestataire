@@ -36,7 +36,7 @@ class ClientProfileFixtures extends BaseFixture implements DependentFixtureInter
             $isPro = 0 === $i % 3;
             $city = $this->faker->randomElement(['Bordeaux', 'Mérignac', 'Pessac', 'Talence', 'Arcachon', 'Libourne']);
 
-            $profile = new ClientProfile()
+            $profile = (new ClientProfile())
                 ->setAccount($user)
                 ->setType($isPro ? ClientTypeEnum::PROFESSIONNEL : ClientTypeEnum::PARTICULIER)
                 ->setCreatedAt($this->randomDateTimeImmutable('-18 months', '-2 months'))

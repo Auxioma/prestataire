@@ -85,9 +85,9 @@ final class PrestataireSearchSynchronizationTest extends TestCase
             self::markTestSkipped('Run with ELASTICSEARCH_INTEGRATION=1 to use a disposable local PostgreSQL schema.');
         }
         $localFile = \dirname(__DIR__, 2).'/.env.local';
-        $local = is_file($localFile) ? new Dotenv()->parse(file_get_contents($localFile), $localFile) : [];
+        $local = is_file($localFile) ? (new Dotenv())->parse(file_get_contents($localFile), $localFile) : [];
         $url = getenv('SEARCH_TEST_DATABASE_URL') ?: ($local['DATABASE_URL'] ?? $_SERVER['DATABASE_URL'] ?? $_ENV['DATABASE_URL'] ?? '');
-        $params = new DsnParser(['postgresql' => 'pdo_pgsql', 'postgres' => 'pdo_pgsql'])->parse($url);
+        $params = (new DsnParser(['postgresql' => 'pdo_pgsql', 'postgres' => 'pdo_pgsql']))->parse($url);
         self::assertContains($params['host'] ?? '', ['127.0.0.1', 'localhost'], 'Integration tests require local PostgreSQL.');
         $this->connection = DriverManager::getConnection($params);
         $this->schema = 'search_sync_test_'.bin2hex(random_bytes(8));
@@ -104,7 +104,7 @@ final class PrestataireSearchSynchronizationTest extends TestCase
         });
         $config->setIdentityGenerationPreferences([PostgreSQLPlatform::class => ClassMetadata::GENERATOR_TYPE_IDENTITY]);
         $this->manager = new EntityManager($this->connection, $config);
-        new SchemaTool($this->manager)->createSchema($this->manager->getMetadataFactory()->getAllMetadata());
+        (new SchemaTool($this->manager))->createSchema($this->manager->getMetadataFactory()->getAllMetadata());
         $this->elasticsearch = new ElasticsearchClient('https://localhost:9200', '', '', true);
         $this->resetHttpClient();
         $logger = new NullLogger();
@@ -132,10 +132,10 @@ final class PrestataireSearchSynchronizationTest extends TestCase
         self::assertSame('Entreprise test', $this->documents[$id]['companyName'], json_encode($this->documents));
         self::assertSame(0, $this->jobCount());
 
-        $category = new ServiceCategory()->setName('Travaux')->setSlug('travaux')->setPosition(0)->setIsActive(true);
-        $service = new Service()->setName('Plomberie')->setSlug('plomberie')->setCategory($category)->setPosition(0)->setIsActive(true);
-        $offer = new PrestataireService()->setPrestataire($profile)->setService($service)->setTitle('Dépannage');
-        $zone = new PrestataireInterventionZone()->setPrestataireProfile($profile)->setCity('Lille');
+        $category = (new ServiceCategory())->setName('Travaux')->setSlug('travaux')->setPosition(0)->setIsActive(true);
+        $service = (new Service())->setName('Plomberie')->setSlug('plomberie')->setCategory($category)->setPosition(0)->setIsActive(true);
+        $offer = (new PrestataireService())->setPrestataire($profile)->setService($service)->setTitle('Dépannage');
+        $zone = (new PrestataireInterventionZone())->setPrestataireProfile($profile)->setCity('Lille');
         foreach ([$category, $service, $offer, $zone] as $entity) {
             $this->manager->persist($entity);
         }
@@ -234,8 +234,8 @@ final class PrestataireSearchSynchronizationTest extends TestCase
 
     private function createProfile(): PrestataireProfile
     {
-        $user = new User()->setEmail('test@example.invalid')->setPassword('test')->setStatus(UserStatusEnum::ACTIVE);
-        $profile = new PrestataireProfile()->setCompanyName('Entreprise test')->setSlug('entreprise-test')->setSiret('12345678900011')
+        $user = (new User())->setEmail('test@example.invalid')->setPassword('test')->setStatus(UserStatusEnum::ACTIVE);
+        $profile = (new PrestataireProfile())->setCompanyName('Entreprise test')->setSlug('entreprise-test')->setSiret('12345678900011')
             ->setProfileStatus(PrestataireProfileStatusEnum::ACTIVE)->setVerificationStatus(VerificationStatusEnum::COMPANY_VERIFIED)->setAccount($user);
         $this->manager->persist($user);
         $this->manager->persist($profile);
@@ -277,6 +277,6 @@ final class PrestataireSearchSynchronizationTest extends TestCase
             return Create::promiseFor(new Response($status, ['X-Elastic-Product' => 'Elasticsearch', 'Content-Type' => 'application/json'], json_encode($response, \JSON_THROW_ON_ERROR)));
         };
         $client = ClientBuilder::create()->setHosts(['https://localhost:9200'])->setHttpClient(new Client(['handler' => $handler]))->build();
-        new \ReflectionProperty($this->elasticsearch, 'client')->setValue($this->elasticsearch, $client);
+        (new \ReflectionProperty($this->elasticsearch, 'client'))->setValue($this->elasticsearch, $client);
     }
 }

@@ -176,14 +176,14 @@ final class PrestataireProfileManager
             return null;
         }
 
-        $zoneMap = new Map('default')
+        $zoneMap = (new Map('default'))
             ->center(new Point(
                 (float) $firstMappableZone->getLatitude(),
                 (float) $firstMappableZone->getLongitude()
             ))
             ->zoom(8)
             ->options(
-                new LeafletOptions()
+                (new LeafletOptions())
                     ->tileLayer(new TileLayer(
                         url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',

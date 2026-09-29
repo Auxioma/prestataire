@@ -71,7 +71,7 @@ final class ReviewManager
             throw new \DomainException('Cette demande n’est pas éligible à un avis.');
         }
 
-        $review = new Review()
+        $review = (new Review())
             ->setClientProfile($client)
             ->setPrestataireProfile($prestataire)
             ->setQuoteRequest($quoteRequest)

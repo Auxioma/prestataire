@@ -43,7 +43,7 @@ final class ElasticsearchProcessQueueCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $result = $this->queue->process(max(1, min(10000, (int) $input->getOption('limit'))));
-        new SymfonyStyle($input, $output)->note(\sprintf('%d synchronisation(s) réussie(s), %d échec(s) conservé(s) pour reprise.', $result['processed'], $result['failed']));
+        (new SymfonyStyle($input, $output))->note(\sprintf('%d synchronisation(s) réussie(s), %d échec(s) conservé(s) pour reprise.', $result['processed'], $result['failed']));
 
         return $result['failed'] > 0 ? Command::FAILURE : Command::SUCCESS;
     }

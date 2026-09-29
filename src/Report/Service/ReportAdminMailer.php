@@ -51,7 +51,7 @@ final class ReportAdminMailer
             $reporterLabel = $reporter?->getEmail() ?? 'Un utilisateur';
         }
 
-        $email = new TemplatedEmail()
+        $email = (new TemplatedEmail())
             ->from(new Address('noreply@trouvemoi.com', 'TrouveMoi'))
             ->to($recipient)
             ->subject(\sprintf('Nouveau signalement - %s', $report->getContextLabel()))

@@ -98,7 +98,7 @@ final class InvoicePdfGeneratorTest extends TestCase
 
     private function createInvoiceFixture(): Invoice
     {
-        $quote = new QuoteProposal()
+        $quote = (new QuoteProposal())
             ->setPublicReference('DEV-TEST-001')
             ->setProposalNumber('DEV-2026-00001')
             ->setProposalSequenceNumber(1)
@@ -123,7 +123,7 @@ final class InvoicePdfGeneratorTest extends TestCase
             ->setClientInterventionCity('Lyon')
             ->setClientInterventionCountry('France');
 
-        $item = new InvoiceItem()
+        $item = (new InvoiceItem())
             ->setLabel('Prestation de test')
             ->setDescription('Exemple de ligne de facture')
             ->setQuantity('2.00')
@@ -132,7 +132,7 @@ final class InvoicePdfGeneratorTest extends TestCase
             ->setTotalHt('200.00')
             ->setPosition(1);
 
-        return new Invoice()
+        return (new Invoice())
             ->setQuoteProposal($quote)
             ->setSourceType(InvoiceSourceTypeEnum::GENERATED_FROM_QUOTE)
             ->setStatus(InvoiceStatusEnum::ISSUED)

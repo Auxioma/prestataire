@@ -86,10 +86,10 @@ final class SubscriptionFacturXXmlBuilderTest extends TestCase
 
     private function createInvoiceFixture(): SubscriptionInvoice
     {
-        $user = new User()
+        $user = (new User())
             ->setEmail('buyer@example.test');
 
-        $prestataire = new PrestataireProfile()
+        $prestataire = (new PrestataireProfile())
             ->setAccount($user)
             ->setCompanyName('Acme Services')
             ->setLegalName('Acme Services SARL')
@@ -101,17 +101,17 @@ final class SubscriptionFacturXXmlBuilderTest extends TestCase
             ->setSiret('98765432100019')
             ->setVatNumber('FR12 123456789');
 
-        $customer = new SubscriptionCustomer()
+        $customer = (new SubscriptionCustomer())
             ->setPrestataireProfile($prestataire)
             ->setStripeCustomerId('cus_test_001')
             ->setBillingEmail('billing@example.test');
 
-        $plan = new SubscriptionPlan()
+        $plan = (new SubscriptionPlan())
             ->setCode('pro')
             ->setName('Abonnement Pro')
             ->setMonthlyAmount('49.00');
 
-        $subscription = new PrestataireSubscription()
+        $subscription = (new PrestataireSubscription())
             ->setPrestataireProfile($prestataire)
             ->setCustomer($customer)
             ->setPlan($plan)
@@ -119,7 +119,7 @@ final class SubscriptionFacturXXmlBuilderTest extends TestCase
             ->setCurrentPeriodStart(new \DateTimeImmutable('2026-07-01 00:00:00'))
             ->setCurrentPeriodEnd(new \DateTimeImmutable('2026-07-31 23:59:59'));
 
-        return new SubscriptionInvoice()
+        return (new SubscriptionInvoice())
             ->setSubscription($subscription)
             ->setStripeInvoiceId('in_sub_test_001')
             ->setStripePaymentIntentId('pi_sub_test_001')

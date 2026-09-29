@@ -46,7 +46,7 @@ class QuoteRequestFixtures extends BaseFixture implements DependentFixtureInterf
             $prestation = $this->getReference(\sprintf('prestataire_service_%d', (($i - 1) % 42) + 1), PrestataireService::class);
             $title = \sprintf('%s pour %s', $prestation->getTitle(), $client->getDefaultCity() ?? 'mon domicile');
 
-            $request = new QuoteRequest()
+            $request = (new QuoteRequest())
                 ->setClient($client)
                 ->setPrestataire($prestataire)
                 ->setPrestation($prestation)

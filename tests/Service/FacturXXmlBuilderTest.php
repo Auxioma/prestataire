@@ -92,7 +92,7 @@ final class FacturXXmlBuilderTest extends TestCase
 
     private function createInvoiceFixture(): Invoice
     {
-        $quote = new QuoteProposal()
+        $quote = (new QuoteProposal())
             ->setProposalNumber('DEV-2026-00002')
             ->setPrestataireCompanyName('Acme Services')
             ->setPrestataireLegalName('Acme Services SARL')
@@ -116,7 +116,7 @@ final class FacturXXmlBuilderTest extends TestCase
             ->setClientInterventionCity('Bordeaux')
             ->setClientInterventionCountry('France');
 
-        $invoice = new Invoice()
+        $invoice = (new Invoice())
             ->setQuoteProposal($quote)
             ->setInvoiceNumber('FAC-TEST-XML-001')
             ->setIssuedAt(new \DateTimeImmutable('2026-07-14 12:00:00'))
@@ -130,7 +130,7 @@ final class FacturXXmlBuilderTest extends TestCase
             ->setEarlyPaymentDiscountTerms('Pas d\'escompte pour paiement anticipe.');
 
         $invoice->addItem(
-            new InvoiceItem()
+            (new InvoiceItem())
                 ->setLabel('Ligne 20')
                 ->setQuantity('1.00')
                 ->setUnitPriceHt('200.00')
@@ -140,7 +140,7 @@ final class FacturXXmlBuilderTest extends TestCase
         );
 
         $invoice->addItem(
-            new InvoiceItem()
+            (new InvoiceItem())
                 ->setLabel('Ligne 10')
                 ->setQuantity('1.00')
                 ->setUnitPriceHt('50.00')

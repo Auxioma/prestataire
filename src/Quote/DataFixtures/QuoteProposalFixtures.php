@@ -51,7 +51,7 @@ class QuoteProposalFixtures extends BaseFixture implements DependentFixtureInter
             $total = number_format((float) $subtotal + (float) $tax, 2, '.', '');
             $status = $statuses[($i - 1) % \count($statuses)];
 
-            $proposal = new QuoteProposal()
+            $proposal = (new QuoteProposal())
                 ->setQuoteRequest($request)
                 ->setPrestataire($prestataire)
                 ->setClient($client)

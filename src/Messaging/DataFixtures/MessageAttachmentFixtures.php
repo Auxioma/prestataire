@@ -33,7 +33,7 @@ class MessageAttachmentFixtures extends BaseFixture implements DependentFixtureI
             /** @var Message $message */
             $message = $this->getReference(\sprintf('message_%d', ($i * 3) % 72 + 1), Message::class);
 
-            $attachment = new MessageAttachment()
+            $attachment = (new MessageAttachment())
                 ->setMessage($message)
                 ->setPosition(0)
                 ->setCreatedAt($this->randomDateTimeImmutable('-2 months', '-1 day'))

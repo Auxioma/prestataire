@@ -47,7 +47,7 @@ class SubscriptionCreditManager
 
         $subscription->grantCredits($credits)->setUpdatedAt(new \DateTimeImmutable());
 
-        $movement = new SubscriptionCreditMovement()
+        $movement = (new SubscriptionCreditMovement())
             ->setPrestataireProfile($subscription->getPrestataireProfile())
             ->setSubscription($subscription)
             ->setType($type)
@@ -78,7 +78,7 @@ class SubscriptionCreditManager
 
         $subscription->consumeCredits($credits)->setUpdatedAt(new \DateTimeImmutable());
 
-        $movement = new SubscriptionCreditMovement()
+        $movement = (new SubscriptionCreditMovement())
             ->setPrestataireProfile($subscription->getPrestataireProfile())
             ->setSubscription($subscription)
             ->setType($type)
@@ -108,7 +108,7 @@ class SubscriptionCreditManager
 
         $subscription->consumeCredits(1)->setUpdatedAt(new \DateTimeImmutable());
 
-        $movement = new SubscriptionCreditMovement()
+        $movement = (new SubscriptionCreditMovement())
             ->setPrestataireProfile($subscription->getPrestataireProfile())
             ->setSubscription($subscription)
             ->setQuoteRequest($quoteRequest)

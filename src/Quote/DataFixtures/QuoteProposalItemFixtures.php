@@ -40,7 +40,7 @@ class QuoteProposalItemFixtures extends BaseFixture implements DependentFixtureI
                 $unitPrice = $this->decimal(35, 850);
                 $total = number_format((float) $quantity * (float) $unitPrice, 2, '.', '');
 
-                $item = new QuoteProposalItem()
+                $item = (new QuoteProposalItem())
                     ->setQuoteProposal($proposal)
                     ->setLabel($labels[($proposalIndex + $position) % \count($labels)])
                     ->setDescription($this->faker->sentence(12))

@@ -97,7 +97,7 @@ class SubscriptionPlanFixtures extends BaseFixture
     public function load(ObjectManager $manager): void
     {
         foreach (self::PLANS as $index => $data) {
-            $plan = new SubscriptionPlan()
+            $plan = (new SubscriptionPlan())
                 ->setCode($data['code'])
                 ->setName($data['name'])
                 ->setDescription($data['description'])
@@ -116,7 +116,7 @@ class SubscriptionPlanFixtures extends BaseFixture
                 ->setCreatedAt($this->randomDateTimeImmutable('-12 months', '-5 months'))
                 ->setUpdatedAt($this->randomDateTimeImmutable('-30 days'));
 
-            $monthlyPrice = new SubscriptionPlanPrice()
+            $monthlyPrice = (new SubscriptionPlanPrice())
                 ->setPlan($plan)
                 ->setBillingPeriod(SubscriptionBillingPeriodEnum::MONTHLY)
                 ->setLabel('Tarif standard')
@@ -127,7 +127,7 @@ class SubscriptionPlanFixtures extends BaseFixture
                 ->setCreatedAt($plan->getCreatedAt())
                 ->setUpdatedAt($plan->getUpdatedAt());
 
-            $annualPrice = new SubscriptionPlanPrice()
+            $annualPrice = (new SubscriptionPlanPrice())
                 ->setPlan($plan)
                 ->setBillingPeriod(SubscriptionBillingPeriodEnum::ANNUAL)
                 ->setLabel('Tarif standard')

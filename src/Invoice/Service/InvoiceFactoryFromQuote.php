@@ -54,7 +54,7 @@ final class InvoiceFactoryFromQuote
 
         if (!$proposal->usesExternalPdfDocument()) {
             foreach ($proposal->getItems() as $proposalItem) {
-                $item = new InvoiceItem()
+                $item = (new InvoiceItem())
                     ->setLabel($proposalItem->getLabel())
                     ->setDescription($proposalItem->getDescription())
                     ->setQuantity($proposalItem->getQuantity())

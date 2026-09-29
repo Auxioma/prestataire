@@ -35,7 +35,7 @@ class PrestataireAvailabilityFixtures extends BaseFixture implements DependentFi
             $prestataire = $this->getReference(\sprintf('prestataire_profile_%d', $prestataireIndex), PrestataireProfile::class);
 
             for ($day = 1; $day <= 7; ++$day) {
-                $availability = new PrestataireAvailability()
+                $availability = (new PrestataireAvailability())
                     ->setPrestataireProfile($prestataire)
                     ->setDayOfWeek($day)
                     ->setCreatedAt($this->faker->dateTimeBetween('-1 year', '-2 months'))

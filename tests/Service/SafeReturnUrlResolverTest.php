@@ -36,7 +36,7 @@ final class SafeReturnUrlResolverTest extends TestCase
 
         $request = Request::create('https://trouvemoi.example/prestataire/artisan', server: $server);
 
-        self::assertSame('/', new SafeReturnUrlResolver()->resolve($request, '/'));
+        self::assertSame('/', (new SafeReturnUrlResolver())->resolve($request, '/'));
     }
 
     public function testKeepsSameOriginPathAndQuery(): void
@@ -48,7 +48,7 @@ final class SafeReturnUrlResolverTest extends TestCase
 
         self::assertSame(
             '/prestataires?query=plombier&page=2',
-            new SafeReturnUrlResolver()->resolve($request, '/')
+            (new SafeReturnUrlResolver())->resolve($request, '/')
         );
     }
 

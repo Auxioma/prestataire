@@ -85,14 +85,14 @@ class ShowPrestataireController extends AbstractController
         }
 
         if (null !== $firstMappableZone) {
-            $zoneMap = new Map()
+            $zoneMap = (new Map())
                 ->center(new Point(
                     (float) $firstMappableZone->getLatitude(),
                     (float) $firstMappableZone->getLongitude()
                 ))
                 ->zoom(9)
                 ->options(
-                    new LeafletOptions()
+                    (new LeafletOptions())
                         ->tileLayer(new TileLayer(
                             url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                             attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',

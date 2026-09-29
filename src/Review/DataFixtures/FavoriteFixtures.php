@@ -40,7 +40,7 @@ class FavoriteFixtures extends BaseFixture implements DependentFixtureInterface
             $user = $this->getReference(\sprintf('user_client_%d', (($i - 1) % UserFixtures::CLIENT_COUNT) + 1), User::class);
             $type = 0 === $i % 3 ? FavoriteTypeEnum::BON_PLAN : (0 === $i % 2 ? FavoriteTypeEnum::PRESTATION : FavoriteTypeEnum::PRESTATAIRE);
 
-            $favorite = new Favorite()
+            $favorite = (new Favorite())
                 ->setUser($user)
                 ->setType($type)
                 ->setCreatedAt($this->faker->dateTimeBetween('-5 months', '-1 day'));

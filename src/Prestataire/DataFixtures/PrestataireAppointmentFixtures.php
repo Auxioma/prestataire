@@ -46,7 +46,7 @@ class PrestataireAppointmentFixtures extends BaseFixture implements DependentFix
             $startsAt = $this->faker->dateTimeBetween('-20 days', '+40 days');
             $endsAt = (clone $startsAt)->modify('+2 hours');
 
-            $appointment = new PrestataireAppointment()
+            $appointment = (new PrestataireAppointment())
                 ->setPrestataire($prestataire)
                 ->setClient($client)
                 ->setPrestation($prestation)
