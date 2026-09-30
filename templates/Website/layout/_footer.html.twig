@@ -46,6 +46,7 @@
                     {label: 'CGU', slug: 'cgu'},
                     {label: 'Politique de confidentialité', slug: 'privacy'},
                     {label: 'Mentions légales', slug: 'legal'},
+                    {label: 'Gérer mes cookies', slug: 'privacy', fragment: 'cookies-et-traceurs', id: 'tm-cookie-settings'},
                     {label: "Besoin d'aide ?", slug: 'help', class: 'tmv2-footer__link--highlight'},
                 ],
             } %}
@@ -57,7 +58,9 @@
                         <ul class="tmv2-footer__links">
                             {% for link in links %}
                                 <li>
-                                    <a href="{{ path('app_static_page', {slug: link.slug}) }}"
+                                    <a
+                                       {% if link.id is defined %}id="{{ link.id }}"{% endif %}
+                                       href="{{ path('app_static_page', {slug: link.slug}) }}{% if link.fragment is defined %}#{{ link.fragment }}{% endif %}"
                                        class="tmv2-footer__link {{ link.class|default('') }}">
                                         {{ link.label }}
                                     </a>
