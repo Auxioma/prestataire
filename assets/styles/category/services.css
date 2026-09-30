@@ -72,6 +72,7 @@
   width: 22px;
   height: 3px;
   border-radius: 999px;
+  background: var(--tm-color-orange);
 }
 
 .tm-servx-hero .tm-servx-eyebrow {
@@ -181,12 +182,15 @@
   flex-direction: column;
   overflow: hidden;
   min-height: 100%;
+  border: 1px solid var(--tm-color-border);
+  border-radius: 18px;
   background: #fff;
   transition: box-shadow .2s ease, border-color .2s ease, transform .2s ease;
 }
 
 .tm-servx-card:hover {
   transform: translateY(-4px);
+  border-color: rgba(var(--tm-color-blue-rgb), .55);
   box-shadow: 0 14px 36px rgba(30, 73, 199, .18), 0 4px 14px rgba(255, 138, 30, .12);
 }
 
@@ -231,20 +235,9 @@
   align-items: center;
   justify-content: center;
   font-size: 18px;
-}
-
-.tm-servx-card__icon--blue {
-  color: #fff;
-}
-
-
-.tm-servx-card__icon--green {
-  color: #fff;
-}
-
-.tm-servx-card__icon--violet {
-  background: #7c3aed;
-  color: #fff;
+  background: var(--tm-color-navy);
+  color: var(--tm-color-white);
+  box-shadow: 0 8px 20px rgba(var(--tm-color-navy-rgb), .2);
 }
 
 .tm-servx-card__body {
@@ -387,6 +380,11 @@
   display: flex;
   gap: 14px;
   align-items: flex-start;
+  padding: 20px;
+  border: 1px solid var(--tm-color-border);
+  border-radius: 16px;
+  background: var(--tm-color-white);
+  box-shadow: var(--tm-shadow-sm);
 }
 
 .tm-servx-reassurance__icon {
@@ -398,6 +396,9 @@
   justify-content: center;
   flex-shrink: 0;
   font-size: 18px;
+  border: 1px solid rgba(var(--tm-color-navy-rgb), .14);
+  background: var(--tm-color-blue-soft);
+  color: var(--tm-color-navy);
 }
 
 .tm-servx-reassurance__item h3 {
@@ -421,8 +422,11 @@
   gap: 40px;
   align-items: center;
   padding: 56px;
+  border: 1px solid rgba(var(--tm-color-blue-rgb), .35);
   border-radius: 24px;
+  background: linear-gradient(135deg, var(--tm-color-navy) 0%, var(--tm-color-navy-light) 62%, var(--tm-color-blue) 100%);
   color: #fff;
+  box-shadow: var(--tm-shadow-lg);
 }
 
 .tm-servx-banner::before {
@@ -460,7 +464,7 @@
   font-weight: 800;
   letter-spacing: .08em;
   text-transform: uppercase;
-  color: #dce5ff;
+  color: var(--tm-color-orange);
 }
 
 .tm-servx-banner__title {
@@ -525,9 +529,12 @@
 
 .tm-servx-btn--primary {
   background: #fff;
+  color: var(--tm-color-navy);
 }
 
 .tm-servx-btn--primary:hover {
+  background: var(--tm-color-orange);
+  color: var(--tm-color-navy);
   box-shadow: 0 10px 24px rgba(255, 255, 255, .22);
 }
 
