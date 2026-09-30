@@ -74,11 +74,10 @@ class DashboardController extends AbstractDashboardController
         return Dashboard::new()
             ->setTitle(
                 '<span class="tm-admin-brand">'
-                .'<span class="tm-admin-brand__mark">TM</span>'
-                .'<span class="tm-admin-brand__copy">TrouveMoi<small>Administration</small></span>'
+                .'<span class="tm-admin-brand__logo" role="img" aria-label="TrouveMoi"></span>'
+                .'<small>Administration</small>'
                 .'</span>'
-            )
-            ->renderContentMaximized();
+            );
     }
 
     /**
