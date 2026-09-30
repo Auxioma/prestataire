@@ -63,7 +63,7 @@ final class SubscriptionInvoicePdfGenerator
                 'country' => 'France',
                 'rcs' => '123 456 789',
                 'vat_number' => 'FR 12 123456789',
-                'phone' => '01 84 80 52 98',
+                // 'phone' => '01 84 80 52 98',
                 'logo_data_uri' => $this->resolvePlatformLogoDataUri(),
             ],
         ]);
