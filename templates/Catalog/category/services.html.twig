@@ -168,9 +168,13 @@
                                         <span>Recherche rapide</span>
                                     </div>
 
-                                    <a href="{{ path('app_search_flow', {type: 'service', slug: service.slug}) }}" class="tm-servx-card__cta">
+                                    <a
+                                        href="{{ path('app_search_flow', {type: 'service', slug: service.slug}) }}"
+                                        class="tm-servx-card__cta"
+                                        aria-label="Trouver un professionnel pour {{ service.name }}"
+                                    >
                                         <span>Trouver un pro</span>
-                                        <i class="fa-solid fa-arrow-right"></i>
+                                        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                                     </a>
                                 </div>
                             </article>
