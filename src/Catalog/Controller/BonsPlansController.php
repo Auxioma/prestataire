@@ -46,8 +46,8 @@ class BonsPlansController extends AbstractController
         PaginatorInterface $paginator,
         FavoriteRepository $favoriteRepository,
     ): Response {
-        $selectedCategorySlug = $request->query->get('category');
-        $selectedSubCategorySlug = $request->query->get('subCategory');
+        $selectedCategorySlug = trim($request->query->getString('category'));
+        $selectedSubCategorySlug = trim($request->query->getString('subCategory'));
 
         $categories = $serviceCategoryRepository->findBy(
             ['parent' => null, 'isActive' => true],
@@ -55,9 +55,10 @@ class BonsPlansController extends AbstractController
         );
 
         $subCategories = [];
-        if ($selectedCategorySlug) {
+        if ('' !== $selectedCategorySlug) {
             $selectedCategory = $serviceCategoryRepository->findOneBy([
                 'slug' => $selectedCategorySlug,
+                'parent' => null,
                 'isActive' => true,
             ]);
 
@@ -66,7 +67,20 @@ class BonsPlansController extends AbstractController
                     ['parent' => $selectedCategory, 'isActive' => true],
                     ['position' => 'ASC']
                 );
+
+                if ('' !== $selectedSubCategorySlug && null === $serviceCategoryRepository->findOneBy([
+                    'slug' => $selectedSubCategorySlug,
+                    'parent' => $selectedCategory,
+                    'isActive' => true,
+                ])) {
+                    $selectedSubCategorySlug = '';
+                }
+            } else {
+                $selectedCategorySlug = '';
+                $selectedSubCategorySlug = '';
             }
+        } else {
+            $selectedSubCategorySlug = '';
         }
 
         $queryBuilder = $prestataireServiceRepository->getBonsPlansQueryBuilder(

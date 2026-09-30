@@ -102,7 +102,7 @@
                       <h2 class="section-titre">Des offres à durée limitée, ne les manquez pas !</h2>
                   </div>
 
-                  <form method="get" action="{{ path('app_bons_plans') }}">
+                  <form method="get" action="{{ path('app_bons_plans') }}" data-controller="core--auto-submit">
                       <label class="filtre" for="category">
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-
   linecap="round">
@@ -112,7 +112,12 @@
                               <rect x="14" y="14" width="7" height="7" rx="1.5"/>
                           </svg>
 
-                          <select id="category" name="category" aria-label="Filtrer par catégorie" onchange="this.form.submit()">
+                          <select
+                              id="category"
+                              name="category"
+                              aria-label="Filtrer par catégorie"
+                              data-action="change->core--auto-submit#submit"
+                          >
                               <option value="">Toutes les catégories</option>
                               {% for category in categories|default([]) %}
                                   {% set categorySlug = category.slug|default('') %}
@@ -121,10 +126,6 @@
                                   </option>
                               {% endfor %}
                           </select>
-
-                          {% if selectedCategorySlug %}
-                              <input type="hidden" name="subCategory" value="{{ selectedSubCategorySlug|default('') }}">
-                          {% endif %}
 
                           <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
   stroke-linecap="round" stroke-linejoin="round">
@@ -137,7 +138,12 @@
               <div class="bons-plans-layout">
                   <div>
                       {% if selectedCategorySlug %}
-                          <form method="get" action="{{ path('app_bons_plans') }}" class="filtres-inner filtres-inner--subcategories">
+                          <form
+                              method="get"
+                              action="{{ path('app_bons_plans') }}"
+                              class="filtres-inner filtres-inner--subcategories"
+                              data-controller="core--auto-submit"
+                          >
                               <label class="filtre" for="subCategory">
                                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-
   linecap="round">
@@ -148,7 +154,7 @@
                                       id="subCategory"
                                       name="subCategory"
                                       aria-label="Filtrer par sous-catégorie"
-                                      onchange="this.form.submit()"
+                                      data-action="change->core--auto-submit#submit"
                                       {{ subCategories|default([]) is empty ? 'disabled' : '' }}
                                   >
                                       <option value="">Toutes les sous-catégories</option>
@@ -399,21 +405,39 @@
 
                       <ul>
                           <li>
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-
-  linecap="round" stroke-linejoin="round">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+                                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                   <path d="m5 12 5 5L20 7"/>
                               </svg>
                               {{ totalBonsPlans }} offre{{ totalBonsPlans > 1 ? 's' : '' }} disponible{{ totalBonsPlans > 1 ? 's' : '' }}
                           </li>
                           <li>
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+                                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                  <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                                  <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                                  <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                                  <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                              </svg>
+                              {{ categories|default([])|length }} catégorie{{ categories|default([])|length > 1 ? 's' : '' }} disponible{{ categories|default([])|length > 1 ? 's' : '' }}
+                          </li>
+                          <li>
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+                                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                  <path d="m5 12 5 5L20 7"/>
                               </svg>
                               Catégorie : {{ activeCategoryLabel }}
                           </li>
-                          <li>
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-
-  linecap="round" stroke-linejoin="round">
-                                  <path d="m5 12 5 5L20 7"/>
+                          {% if selectedCategorySlug %}
+                              <li>
+                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+                                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                      <path d="M4 7h16M4 12h16M4 17h16"/>
+                                  </svg>
+                                  Sous-catégorie : {{ activeSubCategoryLabel }}
+                              </li>
+                          {% endif %}
+                      </ul>
                   </aside>
               </div>
           </div>
