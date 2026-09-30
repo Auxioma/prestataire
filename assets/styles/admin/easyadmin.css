@@ -1,0 +1,317 @@
+@import "../core/tokens.css";
+
+/*
+ * Thème d'administration TrouveMoi.
+ * Les composants et le responsive restent gérés par EasyAdmin : cette feuille
+ * personnalise uniquement leur présentation.
+ */
+
+body.ea {
+    --color-primary: var(--tm-color-blue);
+    --link-color: var(--tm-color-blue);
+    --sidebar-max-width: 270px;
+    --sidebar-padding-left: 14px;
+    --sidebar-padding-right: 14px;
+    --sidebar-menu-items-padding-left: 10px;
+    --sidebar-menu-items-padding-right: 10px;
+    --border-radius: 10px;
+    --button-border-radius: 10px;
+    --button-font-weight: 650;
+    --button-primary-bg: var(--tm-color-blue);
+    --button-primary-border-color: var(--tm-color-blue);
+    --button-primary-color: var(--tm-color-white);
+    --button-primary-icon-color: var(--tm-color-white);
+    --button-primary-hover-bg: var(--tm-color-navy-light);
+    --button-primary-hover-border-color: var(--tm-color-navy-light);
+    --button-primary-hover-color: var(--tm-color-white);
+    --button-primary-active-bg: var(--tm-color-navy);
+    --button-primary-active-border-color: var(--tm-color-navy);
+    --button-primary-active-color: var(--tm-color-white);
+    --button-focus-outline-color: rgba(var(--tm-color-blue-rgb), 0.3);
+    font-family: var(--tm-font-body), system-ui, sans-serif;
+}
+
+body.ea.ea-light-scheme {
+    --body-bg: var(--tm-color-paper);
+    --content-bg: var(--tm-color-white);
+    --content-top-border-color: var(--tm-color-border);
+    --content-section-border-color: var(--tm-color-border);
+    --form-input-border-color: #d7deea;
+    --form-input-hover-border-color: var(--tm-color-blue);
+    --form-input-hover-shadow: 0 0 0 4px rgba(var(--tm-color-blue-rgb), 0.1);
+    --table-cell-border-color: #e8ecf3;
+    --table-hover-cell-bg: #f7f9fd;
+    --table-selected-cell-bg: var(--tm-color-blue-soft);
+}
+
+/* Barre latérale */
+body.ea .sidebar {
+    border: 0;
+    background: linear-gradient(180deg, var(--tm-color-navy-light) 0%, var(--tm-color-navy) 100%);
+    box-shadow: 10px 0 28px rgba(var(--tm-color-navy-rgb), 0.12);
+}
+
+body.ea .sidebar .main-header .navbar {
+    padding-block: 18px 14px;
+}
+
+body.ea .sidebar #header-logo .logo {
+    color: var(--tm-color-white);
+    text-decoration: none;
+}
+
+.tm-admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.tm-admin-brand__mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border-radius: 12px;
+    background: var(--tm-color-orange);
+    color: var(--tm-color-white);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    box-shadow: 0 7px 18px rgba(0, 0, 0, 0.18);
+}
+
+.tm-admin-brand__copy {
+    display: flex;
+    flex-direction: column;
+    color: var(--tm-color-white);
+    font-size: 17px;
+    font-weight: 750;
+    line-height: 1.05;
+}
+
+.tm-admin-brand__copy small {
+    margin-top: 4px;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 10px;
+    font-weight: 650;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+body.ea #main-menu .menu .menu-header {
+    margin-top: 20px;
+    color: rgba(255, 255, 255, 0.48);
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+}
+
+body.ea #main-menu .menu .menu-item {
+    margin-block: 3px;
+    border-radius: 11px;
+    transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+body.ea #main-menu .menu .menu-item-contents {
+    align-items: center;
+    min-height: 42px;
+    color: rgba(255, 255, 255, 0.82);
+    font-weight: 560;
+}
+
+body.ea #main-menu .menu .menu-icon,
+body.ea #main-menu .menu .menu-icon svg {
+    color: rgba(255, 255, 255, 0.62);
+}
+
+body.ea #main-menu .menu .menu-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+body.ea #main-menu .menu .menu-item:hover .menu-item-contents,
+body.ea #main-menu .menu .menu-item:hover .menu-icon,
+body.ea #main-menu .menu .menu-item:hover .menu-icon svg {
+    color: var(--tm-color-white);
+}
+
+body.ea #main-menu .menu .menu-item.active {
+    background: rgba(255, 255, 255, 0.13);
+    box-shadow: inset 3px 0 0 var(--tm-color-orange);
+}
+
+body.ea #main-menu .menu .menu-item.active:not(.expanded) .menu-item-contents,
+body.ea #main-menu .menu .menu-item.active:not(.expanded) .menu-icon,
+body.ea #main-menu .menu .menu-item.active:not(.expanded) .menu-icon svg {
+    color: var(--tm-color-white);
+}
+
+/* En-tête et zone de travail */
+body.ea .content-top {
+    background: var(--content-bg);
+}
+
+body.ea .content-top .content-search .form-widget {
+    gap: 8px;
+}
+
+body.ea .content-top .content-search input[type="search"][name="query"] {
+    border-radius: 999px;
+}
+
+body.ea .content-wrapper {
+    background: var(--body-bg);
+}
+
+body.ea .content-header {
+    padding-top: 30px;
+}
+
+body.ea .content-header-title .title {
+    color: var(--text-color);
+    font-size: clamp(1.55rem, 1.25rem + 0.8vw, 2rem);
+    font-weight: 780;
+    letter-spacing: -0.025em;
+}
+
+body.ea .content-body {
+    min-width: 0;
+}
+
+/* Listes et tableaux */
+body.ea.ea-index .content-body {
+    border: 1px solid var(--content-section-border-color);
+    border-radius: var(--tm-radius-lg);
+    background: var(--content-bg);
+    box-shadow: var(--tm-shadow-sm);
+}
+
+body.ea .datagrid thead {
+    background: rgba(var(--tm-color-blue-rgb), 0.045);
+}
+
+body.ea .datagrid thead a,
+body.ea .datagrid thead span:not(.icon) {
+    font-size: 12px;
+    font-weight: 720;
+    letter-spacing: 0.025em;
+}
+
+body.ea .datagrid td {
+    padding-block: 11px;
+}
+
+body.ea .datagrid tbody tr {
+    transition: background-color 0.14s ease;
+}
+
+body.ea .datagrid tbody tr:hover td {
+    background: rgba(var(--tm-color-blue-rgb), 0.045);
+}
+
+body.ea .pagination .page-item.active .page-link {
+    border-color: var(--tm-color-blue);
+    background: var(--tm-color-blue);
+    color: var(--tm-color-white);
+}
+
+body.ea .badge {
+    border-radius: 999px;
+    font-weight: 650;
+}
+
+/* Formulaires et fiches */
+body.ea .content-panel {
+    border: 1px solid var(--content-section-border-color);
+    border-radius: var(--tm-radius-lg);
+    background: var(--content-bg);
+    box-shadow: var(--tm-shadow-sm);
+}
+
+body.ea .content-panel-header {
+    background: rgba(var(--tm-color-blue-rgb), 0.035);
+    font-weight: 720;
+}
+
+body.ea .content-panel-body,
+body.ea .content-panel-footer {
+    background: var(--content-bg);
+}
+
+body.ea .form-control,
+body.ea .form-select,
+body.ea .ts-control {
+    min-height: 40px;
+    border-radius: 9px;
+}
+
+body.ea textarea.form-control {
+    min-height: 110px;
+}
+
+body.ea .form-control:focus,
+body.ea .form-select:focus {
+    border-color: var(--tm-color-blue);
+    box-shadow: 0 0 0 4px rgba(var(--tm-color-blue-rgb), 0.1);
+}
+
+body.ea .btn {
+    min-height: 38px;
+    padding-inline: 14px;
+}
+
+body.ea .btn-primary {
+    box-shadow: 0 6px 16px rgba(var(--tm-color-blue-rgb), 0.2);
+}
+
+body.ea .btn-primary:hover {
+    box-shadow: 0 8px 20px rgba(var(--tm-color-blue-rgb), 0.26);
+}
+
+body.ea .dropdown-menu {
+    border-radius: 12px;
+}
+
+body.ea .alert {
+    border-radius: 12px;
+}
+
+@media (max-width: 991.98px) {
+    body.ea .responsive-header {
+        background: var(--tm-color-navy);
+        border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+
+    body.ea .responsive-header .responsive-header-logo,
+    body.ea .responsive-header .sidebar-menu-button,
+    body.ea .responsive-header .user-menu-wrapper .user-details {
+        color: var(--tm-color-white);
+    }
+
+    body.ea .content-header {
+        padding-top: 22px;
+    }
+
+    body.ea.ea-index .content-body {
+        overflow: visible;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    body.ea .datagrid tbody tr {
+        border: 1px solid var(--content-section-border-color);
+        border-radius: 13px;
+        background: var(--content-bg);
+        box-shadow: 0 6px 20px rgba(var(--tm-color-navy-rgb), 0.07);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.ea #main-menu .menu .menu-item,
+    body.ea .datagrid tbody tr {
+        transition: none;
+    }
+}

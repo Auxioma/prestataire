@@ -33,6 +33,7 @@ use App\Subscription\Controller\Admin\SubscriptionPlanCrudController;
 use App\Subscription\Controller\Admin\SubscriptionPlanPriceCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -71,8 +72,22 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('🔍 TrouveMoi - Administration')
+            ->setTitle(
+                '<span class="tm-admin-brand">'
+                .'<span class="tm-admin-brand__mark">TM</span>'
+                .'<span class="tm-admin-brand__copy">TrouveMoi<small>Administration</small></span>'
+                .'</span>'
+            )
             ->renderContentMaximized();
+    }
+
+    /**
+     * Charge les ressources visuelles communes à toute l'administration.
+     */
+    public function configureAssets(): Assets
+    {
+        return Assets::new()
+            ->addCssFile('styles/admin/easyadmin.css');
     }
 
     /**
