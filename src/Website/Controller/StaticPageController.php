@@ -19,6 +19,7 @@ declare(strict_types=1);
 
 namespace App\Website\Controller;
 
+use App\Website\Content\FaqContent;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -43,9 +44,15 @@ class StaticPageController extends AbstractController
             throw $this->createNotFoundException("La page demandée n'existe pas.");
         }
 
-        return $this->render($templatePath, [
+        $context = [
             'current_slug' => $slug,
-        ]);
+        ];
+
+        if ('aide-faq' === $slug) {
+            $context['faqCategories'] = FaqContent::categories();
+        }
+
+        return $this->render($templatePath, $context);
     }
 
     /**
