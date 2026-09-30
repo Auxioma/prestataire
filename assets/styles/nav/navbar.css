@@ -48,15 +48,38 @@ body {
 }
 
 .tm-navbar__brand {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
   margin: 0;
   padding: 0;
   flex: 0 0 auto;
+  color: #c9d3e8;
+  text-decoration: none;
 }
 
 .tm-navbar__brand-logo {
   height: 42px;
   width: auto;
   object-fit: contain;
+}
+
+.tm-navbar__brand-tagline {
+  width: 100%;
+  color: inherit;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.015em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.tm-navbar__brand:hover,
+.tm-navbar__brand:focus {
+  color: #fff;
 }
 
 .tm-navbar__search--desktop {
@@ -263,12 +286,20 @@ body {
 
 @media (max-width: 1199.98px) {
   body {
-    padding-top: 76px;
+    padding-top: 84px;
   }
 
   .tm-navbar__topline {
     min-height: 68px;
     gap: 0.75rem;
+  }
+
+  .tm-navbar__brand-logo {
+    height: 40px;
+  }
+
+  .tm-navbar__brand-tagline {
+    font-size: 0.66rem;
   }
 
   .tm-navbar__search--desktop,
@@ -326,8 +357,16 @@ body {
 }
 
 @media (max-width: 767.98px) {
+  body {
+    padding-top: 76px;
+  }
+
   .tm-navbar__brand-logo {
-    height: 36px;
+    height: 34px;
+  }
+
+  .tm-navbar__brand-tagline {
+    font-size: 0.6rem;
   }
 
   .tm-navbar__topline {
@@ -714,6 +753,8 @@ body {
   }
 
   .tm-navbar__brand-logo { height: 70px; }
+  .tm-navbar__brand { color: #fff; }
+  .tm-navbar__brand-tagline { font-size: .78rem; }
 
   .tm-navbar--v2 .tm-navbar__nav--bottom {
     justify-content: flex-end;
