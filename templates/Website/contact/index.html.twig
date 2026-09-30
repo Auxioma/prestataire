@@ -1,0 +1,105 @@
+{% extends 'Website/base.html.twig' %}
+
+{% block title %}Nous contacter - TrouveMoi.com{% endblock %}
+{% block meta_description %}Contactez l’équipe TrouveMoi pour une question, un problème technique ou une suggestion.{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/static/staticpage.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/static/contact.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="bg-light py-4 border-bottom">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 small">
+                    <li class="breadcrumb-item"><a href="{{ path('app_home') }}" class="text-decoration-none text-muted">Accueil</a></li>
+                    <li class="breadcrumb-item"><a href="{{ path('app_static_page', {slug: 'help'}) }}" class="text-decoration-none text-muted">Besoin d’aide ?</a></li>
+                    <li class="breadcrumb-item active text-dark fw-medium" aria-current="page">Formulaire de contact</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <section class="tm-contact-page">
+        <div class="container py-5">
+            <div class="row justify-content-center g-4">
+                <div class="col-12 col-lg-7">
+                    {% for type, messages in app.flashes(['success', 'danger', 'warning', 'info']) %}
+                        {% for flashMessage in messages %}
+                            <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show mb-4" role="alert">
+                                {{ flashMessage }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4 p-md-5">
+                            <span class="tm-contact-page__eyebrow">Contact</span>
+                            <h1 class="h2 fw-bold tm-static-brand-title mt-2 mb-3">Comment pouvons-nous vous aider ?</h1>
+                            <p class="text-muted mb-4">Décrivez votre demande : notre équipe recevra directement votre message.</p>
+
+                            {{ form_start(contactForm, {attr: {class: 'tm-contact-form'}}) }}
+                                {% if contactForm.vars.errors|length > 0 %}
+                                    <div class="alert alert-danger" role="alert">{{ form_errors(contactForm) }}</div>
+                                {% endif %}
+
+                                <div class="mb-4">
+                                    {{ form_label(contactForm.email, null, {label_attr: {class: 'form-label fw-semibold'}}) }}
+                                    {{ form_widget(contactForm.email, {attr: {
+                                        class: 'form-control' ~ (contactForm.email.vars.errors|length > 0 ? ' is-invalid' : ''),
+                                        'aria-invalid': contactForm.email.vars.errors|length > 0 ? 'true' : 'false',
+                                        'aria-describedby': contactForm.email.vars.errors|length > 0 ? contactForm.email.vars.id ~ '-errors' : null,
+                                    }}) }}
+                                    {% if contactForm.email.vars.errors|length > 0 %}
+                                        <div id="{{ contactForm.email.vars.id }}-errors" class="invalid-feedback d-block" role="alert">{{ form_errors(contactForm.email) }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-4">
+                                    {{ form_label(contactForm.category, null, {label_attr: {class: 'form-label fw-semibold'}}) }}
+                                    {{ form_widget(contactForm.category, {attr: {
+                                        class: 'form-select' ~ (contactForm.category.vars.errors|length > 0 ? ' is-invalid' : ''),
+                                        'aria-invalid': contactForm.category.vars.errors|length > 0 ? 'true' : 'false',
+                                        'aria-describedby': contactForm.category.vars.errors|length > 0 ? contactForm.category.vars.id ~ '-errors' : null,
+                                    }}) }}
+                                    {% if contactForm.category.vars.errors|length > 0 %}
+                                        <div id="{{ contactForm.category.vars.id }}-errors" class="invalid-feedback d-block" role="alert">{{ form_errors(contactForm.category) }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-4">
+                                    {{ form_label(contactForm.message, null, {label_attr: {class: 'form-label fw-semibold'}}) }}
+                                    {{ form_widget(contactForm.message, {attr: {
+                                        class: 'form-control' ~ (contactForm.message.vars.errors|length > 0 ? ' is-invalid' : ''),
+                                        'aria-invalid': contactForm.message.vars.errors|length > 0 ? 'true' : 'false',
+                                        'aria-describedby': contactForm.message.vars.id ~ '-help' ~ (contactForm.message.vars.errors|length > 0 ? ' ' ~ contactForm.message.vars.id ~ '-errors' : ''),
+                                    }}) }}
+                                    <div id="{{ contactForm.message.vars.id }}-help" class="form-text">{{ contactForm.message.vars.help }}</div>
+                                    {% if contactForm.message.vars.errors|length > 0 %}
+                                        <div id="{{ contactForm.message.vars.id }}-errors" class="invalid-feedback d-block" role="alert">{{ form_errors(contactForm.message) }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="d-flex flex-column flex-sm-row gap-3 align-items-sm-center">
+                                    <button type="submit" class="btn btn-primary px-4">Envoyer ma demande</button>
+                                    <a href="{{ path('app_static_page', {slug: 'help'}) }}" class="btn btn-outline-secondary px-4">Retour à l’aide</a>
+                                </div>
+                            {{ form_end(contactForm) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-4">
+                    <aside class="tm-contact-page__aside rounded-4 p-4">
+                        <i class="fa-regular fa-envelope-open fs-2 text-primary mb-3" aria-hidden="true"></i>
+                        <h2 class="h5 fw-bold text-dark">Avant d’envoyer</h2>
+                        <p class="small text-muted">Indiquez une adresse e-mail que vous consultez régulièrement afin que notre équipe puisse vous répondre.</p>
+                        <p class="small text-muted mb-0">Pour votre sécurité, ne transmettez jamais de mot de passe ni de numéro complet de carte bancaire.</p>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

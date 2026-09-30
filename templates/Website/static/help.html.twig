@@ -83,7 +83,7 @@
                             <p class="text-muted small mb-0">Contactez notre équipe pour une aide personnalisée.</p>
                         </div>
                     </div>
-                    <a href="#" class="btn btn-outline-primary px-4 fw-semibold text-nowrap">Nous contacter</a>
+                    <a href="{{ path('app_contact') }}" class="btn btn-outline-primary px-4 fw-semibold text-nowrap">Nous contacter</a>
                 </div>
             </div>
         </div>
@@ -119,11 +119,11 @@
 
                     <div class="d-flex align-items-start gap-3">
                         <div class="bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center tm-static-icon-circle-sm">
-                            <i class="bi bi-chat-left-text-fill"></i>
+                            <i class="bi bi-envelope-paper-fill"></i>
                         </div>
                         <div>
-                            <div class="fw-bold text-dark small">Par chat</div>
-                            <div class="text-dark fw-semibold small my-1">Discutez en direct avec un conseiller.</div>
+                            <div class="fw-bold text-dark small">Formulaire de contact</div>
+                            <a href="{{ path('app_contact') }}" class="text-primary fw-semibold small text-decoration-none d-block my-1">Accéder au formulaire de contact</a>
                         </div>
                     </div>
                 </div>
@@ -133,7 +133,7 @@
                 <div>
                     <h4 class="fw-bold text-dark small mb-2">Centre d'aide</h4>
                     <p class="text-muted small mb-3">Consultez nos guides et tutoriels disponibles 24h/24.</p>
-                    <a href="#" class="btn btn-primary w-100 fw-semibold">Accéder au centre d'aide</a>
+                    <a href="{{ path('app_static_page', {slug: 'ressources'}) }}" class="btn btn-primary w-100 fw-semibold">Accéder au centre d'aide</a>
                 </div>
             </div>
         </div>
