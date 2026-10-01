@@ -19,10 +19,12 @@ declare(strict_types=1);
 
 namespace App\Prestataire\Repository;
 
+use App\Account\Enum\UserStatusEnum;
 use App\Catalog\Entity\Service;
 use App\Prestataire\Entity\PrestataireProfile;
 use App\Prestataire\Enum\PrestataireProfileStatusEnum;
-// use App\Search\Enum\SearchVisibilityEnum;
+use App\Search\Enum\SearchVisibilityEnum;
+use App\Search\Service\PrestataireSearchEligibility;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -65,6 +67,39 @@ class PrestataireProfileRepository extends ServiceEntityRepository
             ->addSelect('a')
             ->andWhere('p.profileStatus = :status')
             ->setParameter('status', PrestataireProfileStatusEnum::ACTIVE);
+    }
+
+    /**
+     * Retourne uniquement les profils pouvant être exposés aux moteurs de recherche.
+     *
+     * @return list<PrestataireProfile>
+     */
+    public function findIndexableForSitemap(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->innerJoin('p.account', 'a')
+            ->addSelect('a')
+            ->andWhere('p.profileStatus = :activeProfileStatus')
+            ->andWhere('p.verificationStatus IN (:verifiedStatuses)')
+            ->andWhere('p.searchVisibility != :hiddenVisibility')
+            ->andWhere('p.deletedAt IS NULL')
+            ->andWhere('a.status NOT IN (:excludedAccountStatuses)')
+            ->andWhere('a.deletedAt IS NULL')
+            ->andWhere('p.companyName IS NOT NULL')
+            ->andWhere("TRIM(p.companyName) != ''")
+            ->andWhere('p.slug IS NOT NULL')
+            ->andWhere("TRIM(p.slug) != ''")
+            ->setParameter('activeProfileStatus', PrestataireProfileStatusEnum::ACTIVE)
+            ->setParameter('verifiedStatuses', PrestataireSearchEligibility::VERIFIED_STATUSES)
+            ->setParameter('hiddenVisibility', SearchVisibilityEnum::HIDDEN)
+            ->setParameter('excludedAccountStatuses', [
+                UserStatusEnum::SUSPENDED,
+                UserStatusEnum::BANNED,
+                UserStatusEnum::DELETED,
+            ])
+            ->orderBy('p.slug', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 
     /**

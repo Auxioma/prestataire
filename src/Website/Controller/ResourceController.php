@@ -148,6 +148,14 @@ final class ResourceController extends AbstractController
         ],
     ];
 
+    /**
+     * @return list<string>
+     */
+    public static function slugs(): array
+    {
+        return array_keys(self::RESOURCES);
+    }
+
     #[Route('/ressources/{slug}', name: 'app_resource_show', methods: ['GET'], requirements: ['slug' => '[a-z0-9-]+'])]
     public function __invoke(string $slug): Response
     {
