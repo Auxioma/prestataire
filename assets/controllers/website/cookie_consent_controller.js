@@ -204,5 +204,17 @@ export default class extends Controller {
             serverSide: false,
             partnersList: false,
         });
+
+        /*
+         * Futurs services facultatifs : les enregistrer ici, après init().
+         *
+         * Exemple Google Analytics 4, à activer uniquement après avoir :
+         * - fourni l’identifiant GA4 depuis la configuration de l’environnement ;
+         * - adapté la Content Security Policy et la politique de confidentialité ;
+         * - vérifié le suivi des navigations Turbo sans double comptage.
+         *
+         * window.tarteaucitron.user.gtagUa = 'G-XXXXXXXXXX';
+         * (window.tarteaucitron.job = window.tarteaucitron.job || []).push('gtag');
+         */
     }
 }
