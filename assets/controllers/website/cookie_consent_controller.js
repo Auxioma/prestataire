@@ -1,6 +1,6 @@
-import { Controller } from '@hotwired/stimulus';
+import { Controller } from "@hotwired/stimulus";
 
-const INITIALIZATION_FLAG = '__trouvemoiCookieConsentInitialized';
+const INITIALIZATION_FLAG = "__trouvemoiCookieConsentInitialized";
 const CONSENT_DURATION_DAYS = 180;
 const MAX_LOAD_ATTEMPTS = 100;
 const LOAD_RETRY_DELAY = 50;
@@ -8,15 +8,21 @@ const LOAD_RETRY_DELAY = 50;
 export default class extends Controller {
     static values = {
         privacyUrl: String,
+        googleAnalyticsId: String,
     };
 
     connect() {
-        this.handleCookieSettingsClick = this.handleCookieSettingsClick.bind(this);
+        this.handleCookieSettingsClick =
+            this.handleCookieSettingsClick.bind(this);
         this.handleManagerReady = this.handleManagerReady.bind(this);
-        this.preserveManagerBeforeRender = this.preserveManagerBeforeRender.bind(this);
-        this.element.addEventListener('click', this.handleCookieSettingsClick);
-        document.addEventListener('turbo:before-render', this.preserveManagerBeforeRender);
-        window.addEventListener('tac.root_available', this.handleManagerReady);
+        this.preserveManagerBeforeRender =
+            this.preserveManagerBeforeRender.bind(this);
+        this.element.addEventListener("click", this.handleCookieSettingsClick);
+        document.addEventListener(
+            "turbo:before-render",
+            this.preserveManagerBeforeRender,
+        );
+        window.addEventListener("tac.root_available", this.handleManagerReady);
 
         this.loadAttempts = 0;
         this.decorateManager();
@@ -24,9 +30,18 @@ export default class extends Controller {
     }
 
     disconnect() {
-        this.element.removeEventListener('click', this.handleCookieSettingsClick);
-        document.removeEventListener('turbo:before-render', this.preserveManagerBeforeRender);
-        window.removeEventListener('tac.root_available', this.handleManagerReady);
+        this.element.removeEventListener(
+            "click",
+            this.handleCookieSettingsClick,
+        );
+        document.removeEventListener(
+            "turbo:before-render",
+            this.preserveManagerBeforeRender,
+        );
+        window.removeEventListener(
+            "tac.root_available",
+            this.handleManagerReady,
+        );
         this.managerObserver?.disconnect();
 
         if (this.loadTimer) {
@@ -43,7 +58,7 @@ export default class extends Controller {
     }
 
     decorateManager() {
-        const managerRoot = document.getElementById('tarteaucitronRoot');
+        const managerRoot = document.getElementById("tarteaucitronRoot");
 
         if (!managerRoot) {
             return;
@@ -51,7 +66,9 @@ export default class extends Controller {
 
         this.updateManagerState(managerRoot);
         this.managerObserver?.disconnect();
-        this.managerObserver = new MutationObserver(() => this.updateManagerState(managerRoot));
+        this.managerObserver = new MutationObserver(() =>
+            this.updateManagerState(managerRoot),
+        );
         this.managerObserver.observe(managerRoot, {
             childList: true,
             subtree: true,
@@ -61,28 +78,39 @@ export default class extends Controller {
     updateManagerState(managerRoot) {
         const optionalServiceLists = Array.from(
             managerRoot.querySelectorAll('ul[id^="tarteaucitronServices_"]'),
-        ).filter((list) => ![
-            'tarteaucitronServices_mandatory',
-            'tarteaucitronServices_cookies',
-        ].includes(list.id));
-        const hasOptionalServices = optionalServiceLists.some(
-            (list) => list.querySelector('.tarteaucitronLine'),
+        ).filter(
+            (list) =>
+                ![
+                    "tarteaucitronServices_mandatory",
+                    "tarteaucitronServices_cookies",
+                ].includes(list.id),
+        );
+        const hasOptionalServices = optionalServiceLists.some((list) =>
+            list.querySelector(".tarteaucitronLine"),
         );
 
-        managerRoot.classList.toggle('tm-cookie-consent--essential-only', !hasOptionalServices);
+        managerRoot.classList.toggle(
+            "tm-cookie-consent--essential-only",
+            !hasOptionalServices,
+        );
 
         const mandatoryLine = managerRoot.querySelector(
-            '#tarteaucitronServices_mandatory .tarteaucitronLine',
+            "#tarteaucitronServices_mandatory .tarteaucitronLine",
         );
 
-        if (mandatoryLine && !mandatoryLine.querySelector('.tm-cookie-consent__status')) {
-            const status = document.createElement('span');
-            status.className = 'tm-cookie-consent__status';
-            status.textContent = 'Toujours actifs';
+        if (
+            mandatoryLine &&
+            !mandatoryLine.querySelector(".tm-cookie-consent__status")
+        ) {
+            const status = document.createElement("span");
+            status.className = "tm-cookie-consent__status";
+            status.textContent = "Toujours actifs";
             mandatoryLine.append(status);
         }
 
-        const saveButton = managerRoot.querySelector('#tarteaucitronSaveButton');
+        const saveButton = managerRoot.querySelector(
+            "#tarteaucitronSaveButton",
+        );
         const expectedLabel = hasOptionalServices
             ? window.tarteaucitron.lang.save
             : window.tarteaucitron.lang.close;
@@ -97,7 +125,7 @@ export default class extends Controller {
             return;
         }
 
-        const trigger = event.target.closest('#tm-cookie-settings');
+        const trigger = event.target.closest("#tm-cookie-settings");
 
         if (!trigger || !this.element.contains(trigger)) {
             return;
@@ -105,7 +133,10 @@ export default class extends Controller {
 
         const openPanel = window.tarteaucitron?.userInterface?.openPanel;
 
-        if (typeof openPanel !== 'function' || !document.getElementById('tarteaucitron')) {
+        if (
+            typeof openPanel !== "function" ||
+            !document.getElementById("tarteaucitron")
+        ) {
             return;
         }
 
@@ -114,7 +145,7 @@ export default class extends Controller {
     }
 
     preserveManagerBeforeRender(event) {
-        const managerRoot = document.getElementById('tarteaucitronRoot');
+        const managerRoot = document.getElementById("tarteaucitronRoot");
         const newBody = event.detail?.newBody;
 
         if (!managerRoot || !(newBody instanceof HTMLBodyElement)) {
@@ -129,13 +160,16 @@ export default class extends Controller {
             return;
         }
 
-        const isLibraryReady = typeof window.tarteaucitron?.init === 'function'
-            && typeof window.tarteaucitron.lang?.acceptAll === 'string'
-            && Object.keys(window.tarteaucitron.services ?? {}).length > 0;
+        const isLibraryReady =
+            typeof window.tarteaucitron?.init === "function" &&
+            typeof window.tarteaucitron.lang?.acceptAll === "string" &&
+            Object.keys(window.tarteaucitron.services ?? {}).length > 0;
 
         if (!isLibraryReady) {
             if (this.loadAttempts >= MAX_LOAD_ATTEMPTS) {
-                console.error('Le gestionnaire de cookies n’a pas pu être chargé depuis le CDN.');
+                console.error(
+                    "Le gestionnaire de cookies n’a pas pu être chargé depuis le CDN.",
+                );
 
                 return;
             }
@@ -150,33 +184,37 @@ export default class extends Controller {
         }
 
         window[INITIALIZATION_FLAG] = true;
-        window.tarteaucitronForceLanguage = 'fr';
+        window.tarteaucitronForceLanguage = "fr";
         window.tarteaucitronForceExpire = CONSENT_DURATION_DAYS;
         window.tarteaucitronExpireInDay = true;
         window.tarteaucitronCustomText = {
-            middleBarHead: 'Vos préférences de confidentialité',
-            alertBigPrivacy: 'TrouveMoi utilise des cookies indispensables à son fonctionnement. Vous gardez le contrôle sur tout futur service facultatif.',
-            info: 'Vos préférences de confidentialité',
-            disclaimer: 'Retrouvez ici les services indispensables au fonctionnement de TrouveMoi et, lorsqu’ils seront proposés, vos choix concernant les services facultatifs.',
-            all: 'Services facultatifs',
-            noServices: 'Aucun cookie facultatif nécessitant votre consentement n’est actuellement utilisé.',
-            mandatoryTitle: 'Cookies indispensables',
-            mandatoryText: 'Ces cookies assurent la connexion, la sécurité et les services que vous demandez. Ils ne peuvent pas être désactivés.',
-            privacyUrl: 'Consulter la politique de confidentialité',
+            middleBarHead: "Vos préférences de confidentialité",
+            alertBigPrivacy:
+                "TrouveMoi utilise des cookies indispensables à son fonctionnement. Vous gardez le contrôle sur tout futur service facultatif.",
+            info: "Vos préférences de confidentialité",
+            disclaimer:
+                "Retrouvez ici les services indispensables au fonctionnement de TrouveMoi et, lorsqu’ils seront proposés, vos choix concernant les services facultatifs.",
+            all: "Services facultatifs",
+            noServices:
+                "Aucun cookie facultatif nécessitant votre consentement n’est actuellement utilisé.",
+            mandatoryTitle: "Cookies indispensables",
+            mandatoryText:
+                "Ces cookies assurent la connexion, la sécurité et les services que vous demandez. Ils ne peuvent pas être désactivés.",
+            privacyUrl: "Consulter la politique de confidentialité",
         };
 
-        const privacyUrl = this.hasPrivacyUrlValue ? this.privacyUrlValue : '';
+        const privacyUrl = this.hasPrivacyUrlValue ? this.privacyUrlValue : "";
 
         window.tarteaucitron.init({
             privacyUrl,
             readmoreLink: privacyUrl,
-            bodyPosition: 'bottom',
-            hashtag: '#gestion-cookies',
-            cookieName: 'trouvemoi_cookie_consent',
-            orientation: 'bottom',
+            bodyPosition: "bottom",
+            hashtag: "#gestion-cookies",
+            cookieName: "trouvemoi_cookie_consent",
+            orientation: "bottom",
             groupServices: false,
             showDetailsOnClick: false,
-            serviceDefaultState: 'wait',
+            serviceDefaultState: "wait",
             showAlertSmall: false,
             showTitleBanner: true,
             cookieslist: false,
@@ -187,14 +225,14 @@ export default class extends Controller {
             AcceptAllCta: true,
             highPrivacy: true,
             alwaysNeedConsent: false,
-            handleBrowserDNTRequest: true,
+            handleBrowserDNTRequest: false,
             removeCredit: true,
             moreInfoLink: true,
             useExternalCss: true,
             useExternalJs: true,
             mandatory: true,
             mandatoryCta: false,
-            customCloserId: 'tm-cookie-settings',
+            customCloserId: "tm-cookie-settings",
             googleConsentMode: false,
             bingConsentMode: false,
             pianoConsentMode: false,
@@ -205,16 +243,15 @@ export default class extends Controller {
             partnersList: false,
         });
 
-        /*
-         * Futurs services facultatifs : les enregistrer ici, après init().
-         *
-         * Exemple Google Analytics 4, à activer uniquement après avoir :
-         * - fourni l’identifiant GA4 depuis la configuration de l’environnement ;
-         * - adapté la Content Security Policy et la politique de confidentialité ;
-         * - vérifié le suivi des navigations Turbo sans double comptage.
-         *
-         * window.tarteaucitron.user.gtagUa = 'G-XXXXXXXXXX';
-         * (window.tarteaucitron.job = window.tarteaucitron.job || []).push('gtag');
-         */
+        const googleAnalyticsId = this.hasGoogleAnalyticsIdValue
+            ? this.googleAnalyticsIdValue.trim().toUpperCase()
+            : "";
+
+        if (/^G-[A-Z0-9]+$/.test(googleAnalyticsId)) {
+            window.tarteaucitron.user.gtagUa = googleAnalyticsId;
+            (window.tarteaucitron.job = window.tarteaucitron.job || []).push(
+                "gtag",
+            );
+        }
     }
 }
