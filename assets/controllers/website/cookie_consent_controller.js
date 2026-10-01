@@ -190,11 +190,11 @@ export default class extends Controller {
         window.tarteaucitronCustomText = {
             middleBarHead: "Vos préférences de confidentialité",
             alertBigPrivacy:
-                "TrouveMoi utilise des cookies indispensables à son fonctionnement. Vous gardez le contrôle sur tout futur service facultatif.",
+                "TrouveMoi utilise des cookies nécessaires et, avec votre accord, une mesure d’audience. Vous pouvez accepter, refuser ou personnaliser vos choix.",
             info: "Vos préférences de confidentialité",
             disclaimer:
-                "Retrouvez ici les services indispensables au fonctionnement de TrouveMoi et, lorsqu’ils seront proposés, vos choix concernant les services facultatifs.",
-            all: "Services facultatifs",
+                "Choisissez les services que vous autorisez. Les cookies indispensables restent actifs pour assurer le fonctionnement et la sécurité du site.",
+            all: "Choix globaux",
             noServices:
                 "Aucun cookie facultatif nécessitant votre consentement n’est actuellement utilisé.",
             mandatoryTitle: "Cookies indispensables",
