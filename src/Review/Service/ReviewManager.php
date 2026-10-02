@@ -122,11 +122,10 @@ final class ReviewManager
 
     public function refreshAverageRating(PrestataireProfile $prestataire): void
     {
-        $averageRating = $this->reviewRepository->computeAverageRating($prestataire);
-        $reviewsCount = $this->reviewRepository->countByPrestataire($prestataire);
+        $stats = $this->reviewRepository->computeRatingStats($prestataire);
 
-        $prestataire->setAverageRating(number_format($averageRating ?? 0, 2, '.', ''));
-        $prestataire->setReviewsCount($reviewsCount);
+        $prestataire->setAverageRating(number_format($stats['averageRating'] ?? 0, 2, '.', ''));
+        $prestataire->setReviewsCount($stats['reviewsCount']);
 
         $this->entityManager->flush();
     }

@@ -34,6 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Index(name: 'idx_review_client', columns: ['client_profile_id'])]
 #[ORM\Index(name: 'idx_review_prestataire', columns: ['prestataire_profile_id'])]
 #[ORM\Index(name: 'idx_review_created_at', columns: ['created_at'])]
+#[ORM\Index(name: 'idx_review_prestataire_created_at', columns: ['prestataire_profile_id', 'created_at'])]
 #[UniqueEntity(fields: ['quoteRequest'], message: 'Un avis existe déjà pour cette demande.')]
 class Review
 {

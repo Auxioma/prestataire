@@ -120,86 +120,65 @@ class MessageRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    /**
+     * Temps moyen entre une première relance client et la réponse du prestataire, calculé côté PostgreSQL.
+     *
+     * Chaque message du prestataire clôt une « tentative » : les messages client qui le précèdent depuis la
+     * réponse précédente forment la question, dont on retient le premier. Le comptage glissant des réponses
+     * (fonction de fenêtre) numérote ces tentatives sans charger les messages en PHP.
+     */
     public function calculateAverageFirstResponseTimeMinutesForPrestataire(
         PrestataireProfile $prestataireProfile,
     ): ?int {
-        $messages = $this->createQueryBuilder('m')
-            ->addSelect('conversation', 'author', 'authorPrestataire', 'authorClient')
-            ->leftJoin('m.conversation', 'conversation')
-            ->leftJoin('m.author', 'author')
-            ->leftJoin('author.prestataireProfile', 'authorPrestataire')
-            ->leftJoin('author.clientProfile', 'authorClient')
-            ->andWhere('conversation.prestataire = :prestataire')
-            ->andWhere('m.type = :messageType')
-            ->andWhere('m.author IS NOT NULL')
-            ->setParameter('prestataire', $prestataireProfile)
-            ->setParameter('messageType', MessageTypeEnum::USER)
-            ->orderBy('conversation.id', 'ASC')
-            ->addOrderBy('m.createdAt', 'ASC')
-            ->addOrderBy('m.id', 'ASC')
-            ->getQuery()
-            ->getResult();
+        $averageSeconds = $this->getEntityManager()->getConnection()->fetchOne(
+            <<<'SQL'
+                WITH authored AS (
+                    SELECT m.conversation_id,
+                           m.created_at,
+                           m.id,
+                           CASE
+                               WHEN cp.id = c.client_id THEN 'C'
+                               WHEN pp.id = c.prestataire_id THEN 'P'
+                           END AS role
+                      FROM message m
+                      JOIN conversation c ON c.id = m.conversation_id
+                      LEFT JOIN client_profile cp ON cp.user_id = m.author_id
+                      LEFT JOIN prestataire_profile pp ON pp.user_id = m.author_id
+                     WHERE c.prestataire_id = :prestataire
+                       AND m.type = :messageType
+                       AND m.author_id IS NOT NULL
+                ), numbered AS (
+                    SELECT conversation_id,
+                           created_at,
+                           role,
+                           COUNT(*) FILTER (WHERE role = 'P') OVER (
+                               PARTITION BY conversation_id
+                               ORDER BY created_at, id
+                               ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING
+                           ) AS attempt
+                      FROM authored
+                     WHERE role IS NOT NULL
+                ), attempts AS (
+                    SELECT MIN(created_at) FILTER (WHERE role = 'C') AS asked_at,
+                           MIN(created_at) FILTER (WHERE role = 'P') AS answered_at
+                      FROM numbered
+                  GROUP BY conversation_id, attempt
+                )
+                SELECT AVG(GREATEST(0, EXTRACT(EPOCH FROM answered_at - asked_at)))
+                  FROM attempts
+                 WHERE asked_at IS NOT NULL
+                   AND answered_at IS NOT NULL
+                SQL,
+            [
+                'prestataire' => $prestataireProfile->getId(),
+                'messageType' => MessageTypeEnum::USER->value,
+            ],
+        );
 
-        $firstClientMessageAtByConversation = [];
-        $responseTimesInSeconds = [];
-
-        foreach ($messages as $message) {
-            $conversation = $message->getConversation();
-            $author = $message->getAuthor();
-
-            if (!$message instanceof Message || !$conversation instanceof Conversation || !$author instanceof User) {
-                continue;
-            }
-
-            $conversationId = $conversation->getId();
-
-            if (null === $conversationId) {
-                continue;
-            }
-
-            $authorClientProfile = $author->getClientProfile();
-            $authorPrestataireProfile = $author->getPrestataireProfile();
-
-            if (
-                $authorClientProfile instanceof \App\Account\Entity\ClientProfile
-                && $conversation->getClient()?->getId() === $authorClientProfile->getId()
-            ) {
-                $firstClientMessageAtByConversation[$conversationId] ??= $message->getCreatedAt();
-
-                continue;
-            }
-
-            if (
-                !$authorPrestataireProfile instanceof PrestataireProfile
-                || $authorPrestataireProfile->getId() !== $prestataireProfile->getId()
-            ) {
-                continue;
-            }
-
-            if (!isset($firstClientMessageAtByConversation[$conversationId])) {
-                continue;
-            }
-
-            $firstClientMessageAt = $firstClientMessageAtByConversation[$conversationId];
-
-            if (!$firstClientMessageAt instanceof \DateTimeImmutable || !$message->getCreatedAt() instanceof \DateTimeImmutable) {
-                continue;
-            }
-
-            $responseTimesInSeconds[] = max(
-                0,
-                $message->getCreatedAt()->getTimestamp() - $firstClientMessageAt->getTimestamp()
-            );
-
-            unset($firstClientMessageAtByConversation[$conversationId]);
-        }
-
-        if ([] === $responseTimesInSeconds) {
+        if (null === $averageSeconds || false === $averageSeconds) {
             return null;
         }
 
-        $averageResponseTimeInSeconds = array_sum($responseTimesInSeconds) / \count($responseTimesInSeconds);
-
-        return max(1, (int) round($averageResponseTimeInSeconds / 60));
+        return max(1, (int) round((float) $averageSeconds / 60));
     }
 }

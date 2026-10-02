@@ -31,6 +31,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_notification_type', columns: ['type'])]
 #[ORM\Index(name: 'idx_notification_recipient_is_read', columns: ['recipient_id', 'is_read'])]
 #[ORM\Index(name: 'idx_notification_recipient_created_at', columns: ['recipient_id', 'created_at'])]
+// Index partiel : badge et liste des non-lues ; le dépôt compare à un littéral pour que le planificateur l'utilise.
+#[ORM\Index(name: 'idx_notification_unread', columns: ['recipient_id', 'created_at'], options: ['where' => '(is_read = false)'])]
 class Notification
 {
     #[ORM\Id]
@@ -69,7 +71,7 @@ class Notification
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(type: Types::JSON, nullable: true)]
+    #[ORM\Column(type: Types::JSON, nullable: true, options: ['jsonb' => true])]
     private ?array $metadata = null;
 
     public function __construct()

@@ -28,15 +28,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PrestataireServiceRepository::class)]
-#[ORM\Table(
-    name: 'prestataire_profile_service',
-    uniqueConstraints: [
-        new ORM\UniqueConstraint(
-            name: 'uniq_prestataire_profile_service',
-            columns: ['prestataire_profile_id', 'service_id']
-        ),
-    ]
-)]
+#[ORM\Table(name: 'prestataire_profile_service')]
+// ORM 3 ignore les contraintes imbriquées dans #[ORM\Table] : elles doivent être déclarées au niveau de la classe.
+#[ORM\UniqueConstraint(name: 'uniq_prestataire_profile_service', columns: ['prestataire_profile_id', 'service_id'])]
 #[ORM\HasLifecycleCallbacks]
 class PrestataireService
 {

@@ -43,7 +43,7 @@ class StripeWebhookEvent
     #[ORM\Column]
     private \DateTimeImmutable $processedAt;
 
-    #[ORM\Column(type: Types::JSON, nullable: true)]
+    #[ORM\Column(type: Types::JSON, nullable: true, options: ['jsonb' => true])]
     private ?array $payload = null;
 
     public function __construct()

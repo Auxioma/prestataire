@@ -27,11 +27,11 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SubscriptionCreditMovementRepository::class)]
-#[ORM\Table(
-    name: 'subscription_credit_movement',
-    uniqueConstraints: [new ORM\UniqueConstraint(name: 'uniq_subscription_credit_movement_invoice', columns: ['invoice_id'])]
-)]
+#[ORM\Table(name: 'subscription_credit_movement')]
+// ORM 3 ignore les contraintes imbriquées dans #[ORM\Table] : elles doivent être déclarées au niveau de la classe.
+#[ORM\UniqueConstraint(name: 'uniq_subscription_credit_movement_invoice', columns: ['invoice_id'])]
 #[ORM\Index(name: 'idx_subscription_credit_movement_profile', columns: ['prestataire_profile_id'])]
+#[ORM\Index(name: 'idx_subscription_credit_movement_profile_occurred', columns: ['prestataire_profile_id', 'occurred_at'])]
 #[ORM\Index(name: 'idx_subscription_credit_movement_type', columns: ['type'])]
 #[ORM\Index(name: 'idx_subscription_credit_movement_occurred_at', columns: ['occurred_at'])]
 class SubscriptionCreditMovement
@@ -69,7 +69,7 @@ class SubscriptionCreditMovement
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::JSON, nullable: true)]
+    #[ORM\Column(type: Types::JSON, nullable: true, options: ['jsonb' => true])]
     private ?array $metadata = null;
 
     #[ORM\Column]

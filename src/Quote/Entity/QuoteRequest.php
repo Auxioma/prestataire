@@ -30,6 +30,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: QuoteRequestRepository::class)]
 #[ORM\Table(name: 'quote_request')]
+// Index partiels : les listes ne lisent jamais les demandes supprimées.
+#[ORM\Index(name: 'idx_quote_request_prestataire_active', columns: ['prestataire_id', 'created_at'], options: ['where' => '(deleted_at IS NULL)'])]
+#[ORM\Index(name: 'idx_quote_request_client_active', columns: ['client_id', 'updated_at'], options: ['where' => '(deleted_at IS NULL)'])]
 class QuoteRequest
 {
     #[ORM\Id]

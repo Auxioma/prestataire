@@ -41,6 +41,7 @@ use Vich\UploaderBundle\Mapping\Attribute as Vich;
 #[ORM\Index(name: 'idx_quote_proposal_status', columns: ['status'])]
 #[ORM\Index(name: 'idx_quote_proposal_created_at', columns: ['created_at'])]
 #[ORM\Index(name: 'idx_quote_proposal_deleted_at', columns: ['deleted_at'])]
+#[ORM\Index(name: 'idx_quote_proposal_request_prestataire_active', columns: ['quote_request_id', 'prestataire_id'], options: ['where' => '(deleted_at IS NULL)'])]
 #[Vich\Uploadable]
 class QuoteProposal
 {

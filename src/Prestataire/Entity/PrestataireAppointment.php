@@ -27,6 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PrestataireAppointmentRepository::class)]
+#[ORM\Index(name: 'idx_appointment_prestataire_starts_at', columns: ['prestataire_id', 'starts_at'])]
 #[ORM\HasLifecycleCallbacks]
 class PrestataireAppointment
 {

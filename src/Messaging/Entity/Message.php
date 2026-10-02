@@ -28,6 +28,10 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 #[ORM\Table(name: 'message')]
+// Fil de discussion trié et derniers messages : évite le tri après lecture de l'index FK.
+#[ORM\Index(name: 'idx_message_conversation_created', columns: ['conversation_id', 'created_at', 'id'])]
+// Index partiel : seuls les messages non lus sont indexés pour les compteurs du tableau de bord.
+#[ORM\Index(name: 'idx_message_unread', columns: ['conversation_id'], options: ['where' => '(read_at IS NULL)'])]
 class Message
 {
     #[ORM\Id]

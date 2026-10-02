@@ -91,7 +91,7 @@ class SubscriptionInvoice
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $paidAt = null;
 
-    #[ORM\Column(type: Types::JSON, nullable: true)]
+    #[ORM\Column(type: Types::JSON, nullable: true, options: ['jsonb' => true])]
     private ?array $stripePayload = null;
 
     #[ORM\Column]

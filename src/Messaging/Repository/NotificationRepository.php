@@ -52,9 +52,9 @@ final class NotificationRepository extends ServiceEntityRepository
         return (int) $this->createQueryBuilder('n')
             ->select('COUNT(n.id)')
             ->andWhere('n.recipient = :user')
-            ->andWhere('n.isRead = :isRead')
+            // Littéral (pas de paramètre) : correspond au prédicat de idx_notification_unread même en plan générique.
+            ->andWhere('n.isRead = false')
             ->setParameter('user', $user)
-            ->setParameter('isRead', false)
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -66,9 +66,8 @@ final class NotificationRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('n')
             ->andWhere('n.recipient = :user')
-            ->andWhere('n.isRead = :isRead')
+            ->andWhere('n.isRead = false')
             ->setParameter('user', $user)
-            ->setParameter('isRead', false)
             ->orderBy('n.createdAt', 'DESC')
             ->getQuery()
             ->getResult()
@@ -82,11 +81,10 @@ final class NotificationRepository extends ServiceEntityRepository
             ->set('n.isRead', ':isRead')
             ->set('n.readAt', ':readAt')
             ->andWhere('n.recipient = :user')
-            ->andWhere('n.isRead = :currentIsRead')
+            ->andWhere('n.isRead = false')
             ->setParameter('isRead', true)
             ->setParameter('readAt', new \DateTimeImmutable())
             ->setParameter('user', $user)
-            ->setParameter('currentIsRead', false)
             ->getQuery()
             ->execute()
         ;

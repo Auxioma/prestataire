@@ -107,26 +107,24 @@ final class ReviewRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function computeAverageRating(PrestataireProfile $prestataire): ?float
+    /**
+     * Moyenne et nombre d'avis en un seul passage sur l'index du prestataire.
+     *
+     * @return array{averageRating: ?float, reviewsCount: int}
+     */
+    public function computeRatingStats(PrestataireProfile $prestataire): array
     {
         $result = $this->createQueryBuilder('r')
-            ->select('AVG(r.rating) AS averageRating')
+            ->select('AVG(r.rating) AS averageRating', 'COUNT(r.id) AS reviewsCount')
             ->andWhere('r.prestataireProfile = :prestataire')
             ->setParameter('prestataire', $prestataire)
             ->getQuery()
-            ->getSingleScalarResult();
+            ->getSingleResult();
 
-        return null !== $result ? (float) $result : null;
-    }
-
-    public function countByPrestataire(PrestataireProfile $prestataire): int
-    {
-        return (int) $this->createQueryBuilder('r')
-            ->select('COUNT(r.id)')
-            ->andWhere('r.prestataireProfile = :prestataire')
-            ->setParameter('prestataire', $prestataire)
-            ->getQuery()
-            ->getSingleScalarResult();
+        return [
+            'averageRating' => null !== $result['averageRating'] ? (float) $result['averageRating'] : null,
+            'reviewsCount' => (int) $result['reviewsCount'],
+        ];
     }
 
     /**
