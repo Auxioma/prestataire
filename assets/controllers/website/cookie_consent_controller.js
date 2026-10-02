@@ -2,11 +2,14 @@ import { Controller } from "@hotwired/stimulus";
 
 const INITIALIZATION_FLAG = "__trouvemoiCookieConsentInitialized";
 const CONSENT_DURATION_DAYS = 180;
+const TARTEAUCITRON_SCRIPT_URL =
+    "https://cdn.jsdelivr.net/gh/AmauriC/tarteaucitron.js@master/tarteaucitron.js";
 
 export default class extends Controller {
     static values = {
+        gaId: String,
+        gtmId: String,
         privacyUrl: String,
-        googleAnalyticsId: String,
     };
 
     connect() {
@@ -27,7 +30,7 @@ export default class extends Controller {
         document.addEventListener("DOMContentLoaded", this.initializeWhenReady);
         window.addEventListener("load", this.initializeWhenReady);
         this.decorateManager();
-        this.initializeWhenReady();
+        this.loadTarteaucitron();
     }
 
     disconnect() {
@@ -158,6 +161,22 @@ export default class extends Controller {
         newBody.append(managerRoot);
     }
 
+    async loadTarteaucitron() {
+        try {
+            // Avoid loading the library more than once.
+            if (!window.tarteaucitron) {
+                await this.loadScript(TARTEAUCITRON_SCRIPT_URL);
+            }
+
+            this.initializeWhenReady();
+        } catch (error) {
+            console.error(
+                "Le gestionnaire de cookies n’a pas pu être chargé depuis le CDN.",
+                error,
+            );
+        }
+    }
+
     initializeWhenReady() {
         if (window[INITIALIZATION_FLAG]) {
             return;
@@ -239,15 +258,71 @@ export default class extends Controller {
             partnersList: false,
         });
 
-        const googleAnalyticsId = this.hasGoogleAnalyticsIdValue
-            ? this.googleAnalyticsIdValue.trim().toUpperCase()
+        this.configureGoogleAnalytics();
+        this.configureGoogleTagManager();
+    }
+
+    configureGoogleAnalytics() {
+        const googleAnalyticsId = this.hasGaIdValue
+            ? this.gaIdValue.trim().toUpperCase()
             : "";
 
         if (/^G-[A-Z0-9]+$/.test(googleAnalyticsId)) {
             window.tarteaucitron.user.gtagUa = googleAnalyticsId;
+            window.tarteaucitron.user.gtagMore = () => {};
             (window.tarteaucitron.job = window.tarteaucitron.job || []).push(
                 "gtag",
             );
+        }
+    }
+
+    configureGoogleTagManager() {
+        const googleTagManagerId = this.hasGtmIdValue
+            ? this.gtmIdValue.trim().toUpperCase()
+            : "";
+
+        if (!/^GTM-[A-Z0-9]+$/.test(googleTagManagerId)) {
+            return;
+        }
+
+        window.tarteaucitron.user.googletagmanagerId = googleTagManagerId;
+        (window.tarteaucitron.job = window.tarteaucitron.job || []).push(
+            "googletagmanager",
+        );
+    }
+
+    loadScript(src) {
+        return new Promise((resolve, reject) => {
+            const existingScript = document.querySelector(
+                `script[src="${src}"]`,
+            );
+
+            if (existingScript) {
+                existingScript.addEventListener("load", resolve, {
+                    once: true,
+                });
+                existingScript.addEventListener("error", reject, {
+                    once: true,
+                });
+                return;
+            }
+
+            const script = document.createElement("script");
+
+            script.src = src;
+            script.async = true;
+            script.onload = resolve;
+            script.onerror = reject;
+
+            document.head.appendChild(script);
+        });
+    }
+
+    openPreferences() {
+        const openPanel = window.tarteaucitron?.userInterface?.openPanel;
+
+        if (typeof openPanel === "function") {
+            openPanel.call(window.tarteaucitron.userInterface);
         }
     }
 }

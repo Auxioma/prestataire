@@ -119,7 +119,7 @@
 			 <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
 		{% endif %}
 	</head>
-	<body data-controller="website--cookie-consent" data-website--cookie-consent-privacy-url-value="{{ path('app_static_page', {slug: 'privacy'}) }}" data-website--cookie-consent-google-analytics-id-value="{{ google_analytics_id }}">
+	<body data-controller="website--cookie-consent" data-website--cookie-consent-privacy-url-value="{{ path('app_static_page', {slug: 'privacy'}) }}" data-website--cookie-consent-ga-id-value="{{ google_analytics_id }}" data-website--cookie-consent-gtm-id-value="{{ google_tag_manager_id }}">
 		<a class="visually-hidden-focusable" href="#main-content">Aller au contenu principal</a>
 
 		{% block nav %}
