@@ -2,8 +2,6 @@ import { Controller } from "@hotwired/stimulus";
 
 const INITIALIZATION_FLAG = "__trouvemoiCookieConsentInitialized";
 const CONSENT_DURATION_DAYS = 180;
-const MAX_LOAD_ATTEMPTS = 100;
-const LOAD_RETRY_DELAY = 50;
 
 export default class extends Controller {
     static values = {
@@ -24,7 +22,10 @@ export default class extends Controller {
         );
         window.addEventListener("tac.root_available", this.handleManagerReady);
 
-        this.loadAttempts = 0;
+        this.initializeWhenReady = this.initializeWhenReady.bind(this);
+        // Deferred CDN scripts may finish after Stimulus connects.
+        document.addEventListener("DOMContentLoaded", this.initializeWhenReady);
+        window.addEventListener("load", this.initializeWhenReady);
         this.decorateManager();
         this.initializeWhenReady();
     }
@@ -44,9 +45,11 @@ export default class extends Controller {
         );
         this.managerObserver?.disconnect();
 
-        if (this.loadTimer) {
-            window.clearTimeout(this.loadTimer);
-        }
+        document.removeEventListener(
+            "DOMContentLoaded",
+            this.initializeWhenReady,
+        );
+        window.removeEventListener("load", this.initializeWhenReady);
 
         if (this.decorateTimer) {
             window.clearTimeout(this.decorateTimer);
@@ -166,19 +169,12 @@ export default class extends Controller {
             Object.keys(window.tarteaucitron.services ?? {}).length > 0;
 
         if (!isLibraryReady) {
-            if (this.loadAttempts >= MAX_LOAD_ATTEMPTS) {
+            // Wait for the scripts, even on connections taking more than five seconds.
+            if (document.readyState === "complete") {
                 console.error(
                     "Le gestionnaire de cookies n’a pas pu être chargé depuis le CDN.",
                 );
-
-                return;
             }
-
-            this.loadAttempts += 1;
-            this.loadTimer = window.setTimeout(
-                () => this.initializeWhenReady(),
-                LOAD_RETRY_DELAY,
-            );
 
             return;
         }
