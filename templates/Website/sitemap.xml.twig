@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 {% for url in urls %}
     <url>
         <loc>{{ url.location }}</loc>
 {% if url.lastModifiedAt is defined %}
         <lastmod>{{ url.lastModifiedAt }}</lastmod>
 {% endif %}
+{% for imagePath in url.images|default([]) %}
+        <image:image>
+            <image:loc>{{ absolute_url(asset(imagePath)) }}</image:loc>
+        </image:image>
+{% endfor %}
     </url>
 {% endfor %}
 </urlset>

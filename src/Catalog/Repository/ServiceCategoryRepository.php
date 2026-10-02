@@ -63,6 +63,27 @@ class ServiceCategoryRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Charge en une requête les catégories, sous-catégories et services publiés du sitemap.
+     *
+     * @return list<ServiceCategory>
+     */
+    public function findIndexableTreeForSitemap(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->addSelect('sub', 'service')
+            ->leftJoin('c.subCategories', 'sub', 'WITH', 'sub.isActive = :active')
+            ->leftJoin('sub.services', 'service', 'WITH', 'service.isActive = :active')
+            ->where('c.parent IS NULL')
+            ->andWhere('c.isActive = :active')
+            ->setParameter('active', true)
+            ->orderBy('c.position', 'ASC')
+            ->addOrderBy('sub.position', 'ASC')
+            ->addOrderBy('service.position', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findNavbarCategories(): array
     {
         return $this->createQueryBuilder('c')

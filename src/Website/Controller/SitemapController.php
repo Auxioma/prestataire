@@ -55,6 +55,7 @@ final class SitemapController extends AbstractController
             string $route,
             array $parameters = [],
             ?\DateTimeInterface $lastModifiedAt = null,
+            array $images = [],
         ) use (&$urls, $urlGenerator): void {
             $url = [
                 'location' => $urlGenerator->generate($route, $parameters, UrlGeneratorInterface::ABSOLUTE_URL),
@@ -64,11 +65,24 @@ final class SitemapController extends AbstractController
                 $url['lastModifiedAt'] = $lastModifiedAt->format('Y-m-d');
             }
 
+            $images = array_values(array_unique(array_filter($images)));
+
+            if ([] !== $images) {
+                $url['images'] = $images;
+            }
+
             $urls[] = $url;
         };
 
+        $categories = $categoryRepository->findIndexableTreeForSitemap();
+        $categoryImages = [];
+
+        foreach ($categories as $category) {
+            $categoryImages[] = self::uploadedImagePath('uploads/service-categories', $category->getImage());
+        }
+
         $addUrl('app_home');
-        $addUrl('app_category_index');
+        $addUrl('app_category_index', images: $categoryImages);
         $addUrl('app_prestataire_browse');
         $addUrl('app_bons_plans');
 
@@ -80,14 +94,34 @@ final class SitemapController extends AbstractController
             $addUrl('app_resource_show', ['slug' => $slug]);
         }
 
-        foreach ($categoryRepository->findTopLevelWithActiveSubCategories() as $category) {
+        foreach ($categories as $category) {
+            $subCategoryImages = [];
+
+            foreach ($category->getSubCategories() as $subCategory) {
+                if ($subCategory->isActive()) {
+                    $subCategoryImages[] = self::uploadedImagePath(
+                        'uploads/service-categories',
+                        $subCategory->getImage(),
+                    );
+                }
+            }
+
             $addUrl(
                 'app_category_show',
                 ['slug' => $category->getSlug()],
                 $category->getUpdatedAt() ?? $category->getCreatedAt(),
+                $subCategoryImages,
             );
 
             foreach ($category->getSubCategories() as $subCategory) {
+                $serviceImages = [];
+
+                foreach ($subCategory->getServices() as $service) {
+                    if ($service->isActive()) {
+                        $serviceImages[] = self::uploadedImagePath('uploads/services', $service->getImage());
+                    }
+                }
+
                 $addUrl(
                     'app_subcategory_services',
                     [
@@ -95,15 +129,22 @@ final class SitemapController extends AbstractController
                         'subCategorySlug' => $subCategory->getSlug(),
                     ],
                     $subCategory->getUpdatedAt() ?? $subCategory->getCreatedAt(),
+                    $serviceImages,
                 );
             }
         }
 
         foreach ($prestataireProfileRepository->findIndexableForSitemap() as $prestataireProfile) {
+            $prestataireImages = [
+                self::uploadedImagePath('uploads/covers', $prestataireProfile->getCoverImage()),
+                self::uploadedImagePath('uploads/logos', $prestataireProfile->getLogo()),
+            ];
+
             $addUrl(
                 'app_prestataire_show',
                 ['slug' => $prestataireProfile->getSlug()],
                 $prestataireProfile->getUpdatedAt() ?? $prestataireProfile->getCreatedAt(),
+                $prestataireImages,
             );
         }
 
@@ -116,6 +157,17 @@ final class SitemapController extends AbstractController
         $response->setSharedMaxAge(3600);
 
         return $response;
+    }
+
+    private static function uploadedImagePath(string $directory, ?string $filename): ?string
+    {
+        $filename = mb_trim((string) $filename);
+
+        if ('' === $filename || basename($filename) !== $filename) {
+            return null;
+        }
+
+        return trim($directory, '/').'/'.$filename;
     }
 
     #[Route('/robots.txt', name: 'app_robots', methods: ['GET'])]
