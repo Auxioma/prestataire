@@ -113,13 +113,25 @@
                     <div class="tm-subcatx-grid">
                         {% for subCategory in activeSubCategories|sort((a, b) => a.position <=> b.position) %}
                             {% set colorVariant = cycle(['blue', 'orange', 'green', 'violet'], loop.index0) %}
+                            {% set hasUploadedSubCategoryImage = subCategory.image is not empty and '/' not in subCategory.image %}
 
                             <a
                                 href="{{ path('app_subcategory_services', {categorySlug: category.slug, subCategorySlug: subCategory.slug}) }}"
                                 class="tm-subcatx-card"
                             >
                                 <div class="tm-subcatx-card__media">
-                                    <div class="tm-subcatx-card__cover tm-subcatx-card__cover--{{ colorVariant }}"></div>
+                                    {% if hasUploadedSubCategoryImage %}
+                                        <img
+                                            src="{{ asset('uploads/service-categories/' ~ subCategory.image) }}"
+                                            alt=""
+                                            class="tm-subcatx-card__cover tm-subcatx-card__cover-image"
+                                            width="640"
+                                            height="400"
+                                            loading="lazy"
+                                        >
+                                    {% else %}
+                                        <div class="tm-subcatx-card__cover tm-subcatx-card__cover--{{ colorVariant }}"></div>
+                                    {% endif %}
 
                                     <span class="tm-subcatx-card__icon tm-subcatx-card__icon--{{ colorVariant }}">
                                         <i class="fa-solid {{ subCategory.icon|default('fa-screwdriver-wrench') }}"></i>

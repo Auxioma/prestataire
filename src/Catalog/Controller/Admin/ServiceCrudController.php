@@ -26,6 +26,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
@@ -269,6 +270,13 @@ class ServiceCrudController extends AbstractCrudController
             ->setHelp('Choisis une icône Font Awesome gratuite pour l’affichage sur le site.')
             ->renderExpanded(false)
             ->allowMultipleChoices(false);
+
+        yield ImageField::new('image', 'Image')
+            ->setBasePath('/uploads/services')
+            ->setUploadDir('public/uploads/services')
+            ->setUploadedFileNamePattern('[slug]-[timestamp].[extension]')
+            ->setRequired(false)
+            ->setHelp('Image optionnelle pour illustrer le service. Sans image, le fond coloré par défaut sera conservé.');
 
         yield MoneyField::new('averagePriceMin', 'Prix minimum indicatif')
             ->setCurrency('EUR')

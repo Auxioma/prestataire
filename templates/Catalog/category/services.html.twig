@@ -128,7 +128,18 @@
 
                             <article class="tm-servx-card">
                                 <div class="tm-servx-card__media">
-                                    <div class="tm-servx-card__cover tm-servx-card__cover--{{ colorVariant }}"></div>
+                                    {% if service.image is not empty %}
+                                        <img
+                                            src="{{ asset('uploads/services/' ~ service.image) }}"
+                                            alt=""
+                                            class="tm-servx-card__cover tm-servx-card__cover-image"
+                                            width="800"
+                                            height="460"
+                                            loading="lazy"
+                                        >
+                                    {% else %}
+                                        <div class="tm-servx-card__cover tm-servx-card__cover--{{ colorVariant }}"></div>
+                                    {% endif %}
 
                                     <span class="tm-servx-card__icon tm-servx-card__icon--{{ colorVariant }}">
                                         <i class="fa-solid {{ service.icon|default('fa-gears') }}"></i>

@@ -46,6 +46,9 @@ class Service
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $icon = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
+
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
     private ?string $averagePriceMin = null;
 
@@ -122,6 +125,18 @@ class Service
     public function setIcon(?string $icon): static
     {
         $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
 
         return $this;
     }
